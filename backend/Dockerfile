@@ -1,0 +1,25 @@
+FROM node:16.20.0-alpine3.18
+
+ENV NPM_CONFIG_CACHE /tmp/npm
+RUN mkdir -p /logs \
+    && chmod 755 /logs
+
+WORKDIR /opt/app-root/src
+RUN ln -s /logs .
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . /opt/app-root/src
+
+RUN apk upgrade --no-cache --available \
+    && apk add --no-cache chromium-swiftshader nss freetype harfbuzz ca-certificates ttf-freefont ghostscript
+
+ENV CHROME_BIN=/usr/bin/chromium-browser \
+    CHROME_PATH=/usr/lib/chromium/ \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    GHOSTSCRIPT_PATH=/usr/bin/gs
+
+EXPOSE 443 8080
+CMD ["npm", "start"]
