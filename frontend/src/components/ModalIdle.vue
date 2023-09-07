@@ -1,33 +1,28 @@
 <template>
   <div style="display: none">
-    <a
-      id="logout_href"
-      :href="routes.SESSION_EXPIRED"
-    />
+    <a id="logout_href" :href="routes.SESSION_EXPIRED" />
   </div>
 </template>
 
 <script>
-import {Routes} from '@/utils/constants';
+import { Routes } from '@/utils/constants'
 // TODO... import ApiService from '@/common/apiService';
-import { mapState } from 'pinia';
-import {authStore} from '@/store/modules/auth';
+import { mapState } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   data() {
     return {
       routes: Routes
-    };
+    }
   },
   async mounted() {
-    await this.checkAndLogoutUserOnSessionExpiry();
-
+    await this.checkAndLogoutUserOnSessionExpiry()
   },
   computed: {
-    ...mapState(authStore, ['isAuthenticated']),
+    ...mapState(useAuthStore, ['isAuthenticated'])
   },
   methods: {
-
     async checkAndLogoutUserOnSessionExpiry() {
       if (this.isAuthenticated) {
         try {
@@ -43,12 +38,10 @@ export default {
           }
           */
         } catch (e) {
-          window.location = document.getElementById('logout_href').href;
+          window.location = document.getElementById('logout_href').href
         }
       }
-
     }
   }
-
-};
+}
 </script>

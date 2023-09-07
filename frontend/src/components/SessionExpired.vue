@@ -1,32 +1,15 @@
 <template>
-  <v-container
-    fluid
-    class="full-height"
-  >
+  <v-container fluid class="full-height">
     <!-- login article -->
-    <article
-      name="session-expired-banner"
-      class="top-banner"
-    >
-      <v-row
-        align="center"
-        justify="center"
-      >
-        <v-col
-          xs="10"
-          sm="10"
-          md="8"
-          lg="4"
-          xl="3"
-        >
+    <article name="session-expired-banner" class="top-banner">
+      <v-row align="center" justify="center">
+        <v-col xs="10" sm="10" md="8" lg="4" xl="3">
           <v-card class="session-expired-card">
             <v-card-title class="gov-header">
-              <h4 id="session-expired-text">
-                Session Expired
-              </h4>
+              <h4 id="session-expired-text">Session Expired</h4>
             </v-card-title>
             <v-card-text id="session-expired-descriptor">
-              <v-row style="margin: .3rem">
+              <v-row style="margin: 0.3rem">
                 Your secure session has ended as a result of inactivity.
               </v-row>
               <a
@@ -36,7 +19,8 @@
                 dark
                 color="#003366"
                 @click="clearStorage"
-              >Log In</a><span>again to continue.</span>
+                >Log In</a
+              ><span>again to continue.</span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -46,8 +30,9 @@
 </template>
 
 <script>
-import {Routes} from '../utils/constants';
-import {authStore} from '@/store/modules/auth';
+import { mapActions } from 'pinia'
+import { Routes } from '../utils/constants'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'SessionExpired',
@@ -55,28 +40,27 @@ export default {
   data() {
     return {
       routes: Routes
-    };
+    }
   },
   mounted() {
-    const auStore = authStore();
-    auStore.setJwtToken();
+    this.setJwtToken()
   },
   methods: {
+    ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
-      const auStore = authStore();
-      auStore.setJwtToken();
+      this.setJwtToken()
     }
   }
-};
+}
 </script>
 
 <style scoped>
-  .full-height{
-    height: 100%;
-  }
-  .session-expired-card{
-    margin-top: 15rem;
-    width: 100%;
-    background: #F2E8D5;
-  }
+.full-height {
+  height: 100%;
+}
+.session-expired-card {
+  margin-top: 15rem;
+  width: 100%;
+  background: #f2e8d5;
+}
 </style>

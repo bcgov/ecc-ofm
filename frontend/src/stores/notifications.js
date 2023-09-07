@@ -2,26 +2,28 @@
    Not sure but it appears maybe more business specific than general system notifications. Remove file from code base if its
    purpose was business specific to STUDENT-ADMIN.
 */
-import {defineStore} from 'pinia';
+
+import { defineStore } from 'pinia'
+
 /* TODO: If file is indeed common functionality (i.e. see header comment), then uncomment during integration with backend...
 import { appStore } from '@/store/modules/app';
 */
 
-export const notificationsStore = defineStore('notifications', {
+export const useNotificationsStore = defineStore('notifications', {
   namespaced: true,
   state: () => ({
     notification: null,
-    notifications:[]
+    notifications: []
   }),
   actions: {
-    async changeNotification(payload){
-      this.notification = payload;
-      this.notifications.push(payload);
+    async changeNotification(payload) {
+      this.notification = payload
+      this.notifications.push(payload)
     },
-    async setNotification(payload){
-      try{
-        const notificationData = JSON.parse(payload);
-        await this.changeNotification(notificationData);
+    async setNotification(payload) {
+      try {
+        const notificationData = JSON.parse(payload)
+        await this.changeNotification(notificationData)
         /* TODO: If file is indeed common functionality (i.e. see header comment), then following is example usage with backend...
         if (notificationData && notificationData.sagaName?.startsWith('PEN_SERVICES_') && notificationData.sagaStatus === 'COMPLETED' && notificationData.studentID) {
           await studentStore().resetStudentInProcessStatus(notificationData.studentID);
@@ -29,9 +31,9 @@ export const notificationsStore = defineStore('notifications', {
           await appStore().refreshEntities();
         }
         */
-      }catch (e) {
-        console.error(e);
+      } catch (e) {
+        console.error(e)
       }
     }
   }
-});
+})

@@ -12,24 +12,56 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
+With NPM:
+
 ```sh
 npm install
 ```
 
+With Yarn:
+
+```sh
+yarn
+```
+
 ### Compile and Hot-Reload for Development
+
+With NPM:
 
 ```sh
 npm run dev
 ```
 
+With Yarn:
+
+```sh
+yarn dev
+```
+
 ### Compile and Minify for Production
+
+With NPM:
 
 ```sh
 npm run build
 ```
 
+With Yarn:
+
+```sh
+yarn build
+```
+
 ### Lint with [ESLint](https://eslint.org/)
+
+With NPM:
 
 ```sh
 npm run lint
+```
+
+With Yarn:
+
+```sh
+yarn lint
 ```

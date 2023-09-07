@@ -1,17 +1,20 @@
-import {createRouter, createWebHistory} from 'vue-router';
-import Home from '@/components/Home.vue';
-import Login from '@/components/Login.vue';
-import Logout from '@/components/Logout.vue';
-import SessionExpired from '@/components/SessionExpired.vue';
-import UnAuthorized from '@/components/UnAuthorized.vue';
-import {/*REQUEST_TYPES,*/ PAGE_TITLES } from '@/utils/constants';
-import {authStore} from './store/modules/auth';
+import { createRouter, createWebHistory } from 'vue-router'
+
+import BackendSessionExpired from '@/components/BackendSessionExpired.vue'
+import ErrorPage from '@/components/ErrorPage.vue'
+import Home from '@/components/Home.vue'
+import Login from '@/components/Login.vue'
+import Logout from '@/components/Logout.vue'
+import SessionExpired from '@/components/SessionExpired.vue'
+import UnAuthorized from '@/components/UnAuthorized.vue'
+import UnAuthorizedPage from '@/components/UnAuthorizedPage.vue'
+import { PAGE_TITLES } from '@/utils/constants'
+
+import { useAuthStore } from '../stores/auth'
+
 /* TODO: uncomment during integration with backend...
 import {appStore} from './store/modules/app';
 */
-import ErrorPage from '@/components/ErrorPage.vue';
-import BackendSessionExpired from '@/components/BackendSessionExpired.vue';
-import UnAuthorizedPage from '@/components/UnAuthorizedPage.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -88,7 +91,7 @@ const router = createRouter({
       }
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to 
+    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // eventually be removed...
     {
       path: '/intake',
@@ -101,7 +104,7 @@ const router = createRouter({
       }
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to 
+    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // eventually be removed...
     {
       path: '/contractManagement',
@@ -114,7 +117,7 @@ const router = createRouter({
       }
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to 
+    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // be removed...
     {
       path: '/payments',
@@ -127,7 +130,7 @@ const router = createRouter({
       }
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to 
+    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // be removed...
     {
       path: '/reporting',
@@ -140,7 +143,7 @@ const router = createRouter({
       }
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to 
+    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // be removed...
     {
       path: '/accountMaintenance',
@@ -153,7 +156,7 @@ const router = createRouter({
       }
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to 
+    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // be removed...
     {
       path: '/maintRequetExceptionSream',
@@ -164,9 +167,9 @@ const router = createRouter({
         requiresAuth: true,
         role: 'PCM_ROLE'
       }
-    },
+    }
   ]
-});
+})
 
 router.beforeEach((to, _from, next) => {
   // this section is to set page title in vue store
@@ -180,48 +183,54 @@ router.beforeEach((to, _from, next) => {
   }
   */
 
-  const aStore = authStore();
+  const aStore = useAuthStore()
   // this section is to handle the backend session expiry, where frontend vue session is still valid.
   if (to.meta.requiresAuth && aStore.isAuthenticated) {
-    validateAndExecute('/token-expired', to);
-  }else if (to.meta.requiresAuth) {
-    validateAndExecute('login', to);
-  }
-  else{
-    next();
+    validateAndExecute('/token-expired', to)
+  } else if (to.meta.requiresAuth) {
+    validateAndExecute('login', to)
+  } else {
+    next()
   }
 
   function validateAndExecute(nextRouteInError, to) {
-    const aStore = authStore();
-    aStore.getJwtToken().then(() => {
-      if (!aStore.isAuthenticated) {
-        next(nextRouteInError);
-        return;
-      }
-      if (!to.meta.role) {
-        next();
-        return;
-      }
-      aStore.getUserInfo().then(() => {
-        if (!aStore.isAuthorizedUser) {
-          next('unauthorized');
-          return;
+    const aStore = useAuthStore()
+    aStore
+      .getJwtToken()
+      .then(() => {
+        if (!aStore.isAuthenticated) {
+          next(nextRouteInError)
+          return
         }
-        const hasRole = Object.prototype.hasOwnProperty.call(aStore, to.meta.role) && aStore[to.meta.role];
-        if (!hasRole) {
-          next('unauthorized-page');
-          return;
+        if (!to.meta.role) {
+          next()
+          return
         }
-        next();
-      }).catch((e) => {
-        console.log('Unable to get user info: ' + e);
-        next('error');
-      });
-    }).catch(() => {
-      console.log('Unable to get token');
-      next(nextRouteInError);
-    });
+        aStore
+          .getUserInfo()
+          .then(() => {
+            if (!aStore.isAuthorizedUser) {
+              next('unauthorized')
+              return
+            }
+            const hasRole =
+              Object.prototype.hasOwnProperty.call(aStore, to.meta.role) && aStore[to.meta.role]
+            if (!hasRole) {
+              next('unauthorized-page')
+              return
+            }
+            next()
+          })
+          .catch((e) => {
+            console.log('Unable to get user info: ' + e)
+            next('error')
+          })
+      })
+      .catch(() => {
+        console.log('Unable to get token')
+        next(nextRouteInError)
+      })
   }
-});
+})
 
-export default router;
+export default router

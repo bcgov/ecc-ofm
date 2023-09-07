@@ -1,56 +1,59 @@
 /* TODO: uncomment during integration with backend...
 import ApiService from '@/common/apiService';
 */
-import {defineStore} from 'pinia';
-export const appStore = defineStore('app', {
+
+import { defineStore } from 'pinia'
+
+export const useAppStore = defineStore('app', {
   namespaced: true,
   state: () => ({
     request: {},
     selectedRequest: null,
-    messages:[],
+    messages: [],
     pageTitle: '',
     stickyInfoPanelHeight: null,
     alertNotificationText: '',
     alertNotificationQueue: [],
     alertNotification: false,
-    config: '',
+    config: ''
   }),
   actions: {
-    async setConfig(config){
-      this.config = config;
+    async setConfig(config) {
+      this.config = config
     },
     async setRequest(request) {
-      this.request = request || {};
+      this.request = request || {}
     },
     async setSelectedRequest(selectedRequest) {
-      this.selectedRequest = selectedRequest;
+      this.selectedRequest = selectedRequest
     },
     async pushMessage(message) {
-      this.messages.push(message);
+      this.messages.push(message)
     },
     async setMessages(messages) {
-      this.messages = messages || [];
+      this.messages = messages || []
     },
     async setPageTitle(pageTitle) {
-       this.pageTitle = pageTitle;
+      this.pageTitle = pageTitle
     },
     async setStickyInfoPanelHeight(stickyInfoPanelHeight) {
-      this.stickyInfoPanelHeight = stickyInfoPanelHeight;
+      this.stickyInfoPanelHeight = stickyInfoPanelHeight
     },
     async setAlertNotificationText(alertNotificationText) {
-      this.alertNotificationText = alertNotificationText;
+      this.alertNotificationText = alertNotificationText
     },
     async setAlertNotification(alertNotification) {
-      this.alertNotification = alertNotification;
+      this.alertNotification = alertNotification
     },
     async addAlertNotification(text) {
-      this.alertNotificationQueue.push(text);
+      this.alertNotificationQueue.push(text)
       if (!this.alertNotification) {
-        this.alertNotification = true;
+        this.alertNotification = true
       }
     },
     async getCodes() {
-      if(localStorage.getItem('jwtToken')) { // DONT Call api if there is not token.
+      if (localStorage.getItem('jwtToken')) {
+        // DONT Call api if there is not token.
         /*TODO: get application code lists from backend i.e....
         if (this.activeSchools.length === 0) {
           const response = await ApiService.getActiveSchools();
@@ -70,8 +73,8 @@ export const appStore = defineStore('app', {
       */
     },
     async refreshEntities() {
-      if(localStorage.getItem('jwtToken')) { // DONT Call api if there is not token.
-
+      if (localStorage.getItem('jwtToken')) {
+        // DONT Call api if there is not token.
         /*TODO: fresh data from backend i.e....
         const responseActiveSchools = await ApiService.getActiveSchools();
         await this.setActiveSchools(responseActiveSchools.data);
@@ -79,8 +82,6 @@ export const appStore = defineStore('app', {
         await this.setDistricts(responseDistricts.data);
         */
       }
-    },
-  },
-});
-
-
+    }
+  }
+})
