@@ -65,3 +65,21 @@ With Yarn:
 ```sh
 yarn lint
 ```
+
+### Docker
+
+#### Build
+
+```
+docker build . -t ofm-frontend
+```
+
+#### Run
+
+```
+docker run -d -p 80:2015 ofm-frontend
+```
+
+#### Verify
+
+Open http://localhost to verify that the app is running.
