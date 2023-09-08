@@ -1,10 +1,8 @@
 .dockerignore
 .gitignore
 Dockerfile
-logs
 README.md
-sonar-project.properties
 yarn.lock
 
+dist
 node_modules
-npm-debug.log
