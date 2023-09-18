@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 import BackendSessionExpired from '@/components/BackendSessionExpired.vue'
 import ErrorPage from '@/components/ErrorPage.vue'
 import Home from '@/components/Home.vue'
@@ -9,12 +8,8 @@ import SessionExpired from '@/components/SessionExpired.vue'
 import UnAuthorized from '@/components/UnAuthorized.vue'
 import UnAuthorizedPage from '@/components/UnAuthorizedPage.vue'
 import { PAGE_TITLES } from '@/utils/constants'
-
 import { useAuthStore } from '../stores/auth'
-
-/* TODO: uncomment during integration with backend...
-import {appStore} from './store/modules/app';
-*/
+import {useAppStore} from '../stores/app';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -173,15 +168,14 @@ const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   // this section is to set page title in vue store
-  /* TODO: uncomment during further refinements and backend integration...
   if (to && to.meta) {
-    const apStore = appStore();
+    const apStore = useAppStore();
     apStore.setPageTitle(to.meta.pageTitle);
   } else {
-    const apStore = appStore();
+    const apStore = useAppStore();
     apStore.setPageTitle('');
   }
-  */
+
 
   const aStore = useAuthStore()
   // this section is to handle the backend session expiry, where frontend vue session is still valid.

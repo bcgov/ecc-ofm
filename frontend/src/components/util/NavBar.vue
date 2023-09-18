@@ -123,12 +123,12 @@ export default {
   data() {
     return {
       drawer: null,
-      bannerEnvironment: '{tbd}', //TODO: replace value with null during integration with backend
-      bannerColor: 'blue' //TODO: replace value with null during integration with backend
+      bannerEnvironment: '{tbd}', //TODO: replace value with null if we are loading this as configuration
+      bannerColor: 'blue' //TODO: replace value with null if we are loading this as configuration
     }
   },
   async created() {
-    /* TODO: uncomment during integration with backend...
+    /* TODO: Uncomment if we are loading bannerEvn and banner cole from configuration
     appStore().getConfig().then(() => {
       this.bannerEnvironment = this.config.BANNER_ENVIRONMENT;
       this.bannerColor = this.config.BANNER_COLOR;

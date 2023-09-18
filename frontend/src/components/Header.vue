@@ -11,8 +11,7 @@
         alt="B.C. Government Logo"
       />
     </a>
-    <!-- TODO: during auth/backend integration, replace true with authStore().isAuthenticated to following v-if -->
-    <a v-if="true" tabindex="-1" href="/">
+    <a v-if="isAuthenticated" tabindex="-1" href="/">
       <v-toolbar-title
         ><h3 style="color: white">{{ secureAppTitle }}</h3></v-toolbar-title
       >
@@ -23,8 +22,7 @@
       >
     </a>
     <v-spacer />
-    <!-- TODO: replace true with authStore().isAuthenticated && user to following v-if -->
-    <div v-if="true">
+    <div v-if="isAuthenticated && user">
       <v-menu name="user_options" offset-y>
         <template #activator="{ props }">
           <v-chip v-bind="props" tabindex="0" pill color="#003366" dark>
@@ -58,20 +56,20 @@ export default {
       appTitle: import.meta.env.VITE_APP_TITLE,
       secureAppTitle: import.meta.env.VITE_APP_TITLE,
       routes: Routes,
-      //user: null
-      user: { userName: 'John Smith' }
+      user: null
     }
   },
   created() {
-    //  this.getUserInfo().then(()=> {
-    //    this.user = this.userInfo;
-    //  });
+      useAuthStore().getUserInfo().then(()=> {
+        this.user = this.userInfo;
+      });
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated'])
   },
   methods: {
-    ...mapActions(useAuthStore, ['getUserInfo'])
+    ...mapActions(useAuthStore, ['getUserInfo']),
+    useAuthStore
   }
 }
 </script>

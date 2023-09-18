@@ -1,7 +1,4 @@
-/* TODO: uncomment during integration with backend...
 import ApiService from '@/common/apiService';
-*/
-
 import { defineStore } from 'pinia'
 
 export const useAppStore = defineStore('app', {
@@ -67,10 +64,9 @@ export const useAppStore = defineStore('app', {
       }
     },
     async getConfig() {
-      /* TODO: uncomment during integration with backend...
+      /* TODO: uncomment during integration with backend... */
       const response = await ApiService.getConfig();
       await this.setConfig(response.data);
-      */
     },
     async refreshEntities() {
       if (localStorage.getItem('jwtToken')) {
