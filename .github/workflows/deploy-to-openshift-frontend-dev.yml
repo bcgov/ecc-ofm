@@ -66,6 +66,8 @@ jobs:
             const secrets = {
               OPENSHIFT_SERVER: `${{ secrets.OPENSHIFT_SERVER }}`,
               OPENSHIFT_TOKEN: `${{ secrets.OPENSHIFT_TOKEN }}`,
+              DOCKER_HUB_USERNAME: `${{ secrets.DOCKER_HUB_USERNAME }}`,
+              DOCKER_HUB_ACCESS_TOKEN: `${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}`,
             };
 
             const GHCR = "ghcr.io";
