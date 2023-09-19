@@ -25,7 +25,7 @@ env:
   REPO_NAME: 'ecc-ofm'
   #grabs the branch name from github dynamically
   BRANCH: ${{ github.ref_name }}
-  IMAGE_NAME: 'ecc-ofm/backend'
+  IMAGE_NAME: 'ecc-ofm-backend'
   APP_NAME_BACKEND: 'backend'
   APP_FOLDER: 'backend'
   NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}
