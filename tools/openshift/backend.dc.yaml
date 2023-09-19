@@ -119,7 +119,7 @@ objects:
       annotations:
         openshift.io/host.generated: 'true'
     spec:
-      host: '${HOST_ROUTE}'
+      # host: '${HOST_ROUTE}'
       path: /api
       port:
         targetPort: 8080-tcp
