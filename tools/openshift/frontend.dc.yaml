@@ -150,7 +150,7 @@ parameters:
     required: true
   - name: HOST_ROUTE
     description: The host the route will use to expose service outside cluster
-    required: true
+    required: false
   - name: TAG
     description: The identifying tag for this specific deployment
     required: true
@@ -172,12 +172,12 @@ parameters:
   - name: MAX_MEM
     description: The maximum amount of memory
     required: true
-# - name: CA_CERT
-#   description: The CA Certificate
-#   required: true
-# - name: CERTIFICATE
-#   description: The Certificate
-#   required: true
-# - name: PRIVATE_KEY
-#   description: The private key
-#   required: true
+  - name: CA_CERT
+    description: The CA Certificate
+    required: false
+  - name: CERTIFICATE
+    description: The Certificate
+    required: false
+  - name: PRIVATE_KEY
+    description: The private key
+    required: false
