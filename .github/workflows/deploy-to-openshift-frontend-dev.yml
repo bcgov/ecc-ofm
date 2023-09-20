@@ -1,5 +1,4 @@
 # OFM Frontend DEV workflow
-
 name: 1 DEV - Deploy Frontend
 
 env:
@@ -26,7 +25,7 @@ env:
   REPO_NAME: 'ecc-ofm'
   #grabs the branch name from github dynamically
   BRANCH: ${{ github.ref_name }}
-  IMAGE_NAME: 'ecc-ofm/frontend'
+  IMAGE_NAME: 'ecc-ofm-frontend'
   APP_NAME_FRONTEND: 'frontend'
   APP_FOLDER: 'frontend'
   NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}
@@ -162,7 +161,7 @@ jobs:
           # Process and apply deployment template
           oc process -f tools/openshift/frontend.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} \
           -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} \
-          -p MIN_CPU=${{ env.MIN_CPU }}     -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} -p HOST_ROUTE=${{ env.HOST_ROUTE }} \
+          -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
           | oc apply -f -
 
           # Start rollout (if necessary) and follow it

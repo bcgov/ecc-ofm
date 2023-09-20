@@ -4,7 +4,7 @@ kind: Template
 labels:
   template: '${REPO_NAME}-template'
 metadata:
-  name: '${REPO_NAME}-frontend-dc'
+  name: '${REPO_NAME}-backend-dc'
 objects:
   - apiVersion: v1
     kind: DeploymentConfig
@@ -15,12 +15,12 @@ objects:
       labels:
         app: '${APP_NAME}-${BRANCH}'
         branch: '${BRANCH}'
-      name: '${APP_NAME}-frontend'
+      name: '${APP_NAME}-backend'
     spec:
       replicas: ${{MIN_REPLICAS}}
       selector:
         app: '${APP_NAME}-${BRANCH}'
-        deploymentconfig: '${APP_NAME}-frontend'
+        deploymentconfig: '${APP_NAME}-backend'
       strategy:
         resources: {}
         type: Rolling
@@ -31,39 +31,46 @@ objects:
           creationTimestamp:
           labels:
             app: '${APP_NAME}-${BRANCH}'
-            deploymentconfig: '${APP_NAME}-frontend'
+            deploymentconfig: '${APP_NAME}-backend'
         spec:
           containers:
-            - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-frontend-${BRANCH}:${TAG}
+            - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-backend-${BRANCH}:${TAG}
               imagePullPolicy: Always
-              # volumeMounts:
-              #   - name: tls-certs
-              #     mountPath: '/etc/tls-certs'
-              #     readOnly: true
-              #   - name: config-env
-              #     mountPath: '/srv/js/config'
+              volumeMounts:
+                # - name: tls-certs
+                #   mountPath: '/etc/tls-certs'
+                #   readOnly: true
+                - name: log-storage
+                  mountPath: /logs
               livenessProbe:
-                failureThreshold: 3
+                initialDelaySeconds: 20
+                failureThreshold: 5
                 httpGet:
-                  path: '/'
-                  port: 2015
+                  path: '/api/health'
+                  port: 8080
                   scheme: HTTP
                 periodSeconds: 10
                 successThreshold: 1
-                timeoutSeconds: 1
-              name: '${APP_NAME}-frontend'
+                timeoutSeconds: 5
+              name: '${APP_NAME}-backend'
               ports:
-                - containerPort: 2015
+                - containerPort: 8080
                   protocol: TCP
+                - containerPort: 443
+                  protocol: TCP
+              envFrom:
+                - configMapRef:
+                    name: ecc-ofm-backend-config-map
               readinessProbe:
-                failureThreshold: 3
+                initialDelaySeconds: 10
+                failureThreshold: 5
                 httpGet:
-                  path: '/'
-                  port: 2015
+                  path: '/api/health'
+                  port: 8080
                   scheme: HTTP
                 periodSeconds: 10
                 successThreshold: 1
-                timeoutSeconds: 1
+                timeoutSeconds: 5
               resources:
                 requests:
                   cpu: '${MIN_CPU}'
@@ -71,13 +78,12 @@ objects:
                 limits:
                   cpu: '${MAX_CPU}'
                   memory: '${MAX_MEM}'
-          # volumes:
-          #   - name: tls-certs
-          #     secret:
-          #       secretName: ofm-frontend-cert
-          #   - name: config-env
-          #     configMap:
-          #       name: ofm-frontend-config-map
+          volumes:
+            - name: log-storage
+              emptyDir: {}
+            # - name: tls-certs
+            #   secret:
+            #     secretName: ofm-backend-cert
       test: false
       triggers:
         - type: ConfigChange
@@ -85,46 +91,55 @@ objects:
     kind: Service
     metadata:
       annotations:
-        service.alpha.openshift.io/serving-cert-secret-name: 'ofm-frontend-cert'
+        service.alpha.openshift.io/serving-cert-secret-name: 'ofm-backend-cert'
         openshift.io/generated-by: OpenShiftNewApp
       creationTimestamp:
       labels:
         app: '${APP_NAME}-${BRANCH}'
-      name: '${APP_NAME}-frontend'
+      name: '${APP_NAME}-backend'
     spec:
       ports:
-        - name: 2015-tcp
-          port: 2015
+        - name: 8080-tcp
+          port: 8080
           protocol: TCP
-          targetPort: 2015
+          targetPort: 8080
+        - name: 443-https
+          port: 443
+          protocol: TCP
+          targetPort: 443
       selector:
         app: '${APP_NAME}-${BRANCH}'
-        deploymentconfig: '${APP_NAME}-frontend'
+        deploymentconfig: '${APP_NAME}-backend'
   - apiVersion: v1
     kind: Route
     metadata:
-      name: '${APP_NAME}-frontend-http'
+      name: '${APP_NAME}-backend-http'
       labels:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
         openshift.io/host.generated: 'true'
     spec:
+      host: '${HOST_ROUTE}'
+      path: /api
+      port:
+        targetPort: 8080-tcp
+      # tls:
+      #   insecureEdgeTerminationPolicy: Redirect
+      #   termination: edge
       to:
         kind: Service
-        name: '${APP_NAME}-frontend'
+        name: '${APP_NAME}-backend'
         weight: 100
-      port:
-        targetPort: 2015-tcp
       wildcardPolicy: None
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
-      name: '${APP_NAME}-frontend-cpu-autoscaler'
+      name: '${APP_NAME}-backend-cpu-autoscaler'
     spec:
       scaleTargetRef:
         apiVersion: apps.openshift.io/v1
         kind: DeploymentConfig
-        name: '${APP_NAME}-frontend'
+        name: '${APP_NAME}-backend'
         subresource: scale
       minReplicas: ${{MIN_REPLICAS}}
       maxReplicas: ${{MAX_REPLICAS}}
@@ -150,7 +165,7 @@ parameters:
     required: true
   - name: HOST_ROUTE
     description: The host the route will use to expose service outside cluster
-    required: false
+    required: true
   - name: TAG
     description: The identifying tag for this specific deployment
     required: true
@@ -172,12 +187,3 @@ parameters:
   - name: MAX_MEM
     description: The maximum amount of memory
     required: true
-  - name: CA_CERT
-    description: The CA Certificate
-    required: false
-  - name: CERTIFICATE
-    description: The Certificate
-    required: false
-  - name: PRIVATE_KEY
-    description: The private key
-    required: false
