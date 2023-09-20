@@ -113,7 +113,7 @@ objects:
   - apiVersion: v1
     kind: Route
     metadata:
-      name: '${APP_NAME}-backend'
+      name: '${APP_NAME}-backend-http'
       labels:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
