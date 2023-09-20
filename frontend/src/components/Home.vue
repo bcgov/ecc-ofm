@@ -4,7 +4,6 @@
     title="OFM"
     subtitle="Temp Home Screen"
     text="..."
-    variant="outlined"
     style="height:100%;"
   ></v-card>
 </template>
