@@ -6,7 +6,7 @@
 
 <script>
 import { Routes } from '@/utils/constants'
-// TODO... import ApiService from '@/common/apiService';
+import ApiService from '@/common/apiService';
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
@@ -26,7 +26,6 @@ export default {
     async checkAndLogoutUserOnSessionExpiry() {
       if (this.isAuthenticated) {
         try {
-          /* TODO...
           const response = await ApiService.apiAxios.get(Routes.SESSION_REMAINING_TIME);
           if (response.data > 0) {
             const timeOutValue = parseInt(response.data) + 200; // add 200 ms
@@ -36,7 +35,6 @@ export default {
           } else {
             window.location = document.getElementById('logout_href').href;
           }
-          */
         } catch (e) {
           window.location = document.getElementById('logout_href').href
         }

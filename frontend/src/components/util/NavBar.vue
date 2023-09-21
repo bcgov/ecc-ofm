@@ -72,6 +72,7 @@
       style="z-index: 1001"
       :dark="true"
       class="pl-12 pr-8"
+      density="compact"
     >
       <v-app-bar-nav-icon
         id="menuBtn"
@@ -86,14 +87,15 @@
         {{ title }}
       </v-toolbar-title>
       <v-spacer />
-      <SetNavigation />
+      <SetNavigation/>
     </v-app-bar>
-    <v-app-bar
-      v-if="bannerColor"
-      style="color: white; z-index: 1000"
-      :color="bannerColor"
-      absolute
-      density="compact"
+    <v-app-bar v-if="bannerColor !== ''"
+               style="color:white;"
+               :color="bannerColor"
+               sticky
+               dense
+               height="20rem"
+               clipped-left
     >
       <div>
         <h3 class="envBanner pl-5">{{ bannerEnvironment }} Environment</h3>
@@ -123,12 +125,12 @@ export default {
   data() {
     return {
       drawer: null,
-      bannerEnvironment: '{tbd}', //TODO: replace value with null during integration with backend
-      bannerColor: 'blue' //TODO: replace value with null during integration with backend
+      bannerEnvironment: 'DEV', //TODO: replace value with null when we've sorted out loading it from configuration
+      bannerColor: '#8D28D7' //TODO: replace value with null when we've sorted out loading it from configuration
     }
   },
   async created() {
-    /* TODO: uncomment during integration with backend...
+    /* TODO: Uncomment if we are loading bannerEvn and banner cole from configuration
     appStore().getConfig().then(() => {
       this.bannerEnvironment = this.config.BANNER_ENVIRONMENT;
       this.bannerColor = this.config.BANNER_COLOR;

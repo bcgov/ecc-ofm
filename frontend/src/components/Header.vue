@@ -3,28 +3,16 @@
   <v-app-bar absolute color="rgb(0, 51, 102)" class="sysBar pl-10 pr-10" style="z-index: 1002">
     <!-- Navbar content -->
     <a tabindex="-1" href="/">
-      <img
-        tabindex="-1"
-        src="@/assets/images/bc-gov-logo.svg"
-        width="155"
-        class="logo"
-        alt="B.C. Government Logo"
-      />
+      <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
     </a>
-    <!-- TODO: during auth/backend integration, replace true with authStore().isAuthenticated to following v-if -->
-    <a v-if="true" tabindex="-1" href="/">
-      <v-toolbar-title
-        ><h3 style="color: white">{{ secureAppTitle }}</h3></v-toolbar-title
-      >
+    <a tabindex="-1" href="/">
+      <img class="verticalLine" />
     </a>
-    <a v-else tabindex="-1" href="/">
-      <v-toolbar-title
-        ><h3 style="color: white">{{ appTitle }}</h3></v-toolbar-title
-      >
-    </a>
-    <v-spacer />
-    <!-- TODO: replace true with authStore().isAuthenticated && user to following v-if -->
-    <div v-if="true">
+    <v-toolbar-title style="margin-left: 0px;">
+      <h3>{{ appTitle }}</h3>
+    </v-toolbar-title>
+    <v-spacer></v-spacer>
+    <div v-if="isAuthenticated && user">
       <v-menu name="user_options" offset-y>
         <template #activator="{ props }">
           <v-chip v-bind="props" tabindex="0" pill color="#003366" dark>
@@ -35,12 +23,7 @@
           </v-chip>
         </template>
         <v-list dark style="background-color: #003366; color: white">
-          <v-list-item
-            :href="routes.LOGOUT"
-            id="logout_button"
-            style="min-height: 4vh"
-            title="Logout"
-          />
+          <v-list-item :href="routes.LOGOUT" id="logout_button" style="min-height: 4vh" title="Logout" />
         </v-list>
       </v-menu>
     </div>
@@ -56,22 +39,21 @@ export default {
   data() {
     return {
       appTitle: import.meta.env.VITE_APP_TITLE,
-      secureAppTitle: import.meta.env.VITE_APP_TITLE,
       routes: Routes,
-      //user: null
-      user: { userName: 'John Smith' }
+      user: null
     }
   },
   created() {
-    //  this.getUserInfo().then(()=> {
-    //    this.user = this.userInfo;
-    //  });
+    useAuthStore().getUserInfo().then(() => {
+      this.user = this.userInfo;
+    });
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated'])
   },
   methods: {
-    ...mapActions(useAuthStore, ['getUserInfo'])
+    ...mapActions(useAuthStore, ['getUserInfo']),
+    useAuthStore
   }
 }
 </script>
@@ -87,6 +69,17 @@ a {
 
 .logo {
   padding-right: 15px;
+  padding-top: 4px;
+  width: 205px;
+  height: 77px;
+}
+
+.verticalLine {
+  border-left: 1px solid #DFB433;
+  height: 50px;
+  margin-left: 12px;
+  padding-left: 24px;
+  margin-top: 4px;
 }
 
 .gov-header .title {
@@ -122,5 +115,9 @@ a {
 .top-down {
   padding-top: 20px;
   height: 80%;
+}
+
+.mainTitle {
+  font-size: 1.0rem;
 }
 </style>

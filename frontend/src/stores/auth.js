@@ -1,18 +1,14 @@
 import { defineStore } from 'pinia'
-
 import ApiService from '@/common/apiService'
 import { Routes } from '@/utils/constants'
-
-/* TODO: uncomment during integration with authservice...
 import AuthService from '@/common/authService';
-*/
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
   state: () => ({
     acronyms: [],
-    isAuthenticated: true /* TODO: during integration with backend, replace true with... localStorage.getItem('jwtToken') !== null */,
-    isAuthorizedUser: true /* TODO: during integration with backend, replace true with... localStorage.getItem('isAuthorizedUser') !== null */,
+    isAuthenticated: localStorage.getItem('jwtToken') !== null,
+    isAuthorizedUser: localStorage.getItem('isAuthorizedUser') !== null,
     userInfo: false,
     isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
     isValdProgramUser: localStorage.getItem('isValdProgramUser') !== null,
@@ -67,7 +63,7 @@ export const useAuthStore = defineStore('auth', {
         this.userInfo = null
       }
     },
-    // TODO: method below is part of 1st draft of app framework and likely to be removed...
+      // TODO: Temp placeholder code for OFM authorization role processing...
     async setChildCareProviderUser(isValidChildCareProviderUser) {
       if (isValidChildCareProviderUser) {
         this.isValidChildCareProviderUser = true
@@ -77,7 +73,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isValidChildCareProviderUser')
       }
     },
-    // TODO: method below is part of 1st draft of app framework and likely to be removed...
+      // TODO: Temp placeholder code for OFM authorization role processing...
     async setProgramUser(isValdProgramUser) {
       if (isValdProgramUser) {
         this.isValdProgramUser = true
@@ -87,7 +83,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isValdProgramUser')
       }
     },
-    // TODO: method below is part of 1st draft of app framework and likely to be removed...
+      // TODO: Temp placeholder code for OFM authorization role processing...
     async setFinancialOpsUser(isValidFinancialOpsUser) {
       if (isValidFinancialOpsUser) {
         this.isValidFinancialOpsUser = true
@@ -120,17 +116,11 @@ export const useAuthStore = defineStore('auth', {
       try {
         const token = localStorage.getItem('jwtToken')
         if (this.isAuthenticated && !!token) {
-          /* TODO: uncomment during integration with authservice/backend...
-          const response = await AuthService.refreshAuthToken(token);
-          */
-          //TODO: uncomment 'response' below during integration with backend...
-          await this.setAuthorizations(/*response*/)
+          const response = await AuthService.refreshAuthToken(token)
+          await this.setAuthorizations(response)
         } else {
-          /* TODO: uncomment during integration with backend...
-          const response = await AuthService.getAuthToken();
-          */
-          //TODO: uncomment 'response' below during integration with backend...
-          await this.setAuthorizations(/*response*/)
+          const response = await AuthService.getAuthToken()
+          await this.setAuthorizations(response)
         }
       } catch (e) {
         // Remove tokens from localStorage and update state
@@ -138,16 +128,14 @@ export const useAuthStore = defineStore('auth', {
         throw e
       }
     },
-    //TODO: uncomment 'response' below during integration with authorization/backend...
-    async setAuthorizations(/*response*/) {
-      /* TODO: uncomment during integration with backend...
+    async setAuthorizations(response) {
       if (response.jwtFrontend) {
         await this.setJwtToken(response.jwtFrontend);
       }
-
       ApiService.setAuthHeader(response.jwtFrontend);
-    */
-      await this.setAuthorizedUser(true)
+
+      await this.setAuthorizedUser(response.isAuthorizedUser)
+      // TODO: Temp placeholder code for OFM authorization role processing...
       await this.setChildCareProviderUser(true)
       await this.setProgramUser(true)
       await this.setFinancialOpsUser(true)

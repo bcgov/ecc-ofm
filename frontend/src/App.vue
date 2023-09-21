@@ -21,6 +21,7 @@ import NavBar from '@/components/util/NavBar.vue'
 import SnackBar from '@/components/util/SnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import HttpStatus from 'http-status-codes'
 
 export default {
   name: 'App',
@@ -60,9 +61,18 @@ export default {
     this.handleWebSocket()
   },
   async created() {
-    /*TODO: uncomment when integrating with backend...
-    await this.getConfig();
-    */
+    //this.setLoading(true);
+    this.getJwtToken().then(() =>
+      Promise.all([this.getConfig()])
+    ).catch(e => {
+      if(! e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+        this.logout();
+        this.$router.replace({name: 'error', query: { message: `500_${e.data || 'ServerError'}` } });
+      }
+    }).finally(() => {
+      //this.setLoading(false);
+    });
+    //this.setLoading(false);
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),

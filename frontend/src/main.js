@@ -18,10 +18,6 @@ import webSocketService from '@/services/web-socket-service'
 import App from './App.vue'
 import router from './router'
 
-/*TODO: uncomment when integrating with backend
-import ApiService from '@/common/apiService';
-*/
-
 const myCustomLightTheme = {
   dark: false,
   colors: {
@@ -52,9 +48,6 @@ const app = createApp(App)
 
 const pinia = createPinia()
 
-/*TODO: uncomment when integrating with backend
-const config = await ApiService.getConfig();
-*/
 
 app.provide('$moment', moment)
 app
