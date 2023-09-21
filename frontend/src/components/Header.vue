@@ -9,7 +9,7 @@
       <img class="verticalLine" />
     </a>
     <v-toolbar-title style="margin-left: 0px;">
-      <h3>{{ secureAppTitle }}</h3>
+      <h3>{{ appTitle }}</h3>
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <div v-if="isAuthenticated && user">
@@ -39,7 +39,6 @@ export default {
   data() {
     return {
       appTitle: import.meta.env.VITE_APP_TITLE,
-      secureAppTitle: import.meta.env.VITE_APP_TITLE,
       routes: Routes,
       user: null
     }
