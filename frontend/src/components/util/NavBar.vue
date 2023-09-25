@@ -110,6 +110,7 @@ import { mapState } from 'pinia'
 import SetNavigation from './SetNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
+import StaticConfig from '@/common/staticConfig.js'
 
 export default {
   name: 'NavBar',
@@ -125,8 +126,8 @@ export default {
   data() {
     return {
       drawer: null,
-      bannerEnvironment: 'DEV', //TODO: replace value with null when we've sorted out loading it from configuration
-      bannerColor: '#8D28D7' //TODO: replace value with null when we've sorted out loading it from configuration
+      bannerEnvironment: StaticConfig.BANNER_ENVIRONMENT,
+      bannerColor: StaticConfig.BANNER_COLOR
     }
   },
   async created() {

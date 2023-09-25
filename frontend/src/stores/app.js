@@ -64,7 +64,6 @@ export const useAppStore = defineStore('app', {
       }
     },
     async getConfig() {
-      /* TODO: uncomment during integration with backend... */
       const response = await ApiService.getConfig();
       await this.setConfig(response.data);
     },
