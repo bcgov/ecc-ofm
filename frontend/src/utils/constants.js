@@ -1,22 +1,22 @@
-let baseRoot = '/api';
-const authRoot = baseRoot + '/auth';
-const penRequestBatchRoot = baseRoot + '/penRequestBatch';
-const penRequestRoot = baseRoot + '/penRequest';
-const digitalIDRoot = baseRoot + '/digitalID';
-const sldRequestRoot = baseRoot + '/sld';
-const studentRequestRoot = baseRoot + '/studentRequest';
-const demographicRoot = baseRoot + '/studentDemographics';
-const studentRoot = baseRoot + '/students';
-const penServicesRoot = baseRoot + '/pen-services';
-const schoolRequestRoot = baseRoot + '/schools';
-const penTraxRoot = baseRoot + '/penTrax';
-const penMatchRoot = baseRoot + '/penMatches';
-const macroRoot = baseRoot + '/macros';
-const nominalRollRoot= baseRoot+'/nominal-roll';
-const edxRoot= baseRoot+'/edx';
-const instituteRoot = baseRoot + '/institute';
-const cacheRoot = baseRoot + '/cache';
-const sdcRoot = baseRoot + '/sdc';
+let baseRoot = '/api'
+const authRoot = baseRoot + '/auth'
+const penRequestBatchRoot = baseRoot + '/penRequestBatch'
+const penRequestRoot = baseRoot + '/penRequest'
+const digitalIDRoot = baseRoot + '/digitalID'
+const sldRequestRoot = baseRoot + '/sld'
+const studentRequestRoot = baseRoot + '/studentRequest'
+const demographicRoot = baseRoot + '/studentDemographics'
+const studentRoot = baseRoot + '/students'
+const penServicesRoot = baseRoot + '/pen-services'
+const schoolRequestRoot = baseRoot + '/schools'
+const penTraxRoot = baseRoot + '/penTrax'
+const penMatchRoot = baseRoot + '/penMatches'
+const macroRoot = baseRoot + '/macros'
+const nominalRollRoot = baseRoot + '/nominal-roll'
+const edxRoot = baseRoot + '/edx'
+const instituteRoot = baseRoot + '/institute'
+const cacheRoot = baseRoot + '/cache'
+const sdcRoot = baseRoot + '/sdc'
 
 let object = {
   LOGIN: authRoot + '/login',
@@ -46,7 +46,7 @@ let object = {
     STUDENT_INFO_MACROS_URL: macroRoot + '/?businessUseTypeCode=PENREG&macroTypeCode=INFOREQ',
     PRB_VALIDATION_FIELD_CODE_URL: penRequestBatchRoot + '/prbValidationFieldCodes',
     PRB_VALIDATION_ISSUE_SEVERITY_CODE_URL: penRequestBatchRoot + '/prbValidationSeverityCodes',
-    PRB_VALIDATION_ISSUE_TYPE_CODE_URL: penRequestBatchRoot + '/prbValidationTypeCodes',
+    PRB_VALIDATION_ISSUE_TYPE_CODE_URL: penRequestBatchRoot + '/prbValidationTypeCodes'
   },
 
   penRequest: {
@@ -108,9 +108,9 @@ let object = {
     AUTHORITY_DATA_URL: instituteRoot + '/authority',
     AUTHORITY_CONTACT_URL: instituteRoot + '/authority/contact',
     AUTHORITY_NOTE_URL: instituteRoot + '/authority/note',
-    AUTHORITIES_PAGINATED_DATA_URL: instituteRoot + '/authoritiesPaginated',
+    AUTHORITIES_PAGINATED_DATA_URL: instituteRoot + '/authoritiesPaginated'
   },
-  cache:{
+  cache: {
     ROOT_ENDPOINT: cacheRoot,
     SCHOOL_DATA_URL: cacheRoot + '/school',
     DISTRICT_DATA_URL: cacheRoot + '/district',
@@ -120,20 +120,19 @@ let object = {
     SCHOOL_CATEGORY_TYPES_URL: cacheRoot + '/school-category-types',
     SCHOOL_ORGANIZATION_TYPES_URL: cacheRoot + '/school-organization-types',
     SCHOOL_NEIGHBORHOOD_LEARNING_TYPES_URL: cacheRoot + '/school-neighborhood-learning-types',
-    SCHOOL_REPORTING_REQUIREMENT_TYPES_URL: instituteRoot +
-      '/reporting-requirement-codes',
+    SCHOOL_REPORTING_REQUIREMENT_TYPES_URL: instituteRoot + '/reporting-requirement-codes',
     AUTHORITY_TYPES_URL: cacheRoot + '/authority-types',
     AUTHORITY_CONTACT_TYPES_URL: cacheRoot + '/authority-contact-types',
     GRADE_TYPES_URL: cacheRoot + '/grade-codes',
     PROVINCES_URL: cacheRoot + '/province-codes',
     COUNTRIES_URL: cacheRoot + '/country-codes',
     SCHOOL_CONTACT_TYPES_URL: cacheRoot + '/school-contact-types',
-    SCHOOL_CATEGORY_FACILITY_TYPE_URL: cacheRoot + '/school-category-facility-type',
+    SCHOOL_CATEGORY_FACILITY_TYPE_URL: cacheRoot + '/school-category-facility-type'
   },
   penServices: {
     ROOT_ENDPOINT: penServicesRoot,
     VALIDATE_DEMOGRAPHICS: penServicesRoot + '/demog-validation',
-    MACRO_URL: macroRoot + '/?businessUseTypeCode=PENREG&macroTypeCode=MERGE',
+    MACRO_URL: macroRoot + '/?businessUseTypeCode=PENREG&macroTypeCode=MERGE'
   },
   STUDENT_DATA_URL: studentRoot,
   SEARCH_BY_PEN: demographicRoot,
@@ -144,7 +143,7 @@ let object = {
     POSSIBLE_MATCH_REASON_CODES: penMatchRoot + '/possible-match-reason-codes'
   },
   MACRO_URL: macroRoot,
-  nominalRoll:{
+  nominalRoll: {
     ROOT_ENDPOINT: nominalRollRoot,
     PAGINATED_ENDPOINT: nominalRollRoot + '/search'
   },
@@ -171,51 +170,48 @@ let object = {
     FUNDING_DATA_URL: sdcRoot + '/funding-groups',
     SDC_SCHOOL_COLLECTION: sdcRoot + '/sdcSchoolCollection'
   }
-};
+}
 
 //endpoints
-export const Routes = Object.freeze(object);
+export const Routes = Object.freeze(object)
 
-export const Statuses = Object.freeze(
-  {
-    AUTO_MATCH_RESULT_CODES: {
-      ONE_MATCH: 'ONEMATCH',
-      MANY_MATCHES: 'MANYMATCHES',
-      ZERO_MATCHES: 'ZEROMATCHES',
-      RIGHT_PEN: 'RIGHTPEN',
-      WRONG_PEN: 'WRONGPEN'
-    },
-    penRequest: {
-      DRAFT: 'DRAFT',
-      FIRST_REVIEW: 'INITREV',
-      RETURNED: 'RETURNED',
-      SECOND_REVIEW: 'SUBSREV',
-      AUTO_MATCH: 'AUTO',
-      MANUAL_MATCH: 'MANUAL',
-      REJECTED: 'REJECTED',
-      UNMATCHED: 'UNMATCHED',
-      ABANDONED: 'ABANDONED'
-    },
-    studentRequest: {
-      DRAFT: 'DRAFT',
-      FIRST_REVIEW: 'INITREV',
-      RETURNED: 'RETURNED',
-      SECOND_REVIEW: 'SUBSREV',
-      COMPLETED: 'COMPLETED',
-      REJECTED: 'REJECTED',
-      ABANDONED: 'ABANDONED'
-    },
-    exchange: {
-      NEW: 'NEW',
-      INPROG: 'INPROG',
-      CLOSED: 'CLOSED'
-    }
+export const Statuses = Object.freeze({
+  AUTO_MATCH_RESULT_CODES: {
+    ONE_MATCH: 'ONEMATCH',
+    MANY_MATCHES: 'MANYMATCHES',
+    ZERO_MATCHES: 'ZEROMATCHES',
+    RIGHT_PEN: 'RIGHTPEN',
+    WRONG_PEN: 'WRONGPEN'
+  },
+  penRequest: {
+    DRAFT: 'DRAFT',
+    FIRST_REVIEW: 'INITREV',
+    RETURNED: 'RETURNED',
+    SECOND_REVIEW: 'SUBSREV',
+    AUTO_MATCH: 'AUTO',
+    MANUAL_MATCH: 'MANUAL',
+    REJECTED: 'REJECTED',
+    UNMATCHED: 'UNMATCHED',
+    ABANDONED: 'ABANDONED'
+  },
+  studentRequest: {
+    DRAFT: 'DRAFT',
+    FIRST_REVIEW: 'INITREV',
+    RETURNED: 'RETURNED',
+    SECOND_REVIEW: 'SUBSREV',
+    COMPLETED: 'COMPLETED',
+    REJECTED: 'REJECTED',
+    ABANDONED: 'ABANDONED'
+  },
+  exchange: {
+    NEW: 'NEW',
+    INPROG: 'INPROG',
+    CLOSED: 'CLOSED'
   }
-);
+})
 
-export const REQUEST_TYPES = Object.freeze(
-  {
-    /*
+export const REQUEST_TYPES = Object.freeze({
+  /*
     penRequest: {
       name: 'penRequest',
       label: 'PEN Request',
@@ -274,72 +270,66 @@ export const REQUEST_TYPES = Object.freeze(
       path: '/edx/exchange',
     }
     */
-  }
-);
+})
 /**
  * Source of truth for field Names in  StudentDetails.vue and its child components.
  * @type {Readonly<{GRADE_CODE: string, TWINS: string, MINCODE: string, GRADE_YEAR: string, CREATED_DATE: string, LEGAL_FIRST_NAME: string, USUAL_LAST_NAME: string,
  * STATUS_CODE: string, GRAD_DATE: string, GENDER_CODE: string, MERGED_TO: string, LEGAL_LAST_NAME: string, POSTAL_CODE: string, DEMOG_CODE: string, TRAX_STATUS: string,
  * DOB: string, LEGAL_MIDDLE_NAMES: string, UPDATED_DATE: string, PEN: string, USUAL_MIDDLE_NAMES: string, MERGED_FROM: string, USUAL_FIRST_NAME: string, LOCAL_ID: string, MEMO: string}>}
  */
-export const STUDENT_DETAILS_FIELDS = Object.freeze(
-  {
-    LEGAL_LAST_NAME: 'legalLastName',
-    LEGAL_FIRST_NAME: 'legalFirstName',
-    LEGAL_MIDDLE_NAMES: 'legalMiddleNames',
-    USUAL_LAST_NAME: 'usualLastName',
-    USUAL_FIRST_NAME: 'usualFirstName',
-    USUAL_MIDDLE_NAMES: 'usualMiddleNames',
-    GRADE_CODE: 'gradeCode',
-    GRADE_YEAR: 'gradeYear',
-    POSTAL_CODE: 'postalCode',
-    TWINS: 'twins',
-    MERGED_TO: 'mergedTo',
-    MERGED_FROM: 'mergedFrom',
-    DOB: 'dob',
-    GENDER_CODE: 'genderCode',
-    DEMOG_CODE: 'demogCode',
-    TRAX_STATUS: 'traxStatus',
-    GRAD_DATE: 'gradDate',
-    CREATED_DATE: 'createdDate',
-    UPDATED_DATE: 'updatedDate',
-    LOCAL_ID: 'localID',
-    MINCODE: 'mincode',
-    MEMO: 'memo',
-    PEN: 'pen',
-    STATUS_CODE: 'statusCode',
-    TRUE_STUDENT_ID: 'trueStudentID',
-    DOC_TYPE_CODE: 'documentTypeCode',
-    DATE_OF_CONFIRMATION: 'dateOfConfirmation'
-  }
-);
-
+export const STUDENT_DETAILS_FIELDS = Object.freeze({
+  LEGAL_LAST_NAME: 'legalLastName',
+  LEGAL_FIRST_NAME: 'legalFirstName',
+  LEGAL_MIDDLE_NAMES: 'legalMiddleNames',
+  USUAL_LAST_NAME: 'usualLastName',
+  USUAL_FIRST_NAME: 'usualFirstName',
+  USUAL_MIDDLE_NAMES: 'usualMiddleNames',
+  GRADE_CODE: 'gradeCode',
+  GRADE_YEAR: 'gradeYear',
+  POSTAL_CODE: 'postalCode',
+  TWINS: 'twins',
+  MERGED_TO: 'mergedTo',
+  MERGED_FROM: 'mergedFrom',
+  DOB: 'dob',
+  GENDER_CODE: 'genderCode',
+  DEMOG_CODE: 'demogCode',
+  TRAX_STATUS: 'traxStatus',
+  GRAD_DATE: 'gradDate',
+  CREATED_DATE: 'createdDate',
+  UPDATED_DATE: 'updatedDate',
+  LOCAL_ID: 'localID',
+  MINCODE: 'mincode',
+  MEMO: 'memo',
+  PEN: 'pen',
+  STATUS_CODE: 'statusCode',
+  TRUE_STUDENT_ID: 'trueStudentID',
+  DOC_TYPE_CODE: 'documentTypeCode',
+  DATE_OF_CONFIRMATION: 'dateOfConfirmation'
+})
 
 /*  can be made into an object, if more options are needed in the future for example
  *  export const STUDENT_MERGE_FIELDS = {
        FROM_PREFIX: 'mergeFrom_'
     };
  **/
-export const STUDENT_MERGE_FIELD_PREFIX = 'mergeFrom_';
-export const STUDENT_MERGE_DETAILS_FIELDS = Object.freeze(
-  {
-    LEGAL_LAST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LEGAL_LAST_NAME}`,
-    LEGAL_FIRST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME}`,
-    LEGAL_MIDDLE_NAMES: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LEGAL_MIDDLE_NAMES}`,
-    USUAL_LAST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.USUAL_LAST_NAME}`,
-    USUAL_FIRST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.USUAL_FIRST_NAME}`,
-    USUAL_MIDDLE_NAMES: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.USUAL_MIDDLE_NAMES}`,
-    GENDER_CODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.GENDER_CODE}`,
-    DOB: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.DOB}`,
-    MINCODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MINCODE}`,
-    LOCAL_ID: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LOCAL_ID}`,
-    POSTAL_CODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.POSTAL_CODE}`,
-    MEMO: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MEMO}`,
-  }
-);
+export const STUDENT_MERGE_FIELD_PREFIX = 'mergeFrom_'
+export const STUDENT_MERGE_DETAILS_FIELDS = Object.freeze({
+  LEGAL_LAST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LEGAL_LAST_NAME}`,
+  LEGAL_FIRST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME}`,
+  LEGAL_MIDDLE_NAMES: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LEGAL_MIDDLE_NAMES}`,
+  USUAL_LAST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.USUAL_LAST_NAME}`,
+  USUAL_FIRST_NAME: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.USUAL_FIRST_NAME}`,
+  USUAL_MIDDLE_NAMES: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.USUAL_MIDDLE_NAMES}`,
+  GENDER_CODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.GENDER_CODE}`,
+  DOB: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.DOB}`,
+  MINCODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MINCODE}`,
+  LOCAL_ID: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LOCAL_ID}`,
+  POSTAL_CODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.POSTAL_CODE}`,
+  MEMO: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MEMO}`
+})
 
-export const PEN_REQUEST_STUDENT_VALIDATION_FIELD_CODES_TO_STUDENT_DETAILS_FIELDS_MAPPER = Object.freeze(
-  {
+export const PEN_REQUEST_STUDENT_VALIDATION_FIELD_CODES_TO_STUDENT_DETAILS_FIELDS_MAPPER =
+  Object.freeze({
     LOCALID: STUDENT_DETAILS_FIELDS.LOCAL_ID,
     LEGALFIRST: STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME,
     LEGALMID: STUDENT_DETAILS_FIELDS.LEGAL_MIDDLE_NAMES,
@@ -351,215 +341,197 @@ export const PEN_REQUEST_STUDENT_VALIDATION_FIELD_CODES_TO_STUDENT_DETAILS_FIELD
     GRADECODE: STUDENT_DETAILS_FIELDS.GRADE_CODE,
     BIRTHDATE: STUDENT_DETAILS_FIELDS.DOB,
     GENDER: STUDENT_DETAILS_FIELDS.GENDER_CODE
-  }
-);
+  })
 
-export const NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER = Object.freeze(
-  {
-    givenNames: { name: STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME, label: 'Legal Given'},
-    surname: { name: STUDENT_DETAILS_FIELDS.LEGAL_LAST_NAME, label: 'Legal Surname'},
-    grade: { name: STUDENT_DETAILS_FIELDS.GRADE_CODE, label: 'Grade'},
-    birthDate: { name: STUDENT_DETAILS_FIELDS.DOB, label: 'Birth Date'},
-    gender: { name: STUDENT_DETAILS_FIELDS.GENDER_CODE, label: 'Gen'},
-    schoolNumber: { name: STUDENT_DETAILS_FIELDS.MINCODE, label: 'Mincode'},
-  }
-);
+export const NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER = Object.freeze({
+  givenNames: { name: STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME, label: 'Legal Given' },
+  surname: { name: STUDENT_DETAILS_FIELDS.LEGAL_LAST_NAME, label: 'Legal Surname' },
+  grade: { name: STUDENT_DETAILS_FIELDS.GRADE_CODE, label: 'Grade' },
+  birthDate: { name: STUDENT_DETAILS_FIELDS.DOB, label: 'Birth Date' },
+  gender: { name: STUDENT_DETAILS_FIELDS.GENDER_CODE, label: 'Gen' },
+  schoolNumber: { name: STUDENT_DETAILS_FIELDS.MINCODE, label: 'Mincode' }
+})
 
 export const STUDENT_DETAILS_FIELDS_TO_NOMINAL_ROLL_STUDENT_FIELDS_MAPPER = Object.freeze(
-  Object.fromEntries(Object.entries(NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER).map(([key, value]) => [value.name, key]))
-);
+  Object.fromEntries(
+    Object.entries(NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER).map(
+      ([key, value]) => [value.name, key]
+    )
+  )
+)
 
-export const STUDENT_CODES = Object.freeze(
-  {
-    ACTIVE: 'A',
-    DECEASED: 'D',
-    DELETED: 'X',
-    MERGED: 'M'
-  }
-);
-export const STUDENT_DEMOG_CODES = Object.freeze(
-  {
-    ACTIVE: 'A',
-    CONFIRMED: 'C'
-  }
-);
-export const PEN_REQ_BATCH_STUDENT_REQUEST_CODES = Object.freeze(
-  {
-    FIXABLE: 'FIXABLE',
-    INFOREQ: 'INFOREQ',
-    MATCHEDSYS: 'MATCHEDSYS',
-    MATCHEDUSR: 'MATCHEDUSR',
-    NEWPENSYS: 'NEWPENSYS',
-    NEWPENUSR: 'NEWPENUSR',
-    ERROR: 'ERROR',
-    REPEAT: 'REPEAT',
-    LOADED: 'LOADED',
-    DUPLICATE: 'DUPLICATE',
-  }
-);
-export const PEN_REQ_BATCH_STATUS_CODES = Object.freeze(
-  {
-    HOLD_SIZE: 'HOLD_SIZE',
-    DUPLICATE: 'DUPLICATE',
-    ACTIVE: 'ACTIVE',
-    ARCHIVED: 'ARCHIVED',
-    REARCHIVED: 'REARCHIVED',
-    UNARCHIVED: 'UNARCHIVED',
-    UNARCH_CHG: 'UNARCH_CHG',
-    LOAD_FAIL: 'LOADFAIL',
-  }
-);
-export const PAGE_TITLES = Object.freeze(
-  {
-    INTAKE: 'Intake',
-    CONTRACT_MANAGEMENT: 'Contrct Management',
-    PAYMENTS: 'Payments',
-    REPORTING: 'Reporting',
-    ACCOUNT_MAINTENANCE: 'Account Maintenance',
-    MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream'
-  }
-);
+export const STUDENT_CODES = Object.freeze({
+  ACTIVE: 'A',
+  DECEASED: 'D',
+  DELETED: 'X',
+  MERGED: 'M'
+})
+export const STUDENT_DEMOG_CODES = Object.freeze({
+  ACTIVE: 'A',
+  CONFIRMED: 'C'
+})
+export const PEN_REQ_BATCH_STUDENT_REQUEST_CODES = Object.freeze({
+  FIXABLE: 'FIXABLE',
+  INFOREQ: 'INFOREQ',
+  MATCHEDSYS: 'MATCHEDSYS',
+  MATCHEDUSR: 'MATCHEDUSR',
+  NEWPENSYS: 'NEWPENSYS',
+  NEWPENUSR: 'NEWPENUSR',
+  ERROR: 'ERROR',
+  REPEAT: 'REPEAT',
+  LOADED: 'LOADED',
+  DUPLICATE: 'DUPLICATE'
+})
+export const PEN_REQ_BATCH_STATUS_CODES = Object.freeze({
+  HOLD_SIZE: 'HOLD_SIZE',
+  DUPLICATE: 'DUPLICATE',
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED',
+  REARCHIVED: 'REARCHIVED',
+  UNARCHIVED: 'UNARCHIVED',
+  UNARCH_CHG: 'UNARCH_CHG',
+  LOAD_FAIL: 'LOADFAIL'
+})
+export const PAGE_TITLES = Object.freeze({
+  LOGIN: 'Login',
+  INTAKE: 'Intake',
+  CONTRACT_MANAGEMENT: 'Contrct Management',
+  PAYMENTS: 'Payments',
+  REPORTING: 'Reporting',
+  ACCOUNT_MAINTENANCE: 'Account Maintenance',
+  MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream'
+})
 
-export const MINISTRY_NAME = 'Ministry of Education and Child Care';
+export const MINISTRY_NAME = 'Ministry of Education and Child Care'
 
-export const SEARCH_FILTER_OPERATION = Object.freeze(
+export const SEARCH_FILTER_OPERATION = Object.freeze({
+  /**
+   * Equal filter operation.
+   */
+  EQUAL: 'eq',
+  /**
+   * Not equal filter operation.
+   */
+  NOT_EQUAL: 'neq',
+  /**
+   * Greater than filter operation.
+   */
+  GREATER_THAN: 'gt',
+  /**
+   * Greater than or equal to filter operation.
+   */
+  GREATER_THAN_OR_EQUAL_TO: 'gte',
+  /**
+   * Less than filter operation.
+   */
+  LESS_THAN: 'lt',
+  /**
+   * Less than or equal to filter operation.
+   */
+  LESS_THAN_OR_EQUAL_TO: 'lte',
+  /**
+   * In filter operation.
+   */
+  IN: 'in',
+  /**
+   * Not in filter operation.
+   */
+  NOT_IN: 'nin',
+  /**
+   * Between filter operation.
+   */
+  BETWEEN: 'btn',
+  /**
+   * Contains filter operation.
+   */
+  CONTAINS: 'like',
+  /**
+   * Contains ignore case filter operation.
+   */
+  CONTAINS_IGNORE_CASE: 'like_ignore_case',
+  /**
+   * Starts with filter operation.
+   */
+  STARTS_WITH: 'starts_with',
+  /**
+   * Starts with ignore case filter operation.
+   */
+  STARTS_WITH_IGNORE_CASE: 'starts_with_ignore_case'
+})
+
+export const SEARCH_CONDITION = Object.freeze({
+  /**
+   * And condition.
+   */
+  AND: 'AND',
+  /**
+   * Or condition.
+   */
+  OR: 'OR'
+})
+
+export const SEARCH_VALUE_TYPE = Object.freeze({
+  /**
+   * String value type.
+   */
+  STRING: 'STRING',
+  /**
+   * Integer value type.
+   */
+  INTEGER: 'INTEGER',
+  /**
+   * Long value type.
+   */
+  LONG: 'LONG',
+  /**
+   * Date value type.
+   */
+  DATE: 'DATE',
+  /**
+   * Date time value type.
+   */
+  DATE_TIME: 'DATE_TIME',
+  /**
+   * Uuid value type.
+   */
+  UUID: 'UUID'
+})
+
+export const PRB_SAGA_NAMES = Object.freeze({
+  PEN_REQUEST_BATCH_USER_MATCH_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_USER_MATCH_PROCESSING_SAGA',
+  PEN_REQUEST_BATCH_USER_UNMATCH_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_USER_UNMATCH_PROCESSING_SAGA',
+  PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA'
+})
+
+export const NOMINAL_ROLL_STUDENT_STATUSES = Object.freeze([
   {
-    /**
-     * Equal filter operation.
-     */
-    EQUAL: 'eq',
-    /**
-     * Not equal filter operation.
-     */
-    NOT_EQUAL: 'neq',
-    /**
-     * Greater than filter operation.
-     */
-    GREATER_THAN: 'gt',
-    /**
-     * Greater than or equal to filter operation.
-     */
-    GREATER_THAN_OR_EQUAL_TO: 'gte',
-    /**
-     * Less than filter operation.
-     */
-    LESS_THAN: 'lt',
-    /**
-     * Less than or equal to filter operation.
-     */
-    LESS_THAN_OR_EQUAL_TO: 'lte',
-    /**
-     * In filter operation.
-     */
-    IN: 'in',
-    /**
-     * Not in filter operation.
-     */
-    NOT_IN: 'nin',
-    /**
-     * Between filter operation.
-     */
-    BETWEEN: 'btn',
-    /**
-     * Contains filter operation.
-     */
-    CONTAINS: 'like',
-    /**
-     * Contains ignore case filter operation.
-     */
-    CONTAINS_IGNORE_CASE: 'like_ignore_case',
-    /**
-     * Starts with filter operation.
-     */
-    STARTS_WITH: 'starts_with',
-    /**
-     * Starts with ignore case filter operation.
-     */
-    STARTS_WITH_IGNORE_CASE: 'starts_with_ignore_case'
-  }
-);
-
-export const SEARCH_CONDITION = Object.freeze(
+    value: 'MATCHEDSYS',
+    text: 'Matched by system'
+  },
   {
-    /**
-     * And condition.
-     */
-    AND: 'AND',
-    /**
-     * Or condition.
-     */
-    OR: 'OR'
-  }
-);
-
-export const SEARCH_VALUE_TYPE = Object.freeze(
+    value: 'MATCHEDUSR',
+    text: 'Matched by user'
+  },
   {
-    /**
-     * String value type.
-     */
-    STRING: 'STRING',
-    /**
-     * Integer value type.
-     */
-    INTEGER: 'INTEGER',
-    /**
-     * Long value type.
-     */
-    LONG: 'LONG',
-    /**
-     * Date value type.
-     */
-    DATE: 'DATE',
-    /**
-     * Date time value type.
-     */
-    DATE_TIME: 'DATE_TIME',
-    /**
-     * Uuid value type.
-     */
-    UUID: 'UUID'
-  }
-);
-
-export const PRB_SAGA_NAMES = Object.freeze(
+    value: 'FIXABLE',
+    text: 'Fixable Request'
+  },
   {
-    PEN_REQUEST_BATCH_USER_MATCH_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_USER_MATCH_PROCESSING_SAGA',
-    PEN_REQUEST_BATCH_USER_UNMATCH_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_USER_UNMATCH_PROCESSING_SAGA',
-    PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA',
+    value: 'ERROR',
+    text: 'Error'
+  },
+  {
+    value: 'LOADED',
+    text: 'Loaded'
+  },
+  {
+    value: 'IGNORED',
+    text: 'Ignored'
   }
-);
-
-export const NOMINAL_ROLL_STUDENT_STATUSES = Object.freeze(
-  [
-    {
-      value: 'MATCHEDSYS',
-      text: 'Matched by system'
-    },
-    {
-      value: 'MATCHEDUSR',
-      text: 'Matched by user'
-    },
-    {
-      value: 'FIXABLE',
-      text: 'Fixable Request'
-    },
-    {
-      value: 'ERROR',
-      text: 'Error'
-    },
-    {
-      value: 'LOADED',
-      text: 'Loaded'
-    },
-    {
-      value: 'IGNORED',
-      text: 'Ignored'
-    }
-  ]
-);
+])
 
 export const NOMINAL_ROLL_STUDENT_STATUS_CODES = Object.freeze(
-  Object.fromEntries(NOMINAL_ROLL_STUDENT_STATUSES.map(status => [status.value, status.value]))
-);
+  Object.fromEntries(NOMINAL_ROLL_STUDENT_STATUSES.map((status) => [status.value, status.value]))
+)
 
-export const EDX_SAGA_REQUEST_DELAY_MILLISECONDS = 2000;
+export const EDX_SAGA_REQUEST_DELAY_MILLISECONDS = 2000

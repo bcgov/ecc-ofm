@@ -5,11 +5,12 @@ import ErrorPage from '@/components/ErrorPage.vue'
 import Home from '@/components/Home.vue'
 import Login from '@/components/Login.vue'
 import Logout from '@/components/Logout.vue'
-import { PAGE_TITLES } from '@/utils/constants'
 import SessionExpired from '@/components/SessionExpired.vue'
 import UnAuthorized from '@/components/UnAuthorized.vue'
 import UnAuthorizedPage from '@/components/UnAuthorizedPage.vue'
-import {useAppStore} from '../stores/app';
+import { PAGE_TITLES } from '@/utils/constants'
+
+import { useAppStore } from '../stores/app'
 import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
@@ -21,7 +22,8 @@ const router = createRouter({
       name: 'login',
       component: Login,
       meta: {
-        requiresAuth: false
+        requiresAuth: false,
+        pageTitle: PAGE_TITLES.LOGIN
       }
     },
     {
