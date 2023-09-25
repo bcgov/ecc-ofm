@@ -123,9 +123,9 @@ objects:
       path: /api
       port:
         targetPort: 8080-tcp
-      # tls:
-      #   insecureEdgeTerminationPolicy: Redirect
-      #   termination: edge
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
       to:
         kind: Service
         name: '${APP_NAME}-backend'
