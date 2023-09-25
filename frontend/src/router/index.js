@@ -170,7 +170,7 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   // this section is to set page title in vue store
   const appStore = useAppStore()
-  if (to && to.meta) {
+  if (to && to.meta.pageTitle) {
     appStore.setPageTitle(to.meta.pageTitle)
   } else {
     appStore.setPageTitle('')

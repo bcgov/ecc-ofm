@@ -44,9 +44,9 @@ export default {
     }
   },
   created() {
-    useAuthStore().getUserInfo().then(() => {
-      this.user = this.userInfo;
-    });
+      useAuthStore().getUserInfo().then(() => {
+        this.user = this.userInfo
+      })
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated'])
