@@ -77,7 +77,7 @@ objects:
             #       secretName: ofm-frontend-cert
             - name: config-env
               configMap:
-                name: ofm-frontend-config-map
+                name: ecc-ofm-frontend-config-map
       test: false
       triggers:
         - type: ConfigChange
