@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
-    ...mapActions(useAuthStore, ['getJwtToken']),    
     handleWebSocket() {
       if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
         this.$webSocketsConnect()

@@ -1,7 +1,7 @@
-import ApiService from '@/common/apiService'
-import AuthService from '@/common/authService';
-import { Routes } from '@/utils/constants'
 import { defineStore } from 'pinia'
+import ApiService from '@/common/apiService'
+import { Routes } from '@/utils/constants'
+import AuthService from '@/common/authService';
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
