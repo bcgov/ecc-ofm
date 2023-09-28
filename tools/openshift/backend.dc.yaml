@@ -60,7 +60,7 @@ objects:
                   protocol: TCP
               envFrom:
                 - configMapRef:
-                    name: ecc-ofm-backend-config-map
+                    name: ofm-backend-config-map
               readinessProbe:
                 initialDelaySeconds: 10
                 failureThreshold: 5
@@ -113,7 +113,7 @@ objects:
   - apiVersion: v1
     kind: Route
     metadata:
-      name: '${APP_NAME}-backend-http'
+      name: '${APP_NAME}-backend'
       labels:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
