@@ -1,5 +1,6 @@
-import ApiService from '@/common/apiService';
 import { defineStore } from 'pinia'
+
+import ApiService from '@/common/apiService'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -8,11 +9,13 @@ export const useAppStore = defineStore('app', {
     selectedRequest: null,
     messages: [],
     pageTitle: '',
+    subtitleBanner: '',
+    showNavBar: false,
     stickyInfoPanelHeight: null,
     alertNotificationText: '',
     alertNotificationQueue: [],
     alertNotification: false,
-    config: ''
+    config: '',
   }),
   actions: {
     async setConfig(config) {
@@ -64,8 +67,8 @@ export const useAppStore = defineStore('app', {
       }
     },
     async getConfig() {
-      const response = await ApiService.getConfig();
-      await this.setConfig(response.data);
+      const response = await ApiService.getConfig()
+      await this.setConfig(response.data)
     },
     async refreshEntities() {
       if (localStorage.getItem('jwtToken')) {
@@ -77,6 +80,6 @@ export const useAppStore = defineStore('app', {
         await this.setDistricts(responseDistricts.data);
         */
       }
-    }
-  }
+    },
+  },
 })

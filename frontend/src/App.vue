@@ -1,24 +1,27 @@
 <!-- eslint-disable vue/no-reserved-component-names -->
 <template>
   <v-app id="app">
-    <Header />
-    <SnackBar />
-    <NavBar :title="pageTitle" />
+    <TheHeader />
+    <TheSnackBar />
+    <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
     <v-main fluid class="align-start">
-      <ModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
+      <!-- <div style="background-color: pink; height: 20px">DEV</div> -->
+      <TheEnvBar />
+      <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
       <router-view class="align-start px-8 mb-0" />
     </v-main>
-    <Footer />
+    <TheFooter />
   </v-app>
 </template>
 
 <script>
 import { mapActions, mapState } from 'pinia'
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import ModalIdle from '@/components/ModalIdle.vue'
-import NavBar from '@/components/util/NavBar.vue'
-import SnackBar from '@/components/util/SnackBar.vue'
+import TheEnvBar from '@/components/TheEnvBar.vue'
+import TheHeader from '@/components/TheHeader.vue'
+import TheFooter from '@/components/TheFooter.vue'
+import TheModalIdle from '@/components/TheModalIdle.vue'
+import TheNavBar from '@/components/TheNavBar.vue'
+import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import HttpStatus from 'http-status-codes'
@@ -26,28 +29,22 @@ import HttpStatus from 'http-status-codes'
 export default {
   name: 'App',
   components: {
-    // eslint-disable-next-line vue/no-reserved-component-names
-    Header,
-    SnackBar,
-    NavBar,
-    ModalIdle,
-    // eslint-disable-next-line vue/no-reserved-component-names
-    Footer
+    TheEnvBar,
+    TheHeader,
+    TheSnackBar,
+    TheNavBar,
+    TheModalIdle,
+    TheFooter,
   },
   data() {
     return {
       showToTopBtn: false,
-      deactivateMultipleDraggableDialog: null
+      deactivateMultipleDraggableDialog: null,
     }
   },
   computed: {
-    ...mapState(useAuthStore, [
-      'jwtToken',
-      'isAuthenticated',
-      'userInfo',
-      'isAuthorizedWebsocketUser'
-    ]),
-    ...mapState(useAppStore, ['pageTitle'])
+    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
+    ...mapState(useAppStore, ['pageTitle']),
   },
   watch: {
     isAuthenticated() {
@@ -55,28 +52,32 @@ export default {
     },
     isAuthorizedWebsocketUser() {
       this.handleWebSocket()
-    }
+    },
   },
   mounted() {
     this.handleWebSocket()
   },
   async created() {
     //this.setLoading(true);
-    this.getJwtToken().then(() =>
-      Promise.all([this.getConfig()])
-    ).catch(e => {
-      if(! e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-        this.logout();
-        this.$router.replace({name: 'error', query: { message: `500_${e.data || 'ServerError'}` } });
-      }
-    }).finally(() => {
-      //this.setLoading(false);
-    });
+    this.getJwtToken()
+      .then(() => Promise.all([this.getConfig()]))
+      .catch((e) => {
+        if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+          this.logout()
+          this.$router.replace({
+            name: 'error',
+            query: { message: `500_${e.data || 'ServerError'}` },
+          })
+        }
+      })
+      .finally(() => {
+        //this.setLoading(false);
+      })
     //this.setLoading(false);
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
-    ...mapActions(useAuthStore, ['getJwtToken']),    
+    ...mapActions(useAuthStore, ['getJwtToken']),
     handleWebSocket() {
       if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
         this.$webSocketsConnect()
@@ -91,8 +92,8 @@ export default {
     },
     toTop() {
       this.$vuetify.goTo(0)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -104,7 +105,7 @@ export default {
   opacity: 1;
 }
 
-.v-application {
+html {
   font-family: 'BCSans', Verdana, Arial, sans-serif !important;
 }
 
