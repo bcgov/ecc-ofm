@@ -1,0 +1,42 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoginView > init 1`] = `
+"<div data-v-45f5edd7=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr full-height\\">
+  <!-- login article -->
+  <article data-v-45f5edd7=\\"\\" id=\\"login-banner\\" class=\\"top-banner\\">
+    <div data-v-45f5edd7=\\"\\" class=\\"v-row align-center justify-center\\">
+      <div data-v-45f5edd7=\\"\\" class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated login-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <!---->
+        <!---->
+        <div data-v-45f5edd7=\\"\\" class=\\"v-card-title gov-header\\">
+          <h4 data-v-45f5edd7=\\"\\" id=\\"login_text\\">Log In</h4>
+        </div>
+        <div data-v-45f5edd7=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\"> To access the Student Administration Application, you must have a valid IDIR. </div>
+        <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions\\">
+          <div data-v-45f5edd7=\\"\\" class=\\"v-row align-center justify-center\\"><a data-v-45f5edd7=\\"\\" class=\\"v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text ma-2 px-3\\" style=\\"background-color: #003366;\\" href=\\"/api/auth/login\\" id=\\"login-button\\" dark=\\"\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"> Log In <i data-v-45f5edd7=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+              <!---->
+              <!---->
+            </a></div>
+        </div>
+        <!---->
+        <!----><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+  </article>
+</div>"
+`;
