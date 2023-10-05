@@ -1,93 +1,93 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import BackendSessionExpired from '@/components/BackendSessionExpired.vue'
-import ErrorPage from '@/components/ErrorPage.vue'
-import Home from '@/components/Home.vue'
-import Login from '@/components/Login.vue'
-import Logout from '@/components/Logout.vue'
-import SessionExpired from '@/components/SessionExpired.vue'
-import UnAuthorized from '@/components/UnAuthorized.vue'
-import UnAuthorizedPage from '@/components/UnAuthorizedPage.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { PAGE_TITLES } from '@/utils/constants'
-
-import { useAppStore } from '../stores/app'
-import { useAuthStore } from '../stores/auth'
+import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
+import ErrorView from '@/views/ErrorView.vue'
+import HomeView from '@/views/HomeView.vue'
+import LoginView from '@/views/LoginView.vue'
+import LogoutView from '@/views/LogoutView.vue'
+import SessionExpiredView from '@/views/SessionExpiredView.vue'
+import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
+import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
   routes: [
     {
+      path: '/',
+      name: 'home',
+      component: HomeView,
+      meta: {
+        pageTitle: PAGE_TITLES.DASHBOARD,
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: LoginView,
       meta: {
         requiresAuth: false,
-        pageTitle: PAGE_TITLES.LOGIN
-      }
+        pageTitle: PAGE_TITLES.LOGIN,
+      },
     },
     {
       path: '/logout',
       name: 'logout',
-      component: Logout,
+      component: LogoutView,
       meta: {
-        requiresAuth: false
-      }
+        requiresAuth: false,
+      },
     },
     {
       path: '/session-expired',
       name: 'session-expired',
-      component: SessionExpired,
+      component: SessionExpiredView,
       meta: {
-        requiresAuth: false
-      }
+        requiresAuth: false,
+      },
     },
     {
       path: '/unauthorized',
       name: 'unauthorized',
-      component: UnAuthorized,
+      component: UnAuthorizedView,
       meta: {
-        requiresAuth: false
-      }
+        requiresAuth: false,
+      },
     },
     {
       path: '/unauthorized-page',
       name: 'unauthorized-page',
-      component: UnAuthorizedPage,
+      component: UnAuthorizedPageView,
       meta: {
-        requiresAuth: false
-      }
+        requiresAuth: false,
+      },
     },
     {
       path: '/error',
       name: 'error',
-      component: ErrorPage,
+      component: ErrorView,
       meta: {
-        requiresAuth: false
-      }
+        requiresAuth: false,
+      },
     },
     {
       path: '/:catchAll(.*)',
       name: 'notfound',
       redirect: '/',
       meta: {
-        requiresAuth: true
-      }
+        requiresAuth: true,
+      },
     },
     {
       path: '/token-expired',
       name: 'backend-session-expired',
-      component: BackendSessionExpired
+      component: BackendSessionExpiredView,
     },
-    {
-      path: '/',
-      name: 'home',
-      component: Home,
-      meta: {
-        pageTitle: PAGE_TITLES.DASHBOARD,
-        requiresAuth: true
-      }
-    },
+
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // eventually be removed...
@@ -98,8 +98,8 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.INTAKE,
         requiresAuth: true,
-        role: 'CCP_ROLE'
-      }
+        role: 'CCP_ROLE',
+      },
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
@@ -111,8 +111,8 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.CONTRACT_MANAGEMENT,
         requiresAuth: true,
-        role: 'OPS_ROLE'
-      }
+        role: 'OPS_ROLE',
+      },
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
@@ -124,8 +124,8 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.PAYMENTS,
         requiresAuth: true,
-        role: 'PCM_ROLE'
-      }
+        role: 'PCM_ROLE',
+      },
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
@@ -137,8 +137,8 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.REPORTING,
         requiresAuth: true,
-        role: 'OPS_ROLE'
-      }
+        role: 'OPS_ROLE',
+      },
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
@@ -150,8 +150,8 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.ACCOUNT_MAINTENANCE,
         requiresAuth: true,
-        role: 'PCM_ROLE'
-      }
+        role: 'PCM_ROLE',
+      },
     },
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
@@ -163,10 +163,10 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.MAINTENANCE_REQUEST_EXCEPTION_STREAM,
         requiresAuth: true,
-        role: 'PCM_ROLE'
-      }
-    }
-  ]
+        role: 'PCM_ROLE',
+      },
+    },
+  ],
 })
 
 router.beforeEach((to, _from, next) => {
@@ -189,11 +189,11 @@ router.beforeEach((to, _from, next) => {
   }
 
   function validateAndExecute(nextRouteInError, to) {
-    const aStore = useAuthStore()
-    aStore
+    const authStore = useAuthStore()
+    authStore
       .getJwtToken()
       .then(() => {
-        if (!aStore.isAuthenticated) {
+        if (!authStore.isAuthenticated) {
           next(nextRouteInError)
           return
         }
@@ -201,15 +201,14 @@ router.beforeEach((to, _from, next) => {
           next()
           return
         }
-        aStore
+        authStore
           .getUserInfo()
           .then(() => {
-            if (!aStore.isAuthorizedUser) {
+            if (!authStore.isAuthorizedUser) {
               next('unauthorized')
               return
             }
-            const hasRole =
-              Object.prototype.hasOwnProperty.call(aStore, to.meta.role) && aStore[to.meta.role]
+            const hasRole = Object.prototype.hasOwnProperty.call(authStore, to.meta.role) && authStore[to.meta.role]
             if (!hasRole) {
               next('unauthorized-page')
               return

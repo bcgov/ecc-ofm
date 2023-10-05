@@ -31,7 +31,7 @@
 
 <script>
 import { mapActions } from 'pinia'
-import { Routes } from '../utils/constants'
+import { Routes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
@@ -39,7 +39,7 @@ export default {
 
   data() {
     return {
-      routes: Routes
+      routes: Routes,
     }
   },
   mounted() {
@@ -49,8 +49,8 @@ export default {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
       this.setJwtToken()
-    }
-  }
+    },
+  },
 }
 </script>
 

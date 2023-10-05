@@ -1,45 +1,21 @@
 <template>
   <div v-if="total > 0">
     <span class="mr-6 nav-title">{{ title }}</span>
-    <v-btn
-      id="preRecord"
-      icon="mdi-arrow-left-bold-circle"
-      density="comfortable"
-      size="x-large"
-      color="white"
-      :disabled="preDisabled"
-      @click="clickBtn(preRoute)"
-    >
-    </v-btn>
-    <v-btn
-      id="nextRecord"
-      density="comfortable"
-      size="x-large"
-      color="white"
-      icon="mdi-arrow-right-bold-circle"
-      :disabled="nextDisabled"
-      @click="clickBtn(nextRoute)"
-    >
-    </v-btn>
+    <v-btn id="preRecord" icon="mdi-arrow-left-bold-circle" density="comfortable" size="x-large" color="white" :disabled="preDisabled" @click="clickBtn(preRoute)"> </v-btn>
+    <v-btn id="nextRecord" density="comfortable" size="x-large" color="white" icon="mdi-arrow-right-bold-circle" :disabled="nextDisabled" @click="clickBtn(nextRoute)"> </v-btn>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'pinia'
-import router from '../../router'
+import router from '@/router'
 import { abbreviateCamelCase } from '@/utils/common'
 import { useNavigationStore } from '@/stores/navigation'
 
 export default {
-  name: 'SetNavigation',
+  name: 'TheSetNavigation',
   computed: {
-    ...mapState(useNavigationStore, [
-      'title',
-      'selectedIDs',
-      'currentRequest',
-      'archived',
-      'requestType'
-    ]),
+    ...mapState(useNavigationStore, ['title', 'selectedIDs', 'currentRequest', 'archived', 'requestType']),
     preDisabled() {
       return this.currentRequest <= 0
     },
@@ -54,7 +30,7 @@ export default {
     },
     total() {
       return Object.keys(this.selectedIDs).length
-    }
+    },
   },
   methods: {
     ...mapActions(useNavigationStore, ['setCurrentRequest']),
@@ -64,12 +40,12 @@ export default {
       router.push({
         name: `${requestTypeAbbrev}StudentDetails`,
         params: {
-          [`${requestTypeAbbrev}StudentID`]: this.selectedIDs[route][`${this.requestType}StudentID`]
+          [`${requestTypeAbbrev}StudentID`]: this.selectedIDs[route][`${this.requestType}StudentID`],
         },
-        query: { archived: this.archived }
+        query: { archived: this.archived },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
