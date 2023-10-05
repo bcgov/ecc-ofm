@@ -10,15 +10,7 @@
             </v-card-title>
             <v-card-text id="logout_descriptor">
               <v-row style="margin: 0.3rem"> You have Logged out. </v-row>
-              <a
-                id="login-button"
-                :href="routes.LOGIN"
-                class="ma-1"
-                dark
-                color="#003366"
-                @click="clearStorage"
-                >Log In</a
-              ><span>again if you wish to continue.</span>
+              <a id="login-button" :href="routes.LOGIN" class="ma-1" dark color="#003366" @click="clearStorage">Log In</a><span>again if you wish to continue.</span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -29,16 +21,15 @@
 
 <script>
 import { mapActions } from 'pinia'
-import { Routes } from '../utils/constants'
+import { Routes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: 'Logout',
+  name: 'LogoutView',
 
   data() {
     return {
-      routes: Routes
+      routes: Routes,
     }
   },
   created() {
@@ -48,8 +39,8 @@ export default {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
       this.setJwtToken()
-    }
-  }
+    },
+  },
 }
 </script>
 

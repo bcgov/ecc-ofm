@@ -26,7 +26,7 @@
 
 <script>
 import { mapActions, mapState } from 'pinia'
-import { ALERT_NOTIFICATION_TYPES } from '../../utils/constants/AlertNotificationTypes'
+import { ALERT_NOTIFICATION_TYPES } from '@/utils/constants/AlertNotificationTypes'
 import { useAppStore } from '@/stores/app'
 
 export default {
@@ -36,14 +36,14 @@ export default {
       colour: '',
       polling: null,
       timeout: 5000,
-      pause: false
+      pause: false,
     }
   },
   computed: {
     ...mapState(useAppStore, [
       'alertNotificationText',
       'alertNotificationQueue',
-      'alertNotification'
+      'alertNotification',
     ]),
     hasNotificationsPending() {
       return this.alertNotificationQueue.length > 0
@@ -54,8 +54,8 @@ export default {
       },
       set(val) {
         this.setAlertNotification(val)
-      }
-    }
+      },
+    },
   },
   watch: {
     showSnackBar() {
@@ -66,7 +66,7 @@ export default {
       } else {
         this.teardownSnackBar()
       }
-    }
+    },
   },
   methods: {
     ...mapActions(useAppStore, ['setAlertNotificationText', 'setAlertNotification']),
@@ -116,8 +116,8 @@ export default {
           this.timeout += 1
         }
       }, 1000)
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -9,10 +9,10 @@ import { Routes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 import { mapActions } from 'pinia'
 export default {
-  name: 'BackendSessionExpired',
+  name: 'BackendSessionExpiredView',
   data() {
     return {
-      link: Routes.SESSION_EXPIRED
+      link: Routes.SESSION_EXPIRED,
     }
   },
   mounted() {
@@ -22,7 +22,7 @@ export default {
     ...mapActions(useAuthStore, ['setJwtToken']),
     logout() {
       this.setJwtToken()
-    }
-  }
+    },
+  },
 }
 </script>
