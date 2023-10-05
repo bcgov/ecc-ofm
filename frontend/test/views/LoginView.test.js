@@ -21,6 +21,6 @@ describe('LoginView', () => {
     const wrapper = mount(LoginView, global)
 
     const loginButton = wrapper.get('#login-button')
-    expect(loginButton.attributes().href).toEqual('/api/auth/login')
+    expect(loginButton.attributes().href).toEqual('/api/auth/login-idir')
   })
 })

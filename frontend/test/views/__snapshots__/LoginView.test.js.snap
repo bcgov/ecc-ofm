@@ -27,7 +27,7 @@ exports[`LoginView > init 1`] = `
         </div>
         <div data-v-45f5edd7=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\"> To access the Student Administration Application, you must have a valid IDIR. </div>
         <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions\\">
-          <div data-v-45f5edd7=\\"\\" class=\\"v-row align-center justify-center\\"><a data-v-45f5edd7=\\"\\" class=\\"v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text ma-2 px-3\\" style=\\"background-color: #003366;\\" href=\\"/api/auth/login\\" id=\\"login-button\\" dark=\\"\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+          <div data-v-45f5edd7=\\"\\" class=\\"v-row align-center justify-center\\"><a data-v-45f5edd7=\\"\\" class=\\"v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text ma-2 px-3\\" style=\\"background-color: #003366;\\" href=\\"/api/auth/login-idir\\" id=\\"login-button\\" dark=\\"\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
               <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"> Log In <i data-v-45f5edd7=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
               <!---->
               <!---->

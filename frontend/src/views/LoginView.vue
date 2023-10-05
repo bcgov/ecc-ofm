@@ -10,7 +10,7 @@
           <v-card-text id="login_descriptor"> To access the Student Administration Application, you must have a valid IDIR. </v-card-text>
           <v-card-actions>
             <v-row align="center" justify="center">
-              <v-btn id="login-button" :href="routes.LOGIN" class="ma-2 px-3" dark color="white" style="background-color: #003366" @click="clearStorage">
+              <v-btn id="login-button" :href="routes.LOGIN_IDIR" class="ma-2 px-3" dark color="white" style="background-color: #003366" @click="clearStorage">
                 Log In
                 <v-icon>mdi-login</v-icon>
               </v-btn>

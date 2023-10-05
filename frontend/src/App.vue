@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
-    ...mapState(useAppStore, ['pageTitle']),
+    ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
   },
   watch: {
     isAuthenticated() {
