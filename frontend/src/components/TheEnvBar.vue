@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar class="env-bar" v-if="bannerColor !== ''" :color="bannerColor" density="compact" height="50rem"
+  <v-app-bar class="env-bar" v-if="bannerColor !== ''" :color="bannerColor" height="20"
     ><div>
       <h3 class="envBanner">{{ bannerEnvironment }} Environment</h3>
     </div></v-app-bar
@@ -30,9 +30,6 @@ export default {
 </script>
 <style scoped>
 .env-bar {
-  color: #ffffff;
-  height: 20px;
   margin-top: 2px;
-  padding: 0px 16px;
 }
 </style>

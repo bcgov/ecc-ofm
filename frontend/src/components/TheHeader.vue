@@ -1,8 +1,7 @@
 <template>
   <v-app-bar absolute color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
     <!-- Navbar content -->
-    <!-- TODO :class="{'sizingForIconXLScreen': $vuetify.breakpoint.xlOnly}-->
-    <v-container class="mx-auto">
+    <v-container class="mx-auto" :class="{ sizingForIconXLScreen: xl }">
       <v-row class="justify-space-between">
         <a tabindex="-1" href="/">
           <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
@@ -10,13 +9,13 @@
         <v-row class="verticalLine my-auto">
           <v-row class="my-auto">
             <v-toolbar-title fill-height style="font-size: 14px">
-              <!-- TODO <h6 v-if="this.$vuetify.breakpoint.xsOnly">My ChildCareBC<br />Services</h6> -->
-              <h2 class="mainTitle">{{ appTitle }}</h2>
+              <h6 v-if="xs"><span v-html="appTitleXs" /></h6>
+              <h2 class="mainTitle" v-else>{{ appTitle }}</h2>
             </v-toolbar-title>
           </v-row>
         </v-row>
         <v-spacer></v-spacer>
-        <div v-if="isAuthenticated && user">
+        <div v-if="isAuthenticated && user" class="mt-5">
           <v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
             <v-badge color="red" class="pt-0" :content="unreadMessageCount" bottom right overlap offset-x="8" offset-y="28">
               <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
@@ -24,7 +23,7 @@
           </v-btn>
           <v-menu name="user_options" offset-y>
             <template #activator="{ props }">
-              <v-chip v-bind="props" tabindex="0" pill color="#003366" dark>
+              <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
                 <v-avatar left color="info">
                   {{ user.userName[0] }}
                 </v-avatar>
@@ -50,7 +49,6 @@ import { useAuthStore } from '@/stores/auth'
 export default {
   data() {
     return {
-      appTitle: import.meta.env.VITE_APP_TITLE,
       routes: Routes,
       user: null,
     }
@@ -65,7 +63,20 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated']),
     unreadMessageCount() {
-      return 3
+      return Math.floor(Math.random() * 10)
+    },
+    appTitle() {
+      return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
+    },
+    appTitleXs() {
+      const index = this.appTitle.indexOf(' ')
+      return `${this.appTitle.substring(0, index)}<br/>${this.appTitle.substring(index + 1)}`
+    },
+    xl() {
+      return this.$vuetify.display.xl
+    },
+    xs() {
+      return this.$vuetify.display.xs
     },
   },
   methods: {
@@ -78,6 +89,10 @@ export default {
 <style>
 .gov-header .v-icon {
   padding-left: 10px;
+}
+
+.sizingForIconXLScreen {
+  width: 1470px;
 }
 
 a {
