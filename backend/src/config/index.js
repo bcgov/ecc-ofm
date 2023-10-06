@@ -54,7 +54,9 @@ nconf.defaults({
     apiEndpoint: process.env.ORGANIZATION_API_ENDPOINT,
   },
   dynamicsApi: {
-    apiEndpoint: process.env.D365_API_ENDPOINT
+    apiEndpoint: process.env.D365_API_ENDPOINT,
+    apiKeyHeader: process.env.D365_API_KEY_HEADER,
+    apiKeyValue: process.env.D365_API_KEY_VALUE
   },
   messaging:{
     natsUrl:process.env.NATS_URL,

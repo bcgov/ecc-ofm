@@ -16,8 +16,8 @@
               </v-btn>
             </v-row>
           </v-card-actions>
-        </v-card></v-col
-      >
+        </v-card>
+      </v-col>
       <v-col align="center">
         <v-card class="login-card">
           <v-card-title class="gov-header">
