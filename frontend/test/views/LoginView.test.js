@@ -13,7 +13,8 @@ describe('LoginView', () => {
   const global = { global: { plugins: [createTestingPinia(), vuetify] } }
   test('init', async () => {
     const wrapper = mount(LoginView, global)
-    expect(wrapper.text()).toContain('Log In To access')
+    expect(wrapper.text()).toContain('BCeID')
+    expect(wrapper.text()).toContain('IDIR')
     expect(wrapper.html()).toMatchSnapshot()
   })
 
