@@ -20,6 +20,7 @@ const sdcRoot = baseRoot + '/sdc'
 
 let object = {
   LOGIN: authRoot + '/login',
+  LOGIN_IDIR: authRoot + '/login-idir',
   LOGOUT: authRoot + '/logout',
   SESSION_EXPIRED: authRoot + '/logout?sessionExpired=true',
   REFRESH: authRoot + '/refresh',
@@ -30,7 +31,7 @@ let object = {
 
   digitalIdentity: {
     ROOT_ENDPOINT: digitalIDRoot,
-    DIGITAL_ID_LIST_URL: digitalIDRoot + '/list'
+    DIGITAL_ID_LIST_URL: digitalIDRoot + '/list',
   },
 
   penRequestBatch: {
@@ -46,7 +47,7 @@ let object = {
     STUDENT_INFO_MACROS_URL: macroRoot + '/?businessUseTypeCode=PENREG&macroTypeCode=INFOREQ',
     PRB_VALIDATION_FIELD_CODE_URL: penRequestBatchRoot + '/prbValidationFieldCodes',
     PRB_VALIDATION_ISSUE_SEVERITY_CODE_URL: penRequestBatchRoot + '/prbValidationSeverityCodes',
-    PRB_VALIDATION_ISSUE_TYPE_CODE_URL: penRequestBatchRoot + '/prbValidationTypeCodes'
+    PRB_VALIDATION_ISSUE_TYPE_CODE_URL: penRequestBatchRoot + '/prbValidationTypeCodes',
   },
 
   penRequest: {
@@ -60,12 +61,12 @@ let object = {
     RETURN_URL: penRequestRoot + '/return',
     MACRO_URL: macroRoot + '/?businessUseTypeCode=GMP',
     UNLINK_URL: penRequestRoot + '/unlink',
-    STATS_URL: penRequestRoot + '/stats'
+    STATS_URL: penRequestRoot + '/stats',
   },
 
   sld: {
     ROOT_ENDPOINT: sldRequestRoot,
-    STUDENT_HISTORY_URL: sldRequestRoot + '/studentHistory'
+    STUDENT_HISTORY_URL: sldRequestRoot + '/studentHistory',
   },
 
   studentRequest: {
@@ -78,7 +79,7 @@ let object = {
     REJECT_URL: studentRequestRoot + '/reject',
     RETURN_URL: studentRequestRoot + '/return',
     MACRO_URL: macroRoot + '/?businessUseTypeCode=UMP',
-    STATS_URL: studentRequestRoot + '/stats'
+    STATS_URL: studentRequestRoot + '/stats',
   },
 
   student: {
@@ -91,7 +92,7 @@ let object = {
     GRADE_CODE_URL: studentRoot + '/gradeCodes',
     HISTORY_ACTIVITY_CODE_URL: studentRoot + '/historyActivityCodes',
     GET_ALL_STUDENTS_BY_IDS: studentRoot + '/allStudents',
-    DOC_TYPE_CODES_URL: studentRoot + '/document-type-codes'
+    DOC_TYPE_CODES_URL: studentRoot + '/document-type-codes',
   },
   SCHOOL_DATA_URL: schoolRequestRoot,
   institute: {
@@ -108,7 +109,7 @@ let object = {
     AUTHORITY_DATA_URL: instituteRoot + '/authority',
     AUTHORITY_CONTACT_URL: instituteRoot + '/authority/contact',
     AUTHORITY_NOTE_URL: instituteRoot + '/authority/note',
-    AUTHORITIES_PAGINATED_DATA_URL: instituteRoot + '/authoritiesPaginated'
+    AUTHORITIES_PAGINATED_DATA_URL: instituteRoot + '/authoritiesPaginated',
   },
   cache: {
     ROOT_ENDPOINT: cacheRoot,
@@ -127,12 +128,12 @@ let object = {
     PROVINCES_URL: cacheRoot + '/province-codes',
     COUNTRIES_URL: cacheRoot + '/country-codes',
     SCHOOL_CONTACT_TYPES_URL: cacheRoot + '/school-contact-types',
-    SCHOOL_CATEGORY_FACILITY_TYPE_URL: cacheRoot + '/school-category-facility-type'
+    SCHOOL_CATEGORY_FACILITY_TYPE_URL: cacheRoot + '/school-category-facility-type',
   },
   penServices: {
     ROOT_ENDPOINT: penServicesRoot,
     VALIDATE_DEMOGRAPHICS: penServicesRoot + '/demog-validation',
-    MACRO_URL: macroRoot + '/?businessUseTypeCode=PENREG&macroTypeCode=MERGE'
+    MACRO_URL: macroRoot + '/?businessUseTypeCode=PENREG&macroTypeCode=MERGE',
   },
   STUDENT_DATA_URL: studentRoot,
   SEARCH_BY_PEN: demographicRoot,
@@ -140,12 +141,12 @@ let object = {
   penMatch: {
     ROOT_ENDPOINT: penMatchRoot,
     POSSIBLE_MATCHES: penMatchRoot + '/possible-match',
-    POSSIBLE_MATCH_REASON_CODES: penMatchRoot + '/possible-match-reason-codes'
+    POSSIBLE_MATCH_REASON_CODES: penMatchRoot + '/possible-match-reason-codes',
   },
   MACRO_URL: macroRoot,
   nominalRoll: {
     ROOT_ENDPOINT: nominalRollRoot,
-    PAGINATED_ENDPOINT: nominalRollRoot + '/search'
+    PAGINATED_ENDPOINT: nominalRollRoot + '/search',
   },
   edx: {
     ROOT_ENDPOINT: edxRoot,
@@ -164,12 +165,12 @@ let object = {
     EXCHANGE_RELINK_USER: edxRoot + '/users/relink',
     PRIMARY_ACTIVATION_CODE_URL: edxRoot + '/users/activation-code/primary',
     NEW_SCHOOL_USER_ACTIVATION_INVITE: edxRoot + '/school-user-activation-invite',
-    NEW_DISTRICT_USER_ACTIVATION_INVITE: edxRoot + '/district-user-activation-invite'
+    NEW_DISTRICT_USER_ACTIVATION_INVITE: edxRoot + '/district-user-activation-invite',
   },
   sdc: {
     FUNDING_DATA_URL: sdcRoot + '/funding-groups',
-    SDC_SCHOOL_COLLECTION: sdcRoot + '/sdcSchoolCollection'
-  }
+    SDC_SCHOOL_COLLECTION: sdcRoot + '/sdcSchoolCollection',
+  },
 }
 
 //endpoints
@@ -181,7 +182,7 @@ export const Statuses = Object.freeze({
     MANY_MATCHES: 'MANYMATCHES',
     ZERO_MATCHES: 'ZEROMATCHES',
     RIGHT_PEN: 'RIGHTPEN',
-    WRONG_PEN: 'WRONGPEN'
+    WRONG_PEN: 'WRONGPEN',
   },
   penRequest: {
     DRAFT: 'DRAFT',
@@ -192,7 +193,7 @@ export const Statuses = Object.freeze({
     MANUAL_MATCH: 'MANUAL',
     REJECTED: 'REJECTED',
     UNMATCHED: 'UNMATCHED',
-    ABANDONED: 'ABANDONED'
+    ABANDONED: 'ABANDONED',
   },
   studentRequest: {
     DRAFT: 'DRAFT',
@@ -201,13 +202,13 @@ export const Statuses = Object.freeze({
     SECOND_REVIEW: 'SUBSREV',
     COMPLETED: 'COMPLETED',
     REJECTED: 'REJECTED',
-    ABANDONED: 'ABANDONED'
+    ABANDONED: 'ABANDONED',
   },
   exchange: {
     NEW: 'NEW',
     INPROG: 'INPROG',
-    CLOSED: 'CLOSED'
-  }
+    CLOSED: 'CLOSED',
+  },
 })
 
 export const REQUEST_TYPES = Object.freeze({
@@ -304,7 +305,7 @@ export const STUDENT_DETAILS_FIELDS = Object.freeze({
   STATUS_CODE: 'statusCode',
   TRUE_STUDENT_ID: 'trueStudentID',
   DOC_TYPE_CODE: 'documentTypeCode',
-  DATE_OF_CONFIRMATION: 'dateOfConfirmation'
+  DATE_OF_CONFIRMATION: 'dateOfConfirmation',
 })
 
 /*  can be made into an object, if more options are needed in the future for example
@@ -325,23 +326,22 @@ export const STUDENT_MERGE_DETAILS_FIELDS = Object.freeze({
   MINCODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MINCODE}`,
   LOCAL_ID: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.LOCAL_ID}`,
   POSTAL_CODE: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.POSTAL_CODE}`,
-  MEMO: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MEMO}`
+  MEMO: `${STUDENT_MERGE_FIELD_PREFIX}${STUDENT_DETAILS_FIELDS.MEMO}`,
 })
 
-export const PEN_REQUEST_STUDENT_VALIDATION_FIELD_CODES_TO_STUDENT_DETAILS_FIELDS_MAPPER =
-  Object.freeze({
-    LOCALID: STUDENT_DETAILS_FIELDS.LOCAL_ID,
-    LEGALFIRST: STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME,
-    LEGALMID: STUDENT_DETAILS_FIELDS.LEGAL_MIDDLE_NAMES,
-    LEGALLAST: STUDENT_DETAILS_FIELDS.LEGAL_LAST_NAME,
-    USUALFIRST: STUDENT_DETAILS_FIELDS.USUAL_FIRST_NAME,
-    USUALMID: STUDENT_DETAILS_FIELDS.USUAL_MIDDLE_NAMES,
-    USUALLAST: STUDENT_DETAILS_FIELDS.USUAL_LAST_NAME,
-    POSTALCODE: STUDENT_DETAILS_FIELDS.POSTAL_CODE,
-    GRADECODE: STUDENT_DETAILS_FIELDS.GRADE_CODE,
-    BIRTHDATE: STUDENT_DETAILS_FIELDS.DOB,
-    GENDER: STUDENT_DETAILS_FIELDS.GENDER_CODE
-  })
+export const PEN_REQUEST_STUDENT_VALIDATION_FIELD_CODES_TO_STUDENT_DETAILS_FIELDS_MAPPER = Object.freeze({
+  LOCALID: STUDENT_DETAILS_FIELDS.LOCAL_ID,
+  LEGALFIRST: STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME,
+  LEGALMID: STUDENT_DETAILS_FIELDS.LEGAL_MIDDLE_NAMES,
+  LEGALLAST: STUDENT_DETAILS_FIELDS.LEGAL_LAST_NAME,
+  USUALFIRST: STUDENT_DETAILS_FIELDS.USUAL_FIRST_NAME,
+  USUALMID: STUDENT_DETAILS_FIELDS.USUAL_MIDDLE_NAMES,
+  USUALLAST: STUDENT_DETAILS_FIELDS.USUAL_LAST_NAME,
+  POSTALCODE: STUDENT_DETAILS_FIELDS.POSTAL_CODE,
+  GRADECODE: STUDENT_DETAILS_FIELDS.GRADE_CODE,
+  BIRTHDATE: STUDENT_DETAILS_FIELDS.DOB,
+  GENDER: STUDENT_DETAILS_FIELDS.GENDER_CODE,
+})
 
 export const NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER = Object.freeze({
   givenNames: { name: STUDENT_DETAILS_FIELDS.LEGAL_FIRST_NAME, label: 'Legal Given' },
@@ -349,26 +349,22 @@ export const NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER = Obje
   grade: { name: STUDENT_DETAILS_FIELDS.GRADE_CODE, label: 'Grade' },
   birthDate: { name: STUDENT_DETAILS_FIELDS.DOB, label: 'Birth Date' },
   gender: { name: STUDENT_DETAILS_FIELDS.GENDER_CODE, label: 'Gen' },
-  schoolNumber: { name: STUDENT_DETAILS_FIELDS.MINCODE, label: 'Mincode' }
+  schoolNumber: { name: STUDENT_DETAILS_FIELDS.MINCODE, label: 'Mincode' },
 })
 
 export const STUDENT_DETAILS_FIELDS_TO_NOMINAL_ROLL_STUDENT_FIELDS_MAPPER = Object.freeze(
-  Object.fromEntries(
-    Object.entries(NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER).map(
-      ([key, value]) => [value.name, key]
-    )
-  )
+  Object.fromEntries(Object.entries(NOMINAL_ROLL_STUDENT_FIELDS_TO_STUDENT_DETAILS_FIELDS_MAPPER).map(([key, value]) => [value.name, key])),
 )
 
 export const STUDENT_CODES = Object.freeze({
   ACTIVE: 'A',
   DECEASED: 'D',
   DELETED: 'X',
-  MERGED: 'M'
+  MERGED: 'M',
 })
 export const STUDENT_DEMOG_CODES = Object.freeze({
   ACTIVE: 'A',
-  CONFIRMED: 'C'
+  CONFIRMED: 'C',
 })
 export const PEN_REQ_BATCH_STUDENT_REQUEST_CODES = Object.freeze({
   FIXABLE: 'FIXABLE',
@@ -380,7 +376,7 @@ export const PEN_REQ_BATCH_STUDENT_REQUEST_CODES = Object.freeze({
   ERROR: 'ERROR',
   REPEAT: 'REPEAT',
   LOADED: 'LOADED',
-  DUPLICATE: 'DUPLICATE'
+  DUPLICATE: 'DUPLICATE',
 })
 export const PEN_REQ_BATCH_STATUS_CODES = Object.freeze({
   HOLD_SIZE: 'HOLD_SIZE',
@@ -390,7 +386,7 @@ export const PEN_REQ_BATCH_STATUS_CODES = Object.freeze({
   REARCHIVED: 'REARCHIVED',
   UNARCHIVED: 'UNARCHIVED',
   UNARCH_CHG: 'UNARCH_CHG',
-  LOAD_FAIL: 'LOADFAIL'
+  LOAD_FAIL: 'LOADFAIL',
 })
 export const PAGE_TITLES = Object.freeze({
   LOGIN: 'Login',
@@ -399,7 +395,7 @@ export const PAGE_TITLES = Object.freeze({
   PAYMENTS: 'Payments',
   REPORTING: 'Reporting',
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
-  MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream'
+  MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream',
 })
 
 export const MINISTRY_NAME = 'Ministry of Education and Child Care'
@@ -456,7 +452,7 @@ export const SEARCH_FILTER_OPERATION = Object.freeze({
   /**
    * Starts with ignore case filter operation.
    */
-  STARTS_WITH_IGNORE_CASE: 'starts_with_ignore_case'
+  STARTS_WITH_IGNORE_CASE: 'starts_with_ignore_case',
 })
 
 export const SEARCH_CONDITION = Object.freeze({
@@ -467,7 +463,7 @@ export const SEARCH_CONDITION = Object.freeze({
   /**
    * Or condition.
    */
-  OR: 'OR'
+  OR: 'OR',
 })
 
 export const SEARCH_VALUE_TYPE = Object.freeze({
@@ -494,44 +490,42 @@ export const SEARCH_VALUE_TYPE = Object.freeze({
   /**
    * Uuid value type.
    */
-  UUID: 'UUID'
+  UUID: 'UUID',
 })
 
 export const PRB_SAGA_NAMES = Object.freeze({
   PEN_REQUEST_BATCH_USER_MATCH_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_USER_MATCH_PROCESSING_SAGA',
   PEN_REQUEST_BATCH_USER_UNMATCH_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_USER_UNMATCH_PROCESSING_SAGA',
-  PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA'
+  PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA: 'PEN_REQUEST_BATCH_NEW_PEN_PROCESSING_SAGA',
 })
 
 export const NOMINAL_ROLL_STUDENT_STATUSES = Object.freeze([
   {
     value: 'MATCHEDSYS',
-    text: 'Matched by system'
+    text: 'Matched by system',
   },
   {
     value: 'MATCHEDUSR',
-    text: 'Matched by user'
+    text: 'Matched by user',
   },
   {
     value: 'FIXABLE',
-    text: 'Fixable Request'
+    text: 'Fixable Request',
   },
   {
     value: 'ERROR',
-    text: 'Error'
+    text: 'Error',
   },
   {
     value: 'LOADED',
-    text: 'Loaded'
+    text: 'Loaded',
   },
   {
     value: 'IGNORED',
-    text: 'Ignored'
-  }
+    text: 'Ignored',
+  },
 ])
 
-export const NOMINAL_ROLL_STUDENT_STATUS_CODES = Object.freeze(
-  Object.fromEntries(NOMINAL_ROLL_STUDENT_STATUSES.map((status) => [status.value, status.value]))
-)
+export const NOMINAL_ROLL_STUDENT_STATUS_CODES = Object.freeze(Object.fromEntries(NOMINAL_ROLL_STUDENT_STATUSES.map((status) => [status.value, status.value])))
 
 export const EDX_SAGA_REQUEST_DELAY_MILLISECONDS = 2000

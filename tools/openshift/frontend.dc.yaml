@@ -77,7 +77,7 @@ objects:
             #       secretName: ofm-frontend-cert
             - name: config-env
               configMap:
-                name: ecc-ofm-frontend-config-map
+                name: ofm-frontend-config-map
       test: false
       triggers:
         - type: ConfigChange
@@ -103,7 +103,7 @@ objects:
   - apiVersion: v1
     kind: Route
     metadata:
-      name: '${APP_NAME}-frontend-http'
+      name: '${APP_NAME}-frontend'
       labels:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
