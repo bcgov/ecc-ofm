@@ -154,9 +154,9 @@ jobs:
           || true && echo "No rollout in progress"
 
           # Create the image stream if it doesn't exist
-          oc create imagestream ${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}-${{ env.BRANCH }} 2> /dev/null || true && echo "Frontend image stream in place"
+          oc create imagestream ${{ env.IMAGE_NAME }} 2> /dev/null || true && echo "Frontend image stream in place"
 
-          oc tag ${{ steps.push-image-frontend.outputs.registry-path }} ${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}-${{ env.BRANCH }}:${{ env.TAG }}
+          oc tag ${{ steps.push-image-frontend.outputs.registry-path }} ${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
           # Process and apply deployment template
           oc process -f tools/openshift/frontend.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} \
