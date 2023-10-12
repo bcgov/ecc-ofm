@@ -2,13 +2,14 @@
 name: 1 DEV - Deploy Frontend
 
 env:
+  ENVIRONMENT: 'dev'
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   # To get a permanent token, refer to https://github.com/redhat-actions/oc-login/wiki/Using-a-Service-Account-for-GitHub-Actions
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   # 🖊️ EDIT to set the kube context's namespace after login. Leave blank to use your user's default namespace.
-  OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-dev
+  OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-$(ENVIRONMENT)
 
   # SPLUNK_TOKEN: ${{ secrets.SPLUNK_TOKEN }}
 
@@ -52,7 +53,7 @@ jobs:
   openshift-ci-cd:
     name: Build and deploy Frontend to DEV
     runs-on: ubuntu-20.04
-    environment: dev
+    environment: ${{ env.ENVIRONMENT }}
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
@@ -161,7 +162,7 @@ jobs:
           # Process and apply deployment template
           oc process -f tools/openshift/frontend.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} \
           -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} -p TAG=${{ env.TAG }} -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} \
-          -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} \
+          -p MIN_CPU=${{ env.MIN_CPU }} -p MAX_CPU=${{ env.MAX_CPU }} -p MIN_MEM=${{ env.MIN_MEM }} -p MAX_MEM=${{ env.MAX_MEM }} -p ENVIRONMENT=$${{env.ENVIRONMENT}} \
           | oc apply -f -
 
           # Start rollout (if necessary) and follow it
