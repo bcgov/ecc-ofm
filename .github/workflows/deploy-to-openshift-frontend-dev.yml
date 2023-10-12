@@ -53,7 +53,7 @@ jobs:
   openshift-ci-cd:
     name: Build and deploy Frontend to DEV
     runs-on: ubuntu-20.04
-    environment: ${{ env.ENVIRONMENT }}
+    environment: 'dev'
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
