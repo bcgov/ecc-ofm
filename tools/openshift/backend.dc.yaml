@@ -113,7 +113,7 @@ objects:
   - apiVersion: v1
     kind: Route
     metadata:
-      name: '${APP_NAME}-backend'
+      name: '${APP_NAME}-backend-${ENVIRONMENT}'
       labels:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
@@ -128,7 +128,7 @@ objects:
         insecureEdgeTerminationPolicy: Redirect
       to:
         kind: Service
-        name: '${APP_NAME}-backend'
+        name: '${APP_NAME}-backend-${ENVIRONMENT}'
         weight: 100
       wildcardPolicy: None
   - apiVersion: autoscaling/v2
