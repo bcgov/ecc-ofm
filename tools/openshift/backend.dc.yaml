@@ -15,12 +15,12 @@ objects:
       labels:
         app: '${APP_NAME}-${BRANCH}'
         branch: '${BRANCH}'
-      name: '${APP_NAME}-backend'
+      name: '${APP_NAME}-backend-${ENVIRONMENT}'
     spec:
       replicas: ${{MIN_REPLICAS}}
       selector:
         app: '${APP_NAME}-${BRANCH}'
-        deploymentconfig: '${APP_NAME}-backend'
+        deploymentconfig: '${APP_NAME}-backend-${ENVIRONMENT}'
       strategy:
         resources: {}
         type: Rolling
@@ -31,7 +31,7 @@ objects:
           creationTimestamp:
           labels:
             app: '${APP_NAME}-${BRANCH}'
-            deploymentconfig: '${APP_NAME}-backend'
+            deploymentconfig: '${APP_NAME}-backend-${ENVIRONMENT}'
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-backend:${TAG}
@@ -52,7 +52,7 @@ objects:
                 periodSeconds: 10
                 successThreshold: 1
                 timeoutSeconds: 5
-              name: '${APP_NAME}-backend'
+              name: '${APP_NAME}-backend-${ENVIRONMENT}'
               ports:
                 - containerPort: 8080
                   protocol: TCP
@@ -60,7 +60,7 @@ objects:
                   protocol: TCP
               envFrom:
                 - configMapRef:
-                    name: ofm-backend-config-map
+                    name: ofm-backend-${ENVIRONMENT}-config-map
               readinessProbe:
                 initialDelaySeconds: 10
                 failureThreshold: 5
@@ -96,7 +96,7 @@ objects:
       creationTimestamp:
       labels:
         app: '${APP_NAME}-${BRANCH}'
-      name: '${APP_NAME}-backend'
+      name: '${APP_NAME}-backend-${ENVIRONMENT}'
     spec:
       ports:
         - name: 8080-tcp
@@ -109,7 +109,7 @@ objects:
           targetPort: 443
       selector:
         app: '${APP_NAME}-${BRANCH}'
-        deploymentconfig: '${APP_NAME}-backend'
+        deploymentconfig: '${APP_NAME}-backend-${ENVIRONMENT}'
   - apiVersion: v1
     kind: Route
     metadata:
@@ -134,12 +134,12 @@ objects:
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
-      name: '${APP_NAME}-backend-cpu-autoscaler'
+      name: '${APP_NAME}-backend-${ENVIRONMENT}-cpu-autoscaler'
     spec:
       scaleTargetRef:
         apiVersion: apps.openshift.io/v1
         kind: DeploymentConfig
-        name: '${APP_NAME}-backend'
+        name: '${APP_NAME}-${ENVIRONMENT}-backend'
         subresource: scale
       minReplicas: ${{MIN_REPLICAS}}
       maxReplicas: ${{MAX_REPLICAS}}
@@ -159,6 +159,9 @@ parameters:
     required: true
   - name: NAMESPACE
     description: Target namespace reference (i.e. 'k8vopl-dev')
+    required: true
+  - name: ENVIRONMENT
+    description: The environment being created ('dev', 'test', 'uat', 'prod')
     required: true
   - name: APP_NAME
     description: Application name
