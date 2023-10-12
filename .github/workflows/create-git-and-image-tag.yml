@@ -5,7 +5,7 @@ env:
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-dev
 
-  REPO_NAME: 'educ-ofm'
+  REPO_NAME: 'ecc-ofm'
   BRANCH: ${{ github.ref_name }}
   APP_NAME_FRONTEND: 'frontend'
   APP_NAME_BACKEND: 'backend'
