@@ -7,6 +7,7 @@
     <v-main class="align-start">
       <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
+      <TheMenu />
       <router-view class="align-start px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -18,6 +19,7 @@ import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
+import TheMenu from './components/TheMenu.vue'
 import TheModalIdle from '@/components/TheModalIdle.vue'
 import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
@@ -34,6 +36,7 @@ export default {
     TheNavBar,
     TheModalIdle,
     TheFooter,
+    TheMenu,
   },
   data() {
     return {
