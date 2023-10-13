@@ -1,5 +1,5 @@
 {
-  "name": "ECC-OFM QA Testing",
+  "name": "testing-cypress",
   "version": "1.0.0",
   "description": "ECC OFM QA Testing",
   "main": "index.js",
