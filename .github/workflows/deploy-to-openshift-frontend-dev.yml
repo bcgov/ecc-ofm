@@ -169,7 +169,7 @@ jobs:
           || true && echo "Rollout in progress"
 
           # Get status, returns 0 if rollout is successful
-          oc rollout status dc/${{ env.APP_NAME }}-${{ env.APP_NAME_FRONTEND }}
+          oc rollout status dc/${{ env.APP_NAME }}-${{ env.APP_NAME_FRONTEND }}-dev
 
     # - name: ZAP Scan
     #   uses: zaproxy/action-full-scan@v0.3.0
