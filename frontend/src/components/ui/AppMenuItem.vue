@@ -1,14 +1,11 @@
 <template>
-  <v-list-item class="link" base-color="#003366" color="white" link active-class="menu-item-active">
-    <v-chip style="font-size: 1em" variant="text">
-      <v-icon style="margin-right: 15px" :icon="icon" />
-      <slot />
-    </v-chip>
+  <v-list-item class="menu-item" base-color="#003366" color="white" link active-class="menu-item-active">
+    <v-icon class="menu-icon" :icon="icon" v-if="icon" size="30" />
+    <slot />
   </v-list-item>
 </template>
 <script>
 export default {
-  inheritAttrs: false,
   props: {
     icon: {
       type: String,
@@ -19,7 +16,16 @@ export default {
 </script>
 
 <style scoped>
+.menu-item {
+  cursor: pointer;
+  font-size: 1em;
+  height: 3em;
+}
 .menu-item-active {
   background-color: #003366;
+}
+
+.menu-icon {
+  margin-right: 15px;
 }
 </style>
