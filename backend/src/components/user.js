@@ -73,7 +73,8 @@ async function getUserInfo(req, res) {
     log.verbose('getUserProfile response:', minify(userResponse))
   }
 
-  if (userResponse === null) {
+  // Note for wkubo: to test unauthorized on frontend (no data returned from providerprofile endpoint), uncomment the following if line to true.
+  if (userResponse === null /*true*/) {
     // If no data back, then no associated User Roles/Organization/Facilities/
     return res.status(HttpStatus.UNAUTHORIZED).json(resData)
   }
@@ -97,13 +98,11 @@ async function getUserProfile(userGuid) {
   try {
     let url = undefined
     if (userGuid) {
-      // Note for wkubo: switch to dynamic guid url below for testing unauthorized with bcedid ofmqa02... for now, until
-      // fixed request to 365 group has occured.
-      url = config.get('dynamicsApi:apiEndpoint') + '/api/ProviderProfile?userId=88888881'
-      //url = config.get('dynamicsApi:apiEndpoint') + `/api/ProviderProfile?userId=${userGuid}`
+      url = config.get('dynamicsApi:apiEndpoint') + `/api/ProviderProfile?userId=${userGuid}`
     }
     log.verbose('UserProfile Url is', url)
-    let response = await axios.get(url, getHttpHeader())
+    let response = undefined
+    response = await axios.get(url, getHttpHeader())
     log.verbose('getUserProfile response:', response.data)
     return response.data
   } catch (e) {
