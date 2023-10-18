@@ -4,8 +4,8 @@
     <TheHeader />
     <TheSnackBar />
     <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
+    <TheEnvBar />
     <v-main class="align-start">
-      <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
       <TheMenu v-if="isAuthenticated" />
       <router-view class="align-start px-8 mb-0" />
