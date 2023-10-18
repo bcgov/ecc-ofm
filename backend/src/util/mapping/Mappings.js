@@ -1,34 +1,39 @@
-const OrganizationMappings = [
-  { back: 'ccof_facilitystartdate', front: 'yearBeganOperation' },
-  { back: 'name', front: 'legalName' },
-  { back: 'address1_name', front: 'address1' }, //Address
-  { back: 'address1_city', front: 'city1' },
-  { back: 'address1_postalcode', front: 'postalCode1' },
-  { back: 'address2_name', front: 'address2' }, //Mailing Address
-  { back: 'address2_city', front: 'city2' },
-  { back: 'address2_postalcode', front: 'postalCode2' },
-  { back: 'address1_primarycontactname', front: 'contactName' },
-  { back: 'ccof_position', front: 'position' },
-  { back: 'telephone1', front: 'phone' },
+const UserProfileMappings = [
+  { back: 'contactid', front: 'contactId' },
+  { back: 'ccof_userid', front: 'userId' },
+  { back: 'ccof_username', front: 'username' },
   { back: 'emailaddress1', front: 'email' },
-  { back: 'ccof_instructionnumber', front: 'incNumber' },//incorporation number
-  { back: 'ccof_typeoforganization', front: 'organizationType' },
-  { back: 'ccof_formcomplete', front: 'isOrganizationComplete' },
-  { back: 'ccof_is_mailing_address_same', front: 'isSameAsMailing'}
-];
+  { back: 'ofm_first_name', front: 'firstName' },
+  { back: 'ofm_last_name', front: 'lastName' },
+  { back: 'ofm_portal_role', front: 'roles' },
+]
 
-const ProgramYearMappings = [
-  { back: 'ccof_program_yearid', front: 'programYearId' },
-  { back: 'ccof_name', front: 'name' },
-  { back: 'statuscode', front: 'status' },
-  { back: 'ccof_programyearnumber', front: 'order' },
-  { back: '_ccof_previousyear_value', front: 'previousYearId' },
-  { back: 'ccof_intakeperiodstart', front: 'intakeStart' },
-  { back: 'ccof_intakeperiodend', front: 'intakeEnd' },
-  { back: 'ccof_declarationbstart', front: 'declarationbStart' },
-];
+const UserProfileOrganizationMappings = [
+  { back: 'accountid', front: 'organizationId' },
+  { back: 'accountnumber', front: 'organizationAccountNumber' },
+  { back: 'ccof_accounttype', front: 'organizationAccountType' },
+  { back: 'name', front: 'organizationName' },
+  { back: 'statecode', front: 'organizationStateCode' },
+  { back: 'statuscode', front: 'organizationStatus' },
+]
+
+const UserProfileFacilityPermissionMappings = [
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
+const UserProfileFacilityMappings = [
+  { back: 'accountid', front: 'facilityId' },
+  { back: 'accountnumber', front: 'facilityAccountNumber' },
+  { back: 'name', front: 'facilityName' },
+  { back: 'ccof_accounttype', front: 'facilityType' },
+  { back: 'statecode', front: 'facilityStateCode' },
+  { back: 'statuscode', front: 'facilityStatusCode' },
+]
 
 module.exports = {
-  OrganizationMappings,
-  ProgramYearMappings
-};
+  UserProfileMappings,
+  UserProfileOrganizationMappings,
+  UserProfileFacilityPermissionMappings,
+  UserProfileFacilityMappings,
+}

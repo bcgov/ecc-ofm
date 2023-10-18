@@ -1,5 +1,5 @@
 import ApiService from '@/common/apiService'
-import AuthService from '@/common/authService';
+import AuthService from '@/common/authService'
 import { Routes } from '@/utils/constants'
 import { defineStore } from 'pinia'
 
@@ -12,20 +12,17 @@ export const useAuthStore = defineStore('auth', {
     userInfo: false,
     isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
     isValdProgramUser: localStorage.getItem('isValdProgramUser') !== null,
-    isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null
+    isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
   }),
   getters: {
-    acronymsGet: (state) => state.acronyms,
-    isAuthenticatedGet: (state) => state.isAuthenticated,
     jwtTokenGet: () => localStorage.getItem('jwtToken'),
-    userInfoGet: (state) => state.userInfo,
     //TODO: 3 temp roles ('CCP_ROLE', 'OPS_ROLE', 'PCM_ROLE') were created in auth.js (loosely
     //based on OFM requirements) for the purpose of achieving a 1st draft of the frontend that
     //will render a home screen and menu with minimal errors given no authorization/backend integration.
     //Thus the following related code is only temporarly and expected to be replaced...
     CCP_ROLE: (state) => state.isValidChildCareProviderUser,
     OPS_ROLE: (state) => state.isValdProgramUser,
-    PCM_ROLE: (state) => state.isValidFinancialOpsUser
+    PCM_ROLE: (state) => state.isValidFinancialOpsUser,
   },
   actions: {
     //sets Json web token and determines whether user is authenticated
@@ -63,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
         this.userInfo = null
       }
     },
-      // TODO: Temp placeholder code for OFM authorization role processing...
+    // TODO: Temp placeholder code for OFM authorization role processing...
     async setChildCareProviderUser(isValidChildCareProviderUser) {
       if (isValidChildCareProviderUser) {
         this.isValidChildCareProviderUser = true
@@ -73,7 +70,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isValidChildCareProviderUser')
       }
     },
-      // TODO: Temp placeholder code for OFM authorization role processing...
+    // TODO: Temp placeholder code for OFM authorization role processing...
     async setProgramUser(isValdProgramUser) {
       if (isValdProgramUser) {
         this.isValdProgramUser = true
@@ -83,7 +80,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isValdProgramUser')
       }
     },
-      // TODO: Temp placeholder code for OFM authorization role processing...
+    // TODO: Temp placeholder code for OFM authorization role processing...
     async setFinancialOpsUser(isValidFinancialOpsUser) {
       if (isValidFinancialOpsUser) {
         this.isValidFinancialOpsUser = true
@@ -130,15 +127,15 @@ export const useAuthStore = defineStore('auth', {
     },
     async setAuthorizations(response) {
       if (response.jwtFrontend) {
-        await this.setJwtToken(response.jwtFrontend);
+        await this.setJwtToken(response.jwtFrontend)
       }
-      ApiService.setAuthHeader(response.jwtFrontend);
+      ApiService.setAuthHeader(response.jwtFrontend)
 
       await this.setAuthorizedUser(response.isAuthorizedUser)
       // TODO: Temp placeholder code for OFM authorization role processing...
       await this.setChildCareProviderUser(true)
       await this.setProgramUser(true)
       await this.setFinancialOpsUser(true)
-    }
-  }
+    },
+  },
 })

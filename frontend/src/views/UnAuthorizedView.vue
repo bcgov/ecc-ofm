@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="my-16 full-height">
+  <v-container fluid class="full-height">
     <!-- login article -->
     <article id="login-banner" class="top-banner">
       <v-row align="center" justify="center" width="100%">
@@ -13,9 +13,8 @@
                       <h4 id="error_text" style="color: red">Unauthorized Access</h4>
                     </v-card-title>
                     <v-card-text id="error_message">
-                      <span style="color: black; font-weight: bold"
-                        >You do not have required roles to perform action on this site.</span
-                      >
+                      <span style="color: black; font-weight: bold">You do not have required roles to perform action on
+                        this site.</span>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -32,6 +31,7 @@
 .error-card {
   margin-top: 5%;
 }
+
 .gov-header {
   color: #003366;
 }

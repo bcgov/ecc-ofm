@@ -26,15 +26,16 @@ export default {
     async checkAndLogoutUserOnSessionExpiry() {
       if (this.isAuthenticated) {
         try {
-          const response = await ApiService.apiAxios.get(Routes.SESSION_REMAINING_TIME);
-          if (response.data > 0) {
-            const timeOutValue = parseInt(response.data) + 200; // add 200 ms
-            setTimeout(() => {
-              this.checkAndLogoutUserOnSessionExpiry();
-            }, timeOutValue);
-          } else {
-            window.location = document.getElementById('logout_href').href;
-          }
+          //TODO uncommented in sprint 1... leave incase we need.
+          /*        const response = await ApiService.apiAxios.get(Routes.SESSION_REMAINING_TIME);
+                    if (response.data > 0) {
+                      const timeOutValue = parseInt(response.data) + 200; // add 200 ms
+                      setTimeout(() => {
+                        this.checkAndLogoutUserOnSessionExpiry();
+                      }, timeOutValue);
+                    } else {
+                      window.location = document.getElementById('logout_href').href;
+                    } */
         } catch (e) {
           window.location = document.getElementById('logout_href').href
         }

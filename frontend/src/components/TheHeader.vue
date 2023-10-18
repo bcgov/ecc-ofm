@@ -16,18 +16,19 @@
         </v-row>
         <v-spacer></v-spacer>
         <div v-if="isAuthenticated && user" class="mt-5">
-          <v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
-            <v-badge color="red" class="pt-0" :content="unreadMessageCount" bottom right overlap offset-x="8" offset-y="28">
+          <!--v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
+            <v-badge color="red" class="pt-0" :content="unreadMessageCount" bottom right overlap offset-x="8"
+              offset-y="28">
               <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
             </v-badge>
-          </v-btn>
+          </v-btn-->
           <v-menu name="user_options" offset-y>
             <template #activator="{ props }">
               <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
                 <v-avatar left color="info">
-                  {{ user.userName[0] }}
+                  {{ user.username[0] }}
                 </v-avatar>
-                <span class="display-name pl-1">{{ user.userName }}</span>
+                <span class="display-name pl-1">{{ user.username }}</span>
               </v-chip>
             </template>
             <v-list dark style="background-color: #003366; color: white">
@@ -45,6 +46,7 @@
 import { mapActions, mapState } from 'pinia'
 import { Routes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
 
 export default {
   data() {
@@ -54,11 +56,49 @@ export default {
     }
   },
   created() {
-    useAuthStore()
-      .getUserInfo()
-      .then(() => {
-        this.user = this.userInfo
-      })
+    //Note for wkubo: this won't work... it will run on LoginVue and we can't use this.$route.name to check if we are on home
+    /*     useAuthStore()
+          .getUserInfo()
+          .then(() => {
+            this.user = this.userInfo
+          })
+          .catch((e) => {
+            if (e.response.status === 401) {
+              router.push('/unauthorized');
+            }
+          }); */
+  },
+  watch: {
+    $route(to, from) {
+      console.log('Current Route Name:', this.$route.name);
+      if (this.$route.name === 'home') {
+        useAuthStore()
+          .getUserInfo()
+          .then((userInfo) => {
+            //Note for wkubo: not sure why this.user ends up as undefined and thus user header icon won't appear. Doesn't happen
+            // when this similar logic in 'created' hook.
+            this.user = userInfo;
+          })
+          .catch((e) => {
+            if (e.response.status === 401) {
+              router.push('/unauthorized');
+            }
+          });
+      }
+    },
+    /*     isAuthenticated(newVal, oldVal) {
+          console.log('jstorey = ' + this.$route.name)
+          if (newVal) {
+            useAuthStore()
+              .getUserInfo()
+              .then((userInfo) => {
+                this.user = userInfo;
+              })
+              .catch((e) => {
+                router.push('/unauthorized');
+              });
+          }
+        }, */
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated']),
@@ -135,10 +175,12 @@ a {
 .v-chip .v-chip__content {
   padding-right: 12px;
 }
+
 .v-chip .v-chip__content:hover {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 15px;
 }
+
 .v-chip .v-chip__content:active {
   background: rgba(255, 255, 255, 0.5);
 }

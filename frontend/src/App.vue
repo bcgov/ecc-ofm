@@ -62,7 +62,7 @@ export default {
   async created() {
     //this.setLoading(true);
     this.getJwtToken()
-      .then(() => Promise.all([this.getConfig()]))
+      //TODO commented out during sprint 1, might need in later sprint...then(() => Promise.all([this.getConfig()]))
       .catch((e) => {
         if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
           this.logout()
@@ -103,6 +103,7 @@ export default {
 #toTopBtn {
   opacity: 0.5;
 }
+
 #toTopBtn:hover {
   opacity: 1;
 }
@@ -138,6 +139,7 @@ html {
 .v-alert .v-icon {
   padding-left: 0;
 }
+
 .full-height {
   height: 100%;
 }
