@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
-import { PAGE_TITLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import { PAGE_TITLES } from '@/utils/constants'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -190,6 +190,44 @@ router.beforeEach((to, _from, next) => {
 
   function validateAndExecute(nextRouteInError, to) {
     const authStore = useAuthStore()
+    console.log('router.validateAndExecute  1')
+    if (to.meta.requiresAuth) {
+      console.log('router.validateAndExecute  2')
+      authStore
+        .getJwtToken()
+        .then(() => {
+          if (!authStore.isAuthenticated) {
+            next('/token-expired')
+          } else {
+            console.log('router.validateAndExecute  3')
+            authStore
+              .getUserInfo()
+              .then(() => {
+                console.log('router.validateAndExecute  4 ' + JSON.stringify(authStore.userInfo))
+                next()
+              })
+              .catch((error) => {
+                console.log('error', error)
+                if (error.response?.status == '401') {
+                  next('unauthorized')
+                } else {
+                  console.log('An error occurred.', error)
+                  next('error')
+                }
+              })
+          }
+        })
+        .catch(() => {
+          if (!authStore.state.userInfo) {
+            next('/login')
+          } else {
+            next('/token-expired')
+          }
+        })
+    } else {
+      next()
+    }
+    /* TODO previous code... leave till we are stabalized with new code
     authStore
       .getJwtToken()
       .then(() => {
@@ -224,6 +262,7 @@ router.beforeEach((to, _from, next) => {
         console.log('Unable to get token')
         next(nextRouteInError)
       })
+ */
   }
 })
 
