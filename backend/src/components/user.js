@@ -73,8 +73,7 @@ async function getUserInfo(req, res) {
     log.verbose('getUserProfile response:', minify(userResponse))
   }
 
-  // Note for wkubo: to test unauthorized on frontend (no data returned from providerprofile endpoint), uncomment the following if line to true.
-  if (userResponse === null /*true*/) {
+  if (userResponse === null) {
     // If no data back, then no associated User Roles/Organization/Facilities/
     return res.status(HttpStatus.UNAUTHORIZED).json(resData)
   }
