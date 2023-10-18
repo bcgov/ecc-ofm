@@ -1,7 +1,7 @@
 <template>
   <v-app-bar absolute color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
     <!-- Navbar content -->
-    <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }">
+    <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" fluid="true">
       <v-row class="justify-space-between">
         <a tabindex="-1" href="/">
           <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
@@ -35,7 +35,7 @@
           </v-menu>
         </div> -->
         <div class="logout" v-if="isAuthenticated">
-          <v-btn :href="routes.LOGOUT" variant="plain" color="white">Log out</v-btn>
+          <v-btn :href="routes.LOGOUT" variant="plain" class="logout-link">Log out</v-btn>
         </div>
       </v-row>
     </v-container>
@@ -43,24 +43,17 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'pinia'
+import { mapState } from 'pinia'
 import { Routes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
-//import router from '@/router'
 
 export default {
   data() {
     return {
       routes: Routes,
-      user: null,
     }
   },
-  created() {
-    console.log('created = ' + this.userInfo)
-  },
-  watch: {},
   computed: {
-    //...mapGetters(useAuthStore, ['isAuthenticated', 'userInfo']),
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated']),
     unreadMessageCount() {
       return Math.floor(Math.random() * 10)
@@ -78,10 +71,6 @@ export default {
     xs() {
       return this.$vuetify.display.xs
     },
-  },
-  methods: {
-    //    ...mapActions(useAuthStore, ['getUserInfo']),
-    //    useAuthStore,
   },
 }
 </script>
@@ -110,6 +99,20 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+  float: right;
+}
+
+.logout-link {
+  text-decoration: underline;
+  font-size: 1rem;
+  line-height: 2.25rem;
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.logout-link:hover {
+  text-decoration: none;
 }
 
 .verticalLine {
