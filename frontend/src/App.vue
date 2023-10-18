@@ -1,10 +1,12 @@
 <!-- eslint-disable vue/no-reserved-component-names -->
 <template>
   <v-app id="app">
-    <TheHeader />
-    <TheSnackBar />
-    <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
-    <TheEnvBar />
+    <div class="header">
+      <TheHeader />
+      <TheSnackBar />
+      <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
+      <TheEnvBar />
+    </div>
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
       <TheMenu v-if="isAuthenticated" />
@@ -100,6 +102,20 @@ export default {
 </script>
 
 <style>
+.header {
+  /* background-color: #036;
+  border-bottom: 2px solid #fcba19;
+  padding: 0 65px 0 65px;
+  color: #fff;
+  display: flex;
+  height: 65px;
+  top: 0px;
+  position: fixed;
+  width: 100%; */
+  position: fixed;
+  width: 100%;
+  z-index: 1002;
+}
 #toTopBtn {
   opacity: 0.5;
 }

@@ -1,6 +1,6 @@
 <template>
   <div v-if="isAuthenticated && userInfo">
-    <v-navigation-drawer style="z-index: 0" disable-resize-watcher>
+    <v-navigation-drawer style="z-index: 0" permanent="true">
       <AppMenuItem icon="mdi-home-outline" :to="{ name: 'home' }">Home</AppMenuItem>
       <AppMenuItem>
         <v-badge color="red" :content="unreadMessageCount" offset-x="14" offset-y="20">
