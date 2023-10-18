@@ -9,7 +9,9 @@ export const useAuthStore = defineStore('auth', {
     acronyms: [],
     isAuthenticated: localStorage.getItem('jwtToken') !== null,
     isAuthorizedUser: localStorage.getItem('isAuthorizedUser') !== null,
-    userInfo: false,
+    impersonateId: null,
+    userInfo: null,
+    userHasRoles: false,
     isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
     isValdProgramUser: localStorage.getItem('isValdProgramUser') !== null,
     isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
@@ -56,8 +58,18 @@ export const useAuthStore = defineStore('auth', {
     async setUserInfo(userInf) {
       if (userInf) {
         this.userInfo = userInf
+        this.userHasRoles = userInf.roles && userInf.roles.length > 0
       } else {
         this.userInfo = null
+      }
+    },
+    async setImpersonateId(impersonateId) {
+      if (impersonateId) {
+        this.impersonateId = impersonateId
+        localStorage.setItem('impersonateId', impersonateId)
+      } else {
+        this.impersonateId = impersonateId
+        localStorage.removeItem('impersonateId')
       }
     },
     // TODO: Temp placeholder code for OFM authorization role processing...
@@ -98,11 +110,9 @@ export const useAuthStore = defineStore('auth', {
     },
     async getUserInfo() {
       const token = localStorage.getItem('jwtToken')
-
       if (!token) {
         await this.getJwtToken()
       }
-
       if (localStorage.getItem('jwtToken')) {
         const response = await ApiService.apiAxios.get(Routes.USER)
         await this.setUserInfo(response.data)
@@ -130,8 +140,8 @@ export const useAuthStore = defineStore('auth', {
         await this.setJwtToken(response.jwtFrontend)
       }
       ApiService.setAuthHeader(response.jwtFrontend)
-
       await this.setAuthorizedUser(response.isAuthorizedUser)
+
       // TODO: Temp placeholder code for OFM authorization role processing...
       await this.setChildCareProviderUser(true)
       await this.setProgramUser(true)

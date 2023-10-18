@@ -5,7 +5,7 @@
 </template>
 <script>
 export default {
-  inheritAttrs: false,
+  inheritAttrs: true,
 }
 </script>
 <style scoped>
@@ -14,8 +14,11 @@ export default {
   border: none;
   border-radius: 4px;
   color: white;
-  margin: 8px; /* ma-2 */
-  padding: 0 12px; /* px-3 */
+  margin: 8px;
+  /* ma-2 */
+  padding: 0 12px;
+  width: 100%;
+  /* px-3 */
   /* padding: 12px 32px;
   text-align: center;
   text-decoration: none;

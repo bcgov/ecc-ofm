@@ -203,7 +203,9 @@ router.beforeEach((to, _from, next) => {
             authStore
               .getUserInfo()
               .then(() => {
-                console.log('router.validateAndExecute  4 ' + JSON.stringify(authStore.userInfo))
+                if (!authStore.userHasRoles) {
+                  next('unauthorized')
+                }
                 next()
               })
               .catch((error) => {
@@ -227,42 +229,6 @@ router.beforeEach((to, _from, next) => {
     } else {
       next()
     }
-    /* TODO previous code... leave till we are stabalized with new code
-    authStore
-      .getJwtToken()
-      .then(() => {
-        if (!authStore.isAuthenticated) {
-          next(nextRouteInError)
-          return
-        }
-        if (!to.meta.role) {
-          next()
-          return
-        }
-        authStore
-          .getUserInfo()
-          .then(() => {
-            if (!authStore.isAuthorizedUser) {
-              next('unauthorized')
-              return
-            }
-            const hasRole = Object.prototype.hasOwnProperty.call(authStore, to.meta.role) && authStore[to.meta.role]
-            if (!hasRole) {
-              next('unauthorized-page')
-              return
-            }
-            next()
-          })
-          .catch((e) => {
-            console.log('Unable to get user info: ' + e)
-            next('error')
-          })
-      })
-      .catch(() => {
-        console.log('Unable to get token')
-        next(nextRouteInError)
-      })
- */
   }
 })
 

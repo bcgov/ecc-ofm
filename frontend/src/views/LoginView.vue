@@ -44,11 +44,7 @@
             <v-spacer></v-spacer>
             <v-card-actions class="mt-auto">
               <v-row>
-                <v-btn id="login-button" :href="routes.LOGIN" class="ma-2 px-3" dark color="white"
-                  style="background-color: #003366" @click="clearStorage">
-                  BCeID Log In
-                  <v-icon>mdi-login</v-icon>
-                </v-btn>
+                <AppButton icon="mdi-login" :href="routes.LOGIN" @click="clearStorage">BCeID Log In</AppButton>
               </v-row>
             </v-card-actions>
           </v-card>
@@ -71,11 +67,8 @@
             </v-card-text>
             <v-card-actions>
               <v-row>
-                <v-btn id="login-button" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx"
-                  class="ma-2 px-3" dark color="white" style="background-color: #003366" @click="clearStorage">
-                  Register for a BCeID
-                  <v-icon>mdi-login</v-icon>
-                </v-btn>
+                <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx"
+                  @click="clearStorage">Register for a BCeID</AppButton>
               </v-row>
             </v-card-actions>
           </v-card>
@@ -90,13 +83,14 @@
 import { mapActions, mapState } from 'pinia'
 import { Routes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
+import AppButton from '../components/ui/AppButton.vue'
 
 export default {
   name: 'LoginView',
   data() {
     return {
       routes: Routes
-    }
+    };
   },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated']),
@@ -104,9 +98,10 @@ export default {
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
-      this.setJwtToken()
+      this.setJwtToken();
     },
   },
+  components: { AppButton }
 }
 </script>
 

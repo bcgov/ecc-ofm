@@ -80,8 +80,6 @@ async function getUserInfo(req, res) {
   }
 
   let user = new MappableObjectForFront(userResponse, UserProfileMappings).data
-  delete user.roles
-
   let organization = new MappableObjectForFront(userResponse.organization, UserProfileOrganizationMappings).data
   resData.facilityPermission = parseFacilityPermissions(userResponse)
 

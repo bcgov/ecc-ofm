@@ -15,20 +15,21 @@
           </v-row>
         </v-row>
         <v-spacer></v-spacer>
-        <div v-if="isAuthenticated && userInfo" class="mt-5">
-          <!--v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
+        <!-- TODO: issue with userInfo state on this screen, commenting out for now until we have a story that requires it. -->
+        <!--div v-if="isAuthenticated && userInfo" class="mt-5">
+          <v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
             <v-badge color="red" class="pt-0" :content="unreadMessageCount" bottom right overlap offset-x="8"
               offset-y="28">
               <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
             </v-badge>
-          </v-btn-->
+          </v-btn>
           <v-menu name="user_options" offset-y>
             <template #activator="{ props }">
               <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
                 <v-avatar left color="info">
-
+                  {{ user.username[0] }}
                 </v-avatar>
-                <span class="display-name pl-1"></span>
+                <span class="display-name pl-1">{{ user.username }}</span>
               </v-chip>
             </template>
             <v-list dark style="background-color: #003366; color: white">
@@ -36,7 +37,7 @@
               <v-list-item :href="routes.LOGOUT" id="logout_button" style="min-height: 4vh" title="Logout" />
             </v-list>
           </v-menu>
-        </div>
+        </div-->
       </v-row>
     </v-container>
   </v-app-bar>
