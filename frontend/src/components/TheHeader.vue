@@ -78,6 +78,10 @@ export default {
             //Note for wkubo: not sure why this.user ends up as undefined and thus user header icon won't appear. Doesn't happen
             // when this similar logic in 'created' hook.
             this.user = userInfo;
+            //NOTE for wkubo: the following logic will also not work given this.usre ends up being undefined
+            if (userInfo && !userInfo.hasOwnProperty('roles')) {
+              router.push('/unauthorized-page');
+            }
           })
           .catch((e) => {
             if (e.response.status === 401) {
