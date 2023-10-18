@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { PAGE_TITLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
-import { PAGE_TITLES } from '@/utils/constants'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -217,8 +217,8 @@ router.beforeEach((to, _from, next) => {
               })
           }
         })
-        .catch(() => {
-          if (!authStore.state.userInfo) {
+        .catch((err) => {
+          if (!authStore.userInfo) {
             next('/login')
           } else {
             next('/token-expired')
