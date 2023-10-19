@@ -4,7 +4,7 @@
     <!-- <article id="login-banner" class="top-banner"> -->
     <v-row align="center" justify="center">
       <v-col cols="12" align="center" class="pt-0">
-        <v-img src="src/assets/images/login-header-img-resized.jpg" max-width="1448" class="align-end">
+        <v-img src="@/assets/images/login-header-img-resized.jpg" max-width="1448" class="align-end">
           <v-col align="center" style="background-color: rgb(28, 115, 158, 0.85)">
             <span class="text-h4 text-white font-weight-bold" style="font-family: BCSans">Early Childhood Care - Operating Funding Model</span>
             <br />
