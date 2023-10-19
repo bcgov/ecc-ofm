@@ -1,7 +1,8 @@
+import { defineStore } from 'pinia'
+
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 import { Routes } from '@/utils/constants'
-import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -11,13 +12,12 @@ export const useAuthStore = defineStore('auth', {
     isAuthorizedUser: localStorage.getItem('isAuthorizedUser') !== null,
     impersonateId: null,
     userInfo: null,
-    userHasRoles: false,
     isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
     isValdProgramUser: localStorage.getItem('isValdProgramUser') !== null,
     isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
   }),
   getters: {
-    userHasRolesGet: (state) => userInfo && userInfo.roles && userInfo.roles.length > 0,
+    userHasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
     //TODO: 3 temp roles ('CCP_ROLE', 'OPS_ROLE', 'PCM_ROLE') were created in auth.js (loosely
     //based on OFM requirements) for the purpose of achieving a 1st draft of the frontend that
     //will render a home screen and menu with minimal errors given no authorization/backend integration.
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', {
       if (userInf) {
         this.userInfo = userInf
         // TODO: remove this if we can get value correctly from getter.
-        this.userHasRoles = userInf.roles && userInf.roles.length > 0
+        // this.userHasRoles = userInf.roles && userInf.roles.length > 0
       } else {
         this.userInfo = null
       }

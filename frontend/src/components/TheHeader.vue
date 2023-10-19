@@ -1,7 +1,7 @@
 <template>
   <v-app-bar absolute color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
     <!-- Navbar content -->
-    <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" fluid="true">
+    <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" :fluid="true">
       <v-row class="justify-space-between">
         <a tabindex="-1" href="/">
           <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
