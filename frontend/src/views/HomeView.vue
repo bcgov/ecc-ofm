@@ -106,10 +106,6 @@ import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  data() {
-    return {
-    }
-  },
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated'])
   },

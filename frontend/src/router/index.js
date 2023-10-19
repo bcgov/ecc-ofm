@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
-import { PAGE_TITLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import { PAGE_TITLES } from '@/utils/constants'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -178,57 +178,40 @@ router.beforeEach((to, _from, next) => {
     appStore.setPageTitle('')
   }
 
-  const aStore = useAuthStore()
-  // this section is to handle the backend session expiry, where frontend vue session is still valid.
-  if (to.meta.requiresAuth && aStore.isAuthenticated) {
-    validateAndExecute('/token-expired', to)
-  } else if (to.meta.requiresAuth) {
-    validateAndExecute('login', to)
+  const authStore = useAuthStore()
+  if (to.meta.requiresAuth) {
+    authStore
+      .getJwtToken()
+      .then(() => {
+        if (!authStore.isAuthenticated) {
+          next('/token-expired')
+          return
+        }
+        authStore
+          .getUserInfo()
+          .then(() => {
+            if (!authStore.userHasRoles) {
+              next('unauthorized')
+              return
+            }
+            next()
+          })
+          .catch((error) => {
+            if (error.response?.status == '401') {
+              next('unauthorized')
+              return
+            }
+            next('error')
+          })
+      })
+      .catch((err) => {
+        if (!authStore.userInfo) {
+          next('/login')
+        }
+        next('/token-expired')
+      })
   } else {
     next()
-  }
-
-  function validateAndExecute(nextRouteInError, to) {
-    const authStore = useAuthStore()
-    console.log('router.validateAndExecute  1')
-    if (to.meta.requiresAuth) {
-      console.log('router.validateAndExecute  2')
-      authStore
-        .getJwtToken()
-        .then(() => {
-          if (!authStore.isAuthenticated) {
-            next('/token-expired')
-          } else {
-            console.log('router.validateAndExecute  3')
-            authStore
-              .getUserInfo()
-              .then(() => {
-                if (!authStore.userHasRoles) {
-                  next('unauthorized')
-                }
-                next()
-              })
-              .catch((error) => {
-                console.log('error', error)
-                if (error.response?.status == '401') {
-                  next('unauthorized')
-                } else {
-                  console.log('An error occurred.', error)
-                  next('error')
-                }
-              })
-          }
-        })
-        .catch((err) => {
-          if (!authStore.userInfo) {
-            next('/login')
-          } else {
-            next('/token-expired')
-          }
-        })
-    } else {
-      next()
-    }
   }
 })
 

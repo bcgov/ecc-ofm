@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
     isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
   }),
   getters: {
-    jwtTokenGet: () => localStorage.getItem('jwtToken'),
+    userHasRolesGet: (state) => userInfo && userInfo.roles && userInfo.roles.length > 0,
     //TODO: 3 temp roles ('CCP_ROLE', 'OPS_ROLE', 'PCM_ROLE') were created in auth.js (loosely
     //based on OFM requirements) for the purpose of achieving a 1st draft of the frontend that
     //will render a home screen and menu with minimal errors given no authorization/backend integration.
@@ -58,6 +58,7 @@ export const useAuthStore = defineStore('auth', {
     async setUserInfo(userInf) {
       if (userInf) {
         this.userInfo = userInf
+        // TODO: remove this if we can get value correctly from getter.
         this.userHasRoles = userInf.roles && userInf.roles.length > 0
       } else {
         this.userInfo = null
