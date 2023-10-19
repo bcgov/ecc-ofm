@@ -4,10 +4,9 @@
     <!-- <article id="login-banner" class="top-banner"> -->
     <v-row align="center" justify="center">
       <v-col cols="12" align="center" class="pt-0">
-        <v-img src="src/assets/images/login-header-img-resized.jpg" max-height="300" max-width="1448" class="align-end">
+        <v-img src="src/assets/images/login-header-img-resized.jpg" max-width="1448" class="align-end">
           <v-col align="center" style="background-color: rgb(28, 115, 158, 0.85)">
-            <span class="text-h4 text-white font-weight-bold" style="font-family: BCSans">Early Childhood Care - Operating
-              Funding Model</span>
+            <span class="text-h4 text-white font-weight-bold" style="font-family: BCSans">Early Childhood Care - Operating Funding Model</span>
             <br />
             <span class="text-h6 text-white">Welcome</span>
           </v-col>
@@ -18,20 +17,16 @@
     <v-container class="containerWidth1450 pa-0">
       <p class="pt-4">
         <strong>NOTE:</strong>
-        The information collected through Early Childhood Care - Operating Funding Model is collected under the authority
-        of the
+        The information collected through Early Childhood Care - Operating Funding Model is collected under the authority of the
         <i>Freedom of Information and Protection of Privacy Act</i>
         (FOIPPA) and the
         <i>Child Care BC Act</i>
-        (SBC 2001, c. 4) and will be used for the purpose of administering the Child Care Operating Funding Program, which
-        includes the Child Care Fee Reduction Initiative and the Early Childhood
-        Educator (ECE) Wage Enhancement for successfully enrolled applicants. Personal information is protected from
-        unauthorized use and disclosure in accordance with FOIPPA. Any questions or
-        concerns about the collection of this information can be directed to the Director, Child Care Operating Funding
-        Program, PO Box 9965 Stn Prov Govt, Victoria BC V8W 9R4, Phone: in Greater
+        (SBC 2001, c. 4) and will be used for the purpose of administering the Child Care Operating Funding Program, which includes the Child Care Fee Reduction Initiative and the Early Childhood
+        Educator (ECE) Wage Enhancement for successfully enrolled applicants. Personal information is protected from unauthorized use and disclosure in accordance with FOIPPA. Any questions or
+        concerns about the collection of this information can be directed to the Director, Child Care Operating Funding Program, PO Box 9965 Stn Prov Govt, Victoria BC V8W 9R4, Phone: in Greater
         Victoria: 250 356-6501, outside of Greater Victoria, Toll Free: 1 888 338-6622 (option 2).
       </p>
-      <br>
+      <br />
       <v-row>
         <v-col class="xs-12 lg-4 xl-2">
           <v-divider></v-divider>
@@ -43,9 +38,7 @@
             <v-card-text id="login_descriptor">Log in with your primary Business BCeID</v-card-text>
             <v-spacer></v-spacer>
             <v-card-actions class="mt-auto">
-              <v-row>
-                <AppButton icon="mdi-login" :href="routes.LOGIN" @click="clearStorage">BCeID Log In</AppButton>
-              </v-row>
+              <AppButton icon="mdi-login" :href="routes.LOGIN" @click="clearStorage" width="250px">BCeID Log In</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -66,10 +59,7 @@
               You must register for a Business BCeID before you can log in - it only takes a few minutes.
             </v-card-text>
             <v-card-actions>
-              <v-row>
-                <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx"
-                  @click="clearStorage">Register for a BCeID</AppButton>
-              </v-row>
+              <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" @click="clearStorage" width="250px">Register for a BCeID</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -89,8 +79,8 @@ export default {
   name: 'LoginView',
   data() {
     return {
-      routes: Routes
-    };
+      routes: Routes,
+    }
   },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated']),
@@ -98,10 +88,10 @@ export default {
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
-      this.setJwtToken();
+      this.setJwtToken()
     },
   },
-  components: { AppButton }
+  components: { AppButton },
 }
 </script>
 

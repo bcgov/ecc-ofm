@@ -1,6 +1,7 @@
 <template>
   <v-btn class="BC-Gov-PrimaryButton" v-bind="$attrs">
     <slot />
+    <v-icon v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
 </template>
 <script>
@@ -17,7 +18,6 @@ export default {
   margin: 8px;
   /* ma-2 */
   padding: 0 12px;
-  width: 100%;
   /* px-3 */
   /* padding: 12px 32px;
   text-align: center;
