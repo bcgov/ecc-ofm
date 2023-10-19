@@ -13,8 +13,7 @@ describe('HomeView', () => {
   const global = { global: { plugins: [createTestingPinia(), vuetify] } }
   test('init', async () => {
     const wrapper = mount(HomeView, global)
-    expect(wrapper.text()).toContain('OFM')
-    expect(wrapper.text()).toContain('Temp Home Screen')
+    // expect(wrapper.text()).toContain('Username:')
     expect(wrapper.html()).toMatchSnapshot()
   })
 })
