@@ -1,8 +1,7 @@
-import { defineStore } from 'pinia'
-
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 import { Routes } from '@/utils/constants'
+import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -58,8 +57,6 @@ export const useAuthStore = defineStore('auth', {
     async setUserInfo(userInf) {
       if (userInf) {
         this.userInfo = userInf
-        // TODO: remove this if we can get value correctly from getter.
-        // this.userHasRoles = userInf.roles && userInf.roles.length > 0
       } else {
         this.userInfo = null
       }
