@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import '@/styles/common.css'
 import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheHeader from '@/components/TheHeader.vue'
@@ -28,6 +29,7 @@ import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import HttpStatus from 'http-status-codes'
+
 
 export default {
   name: 'App',
@@ -51,9 +53,11 @@ export default {
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
   },
   watch: {
+    /*
     isAuthenticated() {
       this.handleWebSocket()
     },
+    */
     isAuthorizedWebsocketUser() {
       this.handleWebSocket()
     },
@@ -81,7 +85,7 @@ export default {
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
-    ...mapActions(useAuthStore, ['getJwtToken']),
+    ...mapActions(useAuthStore, ['getJwtToken', 'logout']),
     handleWebSocket() {
       if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
         this.$webSocketsConnect()
@@ -116,6 +120,7 @@ export default {
   width: 100%;
   z-index: 1002;
 }
+
 #toTopBtn {
   opacity: 0.5;
 }

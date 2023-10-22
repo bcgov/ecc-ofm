@@ -3,21 +3,27 @@
     <v-container>
       <v-card>
         <v-card-title>
-          User
+          {{ (isMinistryUser && !isImpersonating) ? 'Ministry ' : 'Provider ' }}User
         </v-card-title>
         <v-card-text>
           <v-list>
             <v-list-item>
-              <v-list-item-title>Username:</v-list-item-title>
-              <v-list-item-subtitle>{{ userInfo.username }}</v-list-item-subtitle>
+              <v-list-item-title>
+                {{ (isMinistryUser && !isImpersonating) ? 'IDIR' : 'Business BCeID' }}:
+              </v-list-item-title>
+              <v-list-item-subtitle>{{ userInfo.userName }}</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
-              <v-list-item-title>User ID:</v-list-item-title>
+              <v-list-item-title>GUID:</v-list-item-title>
               <v-list-item-subtitle>{{ userInfo.userId }}</v-list-item-subtitle>
             </v-list-item>
+            <v-list-item v-if="!isMinistryUser && userInfo.businessName">
+              <v-list-item-title>Business Legal Name:</v-list-item-title>
+              <v-list-item-subtitle>{{ userInfo.businessName }}</v-list-item-subtitle>
+            </v-list-item>
             <v-list-item>
-              <v-list-item-title>Given Name:</v-list-item-title>
-              <v-list-item-subtitle>{{ userInfo.firstName }} {{ userInfo.firstName }}</v-list-item-subtitle>
+              <v-list-item-title>Name:</v-list-item-title>
+              <v-list-item-subtitle>{{ userInfo.firstName }} {{ userInfo.lastName }}</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>Email:</v-list-item-title>
@@ -27,7 +33,7 @@
         </v-card-text>
       </v-card>
     </v-container>
-    <v-container>
+    <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
         <v-card-title>
           Roles
@@ -41,7 +47,7 @@
         </v-card-text>
       </v-card>
     </v-container>
-    <v-container>
+    <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
         <v-card-title>
           Organization
@@ -69,14 +75,14 @@
         </v-card-text>
       </v-card>
     </v-container>
-    <v-container>
+    <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
         <v-card-title>
           Facilities
         </v-card-title>
         <v-card-text>
           <!-- TODO fix: v-list with v-for is throughing warning in browser concole -->
-          <v-list v-for="(facility, index) in userInfo.facilityPermission" :key="index">
+          <v-list v-for="(  facility, index  ) in   userInfo.facilityPermission  " :key="index">
             <v-list-item>
               <v-list-item-title>Facility ID:</v-list-item-title>
               <v-list-item-subtitle>{{ facility.facilityId }}</v-list-item-subtitle>
@@ -107,7 +113,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   computed: {
-    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated'])
+    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser', 'isImpersonating'])
   },
 }
 </script>

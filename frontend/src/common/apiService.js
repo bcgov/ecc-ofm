@@ -1,5 +1,6 @@
+import { ApiRoutes, AuthRoutes } from '@/utils/constants'
+
 import AuthService from '@/common/authService'
-import { Routes } from '@/utils/constants'
 import axios from 'axios'
 
 // Buffer concurrent requests while refresh token is being acquired
@@ -73,13 +74,32 @@ export default {
       delete apiAxios.defaults.headers.common['Authorization']
     }
   },
-  // TODO jstorey not sure if we are going to want to get codes this way...
+
+  async getUserInfo() {
+    try {
+      return await apiAxios.get(ApiRoutes.USER)
+    } catch (e) {
+      console.log(`Failed to get from Nodejs getUserInfo API - ${e}`)
+      throw e
+    }
+  },
+
+  async getUserImpersonateInfo(userName) {
+    try {
+      return await apiAxios.get(`${ApiRoutes.USER}/${userName}`)
+    } catch (e) {
+      console.log(`Failed to get from Nodejs getUserImpersonateInfo API - ${e}`)
+      throw e
+    }
+  },
+
+  // TODO: consider weather we want to do codes this way when we address code list/description functionality...
   //getAllActiveInstituteProvinceCodes: getCodes(`${Routes.cache.PROVINCES_URL}?active=true`),
   //getAllActiveInstituteCountryCodes: getCodes(`${Routes.cache.COUNTRIES_URL}?active=true`),
 
   async getConfig() {
     try {
-      const response = await apiAxios.get(Routes.CONFIG)
+      const response = await apiAxios.get(AuthRoutes.CONFIG)
       return response
     } catch (e) {
       console.log(`Failed to do get from Nodejs getConfig API - ${e}`)
