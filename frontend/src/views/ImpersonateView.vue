@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia';
+import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { PATHS } from '@/utils/constants'
 import rules from '@/utils/rules';
-import alertMixin from '@/mixins/alertMixin';
+import alertMixin from '@/mixins/alertMixin'
 
 
 export default {
@@ -37,7 +37,7 @@ export default {
             businessBCeId: undefined,
             isValidForm: true,
             processing: false,
-        };
+        }
     },
     computed: {
         ...mapState(useAuthStore, ['userInfo']),
@@ -58,7 +58,7 @@ export default {
                 if (error.response?.status == '404') {
                     this.setFailureAlert(`Unable to find BCeID: [ ${this.businessBCeId} ]`)
                 } else if (error.response?.status == '409') {
-                    this.setFailureAlert(`BCeID: [ ${this.businessBCeId} ] is found, but does not have an associated User GUID`);
+                    this.setFailureAlert(`BCeID: [ ${this.businessBCeId} ] is found, but does not have an associated User GUID`)
                 } else {
                     this.setFailureAlert('An error occurred while trying to load BCeID')
                 }

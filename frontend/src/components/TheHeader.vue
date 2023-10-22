@@ -56,7 +56,7 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser']),
     dataReady: function () {
-      return this.userInfo;
+      return this.userInfo
     },
     unreadMessageCount() {
       return Math.floor(Math.random() * 10)

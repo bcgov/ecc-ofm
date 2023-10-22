@@ -6,7 +6,6 @@
 
 <script>
 import { AuthRoutes } from '@/utils/constants'
-import ApiService from '@/common/apiService';
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
