@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar class="env-bar" v-if="bannerColor !== ''" :color="bannerColor" height="20" style="margin-top: 2px; position: relative">
+  <v-app-bar class="env-bar" v-if="bannerColor !== ''" :color="bannerColor" height="20">
     <div>
       <h3 class="envBanner">{{ bannerEnvironment }} Environment</h3>
     </div>

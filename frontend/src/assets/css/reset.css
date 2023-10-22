@@ -1,0 +1,14 @@
+html {
+  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
+}
+
+h1 {
+  font-size: 1.25rem;
+}
+a {
+  color: #1976d2;
+}
+
+a:hover {
+  cursor: pointer;
+}

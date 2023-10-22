@@ -1,5 +1,6 @@
 <template>
   <v-app-bar absolute color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
+    <v-app-bar-nav-icon variant="text" class="d-md-none" @click="$emit('menuToggled')" />
     <!-- Navbar content -->
     <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" :fluid="true">
       <v-row class="justify-space-between">
@@ -72,6 +73,7 @@ export default {
       return this.$vuetify.display.xs
     },
   },
+  emits: ['menuToggled'],
 }
 </script>
 
