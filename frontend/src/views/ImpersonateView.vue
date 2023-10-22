@@ -5,7 +5,7 @@
         </v-row>
         <v-row>
             <v-form ref="form" v-model="isValidForm" @submit.prevent>
-                <v-card>
+                <v-card class="custom-card">
                     <v-row>
                         <v-col>
                             <v-text-field outlined required v-model="businessBCeId" id="businessBCeId-field"
@@ -69,7 +69,7 @@ export default {
 </script>
   
 <style scoped>
-.v-card {
+.custom-card {
     width: 350px;
     margin: 10px;
     padding: 10px;

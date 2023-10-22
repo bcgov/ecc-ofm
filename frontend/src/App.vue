@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import '@/styles/common.css'
 import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheHeader from '@/components/TheHeader.vue'
@@ -29,7 +28,6 @@ import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import HttpStatus from 'http-status-codes'
-
 
 export default {
   name: 'App',
@@ -68,24 +66,25 @@ export default {
   async created() {
     //this.setLoading(true);
     this.getJwtToken()
-      //TODO commented out during sprint 1, might need in later sprint...then(() => Promise.all([this.getConfig()]))
-      .catch((e) => {
-        if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-          this.logout()
-          this.$router.replace({
-            name: 'error',
-            query: { message: `500_${e.data || 'ServerError'}` },
-          })
-        }
-      })
-      .finally(() => {
-        //this.setLoading(false);
-      })
-    //this.setLoading(false);
+    //TODO commented out during sprint 1, might need in later sprint if we need an endpoint for config info...
+    /*.then(() => Promise.all([this.getConfig()]))
+    .catch((e) => {
+      if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+        this.logout()
+        this.$router.replace({
+          name: 'error',
+          query: { message: `500_${e.data || 'ServerError'}` },
+        })
+      }
+    })
+    .finally(() => {
+      this.setLoading(false);
+    })
+    this.setLoading(false); */
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
-    ...mapActions(useAuthStore, ['getJwtToken', 'logout']),
+    ...mapActions(useAuthStore, ['getJwtToken']),
     handleWebSocket() {
       if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
         this.$webSocketsConnect()

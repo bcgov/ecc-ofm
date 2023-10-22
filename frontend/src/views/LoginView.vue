@@ -71,26 +71,6 @@
             </v-card-actions>
           </v-card>
         </v-col>
-
-
-        <v-col cols="4" class="xs-12 lg-6 xl-2">
-          <v-divider></v-divider>
-          <v-card flat class="d-flex flex-column">
-            <v-card-title class="gov-header">
-              <h4 id="login_text">Ministry</h4>
-            </v-card-title>
-            <v-card-text id="login_descriptor">Log in with your IDIR account</v-card-text>
-            <v-card-actions>
-              <v-row>
-                <v-btn id="login-button" :href="authRoutes.LOGIN_IDIR" class="ma-2 px-3" dark color="white"
-                  style="background-color: #003366" @click="clearStorage">
-                  IDIR Log In
-                  <v-icon>mdi-login</v-icon>
-                </v-btn>
-              </v-row>
-            </v-card-actions>
-          </v-card>
-        </v-col>
       </v-row>
     </v-container>
     <!-- </article> -->
