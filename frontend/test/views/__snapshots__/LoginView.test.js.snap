@@ -8,7 +8,7 @@ exports[`LoginView > init 1`] = `
     <div data-v-45f5edd7=\\"\\" class=\\"v-col v-col-12 pt-0\\" align=\\"center\\">
       <div data-v-45f5edd7=\\"\\" class=\\"v-responsive v-img v-img--booting align-end\\" style=\\"max-width: 1448px;\\">
         <div class=\\"v-responsive__sizer\\"></div>
-        <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"src/assets/images/login-header-img-resized.jpg\\" style=\\"display: none;\\"></transition-stub>
+        <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/login-header-img-resized.jpg\\" style=\\"display: none;\\"></transition-stub>
         <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
           <!---->
         </transition-stub>
