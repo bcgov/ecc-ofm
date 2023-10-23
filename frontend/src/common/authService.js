@@ -1,16 +1,15 @@
+import { AuthRoutes } from '@/utils/constants'
 import axios from 'axios'
-
-import { Routes } from '@/utils/constants'
 
 export default {
   //Retrieves an auth token from the API endpoint
   async getAuthToken() {
     try {
-      const response = await axios.get(Routes.TOKEN)
+      const response = await axios.get(AuthRoutes.TOKEN)
 
       return response.data
     } catch (e) {
-      console.log(`Failed to acquire JWT token - ${e}`) // eslint-disable-line no-console
+      console.log(`Failed to acquire JWT token - ${e}`)
       throw e
     }
   },
@@ -18,7 +17,7 @@ export default {
   //Refreshes the users auth token
   async refreshAuthToken(token) {
     try {
-      const response = await axios.post(Routes.REFRESH, {
+      const response = await axios.post(AuthRoutes.REFRESH, {
         refreshToken: token,
       })
 
@@ -28,7 +27,7 @@ export default {
 
       return response.data
     } catch (e) {
-      console.log(`Failed to refresh JWT token - ${e}`) // eslint-disable-line no-console
+      console.log(`Failed to refresh JWT token - ${e}`)
       throw e
     }
   },

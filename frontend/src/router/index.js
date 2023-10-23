@@ -3,8 +3,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
+import Impersonate from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import { PAGE_TITLES } from '@/utils/constants'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
@@ -16,6 +18,24 @@ const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
   routes: [
+    {
+      path: '/impersonate',
+      name: 'impersonate',
+      component: Impersonate,
+      meta: {
+        pageTitle: 'Impersonate a BCeID User',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/internal',
+      name: 'ministry login',
+      component: MinistryLoginView,
+      meta: {
+        pageTitle: PAGE_TITLES.LOGIN,
+        requiresAuth: false,
+      },
+    },
     {
       path: '/',
       name: 'home',
@@ -87,7 +107,6 @@ const router = createRouter({
       name: 'backend-session-expired',
       component: BackendSessionExpiredView,
     },
-
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // eventually be removed...
@@ -190,7 +209,7 @@ router.beforeEach((to, _from, next) => {
         authStore
           .getUserInfo()
           .then(() => {
-            if (!authStore.userHasRoles) {
+            if (!authStore.userHasRoles && !authStore.isMinistryUser) {
               next('unauthorized')
               return
             }

@@ -80,6 +80,7 @@ function getUserGuid(req) {
   }
   return guid
 }
+
 function isIdirUser(req) {
   const userInfo = req.session?.passport?.user
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
@@ -90,11 +91,12 @@ function isIdirUser(req) {
   //For local development only.
   //generally set isIdirUser to false, so that developers can log in using their
   //IDIRS as a normal, non-ministry user.
-  if ('local' === config.get('environment') && !config.get('server:useImpersonate')) {
+  /*   if ('local' === config.get('environment') && !config.get('server:useImpersonate')) {
     return false
-  }
+  } */
   return isIdir
 }
+
 function getUserName(req) {
   let userName = req.session?.passport?.user?._json?.bceid_username
   if (!userName) {
@@ -102,6 +104,12 @@ function getUserName(req) {
   }
   return userName
 }
+
+function getBusinessName(req) {
+  let businessName = req.session?.passport?.user?._json?.bceid_business_name
+  return businessName
+}
+
 function getAccessToken(req) {
   const user = getSessionUser(req)
   return user && user.jwt
@@ -237,6 +245,7 @@ const utils = {
   getUserGuid,
   isIdirUser,
   getUserName,
+  getBusinessName,
   getOperationWithObjectId,
   getOperation,
   postOperation,

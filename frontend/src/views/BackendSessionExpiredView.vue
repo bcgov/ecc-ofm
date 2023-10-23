@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import { Routes } from '@/utils/constants'
+import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 import { mapActions } from 'pinia'
 export default {
   name: 'BackendSessionExpiredView',
   data() {
     return {
-      link: Routes.SESSION_EXPIRED,
+      link: AuthRoutes.SESSION_EXPIRED,
     }
   },
   mounted() {

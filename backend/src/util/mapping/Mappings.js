@@ -1,7 +1,7 @@
 const UserProfileMappings = [
   { back: 'contactid', front: 'contactId' },
   { back: 'ccof_userid', front: 'userId' },
-  { back: 'ccof_username', front: 'username' },
+  { back: 'ccof_username', front: 'userName' },
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },

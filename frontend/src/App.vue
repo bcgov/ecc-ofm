@@ -51,9 +51,11 @@ export default {
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
   },
   watch: {
+    /*
     isAuthenticated() {
       this.handleWebSocket()
     },
+    */
     isAuthorizedWebsocketUser() {
       this.handleWebSocket()
     },
@@ -64,20 +66,21 @@ export default {
   async created() {
     //this.setLoading(true);
     this.getJwtToken()
-      //TODO commented out during sprint 1, might need in later sprint...then(() => Promise.all([this.getConfig()]))
-      .catch((e) => {
-        if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-          this.logout()
-          this.$router.replace({
-            name: 'error',
-            query: { message: `500_${e.data || 'ServerError'}` },
-          })
-        }
-      })
-      .finally(() => {
-        //this.setLoading(false);
-      })
-    //this.setLoading(false);
+    //TODO commented out during sprint 1, might need in later sprint if we need an endpoint for config info...
+    /*.then(() => Promise.all([this.getConfig()]))
+    .catch((e) => {
+      if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+        this.logout()
+        this.$router.replace({
+          name: 'error',
+          query: { message: `500_${e.data || 'ServerError'}` },
+        })
+      }
+    })
+    .finally(() => {
+      this.setLoading(false);
+    })
+    this.setLoading(false); */
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
@@ -116,6 +119,7 @@ export default {
   width: 100%;
   z-index: 1002;
 }
+
 #toTopBtn {
   opacity: 0.5;
 }

@@ -1,20 +1,26 @@
 let baseRoot = '/api'
 const authRoot = baseRoot + '/auth'
 
-let object = {
+export const AuthRoutes = Object.freeze({
   LOGIN: authRoot + '/login',
   LOGIN_IDIR: authRoot + '/login-idir',
   LOGOUT: authRoot + '/logout',
   SESSION_EXPIRED: authRoot + '/logout?sessionExpired=true',
   REFRESH: authRoot + '/refresh',
   TOKEN: authRoot + '/token',
-  USER: baseRoot + '/user',
   SESSION_REMAINING_TIME: authRoot + '/user-session-remaining-time',
-  //TODO comment out sprint 1... might need later: CONFIG: baseRoot + '/config/lookup',
-}
+})
 
-//endpoints
-export const Routes = Object.freeze(object)
+export const ApiRoutes = Object.freeze({
+  USER: baseRoot + '/user',
+})
+
+export const PATHS = Object.freeze({
+  ROOT: {
+    HOME: '/',
+    IMPERSONATE: '/impersonate',
+  },
+})
 
 export const ACCOUNT_TYPE = Object.freeze({
   FACILITY: 100000001,
