@@ -8,7 +8,7 @@ exports[`LoginView > init 1`] = `
     <div data-v-45f5edd7=\\"\\" class=\\"v-col v-col-12 pt-0\\" align=\\"center\\">
       <div data-v-45f5edd7=\\"\\" class=\\"v-responsive v-img v-img--booting align-end\\" style=\\"max-width: 1448px;\\">
         <div class=\\"v-responsive__sizer\\"></div>
-        <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"src/assets/images/login-header-img-resized.jpg\\" style=\\"display: none;\\"></transition-stub>
+        <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/login-header-img-resized.jpg\\" style=\\"display: none;\\"></transition-stub>
         <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
           <!---->
         </transition-stub>
@@ -49,7 +49,7 @@ exports[`LoginView > init 1`] = `
           <div data-v-45f5edd7=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\">Log in with your primary Business BCeID</div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-spacer\\"></div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions mt-auto\\"><a data-v-d22d1084=\\"\\" data-v-45f5edd7=\\"\\" class=\\"v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text BC-Gov-PrimaryButton\\" style=\\"width: 250px;\\" href=\\"/api/auth/login\\" id=\\"bceid-login\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
-              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\">BCeID Log In<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"> BCeID Log In<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
               <!---->
               <!---->
             </a></div>

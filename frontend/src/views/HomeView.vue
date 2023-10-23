@@ -2,15 +2,11 @@
   <div v-if="isAuthenticated && userInfo">
     <v-container>
       <v-card>
-        <v-card-title>
-          {{ (isMinistryUser && !isImpersonating) ? 'Ministry ' : 'Provider ' }}User
-        </v-card-title>
+        <v-card-title>{{ isMinistryUser && !isImpersonating ? 'Ministry ' : 'Provider ' }}User</v-card-title>
         <v-card-text>
           <v-list>
             <v-list-item>
-              <v-list-item-title>
-                {{ (isMinistryUser && !isImpersonating) ? 'IDIR' : 'Business BCeID' }}:
-              </v-list-item-title>
+              <v-list-item-title>{{ isMinistryUser && !isImpersonating ? 'IDIR' : 'Business BCeID' }}:</v-list-item-title>
               <v-list-item-subtitle>{{ userInfo.userName }}</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
@@ -35,9 +31,7 @@
     </v-container>
     <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
-        <v-card-title>
-          Roles
-        </v-card-title>
+        <v-card-title>Roles</v-card-title>
         <v-card-text>
           <v-list>
             <v-list-item>
@@ -49,9 +43,7 @@
     </v-container>
     <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
-        <v-card-title>
-          Organization
-        </v-card-title>
+        <v-card-title>Organization</v-card-title>
         <v-card-text>
           <v-list>
             <v-list-item>
@@ -68,8 +60,7 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>Type:</v-list-item-title>
-              <v-list-item-subtitle>{{ userInfo.organizationAccountType }} (WIP: will convert # to
-                description)</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ userInfo.organizationAccountType }} (WIP: will convert # to description)</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -77,12 +68,10 @@
     </v-container>
     <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
-        <v-card-title>
-          Facilities
-        </v-card-title>
+        <v-card-title>Facilities</v-card-title>
         <v-card-text>
           <!-- TODO fix: v-list with v-for is throughing warning in browser concole -->
-          <v-list v-for="(  facility, index  ) in   userInfo.facilityPermission  " :key="index">
+          <v-list v-for="(facility, index) in userInfo.facilityPermission" :key="index">
             <v-list-item>
               <v-list-item-title>Facility ID:</v-list-item-title>
               <v-list-item-subtitle>{{ facility.facilityId }}</v-list-item-subtitle>
@@ -97,8 +86,7 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>Facility Type:</v-list-item-title>
-              <v-list-item-subtitle>{{ facility.facilityType }} (WIP: will convert # to
-                description)</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ facility.facilityType }} (WIP: will convert # to description)</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -113,7 +101,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   computed: {
-    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser', 'isImpersonating'])
+    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser', 'isImpersonating']),
   },
 }
 </script>
