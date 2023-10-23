@@ -19,7 +19,7 @@ export default {
 .menu-item {
   cursor: pointer;
   font-size: 1em;
-  height: 3em;
+  height: 2em;
 }
 .menu-item-active {
   background-color: #003366;

@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { PAGE_TITLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
@@ -7,35 +10,14 @@ import Impersonate from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import { PAGE_TITLES } from '@/utils/constants'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
   routes: [
-    {
-      path: '/impersonate',
-      name: 'impersonate',
-      component: Impersonate,
-      meta: {
-        pageTitle: 'Impersonate a BCeID User',
-        requiresAuth: true,
-      },
-    },
-    {
-      path: '/internal',
-      name: 'ministry login',
-      component: MinistryLoginView,
-      meta: {
-        pageTitle: PAGE_TITLES.LOGIN,
-        requiresAuth: false,
-      },
-    },
     {
       path: '/',
       name: 'home',
@@ -55,11 +37,29 @@ const router = createRouter({
       },
     },
     {
+      path: '/internal',
+      name: 'ministry login',
+      component: MinistryLoginView,
+      meta: {
+        pageTitle: PAGE_TITLES.LOGIN,
+        requiresAuth: false,
+      },
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: LogoutView,
       meta: {
         requiresAuth: false,
+      },
+    },
+    {
+      path: '/impersonate',
+      name: 'impersonate',
+      component: Impersonate,
+      meta: {
+        pageTitle: 'Impersonate a BCeID User',
+        requiresAuth: true,
       },
     },
     {
@@ -197,6 +197,11 @@ router.beforeEach((to, _from, next) => {
     appStore.setPageTitle('')
   }
 
+  // TODO (weskubo)
+  // 1. Don't allow access to Logout page if not logged in
+  // 2. Don't allow access to Login if Logged in
+  // 3. Don't allow access to Internal if logged in
+
   const authStore = useAuthStore()
   if (to.meta.requiresAuth) {
     authStore
@@ -226,6 +231,7 @@ router.beforeEach((to, _from, next) => {
       .catch((err) => {
         if (!authStore.userInfo) {
           next('/login')
+          return
         }
         next('/token-expired')
       })

@@ -1,5 +1,6 @@
 <template>
   <v-app-bar absolute color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
+    <v-app-bar-nav-icon variant="text" class="d-md-none" @click="$emit('menuToggled')" />
     <!-- Navbar content -->
     <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" :fluid="true">
       <v-row class="justify-space-between">
@@ -29,10 +30,8 @@
               </v-chip>
             </template>
             <v-list dark style="background-color: #003366; color: white">
-              <v-list-item compact :to="{ name: 'home' }" id="home_button" title="Home" />
-              <v-list-item v-if="isMinistryUser" compact id="impersonate_button" :to="paths.ROOT.IMPERSONATE"
-                title="Impersonate" />
-              <v-list-item compact id="logout_button" :href="authRoutes.LOGOUT" title="Log Out" />
+              <v-list-item id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
+              <v-list-item id="logout_button" :href="authRoutes.LOGOUT" title="Log Out" />
             </v-list>
           </v-menu>
         </div>
@@ -43,16 +42,16 @@
 
 <script>
 import { mapState } from 'pinia'
-import { AuthRoutes, PATHS } from '@/utils/constants'
+import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
   data() {
     return {
       authRoutes: AuthRoutes,
-      paths: PATHS,
     }
   },
+  emits: ['menuToggled'],
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser']),
     dataReady: function () {
@@ -75,17 +74,10 @@ export default {
       return this.$vuetify.display.xs
     },
   },
-
-  methods: {
-    goToImpersonatePage() {
-      // jstorey PATHS.ROOT.IMPERSONATE
-      this.$router.push('/impersonate')
-    },
-  }
 }
 </script>
 
-<style>
+<style scoped>
 .gov-header .v-icon {
   padding-left: 10px;
 }

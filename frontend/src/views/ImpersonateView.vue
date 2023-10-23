@@ -23,7 +23,6 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { PATHS } from '@/utils/constants'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
 
@@ -49,7 +48,7 @@ export default {
       try {
         await this.getUserInfo()
         this.processing = false
-        this.$router.push(PATHS.ROOT.HOME)
+        this.$router.push({ name: 'home' })
       } catch (error) {
         this.processing = false
         this.setImpersonateId(null)

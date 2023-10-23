@@ -15,13 +15,6 @@ export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
 })
 
-export const PATHS = Object.freeze({
-  ROOT: {
-    HOME: '/',
-    IMPERSONATE: '/impersonate',
-  },
-})
-
 export const ACCOUNT_TYPE = Object.freeze({
   FACILITY: 100000001,
   ORGANIZATION: 100000000,

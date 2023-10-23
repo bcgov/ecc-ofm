@@ -260,6 +260,11 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-20.5.4.tgz"
   integrity sha512-Y9vbIAoM31djQZrPYjpTLo0XlaSwOIsrlfE3LpulZeRblttsLQRFRlBAppW0LOxyT3ALj2M5vU1ucQQayQH3jA==
 
+"@types/web-bluetooth@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.18.tgz#74bd1c8fd3a2058cb6fc76b188fcded50a83d866"
+  integrity sha512-v/ZHEj9xh82usl8LMR3GarzFY1IrbXJw5L4QfQhokjRV91q+SelFqxQWSep1ucXEZ22+dSTwLFkXeur25sPIbw==
+
 "@vitejs/plugin-vue@^4.3.1":
   version "4.3.3"
   resolved "https://registry.npmjs.org/@vitejs/plugin-vue/-/plugin-vue-4.3.3.tgz"
@@ -418,6 +423,28 @@
   dependencies:
     find-cache-dir "^3.3.2"
     upath "^2.0.1"
+
+"@vueuse/core@^10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.5.0.tgz#04d1e6d26592bb997bb755a4830ea7583c3e8612"
+  integrity sha512-z/tI2eSvxwLRjOhDm0h/SXAjNm8N5ld6/SC/JQs6o6kpJ6Ya50LnEL8g5hoYu005i28L0zqB5L5yAl8Jl26K3A==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.18"
+    "@vueuse/metadata" "10.5.0"
+    "@vueuse/shared" "10.5.0"
+    vue-demi ">=0.14.6"
+
+"@vueuse/metadata@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.5.0.tgz#7501a88cf5cbf7a515a03f0b8bbe3cecf30cad11"
+  integrity sha512-fEbElR+MaIYyCkeM0SzWkdoMtOpIwO72x8WsZHRE7IggiOlILttqttM69AS13nrDxosnDBYdyy3C5mR1LCxHsw==
+
+"@vueuse/shared@10.5.0":
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-10.5.0.tgz#b3ac8c190a5dae41db5e1b60fe304a9b4247393c"
+  integrity sha512-18iyxbbHYLst9MqU1X1QNdMHIjks6wC7XTVf0KNOv5es/Ms6gjVFCAAWTVP2JStuGqydg3DT+ExpFORUEi9yhg==
+  dependencies:
+    vue-demi ">=0.14.6"
 
 abbrev@^1.0.0:
   version "1.1.1"
@@ -1748,7 +1775,7 @@ vue-component-type-helpers@1.8.4:
   resolved "https://registry.npmjs.org/vue-component-type-helpers/-/vue-component-type-helpers-1.8.4.tgz"
   integrity sha512-6bnLkn8O0JJyiFSIF0EfCogzeqNXpnjJ0vW/SZzNHfe6sPx30lTtTXlE5TFs2qhJlAtDFybStVNpL73cPe3OMQ==
 
-vue-demi@>=0.14.5:
+vue-demi@>=0.14.5, vue-demi@>=0.14.6:
   version "0.14.6"
   resolved "https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.6.tgz"
   integrity sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==

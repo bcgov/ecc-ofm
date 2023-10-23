@@ -2,14 +2,17 @@
 <template>
   <v-app id="app">
     <div class="header">
-      <TheHeader />
+      <TheHeader @menu-toggled="handleMenuToggled" />
       <TheSnackBar />
       <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
       <TheEnvBar />
     </div>
+
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <TheMenu v-if="isAuthenticated" />
+      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false">
+        <TheMenu />
+      </v-navigation-drawer>
       <router-view class="align-start px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -27,7 +30,6 @@ import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import HttpStatus from 'http-status-codes'
 
 export default {
   name: 'App',
@@ -40,8 +42,10 @@ export default {
     TheFooter,
     TheMenu,
   },
+
   data() {
     return {
+      showMenu: true,
       showToTopBtn: false,
       deactivateMultipleDraggableDialog: null,
     }
@@ -49,6 +53,9 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
+    mobile() {
+      return this.$vuetify.display.mobile
+    },
   },
   watch: {
     /*
@@ -58,6 +65,10 @@ export default {
     */
     isAuthorizedWebsocketUser() {
       this.handleWebSocket()
+    },
+    mobile() {
+      // Reset the menu state on mobile change
+      this.showMenu = false
     },
   },
   mounted() {
@@ -85,6 +96,9 @@ export default {
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
     ...mapActions(useAuthStore, ['getJwtToken']),
+    handleMenuToggled() {
+      this.showMenu = !this.showMenu
+    },
     handleWebSocket() {
       if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
         this.$webSocketsConnect()
@@ -105,6 +119,14 @@ export default {
 </script>
 
 <style>
+.site-menu {
+  margin-top: 2px;
+}
+
+.envBanner {
+  font-size: 0.8rem;
+}
+
 .header {
   /* background-color: #036;
   border-bottom: 2px solid #fcba19;
@@ -127,11 +149,6 @@ export default {
 #toTopBtn:hover {
   opacity: 1;
 }
-
-html {
-  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
-}
-
 .v-alert.bootstrap-success {
   color: #234720 !important;
   background-color: #d9e7d8 !important;
@@ -164,24 +181,8 @@ html {
   height: 100%;
 }
 
-a {
-  color: #1976d2;
-}
-
-a:hover {
-  cursor: pointer;
-}
-
-.envBanner {
-  font-size: 0.8rem;
-}
-
 .theme--light.application {
   background: #f1f1f1;
-}
-
-h1 {
-  font-size: 1.25rem;
 }
 
 .v-toolbar__title {
