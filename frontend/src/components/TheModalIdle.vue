@@ -1,19 +1,18 @@
 <template>
   <div style="display: none">
-    <a id="logout_href" :href="routes.SESSION_EXPIRED" />
+    <a id="logout_href" :href="authRoutes.SESSION_EXPIRED" />
   </div>
 </template>
 
 <script>
-import { Routes } from '@/utils/constants'
-import ApiService from '@/common/apiService';
+import { AuthRoutes } from '@/utils/constants'
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
   data() {
     return {
-      routes: Routes
+      authRoutes: AuthRoutes
     }
   },
   async mounted() {

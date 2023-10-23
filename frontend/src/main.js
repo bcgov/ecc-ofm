@@ -1,5 +1,6 @@
 import 'regenerator-runtime/runtime'
 import '@bcgov/bc-sans/css/BCSans.css'
+import '@/assets/css/main.css'
 import '@/assets/css/reset.css'
 
 import moment from 'moment'

@@ -49,7 +49,7 @@ exports[`LoginView > init 1`] = `
           <div data-v-45f5edd7=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\">Log in with your primary Business BCeID</div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-spacer\\"></div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions mt-auto\\"><a data-v-d22d1084=\\"\\" data-v-45f5edd7=\\"\\" class=\\"v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text BC-Gov-PrimaryButton\\" style=\\"width: 250px;\\" href=\\"/api/auth/login\\" id=\\"bceid-login\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
-              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\">BCeID Log In<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"> BCeID Log In<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
               <!---->
               <!---->
             </a></div>

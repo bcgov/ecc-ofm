@@ -1,6 +1,5 @@
-import { defineStore } from 'pinia'
-
 import ApiService from '@/common/apiService'
+import { defineStore } from 'pinia'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -12,9 +11,12 @@ export const useAppStore = defineStore('app', {
     subtitleBanner: '',
     showNavBar: false,
     stickyInfoPanelHeight: null,
+
+    // Alert Notifications
     alertNotificationText: '',
     alertNotificationQueue: [],
     alertNotification: false,
+
     config: '',
   }),
   actions: {

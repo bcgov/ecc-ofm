@@ -39,8 +39,8 @@
     </v-navigation-drawer>
     <v-app-bar id="navBar" absolute elevation="0" color="#38598A" style="z-index: 1001" :dark="true" class="pl-12 pr-8" density="compact">
       <v-app-bar-nav-icon id="menuBtn" style="color: white; margin-left: -40px" @click="drawer = true">
-        <v-icon v-if="!drawer"> $menu </v-icon>
-        <v-icon v-else> $close </v-icon>
+        <v-icon v-if="!drawer">$menu</v-icon>
+        <v-icon v-else>$close</v-icon>
       </v-app-bar-nav-icon>
       <v-app-bar-title style="margin-left: 0px">Menu</v-app-bar-title>
       <v-toolbar-title class="ml-4 nav-title pl-4">
@@ -49,11 +49,11 @@
       <v-spacer />
       <TheSetNavigation />
     </v-app-bar>
-    <v-app-bar v-if="bannerColor !== ''" style="color: white" :color="bannerColor" sticky dense height="20rem" clipped-left>
+    <!-- <v-app-bar v-if="bannerColor !== ''" style="color: white" :color="bannerColor" sticky dense height="20rem" clipped-left>
       <div>
         <h3 class="envBanner pl-5">{{ bannerEnvironment }} Environment</h3>
       </div>
-    </v-app-bar>
+    </v-app-bar> -->
   </div>
 </template>
 

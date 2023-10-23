@@ -16,27 +16,24 @@
           </v-row>
         </v-row>
         <v-spacer></v-spacer>
-        <!-- <div v-if="isAuthenticated && userInfo" class="mt-5">
-          <v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
+        <div v-if="isAuthenticated && userInfo" class="mt-5">
+          <!--v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
             <v-badge color="red" class="pt-0" :content="unreadMessageCount" bottom right overlap offset-x="8" offset-y="28">
               <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
             </v-badge>
-          </v-btn>
+          </v-btn-->
           <v-menu name="user_options" offset-y>
             <template #activator="{ props }">
               <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
-                <v-avatar left color="info"></v-avatar>
-                <span class="display-name pl-1"></span>
+                <v-avatar left color="info">{{ userInfo.displayName[0] }}</v-avatar>
+                <span class="display-name pl-1">{{ userInfo.displayName }}</span>
               </v-chip>
             </template>
             <v-list dark style="background-color: #003366; color: white">
-              <v-list-item :to="{ name: 'home' }" id="logout_button" style="min-height: 4vh" title="Home" />
-              <v-list-item :href="routes.LOGOUT" id="logout_button" style="min-height: 4vh" title="Logout" />
+              <v-list-item id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
+              <v-list-item id="logout_button" :href="authRoutes.LOGOUT" title="Log Out" />
             </v-list>
           </v-menu>
-        </div> -->
-        <div class="logout" v-if="isAuthenticated">
-          <v-btn :href="routes.LOGOUT" variant="plain" class="logout-link">Log out</v-btn>
         </div>
       </v-row>
     </v-container>
@@ -45,17 +42,21 @@
 
 <script>
 import { mapState } from 'pinia'
-import { Routes } from '@/utils/constants'
+import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
   data() {
     return {
-      routes: Routes,
+      authRoutes: AuthRoutes,
     }
   },
+  emits: ['menuToggled'],
   computed: {
-    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated']),
+    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser']),
+    dataReady: function () {
+      return this.userInfo
+    },
     unreadMessageCount() {
       return Math.floor(Math.random() * 10)
     },
@@ -73,11 +74,10 @@ export default {
       return this.$vuetify.display.xs
     },
   },
-  emits: ['menuToggled'],
 }
 </script>
 
-<style>
+<style scoped>
 .gov-header .v-icon {
   padding-left: 10px;
 }

@@ -30,7 +30,6 @@ import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import HttpStatus from 'http-status-codes'
 
 export default {
   name: 'App',
@@ -59,9 +58,11 @@ export default {
     },
   },
   watch: {
+    /*
     isAuthenticated() {
       this.handleWebSocket()
     },
+    */
     isAuthorizedWebsocketUser() {
       this.handleWebSocket()
     },
@@ -76,20 +77,21 @@ export default {
   async created() {
     //this.setLoading(true);
     this.getJwtToken()
-      //TODO commented out during sprint 1, might need in later sprint...then(() => Promise.all([this.getConfig()]))
-      .catch((e) => {
-        if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-          this.logout()
-          this.$router.replace({
-            name: 'error',
-            query: { message: `500_${e.data || 'ServerError'}` },
-          })
-        }
-      })
-      .finally(() => {
-        //this.setLoading(false);
-      })
-    //this.setLoading(false);
+    //TODO commented out during sprint 1, might need in later sprint if we need an endpoint for config info...
+    /*.then(() => Promise.all([this.getConfig()]))
+    .catch((e) => {
+      if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+        this.logout()
+        this.$router.replace({
+          name: 'error',
+          query: { message: `500_${e.data || 'ServerError'}` },
+        })
+      }
+    })
+    .finally(() => {
+      this.setLoading(false);
+    })
+    this.setLoading(false); */
   },
   methods: {
     ...mapActions(useAppStore, ['getConfig']),
@@ -139,17 +141,14 @@ export default {
   width: 100%;
   z-index: 1002;
 }
-</style>
 
-<style>
-/* #toTopBtn {
+#toTopBtn {
   opacity: 0.5;
 }
 
 #toTopBtn:hover {
   opacity: 1;
-} */
-
+}
 .v-alert.bootstrap-success {
   color: #234720 !important;
   background-color: #d9e7d8 !important;

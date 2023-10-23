@@ -10,7 +10,8 @@
             </v-card-title>
             <v-card-text id="logout_descriptor">
               <v-row style="margin: 0.3rem"> You have Logged out. </v-row>
-              <a id="login-button" :href="routes.LOGIN" class="ma-1" dark color="#003366" @click="clearStorage">Log In</a><span>again if you wish to continue.</span>
+              <a id="login-button" :href="authRoutes.LOGIN" class="ma-1" dark color="#003366" @click="clearStorage">Log
+                In</a><span>again if you wish to continue.</span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -21,7 +22,7 @@
 
 <script>
 import { mapActions } from 'pinia'
-import { Routes } from '@/utils/constants'
+import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
@@ -29,7 +30,7 @@ export default {
 
   data() {
     return {
-      routes: Routes,
+      authRoutes: AuthRoutes,
     }
   },
   created() {
@@ -48,6 +49,7 @@ export default {
 .full-height {
   height: 100%;
 }
+
 .session-expired-card {
   margin-top: 15rem;
   width: 100%;

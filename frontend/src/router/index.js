@@ -6,8 +6,10 @@ import { PAGE_TITLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
+import Impersonate from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
@@ -35,11 +37,29 @@ const router = createRouter({
       },
     },
     {
+      path: '/internal',
+      name: 'ministry login',
+      component: MinistryLoginView,
+      meta: {
+        pageTitle: PAGE_TITLES.LOGIN,
+        requiresAuth: false,
+      },
+    },
+    {
       path: '/logout',
       name: 'logout',
       component: LogoutView,
       meta: {
         requiresAuth: false,
+      },
+    },
+    {
+      path: '/impersonate',
+      name: 'impersonate',
+      component: Impersonate,
+      meta: {
+        pageTitle: 'Impersonate a BCeID User',
+        requiresAuth: true,
       },
     },
     {
@@ -87,7 +107,6 @@ const router = createRouter({
       name: 'backend-session-expired',
       component: BackendSessionExpiredView,
     },
-
     //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
     // to provide example content to the navbar in the 1st draft of frontend and is expacted to
     // eventually be removed...
@@ -178,6 +197,11 @@ router.beforeEach((to, _from, next) => {
     appStore.setPageTitle('')
   }
 
+  // TODO (weskubo)
+  // 1. Don't allow access to Logout page if not logged in
+  // 2. Don't allow access to Login if Logged in
+  // 3. Don't allow access to Internal if logged in
+
   const authStore = useAuthStore()
   if (to.meta.requiresAuth) {
     authStore
@@ -190,7 +214,7 @@ router.beforeEach((to, _from, next) => {
         authStore
           .getUserInfo()
           .then(() => {
-            if (!authStore.userHasRoles) {
+            if (!authStore.userHasRoles && !authStore.isMinistryUser) {
               next('unauthorized')
               return
             }
