@@ -26,6 +26,7 @@ export default {
 }
 
 .menu-icon {
+  color: #003366;
   margin-right: 15px;
 }
 </style>

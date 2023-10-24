@@ -1,26 +1,18 @@
 <template>
   <AppMenuItem icon="mdi-home-outline" :to="{ name: 'home' }">Home</AppMenuItem>
-  <AppMenuItem>
+  <AppMenuItem :to="{ name: 'messaging' }">
     <div class="badge-wrapper">
       <v-badge color="red" :content="unreadMessageCount" offset-x="18" offset-y="17">
-        <v-icon class="menu-email-icon" aria-hidden="false" icon="mdi-email-outline" size="30" />
+        <v-icon class="badge-icon" aria-hidden="false" icon="mdi-email-outline" size="30" />
       </v-badge>
-      Notifications
+      Messaging
     </div>
   </AppMenuItem>
   <AppMenuItem icon="mdi-text-box-outline">Reporting</AppMenuItem>
   <AppMenuItem icon="mdi-currency-usd">Funding</AppMenuItem>
-  <AppMenuItem icon="mdi-account-group-outline">Enrollment</AppMenuItem>
   <AppMenuItem icon="mdi-folder-outline">Documents</AppMenuItem>
   <AppMenuItem icon="mdi-file-document-edit-outline">Applications</AppMenuItem>
-  <AppMenuItem class="my-menu-item">
-    <div class="badge-wrapper">
-      <v-badge color="red" :content="unreadReplyCount" offset-x="18" offset-y="17">
-        <v-icon class="menu-email-icon" aria-hidden="false" icon="mdi-help" size="30" />
-      </v-badge>
-      <span>Get help</span>
-    </div>
-  </AppMenuItem>
+  <AppMenuItem icon="mdi-help" :to="{ name: 'resources' }">Resources</AppMenuItem>
   <AppMenuItem icon="mdi-cog-outline">Settings</AppMenuItem>
 </template>
 
@@ -51,8 +43,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-.menu-email-icon,
-.menu-help-icon {
+.badge-icon {
   color: #003366;
   margin-right: 15px;
 }
