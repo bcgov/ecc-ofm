@@ -11,6 +11,10 @@ const { UserProfileMappings, UserProfileOrganizationMappings, UserProfileFacilit
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
 
+const USER_NOT_FOUND = 'User not found.'
+const NO_PERMISSIONS = 'No permissions.'
+const NO_PROFILE_FOUND = 'No profile found.'
+
 async function getUserInfo(req, res) {
   const userInfo = getSessionUser(req)
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
@@ -133,8 +137,9 @@ async function getUserProfile(userGuid, userName) {
     return response.data
   } catch (e) {
     if (e.response?.status == '404') {
-      log.verbose('response ', e.response.data)
-      if (e.response?.data?.startsWith('User not found')) {
+      const data = e.response?.data
+      log.verbose('response ', data)
+      if (data?.startsWith(USER_NOT_FOUND) || data?.startsWith(NO_PERMISSIONS) || data?.startsWith(NO_PROFILE_FOUND)) {
         return null
       }
       return {}
