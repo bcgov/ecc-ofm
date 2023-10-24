@@ -13,7 +13,7 @@
       <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false">
         <TheMenu />
       </v-navigation-drawer>
-      <router-view class="align-start px-8 mb-0" />
+      <router-view class="align-start pt-8 px-8 mb-0" />
     </v-main>
     <TheFooter />
   </v-app>

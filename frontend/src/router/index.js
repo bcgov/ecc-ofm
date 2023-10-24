@@ -6,10 +6,12 @@ import { PAGE_TITLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import HomeView from '@/views/HomeView.vue'
-import Impersonate from '@/views/ImpersonateView.vue'
+import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
+import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
@@ -56,9 +58,27 @@ const router = createRouter({
     {
       path: '/impersonate',
       name: 'impersonate',
-      component: Impersonate,
+      component: ImpersonateView,
       meta: {
         pageTitle: 'Impersonate a BCeID User',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/messaging',
+      name: 'messaging',
+      component: MessagingView,
+      meta: {
+        pageTitle: 'Messaging',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/resources',
+      name: 'resources',
+      component: ResourcesView,
+      meta: {
+        pageTitle: 'Resources',
         requiresAuth: true,
       },
     },
