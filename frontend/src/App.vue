@@ -10,7 +10,7 @@
 
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false">
+      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated">
         <TheMenu />
       </v-navigation-drawer>
       <router-view class="align-start pt-8 px-8 mb-0" />
@@ -140,88 +140,5 @@ export default {
   position: fixed;
   width: 100%;
   z-index: 1002;
-}
-
-#toTopBtn {
-  opacity: 0.5;
-}
-
-#toTopBtn:hover {
-  opacity: 1;
-}
-.v-alert.bootstrap-success {
-  color: #234720 !important;
-  background-color: #d9e7d8 !important;
-  border-color: #accbaa !important;
-}
-
-.v-alert.bootstrap-info {
-  color: #4e6478;
-  background-color: #eaf2fa !important;
-  border-color: #b8d4ee !important;
-}
-
-.v-alert.bootstrap-warning {
-  color: #81692c;
-  background-color: #fef4dd !important;
-  border-color: #fbdb8b !important;
-}
-
-.v-alert.bootstrap-error {
-  color: #712024;
-  background-color: #f7d8da !important;
-  border-color: #eeaaad !important;
-}
-
-.v-alert .v-icon {
-  padding-left: 0;
-}
-
-.full-height {
-  height: 100%;
-}
-
-.theme--light.application {
-  background: #f1f1f1;
-}
-
-.v-toolbar__title {
-  font-size: 1rem;
-}
-
-.v-btn {
-  text-transform: none !important;
-}
-
-.v-alert .v-icon {
-  padding-left: 0;
-}
-
-.v-alert.bootstrap-success {
-  color: #234720;
-  background-color: #d9e7d8 !important;
-  border-color: #accbaa !important;
-}
-
-.v-alert.bootstrap-info {
-  color: #4e6478;
-  background-color: #eaf2fa !important;
-  border-color: #b8d4ee !important;
-}
-
-.v-alert.bootstrap-warning {
-  color: #81692c;
-  background-color: #fef4dd !important;
-  border-color: #fbdb8b !important;
-}
-
-.v-alert.bootstrap-error {
-  color: #712024;
-  background-color: #f7d8da !important;
-  border-color: #eeaaad !important;
-}
-
-.theme--light.v-btn.v-btn--disabled:not(.v-btn--text):not(.v-btn--outlined) {
-  background-color: rgba(0, 0, 0, 0.12) !important;
 }
 </style>
