@@ -13,6 +13,7 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
+  MESSAGE: baseRoot + '/messages',
 })
 
 export const ACCOUNT_TYPE = Object.freeze({
