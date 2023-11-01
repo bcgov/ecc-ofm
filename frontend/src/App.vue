@@ -13,6 +13,7 @@
       <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated">
         <TheMenu />
       </v-navigation-drawer>
+      <TheFacilityHeader v-if="isActingProvider" />
       <router-view class="align-start pt-8 px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -22,8 +23,10 @@
 <script>
 import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
-import TheHeader from '@/components/TheHeader.vue'
+
+import TheFacilityHeader from '@/components/TheFacilityHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
+import TheHeader from '@/components/TheHeader.vue'
 import TheMenu from './components/TheMenu.vue'
 import TheModalIdle from '@/components/TheModalIdle.vue'
 import TheNavBar from '@/components/TheNavBar.vue'
@@ -41,6 +44,7 @@ export default {
     TheModalIdle,
     TheFooter,
     TheMenu,
+    TheFacilityHeader,
   },
 
   data() {
@@ -51,7 +55,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
+    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser', 'isActingProvider']),
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
     mobile() {
       return this.$vuetify.display.mobile

@@ -68,28 +68,8 @@
     </v-container>
     <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
-        <v-card-title>Facilities</v-card-title>
-        <v-card-text>
-          <!-- TODO fix: v-list with v-for is throughing warning in browser concole -->
-          <v-list v-for="(facility, index) in userInfo.facilityPermission" :key="index">
-            <v-list-item>
-              <v-list-item-title>Facility ID:</v-list-item-title>
-              <v-list-item-subtitle>{{ facility.facilityId }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Facility Account Number:</v-list-item-title>
-              <v-list-item-subtitle>{{ facility.facilityAccountNumber }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Facility Name:</v-list-item-title>
-              <v-list-item-subtitle>{{ facility.facilityName }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Facility Type:</v-list-item-title>
-              <v-list-item-subtitle>{{ facility.facilityType }} (WIP: will convert # to description)</v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
+        <v-card-title>Current Facility</v-card-title>
+        <v-card-text>Facility Name: {{ currentFacility?.facilityName }}</v-card-text>
       </v-card>
     </v-container>
   </div>
@@ -101,7 +81,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   computed: {
-    ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser', 'isImpersonating']),
+    ...mapState(useAuthStore, ['currentFacility', 'userInfo', 'isAuthenticated', 'isMinistryUser', 'isImpersonating']),
   },
 }
 </script>

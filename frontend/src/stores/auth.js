@@ -2,18 +2,19 @@ import { defineStore } from 'pinia'
 
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
-import { ApiRoutes } from '@/utils/constants'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
   state: () => ({
     acronyms: [],
     isAuthenticated: localStorage.getItem('jwtToken') !== null,
-    isMinistryUser: localStorage.getItem('isMinistryUser') !== null,
-    isImpersonating: localStorage.getItem('isImpersonating') !== null,
+    isMinistryUser: false,
+    isImpersonating: false,
+    // TODO Remove from local storage
     isUserInfoLoaded: localStorage.getItem('isUserInfoLoaded') !== null,
     userInfo: null,
     impersonateId: null,
+    currentFacility: {},
     // TODO: once roles are established more clearly, need to address isAuthorizedUser and general role impleentation design...
     //isAuthorizedUser: localStorage.getItem('isAuthorizedUser') !== null,
     isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
@@ -21,7 +22,9 @@ export const useAuthStore = defineStore('auth', {
     isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
   }),
   getters: {
-    userHasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
+    isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
+    hasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
+    hasFacilities: (state) => state.userInfo && state.userInfo.facilities && state.userInfo.facilities.length > 0,
     //TODO: 3 temp roles ('CCP_ROLE', 'OPS_ROLE', 'PCM_ROLE') were created in auth.js (loosely
     //based on OFM requirements) for the purpose of achieving a 1st draft of the frontend that
     //will render a home screen and menu with minimal errors given no authorization/backend integration.
@@ -41,6 +44,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('jwtToken')
       }
     },
+    // TODO Remove setter. Just use state
     async setIsUserInfoLoaded(isUserInfoLoaded) {
       if (isUserInfoLoaded) {
         this.isUserInfoLoaded = true
@@ -50,6 +54,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isUserInfoLoaded')
       }
     },
+    // TODO Remove setter. Just use state
     async setAuthorizedUser(isAdminUser) {
       if (isAdminUser) {
         this.isAuthorizedUser = true
@@ -59,16 +64,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isAuthorizedUser')
       }
     },
-
-    async setMinistryUser(isMinistryUser) {
-      if (isMinistryUser) {
-        this.isMinistryUser = true
-        localStorage.setItem('isMinistryUser', 'true')
-      } else {
-        this.isMinistryUser = false
-        localStorage.removeItem('isMinistryUser')
-      }
-    },
+    // TODO Remove setter. Just use state
     async setAuthorizedWebsocketUser(isAuthorizedWebsocketUser) {
       if (isAuthorizedWebsocketUser) {
         this.isAuthorizedWebsocketUser = true
@@ -78,13 +74,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isAuthorizedWebsocketUser')
       }
     },
-    async setUserInfo(userInf) {
-      if (userInf) {
-        this.userInfo = userInf
-      } else {
-        this.userInfo = null
-      }
-    },
+    // TODO Remove setter. Just use state
     async setImpersonateId(impersonateId) {
       if (impersonateId) {
         this.impersonateId = impersonateId
@@ -116,7 +106,12 @@ export const useAuthStore = defineStore('auth', {
             this.isMinistryUser = userInfoRes.data.isMinistryUser
             delete userInfoRes.data.isMinistryUser
           }
-          await this.setUserInfo(userInfoRes.data)
+          this.userInfo = userInfoRes.data
+          // Default the facility
+          if (this.isActingProvider && this.hasFacilities) {
+            this.currentFacility = this.userInfo.facilities[0]
+          }
+
           this.isUserInfoLoaded = true
         }
       }

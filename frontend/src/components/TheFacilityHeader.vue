@@ -1,0 +1,52 @@
+<template>
+  <v-container class="pa-0" v-if="isAuthenticated && userInfo">
+    <v-row align="end" justify="space-between">
+      <v-col cols="6" class="header-org">
+        {{ userInfo.organizationName }}
+      </v-col>
+      <v-col class="header-facility" cols="6">
+        Facility: {{ currentFacility?.facilityName }}
+        <v-menu id="facilityMenu">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">
+              <v-list-item-title>{{ facility.facilityName }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+<script>
+import { mapState, mapWritableState } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+export default {
+  computed: {
+    ...mapState(useAuthStore, ['isAuthenticated', 'userInfo']),
+    ...mapWritableState(useAuthStore, ['currentFacility']),
+  },
+  methods: {
+    changeFacility(facility) {
+      this.currentFacility = facility
+    },
+  },
+}
+</script>
+<style scoped>
+.header-org {
+  color: #003366;
+  font-weight: 600;
+  font-size: 1.6em;
+  text-align: left;
+}
+
+.header-facility {
+  color: #003366;
+  font-weight: 600;
+  font-size: 1.4em;
+  text-align: right;
+}
+</style>

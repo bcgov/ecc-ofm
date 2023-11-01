@@ -234,9 +234,13 @@ router.beforeEach((to, _from, next) => {
         authStore
           .getUserInfo()
           .then(() => {
-            if (!authStore.userHasRoles && !authStore.isMinistryUser) {
-              next('unauthorized')
-              return
+            // Validate roles (for non-Ministry users)
+            if (!authStore.isMinistryUser && !authStore.hasRoles) {
+              return next('unauthorized')
+            }
+            // Validate facilities (for non-Ministry users)
+            if (!authStore.isMinistryUser && !authStore.hasFacilities) {
+              return next('unauthorized')
             }
             next()
           })
