@@ -63,16 +63,10 @@ export default {
       this.handleWebSocket()
     },
     */
-    isAuthorizedWebsocketUser() {
-      this.handleWebSocket()
-    },
     mobile() {
       // Reset the menu state on mobile change
       this.showMenu = false
     },
-  },
-  mounted() {
-    this.handleWebSocket()
   },
   async created() {
     //this.setLoading(true);
@@ -98,13 +92,6 @@ export default {
     ...mapActions(useAuthStore, ['getJwtToken']),
     handleMenuToggled() {
       this.showMenu = !this.showMenu
-    },
-    handleWebSocket() {
-      if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
-        this.$webSocketsConnect()
-      } else {
-        this.$webSocketsDisconnect()
-      }
     },
     onScroll(e) {
       if (typeof window === 'undefined') return
@@ -149,6 +136,7 @@ export default {
 #toTopBtn:hover {
   opacity: 1;
 }
+
 .v-alert.bootstrap-success {
   color: #234720 !important;
   background-color: #d9e7d8 !important;
