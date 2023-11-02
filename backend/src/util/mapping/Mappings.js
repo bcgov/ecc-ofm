@@ -31,16 +31,16 @@ const UserProfileFacilityMappings = [
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
 
-const MessageMappings = [
-  { back: 'activityid', front: 'messageId' },
+const NotificationMappings = [
+  { back: 'activityid', front: 'notificationId' },
   { back: 'subject', front: 'subject' },
   { back: 'createdon', front: 'dateReceived' },
-  { back: 'description', front: 'messageContent' },
+  { back: 'description', front: 'notificationContent' },
   { back: 'lastopenedtime', front: 'lastOpenedTime' },
 ]
 
 module.exports = {
-  MessageMappings,
+  NotificationMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
   UserProfileFacilityPermissionMappings,

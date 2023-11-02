@@ -11,7 +11,6 @@ import { createPinia } from 'pinia'
 import moment from 'moment'
 import router from './router'
 import vuetify from '@/plugins/vuetify'
-import webSocketService from '@/services/web-socket-service'
 
 const app = createApp(App)
 
@@ -21,10 +20,6 @@ app.component('VDataTable', VDataTable)
 app.provide('$moment', moment)
 app
   .use(router)
-  .use(webSocketService, {
-    app,
-    //: uncomment when integrating with backend... url: config.data.WEB_SOCKET_URL || 'wss://'+window.location.hostname+'/api/socket'
-  })
   .use(createMetaManager())
   .use(pinia)
   .use(vuetify)

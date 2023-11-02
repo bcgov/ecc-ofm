@@ -1,39 +1,65 @@
-/* TODO: This file was brought across from STUDENT-ADMIN with some uncertainty  as to whether common framework functionality.
-   Not sure but it appears maybe more business specific than general system notifications. Remove file from code base if its
-   purpose was business specific to STUDENT-ADMIN.
-*/
-
+import { ApiRoutes } from '@/utils/constants'
+import ApiService from '@/common/apiService'
 import { defineStore } from 'pinia'
-
-/* TODO: If file is indeed common functionality (i.e. see header comment), then uncomment during integration with backend...
-import { appStore } from '@/store/modules/app';
-*/
 
 export const useNotificationsStore = defineStore('notifications', {
   namespaced: true,
   state: () => ({
-    notification: null,
-    notifications: []
+    notifications: [],
   }),
+  getters: {
+    unreadNotificationCount: (state) => (state.notifications ? state.notifications.filter((notification) => !notification.isRead).length : 0),
+  },
   actions: {
-    async changeNotification(payload) {
-      this.notification = payload
-      this.notifications.push(payload)
-    },
-    async setNotification(payload) {
-      try {
-        const notificationData = JSON.parse(payload)
-        await this.changeNotification(notificationData)
-        /* TODO: If file is indeed common functionality (i.e. see header comment), then following is example usage with backend...
-        if (notificationData && notificationData.sagaName?.startsWith('PEN_SERVICES_') && notificationData.sagaStatus === 'COMPLETED' && notificationData.studentID) {
-          await studentStore().resetStudentInProcessStatus(notificationData.studentID);
-        } else if(notificationData && notificationData.eventType === 'COPY_USERS_TO_NEW_SCHOOL' && notificationData.eventOutcome === 'USERS_TO_NEW_SCHOOL_COPIED'){
-          await appStore().refreshEntities();
-        }
-        */
-      } catch (e) {
-        console.error(e)
+    async getNotifications(contactId) {
+      if (!localStorage.getItem('jwtToken')) {
+        console.log('unable to get Messages data because you are not logged in')
+        throw 'unable to get Messages data because you are not logged in'
       }
-    }
-  }
+      if (contactId) {
+        try {
+          let response = await ApiService.apiAxios.get(ApiRoutes.NOTICE + '/contact/' + contactId)
+          this.notifications = response.data
+        } catch (error) {
+          console.log(`Failed to get notifications - ${error}`)
+          throw error
+        }
+      } else {
+        this.messages = []
+      }
+    },
+    async updateNotification(notificationId, isRead) {
+      if (!localStorage.getItem('jwtToken')) {
+        console.log('unable to update Notification data because you are not logged in')
+        throw 'unable to update Notification data because you are not logged in'
+      }
+      if (notificationId) {
+        try {
+          let updatedNotification = {
+            notificationId: notificationId,
+            isRead: isRead,
+          }
+          this.updateNotificationInMemory(updatedNotification)
+          const payload = {
+            lastopenedtime: isRead ? new Date().toISOString() : null,
+          }
+          await ApiService.apiAxios.put(ApiRoutes.NOTICE + '/' + notificationId, payload)
+        } catch (error) {
+          console.log(`Failed to update existing Message - ${error}`)
+          throw error
+        }
+      }
+    },
+    updateNotificationInMemory(updatedNotification) {
+      try {
+        if (this.notifications) {
+          this.notifications.forEach((notification) => {
+            if (notification.notificationId === updatedNotification.notificationId) notification.isRead = updatedNotification.isRead
+          })
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+  },
 })
