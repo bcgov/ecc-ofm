@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pa-3">
     <v-row>
       <v-col cols="6" class="border-right pa-0">
         <v-data-table :headers="headers" :items="notifications" item-key="notificationId" hover single-select
@@ -39,7 +39,7 @@
           </template>
           <template #item="{ item, index }">
             <tr @click="rowClickHandler(item, index)"
-              :class="{ 'unread-message': item.selectable.isRead === false, 'highlighted': index === rowClickedIndex }">
+              :class="{ 'unread-notification': item.selectable.isRead === false, 'highlighted': index === rowClickedIndex }">
               <td :class="{ 'highlighted': index === rowClickedIndex }">
                 <v-checkbox @click="checkBoxClickHandler" v-model="checkBoxListState[index]" hide-details
                   density="compact"></v-checkbox>
@@ -54,24 +54,24 @@
         </v-data-table>
       </v-col>
       <v-col cols="6">
-        <v-card v-if="message" variant="flat">
+        <v-card v-if="notification" variant="flat">
           <v-card-title class="card-title d-flex align-start flex-wrap">
             <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
                 <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
               </div>
-              <div v-if="message.selectable.isRead === true" @click="updateNotificationUnread(message)"
+              <div v-if="notification.selectable.isRead === true" @click="updateNotificationUnread(notification)"
                 class="d-flex align-center">
                 <v-icon class="icon ml-3">mdi-email-outline</v-icon>
                 <span class="icon-text">Mark Unread</span>
               </div>
             </div>
             <div class="mt-2 w-100">
-              {{ message.selectable.subject }}
+              {{ notification.selectable.subject }}
             </div>
           </v-card-title>
           <hr>
-          <v-card-text v-html="message.selectable.messageContent"></v-card-text>
+          <v-card-text v-html="notification.selectable.notificationContent"></v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -90,7 +90,7 @@ export default {
       checkBoxListState: [], // on/off state for checkboxes in list
       rowClickedIndex: null,
       checkBoxClickedState: false, // on/off state for a checkbox clicked
-      message: null,
+      notificatoin: null,
       headers: [
         { title: null, align: 'start', key: 'name', sortable: false, width: '8%' },
         { title: 'Read/Unread', align: 'start', key: 'isRead', sortable: true, width: '20%' },
@@ -116,7 +116,7 @@ export default {
       this.checkBoxToggleAllState = false
     },
     /**
-     * Toggles all the messages checked or unchecked.
+     * Toggles all the notifications checked or unchecked.
      */
     toggleAllCheckBoxHandler() {
       this.checkBoxListState.fill(!this.checkBoxToggleAllState)
@@ -128,11 +128,11 @@ export default {
       this.checkBoxClickedState = true
     },
     /**
-     * Handles the row click event. When a row is clicked the message is displayed and marked as read.
+     * Handles the row click event. When a row is clicked the notification is displayed and marked as read.
      */
     rowClickHandler(item, index) {
       if (!this.checkBoxClickedState) {
-        this.message = item
+        this.notification = item
         this.rowClickedIndex = index
         this.updateNotification(item.selectable.notificationId, true)
       } else {
@@ -140,7 +140,7 @@ export default {
       }
     },
     /**
-     * Updates all checked messages to read or unread.
+     * Updates all checked notifications to read or unread.
      */
     updateCheckedReadUnread(isRead) {
       this.checkBoxListState.forEach((item, index) => {
@@ -217,7 +217,7 @@ export default {
   border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity))
 }
 
-.unread-message {
+.unread-notification {
   font-size: small;
   font-weight: bold;
 }

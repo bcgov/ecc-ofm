@@ -85,6 +85,6 @@ export default {
 }
 
 .messaging-window-item {
-  padding: 10px;
+  padding: 0px;
 }
 </style>
