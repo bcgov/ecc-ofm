@@ -10,7 +10,7 @@
 
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false">
+      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated">
         <TheMenu />
       </v-navigation-drawer>
       <router-view class="align-start pt-8 px-8 mb-0" />
