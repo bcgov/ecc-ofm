@@ -54,24 +54,24 @@
         </v-data-table>
       </v-col>
       <v-col cols="6">
-        <v-card v-if="notification" variant="flat">
+        <v-card v-if="notificationSelected" variant="flat">
           <v-card-title class="card-title d-flex align-start flex-wrap">
             <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
                 <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
               </div>
-              <div v-if="notification.selectable.isRead" @click="updateNotificationUnread(notification)"
+              <div v-if="notificationSelected.selectable.isRead" @click="updateNotificationUnread(notificationSelected)"
                 class="d-flex align-center">
                 <v-icon class="icon ml-3">mdi-email-outline</v-icon>
                 <span class="icon-text">Mark Unread</span>
               </div>
             </div>
             <div class="mt-2 w-100">
-              {{ notification.selectable.subject }}
+              {{ notificationSelected.selectable.subject }}
             </div>
           </v-card-title>
           <hr>
-          <v-card-text v-html="notification.selectable.notificationContent"></v-card-text>
+          <v-card-text v-html="notificationSelected.selectable.notificationContent"></v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -90,7 +90,7 @@ export default {
       checkBoxListState: [], // on/off state for checkboxes in list
       rowClickedIndex: null,
       checkBoxClickedState: false, // on/off state for a checkbox clicked
-      notification: null,
+      notificationSelected: null,
       headers: [
         { title: null, align: 'start', key: 'name', sortable: false, width: '8%' },
         { title: 'Read/Unread', align: 'start', key: 'isRead', sortable: true, width: '20%' },
@@ -133,10 +133,10 @@ export default {
      */
     rowClickHandler(item, index) {
       if (!this.checkBoxClickedState) {
-        this.notification = item
-        this.rowClickedIndex = index // Used for row select highlighting in item
-        item.selectable.isRead = true
-        this.updateNotification(item.selectable.notificationId, true)
+        this.notificationSelected = item
+        this.rowClickedIndex = index // Used for row select highlighting in template slot item
+        this.notifications[index].isRead = true
+        this.updateNotification(this.notifications[index], true)
       } else {
         this.checkBoxClickedState = false
       }
@@ -148,7 +148,7 @@ export default {
       this.checkBoxListState.forEach((item, index) => {
         if (item) {
           this.notifications[index].isRead = isRead
-          this.updateNotification(this.notifications[index].notificationId, isRead)
+          this.updateNotification(this.notifications[index], isRead)
         }
       })
       this.initCheckBoxState()
@@ -158,7 +158,7 @@ export default {
      */
     updateNotificationUnread(item) {
       item.selectable.isRead = false
-      this.updateNotification(item.selectable.notificationId, false)
+      this.updateNotification(item.selectable, false)
     },
   }
 };
