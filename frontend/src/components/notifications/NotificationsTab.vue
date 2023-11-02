@@ -8,9 +8,9 @@
             <div class="slot-top">
               <div class="flex-container">
                 <!--div class="flex-item">
-                                <v-icon class="icon">mdi-email-plus-outline</v-icon><span class="icon-text">New
-                                    Message</span>
-                            </div-->
+                  <v-icon class="icon">mdi-email-plus-outline</v-icon><span class="icon-text">New
+                  Message</span>
+                </div-->
                 <div @click="updateCheckedReadUnread(false)" class="flex-item">
                   <v-icon class="icon">mdi-email-outline</v-icon><span class="icon-text">Mark
                     Unread</span>
@@ -90,7 +90,7 @@ export default {
       checkBoxListState: [], // on/off state for checkboxes in list
       rowClickedIndex: null,
       checkBoxClickedState: false, // on/off state for a checkbox clicked
-      notificatoin: null,
+      notification: null,
       headers: [
         { title: null, align: 'start', key: 'name', sortable: false, width: '8%' },
         { title: 'Read/Unread', align: 'start', key: 'isRead', sortable: true, width: '20%' },
