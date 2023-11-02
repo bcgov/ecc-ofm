@@ -31,7 +31,16 @@ const UserProfileFacilityMappings = [
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
 
+const NotificationMappings = [
+  { back: 'activityid', front: 'notificationId' },
+  { back: 'subject', front: 'subject' },
+  { back: 'createdon', front: 'dateReceived' },
+  { back: 'description', front: 'notificationContent' },
+  { back: 'lastopenedtime', front: 'lastOpenedTime' },
+]
+
 module.exports = {
+  NotificationMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
   UserProfileFacilityPermissionMappings,
