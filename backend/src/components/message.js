@@ -26,9 +26,9 @@ async function getMessages(req, res) {
   try {
     let operation =
       'emails?$select=description,lastopenedtime,subject,createdon&$expand=email_activity_parties($filter=(_partyid_value eq ' +
-      req.params.userId +
+      req.params.contactId +
       '))&$filter=(email_activity_parties/any(o1:(o1/_partyid_value eq ' +
-      req.params.userId +
+      req.params.contactId +
       ')))'
     log.info('operation: ', operation)
     let operationResponse = await getOperation(operation)

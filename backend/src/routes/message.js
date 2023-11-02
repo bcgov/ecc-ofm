@@ -9,9 +9,9 @@ const { param, validationResult } = require('express-validator')
 module.exports = router
 
 /**
- * Get messages filtered by userid
+ * Get messages filtered by contactid
  */
-router.get('/user/:userId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('userId', 'URL param: [userId] is required').not().isEmpty()], (req, res) => {
+router.get('/contact/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()
   return getMessages(req, res)
 })

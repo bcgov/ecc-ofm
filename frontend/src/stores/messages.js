@@ -11,14 +11,14 @@ export const useMessagesStore = defineStore('messages', {
     unreadMessageCount: (state) => (state.messages ? state.messages.filter((message) => !message.isRead).length : 0),
   },
   actions: {
-    async getMessages(userId) {
+    async getMessages(contactId) {
       if (!localStorage.getItem('jwtToken')) {
         console.log('unable to get Messages data because you are not logged in')
         throw 'unable to get Messages data because you are not logged in'
       }
-      if (userId) {
+      if (contactId) {
         try {
-          let response = await ApiService.apiAxios.get(`${ApiRoutes.MESSAGE}/user/'${userId}'`)
+          let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE + '/contact/' + contactId)
           this.messages = response.data
         } catch (error) {
           console.log(`Failed to get messages - ${error}`)

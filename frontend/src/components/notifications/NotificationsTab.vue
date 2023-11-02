@@ -156,17 +156,20 @@ export default {
             this.initCheckBoxState()
         },
         /**
-         * Updates a message to unread.
+         * Updates a notification to unread.
          */
-        updateMessageUnread(item) {
+        updateNotificationUnread(item) {
             if (this.isRead(item)) {
                 this.updateMessage(item.selectable.messageId, false)
             }
         },
+        /**
+         * Gets all notifications for the current user conact id.
+         */
         async getNotifications() {
             try {
                 if (this.notifications.length === 0) {
-                    await this.getMessages(this.userInfo.userId)
+                    await this.getMessages(this.userInfo.contactId)
                     this.notifications = this.messages
                     this.initCheckBoxState()
                 }
