@@ -35,30 +35,14 @@ export const useNotificationsStore = defineStore('notifications', {
       }
       if (notificationId) {
         try {
-          let updatedNotification = {
-            notificationId: notificationId,
-            isRead: isRead,
-          }
-          this.updateNotificationInMemory(updatedNotification)
           const payload = {
             lastopenedtime: isRead ? new Date().toISOString() : null,
           }
           await ApiService.apiAxios.put(ApiRoutes.NOTICE + '/' + notificationId, payload)
         } catch (error) {
-          console.log(`Failed to update existing Message - ${error}`)
+          console.log(`Failed to update existing Notice - ${error}`)
           throw error
         }
-      }
-    },
-    updateNotificationInMemory(updatedNotification) {
-      try {
-        if (this.notifications) {
-          this.notifications.forEach((notification) => {
-            if (notification.notificationId === updatedNotification.notificationId) notification.isRead = updatedNotification.isRead
-          })
-        }
-      } catch (error) {
-        console.log(error)
       }
     },
   },

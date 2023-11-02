@@ -39,7 +39,7 @@
           </template>
           <template #item="{ item, index }">
             <tr @click="rowClickHandler(item, index)"
-              :class="{ 'unread-notification': item.selectable.isRead === false, 'highlighted': index === rowClickedIndex }">
+              :class="{ 'unread-notification': !item.selectable.isRead, 'highlighted': index === rowClickedIndex }">
               <td :class="{ 'highlighted': index === rowClickedIndex }">
                 <v-checkbox @click="checkBoxClickHandler" v-model="checkBoxListState[index]" hide-details
                   density="compact"></v-checkbox>
@@ -60,7 +60,7 @@
               <div class="d-flex align-center">
                 <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
               </div>
-              <div v-if="notification.selectable.isRead === true" @click="updateNotificationUnread(notification)"
+              <div v-if="notification.selectable.isRead" @click="updateNotificationUnread(notification)"
                 class="d-flex align-center">
                 <v-icon class="icon ml-3">mdi-email-outline</v-icon>
                 <span class="icon-text">Mark Unread</span>
@@ -103,8 +103,9 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
   },
-  created() {
-    this.getUserNotifications()
+  async created() {
+    this.getNotifications(this.userInfo.contactId)
+    this.initCheckBoxState()
   },
   methods: {
     ...mapActions(useNotificationsStore, ['getNotifications', 'updateNotification']),
@@ -133,7 +134,8 @@ export default {
     rowClickHandler(item, index) {
       if (!this.checkBoxClickedState) {
         this.notification = item
-        this.rowClickedIndex = index
+        this.rowClickedIndex = index // Used for row select highlighting in item
+        item.selectable.isRead = true
         this.updateNotification(item.selectable.notificationId, true)
       } else {
         this.checkBoxClickedState = false
@@ -145,6 +147,7 @@ export default {
     updateCheckedReadUnread(isRead) {
       this.checkBoxListState.forEach((item, index) => {
         if (item) {
+          this.notifications[index].isRead = isRead
           this.updateNotification(this.notifications[index].notificationId, isRead)
         }
       })
@@ -154,22 +157,8 @@ export default {
      * Updates a notification to unread.
      */
     updateNotificationUnread(item) {
-      if (item.selectable.isRead === true) {
-        this.updateNotification(item.selectable.notificationId, false)
-      }
-    },
-    /**
-     * Gets all notifications for the current user conact id.
-     */
-    async getUserNotifications() {
-      try {
-        if (this.notifications.length === 0) {
-          await this.getNotifications(this.userInfo.contactId)
-          this.initCheckBoxState()
-        }
-      } catch (error) {
-        console.info(error)
-      }
+      item.selectable.isRead = false
+      this.updateNotification(item.selectable.notificationId, false)
     },
   }
 };

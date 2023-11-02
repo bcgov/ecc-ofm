@@ -10,7 +10,8 @@
 
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated">
+      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false"
+        v-if="isAuthenticated && userInfo">
         <TheMenu />
       </v-navigation-drawer>
       <router-view class="align-start pt-8 px-8 mb-0" />
@@ -51,7 +52,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
+    ...mapState(useAuthStore, ['jwtToken', 'isUserInfoLoaded', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
     mobile() {
       return this.$vuetify.display.mobile

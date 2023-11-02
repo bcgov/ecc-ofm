@@ -1,8 +1,8 @@
 <template>
   <v-card class="messaging-card" variant="flat">
     <v-tabs v-model="tab" bg-color="none" class="messaging-tabs" density="compact">
-      <div v-if="showUnreadMessageCount">
-        <v-badge color="red" :content="unreadMessageCount" offset-x="8" offset-y="9">
+      <div v-if="showUnreadNotificationCount">
+        <v-badge color="red" :content="unreadNotificationCount" offset-x="8" offset-y="9">
           <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="one">Notifications</v-tab>
         </v-badge>
       </div>
@@ -29,7 +29,7 @@
 import { mapState } from 'pinia'
 import MessagesTab from '@/components/messages/MessagesTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
-import { useMessagesStore } from '@/stores/messages'
+import { useNotificationsStore } from '@/stores/notifications'
 
 export default {
   components: { MessagesTab, NotificationsTab },
@@ -37,9 +37,9 @@ export default {
     tab: null,
   }),
   computed: {
-    ...mapState(useMessagesStore, ['messages', 'unreadMessageCount']),
-    showUnreadMessageCount() {
-      return this.unreadMessageCount > 0 ? true : false
+    ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
+    showUnreadNotificationCount() {
+      return this.unreadNotificationCount > 0 ? true : false
     },
   },
 }
