@@ -41,7 +41,7 @@ const AssistanceRequestMappings = [
   { back: 'ofm_subject', front: 'subject' },
   { back: 'ofm_contact_method', front: 'contactMethod' },
   { back: 'ofm_request_description', front: 'description' },
-  { back: 'ofm_telephone1', front: 'phone' },
+  { back: 'ofm_telephone', front: 'phone' },
 ];
 
 module.exports = {

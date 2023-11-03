@@ -105,8 +105,8 @@
     </template>
     <template #button>
       <v-row justify="space-around">
-        <AppButton id="close-new-request" :isPrimary="false" size="large" width="200px" @click="closeNewRequestDialog()">Cancel</AppButton>
-        <AppButton id="submit-new-request" size="large" width="200px" @click="submitNewRequest()">Submit</AppButton>
+        <AppButton id="close-new-request" :isPrimary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
+        <AppButton id="submit-new-request" size="large" width="200px" @click="submitNewRequest()" :loading="isLoading">Submit</AppButton>
       </v-row>
     </template>
   </AppDialog>
@@ -137,6 +137,7 @@ export default {
       newRequestModel: {},
       rules,
       isDisplayed: false,
+      isLoading: false,
     }
   },
   computed: {
@@ -184,14 +185,17 @@ export default {
       this.$refs.newRequestForm?.validate();
       if (this.newRequestModel?.isFormComplete) {
         try {
+          this.isLoading = true
           let response = await this.submitNewAssistanceRequest(this.newRequestModel);
           console.log('this is newRequestResponse');
           console.log(response);
-          this.closeNewRequestDialog();
           this.$emit('openNewRequestConfirmationDialog');
         } catch (error) {
           console.log(`Failed to create a new Assistance Request - ${error}`);
           throw error;
+        } finally {
+          this.closeNewRequestDialog()
+          this.isLoading = false
         }
       }
     }
