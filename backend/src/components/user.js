@@ -76,9 +76,9 @@ async function getUserInfo(req, res) {
       return res.status(HttpStatus.OK).json(resData)
     }
   } else {
-    //Not an idir user, so just get the guid from the header
-    log.verbose('User Guid is: ', userGuid)
-    userResponse = await getUserProfile(userGuid, null)
+    // BCeID user
+    log.verbose('BCEID User guid: ' + userGuid + ' username: ' + userName)
+    userResponse = await getUserProfile(userGuid, userName)
   }
 
   if (log.isVerboseEnabled) {
