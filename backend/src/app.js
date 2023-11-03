@@ -24,7 +24,7 @@ const authRouter = require('./routes/auth')
 const userRouter = require('./routes/user')
 const configRouter = require('./routes/config')
 const messageRouter = require('./routes/message')
-
+const notificationRouter = require('./routes/notification')
 const organizationRouter = require('./routes/organization')
 
 const connectRedis = require('connect-redis')
@@ -187,6 +187,8 @@ app.use(/(\/api)?/, apiRouter)
 apiRouter.use('/auth', authRouter)
 apiRouter.use('/user', userRouter)
 apiRouter.use('/config', configRouter)
+apiRouter.use('/messages', messageRouter)
+apiRouter.use('/notifications', notificationRouter)
 
 apiRouter.use('/message', messageRouter)
 //TODO: Router from MyCCS only here for 1st backend iteration example. To be removed ...

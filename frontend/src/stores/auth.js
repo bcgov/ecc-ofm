@@ -1,8 +1,7 @@
-import { defineStore } from 'pinia'
-
+import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
-import { ApiRoutes } from '@/utils/constants'
+import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -67,15 +66,6 @@ export const useAuthStore = defineStore('auth', {
       } else {
         this.isMinistryUser = false
         localStorage.removeItem('isMinistryUser')
-      }
-    },
-    async setAuthorizedWebsocketUser(isAuthorizedWebsocketUser) {
-      if (isAuthorizedWebsocketUser) {
-        this.isAuthorizedWebsocketUser = true
-        localStorage.setItem('isAuthorizedWebsocketUser', 'true')
-      } else {
-        this.isAuthorizedWebsocketUser = false
-        localStorage.removeItem('isAuthorizedWebsocketUser')
       }
     },
     async setUserInfo(userInf) {

@@ -15,6 +15,7 @@ export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
   LOOKUP: baseRoot + '/config/lookup',
   MESSAGE: baseRoot + '/message',
+  NOTICE: baseRoot + '/notifications',
 })
 
 export const PATHS = {

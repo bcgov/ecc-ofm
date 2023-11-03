@@ -1,10 +1,10 @@
-const express = require('express');
-const passport = require('passport');
-const router = express.Router();
-const auth = require('../components/auth');
-const isValidBackendToken= auth.isValidBackendToken();
-const { getAllMessages, updateMessageLastOpenedTime, createNewAssistanceRequest } = require('../components/message');
-const { param, validationResult, checkSchema } = require('express-validator');
+const express = require('express')
+const passport = require('passport')
+const router = express.Router()
+const auth = require('../components/auth')
+const isValidBackendToken = auth.isValidBackendToken()
+const { getMessages, updateMessageLastOpenedTime, createNewAssistanceRequest } = require('../components/message')
+const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router;
 
@@ -36,22 +36,20 @@ const newAssistanceRequestSchema = {
 };
 
 /**
- * Get ALL messages of an organization
+ * Get messages filtered by contactid
  */
-router.get('/organization/:organizationId', passport.authenticate('jwt', {session: false}),isValidBackendToken,
-  [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()], (req, res) => {
-    validationResult(req).throw();
-    return getAllMessages(req, res);
-  });
+router.get('/contact/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
+  validationResult(req).throw()
+  return getMessages(req, res)
+})
 
 /**
  * Update Last Opened Time of an existing Message
  */
-router.put('/:messageId', passport.authenticate('jwt', {session: false}),isValidBackendToken, [
-  param('messageId', 'URL param: [messageId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw();
-  return updateMessageLastOpenedTime(req, res);
-});
+router.put('/:messageId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('messageId', 'URL param: [messageId] is required').not().isEmpty()], (req, res) => {
+  validationResult(req).throw()
+  return updateMessageLastOpenedTime(req, res)
+})
 
 /**
  * Create a new Assistance Request
@@ -62,4 +60,4 @@ router.post('/newAssistanceRequest', passport.authenticate('jwt', {session: fals
   return createNewAssistanceRequest(req, res);
 });
 
-module.exports = router;
+module.exports = router

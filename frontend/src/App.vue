@@ -10,7 +10,8 @@
 
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated">
+      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false"
+        v-if="isAuthenticated && userInfo">
         <TheMenu />
       </v-navigation-drawer>
       <router-view class="align-start pt-8 px-8 mb-0" />
@@ -52,7 +53,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
+    ...mapState(useAuthStore, ['jwtToken', 'isUserInfoLoaded', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser']),
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
     mobile() {
       return this.$vuetify.display.mobile
@@ -64,16 +65,10 @@ export default {
       this.handleWebSocket()
     },
     */
-    isAuthorizedWebsocketUser() {
-      this.handleWebSocket()
-    },
     mobile() {
       // Reset the menu state on mobile change
       this.showMenu = false
     },
-  },
-  mounted() {
-    this.handleWebSocket()
   },
   async created() {
     //this.setLoading(true);
@@ -99,13 +94,6 @@ export default {
     ...mapActions(useAuthStore, ['getJwtToken']),
     handleMenuToggled() {
       this.showMenu = !this.showMenu
-    },
-    handleWebSocket() {
-      if (this.isAuthenticated && this.isAuthorizedWebsocketUser) {
-        this.$webSocketsConnect()
-      } else {
-        this.$webSocketsDisconnect()
-      }
     },
     onScroll(e) {
       if (typeof window === 'undefined') return
