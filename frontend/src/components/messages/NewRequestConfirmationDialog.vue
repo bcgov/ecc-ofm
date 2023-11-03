@@ -9,7 +9,7 @@
       <v-row>
         <v-col align="center">
           <p class="pt-4">Your message has been submitted.</p>
-          <p class="pt-4">Reference: R1234567</p>
+          <p class="pt-4">Reference: {{referenceNumber}}</p>
           <p class="pt-4">Typical response times are 3-5 business days.</p>
         </v-col>
       </v-row>
@@ -37,6 +37,10 @@ export default {
       type: Boolean,
       default: false
     },
+    referenceNumber: {
+      type: String,
+      default: ''
+    },
   },
   emits: ['closeNewRequestConfirmationDialog'],
   data() {
@@ -48,7 +52,6 @@ export default {
   watch: {
     showNewRequestConfirmationDialog: {
       handler(value) {
-        console.log('showNewRequestConfirmationDialog == ' + value);
         this.isDisplayed = value;
       },
     }

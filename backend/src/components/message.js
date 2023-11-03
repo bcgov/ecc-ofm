@@ -20,6 +20,12 @@ function mapAssistanceRequestObjectForBack(data) {
     delete assistanceRequest['ofm_telephone']
   assistanceRequest['ofm_request_category@odata.bind'] = `/ofm_request_categories(${data?.requestCategoryId})`
   assistanceRequest['ofm_contact@odata.bind'] = `/contacts(${data?.contactId})`
+  assistanceRequest['ofm_facility_request_request'] = [];
+  data?.facilities?.forEach(facility => {
+    assistanceRequest['ofm_facility_request_request'].push({
+      'ofm_facility@odata.bind' : `/accounts(${facility.facilityId})`,
+    })
+  })
   return assistanceRequest;
 }
 
@@ -67,24 +73,17 @@ async function updateMessageLastOpenedTime(req, res) {
 
 async function createNewAssistanceRequest(req, res) {
   try {
-    log.info('THIS IS ASSISTANCE REQUEST BODY');
-    log.info(req.body);
     let payload = mapAssistanceRequestObjectForBack(req.body);
-    log.info('assistanceRequest after 1st MAPPED');
-    log.info(payload);
-    let response = await postOperation('ofm_assistance_requests', payload);
-    log.info('postResponse AssistanceRequest');
-    log.info(response);
+    let response = await postOperation('ofm_assistance_requests?$select=ofm_name', payload);
+    response = new MappableObjectForFront(response, AssistanceRequestMappings).toJSON()
     return res.status(HttpStatus.OK).json(response);
   } catch (e) {
-    log.info('THIS IS ERRRORRRRR');
-    log.info(e);
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status );
   }
 }
 
 module.exports = {
-  getAllMessages,
+  getMessages,
   updateMessageLastOpenedTime,
   createNewAssistanceRequest,
 };

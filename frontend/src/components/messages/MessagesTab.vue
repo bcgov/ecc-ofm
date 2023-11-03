@@ -6,28 +6,22 @@
     </v-btn>
     <NewRequestDialog 
       :showNewRequestDialog="showNewRequestDialog"
-      @closeNewRequestDialog="closeNewRequestDialog"
-      @openNewRequestConfirmationDialog="openNewRequestConfirmationDialog"/>
-    <NewRequestConfirmationDialog
-      :showNewRequestConfirmationDialog="showNewRequestConfirmationDialog"
-      @closeNewRequestConfirmationDialog="closeNewRequestConfirmationDialog"/>
+      @closeNewRequestDialog="closeNewRequestDialog"/>
   </v-container>
 </template>
 
 <script>
 import { mapState } from 'pinia';
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue';
-import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue';
 import { useAuthStore } from '@/stores/auth';
 
 
 export default {
   name: 'MessagesTab',
-  components: { NewRequestDialog, NewRequestConfirmationDialog },
+  components: { NewRequestDialog },
   data() {
     return {
       showNewRequestDialog: false,
-      showNewRequestConfirmationDialog: false,
     }
   },
   computed: {
@@ -39,12 +33,6 @@ export default {
     },
     closeNewRequestDialog() {
       this.showNewRequestDialog = false;
-    },
-    openNewRequestConfirmationDialog() {
-      this.showNewRequestConfirmationDialog = true;
-    },
-    closeNewRequestConfirmationDialog() {
-      this.showNewRequestConfirmationDialog = false;
     },
   },
 }
