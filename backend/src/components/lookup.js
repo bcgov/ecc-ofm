@@ -4,9 +4,9 @@ const HttpStatus = require('http-status-codes');
 const _ = require ('lodash');
 const cache = require('memory-cache');
 const { PROGRAM_YEAR_STATUS_CODES, ORGANIZATION_PROVIDER_TYPES, CHANGE_REQUEST_TYPES } = require('../util/constants');
-const { ProgramYearMappings, SystemMessagesMappings } = require('../util/mapping/Mappings');
+const { ProgramYearMappings, SystemMessagesMappings, RequestCategoryMappings } = require('../util/mapping/Mappings');
 const { MappableObjectForFront } = require('../util/mapping/MappableObject');
-
+const log = require('../components/logger')
 
 const lookupCache = new cache.Cache();
 
@@ -103,6 +103,17 @@ async function getLicenseCategory() {
   return resData;
 }
 
+async function getRequestCategories() {
+  let requestCategories = lookupCache.get('requestCategories');
+  if (!requestCategories) {
+    requestCategories = [];
+    let response = await getOperation('ofm_request_categories');
+    response?.value?.forEach(item => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)));
+    lookupCache.put('requestCategories', requestCategories, 60 * 60 * 1000);
+  }
+  return requestCategories;
+}
+
 async function getLookupInfo(req, res) {
   /**
    * Look ups from Dynamics365.
@@ -112,28 +123,19 @@ async function getLookupInfo(req, res) {
    * 3 - Future
    * 4 - Historica
    */
-  let resData = lookupCache.get('lookups');
-  if (!resData) {
-    let programYear = await getOperation('ccof_program_years');
-    programYear = parseProgramYear(programYear.value);
-
-    let childCareCategory = await getOperation('ccof_childcare_categories');
-    childCareCategory = childCareCategory.value.filter(item => item.statuscode ==1).map(item => { return _.pick(item, ['ccof_childcarecategorynumber', 'ccof_name', 'ccof_description', 'ccof_childcare_categoryid']); });
-
-    let licenseCategory = await getLicenseCategory();
-    resData = {
-      'programYear': programYear,
-      'childCareCategory': childCareCategory,
-      'organizationType': organizationType,
-      'fundingModelType': fundingModelType,
-      'groupLicenseCategory': licenseCategory.groupLicenseCategory,
-      'familyLicenseCategory': licenseCategory.familyLicenseCategory,
-      'changeRequestTypes:' : CHANGE_REQUEST_TYPES
-    };
-    lookupCache.put('lookups', resData, 60 * 60 * 1000);
+  try {
+    let resData = lookupCache.get('lookups');
+    if (!resData) {
+      let requestCategories = await getRequestCategories();
+      resData = {
+        'requestCategories': requestCategories,
+      };
+      lookupCache.put('lookups', resData, 60 * 60 * 1000);
+    }
+    return res.status(HttpStatus.OK).json(resData);
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status);
   }
-  //log.info('lookupData is: ', minify(resData));
-  return res.status(HttpStatus.OK).json(resData);
 }
 
 async function getSystemMessages(req, res) {

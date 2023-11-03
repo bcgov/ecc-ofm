@@ -13,7 +13,13 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
+  LOOKUP: baseRoot + '/config/lookup',
+  MESSAGE: baseRoot + '/message',
 })
+
+export const PATHS = {
+  HOME: '/',
+}
 
 export const ACCOUNT_TYPE = Object.freeze({
   FACILITY: 100000001,

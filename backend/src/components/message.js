@@ -1,7 +1,7 @@
 'use strict';
-const { getOperation, patchOperationWithObjectId } = require('./utils');
-const { MappableObjectForFront } = require('../util/mapping/MappableObject');
-const { MessageMappings } = require('../util/mapping/Mappings');
+const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils');
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject');
+const { MessageMappings, AssistanceRequestMappings } = require('../util/mapping/Mappings');
 const HttpStatus = require('http-status-codes');
 const moment = require('moment');
 const log = require('./logger');
@@ -11,6 +11,15 @@ function mapMessageObjectForFront(data) {
     data.createdon = new moment(data.createdon).format('YYYY/MM/DD');
   }
   return new MappableObjectForFront(data, MessageMappings).toJSON();
+}
+
+function mapAssistanceRequestObjectForBack(data) {
+  let assistanceRequest = new MappableObjectForBack(data, AssistanceRequestMappings).toJSON()
+  if (assistanceRequest['ofm_contact_method'] == '1')
+    delete assistanceRequest['ofm_telephone1']
+  assistanceRequest['ofm_request_category@odata.bind'] = `/ofm_request_categories(${data?.requestCategoryId})`
+  assistanceRequest['ofm_contact@odata.bind'] = `/contacts(${data?.contactId})`
+  return assistanceRequest;
 }
 
 function sortByPropertyDesc(property){  
@@ -54,8 +63,27 @@ async function updateMessageLastOpenedTime(req, res) {
   }
 }
 
+async function createNewAssistanceRequest(req, res) {
+  try {
+    log.info('THIS IS ASSISTANCE REQUEST BODY');
+    log.info(req.body);
+    let payload = mapAssistanceRequestObjectForBack(req.body);
+    log.info('assistanceRequest after 1st MAPPED');
+    log.info(payload);
+    let response = await postOperation('ofm_assistance_requests', payload);
+    log.info('postResponse AssistanceRequest');
+    log.info(response);
+    return res.status(HttpStatus.OK).json(response);
+  } catch (e) {
+    log.info('THIS IS ERRRORRRRR');
+    log.info(e);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status );
+  }
+}
+
 module.exports = {
   getAllMessages,
-  updateMessageLastOpenedTime
+  updateMessageLastOpenedTime,
+  createNewAssistanceRequest,
 };
 

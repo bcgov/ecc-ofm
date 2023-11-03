@@ -6,6 +6,7 @@ const UserProfileMappings = [
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
   { back: 'ofm_portal_role', front: 'roles' },
+  { back: 'telephone1', front: 'phone' },
 ]
 
 const UserProfileOrganizationMappings = [
@@ -31,9 +32,23 @@ const UserProfileFacilityMappings = [
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
 
+const RequestCategoryMappings = [
+  { back: 'ofm_name', front: 'categoryName' },
+  { back: 'ofm_request_categoryid', front: 'categoryId' },
+];
+
+const AssistanceRequestMappings = [
+  { back: 'ofm_subject', front: 'subject' },
+  { back: 'ofm_contact_method', front: 'contactMethod' },
+  { back: 'ofm_request_description', front: 'description' },
+  { back: 'ofm_telephone1', front: 'phone' },
+];
+
 module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   UserProfileFacilityPermissionMappings,
   UserProfileFacilityMappings,
-}
+  RequestCategoryMappings,
+  AssistanceRequestMappings,
+};

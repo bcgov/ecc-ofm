@@ -30,6 +30,7 @@ import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import HttpStatus from 'http-status-codes';
 
 export default {
   name: 'App',
@@ -77,11 +78,11 @@ export default {
   async created() {
     //this.setLoading(true);
     this.getJwtToken()
-    //TODO commented out during sprint 1, might need in later sprint if we need an endpoint for config info...
-    /*.then(() => Promise.all([this.getConfig()]))
+    .then(() => Promise.all([this.getLookupInfo()]))
     .catch((e) => {
       if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-        this.logout()
+        // this.logout()
+        console.log(e);
         this.$router.replace({
           name: 'error',
           query: { message: `500_${e.data || 'ServerError'}` },
@@ -89,12 +90,12 @@ export default {
       }
     })
     .finally(() => {
-      this.setLoading(false);
+      // this.setLoading(false);
     })
-    this.setLoading(false); */
+    // this.setLoading(false);
   },
   methods: {
-    ...mapActions(useAppStore, ['getConfig']),
+    ...mapActions(useAppStore, ['getConfig', 'getLookupInfo']),
     ...mapActions(useAuthStore, ['getJwtToken']),
     handleMenuToggled() {
       this.showMenu = !this.showMenu

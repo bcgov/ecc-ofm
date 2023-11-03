@@ -23,6 +23,7 @@ const apiRouter = express.Router()
 const authRouter = require('./routes/auth')
 const userRouter = require('./routes/user')
 const configRouter = require('./routes/config')
+const messageRouter = require('./routes/message')
 
 const organizationRouter = require('./routes/organization')
 
@@ -187,6 +188,7 @@ apiRouter.use('/auth', authRouter)
 apiRouter.use('/user', userRouter)
 apiRouter.use('/config', configRouter)
 
+apiRouter.use('/message', messageRouter)
 //TODO: Router from MyCCS only here for 1st backend iteration example. To be removed ...
 apiRouter.use('/organization', organizationRouter)
 
