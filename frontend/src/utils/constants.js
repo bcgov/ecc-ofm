@@ -13,8 +13,8 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
+  MESSAGE: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
-  MESSAGE: baseRoot + '/message',
   NOTICE: baseRoot + '/notifications',
 })
 

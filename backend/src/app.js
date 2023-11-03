@@ -190,7 +190,6 @@ apiRouter.use('/config', configRouter)
 apiRouter.use('/messages', messageRouter)
 apiRouter.use('/notifications', notificationRouter)
 
-apiRouter.use('/message', messageRouter)
 //TODO: Router from MyCCS only here for 1st backend iteration example. To be removed ...
 apiRouter.use('/organization', organizationRouter)
 
