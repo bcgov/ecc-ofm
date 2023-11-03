@@ -111,7 +111,6 @@ export default {
     try{
       return await apiAxios.get(ApiRoutes.LOOKUP);
     } catch(e) {
-      console.log(e);
       console.log(`Failed to get from Nodejs getLookups API - ${e}`);
       throw e;
     }

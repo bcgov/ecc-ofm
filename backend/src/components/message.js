@@ -64,21 +64,21 @@ async function getMessages(req, res) {
 
 async function updateMessageLastOpenedTime(req, res) {
   try {
-    let response = await patchOperationWithObjectId('emails', req.params.messageId, req.body);
-    return res.status(HttpStatus.OK).json(response);
+    let response = await patchOperationWithObjectId('emails', req.params.messageId, req.body)
+    return res.status(HttpStatus.OK).json(response)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status );
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status )
   }
 }
 
 async function createNewAssistanceRequest(req, res) {
   try {
-    let payload = mapAssistanceRequestObjectForBack(req.body);
-    let response = await postOperation('ofm_assistance_requests?$select=ofm_name', payload);
+    let payload = mapAssistanceRequestObjectForBack(req.body)
+    let response = await postOperation('ofm_assistance_requests?$select=ofm_name', payload)
     response = new MappableObjectForFront(response, AssistanceRequestMappings).toJSON()
-    return res.status(HttpStatus.OK).json(response);
+    return res.status(HttpStatus.OK).json(response)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status );
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status )
   }
 }
 
