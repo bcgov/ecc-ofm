@@ -16,17 +16,16 @@ function mapMessageObjectForFront(data) {
 
 function mapAssistanceRequestObjectForBack(data) {
   let assistanceRequest = new MappableObjectForBack(data, AssistanceRequestMappings).toJSON()
-  if (assistanceRequest['ofm_contact_method'] == '1')
-    delete assistanceRequest['ofm_telephone']
+  if (assistanceRequest['ofm_contact_method'] == '1') delete assistanceRequest['ofm_telephone']
   assistanceRequest['ofm_request_category@odata.bind'] = `/ofm_request_categories(${data?.requestCategoryId})`
   assistanceRequest['ofm_contact@odata.bind'] = `/contacts(${data?.contactId})`
-  assistanceRequest['ofm_facility_request_request'] = [];
-  data?.facilities?.forEach(facility => {
+  assistanceRequest['ofm_facility_request_request'] = []
+  data?.facilities?.forEach((facility) => {
     assistanceRequest['ofm_facility_request_request'].push({
-      'ofm_facility@odata.bind' : `/accounts(${facility.facilityId})`,
+      'ofm_facility@odata.bind': `/accounts(${facility.facilityId})`,
     })
   })
-  return assistanceRequest;
+  return assistanceRequest
 }
 
 function sortByPropertyDesc(property) {
@@ -67,7 +66,7 @@ async function updateMessageLastOpenedTime(req, res) {
     let response = await patchOperationWithObjectId('emails', req.params.messageId, req.body)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status )
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
@@ -78,7 +77,7 @@ async function createNewAssistanceRequest(req, res) {
     response = new MappableObjectForFront(response, AssistanceRequestMappings).toJSON()
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data? e.data : e?.status )
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
@@ -86,5 +85,4 @@ module.exports = {
   getMessages,
   updateMessageLastOpenedTime,
   createNewAssistanceRequest,
-};
-
+}

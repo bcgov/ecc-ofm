@@ -1,5 +1,5 @@
 <template>
-  <v-btn :class="[isPrimary ? 'BC-Gov-PrimaryButton': 'BC-Gov-OutlinedButton']" v-bind="$attrs">
+  <v-btn :class="[isPrimary ? 'BC-Gov-PrimaryButton' : 'BC-Gov-OutlinedButton']" v-bind="$attrs">
     <slot />
     <v-icon v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
@@ -10,8 +10,8 @@ export default {
   props: {
     isPrimary: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 }
 </script>
@@ -57,7 +57,7 @@ export default {
 
 .BC-Gov-OutlinedButton {
   background-color: white;
-  border:1px solid #003366;
+  border: 1px solid #003366;
   color: #003366;
   margin: 8px;
   /* ma-2 */
@@ -83,5 +83,4 @@ export default {
   text-decoration: underline;
   opacity: 0.8;
 }
-
 </style>

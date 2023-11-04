@@ -10,8 +10,7 @@
 
     <v-main class="align-start">
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false"
-        v-if="isAuthenticated && userInfo">
+      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated && userInfo">
         <TheMenu />
       </v-navigation-drawer>
       <router-view class="align-start pt-8 px-8 mb-0" />
@@ -31,7 +30,7 @@ import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import HttpStatus from 'http-status-codes';
+import HttpStatus from 'http-status-codes'
 
 export default {
   name: 'App',
@@ -73,20 +72,20 @@ export default {
   async created() {
     //this.setLoading(true);
     this.getJwtToken()
-    .then(() => Promise.all([this.getLookupInfo()]))
-    .catch((e) => {
-      if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-        // this.logout()
-        console.log(e);
-        this.$router.replace({
-          name: 'error',
-          query: { message: `500_${e.data || 'ServerError'}` },
-        })
-      }
-    })
-    .finally(() => {
-      // this.setLoading(false);
-    })
+      .then(() => Promise.all([this.getLookupInfo()]))
+      .catch((e) => {
+        if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+          // this.logout()
+          console.log(e)
+          this.$router.replace({
+            name: 'error',
+            query: { message: `500_${e.data || 'ServerError'}` },
+          })
+        }
+      })
+      .finally(() => {
+        // this.setLoading(false);
+      })
     // this.setLoading(false);
   },
   methods: {

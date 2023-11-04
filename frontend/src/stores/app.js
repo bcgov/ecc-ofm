@@ -24,12 +24,13 @@ export const useAppStore = defineStore('app', {
   }),
   actions: {
     setRequestCategories(requestCategories) {
-      this.requestCategories = requestCategories;
+      this.requestCategories = requestCategories
     },
     async getLookupInfo() {
-      if (localStorage.getItem('jwtToken')) { // DONT Call api if there is no token.
-        const lookupInfo = await ApiService.getLookupInfo();
-        this.setRequestCategories(lookupInfo.data?.requestCategories);
+      if (localStorage.getItem('jwtToken')) {
+        // DONT Call api if there is no token.
+        const lookupInfo = await ApiService.getLookupInfo()
+        this.setRequestCategories(lookupInfo.data?.requestCategories)
       }
     },
     async setConfig(config) {

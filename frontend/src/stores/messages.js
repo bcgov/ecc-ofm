@@ -63,11 +63,11 @@ export const useMessagesStore = defineStore('messages', {
     },
     async submitNewAssistanceRequest(payload) {
       try {
-        let response = await ApiService.apiAxios.post(ApiRoutes.MESSAGE + '/newAssistanceRequest', payload);
-        return response?.data;
+        let response = await ApiService.apiAxios.post(ApiRoutes.MESSAGE + '/newAssistanceRequest', payload)
+        return response?.data
       } catch (error) {
-        console.log(`Failed to create a new Assistance Request - ${error}`);
-        throw error;
+        console.log(`Failed to create a new Assistance Request - ${error}`)
+        throw error
       }
     },
   },

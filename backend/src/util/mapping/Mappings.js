@@ -35,7 +35,7 @@ const UserProfileFacilityMappings = [
 const RequestCategoryMappings = [
   { back: 'ofm_name', front: 'categoryName' },
   { back: 'ofm_request_categoryid', front: 'categoryId' },
-];
+]
 
 const AssistanceRequestMappings = [
   { back: 'ofm_subject', front: 'subject' },
@@ -44,7 +44,7 @@ const AssistanceRequestMappings = [
   { back: 'ofm_telephone', front: 'phone' },
   { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
   { back: 'ofm_name', front: 'referenceNumber' },
-];
+]
 
 const NotificationMappings = [
   { back: 'activityid', front: 'notificationId' },
@@ -62,4 +62,4 @@ module.exports = {
   UserProfileFacilityMappings,
   RequestCategoryMappings,
   AssistanceRequestMappings,
-};
+}

@@ -2,15 +2,15 @@
   <v-dialog>
     <template #default="{ isActive }">
       <v-card>
-        <div class="pb-3" style="background-color:#003366;">
+        <div class="pb-3" style="background-color: #003366">
           <v-card-title class="text-white px-10">
             <v-row no-gutters justify="space-between" align="center">
               <h3>{{ title }}</h3>
-              <v-btn variant="text" icon="mdi-window-close" @click="closeDialog()"/>
+              <v-btn variant="text" icon="mdi-window-close" @click="closeDialog()" />
             </v-row>
           </v-card-title>
         </div>
-        <div style="background-color:#FFC72C;padding:2px;"></div>
+        <div style="background-color: #ffc72c; padding: 2px"></div>
         <v-card-text class="mb-4">
           <slot name="content"></slot>
         </v-card-text>
@@ -27,14 +27,14 @@ export default {
   props: {
     title: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   emits: ['closeDialog'],
   methods: {
     closeDialog() {
-      this.$emit('closeDialog');
+      this.$emit('closeDialog')
     },
-  }
+  },
 }
 </script>

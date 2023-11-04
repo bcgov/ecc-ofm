@@ -6,34 +6,34 @@ const isValidBackendToken = auth.isValidBackendToken()
 const { getMessages, updateMessageLastOpenedTime, createNewAssistanceRequest } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
 
-module.exports = router;
+module.exports = router
 
 const newAssistanceRequestSchema = {
   contactId: {
     in: ['body'],
-    exists: { errorMessage: '[contactId] is required', }
+    exists: { errorMessage: '[contactId] is required' },
   },
   requestCategoryId: {
     in: ['body'],
-    exists: { errorMessage: '[requestCategoryId] is required', }
+    exists: { errorMessage: '[requestCategoryId] is required' },
   },
   subject: {
     in: ['body'],
-    exists: { errorMessage: '[subject] is required', }
+    exists: { errorMessage: '[subject] is required' },
   },
   description: {
     in: ['body'],
-    exists: { errorMessage: '[description] is required', }
+    exists: { errorMessage: '[description] is required' },
   },
   facilities: {
     in: ['body'],
-    exists: { errorMessage: '[facilities] is required', }
+    exists: { errorMessage: '[facilities] is required' },
   },
   contactMethod: {
     in: ['body'],
-    exists: { errorMessage: '[contactMethod] is required', }
-  }
-};
+    exists: { errorMessage: '[contactMethod] is required' },
+  },
+}
 
 /**
  * Get messages filtered by contactid
@@ -54,10 +54,9 @@ router.put('/:messageId', passport.authenticate('jwt', { session: false }), isVa
 /**
  * Create a new Assistance Request
  */
-router.post('/newAssistanceRequest', passport.authenticate('jwt', {session: false}),isValidBackendToken, [
-  checkSchema(newAssistanceRequestSchema)], (req, res) => { 
-  validationResult(req).throw();
-  return createNewAssistanceRequest(req, res);
-});
+router.post('/newAssistanceRequest', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(newAssistanceRequestSchema)], (req, res) => {
+  validationResult(req).throw()
+  return createNewAssistanceRequest(req, res)
+})
 
 module.exports = router
