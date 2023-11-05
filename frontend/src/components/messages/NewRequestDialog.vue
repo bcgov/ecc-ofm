@@ -41,7 +41,7 @@
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
               <v-select
                 v-model="newRequestModel.facilities"
-                placeholder="[select facility] (add more)"
+                placeholder="[selected facility] (add more)"
                 variant="outlined"
                 multiple
                 :rules="rules.listIsNotEmpty"
@@ -55,7 +55,7 @@
               <strong>Supporting documents</strong>
               (optional):
             </div>
-            <AppButton :isPrimary="false" @click="false">
+            <AppButton id="upload-document" :isPrimary="false" @click="false">
               <v-icon class="mr-3">mdi-tray-arrow-up</v-icon>
               Upload
             </AppButton>
@@ -65,7 +65,7 @@
               <strong>Preferred method of contact:</strong>
             </v-col>
             <v-col class="v-col-12">
-              <v-radio-group v-model="newRequestModel.contactMethod" :rules="rules.required" inline>
+              <v-radio-group v-model="newRequestModel.contactMethod" :rules="rules.required" inline color="primary">
                 <v-radio label="Phone" value="2"></v-radio>
                 <v-radio label="Portal message" value="1"></v-radio>
               </v-radio-group>
@@ -73,7 +73,7 @@
           </v-row>
           <v-row v-if="newRequestModel.contactMethod == '2'" no-gutters class="mt-2">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blueText pt-3">
-              <strong>Business Phone:</strong>
+              <strong>Business phone:</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
               <v-text-field v-model="newRequestModel.phone" variant="outlined" :rules="[...rules.required, rules.phone]" />
@@ -83,7 +83,7 @@
       </template>
       <template #button>
         <v-row justify="space-around">
-          <AppButton id="close-new-request" :isPrimary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
+          <AppButton id="cancel-new-request" :isPrimary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
           <AppButton id="submit-new-request" size="large" width="200px" @click="submitNewRequest()" :loading="isLoading">Submit</AppButton>
         </v-row>
       </template>
