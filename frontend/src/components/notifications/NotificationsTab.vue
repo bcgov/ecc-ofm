@@ -3,8 +3,8 @@
     <v-row>
       <v-col cols="6" class="border-right pa-0">
         <v-data-table-virtual v-model="rowCheckedIndexes" :headers="headers" :items="notifications"
-          item-key="notificationId" item-value="notificationId" show-select hover height="493px" fixed-header
-          density="compact">
+          item-key="notificationId" item-value="notificationId" show-select hover fixed-header density="compact"
+          class="data-table">
           <!-- TOP -->
           <template #top>
             <v-row>
@@ -201,6 +201,10 @@ hr {
   height: 1px;
   background: #6699cc;
   background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
+}
+
+.data-table {
+  height: 524px;
 }
 
 .flex-item {

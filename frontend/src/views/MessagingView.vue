@@ -88,23 +88,7 @@ export default {
   padding: 0px;
 }
 
-::v-deep .v-badge__badge {
-  align-items: center;
-  display: inline-flex;
-  border-radius: 10px;
+:deep(.v-badge__badge) {
   font-size: 0.75rem !important;
-  font-weight: 500;
-  height: 1.25rem;
-  justify-content: center;
-  min-width: 18px;
-  padding: 2px 3px;
-  pointer-events: auto;
-  position: absolute;
-  text-align: center;
-  text-indent: 0;
-  transition: 0.225s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  background: rgb(var(--v-theme-surface-variant));
-  color: rgba(var(--v-theme-on-surface-variant), var(--v-high-emphasis-opacity));
 }
 </style>
