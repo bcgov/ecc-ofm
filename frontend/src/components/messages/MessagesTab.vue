@@ -2,24 +2,26 @@
   <v-container class="pa-3">
     <v-row>
       <v-col cols="6" class="border-right pa-0">
-        <v-data-table :headers="headers" hover single-select height="500px" density="compact">
-          <template v-slot:top>
-            <div class="slot-top">
-              <div class="flex-container">
-                <div id="new-message" @click="toggleNewRequestDialog()" class="flex-item message-button">
-                  <v-icon class="icon">mdi-email-plus-outline</v-icon>
-                  <span class="icon-text">New message</span>
+        <v-data-table-virtual :headers="headers" show-select hover fixed-header density="compact" class="data-table">
+          <template #top>
+            <v-row>
+              <v-col class="mt-1">
+                <div class="flex-item">
+                  <v-btn class="btn-style" @click="toggleNewRequestDialog()">
+                    <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
+                    <span class="btn-label">New message</span>
+                  </v-btn>
+                  <v-btn class="btn-style" @click="false">
+                    <v-icon class="icon" left>mdi-email-outline</v-icon>
+                    <span class="btn-label">Mark unread</span>
+                  </v-btn>
+                  <v-btn class="btn-style" @click="false">
+                    <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+                    <span class="btn-label">Mark read</span>
+                  </v-btn>
                 </div>
-                <div @click="false" class="flex-item message-button">
-                  <v-icon class="icon">mdi-email-outline</v-icon>
-                  <span class="icon-text">Mark unread</span>
-                </div>
-                <div @click="false" class="flex-item message-button">
-                  <v-icon class="icon">mdi-email-open-outline</v-icon>
-                  <span class="icon-text">Mark read</span>
-                </div>
-              </div>
-            </div>
+              </v-col>
+            </v-row>
           </template>
           <!-- <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
@@ -49,8 +51,7 @@
               <td :class="{ 'highlighted': index === rowClickedIndex }">{{ item.selectable.dateReceived }}</td>
             </tr>
           </template> -->
-          <template v-slot:bottom></template>
-        </v-data-table>
+        </v-data-table-virtual>
       </v-col>
       <v-col cols="6">
         <v-card v-if="false" variant="flat">
@@ -104,9 +105,23 @@ export default {
 </script>
 
 <style scoped>
-.flex-container {
-  display: flex;
-  justify-content: space-evenly;
+th {
+  padding: 0px 0px 0px 4px !important;
+}
+
+td {
+  padding: 0px 3px 0px 4px !important;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #6699cc;
+  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
+}
+
+.data-table {
+  height: 524px;
 }
 
 .flex-item {
@@ -114,32 +129,52 @@ export default {
   align-items: left;
 }
 
-.icon {
-  font-size: 24px;
-  padding-right: 2px;
+.btn-style {
+  padding: 0px 6px !important;
+  margin: 0px;
+  font-size: 14px;
+  background-color: #ffffff;
   color: #6699cc;
-  cursor: pointer;
+  font-weight: bold;
+  text-transform: none;
+  max-height: 28px;
+  border: none;
+  box-shadow: none;
 }
 
-.icon-text {
-  color: #6699cc;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  padding: 2px 0px;
+.btn-style:hover {
+  background-color: #ffffff;
 }
 
-.message-button:hover {
-  opacity: 0.8;
+.btn-style:hover .btn-label {
+  text-decoration: underline;
+}
+
+.item {
+  padding-left: 4px;
+}
+
+.btn-style .v-btn__content .icon {
+  padding: 0px !important;
+  margin: 0px;
+  font-size: 1.5em;
+}
+
+.headers {
+  padding-left: 4px !important;
+  font-weight: bold !important;
+  color: #878787 !important;
+}
+
+.headers:hover {
+  padding-left: 4px !important;
+  font-weight: bold !important;
+  color: black !important;
+  cursor: pointer !important;
 }
 
 .font-bold {
   font-weight: bold;
-}
-
-.slot-top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
 .unread-notification {
@@ -151,19 +186,7 @@ export default {
   border-right: 2px solid #6699cc;
 }
 
-hr {
-  border: 0;
-  height: 1px;
-  background: #6699cc;
-  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
-}
-
-.card-title {
-  font-size: medium;
-  padding-left: 0px !important;
-}
-
-.highlighted {
+.highlighted-row {
   background-color: #d4eaff !important;
 }
 </style>
