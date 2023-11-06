@@ -28,7 +28,7 @@ export const useNotificationsStore = defineStore('notifications', {
         this.messages = []
       }
     },
-    async updateNotification(notification, isRead) {
+    async updateNotification(notification) {
       if (!localStorage.getItem('jwtToken')) {
         console.log('unable to update Notification data because you are not logged in')
         throw 'unable to update Notification data because you are not logged in'
@@ -36,7 +36,7 @@ export const useNotificationsStore = defineStore('notifications', {
       if (notification.notificationId) {
         try {
           const payload = {
-            lastopenedtime: isRead ? new Date().toISOString() : null,
+            lastopenedtime: notification.isRead ? new Date().toISOString() : null,
           }
           await ApiService.apiAxios.put(ApiRoutes.NOTICE + '/' + notification.notificationId, payload)
         } catch (error) {

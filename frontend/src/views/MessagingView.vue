@@ -2,7 +2,7 @@
   <v-card class="messaging-card" variant="flat">
     <v-tabs v-model="tab" bg-color="none" class="messaging-tabs" density="compact">
       <div v-if="showUnreadNotificationCount">
-        <v-badge color="red" :content="unreadNotificationCount" offset-x="8" offset-y="9">
+        <v-badge color="red" :content="unreadNotificationCount" offset-x="9" offset-y="9">
           <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="one">Notifications</v-tab>
         </v-badge>
       </div>
@@ -53,8 +53,8 @@ export default {
 .messaging-tab {
   border: 2px solid #6699cc;
   border-bottom: 0px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-left-radius: 10px !important;
+  border-top-right-radius: 10px !important;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
   color: #336699;
@@ -86,5 +86,9 @@ export default {
 
 .messaging-window-item {
   padding: 0px;
+}
+
+:deep(.v-badge__badge) {
+  font-size: 0.75rem !important;
 }
 </style>
