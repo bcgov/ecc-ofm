@@ -1,18 +1,18 @@
 <template>
-  <AppDialog v-model="isDisplayed" :title="dialogTitle" persistent max-width="40%" @closeDialog="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Success" persistent max-width="40%" @close="closeDialog">
     <template #content>
-      <v-row>
+      <v-row class="mb-2">
         <v-col align="center">
-          <p class="pt-4 text-h5">Your message has been submitted.</p>
-          <p class="pt-4 text-h5">Reference: {{ referenceNumber }}</p>
-          <p class="pt-4 text-h5">Typical response times are 3-5 business days.</p>
+          <p class="pt-4 text-h6">Your message has been submitted.</p>
+          <p class="pt-4 text-h6">Reference: {{ referenceNumber }}</p>
+          <p class="pt-4 text-h6">Typical response times are 3-5 business days.</p>
         </v-col>
       </v-row>
     </template>
     <template #button>
       <v-row justify="space-around">
-        <AppButton id="return-home-button" :isPrimary="false" size="large" width="200px" @click="returnToHome()">Return to home</AppButton>
-        <AppButton id="view-messages-button" size="large" width="200px" @click="viewMessages()">View messages</AppButton>
+        <AppButton id="return-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">Return to home</AppButton>
+        <AppButton id="view-messages-button" size="large" width="200px" @click="closeDialog()">View messages</AppButton>
       </v-row>
     </template>
   </AppDialog>
@@ -21,13 +21,12 @@
 <script>
 import AppButton from '../ui/AppButton.vue'
 import AppDialog from '../ui/AppDialog.vue'
-import { PATHS } from '@/utils/constants'
 
 export default {
   name: 'NewRequestConfirmationDialog',
   components: { AppButton, AppDialog },
   props: {
-    showNewRequestConfirmationDialog: {
+    show: {
       type: Boolean,
       default: false,
     },
@@ -36,30 +35,23 @@ export default {
       default: '',
     },
   },
-  emits: ['closeNewRequestConfirmationDialog'],
+  emits: ['close'],
   data() {
     return {
       isDisplayed: false,
-      dialogTitle: 'Success',
     }
   },
+  computed: {},
   watch: {
-    showNewRequestConfirmationDialog: {
+    show: {
       handler(value) {
         this.isDisplayed = value
       },
     },
   },
   methods: {
-    returnToHome() {
-      this.closeDialog()
-      this.$router.push(PATHS.HOME)
-    },
-    viewMessages() {
-      this.closeDialog()
-    },
     closeDialog() {
-      this.$emit('closeNewRequestConfirmationDialog')
+      this.$emit('close')
     },
   },
 }

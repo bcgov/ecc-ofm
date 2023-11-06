@@ -18,10 +18,6 @@ export const ApiRoutes = Object.freeze({
   NOTICE: baseRoot + '/notifications',
 })
 
-export const PATHS = {
-  HOME: '/',
-}
-
 export const ACCOUNT_TYPE = Object.freeze({
   FACILITY: 100000001,
   ORGANIZATION: 100000000,

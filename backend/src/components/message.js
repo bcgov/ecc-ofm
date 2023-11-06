@@ -16,7 +16,7 @@ function mapMessageObjectForFront(data) {
 
 function mapAssistanceRequestObjectForBack(data) {
   let assistanceRequest = new MappableObjectForBack(data, AssistanceRequestMappings).toJSON()
-  if (assistanceRequest['ofm_contact_method'] == '1') delete assistanceRequest['ofm_telephone']
+  if (assistanceRequest['ofm_contact_method'] === '1') delete assistanceRequest['ofm_telephone']
   assistanceRequest['ofm_request_category@odata.bind'] = `/ofm_request_categories(${data?.requestCategoryId})`
   assistanceRequest['ofm_contact@odata.bind'] = `/contacts(${data?.contactId})`
   assistanceRequest['ofm_facility_request_request'] = []

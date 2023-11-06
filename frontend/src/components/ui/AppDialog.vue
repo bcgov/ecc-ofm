@@ -1,24 +1,20 @@
 <template>
   <v-dialog>
-    <template #default="{ isActive }">
-      <v-card>
-        <div class="pb-3" style="background-color: #003366">
-          <v-card-title class="text-white px-10">
-            <v-row no-gutters justify="space-between" align="center">
-              <h3>{{ title }}</h3>
-              <v-btn variant="text" icon="mdi-window-close" @click="closeDialog()" />
-            </v-row>
-          </v-card-title>
-        </div>
-        <div style="background-color: #ffc72c; padding: 2px"></div>
-        <v-card-text class="mb-4">
-          <slot name="content"></slot>
-        </v-card-text>
-        <v-card-actions class="mb-4">
-          <slot name="button"></slot>
-        </v-card-actions>
-      </v-card>
-    </template>
+    <v-card>
+      <v-card-title class="dialog-title">
+        <v-row no-gutters justify="space-between" align="center">
+          <h3>{{ title }}</h3>
+          <v-btn variant="text" icon="mdi-window-close" @click="$emit('close')" />
+        </v-row>
+      </v-card-title>
+      <div class="yellow-line"></div>
+      <v-card-text>
+        <slot name="content"></slot>
+      </v-card-text>
+      <v-card-actions class="mb-4">
+        <slot name="button"></slot>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 <script>
@@ -30,11 +26,16 @@ export default {
       default: '',
     },
   },
-  emits: ['closeDialog'],
-  methods: {
-    closeDialog() {
-      this.$emit('closeDialog')
-    },
-  },
 }
 </script>
+<style scoped>
+.dialog-title {
+  background-color: #003366;
+  color: white;
+  padding: 10px 30px;
+}
+.yellow-line {
+  background-color: #ffc72c;
+  padding: 2px;
+}
+</style>

@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="dialogTitle" persistent max-width="70%" @closeDialog="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" persistent max-width="70%" @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="newRequestModel.isFormComplete" class="px-12 mx-8">
           <v-row no-gutters class="mt-4">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blueText pt-3">
+            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blue-text pt-3">
               <strong>Topic:</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
@@ -19,7 +19,7 @@
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blueText pt-3">
+            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blue-text pt-3">
               <strong>Subject:</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
@@ -27,7 +27,7 @@
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 blueText pb-0">
+            <v-col class="v-col-12 blue-text pb-0">
               <strong>Request description:</strong>
             </v-col>
             <v-col class="v-col-12">
@@ -35,7 +35,7 @@
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blueText pt-3">
+            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blue-text pt-3">
               <strong>Facility(s):</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
@@ -50,18 +50,18 @@
                 item-value="facilityId"></v-select>
             </v-col>
           </v-row>
-          <v-row no-gutters align="center" class="mt-2">
-            <div class="blueText mr-8">
+          <v-row no-gutters align="center">
+            <div class="blue-text mr-8">
               <strong>Supporting documents</strong>
               (optional):
             </div>
-            <AppButton id="upload-document" :isPrimary="false" @click="false">
+            <AppButton id="upload-document" :primary="false" @click="false">
               <v-icon class="mr-3">mdi-tray-arrow-up</v-icon>
               Upload
             </AppButton>
           </v-row>
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 blueText pb-0">
+            <v-col class="v-col-12 blue-text pb-0">
               <strong>Preferred method of contact:</strong>
             </v-col>
             <v-col class="v-col-12">
@@ -72,7 +72,7 @@
             </v-col>
           </v-row>
           <v-row v-if="newRequestModel.contactMethod == '2'" no-gutters class="mt-2">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blueText pt-3">
+            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 blue-text pt-3">
               <strong>Business phone:</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
@@ -83,15 +83,12 @@
       </template>
       <template #button>
         <v-row justify="space-around">
-          <AppButton id="cancel-new-request" :isPrimary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-new-request" size="large" width="200px" @click="submitNewRequest()" :loading="isLoading">Submit</AppButton>
+          <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
+          <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
         </v-row>
       </template>
     </AppDialog>
-    <NewRequestConfirmationDialog
-      :referenceNumber="referenceNumber"
-      :showNewRequestConfirmationDialog="showNewRequestConfirmationDialog"
-      @closeNewRequestConfirmationDialog="closeNewRequestConfirmationDialog" />
+    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog" @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -109,15 +106,14 @@ export default {
   name: 'NewRequestDialog',
   components: { AppButton, AppDialog, NewRequestConfirmationDialog },
   props: {
-    showNewRequestDialog: {
+    show: {
       type: Boolean,
       default: false,
     },
   },
-  emits: ['closeNewRequestDialog'],
+  emits: ['close'],
   data() {
     return {
-      dialogTitle: 'New request',
       newRequestModel: {},
       rules,
       isDisplayed: false,
@@ -134,17 +130,17 @@ export default {
     },
   },
   watch: {
-    showNewRequestDialog: {
+    show: {
       handler(value) {
         this.isDisplayed = value
       },
     },
   },
-  beforeMount() {
+  created() {
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, ['submitNewAssistanceRequest']),
+    ...mapActions(useMessagesStore, ['createNewAssistanceRequest']),
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
@@ -162,18 +158,17 @@ export default {
 
     closeNewRequestDialog() {
       this.resetForm()
-      this.$emit('closeNewRequestDialog')
+      this.$emit('close')
     },
 
-    async submitNewRequest() {
-      console.log(this.newRequestModel)
+    async submit() {
       this.$refs.newRequestForm?.validate()
       if (this.newRequestModel?.isFormComplete) {
         try {
           this.isLoading = true
-          let response = await this.submitNewAssistanceRequest(this.newRequestModel)
+          let response = await this.createNewAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
-          this.openNewRequestConfirmationDialog()
+          this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           console.log(`Failed to create a new Assistance Request - ${error}`)
           throw error
@@ -184,19 +179,15 @@ export default {
       }
     },
 
-    openNewRequestConfirmationDialog() {
-      this.showNewRequestConfirmationDialog = true
-    },
-
-    closeNewRequestConfirmationDialog() {
-      this.showNewRequestConfirmationDialog = false
+    toggleNewRequestConfirmationDialog() {
+      this.showNewRequestConfirmationDialog = !this.showNewRequestConfirmationDialog
     },
   },
 }
 </script>
 
 <style scoped>
-.blueText {
+.blue-text {
   color: #003366;
   font-size: 125%;
 }
