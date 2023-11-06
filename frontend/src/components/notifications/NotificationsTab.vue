@@ -2,76 +2,85 @@
   <v-container class="pa-3">
     <v-row>
       <v-col cols="6" class="border-right pa-0">
-        <v-data-table :headers="headers" :items="notifications" item-key="notificationId" hover single-select
-          height="500px" density="compact">
-          <template v-slot:top>
-            <div class="slot-top">
-              <div class="flex-container">
-                <!--div class="flex-item">
-                  <v-icon class="icon">mdi-email-plus-outline</v-icon><span class="icon-text">New
-                  Message</span>
-                </div-->
-                <div @click="updateCheckedReadUnread(false)" class="flex-item">
-                  <v-icon class="icon">mdi-email-outline</v-icon><span class="icon-text">Mark
-                    Unread</span>
+        <v-data-table-virtual v-model="rowCheckedIndexes" :headers="headers" :items="notifications"
+          item-key="notificationId" item-value="notificationId" show-select hover height="493px" fixed-header
+          density="compact">
+          <!-- TOP -->
+          <template #top>
+            <v-row>
+              <v-col class="mt-1">
+                <div class="flex-item">
+                  <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
+                    <v-icon class="icon" left>mdi-email</v-icon>
+                    <span class="btn-label">Mark Unread</span>
+                  </v-btn>
+                  <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
+                    <v-icon class="icon" left>mdi-email-open</v-icon>
+                    <span class="btn-label">Mark read</span>
+                  </v-btn>
                 </div>
-                <div @click="updateCheckedReadUnread(true)" class="flex-item">
-                  <v-icon class="icon">mdi-email-open-outline</v-icon><span class="icon-text">Mark
-                    Read</span>
-                </div>
-              </div>
-            </div>
+              </v-col>
+            </v-row>
           </template>
+          <!-- HEADERS -->
           <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
-              <th v-for="column  in  columns" :key="column.key" @click="toggleSort(column)"
-                :style="{ width: column.width }">
-                <div v-if="column.title === null">
-                  <v-checkbox v-model="checkBoxToggleAllState" @click="toggleAllCheckBoxHandler" hide-details
-                    density="compact"></v-checkbox>
+              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }"
+                @click="toggleSort(column)">
+                <div v-if="column.title === ''">
+                  <v-checkbox v-model="headerCheckboxState"
+                    :indeterminate="bodyCheckboxesSelected.length > 0 && bodyCheckboxesSelected.includes(true)"
+                    hide-details density="compact" @click.stop="headerCheckboxClickHandler" />
                 </div>
-                <div v-else>
+                <div v-else class="headers">
                   {{ column.title }}
-                  <v-icon v-if="isSorted(column)">{{ getSortIcon(column) }}</v-icon>
+                  <v-icon v-if="isSorted(column)" size="20" class="pa-0, ma-0">{{ getSortIcon(column) }}</v-icon>
                 </div>
               </th>
             </tr>
           </template>
+          <!-- BODY -->
           <template #item="{ item, index }">
-            <tr @click="rowClickHandler(item, index)"
-              :class="{ 'unread-notification': !item.selectable.isRead, 'highlighted': index === rowClickedIndex }">
-              <td :class="{ 'highlighted': index === rowClickedIndex }">
-                <v-checkbox @click="checkBoxClickHandler" v-model="checkBoxListState[index]" hide-details
-                  density="compact"></v-checkbox>
+            <tr :class="{ 'unread-notification': !item.isRead, 'highlighted-row': index === rowClickedIndex }"
+              item-key="notificationId" @click="rowClickHandler(item, index)">
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact"
+                  @click.stop="bodyCheckboxesClickHandler" />
               </td>
-              <td :class="{ 'highlighted': index === rowClickedIndex }">{{ (item.selectable.isRead) ? 'Read' : 'Unread' }}
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ (item.isRead) ?
+                  'Read' :
+                  'Unread' }}</div>
               </td>
-              <td :class="{ 'highlighted': index === rowClickedIndex }">{{ item.selectable.subject }}</td>
-              <td :class="{ 'highlighted': index === rowClickedIndex }">{{ item.selectable.dateReceived }}</td>
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ item.subject }}</div>
+              </td>
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ item.dateReceived }}</div>
+              </td>
             </tr>
           </template>
-          <template v-slot:bottom></template>
-        </v-data-table>
+        </v-data-table-virtual>
       </v-col>
       <v-col cols="6">
+        <!-- NOTIFICATION DETAILS -->
         <v-card v-if="notificationSelected" variant="flat">
-          <v-card-title class="card-title d-flex align-start flex-wrap">
+          <v-card-title>
             <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
                 <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
               </div>
-              <div v-if="notificationSelected.selectable.isRead" @click="updateNotificationUnread(notificationSelected)"
-                class="d-flex align-center">
-                <v-icon class="icon ml-3">mdi-email-outline</v-icon>
-                <span class="icon-text">Mark Unread</span>
-              </div>
+              <v-btn v-if="notificationSelected.isRead" class="btn-style" @click="updateNotificationUnread">
+                <v-icon class="icon" left>mdi-email-open</v-icon>
+                <span class="btn-label">Mark Unread</span>
+              </v-btn>
             </div>
-            <div class="mt-2 w-100">
-              {{ notificationSelected.selectable.subject }}
+            <div class="w-100">
+              {{ notificationSelected.subject }}
             </div>
           </v-card-title>
           <hr>
-          <v-card-text v-html="notificationSelected.selectable.notificationContent"></v-card-text>
+          <v-card-text v-html="notificationSelected.notificationContent" />
         </v-card>
       </v-col>
     </v-row>
@@ -86,16 +95,35 @@ import { useNotificationsStore } from '@/stores/notifications'
 export default {
   data() {
     return {
-      checkBoxToggleAllState: false, // on/off state for toggle all checkbox
-      checkBoxListState: [], // on/off state for checkboxes in list
+      headerCheckboxState: false,
+      bodyCheckboxesSelected: [],
       rowClickedIndex: null,
+      checkBoxToggleAllState: false, // on/off state for toggle all checkbox
+      rowCheckedIndexes: [], // on/off state for checkboxes in list
       checkBoxClickedState: false, // on/off state for a checkbox clicked
       notificationSelected: null,
       headers: [
-        { title: null, align: 'start', key: 'name', sortable: false, width: '8%' },
-        { title: 'Read/Unread', align: 'start', key: 'isRead', sortable: true, width: '20%' },
-        { title: 'Subject', align: 'start', key: 'subject', sortable: false, width: '50%' },
-        { title: 'Date Received', align: 'start', key: 'dateReceived', sortable: true, width: '22%' },
+        {
+          title: 'Read/Unread',
+          align: 'start',
+          key: 'isRead',
+          sortable: true,
+          width: '22%',
+        },
+        {
+          title: 'Subject',
+          align: 'start',
+          key: 'subject',
+          sortable: true,
+          width: '50%',
+        },
+        {
+          title: 'Date Received',
+          align: 'start',
+          key: 'dateReceived',
+          sortable: true,
+          width: '23%',
+        },
       ],
     }
   },
@@ -104,70 +132,75 @@ export default {
     ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
   },
   async created() {
-    this.getNotifications(this.userInfo.contactId)
-    this.initCheckBoxState()
+    this.getNotifications(this.userInfo.contactId).then(() => {
+      this.initAllCheckboxState()
+    })
   },
   methods: {
     ...mapActions(useNotificationsStore, ['getNotifications', 'updateNotification']),
     /**
-     * Initializes the toggle all checkbox and checkbox list state.
+     * Initializes the header and body/item checkboxes to false.
      */
-    initCheckBoxState() {
-      this.checkBoxListState = Array(this.notifications.length).fill(false)
-      this.checkBoxToggleAllState = false
+    initAllCheckboxState() {
+      this.headerCheckboxState = false
+      this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
     },
     /**
-     * Toggles all the notifications checked or unchecked.
+     * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
      */
-    toggleAllCheckBoxHandler() {
-      this.checkBoxListState.fill(!this.checkBoxToggleAllState)
+    headerCheckboxClickHandler() {
+      this.bodyCheckboxesSelected.fill(!this.headerCheckboxState)
     },
     /**
-     * Flags a list item has been checked.
+     *  This must exist to avoid mutation of the array
      */
-    checkBoxClickHandler() {
-      this.checkBoxClickedState = true
-    },
+    bodyCheckboxesClickHandler() { },
     /**
-     * Handles the row click event. When a row is clicked the notification is displayed and marked as read.
+     * Update the body/item checkboxes to read or unread.
      */
-    rowClickHandler(item, index) {
-      if (!this.checkBoxClickedState) {
-        this.notificationSelected = item
-        this.rowClickedIndex = index // Used for row select highlighting in template slot item
-        this.notifications[index].isRead = true
-        this.updateNotification(this.notifications[index], true)
-      } else {
-        this.checkBoxClickedState = false
-      }
-    },
-    /**
-     * Updates all checked notifications to read or unread.
-     */
-    updateCheckedReadUnread(isRead) {
-      this.checkBoxListState.forEach((item, index) => {
-        if (item) {
+    updateBodyCheckboxesReadUnread(isRead) {
+      this.bodyCheckboxesSelected.forEach((item, index) => {
+        if (item) { // jstorey can remove?
           this.notifications[index].isRead = isRead
           this.updateNotification(this.notifications[index], isRead)
         }
       })
-      this.initCheckBoxState()
+      this.initAllCheckboxState()
     },
     /**
-     * Updates a notification to unread.
+     * Handles the row click event. When a row is clicked the notification in context is displayed and marked as read.
      */
-    updateNotificationUnread(item) {
-      item.selectable.isRead = false
-      this.updateNotification(item.selectable, false)
+    rowClickHandler: function (item, index) {
+      this.rowClickedIndex = index // Used for row select highlighting in template slot item
+      this.notificationSelected = this.notifications.find(notification => notification.notificationId === item.notificationId)
+      this.notificationSelected.isRead = true
+      this.updateNotification(this.notificationSelected)
+    },
+    /**
+     * Updates the currnetly clicked/selected notification to unread.
+     */
+    updateNotificationUnread() {
+      this.notificationSelected.isRead = false
+      this.updateNotification(this.notificationSelected)
     },
   }
 };
 </script>
   
 <style scoped>
-.flex-container {
-  display: flex;
-  justify-content: space-evenly;
+th {
+  padding: 0px 0px 0px 4px !important;
+}
+
+td {
+  padding: 0px 3px 0px 4px !important;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #6699cc;
+  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
 }
 
 .flex-item {
@@ -175,35 +208,52 @@ export default {
   align-items: left;
 }
 
-.icon {
-  font-size: 24px;
-  padding-right: 2px;
+.btn-style {
+  padding: 0px 6px !important;
+  margin: 0px;
+  font-size: 14px;
+  background-color: #ffffff;
   color: #6699cc;
-  cursor: pointer;
+  font-weight: bold;
+  text-transform: none;
+  max-height: 28px;
+  border: none;
+  box-shadow: none;
 }
 
-.icon:hover {
-  color: #6699cc;
+.btn-style:hover {
+  background-color: #ffffff;
 }
 
-.icon-text {
-  color: #6699cc;
-  cursor: pointer;
-  transition: color 0.3s ease;
+.btn-style:hover .btn-label {
+  text-decoration: underline;
 }
 
-.icon-text:hover {
-  color: #6699cc;
+.item {
+  padding-left: 4px;
+}
+
+.btn-style .v-btn__content .icon {
+  padding: 0px !important;
+  margin: 0px;
+  font-size: 1.5em;
+}
+
+.headers {
+  padding-left: 4px !important;
+  font-weight: bold !important;
+  color: #878787 !important;
+}
+
+.headers:hover {
+  padding-left: 4px !important;
+  font-weight: bold !important;
+  color: black !important;
+  cursor: pointer !important;
 }
 
 .font-bold {
   font-weight: bold;
-}
-
-.slot-top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity))
 }
 
 .unread-notification {
@@ -215,19 +265,7 @@ export default {
   border-right: 2px solid #6699cc;
 }
 
-hr {
-  border: 0;
-  height: 1px;
-  background: #6699cc;
-  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
-}
-
-.card-title {
-  font-size: medium;
-  padding-left: 0px !important;
-}
-
-.highlighted {
+.highlighted-row {
   background-color: #D4EAFF !important;
 }
 </style>

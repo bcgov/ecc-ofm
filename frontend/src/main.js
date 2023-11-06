@@ -5,6 +5,7 @@ import '@/assets/css/reset.css'
 
 import App from './App.vue'
 import { VDataTable } from 'vuetify/lib/labs/components.mjs'
+import { VDataTableVirtual } from 'vuetify/lib/labs/components.mjs'
 import { createApp } from 'vue'
 import { createMetaManager } from 'vue-meta'
 import { createPinia } from 'pinia'
@@ -17,6 +18,7 @@ const app = createApp(App)
 const pinia = createPinia()
 
 app.component('VDataTable', VDataTable)
+app.component('VDataTableVirtual', VDataTableVirtual)
 app.provide('$moment', moment)
 app
   .use(router)
