@@ -1,7 +1,7 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId } = require('./utils')
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
-const { MessageMappings } = require('../util/mapping/Mappings')
+const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
+const { MessageMappings, AssistanceRequestMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const moment = require('moment')
 const log = require('./logger')
@@ -12,6 +12,20 @@ function mapMessageObjectForFront(data) {
     data.createdon = new moment(data.createdon).format('YYYY/MM/DD')
   }
   return new MappableObjectForFront(data, MessageMappings).toJSON()
+}
+
+function mapAssistanceRequestObjectForBack(data) {
+  let assistanceRequest = new MappableObjectForBack(data, AssistanceRequestMappings).toJSON()
+  if (assistanceRequest['ofm_contact_method'] === '1') delete assistanceRequest['ofm_telephone']
+  assistanceRequest['ofm_request_category@odata.bind'] = `/ofm_request_categories(${data?.requestCategoryId})`
+  assistanceRequest['ofm_contact@odata.bind'] = `/contacts(${data?.contactId})`
+  assistanceRequest['ofm_facility_request_request'] = []
+  data?.facilities?.forEach((facility) => {
+    assistanceRequest['ofm_facility_request_request'].push({
+      'ofm_facility@odata.bind': `/accounts(${facility.facilityId})`,
+    })
+  })
+  return assistanceRequest
 }
 
 function sortByPropertyDesc(property) {
@@ -56,7 +70,19 @@ async function updateMessageLastOpenedTime(req, res) {
   }
 }
 
+async function createNewAssistanceRequest(req, res) {
+  try {
+    let payload = mapAssistanceRequestObjectForBack(req.body)
+    let response = await postOperation('ofm_assistance_requests?$select=ofm_name', payload)
+    response = new MappableObjectForFront(response, AssistanceRequestMappings).toJSON()
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getMessages,
   updateMessageLastOpenedTime,
+  createNewAssistanceRequest,
 }
