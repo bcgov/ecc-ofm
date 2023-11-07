@@ -76,9 +76,10 @@ async function getUserInfo(req, res) {
       return res.status(HttpStatus.OK).json(resData)
     }
   } else {
-    //Not an idir user, so just get the guid from the header
-    log.verbose('User Guid is: ', userGuid)
-    userResponse = await getUserProfile(userGuid, null)
+    // This is a BCeID user: if the userGuid cannot be found in dyanmics, then dyanmics will check if the userName exists,
+    // if userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
+    log.verbose('BCEID User guid: ' + userGuid + ' username: ' + userName)
+    userResponse = await getUserProfile(userGuid, userName)
   }
 
   if (log.isVerboseEnabled) {

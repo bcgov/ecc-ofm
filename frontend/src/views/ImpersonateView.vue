@@ -37,21 +37,21 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAuthStore, ['impersonateId', 'isUserInfoLoaded', 'userInfo']),
   },
   methods: {
-    ...mapActions(useAuthStore, ['getUserInfo', 'setIsUserInfoLoaded', 'setImpersonateId']),
+    ...mapActions(useAuthStore, ['getUserInfo']),
     async setBCeID() {
       this.processing = true
-      this.setIsUserInfoLoaded(false)
-      this.setImpersonateId(this.businessBCeId)
+      this.isUserInfoLoaded = false
+      this.impersonateId = this.businessBCeId)
       try {
         await this.getUserInfo()
         this.processing = false
         this.$router.push({ name: 'home' })
       } catch (error) {
         this.processing = false
-        this.setImpersonateId(null)
+        this.impersonateId = null
         if (error.response?.status == '404') {
           this.setFailureAlert(`Unable to find BCeID: [ ${this.businessBCeId} ]`)
         } else if (error.response?.status == '409') {

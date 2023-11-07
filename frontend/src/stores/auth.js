@@ -1,17 +1,13 @@
-import { defineStore } from 'pinia'
-
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
   state: () => ({
-    acronyms: [],
     isAuthenticated: localStorage.getItem('jwtToken') !== null,
     isMinistryUser: false,
     isImpersonating: false,
-    // TODO Remove from local storage
-    isUserInfoLoaded: localStorage.getItem('isUserInfoLoaded') !== null,
+    isUserInfoLoaded: false,
     userInfo: null,
     impersonateId: null,
     currentFacility: {},
@@ -45,16 +41,6 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     // TODO Remove setter. Just use state
-    async setIsUserInfoLoaded(isUserInfoLoaded) {
-      if (isUserInfoLoaded) {
-        this.isUserInfoLoaded = true
-        localStorage.setItem('isUserInfoLoaded', 'true')
-      } else {
-        this.isUserInfoLoaded = false
-        localStorage.removeItem('isUserInfoLoaded')
-      }
-    },
-    // TODO Remove setter. Just use state
     async setAuthorizedUser(isAdminUser) {
       if (isAdminUser) {
         this.isAuthorizedUser = true
@@ -72,16 +58,6 @@ export const useAuthStore = defineStore('auth', {
       } else {
         this.isAuthorizedWebsocketUser = false
         localStorage.removeItem('isAuthorizedWebsocketUser')
-      }
-    },
-    // TODO Remove setter. Just use state
-    async setImpersonateId(impersonateId) {
-      if (impersonateId) {
-        this.impersonateId = impersonateId
-        localStorage.setItem('impersonateId', impersonateId)
-      } else {
-        this.impersonateId = impersonateId
-        localStorage.removeItem('impersonateId')
       }
     },
     //sets the token required for refreshing expired json web tokens
