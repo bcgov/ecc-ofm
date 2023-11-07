@@ -11,11 +11,11 @@
               <v-col class="mt-1">
                 <div class="flex-item">
                   <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email</v-icon>
-                    <span class="btn-label">Mark Unread</span>
+                    <v-icon class="icon" left>mdi-email-outline</v-icon>
+                    <span class="btn-label">Mark unread</span>
                   </v-btn>
                   <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email-open</v-icon>
+                    <v-icon class="icon" left>mdi-email-open-outline</v-icon>
                     <span class="btn-label">Mark read</span>
                   </v-btn>
                 </div>
@@ -71,11 +71,11 @@
                 <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
               </div>
               <v-btn v-if="notificationSelected.isRead" class="btn-style" @click="updateNotificationUnread">
-                <v-icon class="icon" left>mdi-email-open</v-icon>
+                <v-icon class="icon" left>mdi-email-open-outline</v-icon>
                 <span class="btn-label">Mark Unread</span>
               </v-btn>
             </div>
-            <div class="w-100">
+            <div class="subject-text">
               {{ notificationSelected.subject }}
             </div>
           </v-card-title>
@@ -258,6 +258,10 @@ hr {
 
 .font-bold {
   font-weight: bold;
+}
+
+.subject-text {
+  font-size: 18px !important;
 }
 
 .unread-notification {
