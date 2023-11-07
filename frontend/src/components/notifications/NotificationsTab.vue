@@ -164,8 +164,8 @@ export default {
      * Update the body/item checkboxes to read or unread.
      */
     updateBodyCheckboxesReadUnread(isRead) {
-      const areAllNotificatoinsChecked = this.bodyCheckboxesSelected.every((item) => item === true)
-      if (areAllNotificatoinsChecked) {
+      const areAllNotificationsChecked = this.bodyCheckboxesSelected.every((item) => item === true)
+      if (areAllNotificationsChecked) {
         this.notifications.forEach((notification) => {
           notification.isRead = isRead
           this.updateNotification(notification)
@@ -225,7 +225,7 @@ hr {
 }
 
 .btn-style {
-  padding: 0px 6px !important;
+  padding: 0px 6px;
   margin: 0px;
   font-size: 14px;
   background-color: #ffffff;
@@ -250,22 +250,22 @@ hr {
 }
 
 .btn-style .v-btn__content .icon {
-  padding: 0px !important;
+  padding: 0px;
   margin: 0px;
   font-size: 1.5em;
 }
 
 .headers {
-  padding-left: 4px !important;
-  font-weight: bold !important;
-  color: #878787 !important;
+  padding-left: 4px;
+  font-weight: bold;
+  color: #878787;
 }
 
 .headers:hover {
-  padding-left: 4px !important;
-  font-weight: bold !important;
-  color: black !important;
-  cursor: pointer !important;
+  padding-left: 4px;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
 }
 
 .font-bold {
@@ -273,7 +273,7 @@ hr {
 }
 
 .subject-text {
-  font-size: 18px !important;
+  font-size: 18px;
 }
 
 .unread-notification {
@@ -286,7 +286,7 @@ hr {
 }
 
 .highlighted-row {
-  background-color: #D4EAFF !important;
+  background-color: #D4EAFF;
 }
 </style>
   
