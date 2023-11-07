@@ -7,7 +7,7 @@
           offset-y="17">
           <v-icon class="badge-icon" aria-hidden="false" icon="mdi-email-outline" size="30" />
         </v-badge>
-        <v-icon v-if="!unreadNotificationCount" class="badge-icon" aria-hidden="false" icon="mdi-email-outline"
+        <v-icon v-else-if="!unreadNotificationCount" class="badge-icon" aria-hidden="false" icon="mdi-email-outline"
           size="30" />
         Messaging
       </div>
