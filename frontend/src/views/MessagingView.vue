@@ -90,5 +90,7 @@ export default {
 
 :deep(.v-badge__badge) {
   font-size: 0.75rem !important;
+  min-width: 18px !important;
+  padding: 2px 3px !important;
 }
 </style>

@@ -2,7 +2,7 @@
   <v-container class="pa-3">
     <v-row>
       <v-col cols="6" class="border-right pa-0">
-        <v-data-table-virtual v-model="rowCheckedIndexes" :headers="headers" :items="notifications"
+        <v-data-table-virtual v-model="bodyCheckboxesSelected" :headers="headers" :items="notifications"
           item-key="notificationId" item-value="notificationId" show-select hover fixed-header density="compact"
           class="data-table">
           <!-- TOP -->
@@ -45,7 +45,7 @@
               item-key="notificationId" @click="rowClickHandler(item, index)">
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact"
-                  @click.stop="bodyCheckboxesClickHandler" />
+                  @click.stop="bodyCheckboxesClickHandler(item)" />
               </td>
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <div class="item">{{ (item.isRead) ?
@@ -95,13 +95,11 @@ import { useNotificationsStore } from '@/stores/notifications'
 export default {
   data() {
     return {
-      headerCheckboxState: false,
-      bodyCheckboxesSelected: [],
-      rowClickedIndex: null,
-      checkBoxToggleAllState: false, // on/off state for toggle all checkbox
-      rowCheckedIndexes: [], // on/off state for checkboxes in list
-      checkBoxClickedState: false, // on/off state for a checkbox clicked
-      notificationSelected: null,
+      headerCheckboxState: false, // Manages state of checkbox in custom header
+      bodyCheckboxesSelected: [], // Manages state of checkboxes in custom body
+      rowClickedIndex: null, // Used for row select highlighting in template slot item
+      notificationSelected: null, // Used for displaying notification details
+      checkedNotifications: [], // Used for updating notifications
       headers: [
         {
           title: 'Read/Unread',
@@ -144,6 +142,7 @@ export default {
     initAllCheckboxState() {
       this.headerCheckboxState = false
       this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
+      this.checkedNotifications = []
     },
     /**
      * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
@@ -152,19 +151,32 @@ export default {
       this.bodyCheckboxesSelected.fill(!this.headerCheckboxState)
     },
     /**
-     *  This must exist to avoid mutation of the array
+     *  Add or remove the clicked body/item checkbox to the checkedNotifications array.
      */
-    bodyCheckboxesClickHandler() { },
+    bodyCheckboxesClickHandler(item) {
+      if (this.checkedNotifications.includes(item)) {
+        this.checkedNotifications.splice(this.checkedNotifications.indexOf(item), 1)
+      } else {
+        this.checkedNotifications.push(item)
+      }
+    },
     /**
      * Update the body/item checkboxes to read or unread.
      */
     updateBodyCheckboxesReadUnread(isRead) {
-      this.bodyCheckboxesSelected.forEach((item, index) => {
-        if (item) { // jstorey can remove?
-          this.notifications[index].isRead = isRead
-          this.updateNotification(this.notifications[index], isRead)
-        }
-      })
+      const areAllNotificatoinsChecked = this.bodyCheckboxesSelected.every((item) => item === true)
+      if (areAllNotificatoinsChecked) {
+        this.notifications.forEach((notification) => {
+          notification.isRead = isRead
+          this.updateNotification(notification)
+        })
+      } else if (this.checkedNotifications.length > 0) {
+        this.checkedNotifications.forEach((item) => {
+          let noticeToUpdate = this.notifications.find(notification => notification.notificationId === item.notificationId)
+          noticeToUpdate.isRead = isRead
+          this.updateNotification(noticeToUpdate)
+        })
+      }
       this.initAllCheckboxState()
     },
     /**
