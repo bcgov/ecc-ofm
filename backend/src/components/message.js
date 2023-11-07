@@ -19,6 +19,7 @@ function mapAssistanceRequestObjectForBack(data) {
   if (assistanceRequest['ofm_contact_method'] === '1') delete assistanceRequest['ofm_telephone']
   assistanceRequest['ofm_request_category@odata.bind'] = `/ofm_request_categories(${data?.requestCategoryId})`
   assistanceRequest['ofm_contact@odata.bind'] = `/contacts(${data?.contactId})`
+  assistanceRequest['statuscode'] = 1
   assistanceRequest['ofm_facility_request_request'] = []
   data?.facilities?.forEach((facility) => {
     assistanceRequest['ofm_facility_request_request'].push({
