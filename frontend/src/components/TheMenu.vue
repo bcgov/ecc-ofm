@@ -3,9 +3,12 @@
     <AppMenuItem icon="mdi-home-outline" :to="{ name: 'home' }">Home</AppMenuItem>
     <AppMenuItem :to="{ name: 'messaging' }">
       <div class="badge-wrapper">
-        <v-badge :content="unreadNotificationCount" color="red" offset-x="18" offset-y="17">
+        <v-badge v-if="unreadNotificationCount > 0" :content="unreadNotificationCount" color="red" offset-x="18"
+          offset-y="17">
           <v-icon class="badge-icon" aria-hidden="false" icon="mdi-email-outline" size="30" />
         </v-badge>
+        <v-icon v-if="!unreadNotificationCount" class="badge-icon" aria-hidden="false" icon="mdi-email-outline"
+          size="30" />
         Messaging
       </div>
     </AppMenuItem>
