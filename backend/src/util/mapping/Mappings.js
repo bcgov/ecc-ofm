@@ -44,6 +44,9 @@ const AssistanceRequestMappings = [
   { back: 'ofm_telephone', front: 'phone' },
   { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
   { back: 'ofm_name', front: 'referenceNumber' },
+  { back: 'statuscode', front: 'assistanceRequestStatus' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'assistanceRequestStatusName' },
+  { back: '_ofm_request_category_value@OData.Community.Display.V1.FormattedValue', front: 'categoryName' },
 ]
 
 const NotificationMappings = [

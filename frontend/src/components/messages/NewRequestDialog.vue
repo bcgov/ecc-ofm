@@ -145,7 +145,7 @@ export default {
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
         contactId: this.userInfo?.contactId,
-        facilities: this.facilities?.filter((facility) => facility.statusCode === 1),
+        facilities: this.facilities?.filter((facility) => facility.facilityStateCode === 0), // statecode: 0 = Active, 1 = Inactive
         contactMethod: '1',
         phone: this.userInfo?.phone,
       }

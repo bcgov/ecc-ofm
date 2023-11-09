@@ -2,7 +2,19 @@
   <v-container class="pa-3">
     <v-row>
       <v-col cols="6" class="border-right pa-0">
-        <v-data-table-virtual :headers="headers" show-select hover fixed-header density="compact" class="data-table">
+        <v-data-table-virtual
+          v-if="assistanceRequests?.length > 0"
+          v-model="selectedRows"
+          :headers="headers"
+          :items="assistanceRequests"
+          item-key="assistanceRequestId"
+          item-value="assistanceRequestId"
+          :height="fitScreenHeight()"
+          show-select
+          hover
+          fixed-header
+          density="compact"
+          @click:row="rowClickHandler(item)">
           <template #top>
             <v-row>
               <v-col class="mt-1">
@@ -11,11 +23,11 @@
                     <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
                     <span class="btn-label">New message</span>
                   </v-btn>
-                  <v-btn class="btn-style" @click="false">
+                  <v-btn class="btn-style" @click="whatEver()">
                     <v-icon class="icon" left>mdi-email-outline</v-icon>
                     <span class="btn-label">Mark unread</span>
                   </v-btn>
-                  <v-btn class="btn-style" @click="false">
+                  <v-btn class="btn-style" @click="whatEver()">
                     <v-icon class="icon" left>mdi-email-open-outline</v-icon>
                     <span class="btn-label">Mark read</span>
                   </v-btn>
@@ -23,49 +35,60 @@
               </v-col>
             </v-row>
           </template>
-          <!-- <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
+          <!-- HEADERS -->
+          <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
-              <th v-for="column  in  columns" :key="column.key" @click="toggleSort(column)"
-                :style="{ width: column.width }">
-                <div v-if="column.title === null">
-                  <v-checkbox v-model="checkBoxToggleAllState" @click="toggleAllCheckBoxHandler" hide-details
-                    density="compact"></v-checkbox>
+              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }" @click="toggleSort(column)">
+                <div v-if="column.title === ''">
+                  <v-checkbox
+                    v-model="headerCheckboxState"
+                    :indeterminate="bodyCheckboxesSelected.length > 0 && bodyCheckboxesSelected.includes(true)"
+                    hide-details
+                    density="compact"
+                    @click.stop="headerCheckboxClickHandler" />
                 </div>
-                <div v-else>
+                <div v-else class="headers">
                   {{ column.title }}
-                  <v-icon v-if="isSorted(column)">{{ getSortIcon(column) }}</v-icon>
+                  <v-icon v-if="isSorted(column)" size="20" class="pa-0, ma-0">{{ getSortIcon(column) }}</v-icon>
                 </div>
               </th>
             </tr>
           </template>
+          <!-- BODY -->
           <template #item="{ item, index }">
-            <tr @click="rowClickHandler(item, index)"
-              :class="{ 'unread-notification': !item.selectable.isRead, 'highlighted': index === rowClickedIndex }">
-              <td :class="{ 'highlighted': index === rowClickedIndex }">
-                <v-checkbox @click="checkBoxClickHandler" v-model="checkBoxListState[index]" hide-details
-                  density="compact"></v-checkbox>
+            <tr :class="{ 'unread-notification': !item.categoryName, 'highlighted-row': index === rowClickedIndex }" item-key="assistanceRequestId" @click="rowClickHandler(item, index)">
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact" @click.stop="bodyCheckboxesClickHandler" />
               </td>
-              <td :class="{ 'highlighted': index === rowClickedIndex }">{{ (item.selectable.isRead) ? 'Read' : 'Unread' }}
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ item.assistanceRequestStatusName }}</div>
               </td>
-              <td :class="{ 'highlighted': index === rowClickedIndex }">{{ item.selectable.subject }}</td>
-              <td :class="{ 'highlighted': index === rowClickedIndex }">{{ item.selectable.dateReceived }}</td>
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ item.subject }}</div>
+              </td>
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ item.categoryName }}</div>
+              </td>
+              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
+                <div class="item">{{ item.categoryName }}</div>
+              </td>
             </tr>
-          </template> -->
+          </template>
         </v-data-table-virtual>
       </v-col>
       <v-col cols="6">
-        <v-card v-if="false" variant="flat">
+        <v-card v-if="true" variant="flat">
           <v-card-title class="card-title d-flex align-start flex-wrap">
             <!-- <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
-                <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
+                <span class="font-bold">From:</span>
+                &nbsp;Operating Funding Model Program
               </div>
-                <v-icon class="icon ml-3">mdi-email-outline</v-icon>
-                <span class="icon-text">Mark Unread</span>
-              </div>
-            </div> -->
-            <!-- <div class="mt-2 w-100">
-              {{ notificationSelected.selectable.subject }}
+              <v-icon class="icon ml-3">mdi-email-outline</v-icon>
+              <span class="icon-text">Mark Unread</span>
+            </div>
+            <div class="mt-2 w-100">
+              {{ assistanceRequestSelected.selectable.subject }}
             </div> -->
           </v-card-title>
           <hr />
@@ -78,6 +101,9 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { useMessagesStore } from '@/stores/messages'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 
 export default {
@@ -87,18 +113,102 @@ export default {
     return {
       showNewRequestDialog: false,
       headers: [
-        { title: null, align: 'start', key: 'name', sortable: false, width: '8%' },
-        { title: 'Status', align: 'start', key: 'isRead', sortable: true, width: '10%' },
-        { title: 'Subject', align: 'start', key: 'subject', sortable: true, width: '30%' },
-        { title: 'Topic', align: 'start', key: 'topic', sortable: true, width: '20%' },
-        { title: 'Last updated', align: 'start', key: 'dateReceived', sortable: true, width: '30%' },
+        { title: 'Status', align: 'start', key: 'assistanceRequestStatusName', sortable: true, width: '10%' },
+        { title: 'Subject', align: 'start', key: 'subject', sortable: true, width: '25%' },
+        { title: 'Topic', align: 'start', key: 'categoryName', sortable: true, width: '45%' },
+        { title: 'Last updated', align: 'start', key: 'dateReceived', sortable: true, width: '20%' },
       ],
+      selectedRows: [],
+      headerCheckboxState: false,
+      bodyCheckboxesSelected: [],
+      rowClickedIndex: null,
+      checkBoxToggleAllState: false, // on/off state for toggle all checkbox
+      rowCheckedIndexes: [], // on/off state for checkboxes in list
+      checkBoxClickedState: false, // on/off state for a checkbox clicked
+      assistanceRequestSelected: null,
     }
   },
-  computed: {},
+  computed: {
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useMessagesStore, ['assistanceRequests']),
+  },
+  async created() {
+    this.getAssistanceRequests(this.userInfo?.contactId).then(() => {
+      this.initAllCheckboxState()
+    })
+  },
   methods: {
+    ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     toggleNewRequestDialog() {
       this.showNewRequestDialog = !this.showNewRequestDialog
+    },
+    whatEver() {
+      console.log(this.selectedRows)
+    },
+    /**
+     * Initializes the header and body/item checkboxes to false.
+     */
+    initAllCheckboxState() {
+      this.headerCheckboxState = false
+      this.bodyCheckboxesSelected = new Array(this.assistanceRequests.length).fill(false)
+    },
+    /**
+     * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
+     */
+    headerCheckboxClickHandler() {
+      this.bodyCheckboxesSelected.fill(!this.headerCheckboxState)
+    },
+    /**
+     *  This must exist to avoid mutation of the array
+     */
+    bodyCheckboxesClickHandler() {},
+    /**
+     * Update the body/item checkboxes to read or unread.
+     */
+    updateBodyCheckboxesReadUnread(isRead) {
+      this.bodyCheckboxesSelected.forEach((item, index) => {
+        if (item) {
+          // jstorey can remove?
+          this.assistanceRequests[index].isRead = isRead
+          this.updateNotification(this.assistanceRequests[index], isRead)
+        }
+      })
+      this.initAllCheckboxState()
+    },
+    /**
+     * Handles the row click event. When a row is clicked the assistanceRequests in context is displayed and marked as read.
+     */
+    rowClickHandler(item, index) {
+      console.log(item)
+      console.log(item.assistanceRequestStatusName)
+      this.rowClickedIndex = index // Used for row select highlighting in template slot item
+      this.assistanceRequestSelected = this.assistanceRequests.find((assistanceRequest) => assistanceRequest.assistanceRequestId === item.assistanceRequestId)
+      // this.assistanceRequestSelected.isRead = true
+      // this.updateNotification(this.assistanceRequestSelected)
+    },
+    /**
+     * Updates the currnetly clicked/selected notification to unread.
+     */
+    updateNotificationUnread() {
+      this.assistanceRequestSelected.isRead = false
+      this.updateNotification(this.assistanceRequestSelected)
+    },
+    getRowStyle() {
+      console.log(' CLGVVVVVVVVVVVVVVVVVVVV ??????????????????????? ')
+      return 'unread-notification'
+      // console.log(assistanceRequestStatusName)
+      // if (assistanceRequestStatusName) {
+      //   console.log(assistanceRequestStatusName)
+      //   return 'unread-notification'
+      // } else return 'unread'
+    },
+    fitScreenHeight() {
+      if (this.$vuetify.display.xs) return '67vh'
+      else if (this.$vuetify.display.sm) return '82vh'
+      else if (this.$vuetify.display.md) return '75vh'
+      else if (this.$vuetify.display.lg) return '70vh'
+      else if (this.$vuetify.display.xl) return '78vh'
+      else return '70vh'
     },
   },
 }

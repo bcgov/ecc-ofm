@@ -81,8 +81,24 @@ async function createNewAssistanceRequest(req, res) {
   }
 }
 
+async function getAssistanceRequests(req, res) {
+  try {
+    let assistanceRequests = []
+    log.info(`operation: ofm_assistance_requests?$filter=(_ofm_contact_value eq ${req.params.contactId}`)
+    let response = await getOperation(`ofm_assistance_requests?$filter=(_ofm_contact_value eq ${req.params.contactId})`)
+    response?.value?.forEach((item) => {
+      let mappedAssistanceRequest = new MappableObjectForFront(item, AssistanceRequestMappings).toJSON()
+      assistanceRequests.push(mappedAssistanceRequest)
+    })
+    return res.status(HttpStatus.OK).json(assistanceRequests)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getMessages,
   updateMessageLastOpenedTime,
   createNewAssistanceRequest,
+  getAssistanceRequests,
 }

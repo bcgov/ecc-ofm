@@ -6,6 +6,7 @@ export const useMessagesStore = defineStore('messages', {
   namespaced: true,
   state: () => ({
     messages: null,
+    assistanceRequests: [],
   }),
   getters: {
     unreadMessageCount: (state) => (state.messages ? state.messages.filter((message) => !message.isRead).length : 0),
@@ -68,6 +69,17 @@ export const useMessagesStore = defineStore('messages', {
       } catch (error) {
         console.log(`Failed to create a new Assistance Request - ${error}`)
         throw error
+      }
+    },
+    async getAssistanceRequests(contactId) {
+      if (contactId) {
+        try {
+          let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE + '/' + contactId)
+          this.assistanceRequests = response.data
+        } catch (error) {
+          console.log(`Failed to get messages - ${error}`)
+          throw error
+        }
       }
     },
   },
