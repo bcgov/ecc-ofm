@@ -2,7 +2,7 @@
   <v-container class="pa-3">
     <v-row>
       <v-col cols="6" class="border-right pa-0">
-        <v-data-table-virtual v-model="rowCheckedIndexes" :headers="headers" :items="notifications"
+        <v-data-table-virtual v-model="bodyCheckboxesSelected" :headers="headers" :items="notifications"
           item-key="notificationId" item-value="notificationId" show-select hover fixed-header density="compact"
           class="data-table">
           <!-- TOP -->
@@ -11,11 +11,11 @@
               <v-col class="mt-1">
                 <div class="flex-item">
                   <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email</v-icon>
-                    <span class="btn-label">Mark Unread</span>
+                    <v-icon class="icon" left>mdi-email-outline</v-icon>
+                    <span class="btn-label">Mark unread</span>
                   </v-btn>
                   <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email-open</v-icon>
+                    <v-icon class="icon" left>mdi-email-open-outline</v-icon>
                     <span class="btn-label">Mark read</span>
                   </v-btn>
                 </div>
@@ -45,7 +45,7 @@
               item-key="notificationId" @click="rowClickHandler(item, index)">
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact"
-                  @click.stop="bodyCheckboxesClickHandler" />
+                  @click.stop="bodyCheckboxesClickHandler(item)" />
               </td>
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <div class="item">{{ (item.isRead) ?
@@ -71,11 +71,11 @@
                 <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
               </div>
               <v-btn v-if="notificationSelected.isRead" class="btn-style" @click="updateNotificationUnread">
-                <v-icon class="icon" left>mdi-email-open</v-icon>
+                <v-icon class="icon" left>mdi-email-open-outline</v-icon>
                 <span class="btn-label">Mark Unread</span>
               </v-btn>
             </div>
-            <div class="w-100">
+            <div class="subject-text">
               {{ notificationSelected.subject }}
             </div>
           </v-card-title>
@@ -95,13 +95,11 @@ import { useNotificationsStore } from '@/stores/notifications'
 export default {
   data() {
     return {
-      headerCheckboxState: false,
-      bodyCheckboxesSelected: [],
-      rowClickedIndex: null,
-      checkBoxToggleAllState: false, // on/off state for toggle all checkbox
-      rowCheckedIndexes: [], // on/off state for checkboxes in list
-      checkBoxClickedState: false, // on/off state for a checkbox clicked
-      notificationSelected: null,
+      headerCheckboxState: false, // Manages state of checkbox in custom header
+      bodyCheckboxesSelected: [], // Manages state of checkboxes in custom body
+      rowClickedIndex: null, // Used for row select highlighting in template slot item
+      notificationSelected: null, // Used for displaying notification details
+      checkedNotifications: [], // Used for updating notifications
       headers: [
         {
           title: 'Read/Unread',
@@ -144,27 +142,47 @@ export default {
     initAllCheckboxState() {
       this.headerCheckboxState = false
       this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
+      this.checkedNotifications = []
     },
     /**
      * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
      */
     headerCheckboxClickHandler() {
       this.bodyCheckboxesSelected.fill(!this.headerCheckboxState)
+      if (this.headerCheckboxState) {
+        this.checkedNotifications = []
+      } else {
+        this.checkedNotifications = JSON.parse(JSON.stringify(this.notifications))
+      }
     },
     /**
-     *  This must exist to avoid mutation of the array
+     *  Add or remove the clicked body/item checkbox to the checkedNotifications array.
      */
-    bodyCheckboxesClickHandler() { },
+    bodyCheckboxesClickHandler(item) {
+      const exists = this.checkedNotifications.some(notice => notice.notificationId === item.notificationId);
+      if (exists) {
+        this.checkedNotifications = this.checkedNotifications.filter(notice => notice.notificationId !== item.notificationId);
+      } else {
+        this.checkedNotifications.push(item)
+      }
+    },
     /**
      * Update the body/item checkboxes to read or unread.
      */
     updateBodyCheckboxesReadUnread(isRead) {
-      this.bodyCheckboxesSelected.forEach((item, index) => {
-        if (item) { // jstorey can remove?
-          this.notifications[index].isRead = isRead
-          this.updateNotification(this.notifications[index], isRead)
-        }
-      })
+      const areAllNotificationsChecked = this.bodyCheckboxesSelected.every((item) => item === true)
+      if (areAllNotificationsChecked) {
+        this.notifications.forEach((notification) => {
+          notification.isRead = isRead
+          this.updateNotification(notification)
+        })
+      } else if (this.checkedNotifications.length > 0) {
+        this.checkedNotifications.forEach((item) => {
+          let noticeToUpdate = this.notifications.find(notification => notification.notificationId === item.notificationId)
+          noticeToUpdate.isRead = isRead
+          this.updateNotification(noticeToUpdate)
+        })
+      }
       this.initAllCheckboxState()
     },
     /**
@@ -213,7 +231,7 @@ hr {
 }
 
 .btn-style {
-  padding: 0px 6px !important;
+  padding: 0px 6px;
   margin: 0px;
   font-size: 14px;
   background-color: #ffffff;
@@ -238,26 +256,30 @@ hr {
 }
 
 .btn-style .v-btn__content .icon {
-  padding: 0px !important;
+  padding: 0px;
   margin: 0px;
   font-size: 1.5em;
 }
 
 .headers {
-  padding-left: 4px !important;
-  font-weight: bold !important;
-  color: #878787 !important;
+  padding-left: 4px;
+  font-weight: bold;
+  color: #878787;
 }
 
 .headers:hover {
-  padding-left: 4px !important;
-  font-weight: bold !important;
-  color: black !important;
-  cursor: pointer !important;
+  padding-left: 4px;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
 }
 
 .font-bold {
   font-weight: bold;
+}
+
+.subject-text {
+  font-size: 18px;
 }
 
 .unread-notification {
@@ -270,7 +292,7 @@ hr {
 }
 
 .highlighted-row {
-  background-color: #D4EAFF !important;
+  background-color: #D4EAFF;
 }
 </style>
   
