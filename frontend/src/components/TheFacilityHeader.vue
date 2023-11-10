@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0" v-if="isAuthenticated && userInfo">
+  <v-container class="pa-2 ma-0 facility-container" v-if="isAuthenticated && userInfo">
     <v-row align="end" justify="space-between">
       <v-col cols="6" class="header-org">
         {{ userInfo.organizationName }}
@@ -36,17 +36,24 @@ export default {
 }
 </script>
 <style scoped>
+.facility-container {
+  max-width: 100%;
+}
 .header-org {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
   color: #003366;
   font-weight: 600;
-  font-size: 1.6em;
-  text-align: left;
+  font-size: 1.5em;
 }
 
 .header-facility {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
   color: #003366;
   font-weight: 600;
-  font-size: 1.4em;
-  text-align: right;
+  font-size: 1.3em;
 }
 </style>

@@ -5,7 +5,7 @@
     </v-row>
     <v-row>
       <v-form ref="form" v-model="isValidForm" @submit.prevent>
-        <v-card class="custom-card">
+        <v-card class="impersonate-card">
           <v-row>
             <v-col>
               <v-text-field outlined required v-model="businessBCeId" id="businessBCeId-field" :rules="rules.required" label="Business BCeID" v-on:keydown.enter="setBCeID()" />
@@ -44,7 +44,7 @@ export default {
     async setBCeID() {
       this.processing = true
       this.isUserInfoLoaded = false
-      this.impersonateId = this.businessBCeId)
+      this.impersonateId = this.businessBCeId
       try {
         await this.getUserInfo()
         this.processing = false
@@ -66,7 +66,7 @@ export default {
 </script>
 
 <style scoped>
-.custom-card {
+.impersonate-card {
   width: 350px;
   margin: 10px;
   padding: 10px;

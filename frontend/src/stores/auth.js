@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia'
+
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 
@@ -63,7 +65,7 @@ export const useAuthStore = defineStore('auth', {
     //sets the token required for refreshing expired json web tokens
     async logout() {
       localStorage.removeItem('jwtToken')
-      this.userInfo = false
+      this.userInfo = null
       this.isAuthenticated = false
     },
     async getUserInfo() {

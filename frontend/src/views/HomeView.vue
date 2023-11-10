@@ -69,7 +69,11 @@
     <v-container v-if="!isMinistryUser || isImpersonating">
       <v-card>
         <v-card-title>Current Facility</v-card-title>
-        <v-card-text>Facility Name: {{ currentFacility?.facilityName }}</v-card-text>
+        <v-card-text>
+          Facility Name:
+          <br />
+          <span style="opacity: 0.6">{{ currentFacility?.facilityName }}</span>
+        </v-card-text>
       </v-card>
     </v-container>
   </div>

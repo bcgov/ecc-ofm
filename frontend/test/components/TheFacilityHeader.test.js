@@ -31,7 +31,7 @@ describe('TheFacilityHeader', () => {
     const changeFacilityButton = wrapper.get('#changeFacility')
 
     changeFacilityButton.trigger('click')
-    // TODO Menu is rendered outside of the component
+    // TODO (weskubo-cgi) Menu is rendered outside of the component
     //const menu = createWrapper(document.body).find('.v-menu__content')
     //console.log(menu)
     //expect(wrapper.find('.v-menu').isVisible()).toBe(false)

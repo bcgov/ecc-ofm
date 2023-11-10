@@ -3,16 +3,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { PAGE_TITLES } from '@/utils/constants'
+import ApplicationsView from '@/views/ApplicationsView.vue'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
+import DocumentsView from '@/views/DocumentsView.vue'
 import ErrorView from '@/views/ErrorView.vue'
+import FundingView from '@/views/FundingView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
+import ReportingView from '@/views/ReportingView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
+import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 
@@ -74,11 +79,56 @@ const router = createRouter({
       },
     },
     {
+      path: '/reporting',
+      name: 'reporting',
+      component: ReportingView,
+      meta: {
+        pageTitle: 'Reporting',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/funding',
+      name: 'funding',
+      component: FundingView,
+      meta: {
+        pageTitle: 'Funding',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/documents',
+      name: 'documents',
+      component: DocumentsView,
+      meta: {
+        pageTitle: 'Documents',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/applications',
+      name: 'applications',
+      component: ApplicationsView,
+      meta: {
+        pageTitle: 'Applications',
+        requiresAuth: true,
+      },
+    },
+    {
       path: '/resources',
       name: 'resources',
       component: ResourcesView,
       meta: {
         pageTitle: 'Resources',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsView,
+      meta: {
+        pageTitle: 'Settings',
         requiresAuth: true,
       },
     },
@@ -140,71 +190,6 @@ const router = createRouter({
         role: 'CCP_ROLE',
       },
     },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // eventually be removed...
-    {
-      path: '/contractManagement',
-      name: 'contractManagement',
-      //component: ContractManagement,
-      meta: {
-        pageTitle: PAGE_TITLES.CONTRACT_MANAGEMENT,
-        requiresAuth: true,
-        role: 'OPS_ROLE',
-      },
-    },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // be removed...
-    {
-      path: '/payments',
-      name: 'payments',
-      //component: Payments,
-      meta: {
-        pageTitle: PAGE_TITLES.PAYMENTS,
-        requiresAuth: true,
-        role: 'PCM_ROLE',
-      },
-    },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // be removed...
-    {
-      path: '/reporting',
-      name: 'reporting',
-      //component: Reporting,
-      meta: {
-        pageTitle: PAGE_TITLES.REPORTING,
-        requiresAuth: true,
-        role: 'OPS_ROLE',
-      },
-    },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // be removed...
-    {
-      path: '/accountMaintenance',
-      name: 'accountMaintenance',
-      //component: AccountMaintenance,
-      meta: {
-        pageTitle: PAGE_TITLES.ACCOUNT_MAINTENANCE,
-        requiresAuth: true,
-        role: 'PCM_ROLE',
-      },
-    },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // be removed...
-    {
-      path: '/maintRequetExceptionSream',
-      name: 'maintRequetExceptionStream',
-      //component: MaintenanceRequestExceptionStream,
-      meta: {
-        pageTitle: PAGE_TITLES.MAINTENANCE_REQUEST_EXCEPTION_STREAM,
-        requiresAuth: true,
-        role: 'PCM_ROLE',
-      },
-    },
   ],
 })
 
@@ -217,7 +202,7 @@ router.beforeEach((to, _from, next) => {
     appStore.setPageTitle('')
   }
 
-  // TODO (weskubo)
+  // TODO (weskubo-cgi)
   // 1. Don't allow access to Logout page if not logged in
   // 2. Don't allow access to Login if Logged in
   // 3. Don't allow access to Internal if logged in
@@ -234,13 +219,15 @@ router.beforeEach((to, _from, next) => {
         authStore
           .getUserInfo()
           .then(() => {
-            // Validate roles (for non-Ministry users)
-            if (!authStore.isMinistryUser && !authStore.hasRoles) {
-              return next('unauthorized')
-            }
-            // Validate facilities (for non-Ministry users)
-            if (!authStore.isMinistryUser && !authStore.hasFacilities) {
-              return next('unauthorized')
+            if (!authStore.isMinistryUser) {
+              // Validate Provider roles
+              if (!authStore.hasRoles) {
+                return next('unauthorized')
+              }
+              // Validate Provider facilities
+              if (!authStore.hasFacilities) {
+                return next('unauthorized')
+              }
             }
             next()
           })
