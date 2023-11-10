@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getMessages, updateMessageLastOpenedTime, createNewAssistanceRequest, getAssistanceRequests } = require('../components/message')
+const { updateAssistanceRequest, createNewAssistanceRequest, getAssistanceRequests } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
@@ -36,20 +36,18 @@ const newAssistanceRequestSchema = {
 }
 
 /**
- * Get messages filtered by contactid
+ * Update an existing Assistance Request
  */
-router.get('/contact/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getMessages(req, res)
-})
-
-/**
- * Update Last Opened Time of an existing Message
- */
-router.put('/:messageId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('messageId', 'URL param: [messageId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return updateMessageLastOpenedTime(req, res)
-})
+router.put(
+  '/:assistanceRequestId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateAssistanceRequest(req, res)
+  },
+)
 
 /**
  * Create a new Assistance Request
@@ -60,7 +58,7 @@ router.post('/newAssistanceRequest', passport.authenticate('jwt', { session: fal
 })
 
 /**
- * Get messages filtered by contactid
+ * Get the list of assistance requests filtered by contactid
  */
 router.get('/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()

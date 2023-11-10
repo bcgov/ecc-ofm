@@ -1,17 +1,26 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { MessageMappings, AssistanceRequestMappings } = require('../util/mapping/Mappings')
+const { AssistanceRequestMappings, AssistanceRequestFacilityMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
+const { ASSISTANCE_REQUEST_STATUS_CODES } = require('../util/constants')
 const moment = require('moment')
 const log = require('./logger')
-const { join } = require('path')
+const { sortByPropertyDesc } = require('../util/common')
 
-function mapMessageObjectForFront(data) {
-  if (data.createdon) {
-    data.createdon = new moment(data.createdon).format('YYYY/MM/DD')
-  }
-  return new MappableObjectForFront(data, MessageMappings).toJSON()
+function mapAssistanceRequestStatusForFront(statusCode) {
+  if (ASSISTANCE_REQUEST_STATUS_CODES.OPEN.includes(statusCode)) return 'Open'
+  else if (ASSISTANCE_REQUEST_STATUS_CODES.ACTION_REQUIRED.includes(statusCode)) return 'Action Required'
+  else if (ASSISTANCE_REQUEST_STATUS_CODES.CLOSED.includes(statusCode)) return 'Closed'
+}
+
+function mapAssistanceRequestObjectForFront(data) {
+  const assistanceRequest = new MappableObjectForFront(data, AssistanceRequestMappings).toJSON()
+  assistanceRequest.status = mapAssistanceRequestStatusForFront(assistanceRequest?.statusCode)
+  assistanceRequest.lastUpdatedTime = assistanceRequest?.lastUpdatedTime ? new moment(assistanceRequest.lastUpdatedTime).format('YYYY/MM/DD') : null
+  assistanceRequest.requestFacilities = []
+  data?.ofm_facility_request_request?.forEach((facility) => assistanceRequest.requestFacilities.push(new MappableObjectForFront(facility, AssistanceRequestFacilityMappings).toJSON()))
+  return assistanceRequest
 }
 
 function mapAssistanceRequestObjectForBack(data) {
@@ -29,48 +38,6 @@ function mapAssistanceRequestObjectForBack(data) {
   return assistanceRequest
 }
 
-function sortByPropertyDesc(property) {
-  return function (a, b) {
-    if (a[property] < b[property]) return 1
-    else if (a[property] > b[property]) return -1
-    return 0
-  }
-}
-
-async function getMessages(req, res) {
-  try {
-    let operation =
-      'emails?$select=description,lastopenedtime,subject,createdon&$expand=email_activity_parties($filter=(_partyid_value eq ' +
-      req.params.contactId +
-      '))&$filter=(email_activity_parties/any(o1:(o1/_partyid_value eq ' +
-      req.params.contactId +
-      ')))'
-    log.info('operation: ', operation)
-    let operationResponse = await getOperation(operation)
-    operationResponse.value.sort(sortByPropertyDesc('createdon'))
-    let messages = []
-    for (const item of operationResponse.value) {
-      let message = mapMessageObjectForFront(item)
-      if (message.lastOpenedTime) message['isRead'] = true
-      else message['isRead'] = false
-      messages.push(message)
-    }
-    return res.status(HttpStatus.OK).json(messages)
-  } catch (e) {
-    log.error('failed with error', e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
-async function updateMessageLastOpenedTime(req, res) {
-  try {
-    let response = await patchOperationWithObjectId('emails', req.params.messageId, req.body)
-    return res.status(HttpStatus.OK).json(response)
-  } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
 async function createNewAssistanceRequest(req, res) {
   try {
     let payload = mapAssistanceRequestObjectForBack(req.body)
@@ -85,21 +52,29 @@ async function createNewAssistanceRequest(req, res) {
 async function getAssistanceRequests(req, res) {
   try {
     let assistanceRequests = []
-    log.info(`operation: ofm_assistance_requests?$filter=(_ofm_contact_value eq ${req.params.contactId}`)
-    let response = await getOperation(`ofm_assistance_requests?$filter=(_ofm_contact_value eq ${req.params.contactId})`)
-    response?.value?.forEach((item) => {
-      let mappedAssistanceRequest = new MappableObjectForFront(item, AssistanceRequestMappings).toJSON()
-      assistanceRequests.push(mappedAssistanceRequest)
-    })
+    let operation = `ofm_assistance_requests?$expand=ofm_facility_request_request($select=_ofm_facility_value)&$filter=(_ofm_contact_value eq ${req.params.contactId})`
+    log.info('operation: ', operation)
+    let response = await getOperation(operation)
+    response?.value?.sort(sortByPropertyDesc('modifiedon'))
+    response?.value?.forEach((item) => assistanceRequests.push(mapAssistanceRequestObjectForFront(item)))
     return res.status(HttpStatus.OK).json(assistanceRequests)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
+async function updateAssistanceRequest(req, res) {
+  try {
+    let payload = new MappableObjectForBack(req.body, AssistanceRequestMappings).toJSON()
+    let response = await patchOperationWithObjectId('ofm_assistance_requests', req.params.assistanceRequestId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
-  getMessages,
-  updateMessageLastOpenedTime,
   createNewAssistanceRequest,
   getAssistanceRequests,
+  updateAssistanceRequest,
 }

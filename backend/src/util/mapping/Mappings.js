@@ -38,15 +38,22 @@ const RequestCategoryMappings = [
 ]
 
 const AssistanceRequestMappings = [
+  { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
   { back: 'ofm_subject', front: 'subject' },
   { back: 'ofm_contact_method', front: 'contactMethod' },
   { back: 'ofm_request_description', front: 'description' },
   { back: 'ofm_telephone', front: 'phone' },
-  { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
   { back: 'ofm_name', front: 'referenceNumber' },
-  { back: 'statuscode', front: 'assistanceRequestStatus' },
-  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'assistanceRequestStatusName' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
   { back: '_ofm_request_category_value@OData.Community.Display.V1.FormattedValue', front: 'categoryName' },
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: 'ofm_last_opened_time', front: 'lastOpenedTime' },
+]
+
+const AssistanceRequestFacilityMappings = [
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
 ]
 
 const NotificationMappings = [
@@ -65,4 +72,5 @@ module.exports = {
   UserProfileFacilityMappings,
   RequestCategoryMappings,
   AssistanceRequestMappings,
+  AssistanceRequestFacilityMappings,
 }

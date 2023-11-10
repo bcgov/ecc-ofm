@@ -1,5 +1,5 @@
 <template>
-  <v-card class="messaging-card" variant="flat">
+  <v-card class="messaging-card" variant="flat" max-width="100%">
     <v-tabs v-model="tab" bg-color="none" class="messaging-tabs" density="compact">
       <div v-if="showUnreadNotificationCount">
         <v-badge color="red" :content="unreadNotificationCount" offset-x="9" offset-y="9">

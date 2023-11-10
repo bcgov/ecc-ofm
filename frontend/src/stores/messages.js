@@ -12,56 +12,6 @@ export const useMessagesStore = defineStore('messages', {
     unreadMessageCount: (state) => (state.messages ? state.messages.filter((message) => !message.isRead).length : 0),
   },
   actions: {
-    async getMessages(contactId) {
-      if (!localStorage.getItem('jwtToken')) {
-        console.log('unable to get Messages data because you are not logged in')
-        throw 'unable to get Messages data because you are not logged in'
-      }
-      if (contactId) {
-        try {
-          let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE + '/contact/' + contactId)
-          this.messages = response.data
-        } catch (error) {
-          console.log(`Failed to get messages - ${error}`)
-          throw error
-        }
-      } else {
-        this.messages = []
-      }
-    },
-    async updateMessage(messageId, isRead) {
-      if (!localStorage.getItem('jwtToken')) {
-        console.log('unable to update Messages data because you are not logged in')
-        throw 'unable to update Messages data because you are not logged in'
-      }
-      if (messageId) {
-        try {
-          let updatedMessage = {
-            messageId: messageId,
-            isRead: isRead,
-          }
-          this.updateMessageInMemory(updatedMessage)
-          const payload = {
-            lastopenedtime: isRead ? new Date().toISOString() : null,
-          }
-          await ApiService.apiAxios.put(ApiRoutes.MESSAGE + '/' + messageId, payload)
-        } catch (error) {
-          console.log(`Failed to update existing Message - ${error}`)
-          throw error
-        }
-      }
-    },
-    updateMessageInMemory(updatedMessage) {
-      try {
-        if (this.messages) {
-          this.messages.forEach((message) => {
-            if (message.messageId === updatedMessage.messageId) message.isRead = updatedMessage.isRead
-          })
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
     async createNewAssistanceRequest(payload) {
       try {
         let response = await ApiService.apiAxios.post(ApiRoutes.MESSAGE + '/newAssistanceRequest', payload)
@@ -72,14 +22,23 @@ export const useMessagesStore = defineStore('messages', {
       }
     },
     async getAssistanceRequests(contactId) {
-      if (contactId) {
-        try {
-          let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE + '/' + contactId)
-          this.assistanceRequests = response.data
-        } catch (error) {
-          console.log(`Failed to get messages - ${error}`)
-          throw error
-        }
+      try {
+        let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE + '/' + contactId)
+        this.assistanceRequests = response.data
+      } catch (error) {
+        console.log(`Failed to get the list of assistance requests - ${error}`)
+        throw error
+      }
+    },
+    async updateAssistanceRequest(assistanceRequestId, payload) {
+      try {
+        // const payload = {
+        //   lastopenedtime: isRead ? new Date().toISOString() : null,
+        // }
+        await ApiService.apiAxios.put(ApiRoutes.MESSAGE + '/' + assistanceRequestId, payload)
+      } catch (error) {
+        console.log(`Failed to update existing assistance request - ${error}`)
+        throw error
       }
     },
   },
