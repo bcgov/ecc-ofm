@@ -1,4 +1,4 @@
-# OFM Frontend TEST workflow
+# OFM Frontend UAT workflow
 name: 3 UAT - Deploy Frontend
 
 env:
@@ -24,7 +24,7 @@ env:
   REPO_NAME: 'ecc-ofm'
   #grabs the branch name from github dynamically
   BRANCH: ${{ github.ref_name }}
-  IMAGE_NAME: 'ecc-ofm-backend'
+  IMAGE_NAME: 'ecc-ofm-frontend'
   APP_NAME_FRONTEND: 'frontend'
 
   NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}
