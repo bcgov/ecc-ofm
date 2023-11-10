@@ -149,13 +149,19 @@ export default {
      */
     headerCheckboxClickHandler() {
       this.bodyCheckboxesSelected.fill(!this.headerCheckboxState)
+      if (this.headerCheckboxState) {
+        this.checkedNotifications = []
+      } else {
+        this.checkedNotifications = JSON.parse(JSON.stringify(this.notifications))
+      }
     },
     /**
      *  Add or remove the clicked body/item checkbox to the checkedNotifications array.
      */
     bodyCheckboxesClickHandler(item) {
-      if (this.checkedNotifications.includes(item)) {
-        this.checkedNotifications.splice(this.checkedNotifications.indexOf(item), 1)
+      const exists = this.checkedNotifications.some(notice => notice.notificationId === item.notificationId);
+      if (exists) {
+        this.checkedNotifications = this.checkedNotifications.filter(notice => notice.notificationId !== item.notificationId);
       } else {
         this.checkedNotifications.push(item)
       }

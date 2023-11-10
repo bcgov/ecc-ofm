@@ -47,7 +47,7 @@
                 :rules="rules.listIsNotEmpty"
                 :items="facilities"
                 item-title="facilityName"
-                item-value="facilityId"></v-select>
+                return-object></v-select>
             </v-col>
           </v-row>
           <v-row no-gutters align="center">
