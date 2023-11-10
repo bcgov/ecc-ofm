@@ -121,7 +121,7 @@ jobs:
           oc create imagestream ${{ env.IMAGE_NAME }} 2> /dev/null || true && echo "frontend image stream in place"
 
           # Create tag for UAT env from DEV env image
-          # oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-test/${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}:${{ steps.get-latest-tag.outputs.tag }}
+          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-test/${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}:${{ steps.get-latest-tag.outputs.tag }}
 
           # Process and apply deployment template
           oc process -f tools/openshift/frontend.dc.yaml -p APP_NAME=${{ env.APP_NAME }} -p REPO_NAME=${{ env.REPO_NAME }} -p BRANCH=${{ env.BRANCH }} \
