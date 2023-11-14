@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
@@ -37,7 +37,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['impersonateId', 'isUserInfoLoaded', 'userInfo']),
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapWritableState(useAuthStore, ['impersonateId', 'isUserInfoLoaded']),
   },
   methods: {
     ...mapActions(useAuthStore, ['getUserInfo']),

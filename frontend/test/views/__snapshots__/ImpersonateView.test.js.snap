@@ -7,7 +7,7 @@ exports[`ImpersonateView > init 1`] = `
   </div>
   <div data-v-66d859e8=\\"\\" class=\\"v-row\\">
     <form data-v-66d859e8=\\"\\" class=\\"v-form\\" novalidate=\\"\\">
-      <div data-v-66d859e8=\\"\\" class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated custom-card\\">
+      <div data-v-66d859e8=\\"\\" class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated impersonate-card\\">
         <!---->
         <div class=\\"v-card__loader\\">
           <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">

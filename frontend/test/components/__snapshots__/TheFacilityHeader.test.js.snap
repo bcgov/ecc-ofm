@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`TheFacilityHeader > init 1`] = `
-"<div data-v-02941873=\\"\\" class=\\"v-container v-locale--is-ltr pa-0\\">
+"<div data-v-02941873=\\"\\" class=\\"v-container v-locale--is-ltr pa-2 ma-0 facility-container\\">
   <div data-v-02941873=\\"\\" class=\\"v-row align-end justify-space-between\\">
     <div data-v-02941873=\\"\\" class=\\"v-col v-col-6 header-org\\">UT Org</div>
     <div data-v-02941873=\\"\\" class=\\"v-col v-col-6 header-facility\\"> Facility: UT Facility <button data-v-02941873=\\"\\" type=\\"button\\" class=\\"v-btn v-theme--light text-primary v-btn--density-default v-btn--size-default v-btn--variant-text\\" id=\\"changeFacility\\" aria-haspopup=\\"menu\\" aria-expanded=\\"false\\" aria-owns=\\"facilityMenu\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
