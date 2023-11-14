@@ -93,7 +93,7 @@ async function getUserInfo(req, res) {
 
   let user = new MappableObjectForFront(userResponse, UserProfileMappings).data
   let organization = new MappableObjectForFront(userResponse.organization, UserProfileOrganizationMappings).data
-  resData.facilityPermission = parseFacilityPermissions(userResponse)
+  resData.facilities = parseFacilityPermissions(userResponse)
 
   let results = {
     ...resData,
@@ -151,21 +151,10 @@ async function getUserProfile(userGuid, userName) {
 }
 
 function parseFacilityPermissions(userResponse) {
-  const facilityList = Object.entries(userResponse.facility_permission)
-    .map(([key, value]) => {
-      // Only add facilities that have portal access
-      if (value.ofm_portal_access === true) {
-        const facilityPermission = new MappableObjectForFront(value, UserProfileFacilityPermissionMappings).data
-        const facility = new MappableObjectForFront(value.facility, UserProfileFacilityMappings).data
-        const combinedData = { ...facilityPermission, ...facility }
-        if (!_.isEmpty(combinedData)) {
-          return combinedData
-        }
-      }
-      return null
-    })
-    .filter((facility) => facility !== null)
-  return facilityList
+  return userResponse.facility_permission
+    .filter((fp) => fp.ofm_portal_access)
+    .map((fp) => new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data)
+    .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
 module.exports = {

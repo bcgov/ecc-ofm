@@ -1,18 +1,18 @@
-import { ApiRoutes } from '@/utils/constants'
+import { defineStore } from 'pinia'
+
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
-import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
   state: () => ({
-    acronyms: [],
     isAuthenticated: localStorage.getItem('jwtToken') !== null,
-    isMinistryUser: localStorage.getItem('isMinistryUser') !== null,
-    isImpersonating: localStorage.getItem('isImpersonating') !== null,
-    isUserInfoLoaded: localStorage.getItem('isUserInfoLoaded') !== null,
+    isMinistryUser: false,
+    isImpersonating: false,
+    isUserInfoLoaded: false,
     userInfo: null,
     impersonateId: null,
+    currentFacility: {},
     // TODO: once roles are established more clearly, need to address isAuthorizedUser and general role impleentation design...
     //isAuthorizedUser: localStorage.getItem('isAuthorizedUser') !== null,
     isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
@@ -20,7 +20,9 @@ export const useAuthStore = defineStore('auth', {
     isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
   }),
   getters: {
-    userHasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
+    isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
+    hasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
+    hasFacilities: (state) => state.userInfo && state.userInfo.facilities && state.userInfo.facilities.length > 0,
     //TODO: 3 temp roles ('CCP_ROLE', 'OPS_ROLE', 'PCM_ROLE') were created in auth.js (loosely
     //based on OFM requirements) for the purpose of achieving a 1st draft of the frontend that
     //will render a home screen and menu with minimal errors given no authorization/backend integration.
@@ -40,15 +42,7 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('jwtToken')
       }
     },
-    async setIsUserInfoLoaded(isUserInfoLoaded) {
-      if (isUserInfoLoaded) {
-        this.isUserInfoLoaded = true
-        localStorage.setItem('isUserInfoLoaded', 'true')
-      } else {
-        this.isUserInfoLoaded = false
-        localStorage.removeItem('isUserInfoLoaded')
-      }
-    },
+    // TODO Remove setter. Just use state
     async setAuthorizedUser(isAdminUser) {
       if (isAdminUser) {
         this.isAuthorizedUser = true
@@ -58,36 +52,20 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isAuthorizedUser')
       }
     },
-
-    async setMinistryUser(isMinistryUser) {
-      if (isMinistryUser) {
-        this.isMinistryUser = true
-        localStorage.setItem('isMinistryUser', 'true')
+    // TODO Remove setter. Just use state
+    async setAuthorizedWebsocketUser(isAuthorizedWebsocketUser) {
+      if (isAuthorizedWebsocketUser) {
+        this.isAuthorizedWebsocketUser = true
+        localStorage.setItem('isAuthorizedWebsocketUser', 'true')
       } else {
-        this.isMinistryUser = false
-        localStorage.removeItem('isMinistryUser')
-      }
-    },
-    async setUserInfo(userInf) {
-      if (userInf) {
-        this.userInfo = userInf
-      } else {
-        this.userInfo = null
-      }
-    },
-    async setImpersonateId(impersonateId) {
-      if (impersonateId) {
-        this.impersonateId = impersonateId
-        localStorage.setItem('impersonateId', impersonateId)
-      } else {
-        this.impersonateId = impersonateId
-        localStorage.removeItem('impersonateId')
+        this.isAuthorizedWebsocketUser = false
+        localStorage.removeItem('isAuthorizedWebsocketUser')
       }
     },
     //sets the token required for refreshing expired json web tokens
     async logout() {
       localStorage.removeItem('jwtToken')
-      this.userInfo = false
+      this.userInfo = null
       this.isAuthenticated = false
     },
     async getUserInfo() {
@@ -106,7 +84,12 @@ export const useAuthStore = defineStore('auth', {
             this.isMinistryUser = userInfoRes.data.isMinistryUser
             delete userInfoRes.data.isMinistryUser
           }
-          await this.setUserInfo(userInfoRes.data)
+          this.userInfo = userInfoRes.data
+          // Default the facility
+          if (this.isActingProvider && this.hasFacilities) {
+            this.currentFacility = this.userInfo.facilities[0]
+          }
+
           this.isUserInfoLoaded = true
         }
       }
