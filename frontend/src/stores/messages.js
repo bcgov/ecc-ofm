@@ -5,12 +5,10 @@ import { defineStore } from 'pinia'
 export const useMessagesStore = defineStore('messages', {
   namespaced: true,
   state: () => ({
-    messages: null,
-    assistanceRequests: [],
-    assistanceRequestMessages: [],
+    assistanceRequests: null,
   }),
   getters: {
-    unreadMessageCount: (state) => (state.messages ? state.messages.filter((message) => !message.isRead).length : 0),
+    unreadMessageCount: (state) => (state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.lastOpenedTime).length : 0),
   },
   actions: {
     async createNewAssistanceRequest(payload) {
@@ -33,9 +31,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async updateAssistanceRequest(assistanceRequestId, payload) {
       try {
-        // const payload = {
-        //   lastopenedtime: isRead ? new Date().toISOString() : null,
-        // }
+        console.log(`THIS IS payload -------- ${assistanceRequestId} ============ ${payload}`)
         await ApiService.apiAxios.put(ApiRoutes.MESSAGE + '/' + assistanceRequestId, payload)
       } catch (error) {
         console.log(`Failed to update existing assistance request - ${error}`)

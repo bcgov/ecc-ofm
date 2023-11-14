@@ -2,6 +2,20 @@
   <v-container class="pa-3" fluid>
     <v-row>
       <v-col cols="6" class="border-right pa-0">
+        <v-row>
+          <v-col class="mt-1">
+            <div class="flex-item">
+              <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
+                <v-icon class="icon" left>mdi-email-outline</v-icon>
+                <span class="btn-label">Mark unread</span>
+              </v-btn>
+              <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
+                <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+                <span class="btn-label">Mark read</span>
+              </v-btn>
+            </div>
+          </v-col>
+        </v-row>
         <v-data-table-virtual
           v-model="bodyCheckboxesSelected"
           :headers="headers"
@@ -13,23 +27,6 @@
           fixed-header
           density="compact"
           class="data-table">
-          <!-- TOP -->
-          <template #top>
-            <v-row>
-              <v-col class="mt-1">
-                <div class="flex-item">
-                  <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email-outline</v-icon>
-                    <span class="btn-label">Mark unread</span>
-                  </v-btn>
-                  <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-                    <span class="btn-label">Mark read</span>
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-          </template>
           <!-- HEADERS -->
           <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
@@ -150,6 +147,7 @@ export default {
       this.headerCheckboxState = false
       this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
       this.checkedNotifications = []
+      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
@@ -172,6 +170,7 @@ export default {
       } else {
         this.checkedNotifications.push(item)
       }
+      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Update the body/item checkboxes to read or unread.

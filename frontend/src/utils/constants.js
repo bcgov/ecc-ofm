@@ -32,3 +32,12 @@ export const PAGE_TITLES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
   MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream',
 })
+
+export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
+  SUBMITTED: 1,
+  ASSIGNED: 2,
+  WITH_PROVIDER: 3,
+  READY_TO_RESOLVE: 4,
+  CLOSED_COMPLETE: 5,
+  CLOSED_CANCELLED: 6,
+})
