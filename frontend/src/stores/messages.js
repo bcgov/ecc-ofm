@@ -7,6 +7,7 @@ export const useMessagesStore = defineStore('messages', {
   state: () => ({
     messages: null,
     assistanceRequests: [],
+    assistanceRequestMessages: [],
   }),
   getters: {
     unreadMessageCount: (state) => (state.messages ? state.messages.filter((message) => !message.isRead).length : 0),
@@ -38,6 +39,15 @@ export const useMessagesStore = defineStore('messages', {
         await ApiService.apiAxios.put(ApiRoutes.MESSAGE + '/' + assistanceRequestId, payload)
       } catch (error) {
         console.log(`Failed to update existing assistance request - ${error}`)
+        throw error
+      }
+    },
+    async getAssistanceRequestMessages(assistanceRequestId) {
+      try {
+        let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE+ '/CONVERSATIONS' + '/' + assistanceRequestId)
+        this.assistanceRequestMessages = response.data
+      } catch (error) {
+        console.log(`Failed to get the list of assistance request messages - ${error}`)
         throw error
       }
     },

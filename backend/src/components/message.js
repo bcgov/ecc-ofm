@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { AssistanceRequestMappings, AssistanceRequestFacilityMappings } = require('../util/mapping/Mappings')
+const { AssistanceRequestMappings, AssistanceRequestFacilityMappings, AssistanceRequestMessagesMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { ASSISTANCE_REQUEST_STATUS_CODES } = require('../util/constants')
 const moment = require('moment')
@@ -51,6 +51,7 @@ async function createNewAssistanceRequest(req, res) {
 
 async function getAssistanceRequests(req, res) {
   try {
+    log.info('getAssistanceRequests: ', req.params.contactId)
     let assistanceRequests = []
     let operation = `ofm_assistance_requests?$expand=ofm_facility_request_request($select=_ofm_facility_value)&$filter=(_ofm_contact_value eq ${req.params.contactId})`
     log.info('operation: ', operation)
@@ -73,8 +74,26 @@ async function updateAssistanceRequest(req, res) {
   }
 }
 
+async function getAssistanceRequestMessages(req, res) {
+  try {
+    let operation = `ofm_conversations?$select=ofm_conversationid,ofm_name,createdon,ofm_message,_ofm_request_value,_ownerid_value,statecode,statuscode&$expand=createdby($select=firstname,lastname)&$filter=(_ofm_request_value eq ${req.params.assistanceRequestId})&$orderby=createdon desc`
+    log.info('operation: ', operation)
+    let response = await getOperation(operation)
+    const messages = []
+
+    for (const item of response.value) {
+      let assistanceRequestMessage = new MappableObjectForFront(item, AssistanceRequestMessagesMappings).toJSON()
+      messages.push(assistanceRequestMessage)
+    }
+    return res.status(HttpStatus.OK).json(messages)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   createNewAssistanceRequest,
   getAssistanceRequests,
   updateAssistanceRequest,
+  getAssistanceRequestMessages,
 }

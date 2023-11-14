@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { updateAssistanceRequest, createNewAssistanceRequest, getAssistanceRequests } = require('../components/message')
+const { updateAssistanceRequest, createNewAssistanceRequest, getAssistanceRequests, getAssistanceRequestMessages } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
@@ -64,5 +64,19 @@ router.get('/:contactId', passport.authenticate('jwt', { session: false }), isVa
   validationResult(req).throw()
   return getAssistanceRequests(req, res)
 })
+
+/**
+ * Get the list of messages for a assistanceRequestId
+ */
+router.get(
+  '/conversations/:assistanceRequestId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getAssistanceRequestMessages(req, res)
+  },
+)
 
 module.exports = router

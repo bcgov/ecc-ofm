@@ -51,6 +51,16 @@ const AssistanceRequestMappings = [
   { back: 'ofm_last_opened_time', front: 'lastOpenedTime' },
 ]
 
+const AssistanceRequestMessagesMappings = [
+  { back: 'ofm_conversationid', front: 'conversationId' },
+  { back: 'ofm_name', front: 'subject' },
+  { back: '_ownerid_value', front: 'from' },
+  { back: 'createdon', front: 'sentDate' },
+  { back: 'ofm_message', front: 'message' },
+  { back: '_ofm_request_value', front: 'requestValue' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
 const AssistanceRequestFacilityMappings = [
   { back: '_ofm_facility_value', front: 'facilityId' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
@@ -73,4 +83,5 @@ module.exports = {
   RequestCategoryMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
+  AssistanceRequestMessagesMappings
 }
