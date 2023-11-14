@@ -10,7 +10,7 @@ const { sortByPropertyDesc } = require('../util/common')
 
 function mapAssistanceRequestStatusForFront(statusCode) {
   if (ASSISTANCE_REQUEST_STATUS_CODES.OPEN.includes(statusCode)) return 'Open'
-  else if (ASSISTANCE_REQUEST_STATUS_CODES.ACTION_REQUIRED.includes(statusCode)) return 'Action Required'
+  else if (ASSISTANCE_REQUEST_STATUS_CODES.ACTION_REQUIRED.includes(statusCode)) return 'Action required'
   else if (ASSISTANCE_REQUEST_STATUS_CODES.CLOSED.includes(statusCode)) return 'Closed'
 }
 

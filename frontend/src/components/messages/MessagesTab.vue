@@ -9,7 +9,7 @@
                 <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
                 <span class="btn-label">New message</span>
               </v-btn>
-              <v-btn class="btn-style" @click="toggleMarkUnreadButton()">
+              <v-btn class="btn-style" @click="toggleMarkUnreadButtonInMessageTable()">
                 <v-icon class="icon" left>mdi-email-outline</v-icon>
                 <span class="btn-label">Mark unread</span>
               </v-btn>
@@ -20,10 +20,14 @@
             </div>
           </v-col>
         </v-row>
+        <v-row v-if="!assistanceRequests" class="mx-1">
+          <v-skeleton-loader type="table-tbody"></v-skeleton-loader>
+        </v-row>
         <AssistanceRequestTable
-          v-if="assistanceRequests?.length > 0"
-          :isMarkReadButtonClicked="isMarkReadButtonClicked"
-          :isMarkUnreadButtonClicked="isMarkUnreadButtonClicked"
+          v-else
+          :markReadButtonState="markReadButtonState"
+          :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
+          :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
           @openRequestConversation="openRequestConversation" />
       </v-col>
       <v-col cols="6">
@@ -49,8 +53,9 @@ export default {
     return {
       showNewRequestDialog: false,
       selectedAssistanceRequestId: null,
-      isMarkReadButtonClicked: false,
-      isMarkUnreadButtonClicked: false,
+      markReadButtonState: false,
+      markUnreadButtonInMessageTableState: false,
+      markUnreadButtonInConversationThreadState: false,
     }
   },
   computed: {
@@ -58,7 +63,7 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests']),
   },
   async created() {
-    await this.getAssistanceRequests(this.userInfo?.contactId)
+    if (!this.assistanceRequests) await this.getAssistanceRequests(this.userInfo?.contactId)
   },
   methods: {
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
@@ -66,10 +71,13 @@ export default {
       this.showNewRequestDialog = !this.showNewRequestDialog
     },
     toggleMarkReadButton() {
-      this.isMarkReadButtonClicked = !this.isMarkReadButtonClicked
+      this.markReadButtonState = !this.markReadButtonState
     },
-    toggleMarkUnreadButton() {
-      this.isMarkUnreadButtonClicked = !this.isMarkUnreadButtonClicked
+    toggleMarkUnreadButtonInMessageTable() {
+      this.markUnreadButtonInMessageTableState = !this.markUnreadButtonInMessageTableState
+    },
+    toggleMarkUnreadButtonInConversationThread() {
+      this.markUnreadButtonInConversationThreadState = !this.markUnreadButtonInConversationThreadState
     },
     openRequestConversation(assistanceRequestId) {
       this.selectedAssistanceRequestId = assistanceRequestId
