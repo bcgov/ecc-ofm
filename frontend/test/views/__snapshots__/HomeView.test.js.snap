@@ -201,7 +201,7 @@ exports[`HomeView > BceID User 1`] = `
       <!---->
       <!---->
       <div class=\\"v-card-title\\">Current Facility</div>
-      <div class=\\"v-card-text\\">Facility Name: </div>
+      <div class=\\"v-card-text\\"> Facility Name: <br><span style=\\"opacity: 0.6;\\"></span></div>
       <!---->
       <!----><span class=\\"v-card__underlay\\"></span>
     </div>
