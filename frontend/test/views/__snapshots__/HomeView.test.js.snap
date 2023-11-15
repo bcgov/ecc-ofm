@@ -200,10 +200,8 @@ exports[`HomeView > BceID User 1`] = `
       </div>
       <!---->
       <!---->
-      <div class=\\"v-card-title\\">Facilities</div>
-      <div class=\\"v-card-text\\">
-        <!-- TODO fix: v-list with v-for is throughing warning in browser concole -->
-      </div>
+      <div class=\\"v-card-title\\">Current Facility</div>
+      <div class=\\"v-card-text\\"> Facility Name: <br><span style=\\"opacity: 0.6;\\"></span></div>
       <!---->
       <!----><span class=\\"v-card__underlay\\"></span>
     </div>

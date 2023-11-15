@@ -10,12 +10,12 @@
         Messaging
       </div>
     </AppMenuItem>
-    <AppMenuItem icon="mdi-text-box-outline">Reporting</AppMenuItem>
-    <AppMenuItem icon="mdi-currency-usd">Funding</AppMenuItem>
-    <AppMenuItem icon="mdi-folder-outline">Documents</AppMenuItem>
-    <AppMenuItem icon="mdi-file-document-edit-outline">Applications</AppMenuItem>
+    <AppMenuItem icon="mdi-text-box-outline" :to="{ name: 'reporting' }">Reporting</AppMenuItem>
+    <AppMenuItem icon="mdi-currency-usd" :to="{ name: 'funding' }">Funding</AppMenuItem>
+    <AppMenuItem icon="mdi-folder-outline" :to="{ name: 'documents' }">Documents</AppMenuItem>
+    <AppMenuItem icon="mdi-file-document-edit-outline" :to="{ name: 'applications' }">Applications</AppMenuItem>
     <AppMenuItem icon="mdi-help" :to="{ name: 'resources' }">Resources</AppMenuItem>
-    <AppMenuItem icon="mdi-cog-outline">Settings</AppMenuItem>
+    <AppMenuItem icon="mdi-cog-outline" :to="{ name: 'settings' }">Settings</AppMenuItem>
   </div>
 </template>
 
