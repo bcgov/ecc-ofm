@@ -147,7 +147,6 @@ export default {
       this.headerCheckboxState = false
       this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
       this.checkedNotifications = []
-      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
@@ -170,7 +169,6 @@ export default {
       } else {
         this.checkedNotifications.push(item)
       }
-      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Update the body/item checkboxes to read or unread.
