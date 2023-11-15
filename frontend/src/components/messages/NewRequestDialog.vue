@@ -126,7 +126,7 @@ export default {
     ...mapState(useAppStore, ['requestCategories']),
     ...mapState(useAuthStore, ['userInfo']),
     facilities() {
-      return this.userInfo?.facilityPermission
+      return this.userInfo?.facilities
     },
   },
   watch: {

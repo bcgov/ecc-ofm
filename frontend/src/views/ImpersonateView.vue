@@ -5,7 +5,7 @@
     </v-row>
     <v-row>
       <v-form ref="form" v-model="isValidForm" @submit.prevent>
-        <v-card class="custom-card">
+        <v-card class="impersonate-card">
           <v-row>
             <v-col>
               <v-text-field outlined required v-model="businessBCeId" id="businessBCeId-field" :rules="rules.required" label="Business BCeID" v-on:keydown.enter="setBCeID()" />
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapActions, mapState, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
@@ -38,20 +38,21 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapWritableState(useAuthStore, ['impersonateId', 'isUserInfoLoaded']),
   },
   methods: {
-    ...mapActions(useAuthStore, ['getUserInfo', 'setIsUserInfoLoaded', 'setImpersonateId']),
+    ...mapActions(useAuthStore, ['getUserInfo']),
     async setBCeID() {
       this.processing = true
-      this.setIsUserInfoLoaded(false)
-      this.setImpersonateId(this.businessBCeId)
+      this.isUserInfoLoaded = false
+      this.impersonateId = this.businessBCeId
       try {
         await this.getUserInfo()
         this.processing = false
         this.$router.push({ name: 'home' })
       } catch (error) {
         this.processing = false
-        this.setImpersonateId(null)
+        this.impersonateId = null
         if (error.response?.status == '404') {
           this.setFailureAlert(`Unable to find BCeID: [ ${this.businessBCeId} ]`)
         } else if (error.response?.status == '409') {
@@ -66,7 +67,7 @@ export default {
 </script>
 
 <style scoped>
-.custom-card {
+.impersonate-card {
   width: 350px;
   margin: 10px;
   padding: 10px;

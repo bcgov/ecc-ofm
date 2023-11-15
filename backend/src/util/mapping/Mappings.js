@@ -18,6 +18,7 @@ const UserProfileOrganizationMappings = [
   { back: 'statuscode', front: 'organizationStatus' },
 ]
 
+// TODO (weskubo-cgi) Remove this
 const UserProfileFacilityPermissionMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
