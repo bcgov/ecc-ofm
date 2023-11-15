@@ -1,49 +1,48 @@
 <template>
-  <v-container class="pa-3">
+  <v-container v-if="assistanceRequest" class="pa-3">
+    <v-row>
+      <v-col class="d-flex align-center pl-0">
+        <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
+      </v-col>
+      <v-col class="d-flex flex-column align-end pb-0">
+        <v-btn v-if="assistanceRequest.lastOpenedTime"
+          @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
+          <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+          <span class="btn-label">Mark unread</span>
+        </v-btn>
+        <v-btn @click="toggleReplyRequestDialog" class="btn-style mr-15">
+          <v-icon class="icon" left>mdi-reply</v-icon>
+          <span class="btn-label">Reply</span>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="auto" class="font-weight-bold pt-0 pl-0">Status:</v-col>
+      <v-col cols="3" class="pt-0 pl-1">{{ assistanceRequest.status }}</v-col>
+      <v-col cols="auto" class="font-weight-bold pt-0 pl-1">Reference#:</v-col>
+      <v-col class="pt-0 pl-0">{{ assistanceRequest.referenceNumber }}</v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="auto" class="font-weight-bold pt-0 pb-0 pl-0">Topic:</v-col>
+      <v-col cols="3" class="pt-0 pb-0">{{ assistanceRequest.categoryName }}</v-col>
+      <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
+      <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map(facility =>
+        facility.facilityName).join(', ') }}</v-col>
+    </v-row>
+    <v-row class="header-bottom-border">
+      <v-col class="d-flex justify-end pt-0 pb-0 pr-2 w-100 align-center"><span class="font-weight-bold">Sort
+          By:</span>
+        <v-btn class="btn-style" @click="toggleSort()">
+          <span class="btn-label">{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
+          <v-icon v-if="isSortedDesc" class="icon">mdi-arrow-up</v-icon>
+          <v-icon v-else class="icon">mdi-arrow-down</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
     <v-row v-if="assistanceRequest">
       <v-col cols="12" class="border-right pa-0">
         <v-data-table-virtual :headers="headers" :items="assistanceRequestMessages" item-key="messageId"
           class="data-table">
-          <template #top>
-            <v-row>
-              <v-col cols="5">
-                <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
-              </v-col>
-              <v-col cols="7" class="d-flex flex-column align-end pb-0">
-                <v-btn class="btn-style">
-                  <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-                  <span class="btn-label">Mark unread</span>
-                </v-btn>
-                <v-btn class="btn-style mr-15">
-                  <v-icon class="icon" left>mdi-reply</v-icon>
-                  <span class="btn-label">Reply</span>
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="2" class="font-weight-bold pt-0">Status:</v-col>
-              <v-col cols="3" class="pl-4 pt-0">{{ assistanceRequest.status }}</v-col>
-              <v-col cols="2" class="font-weight-bold pt-0">Reference#:</v-col>
-              <v-col cols="5" class="pt-0">{{ assistanceRequest.referenceNumber }}</v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="2" class="font-weight-bold pt-0 pb-0">Topic:</v-col>
-              <v-col cols="3" class="pl-4 pt-0 pb-0">{{ assistanceRequest.categoryName }}</v-col>
-              <v-col cols="2" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
-              <v-col cols="5" class="pt-0 pb-0">?requestFacilities[]?</v-col>
-            </v-row>
-            <v-row>
-              <v-col class="d-flex justify-end pt-0 mr-0 pr-2 w-100 align-center"><span class="font-weight-bold">Sort
-                  By:</span>
-                <v-btn class="btn-style" @click="toggleSort()">
-                  <span class="btn-label">{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
-                  <v-icon v-if="isSortedDesc" class="icon">mdi-arrow-up</v-icon>
-                  <v-icon v-else class="icon">mdi-arrow-down</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-            <hr>
-          </template>
           <template #headers>
           </template>
           <template #item="{ item }">
@@ -58,14 +57,17 @@
         </v-data-table-virtual>
       </v-col>
     </v-row>
+    <ReplyRequestDialog class="pa-0" :show="showReplyRequestDialog" @close="toggleReplyRequestDialog" />
   </v-container>
 </template>
   
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 
 export default {
+  components: { ReplyRequestDialog },
   props: {
     assistanceRequestId: {
       type: [String, null],
@@ -73,8 +75,10 @@ export default {
       default: ''
     }
   },
+  emits: ['toggleMarkUnreadButtonInConversationThread'],
   data() {
     return {
+      showReplyRequestDialog: false,
       isSortedDesc: true,
       assistanceRequest: null,
       headers: [
@@ -90,9 +94,11 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestMessages', 'getAssistanceRequestMessages']),
   },
   watch: {
-    assistanceRequestId(newVal) {
+    assistanceRequestId: async function (newVal) {
+      console.log('assistanceRequestId = ' + JSON.stringify(this.assistanceRequestId))
+      await this.getAssistanceRequestMessages(this.assistanceRequestId)
       this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId = newVal)
-      this.getAssistanceRequestMessages(this.assistanceRequestId)
+      //console.log('this.assistanceRequest = ' + JSON.stringify(this.assistanceRequest))
     },
   },
   methods: {
@@ -100,7 +106,10 @@ export default {
     toggleSort() {
       this.isSortedDesc = !this.isSortedDesc
       this.assistanceRequestMessages.sort((a, b) => (a.dateReceived > b.dateReceived) ? 1 : -1)
-    }
+    },
+    toggleReplyRequestDialog() {
+      this.showReplyRequestDialog = !this.showReplyRequestDialog
+    },
   }
 }
 </script>
@@ -150,19 +159,17 @@ hr {
   box-shadow: none;
 }
 
-.reply-btn {
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
 .btn-style:hover {
   background-color: #ffffff;
 }
 
 .btn-style:hover .btn-label {
   text-decoration: underline;
+}
+
+.header-bottom-border {
+  padding: 0px;
+  border-bottom: 1px solid #6699cc;
 }
 </style>
   

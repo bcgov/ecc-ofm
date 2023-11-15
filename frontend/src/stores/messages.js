@@ -31,7 +31,6 @@ export const useMessagesStore = defineStore('messages', {
     },
     async updateAssistanceRequest(assistanceRequestId, payload) {
       try {
-        console.log(`THIS IS payload -------- ${assistanceRequestId} ============ ${payload}`)
         await ApiService.apiAxios.put(ApiRoutes.MESSAGE + '/' + assistanceRequestId, payload)
       } catch (error) {
         console.log(`Failed to update existing assistance request - ${error}`)
@@ -40,7 +39,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async getAssistanceRequestMessages(assistanceRequestId) {
       try {
-        let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE+ '/CONVERSATIONS' + '/' + assistanceRequestId)
+        let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGE + '/conversations' + '/' + assistanceRequestId)
         this.assistanceRequestMessages = response.data
       } catch (error) {
         console.log(`Failed to get the list of assistance request messages - ${error}`)

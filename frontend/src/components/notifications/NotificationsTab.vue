@@ -30,7 +30,8 @@
           <!-- HEADERS -->
           <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
-              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }" @click="toggleSort(column)">
+              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }"
+                @click="toggleSort(column)">
                 <div v-if="column.title === ''">
                   <v-checkbox
                     v-model="headerCheckboxState"
@@ -48,9 +49,11 @@
           </template>
           <!-- BODY -->
           <template #item="{ item, index }">
-            <tr :class="{ 'unread-notification': !item.isRead, 'highlighted-row': index === rowClickedIndex }" item-key="notificationId" @click="rowClickHandler(item, index)">
+            <tr :class="{ 'unread-notification': !item.isRead, 'highlighted-row': index === rowClickedIndex }"
+              item-key="notificationId" @click="rowClickHandler(item, index)">
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact" @click.stop="bodyCheckboxesClickHandler(item)" />
+                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact"
+                  @click.stop="bodyCheckboxesClickHandler(item)" />
               </td>
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <div class="item">{{ item.isRead ? 'Read' : 'Unread' }}</div>
@@ -147,7 +150,6 @@ export default {
       this.headerCheckboxState = false
       this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
       this.checkedNotifications = []
-      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
@@ -170,7 +172,6 @@ export default {
       } else {
         this.checkedNotifications.push(item)
       }
-      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Update the body/item checkboxes to read or unread.
@@ -299,5 +300,4 @@ hr {
 
 .highlighted-row {
   background-color: #d4eaff;
-}
-</style>
+}</style>

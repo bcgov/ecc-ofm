@@ -39,7 +39,8 @@
         }"
         @click="rowClickHandler(item, index)">
         <td>
-          <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact" @click.stop="bodyCheckboxesClickHandler" />
+          <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact"
+            @click.stop="bodyCheckboxesClickHandler" />
         </td>
         <td>
           <div class="item" :class="{ 'action-required-message': isActionRequiredMessage(item) }">{{ item.status }}</div>
@@ -48,10 +49,12 @@
           <div class="item" :class="{ 'action-required-message': isActionRequiredMessage(item) }">{{ item.subject }}</div>
         </td>
         <td>
-          <div class="item" :class="{ 'action-required-message': isActionRequiredMessage(item) }">{{ item.categoryName }}</div>
+          <div class="item" :class="{ 'action-required-message': isActionRequiredMessage(item) }">{{ item.categoryName }}
+          </div>
         </td>
         <td>
-          <div class="item" :class="{ 'action-required-message': isActionRequiredMessage(item) }">{{ item.lastUpdatedTime }}</div>
+          <div class="item" :class="{ 'action-required-message': isActionRequiredMessage(item) }">{{ item.lastUpdatedTime
+          }}</div>
         </td>
       </tr>
     </template>
@@ -127,7 +130,6 @@ export default {
     initAllCheckboxState() {
       this.headerCheckboxState = false
       this.bodyCheckboxesSelected = new Array(this.assistanceRequests.length).fill(false)
-      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
@@ -139,8 +141,6 @@ export default {
      *  This must exist to avoid mutation of the array
      */
     bodyCheckboxesClickHandler(item) {
-      console.log(`bodyCheckboxesSelected (${item.assistanceRequestId}) = ${this.bodyCheckboxesSelected}`)
-      console.log(`bodyCheckboxesSelected (${this.bodyCheckboxesSelected.length}) = ${this.bodyCheckboxesSelected}`)
     },
     /**
      * Update the body/item checkboxes to read or unread.
@@ -160,6 +160,7 @@ export default {
      */
     async rowClickHandler(item, index) {
       this.rowClickedIndex = index // Used for row select highlighting in template slot item
+      console.log('rowClickHandler item.assistanceRequestId = ' + item.assistanceRequestId)
       this.$emit('openRequestConversation', item.assistanceRequestId)
       await this.updateMessageLastOpenedTime(true, item.assistanceRequestId)
     },
@@ -183,38 +184,46 @@ export default {
 th {
   padding: 0px 0px 0px 4px !important;
 }
+
 td {
   padding: 0px 3px 0px 4px !important;
 }
+
 hr {
   border: 0;
   height: 1px;
   background: #6699cc;
   background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
 }
+
 .item {
   padding-left: 30px;
   font-size: small;
 }
+
 .headers {
   padding-left: 30px;
   font-weight: bold;
   color: #878787;
 }
+
 .headers:hover {
   padding-left: 30px;
   font-weight: bold;
   color: black;
   cursor: pointer;
 }
+
 .unread-message {
   font-size: small;
   font-weight: bold;
 }
+
 .action-required-message {
   color: red;
   font-size: small;
 }
+
 .highlighted-row {
   background-color: #d4eaff;
 }
