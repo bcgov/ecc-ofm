@@ -39,7 +39,7 @@ export default {
     },
     // count of requests that are unread or are in the status of “Action required”
     getMessageCount() {
-      const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.lastOpenedTime)?.length
+      const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
   },
