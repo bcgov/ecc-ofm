@@ -49,6 +49,19 @@ async function createNewAssistanceRequest(req, res) {
   }
 }
 
+async function replyToAssistanceRequest(req, res) {
+  try {
+    let payload = `{
+      "ofm_message": "${req.body?.message}",
+      "ofm_request@odata.bind": "/ofm_assistance_requests(${req.body?.assistanceRequestId})"
+    }`
+    let response = await postOperation('ofm_conversations', payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function getAssistanceRequests(req, res) {
   try {
     log.info('getAssistanceRequests: ', req.params.contactId)
@@ -96,4 +109,5 @@ module.exports = {
   getAssistanceRequests,
   updateAssistanceRequest,
   getAssistanceRequestMessages,
+  replyToAssistanceRequest,
 }

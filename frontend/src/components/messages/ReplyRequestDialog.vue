@@ -1,15 +1,16 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="Request ????????" persistent max-width="70%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" :title="`Request ${referenceNumber}`" persistent max-width="50%"
+      @close="closeReplyRequestDialog">
       <template #content>
-        <v-form ref="newRequestForm" v-model="newRequestModel.isFormComplete" class="px-12 mx-8">
+        <v-form ref="replyRequestForm" v-model="replyRequestModel.isFormComplete" class="px-12 mx-8">
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 blue-text pb-0">
               <strong>Reply to request:</strong>
             </v-col>
             <v-col class="v-col-12">
-              <v-textarea v-model="newRequestModel.description" placeholder="Enter message text" counter
-                maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
+              <v-textarea v-model="replyRequestModel.message" placeholder="Enter message text" counter
+                maxlength="1000" variant="outlined" :rules="rules.required" :rows="6"></v-textarea>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-end mt-0">
@@ -21,16 +22,15 @@
         </v-form>
       </template>
       <template #button>
-        <v-row justify="space-around mt-6">
-          <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()"
+        <v-row class="mt-6" justify="space-around">
+          <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px"
+            @click="closeReplyRequestDialog()"
             :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit
+          <AppButton id="submit-reply-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit
           </AppButton>
         </v-row>
       </template>
     </AppDialog>
-    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog"
-      @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -42,34 +42,35 @@ import { useMessagesStore } from '@/stores/messages'
 import AppButton from '../ui/AppButton.vue'
 import AppDialog from '../ui/AppDialog.vue'
 import rules from '@/utils/rules'
-import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
 
 export default {
-  name: 'NewRequestDialog',
-  components: { AppButton, AppDialog, NewRequestConfirmationDialog },
+  name: 'ReplyRequestDialog',
+  components: { AppButton, AppDialog },
   props: {
     show: {
       type: Boolean,
       default: false,
     },
+    assistanceRequestId: {
+      type: [String, null],
+      required: true,
+      default: '',
+    },
+    referenceNumber: {
+      type: String,
+      required: true,
+      default: '',
+    },
   },
-  emits: ['close'],
+  emits: ['close', 'reply-success-event'],
   data() {
     return {
-      newRequestModel: {},
+      replyRequestModel: {},
       rules,
       isDisplayed: false,
       isLoading: false,
-      showNewRequestConfirmationDialog: false,
-      referenceNumber: '',
+      showReplyRequestConfirmationDialog: false,
     }
-  },
-  computed: {
-    ...mapState(useAppStore, ['requestCategories']),
-    ...mapState(useAuthStore, ['userInfo']),
-    facilities() {
-      return this.userInfo?.facilityPermission
-    },
   },
   watch: {
     show: {
@@ -79,50 +80,54 @@ export default {
     },
   },
   created() {
-    this.setUpDefaultNewRequestModel()
+    this.initReplyRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, ['createNewAssistanceRequest']),
+    ...mapActions(useMessagesStore, ['replyToAssistanceRequest']),
 
-    setUpDefaultNewRequestModel() {
-      this.newRequestModel = {
-        contactId: this.userInfo?.contactId,
-        facilities: this.facilities?.filter((facility) => facility.facilityStateCode === 0), // statecode: 0 = Active, 1 = Inactive
-        contactMethod: '1',
-        phone: this.userInfo?.phone,
+    /**
+     * Initialize the reply request model.
+     */
+    initReplyRequestModel() {
+      this.replyRequestModel = {
+        assistanceRequestId: this.assistanceRequestId,
       }
     },
 
+    /**
+     * Reset the form and initialize the reply request model.
+     */
     resetForm() {
-      this.$refs.newRequestForm?.reset()
-      this.setUpDefaultNewRequestModel()
+      this.$refs.replyRequestForm?.reset()
+      this.initReplyRequestModel()
     },
 
-    closeNewRequestDialog() {
+    /**
+     * Close the reply request dialog.
+     */
+    closeReplyRequestDialog() {
       this.resetForm()
       this.$emit('close')
     },
 
+    /** 
+     * Create the reply and emit success event.
+     */
     async submit() {
-      this.$refs.newRequestForm?.validate()
-      if (this.newRequestModel?.isFormComplete) {
+      this.$refs.replyRequestForm?.validate()
+      if (this.replyRequestModel?.isFormComplete) {
         try {
           this.isLoading = true
-          let response = await this.createNewAssistanceRequest(this.newRequestModel)
-          this.referenceNumber = response?.referenceNumber
-          this.toggleNewRequestConfirmationDialog()
+          let response = await this.replyToAssistanceRequest(this.replyRequestModel)
+          this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
-          console.log(`Failed to create a new Assistance Request - ${error}`)
+          console.log(`Failed to create a reply for Assistance Request - ${error}`)
           throw error
         } finally {
-          this.closeNewRequestDialog()
+          this.closeReplyRequestDialog()
           this.isLoading = false
         }
       }
-    },
-
-    toggleNewRequestConfirmationDialog() {
-      this.showNewRequestConfirmationDialog = !this.showNewRequestConfirmationDialog
     },
   },
 }

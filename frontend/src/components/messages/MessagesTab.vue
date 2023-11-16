@@ -23,13 +23,16 @@
         <v-row v-if="!assistanceRequests" class="mx-1">
           <v-skeleton-loader type="table-tbody"></v-skeleton-loader>
         </v-row>
-        <AssistanceRequestTable v-else :markReadButtonState="markReadButtonState"
+        <AssistanceRequestTable
+          v-else
+          :markReadButtonState="markReadButtonState"
           :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
           :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
           @openRequestConversation="openRequestConversation" />
       </v-col>
       <v-col cols="6">
-        <MessageThreads :assistanceRequestId="selectedAssistanceRequestId"
+        <RequestConversations
+          :assistanceRequestId="selectedAssistanceRequestId"
           @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
       </v-col>
     </v-row>
@@ -43,11 +46,10 @@ import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
-import MessageThreads from './MessageThreads.vue'
-
+import RequestConversations from './RequestConversations.vue'
 export default {
   name: 'MessagesTab',
-  components: { NewRequestDialog, AssistanceRequestTable, MessageThreads },
+  components: { NewRequestDialog, AssistanceRequestTable, RequestConversations },
   data() {
     return {
       showNewRequestDialog: false,
@@ -76,13 +78,10 @@ export default {
       this.markUnreadButtonInMessageTableState = !this.markUnreadButtonInMessageTableState
     },
     toggleMarkUnreadButtonInConversationThread() {
-      console.log('Mark Unread Button In Conversation Thread is Clicked!!!!!!!!!!!!!!')
       this.markUnreadButtonInConversationThreadState = !this.markUnreadButtonInConversationThreadState
     },
     openRequestConversation(assistanceRequestId) {
-      //console.log('openRequestConversation selectedAssistanceRequestId = ' + this.selectedAssistanceRequestId)
       this.selectedAssistanceRequestId = assistanceRequestId
-      //console.log('openRequestConversation assistanceRequestId = ' + assistanceRequestId)
     },
   },
 }

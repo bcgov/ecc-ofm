@@ -49,7 +49,7 @@
             <v-row style="border-bottom: 1px solid #E0E0E0;" class="mr-0">
               <v-col>
                 <div><span class="font-weight-bold">From:</span> {{ item.from }}</div>
-                <div><span class="font-weight-bold">Sent:</span> {{ item.sentDate }}</div>
+                <div><span class="font-weight-bold">Sent:</span> {{ item.sentDate.split('T')[0] }}</div>
                 <div class="pt-1">{{ item.message }}</div>
               </v-col>
             </v-row>
@@ -57,7 +57,12 @@
         </v-data-table-virtual>
       </v-col>
     </v-row>
-    <ReplyRequestDialog class="pa-0" :show="showReplyRequestDialog" @close="toggleReplyRequestDialog" />
+    <ReplyRequestDialog class="pa-0"
+      :assistanceRequestId="assistanceRequest.assistanceRequestId"
+      :referenceNumber="assistanceRequest.referenceNumber"
+      :show="showReplyRequestDialog"
+      @reply-success-event="replySuccessEvent"
+      @close="toggleReplyRequestDialog" />
   </v-container>
 </template>
   
@@ -65,8 +70,10 @@
 import { mapState, mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
+import alertMixin from '@/mixins/alertMixin'
 
 export default {
+  mixins: [alertMixin],
   components: { ReplyRequestDialog },
   props: {
     assistanceRequestId: {
@@ -91,25 +98,52 @@ export default {
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestMessages', 'getAssistanceRequestMessages']),
+    ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestMessages']),
   },
   watch: {
+    // When assistanceRequestId changes, get the messages for the new assistance request.
     assistanceRequestId: async function (newVal) {
-      console.log('assistanceRequestId = ' + JSON.stringify(this.assistanceRequestId))
       await this.getAssistanceRequestMessages(this.assistanceRequestId)
-      this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId = newVal)
-      //console.log('this.assistanceRequest = ' + JSON.stringify(this.assistanceRequest))
+      this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === newVal)
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['createNewAssistanceRequest']),
-    toggleSort() {
-      this.isSortedDesc = !this.isSortedDesc
+    ...mapActions(useMessagesStore, ['getAssistanceRequestMessages']),
+
+    /**
+     * Sorts the messages by date received based on isSortedDesc.
+     */
+    sortMessages() {
       this.assistanceRequestMessages.sort((a, b) => (a.dateReceived > b.dateReceived) ? 1 : -1)
     },
+
+    /**
+     * Toggles the sort order of the messages.
+     */
+    toggleSort() {
+      this.isSortedDesc = !this.isSortedDesc
+      this.sortMessages()
+    },
+
+    /**
+     * Toggles the reply request dialog opened/closed.
+     */
     toggleReplyRequestDialog() {
       this.showReplyRequestDialog = !this.showReplyRequestDialog
     },
+
+    /**
+     * Called when the reply request dialog emits a reply-success-event. Gets the messages for the
+     * assistance request and sorts them.
+     */
+    async replySuccessEvent(isSuccess) {
+      if (isSuccess) {
+        await this.getAssistanceRequestMessages(this.assistanceRequestId);
+        this.sortMessages();
+        this.setSuccessAlert('Reply sent successfully');
+      }
+    }
+
   }
 }
 </script>
