@@ -10,7 +10,7 @@
           <v-icon class="icon" left>mdi-email-open-outline</v-icon>
           <span class="btn-label">Mark unread</span>
         </v-btn>
-        <v-tooltip v-if="isReplyDisabled"
+        <v-tooltip v-if="isReplyDisabled" content-class="tooltip"
           :text="getReplyDisabledText()">
           <template v-slot:activator="{ props }">
             <div v-bind="props" class="reply-disabled">
@@ -38,7 +38,7 @@
       <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map(facility =>
         facility.facilityName).join(', ') }}</v-col>
     </v-row>
-    <v-row class="header-bottom-border">
+    <v-row class="border-bottom">
       <v-col class="d-flex justify-end pt-0 pb-0 pr-2 w-100 align-center"><span class="font-weight-bold">Sort
           By:</span>
         <v-btn class="btn-style" @click="toggleSort()">
@@ -55,7 +55,7 @@
           <template #headers>
           </template>
           <template #item="{ item }">
-            <v-row style="border-bottom: 1px solid #E0E0E0;" class="mr-0">
+            <v-row class="border-bottom mr-0">
               <v-col>
                 <div><span class="font-weight-bold">From:</span> {{ item.from }}</div>
                 <div><span class="font-weight-bold">Sent:</span> {{ format.formatDate(item.sentDate) }}</div>
@@ -183,6 +183,11 @@ export default {
 </script>
   
 <style scoped>
+:global(.tooltip) {
+  background-color: #003466 !important;
+  color: #ffffff !important;
+}
+
 th {
   padding: 0px 0px 0px 4px !important;
 }
@@ -228,7 +233,7 @@ td {
   text-decoration: underline;
 }
 
-.header-bottom-border {
+.border-bottom {
   padding: 0px;
   border-bottom: 1px solid #E0E0E0;
 }
