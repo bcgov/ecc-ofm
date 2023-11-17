@@ -18,11 +18,7 @@ export const ApiRoutes = Object.freeze({
   NOTICE: baseRoot + '/notifications',
 })
 
-export const ACCOUNT_TYPE = Object.freeze({
-  FACILITY: 100000001,
-  ORGANIZATION: 100000000,
-})
-
+// TODO (weskubo-cgi) Remove this if not using page titles in UI
 export const PAGE_TITLES = Object.freeze({
   LOGIN: 'Login',
   INTAKE: 'Intake',
