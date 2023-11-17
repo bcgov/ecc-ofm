@@ -10,7 +10,16 @@
           <v-icon class="icon" left>mdi-email-open-outline</v-icon>
           <span class="btn-label">Mark unread</span>
         </v-btn>
-        <v-btn @click="toggleReplyRequestDialog" class="btn-style mr-15">
+        <v-tooltip v-if="isReplyDisabled"
+          :text="getReplyDisabledText()">
+          <template v-slot:activator="{ props }">
+            <div v-bind="props" class="reply-disabled">
+              <v-icon left>mdi-reply</v-icon>
+              <span>Reply</span>
+            </div>
+          </template>
+        </v-tooltip>
+        <v-btn v-else @click="toggleReplyRequestDialog" class="btn-style mr-15">
           <v-icon class="icon" left>mdi-reply</v-icon>
           <span class="btn-label">Reply</span>
         </v-btn>
@@ -49,7 +58,7 @@
             <v-row style="border-bottom: 1px solid #E0E0E0;" class="mr-0">
               <v-col>
                 <div><span class="font-weight-bold">From:</span> {{ item.from }}</div>
-                <div><span class="font-weight-bold">Sent:</span> {{ item.sentDate.split('T')[0] }}</div>
+                <div><span class="font-weight-bold">Sent:</span> {{ format.formatDate(item.sentDate) }}</div>
                 <div class="pt-1">{{ item.message }}</div>
               </v-col>
             </v-row>
@@ -71,9 +80,12 @@ import { mapState, mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
+import format from '@/utils/format'
+import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT } from '@/utils/constants'
 
 export default {
   mixins: [alertMixin],
+  format: [format],
   components: { ReplyRequestDialog },
   props: {
     assistanceRequestId: {
@@ -85,6 +97,7 @@ export default {
   emits: ['toggleMarkUnreadButtonInConversationThread'],
   data() {
     return {
+      format,
       showReplyRequestDialog: false,
       isSortedDesc: true,
       assistanceRequest: null,
@@ -99,6 +112,14 @@ export default {
   },
   computed: {
     ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestMessages']),
+    isReplyDisabled() {
+      // TODO: **WES** need to confirm how to handle statuses... there were values for statuses in constants.js in Viets previous code, although there where id values, while in this case i have the descriptions.
+      // i would assume this in constants but want to confirm given removing the previous id status values. if that still existed i could have levergaed on that by adding descriptions with the ids, something
+      // seen in CCOF. Let me know how you'd like to handle.
+      return this.assistanceRequest &&
+        (this.assistanceRequest.status !== 'With Provider' ||
+          this.assistanceRequest.status !== 'Ready to resolve');
+    }
   },
   watch: {
     // When assistanceRequestId changes, get the messages for the new assistance request.
@@ -148,6 +169,13 @@ export default {
         this.sortMessages();
         this.setSuccessAlert('Reply sent successfully');
       }
+    },
+
+    /**
+     * Returns the text to display in the tooltip for the reply button when it is disabled.
+     */
+    getReplyDisabledText() {
+      return ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT;
     }
 
   }
@@ -203,6 +231,15 @@ td {
 .header-bottom-border {
   padding: 0px;
   border-bottom: 1px solid #E0E0E0;
+}
+
+.reply-disabled {
+  width: 131px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 1.25px;
+  color: #C0C0C0;
+  font-family: BCSans, veranda, arial, sans-serif;
 }
 </style>
   

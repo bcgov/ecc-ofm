@@ -35,9 +35,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import { useAppStore } from '@/stores/app'
+import { mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import AppButton from '../ui/AppButton.vue'
 import AppDialog from '../ui/AppDialog.vue'

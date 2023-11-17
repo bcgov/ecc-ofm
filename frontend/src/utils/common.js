@@ -4,7 +4,6 @@ import { DateTimeFormatter, LocalDate } from '@js-joda/core'
 import { filter, isPlainObject, sortBy } from 'lodash'
 
 import ApiService from '@/common/apiService'
-import { getDateFormatter } from '@/utils/format'
 import rfdc from 'rfdc/default'
 
 export function deepCloneObject(objectToBeCloned) {
@@ -22,15 +21,6 @@ export function sortArrayByDate(array, dateFieldName, isAscending, datePattern =
     const dateB = getLocalDateFromString(b[`${dateFieldName}`].toString(), datePattern)
     return isAscending ? dateA.compareTo(dateB) : dateB.compareTo(dateA)
   })
-}
-
-export const getLocalDateFromString = (date, pattern = 'uuuuMMdd') => {
-  const formatter = getDateFormatter(pattern)
-  try {
-    return LocalDate.parse(date, formatter)
-  } catch (e) {
-    console.error(`Error is ${e}`)
-  }
 }
 
 export function capitalizeFirstLetter(string) {
