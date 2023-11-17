@@ -81,7 +81,7 @@ import { useMessagesStore } from '@/stores/messages'
 import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
-import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUSES } from '@/utils/constants'
 
 export default {
   mixins: [alertMixin],
@@ -113,12 +113,9 @@ export default {
   computed: {
     ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestMessages']),
     isReplyDisabled() {
-      // TODO: **WES** need to confirm how to handle statuses... there were values for statuses in constants.js in Viets previous code, although there where id values, while in this case i have the descriptions.
-      // i would assume this in constants but want to confirm given removing the previous id status values. if that still existed i could have levergaed on that by adding descriptions with the ids, something
-      // seen in CCOF. Let me know how you'd like to handle.
       return this.assistanceRequest &&
-        (this.assistanceRequest.status !== 'With Provider' ||
-          this.assistanceRequest.status !== 'Ready to resolve');
+        (this.assistanceRequest.status !== ASSISTANCE_REQUEST_STATUSES.WITH_PROVIDER &&
+          this.assistanceRequest.status !== ASSISTANCE_REQUEST_STATUSES.READY_TO_RESOLVE);
     }
   },
   watch: {

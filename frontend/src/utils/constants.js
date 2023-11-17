@@ -29,4 +29,13 @@ export const PAGE_TITLES = Object.freeze({
   MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream',
 })
 
+export const ASSISTANCE_REQUEST_STATUSES = Object.freeze({
+  SUBMITTED: 'Submitted',
+  ASSIGNED: 'Assigned',
+  WITH_PROVIDER: 'With Provider',
+  READY_TO_RESOLVE: 'Ready to resolve',
+  CLOSED_COMPLETE: 'Closed Complete',
+  CLOSED_CANCELLED: 'Closed Cancelled',
+})
+
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
