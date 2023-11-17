@@ -4,7 +4,7 @@
       <v-card-title class="dialog-title">
         <v-row no-gutters justify="space-between" align="center">
           <h3>{{ title }}</h3>
-          <v-btn variant="text" icon="mdi-window-close" @click="$emit('close')" />
+          <v-btn v-if="!isLoading" variant="text" icon="mdi-window-close" @click="$emit('close')" />
         </v-row>
       </v-card-title>
       <div class="yellow-line"></div>
@@ -24,6 +24,10 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+    isLoading: {
+      type: Boolean,
+      default: false,
     },
   },
 }

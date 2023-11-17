@@ -13,16 +13,12 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
-  MESSAGE: baseRoot + '/messages',
+  MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
-  NOTICE: baseRoot + '/notifications',
+  NOTIFICATIONS: baseRoot + '/notifications',
 })
 
-export const ACCOUNT_TYPE = Object.freeze({
-  FACILITY: 100000001,
-  ORGANIZATION: 100000000,
-})
-
+// TODO (weskubo-cgi) Remove this if not using page titles in UI
 export const PAGE_TITLES = Object.freeze({
   LOGIN: 'Login',
   INTAKE: 'Intake',
@@ -31,13 +27,4 @@ export const PAGE_TITLES = Object.freeze({
   REPORTING: 'Reporting',
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
   MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream',
-})
-
-export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
-  SUBMITTED: 1,
-  ASSIGNED: 2,
-  WITH_PROVIDER: 3,
-  READY_TO_RESOLVE: 4,
-  CLOSED_COMPLETE: 5,
-  CLOSED_CANCELLED: 6,
 })

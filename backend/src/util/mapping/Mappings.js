@@ -50,6 +50,7 @@ const AssistanceRequestMappings = [
   { back: '_ofm_request_category_value@OData.Community.Display.V1.FormattedValue', front: 'categoryName' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
   { back: 'ofm_last_opened_time', front: 'lastOpenedTime' },
+  { back: 'ofm_is_read', front: 'isRead' },
 ]
 
 const AssistanceRequestMessagesMappings = [

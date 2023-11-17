@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" persistent max-width="70%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="newRequestModel.isFormComplete" class="px-12 mx-8">
           <v-row no-gutters class="mt-4">
@@ -140,7 +140,7 @@ export default {
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, ['createNewAssistanceRequest']),
+    ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore']),
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
@@ -166,8 +166,9 @@ export default {
       if (this.newRequestModel?.isFormComplete) {
         try {
           this.isLoading = true
-          let response = await this.createNewAssistanceRequest(this.newRequestModel)
+          const response = await this.createAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
+          await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           console.log(`Failed to create a new Assistance Request - ${error}`)

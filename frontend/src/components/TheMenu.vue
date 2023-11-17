@@ -35,11 +35,11 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
     messageNotificationCount() {
-      return this.getMessageCount + this.unreadNotificationCount
+      return this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount
     },
     // count of requests that are unread or are in the status of “Action required”
-    getMessageCount() {
-      const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.lastOpenedTime)?.length
+    actionRequiredAndUnreadMessageCount() {
+      const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
   },
