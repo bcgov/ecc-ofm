@@ -30,7 +30,7 @@
     </template>
     <template #item.lastConversationTime="{ item }">
       <div :class="getItemClass(item)">
-        {{ formatDate(item.lastConversationTime) }}
+        {{ format.formatDate(item.lastConversationTime) }}
       </div>
     </template>
   </v-data-table-virtual>
@@ -39,10 +39,11 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
-import moment from 'moment'
+import format from '@/utils/format'
 
 export default {
   name: 'AssistanceRequestTable',
+  format: [format],
   props: {
     markReadButtonState: {
       type: Boolean,
@@ -60,6 +61,7 @@ export default {
   emits: ['openRequestConversation'],
   data() {
     return {
+      format,
       headers: [
         { title: 'Status', align: 'start', key: 'status', sortable: true, width: '15%' },
         { title: 'Subject', align: 'start', key: 'subject', sortable: true, width: '40%' },
@@ -139,9 +141,6 @@ export default {
         'highlighted-row': this.selectedRequestId === item?.assistanceRequestId,
       }
     },
-    formatDate(date) {
-      return moment(date).format('YYYY-MMM-DD')
-    },
   },
 }
 </script>
@@ -150,23 +149,28 @@ export default {
 .tableText {
   font-size: small;
 }
+
 :deep(.v-data-table-header__content:hover) {
   font-weight: bold;
   color: black;
   cursor: pointer;
 }
+
 .unread-message {
   font-weight: bold;
 }
+
 .action-required-message {
   color: red;
 }
+
 .highlighted-row {
   display: flex;
   align-items: center;
   background: #d4eaff;
   height: 100%;
 }
+
 :deep(.v-data-table__td) {
   padding: 0 !important;
 }

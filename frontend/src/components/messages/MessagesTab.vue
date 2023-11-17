@@ -29,8 +29,9 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
-        This is selected Assistance Request ID for conversation thread
-        {{ selectedAssistanceRequestId }}
+        <RequestConversations
+          :assistanceRequestId="selectedAssistanceRequestId"
+          @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
       </v-col>
     </v-row>
     <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
@@ -43,10 +44,10 @@ import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
-
+import RequestConversations from '@/components/messages/RequestConversations.vue'
 export default {
   name: 'MessagesTab',
-  components: { NewRequestDialog, AssistanceRequestTable },
+  components: { NewRequestDialog, AssistanceRequestTable, RequestConversations },
   data() {
     return {
       showNewRequestDialog: false,
@@ -88,13 +89,16 @@ export default {
 .border-right {
   border-right: 2px solid #6699cc;
 }
+
 .flex-item {
   display: flex;
   align-items: left;
 }
+
 .btn-style:hover .btn-label {
   text-decoration: underline;
 }
+
 .btn-style {
   padding: 0px 6px;
   margin: 0px;
@@ -107,9 +111,11 @@ export default {
   border: none;
   box-shadow: none;
 }
+
 .btn-style:hover {
   background-color: #ffffff;
 }
+
 .btn-style .v-btn__content .icon {
   padding: 0px;
   margin: 0px;

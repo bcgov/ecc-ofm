@@ -30,7 +30,8 @@
           <!-- HEADERS -->
           <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
-              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }" @click="toggleSort(column)">
+              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }"
+                @click="toggleSort(column)">
                 <div v-if="column.title === ''">
                   <v-checkbox
                     v-model="headerCheckboxState"
@@ -48,9 +49,11 @@
           </template>
           <!-- BODY -->
           <template #item="{ item, index }">
-            <tr :class="{ 'unread-notification': !item.isRead, 'highlighted-row': index === rowClickedIndex }" item-key="notificationId" @click="rowClickHandler(item, index)">
+            <tr :class="{ 'unread-notification': !item.isRead, 'highlighted-row': index === rowClickedIndex }"
+              item-key="notificationId" @click="rowClickHandler(item, index)">
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact" @click.stop="bodyCheckboxesClickHandler(item)" />
+                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact"
+                  @click.stop="bodyCheckboxesClickHandler(item)" />
               </td>
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <div class="item">{{ item.isRead ? 'Read' : 'Unread' }}</div>
@@ -297,5 +300,4 @@ hr {
 
 .highlighted-row {
   background-color: #d4eaff;
-}
-</style>
+}</style>
