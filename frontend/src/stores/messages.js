@@ -15,7 +15,7 @@ export const useMessagesStore = defineStore('messages', {
   namespaced: true,
   state: () => ({
     assistanceRequests: null,
-    assistanceRequestMessages: null,
+    assistanceRequestConversation: null,
   }),
   getters: {
     unreadMessageCount: (state) => (state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0),
@@ -67,10 +67,10 @@ export const useMessagesStore = defineStore('messages', {
         sortAssistanceRequests(this.assistanceRequests)
       }
     },
-    async getAssistanceRequestMessages(assistanceRequestId) {
+    async getAssistanceRequestConversation(assistanceRequestId) {
       try {
-        let response = await ApiService.apiAxios.get(ApiRoutes.MESSAGES + '/conversations' + '/' + assistanceRequestId)
-        this.assistanceRequestMessages = response.data
+        const response = await ApiService.apiAxios.get(ApiRoutes.MESSAGES + '/conversations' + '/' + assistanceRequestId)
+        this.assistanceRequestConversation = response.data
       } catch (error) {
         console.log(`Failed to get the list of assistance request messages - ${error}`)
         throw error
@@ -78,7 +78,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async replyToAssistanceRequest(payload) {
       try {
-        let response = await ApiService.apiAxios.post(ApiRoutes.MESSAGES + '/replyToAssistanceRequest', payload)
+        const response = await ApiService.apiAxios.post(ApiRoutes.MESSAGES + '/replyToAssistanceRequest', payload)
         return response?.data
       } catch (error) {
         console.log(`Failed to create a reply for the Assistance Request - ${error}`)

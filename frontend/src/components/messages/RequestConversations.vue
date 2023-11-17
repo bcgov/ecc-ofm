@@ -50,14 +50,14 @@
     </v-row>
     <v-row v-if="assistanceRequest">
       <v-col cols="12" class="border-right pa-0">
-        <v-data-table-virtual :headers="headers" :items="assistanceRequestMessages" item-key="messageId"
+        <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId"
           class="data-table">
           <template #headers>
           </template>
           <template #item="{ item }">
             <v-row class="border-bottom mr-0">
               <v-col>
-                <div><span class="font-weight-bold">From:</span> {{ item.from }}</div>
+                <div><span class="font-weight-bold">From:</span> {{ deriveFromDisplay(item) }}</div>
                 <div><span class="font-weight-bold">Sent:</span> {{ format.formatDate(item.sentDate) }}</div>
                 <div class="pt-1">{{ item.message }}</div>
               </v-col>
@@ -77,11 +77,12 @@
   
 <script>
 import { mapState, mapActions } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
-import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUSES } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
 
 export default {
   mixins: [alertMixin],
@@ -111,28 +112,29 @@ export default {
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestMessages']),
+    ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestConversation']),
+    ...mapState(useAuthStore, ['userInfo']),
     isReplyDisabled() {
       return this.assistanceRequest &&
-        (this.assistanceRequest.status !== ASSISTANCE_REQUEST_STATUSES.WITH_PROVIDER &&
-          this.assistanceRequest.status !== ASSISTANCE_REQUEST_STATUSES.READY_TO_RESOLVE);
+        (this.assistanceRequest.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER &&
+          this.assistanceRequest.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE);
     }
   },
   watch: {
-    // When assistanceRequestId changes, get the messages for the new assistance request.
+    // When assistanceRequestId changes, get the conversation for the new assistance request.
     assistanceRequestId: async function (newVal) {
-      await this.getAssistanceRequestMessages(this.assistanceRequestId)
+      await this.getAssistanceRequestConversation(this.assistanceRequestId)
       this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === newVal)
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['getAssistanceRequestMessages']),
+    ...mapActions(useMessagesStore, ['getAssistanceRequestConversation']),
 
     /**
-     * Sorts the messages by date received based on isSortedDesc.
+     * Sorts the conversation by date received based on isSortedDesc.
      */
-    sortMessages() {
-      this.assistanceRequestMessages.sort((a, b) => {
+    sortConversation() {
+      this.assistanceRequestConversation.sort((a, b) => {
         if (this.isSortedDesc) {
           return (a.dateReceived < b.dateReceived) ? 1 : -1;
         } else {
@@ -142,11 +144,11 @@ export default {
     },
 
     /**
-     * Toggles the sort order of the messages.
+     * Toggles the sort order of the conversation.
      */
     toggleSort() {
       this.isSortedDesc = !this.isSortedDesc
-      this.sortMessages()
+      this.sortConversation()
     },
 
     /**
@@ -157,13 +159,13 @@ export default {
     },
 
     /**
-     * Called when the reply request dialog emits a reply-success-event. Gets the messages for the
+     * Called when the reply request dialog emits a reply-success-event. Gets the conversation for the
      * assistance request and sorts them.
      */
     async replySuccessEvent(isSuccess) {
       if (isSuccess) {
-        await this.getAssistanceRequestMessages(this.assistanceRequestId);
-        this.sortMessages();
+        await this.getAssistanceRequestConversation(this.assistanceRequestId);
+        this.sortConversation();
         this.setSuccessAlert('Reply sent successfully');
       }
     },
@@ -173,6 +175,13 @@ export default {
      */
     getReplyDisabledText() {
       return ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT;
+    },
+
+    /**
+     * Returns the sent by value for the conversation depending on the source system.
+     */
+    deriveFromDisplay(item) {
+      return (item.ofmSourceSystem) ? this.userInfo?.firstName + ' ' + this.userInfo?.lastName : OFM_PROGRAM
     }
 
   }
@@ -185,16 +194,8 @@ export default {
   color: #ffffff !important;
 }
 
-th {
-  padding: 0px 0px 0px 4px !important;
-}
-
-td {
-  padding: 0px 3px 0px 4px !important;
-}
-
 .data-table {
-  height: 635px;
+  max-height: 635px;
 }
 
 .subject-header {

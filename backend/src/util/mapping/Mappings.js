@@ -53,12 +53,13 @@ const AssistanceRequestMappings = [
   { back: 'ofm_is_read', front: 'isRead' },
 ]
 
-const AssistanceRequestMessagesMappings = [
+const AssistanceRequestConversationMappings = [
   { back: 'ofm_conversationid', front: 'conversationId' },
   { back: 'ofm_name', front: 'subject' },
   { back: '_ownerid_value', front: 'from' },
   { back: 'createdon', front: 'sentDate' },
   { back: 'ofm_message', front: 'message' },
+  { back: 'ofm_source_system', front: 'ofmSourceSystem' },
   { back: '_ofm_request_value', front: 'requestValue' },
   { back: 'statuscode', front: 'statusCode' },
 ]
@@ -85,5 +86,5 @@ module.exports = {
   RequestCategoryMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
-  AssistanceRequestMessagesMappings
+  AssistanceRequestConversationMappings,
 }

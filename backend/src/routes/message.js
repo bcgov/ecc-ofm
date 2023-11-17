@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { updateAssistanceRequest, createAssistanceRequest, getAssistanceRequests, getAssistanceRequest, getAssistanceRequestMessages, replyToAssistanceRequest } = require('../components/message')
+const { updateAssistanceRequest, createAssistanceRequest, getAssistanceRequests, getAssistanceRequest, getAssistanceRequestConversation, replyToAssistanceRequest } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
@@ -100,7 +100,7 @@ router.get(
   [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
-    return getAssistanceRequestMessages(req, res)
+    return getAssistanceRequestConversation(req, res)
   },
 )
 

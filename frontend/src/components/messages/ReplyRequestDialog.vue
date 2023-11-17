@@ -134,6 +134,6 @@ export default {
 <style scoped>
 .blue-text {
   color: #003366;
-  font-size: 125%;
+  font-size: 1.25em;
 }
 </style>

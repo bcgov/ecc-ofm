@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { AssistanceRequestMappings, AssistanceRequestFacilityMappings, AssistanceRequestMessagesMappings } = require('../util/mapping/Mappings')
+const { AssistanceRequestMappings, AssistanceRequestFacilityMappings, AssistanceRequestConversationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { ASSISTANCE_REQUEST_STATUS_CODES } = require('../util/constants')
 const log = require('./logger')
@@ -72,11 +72,11 @@ async function createAssistanceRequest(req, res) {
 
 async function replyToAssistanceRequest(req, res) {
   try {
-    let payload = `{
+    const payload = `{
       "ofm_message": "${req.body?.message}",
       "ofm_request@odata.bind": "/ofm_assistance_requests(${req.body?.assistanceRequestId})"
     }`
-    let response = await postOperation('ofm_conversations', payload)
+    const response = await postOperation('ofm_conversations', payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -85,10 +85,10 @@ async function replyToAssistanceRequest(req, res) {
 
 async function getAssistanceRequests(req, res) {
   try {
-    log.info('getAssistanceRequests: ', req.params.contactId)
+    log.debug('getAssistanceRequests: ', req.params.contactId)
     let assistanceRequests = []
     let operation = `ofm_assistance_requests?$select=modifiedon,ofm_assistance_requestid,ofm_last_opened_time,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)&$filter=(_ofm_contact_value eq ${req.params.contactId}) and (ofm_facility_request_request/any(o1:(o1/ofm_facility_requestid ne null))) and (ofm_conversation_request/any(o2:(o2/ofm_conversationid ne null)))`
-    log.info('operation: ', operation)
+    log.debug('operation: ', operation)
     let response = await getOperation(operation)
     response?.value?.forEach((item) => assistanceRequests.push(mapAssistanceRequestObjectForFront(item)))
     return res.status(HttpStatus.OK).json(assistanceRequests)
@@ -100,7 +100,7 @@ async function getAssistanceRequests(req, res) {
 async function getAssistanceRequest(req, res) {
   try {
     let operation = `ofm_assistance_requests(${req.params.assistanceRequestId})?$select=modifiedon,ofm_assistance_requestid,ofm_last_opened_time,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)`
-    log.info('operation: ', operation)
+    log.debug('operation: ', operation)
     let response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapAssistanceRequestObjectForFront(response))
   } catch (e) {
@@ -118,16 +118,16 @@ async function updateAssistanceRequest(req, res) {
   }
 }
 
-async function getAssistanceRequestMessages(req, res) {
+async function getAssistanceRequestConversation(req, res) {
   try {
-    let operation = `ofm_conversations?$select=ofm_conversationid,ofm_name,createdon,ofm_message,_ofm_request_value,_ownerid_value,statecode,statuscode&$expand=createdby($select=firstname,lastname)&$filter=(_ofm_request_value eq ${req.params.assistanceRequestId})&$orderby=createdon desc`
-    log.info('operation: ', operation)
+    let operation = `ofm_conversations?$select=ofm_conversationid,ofm_name,createdon,ofm_message,ofm_source_system,_ofm_request_value,_ownerid_value,statecode,statuscode&$expand=createdby($select=firstname,lastname)&$filter=(_ofm_request_value eq ${req.params.assistanceRequestId})&$orderby=createdon desc`
+    log.debug('operation: ', operation)
     let response = await getOperation(operation)
     const messages = []
 
     for (const item of response.value) {
-      let assistanceRequestMessage = new MappableObjectForFront(item, AssistanceRequestMessagesMappings).toJSON()
-      messages.push(assistanceRequestMessage)
+      let assistanceRequestConversation = new MappableObjectForFront(item, AssistanceRequestConversationMappings).toJSON()
+      messages.push(assistanceRequestConversation)
     }
     return res.status(HttpStatus.OK).json(messages)
   } catch (e) {
@@ -140,6 +140,6 @@ module.exports = {
   getAssistanceRequests,
   getAssistanceRequest,
   updateAssistanceRequest,
-  getAssistanceRequestMessages,
+  getAssistanceRequestConversation,
   replyToAssistanceRequest,
 }
