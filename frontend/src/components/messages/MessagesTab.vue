@@ -44,7 +44,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
-import RequestConversations from './RequestConversations.vue'
+import RequestConversations from '@/components/messages/RequestConversations.vue'
 export default {
   name: 'MessagesTab',
   components: { NewRequestDialog, AssistanceRequestTable, RequestConversations },

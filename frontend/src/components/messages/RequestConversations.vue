@@ -1,10 +1,10 @@
 <template>
   <v-container v-if="assistanceRequest" class="pa-3">
     <v-row>
-      <v-col class="d-flex align-center pl-0 pt-0 pb-0">
+      <v-col cols="10" class="d-flex align-center pl-0 pt-0 pb-0">
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
-      <v-col class="d-flex flex-column align-end pb-0 pt-0">
+      <v-col cols="2" class="d-flex flex-column align-start pb-0 pt-0">
         <v-btn v-if="assistanceRequest.lastOpenedTime"
           @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
           <v-icon class="icon" left>mdi-email-open-outline</v-icon>
@@ -19,7 +19,7 @@
             </div>
           </template>
         </v-tooltip>
-        <v-btn v-else @click="toggleReplyRequestDialog" class="btn-style mr-15">
+        <v-btn v-else @click="toggleReplyRequestDialog" class="btn-style pl-0 pr-15">
           <v-icon class="icon" left>mdi-reply</v-icon>
           <span class="btn-label">Reply</span>
         </v-btn>
@@ -39,7 +39,7 @@
         facility.facilityName).join(', ') }}</v-col>
     </v-row>
     <v-row class="border-bottom">
-      <v-col class="d-flex justify-end pt-0 pb-0 pr-2 w-100 align-center"><span class="font-weight-bold">Sort
+      <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center"><span class="font-weight-bold">Sort
           By:</span>
         <v-btn class="btn-style" @click="toggleSort()">
           <span class="btn-label">{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
@@ -50,20 +50,22 @@
     </v-row>
     <v-row v-if="assistanceRequest">
       <v-col cols="12" class="border-right pa-0">
-        <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId"
-          class="data-table">
-          <template #headers>
-          </template>
-          <template #item="{ item }">
-            <v-row class="border-bottom mr-0">
-              <v-col>
-                <div><span class="font-weight-bold">From:</span> {{ deriveFromDisplay(item) }}</div>
-                <div><span class="font-weight-bold">Sent:</span> {{ format.formatDate(item.sentDate) }}</div>
-                <div class="pt-1">{{ item.message }}</div>
-              </v-col>
-            </v-row>
-          </template>
-        </v-data-table-virtual>
+        <v-skeleton-loader :loading="loading" type="table-tbody">
+          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId"
+            class="data-table">
+            <template #headers>
+            </template>
+            <template #item="{ item }">
+              <v-row class="border-bottom mr-0">
+                <v-col>
+                  <div><span class="font-weight-bold">From:</span> {{ deriveFromDisplay(item) }}</div>
+                  <div><span class="font-weight-bold">Sent:</span> {{ format.formatDate(item.sentDate) }}</div>
+                  <div class="pt-1">{{ item.message }}</div>
+                </v-col>
+              </v-row>
+            </template>
+          </v-data-table-virtual>
+        </v-skeleton-loader>
       </v-col>
     </v-row>
     <ReplyRequestDialog class="pa-0"
@@ -102,6 +104,7 @@ export default {
       showReplyRequestDialog: false,
       isSortedDesc: true,
       assistanceRequest: null,
+      loading: false,
       headers: [
         {
           title: 'dateReceived',
@@ -123,7 +126,9 @@ export default {
   watch: {
     // When assistanceRequestId changes, get the conversation for the new assistance request.
     assistanceRequestId: async function (newVal) {
+      this.loading = true
       await this.getAssistanceRequestConversation(this.assistanceRequestId)
+      this.loading = false
       this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === newVal)
     },
   },
@@ -181,7 +186,7 @@ export default {
      * Returns the sent by value for the conversation depending on the source system.
      */
     deriveFromDisplay(item) {
-      return (item.ofmSourceSystem) ? this.userInfo?.firstName + ' ' + this.userInfo?.lastName : OFM_PROGRAM
+      return (item.ofmSourceSystem) ? `${this.userInfo?.firstName} ${this.userInfo?.lastName}` : OFM_PROGRAM;
     }
 
   }
@@ -189,11 +194,6 @@ export default {
 </script>
   
 <style scoped>
-:global(.tooltip) {
-  background-color: #003466 !important;
-  color: #ffffff !important;
-}
-
 .data-table {
   max-height: 635px;
 }
@@ -237,7 +237,7 @@ export default {
 }
 
 .reply-disabled {
-  width: 131px;
+  padding-right: 17px;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 1.25px;

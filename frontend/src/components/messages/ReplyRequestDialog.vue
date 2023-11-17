@@ -37,8 +37,8 @@
 <script>
 import { mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
-import AppButton from '../ui/AppButton.vue'
-import AppDialog from '../ui/AppDialog.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
 import rules from '@/utils/rules'
 
 export default {
@@ -50,7 +50,7 @@ export default {
       default: false,
     },
     assistanceRequestId: {
-      type: [String, null],
+      type: String,
       required: true,
       default: '',
     },
@@ -116,7 +116,7 @@ export default {
       if (this.replyRequestModel?.isFormComplete) {
         try {
           this.isLoading = true
-          let response = await this.replyToAssistanceRequest(this.replyRequestModel)
+          await this.replyToAssistanceRequest(this.replyRequestModel)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
           console.log(`Failed to create a reply for Assistance Request - ${error}`)
