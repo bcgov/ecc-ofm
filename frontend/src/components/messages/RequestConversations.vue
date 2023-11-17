@@ -1,10 +1,10 @@
 <template>
   <v-container v-if="assistanceRequest" class="pa-3">
     <v-row>
-      <v-col class="d-flex align-center pl-0">
+      <v-col class="d-flex align-center pl-0 pt-0 pb-0">
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
-      <v-col class="d-flex flex-column align-end pb-0">
+      <v-col class="d-flex flex-column align-end pb-0 pt-0">
         <v-btn v-if="assistanceRequest.lastOpenedTime"
           @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
           <v-icon class="icon" left>mdi-email-open-outline</v-icon>
@@ -114,7 +114,13 @@ export default {
      * Sorts the messages by date received based on isSortedDesc.
      */
     sortMessages() {
-      this.assistanceRequestMessages.sort((a, b) => (a.dateReceived > b.dateReceived) ? 1 : -1)
+      this.assistanceRequestMessages.sort((a, b) => {
+        if (this.isSortedDesc) {
+          return (a.dateReceived < b.dateReceived) ? 1 : -1;
+        } else {
+          return (a.dateReceived > b.dateReceived) ? 1 : -1;
+        }
+      });
     },
 
     /**
@@ -157,13 +163,6 @@ td {
   padding: 0px 3px 0px 4px !important;
 }
 
-hr {
-  border: 0;
-  height: 1px;
-  background: #6699cc;
-  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
-}
-
 .data-table {
   height: 635px;
 }
@@ -203,7 +202,7 @@ hr {
 
 .header-bottom-border {
   padding: 0px;
-  border-bottom: 1px solid #6699cc;
+  border-bottom: 1px solid #E0E0E0;
 }
 </style>
   
