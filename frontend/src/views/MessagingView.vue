@@ -41,9 +41,11 @@ import { useNotificationsStore } from '@/stores/notifications'
 
 export default {
   components: { MessagesTab, NotificationsTab },
-  data: () => ({
-    tab: null,
-  }),
+  data() {
+    return {
+      tab: null,
+    }
+  },
   computed: {
     ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
     ...mapState(useMessagesStore, ['unreadMessageCount']),
