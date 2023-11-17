@@ -5,6 +5,7 @@ import '@/assets/css/reset.css'
 
 import App from './App.vue'
 import { VDataTableVirtual } from 'vuetify/lib/labs/components.mjs'
+import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 import { createApp } from 'vue'
 import { createMetaManager } from 'vue-meta'
 import { createPinia } from 'pinia'
@@ -17,10 +18,6 @@ const app = createApp(App)
 const pinia = createPinia()
 
 app.component('VDataTableVirtual', VDataTableVirtual)
+app.component('VSkeletonLoader', VSkeletonLoader)
 app.provide('$moment', moment)
-app
-  .use(router)
-  .use(createMetaManager())
-  .use(pinia)
-  .use(vuetify)
-  .mount('#app')
+app.use(router).use(createMetaManager()).use(pinia).use(vuetify).mount('#app')
