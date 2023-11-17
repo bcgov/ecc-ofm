@@ -1,7 +1,7 @@
 <template>
   <v-card class="messaging-card" variant="flat" max-width="100%">
     <v-tabs v-model="tab" bg-color="none" class="messaging-tabs" density="compact">
-      <div v-if="showUnreadNotificationCount">
+      <div v-if="unreadNotificationCount > 0">
         <v-badge color="red" :content="unreadNotificationCount" offset-x="9" offset-y="9">
           <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="one">Notifications</v-tab>
         </v-badge>
@@ -45,11 +45,8 @@ export default {
     tab: null,
   }),
   computed: {
-    ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
+    ...mapState(useNotificationsStore, ['unreadNotificationCount']),
     ...mapState(useMessagesStore, ['unreadMessageCount']),
-    showUnreadNotificationCount() {
-      return this.unreadNotificationCount > 0 ? true : false
-    },
   },
 }
 </script>

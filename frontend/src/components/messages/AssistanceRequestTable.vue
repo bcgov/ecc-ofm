@@ -30,7 +30,7 @@
     </template>
     <template #item.lastConversationTime="{ item }">
       <div :class="getItemClass(item)">
-        {{ convertDateToLocalDate(item.lastConversationTime) }}
+        {{ formatDate(item.lastConversationTime) }}
       </div>
     </template>
   </v-data-table-virtual>
@@ -39,6 +39,7 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import moment from 'moment'
 
 export default {
   name: 'AssistanceRequestTable',
@@ -132,41 +133,20 @@ export default {
       return item?.status === 'Action required'
     },
     getItemClass(item) {
-      let result = ''
-      if (this.isActionRequiredMessage(item)) {
-        result += 'action-required-message '
+      return {
+        'action-required-message': this.isActionRequiredMessage(item),
+        'unread-message': !item?.isRead,
+        'highlighted-row': this.selectedRequestId === item?.assistanceRequestId,
       }
-      if (!item?.isRead) {
-        result += 'unread-message '
-      }
-      if (this.selectedRequestId === item?.assistanceRequestId) {
-        result += 'highlighted-row '
-      }
-      return result
     },
-    convertDateToLocalDate(date) {
-      let localDate = new Date(date)
-      let monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-      let dateString = localDate?.getFullYear() + '-' + monthNames[localDate?.getMonth()] + '-' + localDate?.getDate()
-      return dateString
+    formatDate(date) {
+      return moment(date).format('YYYY-MMM-DD')
     },
   },
 }
 </script>
 
 <style scoped>
-th {
-  padding: 0px 0px 0px 4px !important;
-}
-td {
-  padding: 0px 3px 0px 4px !important;
-}
-hr {
-  border: 0;
-  height: 1px;
-  background: #6699cc;
-  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
-}
 .tableText {
   font-size: small;
 }
@@ -184,7 +164,7 @@ hr {
 .highlighted-row {
   display: flex;
   align-items: center;
-  background: #d4eaff !important;
+  background: #d4eaff;
   height: 100%;
 }
 :deep(.v-data-table__td) {

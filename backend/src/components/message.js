@@ -59,7 +59,7 @@ function mapAssistanceRequestObjectForBack(data) {
   return assistanceRequest
 }
 
-async function createNewAssistanceRequest(req, res) {
+async function createAssistanceRequest(req, res) {
   try {
     let payload = mapAssistanceRequestObjectForBack(req.body)
     let response = await postOperation('ofm_assistance_requests?$select=ofm_name,ofm_assistance_requestid', payload)
@@ -105,7 +105,7 @@ async function updateAssistanceRequest(req, res) {
 }
 
 module.exports = {
-  createNewAssistanceRequest,
+  createAssistanceRequest,
   getAssistanceRequests,
   getAssistanceRequest,
   updateAssistanceRequest,

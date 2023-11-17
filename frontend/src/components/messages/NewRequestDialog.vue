@@ -140,7 +140,7 @@ export default {
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, ['createNewAssistanceRequest', 'addNewAssistanceRequestToStore']),
+    ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore']),
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
@@ -166,7 +166,7 @@ export default {
       if (this.newRequestModel?.isFormComplete) {
         try {
           this.isLoading = true
-          let response = await this.createNewAssistanceRequest(this.newRequestModel)
+          const response = await this.createAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
           await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()

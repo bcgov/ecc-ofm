@@ -20,15 +20,13 @@
             </div>
           </v-col>
         </v-row>
-        <v-row v-if="!assistanceRequests" class="mx-1">
-          <v-skeleton-loader type="table-tbody"></v-skeleton-loader>
-        </v-row>
-        <AssistanceRequestTable
-          v-else
-          :markReadButtonState="markReadButtonState"
-          :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
-          :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
-          @openRequestConversation="openRequestConversation" />
+        <v-skeleton-loader :loading="!assistanceRequests" type="table-tbody">
+          <AssistanceRequestTable
+            :markReadButtonState="markReadButtonState"
+            :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
+            :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
+            @openRequestConversation="openRequestConversation" />
+        </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
         This is selected Assistance Request ID for conversation thread

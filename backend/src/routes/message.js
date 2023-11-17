@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { updateAssistanceRequest, createNewAssistanceRequest, getAssistanceRequests, getAssistanceRequest } = require('../components/message')
+const { updateAssistanceRequest, createAssistanceRequest, getAssistanceRequests, getAssistanceRequest } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
@@ -54,7 +54,7 @@ router.put(
  */
 router.post('/newAssistanceRequest', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(newAssistanceRequestSchema)], (req, res) => {
   validationResult(req).throw()
-  return createNewAssistanceRequest(req, res)
+  return createAssistanceRequest(req, res)
 })
 
 /**
