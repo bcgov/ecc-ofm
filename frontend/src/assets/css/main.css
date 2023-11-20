@@ -161,3 +161,8 @@ input[type='number'] {
 .theme--light.v-btn.v-btn--disabled:not(.v-btn--text):not(.v-btn--outlined) {
   background-color: rgba(0, 0, 0, 0.12) !important;
 }
+
+.tooltip {
+  background-color: #003466 !important;
+  color: #ffffff !important;
+}
