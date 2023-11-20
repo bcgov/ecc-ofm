@@ -162,7 +162,7 @@ input[type='number'] {
   background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
-:global(.tooltip) {
+.tooltip {
   background-color: #003466 !important;
   color: #ffffff !important;
 }
