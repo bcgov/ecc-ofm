@@ -1,6 +1,7 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" persistent max-width="70%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%"
+      @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="newRequestModel.isFormComplete" class="px-12 mx-8">
           <v-row no-gutters class="mt-4">
@@ -23,7 +24,8 @@
               <strong>Subject:</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
-              <v-text-field v-model="newRequestModel.subject" placeholder="Brief summary of request" counter maxlength="100" variant="outlined" :rules="rules.required"></v-text-field>
+              <v-text-field v-model="newRequestModel.subject" placeholder="Brief summary of request" counter
+                maxlength="100" variant="outlined" :rules="rules.required"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
@@ -31,7 +33,8 @@
               <strong>Request description:</strong>
             </v-col>
             <v-col class="v-col-12">
-              <v-textarea v-model="newRequestModel.description" placeholder="Detailed description of request" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
+              <v-textarea v-model="newRequestModel.description" placeholder="Detailed description of request" counter
+                maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
@@ -76,19 +79,23 @@
               <strong>Business phone:</strong>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
-              <v-text-field v-model="newRequestModel.phone" variant="outlined" :rules="[...rules.required, rules.phone]" />
+              <v-text-field v-model="newRequestModel.phone" variant="outlined"
+                :rules="[...rules.required, rules.phone]" />
             </v-col>
           </v-row>
         </v-form>
       </template>
       <template #button>
         <v-row justify="space-around">
-          <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
+          <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()"
+            :loading="isLoading">Cancel</AppButton>
+          <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit
+          </AppButton>
         </v-row>
       </template>
     </AppDialog>
-    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog" @close="toggleNewRequestConfirmationDialog" />
+    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog"
+      @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -140,12 +147,12 @@ export default {
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, ['createNewAssistanceRequest']),
+    ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore']),
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
         contactId: this.userInfo?.contactId,
-        facilities: this.facilities?.filter((facility) => facility.statusCode === 1),
+        facilities: this.facilities?.filter((facility) => facility.facilityStateCode === 0), // statecode: 0 = Active, 1 = Inactive
         contactMethod: '1',
         phone: this.userInfo?.phone,
       }
@@ -166,8 +173,9 @@ export default {
       if (this.newRequestModel?.isFormComplete) {
         try {
           this.isLoading = true
-          let response = await this.createNewAssistanceRequest(this.newRequestModel)
+          const response = await this.createAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
+          await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           console.log(`Failed to create a new Assistance Request - ${error}`)
@@ -186,9 +194,7 @@ export default {
 }
 </script>
 
-<style scoped>
-.blue-text {
+<style scoped>.blue-text {
   color: #003366;
-  font-size: 125%;
-}
-</style>
+  font-size: 1.25em;
+}</style>

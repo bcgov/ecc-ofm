@@ -1,36 +1,44 @@
 <template>
-  <v-container class="pa-3">
+  <v-container class="pa-3" fluid>
     <v-row>
       <v-col cols="6" class="border-right pa-0">
-        <v-data-table-virtual v-model="bodyCheckboxesSelected" :headers="headers" :items="notifications"
-          item-key="notificationId" item-value="notificationId" show-select hover fixed-header density="compact"
+        <v-row>
+          <v-col class="mt-1">
+            <div class="flex-item">
+              <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
+                <v-icon class="icon" left>mdi-email-outline</v-icon>
+                <span class="btn-label">Mark unread</span>
+              </v-btn>
+              <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
+                <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+                <span class="btn-label">Mark read</span>
+              </v-btn>
+            </div>
+          </v-col>
+        </v-row>
+        <v-data-table-virtual
+          v-model="bodyCheckboxesSelected"
+          :headers="headers"
+          :items="notifications"
+          item-key="notificationId"
+          item-value="notificationId"
+          show-select
+          hover
+          fixed-header
+          density="compact"
           class="data-table">
-          <!-- TOP -->
-          <template #top>
-            <v-row>
-              <v-col class="mt-1">
-                <div class="flex-item">
-                  <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email-outline</v-icon>
-                    <span class="btn-label">Mark unread</span>
-                  </v-btn>
-                  <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
-                    <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-                    <span class="btn-label">Mark read</span>
-                  </v-btn>
-                </div>
-              </v-col>
-            </v-row>
-          </template>
           <!-- HEADERS -->
           <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
               <th v-for="column in columns" :key="column.key" :style="{ width: column.width }"
                 @click="toggleSort(column)">
                 <div v-if="column.title === ''">
-                  <v-checkbox v-model="headerCheckboxState"
+                  <v-checkbox
+                    v-model="headerCheckboxState"
                     :indeterminate="bodyCheckboxesSelected.length > 0 && bodyCheckboxesSelected.includes(true)"
-                    hide-details density="compact" @click.stop="headerCheckboxClickHandler" />
+                    hide-details
+                    density="compact"
+                    @click.stop="headerCheckboxClickHandler" />
                 </div>
                 <div v-else class="headers">
                   {{ column.title }}
@@ -48,9 +56,7 @@
                   @click.stop="bodyCheckboxesClickHandler(item)" />
               </td>
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <div class="item">{{ (item.isRead) ?
-                  'Read' :
-                  'Unread' }}</div>
+                <div class="item">{{ item.isRead ? 'Read' : 'Unread' }}</div>
               </td>
               <td :class="{ 'highlighted-row': index === rowClickedIndex }">
                 <div class="item">{{ item.subject }}</div>
@@ -68,7 +74,8 @@
           <v-card-title>
             <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
-                <span class="font-bold">From:</span>&nbsp;Operating Funding Model Program
+                <span class="font-bold">From:</span>
+                &nbsp;Operating Funding Model Program
               </div>
               <v-btn v-if="notificationSelected.isRead" class="btn-style" @click="updateNotificationUnread">
                 <v-icon class="icon" left>mdi-email-open-outline</v-icon>
@@ -79,14 +86,14 @@
               {{ notificationSelected.subject }}
             </div>
           </v-card-title>
-          <hr>
+          <hr />
           <v-card-text v-html="notificationSelected.notificationContent" />
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
-  
+
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -159,9 +166,9 @@ export default {
      *  Add or remove the clicked body/item checkbox to the checkedNotifications array.
      */
     bodyCheckboxesClickHandler(item) {
-      const exists = this.checkedNotifications.some(notice => notice.notificationId === item.notificationId);
+      const exists = this.checkedNotifications.some((notice) => notice.notificationId === item.notificationId)
       if (exists) {
-        this.checkedNotifications = this.checkedNotifications.filter(notice => notice.notificationId !== item.notificationId);
+        this.checkedNotifications = this.checkedNotifications.filter((notice) => notice.notificationId !== item.notificationId)
       } else {
         this.checkedNotifications.push(item)
       }
@@ -178,7 +185,7 @@ export default {
         })
       } else if (this.checkedNotifications.length > 0) {
         this.checkedNotifications.forEach((item) => {
-          let noticeToUpdate = this.notifications.find(notification => notification.notificationId === item.notificationId)
+          let noticeToUpdate = this.notifications.find((notification) => notification.notificationId === item.notificationId)
           noticeToUpdate.isRead = isRead
           this.updateNotification(noticeToUpdate)
         })
@@ -190,7 +197,7 @@ export default {
      */
     rowClickHandler: function (item, index) {
       this.rowClickedIndex = index // Used for row select highlighting in template slot item
-      this.notificationSelected = this.notifications.find(notification => notification.notificationId === item.notificationId)
+      this.notificationSelected = this.notifications.find((notification) => notification.notificationId === item.notificationId)
       this.notificationSelected.isRead = true
       this.updateNotification(this.notificationSelected)
     },
@@ -201,10 +208,10 @@ export default {
       this.notificationSelected.isRead = false
       this.updateNotification(this.notificationSelected)
     },
-  }
-};
+  },
+}
 </script>
-  
+
 <style scoped>
 th {
   padding: 0px 0px 0px 4px !important;
@@ -292,7 +299,5 @@ hr {
 }
 
 .highlighted-row {
-  background-color: #D4EAFF;
-}
-</style>
-  
+  background-color: #d4eaff;
+}</style>

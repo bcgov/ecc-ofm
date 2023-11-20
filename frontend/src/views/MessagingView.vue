@@ -1,7 +1,7 @@
 <template>
-  <v-card class="messaging-card" variant="flat">
+  <v-card class="messaging-card" variant="flat" max-width="100%">
     <v-tabs v-model="tab" bg-color="none" class="messaging-tabs" density="compact">
-      <div v-if="showUnreadNotificationCount">
+      <div v-if="unreadNotificationCount > 0">
         <v-badge color="red" :content="unreadNotificationCount" offset-x="9" offset-y="9">
           <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="one">Notifications</v-tab>
         </v-badge>
@@ -9,7 +9,14 @@
       <div v-else>
         <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="one">Notifications</v-tab>
       </div>
-      <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="two">Messages</v-tab>
+      <div v-if="unreadMessageCount > 0">
+        <v-badge color="red" :content="unreadMessageCount" offset-x="9" offset-y="9">
+          <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="two">Messages</v-tab>
+        </v-badge>
+      </div>
+      <div v-else>
+        <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="two">Messages</v-tab>
+      </div>
       <v-tab class="messaging-tab" selected-class="messaging-tab-selected" value="three">Archive</v-tab>
     </v-tabs>
     <v-card-text class="messaging-card-text">
@@ -29,18 +36,19 @@
 import { mapState } from 'pinia'
 import MessagesTab from '@/components/messages/MessagesTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
+import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
 
 export default {
   components: { MessagesTab, NotificationsTab },
-  data: () => ({
-    tab: null,
-  }),
+  data() {
+    return {
+      tab: null,
+    }
+  },
   computed: {
-    ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
-    showUnreadNotificationCount() {
-      return this.unreadNotificationCount > 0 ? true : false
-    },
+    ...mapState(useNotificationsStore, ['unreadNotificationCount']),
+    ...mapState(useMessagesStore, ['unreadMessageCount']),
   },
 }
 </script>

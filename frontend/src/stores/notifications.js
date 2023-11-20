@@ -18,7 +18,7 @@ export const useNotificationsStore = defineStore('notifications', {
       }
       if (contactId) {
         try {
-          let response = await ApiService.apiAxios.get(ApiRoutes.NOTICE + '/contact/' + contactId)
+          let response = await ApiService.apiAxios.get(ApiRoutes.NOTIFICATIONS + '/contact/' + contactId)
           this.notifications = response.data
         } catch (error) {
           console.log(`Failed to get notifications - ${error}`)
@@ -38,7 +38,7 @@ export const useNotificationsStore = defineStore('notifications', {
           const payload = {
             lastopenedtime: notification.isRead ? new Date().toISOString() : null,
           }
-          await ApiService.apiAxios.put(ApiRoutes.NOTICE + '/' + notification.notificationId, payload)
+          await ApiService.apiAxios.put(ApiRoutes.NOTIFICATIONS + '/' + notification.notificationId, payload)
         } catch (error) {
           console.log(`Failed to update existing Notice - ${error}`)
           throw error

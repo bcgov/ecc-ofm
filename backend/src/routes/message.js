@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getMessages, updateMessageLastOpenedTime, createNewAssistanceRequest } = require('../components/message')
+const { updateAssistanceRequest, createAssistanceRequest, getAssistanceRequests, getAssistanceRequest, getAssistanceRequestConversation, replyToAssistanceRequest } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
@@ -35,28 +35,80 @@ const newAssistanceRequestSchema = {
   },
 }
 
-/**
- * Get messages filtered by contactid
- */
-router.get('/contact/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getMessages(req, res)
-})
+const replyAssistanceRequestSchema = {
+  assistanceRequestId: {
+    in: ['body'],
+    exists: { errorMessage: '[assistanceRequestId] is required' },
+  },
+  message: {
+    in: ['body'],
+    exists: { errorMessage: '[message] is required' },
+  },
+}
 
 /**
- * Update Last Opened Time of an existing Message
+ * Update an existing Assistance Request
  */
-router.put('/:messageId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('messageId', 'URL param: [messageId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return updateMessageLastOpenedTime(req, res)
-})
+router.put(
+  '/:assistanceRequestId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateAssistanceRequest(req, res)
+  },
+)
 
 /**
  * Create a new Assistance Request
  */
 router.post('/newAssistanceRequest', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(newAssistanceRequestSchema)], (req, res) => {
   validationResult(req).throw()
-  return createNewAssistanceRequest(req, res)
+  return createAssistanceRequest(req, res)
 })
 
+/**
+ * Get the list of assistance requests filtered by contactid
+ */
+router.get('/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
+  validationResult(req).throw()
+  return getAssistanceRequests(req, res)
+})
+
+/**
+ * Get the details of an assistance requests with the provided assistance request ID
+ */
+router.get(
+  '/assistanceRequests/:assistanceRequestId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getAssistanceRequest(req, res)
+  },
+)
+
+/**
+ * Get the list of conversations for a assistanceRequestId
+ */
+router.get(
+  '/conversations/:assistanceRequestId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getAssistanceRequestConversation(req, res)
+  },
+)
+
+/**
+ * Create a reply to a Assistance Request
+ */
+router.post('/replyToAssistanceRequest', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(replyAssistanceRequestSchema)], (req, res) => {
+  validationResult(req).throw()
+  return replyToAssistanceRequest(req, res)
+})
 module.exports = router
