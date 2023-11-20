@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       showNewRequestDialog: false,
-      selectedAssistanceRequestId: null,
+      selectedAssistanceRequestId: '',
       markReadButtonState: false,
       markUnreadButtonInMessageTableState: false,
       markUnreadButtonInConversationThreadState: false,

@@ -3,13 +3,13 @@
     <AppDialog v-model="isDisplayed" :title="`Request ${referenceNumber}`" persistent max-width="50%"
       @close="closeReplyRequestDialog">
       <template #content>
-        <v-form ref="replyRequestForm" v-model="replyRequestModel.isFormComplete" class="px-12 mx-8">
+        <v-form ref="replyRequestForm" v-model="isFormComplete" class="px-12 mx-8">
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 blue-text pb-0">
               <strong>Reply to request:</strong>
             </v-col>
             <v-col class="v-col-12">
-              <v-textarea v-model="replyRequestModel.message" placeholder="Enter message text" counter
+              <v-textarea v-model="message" placeholder="Enter message text" counter
                 maxlength="1000" variant="outlined" :rules="rules.required" :rows="6"></v-textarea>
             </v-col>
           </v-row>
@@ -63,7 +63,8 @@ export default {
   emits: ['close', 'reply-success-event'],
   data() {
     return {
-      replyRequestModel: {},
+      isFormComplete: false,
+      message: null,
       rules,
       isDisplayed: false,
       isLoading: false,
@@ -77,27 +78,14 @@ export default {
       },
     },
   },
-  created() {
-    this.initReplyRequestModel()
-  },
   methods: {
     ...mapActions(useMessagesStore, ['replyToAssistanceRequest']),
-
-    /**
-     * Initialize the reply request model.
-     */
-    initReplyRequestModel() {
-      this.replyRequestModel = {
-        assistanceRequestId: this.assistanceRequestId,
-      }
-    },
 
     /**
      * Reset the form and initialize the reply request model.
      */
     resetForm() {
       this.$refs.replyRequestForm?.reset()
-      this.initReplyRequestModel()
     },
 
     /**
@@ -113,10 +101,14 @@ export default {
      */
     async submit() {
       this.$refs.replyRequestForm?.validate()
-      if (this.replyRequestModel?.isFormComplete) {
+      if (this.isFormComplete) {
         try {
           this.isLoading = true
-          await this.replyToAssistanceRequest(this.replyRequestModel)
+          const payload = {
+            assistanceRequestId: this.assistanceRequestId,
+            message: this.message,
+          }
+          await this.replyToAssistanceRequest(payload)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
           console.log(`Failed to create a reply for Assistance Request - ${error}`)
