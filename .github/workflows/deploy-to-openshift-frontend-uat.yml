@@ -48,7 +48,7 @@ jobs:
   openshift-ci-cd:
     name: Deploy Frontend to UAT
     runs-on: ubuntu-latest
-    environment: uat
+    environment: ${{ env.APP_ENVIRONMENT }}
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}

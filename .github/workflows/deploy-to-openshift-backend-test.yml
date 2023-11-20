@@ -44,7 +44,7 @@ jobs:
   openshift-ci-cd:
     name: Deploy Backend to TEST
     runs-on: ubuntu-latest
-    environment: test
+    environment: ${{ env.APP_ENVIRONMENT }}
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
