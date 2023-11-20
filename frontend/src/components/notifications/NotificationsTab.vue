@@ -5,69 +5,30 @@
         <v-row>
           <v-col class="mt-1">
             <div class="flex-item">
-              <v-btn @click="updateBodyCheckboxesReadUnread(false)" class="btn-style">
+              <v-btn @click="toggleMarkUnreadButtonInNotificationTableState(false)" class="btn-style">
                 <v-icon class="icon" left>mdi-email-outline</v-icon>
                 <span class="btn-label">Mark unread</span>
               </v-btn>
-              <v-btn @click="updateBodyCheckboxesReadUnread(true)" class="btn-style">
+              <v-btn @click="toggleMarkReadButton(true)" class="btn-style">
                 <v-icon class="icon" left>mdi-email-open-outline</v-icon>
                 <span class="btn-label">Mark read</span>
               </v-btn>
             </div>
           </v-col>
         </v-row>
-        <v-data-table-virtual
-          v-model="bodyCheckboxesSelected"
-          :headers="headers"
-          :items="notifications"
-          item-key="notificationId"
-          item-value="notificationId"
-          show-select
-          hover
-          fixed-header
-          density="compact"
-          class="data-table">
-          <!-- HEADERS -->
-          <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
-            <tr>
-              <th v-for="column in columns" :key="column.key" :style="{ width: column.width }" @click="toggleSort(column)">
-                <div v-if="column.title === ''">
-                  <v-checkbox
-                    v-model="headerCheckboxState"
-                    :indeterminate="bodyCheckboxesSelected.length > 0 && bodyCheckboxesSelected.includes(true)"
-                    hide-details
-                    density="compact"
-                    @click.stop="headerCheckboxClickHandler" />
-                </div>
-                <div v-else class="headers">
-                  {{ column.title }}
-                  <v-icon v-if="isSorted(column)" size="20" class="pa-0, ma-0">{{ getSortIcon(column) }}</v-icon>
-                </div>
-              </th>
-            </tr>
-          </template>
-          <!-- BODY -->
-          <template #item="{ item, index }">
-            <tr :class="{ 'unread-notification': !item.isRead, 'highlighted-row': index === rowClickedIndex }" item-key="notificationId" @click="rowClickHandler(item, index)">
-              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <v-checkbox v-model="bodyCheckboxesSelected[index]" hide-details density="compact" @click.stop="bodyCheckboxesClickHandler(item)" />
-              </td>
-              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <div class="item">{{ item.isRead ? 'Read' : 'Unread' }}</div>
-              </td>
-              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <div class="item">{{ item.subject }}</div>
-              </td>
-              <td :class="{ 'highlighted-row': index === rowClickedIndex }">
-                <div class="item">{{ item.dateReceived }}</div>
-              </td>
-            </tr>
-          </template>
-        </v-data-table-virtual>
+        <v-skeleton-loader :loading="!notifications" type="table-tbody">
+          <NotificationsTable
+            :markReadButtonState="markReadButtonState"
+            :markUnreadButtonInNotificationTableState="markUnreadButtonInNotificationTableState"
+            :markUnreadButtonInNotificationDetailsState="markUnreadButtonInNotificationDetailsState"
+            @openNotificationDetails="openNotificationDetails" />
+        </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
+        This is selected Assistance Request ID for conversation thread
+        {{ selectedNotificationId }}
         <!-- NOTIFICATION DETAILS -->
-        <v-card v-if="notificationSelected" variant="flat">
+        <!-- <v-card v-if="notificationSelected" variant="flat">
           <v-card-title>
             <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
@@ -85,7 +46,7 @@
           </v-card-title>
           <hr />
           <v-card-text v-html="notificationSelected.notificationContent" />
-        </v-card>
+        </v-card> -->
       </v-col>
     </v-row>
   </v-container>
@@ -95,115 +56,39 @@
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationsStore } from '@/stores/notifications'
+import NotificationsTable from '@/components/notifications/NotificationsTable.vue'
 
 export default {
+  name: 'NotificationsTab',
+  components: { NotificationsTable },
   data() {
     return {
-      headerCheckboxState: false, // Manages state of checkbox in custom header
-      bodyCheckboxesSelected: [], // Manages state of checkboxes in custom body
-      rowClickedIndex: null, // Used for row select highlighting in template slot item
-      notificationSelected: null, // Used for displaying notification details
-      checkedNotifications: [], // Used for updating notifications
-      headers: [
-        {
-          title: 'Read/Unread',
-          align: 'start',
-          key: 'isRead',
-          sortable: true,
-          width: '22%',
-        },
-        {
-          title: 'Subject',
-          align: 'start',
-          key: 'subject',
-          sortable: true,
-          width: '50%',
-        },
-        {
-          title: 'Date Received',
-          align: 'start',
-          key: 'dateReceived',
-          sortable: true,
-          width: '23%',
-        },
-      ],
+      selectedNotificationId: null,
+      markReadButtonState: false,
+      markUnreadButtonInNotificationTableState: false,
+      markUnreadButtonInNotificationDetailsState: false,
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useNotificationsStore, ['notifications', 'unreadNotificationCount']),
   },
-  async created() {
-    this.getNotifications(this.userInfo.contactId).then(() => {
-      this.initAllCheckboxState()
-    })
-  },
+  // async created() {
+  //   if (!this.notifications) await this.getNotifications(this.userInfo?.contactId)
+  // },
   methods: {
     ...mapActions(useNotificationsStore, ['getNotifications', 'updateNotification']),
-    /**
-     * Initializes the header and body/item checkboxes to false.
-     */
-    initAllCheckboxState() {
-      this.headerCheckboxState = false
-      this.bodyCheckboxesSelected = new Array(this.notifications.length).fill(false)
-      this.checkedNotifications = []
+    toggleMarkReadButton() {
+      this.markReadButtonState = !this.markReadButtonState
     },
-    /**
-     * Handles the header checkbox click event. When the header checkbox is clicked all body/item checkboxes are selected.
-     */
-    headerCheckboxClickHandler() {
-      this.bodyCheckboxesSelected.fill(!this.headerCheckboxState)
-      if (this.headerCheckboxState) {
-        this.checkedNotifications = []
-      } else {
-        this.checkedNotifications = JSON.parse(JSON.stringify(this.notifications))
-      }
+    toggleMarkUnreadButtonInNotificationTableState() {
+      this.markUnreadButtonInNotificationTableState = !this.markUnreadButtonInNotificationTableState
     },
-    /**
-     *  Add or remove the clicked body/item checkbox to the checkedNotifications array.
-     */
-    bodyCheckboxesClickHandler(item) {
-      const exists = this.checkedNotifications.some((notice) => notice.notificationId === item.notificationId)
-      if (exists) {
-        this.checkedNotifications = this.checkedNotifications.filter((notice) => notice.notificationId !== item.notificationId)
-      } else {
-        this.checkedNotifications.push(item)
-      }
+    toggleMarkUnreadButtonInNotificationDetailsState() {
+      this.markUnreadButtonInNotificationDetailsState = !this.markUnreadButtonInNotificationDetailsState
     },
-    /**
-     * Update the body/item checkboxes to read or unread.
-     */
-    updateBodyCheckboxesReadUnread(isRead) {
-      const areAllNotificationsChecked = this.bodyCheckboxesSelected.every((item) => item === true)
-      if (areAllNotificationsChecked) {
-        this.notifications.forEach((notification) => {
-          notification.isRead = isRead
-          this.updateNotification(notification)
-        })
-      } else if (this.checkedNotifications.length > 0) {
-        this.checkedNotifications.forEach((item) => {
-          let noticeToUpdate = this.notifications.find((notification) => notification.notificationId === item.notificationId)
-          noticeToUpdate.isRead = isRead
-          this.updateNotification(noticeToUpdate)
-        })
-      }
-      this.initAllCheckboxState()
-    },
-    /**
-     * Handles the row click event. When a row is clicked the notification in context is displayed and marked as read.
-     */
-    rowClickHandler: function (item, index) {
-      this.rowClickedIndex = index // Used for row select highlighting in template slot item
-      this.notificationSelected = this.notifications.find((notification) => notification.notificationId === item.notificationId)
-      this.notificationSelected.isRead = true
-      this.updateNotification(this.notificationSelected)
-    },
-    /**
-     * Updates the currnetly clicked/selected notification to unread.
-     */
-    updateNotificationUnread() {
-      this.notificationSelected.isRead = false
-      this.updateNotification(this.notificationSelected)
+    openNotificationDetails(notificationId) {
+      this.selectedNotificationId = notificationId
     },
   },
 }

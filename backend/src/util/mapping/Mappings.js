@@ -49,7 +49,6 @@ const AssistanceRequestMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: '_ofm_request_category_value@OData.Community.Display.V1.FormattedValue', front: 'categoryName' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
-  { back: 'ofm_last_opened_time', front: 'lastOpenedTime' },
   { back: 'ofm_is_read', front: 'isRead' },
 ]
 
@@ -64,6 +63,7 @@ const NotificationMappings = [
   { back: 'createdon', front: 'dateReceived' },
   { back: 'description', front: 'notificationContent' },
   { back: 'lastopenedtime', front: 'lastOpenedTime' },
+  { back: 'ofm_is_read', front: 'isRead' },
 ]
 
 module.exports = {

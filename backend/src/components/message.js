@@ -73,7 +73,7 @@ async function createAssistanceRequest(req, res) {
 async function getAssistanceRequests(req, res) {
   try {
     let assistanceRequests = []
-    let operation = `ofm_assistance_requests?$select=modifiedon,ofm_assistance_requestid,ofm_last_opened_time,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)&$filter=(_ofm_contact_value eq ${req.params.contactId}) and (ofm_facility_request_request/any(o1:(o1/ofm_facility_requestid ne null))) and (ofm_conversation_request/any(o2:(o2/ofm_conversationid ne null)))`
+    let operation = `ofm_assistance_requests?$select=modifiedon,ofm_assistance_requestid,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)&$filter=(_ofm_contact_value eq ${req.params.contactId}) and (ofm_facility_request_request/any(o1:(o1/ofm_facility_requestid ne null))) and (ofm_conversation_request/any(o2:(o2/ofm_conversationid ne null)))`
     log.info('operation: ', operation)
     let response = await getOperation(operation)
     response?.value?.forEach((item) => assistanceRequests.push(mapAssistanceRequestObjectForFront(item)))
@@ -85,7 +85,7 @@ async function getAssistanceRequests(req, res) {
 
 async function getAssistanceRequest(req, res) {
   try {
-    let operation = `ofm_assistance_requests(${req.params.assistanceRequestId})?$select=modifiedon,ofm_assistance_requestid,ofm_last_opened_time,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)`
+    let operation = `ofm_assistance_requests(${req.params.assistanceRequestId})?$select=modifiedon,ofm_assistance_requestid,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)`
     log.info('operation: ', operation)
     let response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapAssistanceRequestObjectForFront(response))

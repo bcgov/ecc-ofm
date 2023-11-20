@@ -75,13 +75,13 @@ export default {
   },
   watch: {
     markReadButtonState: {
-      handler() {
-        this.updateBodyCheckboxesReadUnread(true)
+      async handler() {
+        await this.updateBodyCheckboxesReadUnread(true)
       },
     },
     markUnreadButtonInMessageTableState: {
-      handler() {
-        this.updateBodyCheckboxesReadUnread(false)
+      async handler() {
+        await this.updateBodyCheckboxesReadUnread(false)
       },
     },
     markUnreadButtonInConversationThreadState: {
@@ -116,18 +116,17 @@ export default {
       this.$emit('openRequestConversation', this.selectedRequestId)
       await this.updateMessageReadUnread(true, this.selectedRequestId)
     },
+    /**
+     * Include isRead in the payload if its value changes
+     */
     async updateMessageReadUnread(isRead, assistanceRequestId) {
-      this.selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
+      let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
       let payload = {}
-      if (isRead) {
-        this.selectedAssistanceRequest.lastOpenedTime = new Date().toUTCString()
-        payload.lastOpenedTime = this.selectedAssistanceRequest.lastOpenedTime
-      }
-      if (this.selectedAssistanceRequest.isRead != isRead) {
-        this.selectedAssistanceRequest.isRead = isRead
+      if (selectedAssistanceRequest?.isRead != isRead) {
+        selectedAssistanceRequest.isRead = isRead
         payload.isRead = isRead
+        await this.updateAssistanceRequest(assistanceRequestId, payload)
       }
-      await this.updateAssistanceRequest(assistanceRequestId, payload)
     },
     isActionRequiredMessage(item) {
       return item?.status === 'Action required'
