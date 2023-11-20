@@ -76,6 +76,12 @@ export default {
         this.isDisplayed = value
       },
     },
+    assistanceRequestId: {
+      handler(value) {
+        this.replyRequestModel.assistanceRequestId = value
+      },
+    },
+
   },
   created() {
     this.initReplyRequestModel()
@@ -89,6 +95,7 @@ export default {
     initReplyRequestModel() {
       this.replyRequestModel = {
         assistanceRequestId: this.assistanceRequestId,
+        message: null,
       }
     },
 

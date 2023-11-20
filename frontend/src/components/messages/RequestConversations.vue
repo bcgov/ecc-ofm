@@ -92,7 +92,7 @@ export default {
   components: { ReplyRequestDialog },
   props: {
     assistanceRequestId: {
-      type: [String, null],
+      type: String,
       required: true,
       default: ''
     }
@@ -128,6 +128,7 @@ export default {
     assistanceRequestId: async function (newVal) {
       this.loading = true
       await this.getAssistanceRequestConversation(this.assistanceRequestId)
+      this.sortConversation()
       this.loading = false
       this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === newVal)
     },
@@ -136,14 +137,14 @@ export default {
     ...mapActions(useMessagesStore, ['getAssistanceRequestConversation']),
 
     /**
-     * Sorts the conversation by date received based on isSortedDesc.
+     * Sorts the conversation by sent date.
      */
     sortConversation() {
       this.assistanceRequestConversation.sort((a, b) => {
         if (this.isSortedDesc) {
-          return (a.dateReceived < b.dateReceived) ? 1 : -1;
+          return (a.sentDate < b.sentDate) ? 1 : -1;
         } else {
-          return (a.dateReceived > b.dateReceived) ? 1 : -1;
+          return (a.sentDate > b.sentDate) ? 1 : -1;
         }
       });
     },
