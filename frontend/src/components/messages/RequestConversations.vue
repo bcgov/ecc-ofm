@@ -10,7 +10,7 @@
           <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span class="btn-label">Mark unread</span>
         </v-btn>
-        <v-tooltip v-if="isReplyDisabled" content-class="tooltip"
+        <v-tooltip v-if="showTooltip" content-class="tooltip"
           :text="getReplyDisabledText()">
           <template v-slot:activator="{ props }">
             <div v-bind="props" class="reply-disabled">
@@ -19,10 +19,15 @@
             </div>
           </template>
         </v-tooltip>
-        <v-btn v-else @click="toggleReplyRequestDialog" class="btn-style pl-0 pr-15">
+        <v-btn v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog"
+          class="btn-style pl-0 pr-15">
           <v-icon class="icon" left>mdi-reply</v-icon>
           <span class="btn-label">Reply</span>
         </v-btn>
+        <div v-else class="reply-disabled">
+          <v-icon left>mdi-reply</v-icon>
+          <span>Reply</span>
+        </div>
       </v-col>
     </v-row>
     <v-row>
@@ -117,10 +122,18 @@ export default {
   computed: {
     ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestConversation']),
     ...mapState(useAuthStore, ['userInfo']),
-    isReplyDisabled() {
+    showTooltip() {
+      return !this.isReplyButtonEnabled && !this.isStatusClosed;
+    },
+    isReplyButtonEnabled() {
       return this.assistanceRequest &&
-        (this.assistanceRequest.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER &&
-          this.assistanceRequest.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE);
+        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER ||
+          this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE);
+    },
+    isStatusClosed() {
+      return this.assistanceRequest &&
+        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE ||
+          this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED);
     }
   },
   watch: {
@@ -170,7 +183,7 @@ export default {
      */
     async replySuccessEvent(isSuccess) {
       if (isSuccess) {
-        // assisantanceRequest status has been updated as part of reply, get the latest from store.
+        // Assistance request status has been updated as part of reply, get the latest from store.
         this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === this.assistanceRequestId)
         await this.getAssistanceRequestConversation(this.assistanceRequestId);
         this.sortConversation();

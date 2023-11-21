@@ -59,7 +59,7 @@ export default {
       type: String,
       required: true,
       default: '',
-    }
+    },
   },
   emits: ['close', 'reply-success-event'],
   data() {
@@ -104,9 +104,9 @@ export default {
       if (this.isFormComplete && this.$refs.replyRequestForm?.validate()) {
         try {
           this.isLoading = true
-          this.createReply(this.assistanceRequestId)
-          this.updateStatusToAssigned(this.assistanceRequestId)
-          this.updateStoredAssistanceRequest(this.assistanceRequestId)
+          await this.createReply(this.assistanceRequestId)
+          await this.updateStatusToAssigned(this.assistanceRequestId)
+          await this.updateStoredAssistanceRequest(this.assistanceRequestId)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
           console.log(`Submit processing for reply failed  - ${error}`)

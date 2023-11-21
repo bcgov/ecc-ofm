@@ -33,6 +33,8 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   ASSIGNED: 2,
   WITH_PROVIDER: 3,
   READY_TO_RESOLVE: 4,
+  CLOSED_COMPLETE: 5,
+  CLOSED_CANCELLED: 6,
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
