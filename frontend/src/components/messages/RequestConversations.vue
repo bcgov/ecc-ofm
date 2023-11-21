@@ -7,7 +7,7 @@
       <v-col cols="2" class="d-flex flex-column align-start pb-0 pt-0">
         <v-btn v-if="assistanceRequest.lastOpenedTime"
           @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
-          <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+          <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span class="btn-label">Mark unread</span>
         </v-btn>
         <v-tooltip v-if="isReplyDisabled" content-class="tooltip"
@@ -170,6 +170,8 @@ export default {
      */
     async replySuccessEvent(isSuccess) {
       if (isSuccess) {
+        // assisantanceRequest status has been updated as part of reply, get the latest from store.
+        this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === this.assistanceRequestId)
         await this.getAssistanceRequestConversation(this.assistanceRequestId);
         this.sortConversation();
         this.setSuccessAlert('Reply sent successfully');

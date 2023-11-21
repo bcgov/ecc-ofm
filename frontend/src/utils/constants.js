@@ -30,6 +30,7 @@ export const PAGE_TITLES = Object.freeze({
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
+  ASSIGNED: 2,
   WITH_PROVIDER: 3,
   READY_TO_RESOLVE: 4,
 })

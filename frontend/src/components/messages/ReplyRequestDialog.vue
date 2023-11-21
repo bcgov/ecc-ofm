@@ -40,6 +40,7 @@ import { useMessagesStore } from '@/stores/messages'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import rules from '@/utils/rules'
+import { ASSISTANCE_REQUEST_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'ReplyRequestDialog',
@@ -58,7 +59,7 @@ export default {
       type: String,
       required: true,
       default: '',
-    },
+    }
   },
   emits: ['close', 'reply-success-event'],
   data() {
@@ -79,7 +80,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['replyToAssistanceRequest']),
+    ...mapActions(useMessagesStore, ['replyToAssistanceRequest', 'updateAssistanceRequest', 'updateAssistanceRequestInStore']),
 
     /**
      * Reset the form and initialize the reply request model.
@@ -97,21 +98,18 @@ export default {
     },
 
     /** 
-     * Create the reply and emit success event.
+     * Create the reply, update status to assigned, and emit success event.
      */
     async submit() {
-      this.$refs.replyRequestForm?.validate()
-      if (this.isFormComplete) {
+      if (this.isFormComplete && this.$refs.replyRequestForm?.validate()) {
         try {
           this.isLoading = true
-          const payload = {
-            assistanceRequestId: this.assistanceRequestId,
-            message: this.message,
-          }
-          await this.replyToAssistanceRequest(payload)
+          this.createReply(this.assistanceRequestId)
+          this.updateStatusToAssigned(this.assistanceRequestId)
+          this.updateStoredAssistanceRequest(this.assistanceRequestId)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
-          console.log(`Failed to create a reply for Assistance Request - ${error}`)
+          console.log(`Submit processing for reply failed  - ${error}`)
           throw error
         } finally {
           this.closeReplyRequestDialog()
@@ -119,6 +117,49 @@ export default {
         }
       }
     },
+
+    /**
+     * Create a reply for the assistance request.
+     */
+    async createReply(assistanceRequestId) {
+      try {
+        const payload = {
+          assistanceRequestId: assistanceRequestId,
+          message: this.message,
+        }
+        await this.replyToAssistanceRequest(payload)
+      } catch (error) {
+        console.log(`Failed to create a reply for Assistance Request - ${error}`)
+        throw error
+      }
+    },
+
+    /**
+     * Update the status of the assistance request to assigned, update the assistance request in the store.
+     */
+    async updateStatusToAssigned(assistanceRequestId) {
+      try {
+        const payload = {
+          statusCode: ASSISTANCE_REQUEST_STATUS_CODES.ASSIGNED,
+        }
+        await this.updateAssistanceRequest(assistanceRequestId, payload)
+      } catch (error) {
+        console.log(`Failed to update status to assigned for Assistance Request - ${error}`)
+        throw error
+      }
+    },
+
+    /**
+     * Update the assistance request in the store.
+     */
+    async updateStoredAssistanceRequest(assistanceRequestId) {
+      try {
+        await this.updateAssistanceRequestInStore(assistanceRequestId)
+      } catch (error) {
+        console.log(`Failed to update Assistance Request in store - ${error}`)
+        throw error
+      }
+    }
   },
 }
 </script>
