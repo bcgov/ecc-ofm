@@ -47,7 +47,7 @@ jobs:
   openshift-ci-cd:
     name: Deploy Frontend to TEST
     runs-on: ubuntu-latest
-    environment: ${{ env.APP_ENVIRONMENT }}
+    environment: test
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
@@ -131,8 +131,3 @@ jobs:
 
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.APP_NAME }}-${{ env.APP_NAME_FRONTEND }}-${{ env.APP_ENVIRONMENT }}
-
-      - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.8.0
-        with:
-          target: 'https://${{ env.HOST_ROUTE }}'

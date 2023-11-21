@@ -49,7 +49,7 @@ jobs:
   openshift-ci-cd:
     name: Build and deploy Backend to DEV
     runs-on: ubuntu-20.04
-    environment: ${{ env.APP_ENVIRONMENT }}
+    environment: dev
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
