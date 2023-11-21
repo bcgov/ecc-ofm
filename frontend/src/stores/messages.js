@@ -67,6 +67,13 @@ export const useMessagesStore = defineStore('messages', {
         sortAssistanceRequests(this.assistanceRequests)
       }
     },
+    async updateAssistanceRequestInStore(assistanceRequestId) {
+      const assistanceRequest = await this.getAssistanceRequest(assistanceRequestId)
+      const assistanceRequestIndex = this.assistanceRequests?.findIndex((item) => item.assistanceRequestId === assistanceRequest?.assistanceRequestId)
+      if (assistanceRequestIndex !== -1) {
+        this.assistanceRequests[assistanceRequestIndex] = assistanceRequest
+      }
+    },
     async getAssistanceRequestConversation(assistanceRequestId) {
       try {
         const response = await ApiService.apiAxios.get(ApiRoutes.MESSAGES + '/conversations' + '/' + assistanceRequestId)
