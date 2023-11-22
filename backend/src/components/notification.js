@@ -13,7 +13,7 @@ async function getNotifications(req, res) {
       '))&$filter=(email_activity_parties/any(o1:(o1/_partyid_value eq ' +
       req.params.contactId +
       ')))'
-    log.info('operation: ', operation)
+    log.debug('operation: ', operation)
     const response = await getOperation(operation)
     let notifications = []
     response?.value?.forEach((item) => notifications.push(new MappableObjectForFront(item, NotificationMappings).toJSON()))
