@@ -1,6 +1,6 @@
 <template>
   <v-data-table-virtual
-    v-if="assistanceRequests?.length > 0"
+    v-if="assistanceRequests"
     v-model="bodyCheckboxesSelected"
     :headers="headers"
     :items="assistanceRequests"
