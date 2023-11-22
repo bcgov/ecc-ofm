@@ -29,9 +29,7 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
-        <RequestConversations
-          :assistanceRequestId="selectedAssistanceRequestId"
-          @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
+        <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
       </v-col>
     </v-row>
     <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
@@ -40,11 +38,11 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
 import RequestConversations from '@/components/messages/RequestConversations.vue'
+
 export default {
   name: 'MessagesTab',
   components: { NewRequestDialog, AssistanceRequestTable, RequestConversations },
@@ -58,11 +56,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useMessagesStore, ['assistanceRequests']),
-  },
-  async created() {
-    if (!this.assistanceRequests) await this.getAssistanceRequests(this.userInfo?.contactId)
   },
   methods: {
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),

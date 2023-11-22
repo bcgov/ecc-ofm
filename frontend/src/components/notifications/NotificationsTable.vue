@@ -25,7 +25,7 @@
     </template>
     <template #item.dateReceived="{ item }">
       <div :class="getItemClass(item)">
-        {{ formatDate(item.dateReceived) }}
+        {{ format.formatDate(item.dateReceived) }}
       </div>
     </template>
   </v-data-table-virtual>
@@ -34,10 +34,11 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useNotificationsStore } from '@/stores/notifications'
-import moment from 'moment'
+import format from '@/utils/format'
 
 export default {
   name: 'NotificationsTable',
+  format: [format],
   props: {
     markReadButtonState: {
       type: Boolean,
@@ -55,6 +56,7 @@ export default {
   emits: ['openNotificationDetails'],
   data() {
     return {
+      format,
       headers: [
         {
           title: 'Read/Unread',
@@ -103,7 +105,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useNotificationsStore, ['getNotifications', 'updateNotification']),
+    ...mapActions(useNotificationsStore, ['updateNotification']),
 
     resetAllCheckboxes() {
       this.bodyCheckboxesSelected = []
@@ -129,7 +131,7 @@ export default {
       await this.updateNotificationReadUnread(true, this.selectedNotificationId)
     },
     /**
-     * Include lastOpenedTime in the payload if the notification is "Marked as Read" or "Opened"
+     * Include lastOpenedTime in the payload if the email/notification is "Marked as Read" or "Opened"
      * Include isRead in the payload if its value changes
      */
     async updateNotificationReadUnread(isRead, notificationId) {
@@ -150,9 +152,6 @@ export default {
         'unread-notification': !item?.isRead,
         'highlighted-row': this.selectedNotificationId === item?.notificationId,
       }
-    },
-    formatDate(date) {
-      return moment(date).format('YYYY-MMM-DD')
     },
   },
 }
