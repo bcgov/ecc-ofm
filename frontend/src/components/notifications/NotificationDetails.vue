@@ -1,6 +1,6 @@
 <template>
   <v-card v-if="notification" variant="flat">
-    <v-card-title>
+    <v-card-title class="notification-details-header">
       <div class="d-flex align-center justify-space-between w-100">
         <div class="d-flex align-center">
           <strong>From:</strong>
@@ -15,7 +15,6 @@
         {{ notification?.subject }}
       </div>
     </v-card-title>
-    <hr />
     <v-card-text v-html="notification?.notificationContent" />
   </v-card>
 </template>
@@ -56,11 +55,10 @@ export default {
 </script>
 
 <style scoped>
-hr {
-  border: 0;
-  height: 1px;
-  background: #6699cc;
-  background-image: linear-gradient(to right, #6699cc, #6699cc, #6699cc);
+.notification-details-header {
+  border-bottom: 1px solid #6699cc;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
 }
 
 .btn-style {
