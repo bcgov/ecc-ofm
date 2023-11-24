@@ -16,7 +16,7 @@
         <v-window-item value="notifications">
           <NotificationsTab />
         </v-window-item>
-        <v-window-item value="messagestwo">
+        <v-window-item value="messages">
           <MessagesTab />
         </v-window-item>
         <v-window-item value="archive">Archive</v-window-item>
