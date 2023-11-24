@@ -172,7 +172,7 @@ export default {
 .highlighted-row {
   display: flex;
   align-items: center;
-  background: #d4eaff;
+  background: #eeeeee;
   height: 100%;
 }
 :deep(.v-data-table__td) {

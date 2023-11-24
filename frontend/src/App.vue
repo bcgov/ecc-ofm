@@ -14,7 +14,7 @@
         <TheMenu />
       </v-navigation-drawer>
       <TheFacilityHeader v-if="isActingProvider" />
-      <router-view class="align-start pt-8 px-8 mb-0" />
+      <router-view class="align-start pt-0 px-8 mb-0" />
     </v-main>
     <TheFooter />
   </v-app>
