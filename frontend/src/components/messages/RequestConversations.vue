@@ -5,13 +5,11 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="2" class="d-flex flex-column align-start pb-0 pt-0">
-        <v-btn v-if="assistanceRequest.lastOpenedTime"
-          @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
+        <v-btn v-if="assistanceRequest.lastOpenedTime" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
           <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span class="btn-label">Mark unread</span>
         </v-btn>
-        <v-tooltip v-if="showTooltip" content-class="tooltip"
-          :text="getReplyDisabledText()">
+        <v-tooltip v-if="showTooltip" content-class="tooltip" :text="getReplyDisabledText()">
           <template v-slot:activator="{ props }">
             <div v-bind="props" class="reply-disabled">
               <v-icon left>mdi-reply</v-icon>
@@ -19,8 +17,7 @@
             </div>
           </template>
         </v-tooltip>
-        <v-btn v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog"
-          class="btn-style pl-0 pr-15">
+        <v-btn v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="btn-style pl-0 pr-15">
           <v-icon class="icon" left>mdi-reply</v-icon>
           <span class="btn-label">Reply</span>
         </v-btn>
@@ -40,12 +37,11 @@
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0 pl-0">Topic:</v-col>
       <v-col cols="3" class="pt-0 pb-0">{{ assistanceRequest.categoryName }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
-      <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map(facility =>
-        facility.facilityName).join(', ') }}</v-col>
+      <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
     </v-row>
-    <v-row class="border-bottom">
-      <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center"><span class="font-weight-bold">Sort
-          By:</span>
+    <v-row>
+      <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center">
+        <span class="font-weight-bold">Sort By:</span>
         <v-btn class="btn-style" @click="toggleSort()">
           <span class="btn-label">{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
           <v-icon v-if="isSortedDesc" class="icon">mdi-arrow-up</v-icon>
@@ -53,18 +49,25 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-row v-if="assistanceRequest">
+    <v-row>
+      <CloseRequestBanner :assistanceRequestId="assistanceRequestId" class="px-0" />
+    </v-row>
+    <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId"
-            class="data-table">
-            <template #headers>
-            </template>
+          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table">
+            <template #headers></template>
             <template #item="{ item }">
               <v-row class="border-bottom mr-0">
                 <v-col>
-                  <div><span class="font-weight-bold">From:</span> {{ deriveFromDisplay(item) }}</div>
-                  <div><span class="font-weight-bold">Sent:</span> {{ format.formatDate(item.sentDate) }}</div>
+                  <div>
+                    <span class="font-weight-bold">From:</span>
+                    {{ deriveFromDisplay(item) }}
+                  </div>
+                  <div>
+                    <span class="font-weight-bold">Sent:</span>
+                    {{ format.formatDate(item.sentDate) }}
+                  </div>
                   <div class="pt-1">{{ item.message }}</div>
                 </v-col>
               </v-row>
@@ -73,7 +76,8 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
-    <ReplyRequestDialog class="pa-0"
+    <ReplyRequestDialog
+      class="pa-0"
       :assistanceRequestId="assistanceRequest.assistanceRequestId"
       :referenceNumber="assistanceRequest.referenceNumber"
       :show="showReplyRequestDialog"
@@ -81,12 +85,13 @@
       @close="toggleReplyRequestDialog" />
   </v-container>
 </template>
-  
+
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
+import CloseRequestBanner from '@/components/messages/CloseRequestBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
 import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
@@ -94,13 +99,13 @@ import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES
 export default {
   mixins: [alertMixin],
   format: [format],
-  components: { ReplyRequestDialog },
+  components: { ReplyRequestDialog, CloseRequestBanner },
   props: {
     assistanceRequestId: {
       type: String,
       required: true,
-      default: ''
-    }
+      default: '',
+    },
   },
   emits: ['toggleMarkUnreadButtonInConversationThread'],
   data() {
@@ -114,8 +119,8 @@ export default {
         {
           title: 'dateReceived',
           key: 'dateReceived',
-          sortable: true
-        }
+          sortable: true,
+        },
       ],
     }
   },
@@ -123,18 +128,20 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestConversation']),
     ...mapState(useAuthStore, ['userInfo']),
     showTooltip() {
-      return !this.isReplyButtonEnabled && !this.isStatusClosed;
+      return !this.isReplyButtonEnabled && !this.isStatusClosed
     },
     isReplyButtonEnabled() {
-      return this.assistanceRequest &&
-        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER ||
-          this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE);
+      return (
+        this.assistanceRequest &&
+        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER || this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE)
+      )
     },
     isStatusClosed() {
-      return this.assistanceRequest &&
-        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE ||
-          this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED);
-    }
+      return (
+        this.assistanceRequest &&
+        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE || this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED)
+      )
+    },
   },
   watch: {
     // When assistanceRequestId changes, get the conversation for the new assistance request.
@@ -143,7 +150,7 @@ export default {
       await this.getAssistanceRequestConversation(this.assistanceRequestId)
       this.sortConversation()
       this.loading = false
-      this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === newVal)
+      this.assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === newVal)
     },
   },
   methods: {
@@ -155,11 +162,11 @@ export default {
     sortConversation() {
       this.assistanceRequestConversation.sort((a, b) => {
         if (this.isSortedDesc) {
-          return (a.sentDate < b.sentDate) ? 1 : -1;
+          return a.sentDate < b.sentDate ? 1 : -1
         } else {
-          return (a.sentDate > b.sentDate) ? 1 : -1;
+          return a.sentDate > b.sentDate ? 1 : -1
         }
-      });
+      })
     },
 
     /**
@@ -184,10 +191,10 @@ export default {
     async replySuccessEvent(isSuccess) {
       if (isSuccess) {
         // Assistance request status has been updated as part of reply, get the latest from store.
-        this.assistanceRequest = this.assistanceRequests.find(item => item.assistanceRequestId === this.assistanceRequestId)
-        await this.getAssistanceRequestConversation(this.assistanceRequestId);
-        this.sortConversation();
-        this.setSuccessAlert('Reply sent successfully');
+        this.assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
+        await this.getAssistanceRequestConversation(this.assistanceRequestId)
+        this.sortConversation()
+        this.setSuccessAlert('Reply sent successfully')
       }
     },
 
@@ -195,20 +202,19 @@ export default {
      * Returns the text to display in the tooltip for the reply button when it is disabled.
      */
     getReplyDisabledText() {
-      return ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT;
+      return ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT
     },
 
     /**
      * Returns the sent by value for the conversation depending on the source system.
      */
     deriveFromDisplay(item) {
-      return (item.ofmSourceSystem) ? `${this.userInfo?.firstName} ${this.userInfo?.lastName}` : OFM_PROGRAM;
-    }
-
-  }
+      return item.ofmSourceSystem ? `${this.userInfo?.firstName} ${this.userInfo?.lastName}` : OFM_PROGRAM
+    },
+  },
 }
 </script>
-  
+
 <style scoped>
 .data-table {
   max-height: 635px;
@@ -247,9 +253,9 @@ export default {
   text-decoration: underline;
 }
 
-.border-bottom {
-  padding: 0px;
-  border-bottom: 1px solid #E0E0E0;
+.border-top {
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
 }
 
 .reply-disabled {
@@ -257,8 +263,7 @@ export default {
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 1.25px;
-  color: #C0C0C0;
+  color: #c0c0c0;
   font-family: BCSans, veranda, arial, sans-serif;
 }
 </style>
-  
