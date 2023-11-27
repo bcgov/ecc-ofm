@@ -49,7 +49,7 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="showCloseRequestBanner">
       <CloseRequestBanner :assistanceRequestId="assistanceRequestId" class="px-0" />
     </v-row>
     <v-row v-if="assistanceRequest" class="border-top">
@@ -130,17 +130,17 @@ export default {
     showTooltip() {
       return !this.isReplyButtonEnabled && !this.isStatusClosed
     },
+    showCloseRequestBanner() {
+      const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
+      return assistanceRequest?.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE
+    },
     isReplyButtonEnabled() {
-      return (
-        this.assistanceRequest &&
-        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER || this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE)
-      )
+      const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
+      return [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(assistanceRequest?.statusCode)
     },
     isStatusClosed() {
-      return (
-        this.assistanceRequest &&
-        (this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE || this.assistanceRequest.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED)
-      )
+      const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
+      return [ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE, ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED].includes(assistanceRequest?.statusCode)
     },
   },
   watch: {
