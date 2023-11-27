@@ -1,16 +1,14 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="`Request ${referenceNumber}`" persistent max-width="50%"
-      @close="closeReplyRequestDialog">
+    <AppDialog v-model="isDisplayed" :title="`Request ${referenceNumber}`" persistent max-width="50%" @close="closeReplyRequestDialog">
       <template #content>
         <v-form ref="replyRequestForm" v-model="isFormComplete" class="px-12 mx-8">
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 blue-text pb-0">
-              <strong>Reply to request:</strong>
+            <v-col class="v-col-12 pb-0">
+              <AppLabel variant="modal">Reply to request:</AppLabel>
             </v-col>
             <v-col class="v-col-12">
-              <v-textarea v-model="message" placeholder="Enter message text" counter
-                maxlength="1000" variant="outlined" :rules="rules.required" :rows="6"></v-textarea>
+              <v-textarea v-model="message" placeholder="Enter message text" counter maxlength="1000" variant="outlined" :rules="rules.required" :rows="6"></v-textarea>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-end mt-0">
@@ -23,11 +21,8 @@
       </template>
       <template #button>
         <v-row class="mt-6" justify="space-around">
-          <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px"
-            @click="closeReplyRequestDialog()"
-            :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-reply-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit
-          </AppButton>
+          <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeReplyRequestDialog()" :loading="isLoading">Cancel</AppButton>
+          <AppButton id="submit-reply-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
         </v-row>
       </template>
     </AppDialog>
@@ -39,12 +34,13 @@ import { mapActions } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import { ASSISTANCE_REQUEST_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'ReplyRequestDialog',
-  components: { AppButton, AppDialog },
+  components: { AppButton, AppDialog, AppLabel },
   props: {
     show: {
       type: Boolean,
@@ -97,7 +93,7 @@ export default {
       this.$emit('close')
     },
 
-    /** 
+    /**
      * Create the reply, update status to assigned, and emit success event.
      */
     async submit() {
@@ -159,14 +155,7 @@ export default {
         console.log(`Failed to update Assistance Request in store - ${error}`)
         throw error
       }
-    }
+    },
   },
 }
 </script>
-
-<style scoped>
-.blue-text {
-  color: #003366;
-  font-size: 1.25em;
-}
-</style>
