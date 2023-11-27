@@ -15,13 +15,13 @@
     <AppMenuItem icon="mdi-folder-outline" :to="{ name: 'documents' }">Documents</AppMenuItem>
     <AppMenuItem icon="mdi-file-document-edit-outline" :to="{ name: 'applications' }">Applications</AppMenuItem>
     <AppMenuItem icon="mdi-help" :to="{ name: 'resources' }">Resources</AppMenuItem>
-    <AppMenuItem icon="mdi-cog-outline" :to="{ name: 'settings' }">Settings</AppMenuItem>
+    <AppMenuItem icon="mdi-cog-outline" :to="{ name: 'settings' }" v-if="hasRole(ROLES.ACCOUNT_MANAGEMENT)">Settings</AppMenuItem>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { useAppStore } from '@/stores/app'
+import rolesMixin from '@/mixins/rolesMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
@@ -29,8 +29,8 @@ import AppMenuItem from '@/components/ui/AppMenuItem.vue'
 
 export default {
   components: { AppMenuItem },
+  mixins: [rolesMixin],
   computed: {
-    ...mapState(useAppStore, ['showMenu']),
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated']),
     ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
@@ -52,6 +52,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useAuthStore, ['hasRole']),
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     ...mapActions(useNotificationsStore, ['getNotifications']),
   },

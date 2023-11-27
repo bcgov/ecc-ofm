@@ -13,23 +13,14 @@ export const useAuthStore = defineStore('auth', {
     userInfo: null,
     impersonateId: null,
     currentFacility: {},
-    // TODO: once roles are established more clearly, need to address isAuthorizedUser and general role impleentation design...
-    //isAuthorizedUser: localStorage.getItem('isAuthorizedUser') !== null,
-    isValidChildCareProviderUser: localStorage.getItem('iisValidChildCareProviderUser') !== null,
-    isValdProgramUser: localStorage.getItem('isValdProgramUser') !== null,
-    isValidFinancialOpsUser: localStorage.getItem('isValidFinancialOpsUser') !== null,
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
     hasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
     hasFacilities: (state) => state.userInfo && state.userInfo.facilities && state.userInfo.facilities.length > 0,
-    //TODO: 3 temp roles ('CCP_ROLE', 'OPS_ROLE', 'PCM_ROLE') were created in auth.js (loosely
-    //based on OFM requirements) for the purpose of achieving a 1st draft of the frontend that
-    //will render a home screen and menu with minimal errors given no authorization/backend integration.
-    //Thus the following related code is only temporarly and expected to be replaced...
-    CCP_ROLE: (state) => state.isValidChildCareProviderUser,
-    OPS_ROLE: (state) => state.isValdProgramUser,
-    PCM_ROLE: (state) => state.isValidFinancialOpsUser,
+    hasRole: (state) => {
+      return (role) => state.userInfo && state.userInfo.roles.includes(role)
+    },
   },
   actions: {
     //sets Json web token and determines whether user is authenticated
@@ -119,40 +110,6 @@ export const useAuthStore = defineStore('auth', {
 
       // TODO: Once roles are more clear need to sort out this logic...
       await this.setAuthorizedUser(response.isAuthorizedUser)
-      await this.setChildCareProviderUser(true)
-      await this.setProgramUser(true)
-      await this.setFinancialOpsUser(true)
-    },
-
-    // TODO: Temp placeholder code for OFM authorization role processing...
-    async setChildCareProviderUser(isValidChildCareProviderUser) {
-      if (isValidChildCareProviderUser) {
-        this.isValidChildCareProviderUser = true
-        localStorage.setItem('isValidChildCareProviderUser', 'true')
-      } else {
-        this.isValidChildCareProviderUser = false
-        localStorage.removeItem('isValidChildCareProviderUser')
-      }
-    },
-    // TODO: Temp placeholder code for OFM authorization role processing...
-    async setProgramUser(isValdProgramUser) {
-      if (isValdProgramUser) {
-        this.isValdProgramUser = true
-        localStorage.setItem('isValdProgramUser', 'true')
-      } else {
-        this.isValdProgramUser = false
-        localStorage.removeItem('isValdProgramUser')
-      }
-    },
-    // TODO: Temp placeholder code for OFM authorization role processing...
-    async setFinancialOpsUser(isValidFinancialOpsUser) {
-      if (isValidFinancialOpsUser) {
-        this.isValidFinancialOpsUser = true
-        localStorage.setItem('isValidFinancialOpsUser', 'true')
-      } else {
-        this.isValidFinancialOpsUser = false
-        localStorage.removeItem('isValidFinancialOpsUser')
-      }
     },
   },
 })
