@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import AppButton from '../ui/AppButton.vue'
-import AppDialog from '../ui/AppDialog.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
 
 export default {
   name: 'NewRequestConfirmationDialog',
