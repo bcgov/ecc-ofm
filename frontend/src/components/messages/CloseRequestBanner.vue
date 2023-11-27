@@ -87,6 +87,6 @@ export default {
 
 .confirm-dialog-text {
   margin: 12px 0px;
-  font-size: 1.3em;
+  font-size: 1.1em;
 }
 </style>
