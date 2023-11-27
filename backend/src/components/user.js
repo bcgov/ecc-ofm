@@ -157,6 +157,70 @@ function parseFacilityPermissions(userResponse) {
     .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
+async function getUsersFacilitiesByOrganizationId(organizationId, response) {
+  let users = [
+    {
+      id: 1,
+      firstname: 'Jane',
+      lastname: 'Doe',
+      email: 'jdoe@email.com',
+      bceidusername: 'jdoe',
+      userrole: 'Account Manager',
+      expenseAuthority: true,
+      status: 'Active',
+      facilities: [
+        { name: 'Facilty 1', address: '123 Fitness St', city: 'Healthville' },
+        { name: 'Facility 2', address: '456 Swim Ln', city: 'Aquatown' },
+      ],
+    },
+    {
+      id: 2,
+      firstname: 'John',
+      lastname: 'Grant',
+      email: 'jgrant@email.com',
+      bceidusername: 'jgrant',
+      userrole: 'Reporter',
+      expenseAuthority: false,
+      status: 'Active',
+      facilities: [{ name: 'Facility 3', address: '789 Book Rd', city: 'Readville' }],
+    },
+    {
+      id: 3,
+      firstname: 'Jack',
+      lastname: 'Smith',
+      email: 'jsmith@email.com',
+      bceidusername: 'jsmith',
+      userrole: 'Financial',
+      expenseAuthority: false,
+      status: 'Active',
+      facilities: [
+        { name: 'Facilty 4', address: '123 Fitness St', city: 'Healthville' },
+        { name: 'Facilty 5', address: '789 Book Rd', city: 'Readville' },
+        { name: 'Facilty 6', address: '101 Food Ave', city: 'Tastytown' },
+      ],
+    },
+    {
+      id: 4,
+      firstname: 'Jill',
+      lastname: 'Lewis',
+      email: 'jlewis@email.com',
+      bceidusername: 'jlewis',
+      userrole: 'Reporter',
+      expenseAuthority: false,
+      status: 'Active',
+      facilities: [
+        { name: 'Facilty 1', address: '123 Fitness St', city: 'Healthville' },
+        { name: 'Facility 2', address: '456 Swim Ln', city: 'Aquatown' },
+        { name: 'Facility 3', address: '789 Book Rd', city: 'Readville' },
+        { name: 'Facility 4', address: '101 Food Ave', city: 'Tastytown' },
+      ],
+    },
+  ]
+
+  return response.status(HttpStatus.OK).json(users)
+}
+
 module.exports = {
   getUserInfo,
+  getUsersFacilitiesByOrganizationId,
 }

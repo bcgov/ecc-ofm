@@ -13,6 +13,7 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
+  USER_FACILITIES: baseRoot + '/user/facilities',
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
   NOTIFICATIONS: baseRoot + '/notifications',
@@ -35,6 +36,13 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   READY_TO_RESOLVE: 4,
   CLOSED_COMPLETE: 5,
   CLOSED_CANCELLED: 6,
+})
+
+export const USER_ROLES = Object.freeze({
+  ADMIN: 1,
+  ACCOUNT_MANAGER: 3,
+  FINANCIAL: 4,
+  REPORTING: 5,
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
