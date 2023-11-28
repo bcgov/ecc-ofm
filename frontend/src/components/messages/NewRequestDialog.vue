@@ -63,7 +63,7 @@
           </v-row>
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 pb-0">
-              <AppLabel>Preferred method of contact:</AppLabel>
+              <AppLabel variant="modal">Preferred method of contact:</AppLabel>
             </v-col>
             <v-col class="v-col-12">
               <v-radio-group v-model="newRequestModel.contactMethod" :rules="rules.required" inline color="primary">
@@ -74,7 +74,7 @@
           </v-row>
           <v-row v-if="newRequestModel.contactMethod === '2'" no-gutters class="mt-2">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-3">
-              <AppLabel (optional):>Business phone:</AppLabel>
+              <AppLabel variant="modal">Business phone:</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
               <v-text-field v-model="newRequestModel.phone" variant="outlined" :rules="[...rules.required, rules.phone]" />
