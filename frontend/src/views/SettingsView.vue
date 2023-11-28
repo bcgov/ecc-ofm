@@ -6,10 +6,16 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <v-btn>Filter by facility</v-btn>
+      <v-col cols="auto">
+        <v-btn @click="toggleShowFilter()">Filter by facility</v-btn>
       </v-col>
-      <v-col>
+      <v-col cols="3">
+        <v-text-field
+          v-if="showFilterInput"
+          v-model="facilityNameFilter"
+          placeholder="Filter by facility name"></v-text-field>
+      </v-col>
+      <v-col class="d-flex justify-end align-end">
         <v-btn>+ Add new user</v-btn>
       </v-col>
     </v-row>
@@ -18,7 +24,7 @@
         <!-- Users Table -->
         <v-data-table-virtual
           :headers="headersUsers"
-          :items="usersAndFacilities"
+          :items="filteredUserFacilities"
           item-key="id"
           show-expand
           density="compact"
@@ -91,6 +97,8 @@ export default {
   data() {
     return {
       organizationId: 9191919191,
+      showFilterInput: false,
+      facilityNameFilter: '',
       expanded: [],
       headersUsers: [
         { title: '', key: 'data-table-expand', width: '6%' },
@@ -111,6 +119,10 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useUsersStore, ['usersAndFacilities']),
+    filteredUserFacilities() {
+      return this.usersAndFacilities.filter(user =>
+        user.facilities.some(facility => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase())))
+    },
   },
   created() {
     this.getUsersFacilities(this.organizationId)
@@ -121,9 +133,16 @@ export default {
     async getUsersFacilities(organizationId) {
       try {
         await this.getUsersFacilitiesByOrganizationId(organizationId)
-        console.log('usersAndFacilities', this.usersAndFacilities)
       } catch (error) {
         //this.setFailureAlert('An error occurred while trying to load users and facilities')
+      }
+    },
+
+    toggleShowFilter() {
+      if (this.showFilterInput) {
+        this.showFilterInput = false
+      } else {
+        this.showFilterInput = true
       }
     },
 
@@ -150,14 +169,13 @@ export default {
 }
 
 .table-facility {
-  border: 1px solid black;
+  border: 1px solid #D9D9D9;
 }
 
 .table-header-facility {
   color: black !important;
   font-weight: bold !important;
   background-color: #D9D9D9;
-  border-bottom: 1px solid black !important;
   font-size: .90em;
 }
 

@@ -169,7 +169,7 @@ async function getUsersFacilitiesByOrganizationId(organizationId, response) {
       expenseAuthority: true,
       status: 'Active',
       facilities: [
-        { name: 'Facilty 1', address: '123 Fitness St', city: 'Healthville' },
+        { name: 'Facility 1', address: '123 Fitness St', city: 'Healthville' },
         { name: 'Facility 2', address: '456 Swim Ln', city: 'Aquatown' },
       ],
     },
@@ -194,9 +194,9 @@ async function getUsersFacilitiesByOrganizationId(organizationId, response) {
       expenseAuthority: false,
       status: 'Active',
       facilities: [
-        { name: 'Facilty 4', address: '123 Fitness St', city: 'Healthville' },
-        { name: 'Facilty 5', address: '789 Book Rd', city: 'Readville' },
-        { name: 'Facilty 6', address: '101 Food Ave', city: 'Tastytown' },
+        { name: 'Facility 4', address: '123 Fitness St', city: 'Healthville' },
+        { name: 'Facility 5', address: '789 Book Rd', city: 'Readville' },
+        { name: 'Facility 6', address: '101 Food Ave', city: 'Tastytown' },
       ],
     },
     {
@@ -209,7 +209,7 @@ async function getUsersFacilitiesByOrganizationId(organizationId, response) {
       expenseAuthority: false,
       status: 'Active',
       facilities: [
-        { name: 'Facilty 1', address: '123 Fitness St', city: 'Healthville' },
+        { name: 'Facility 1', address: '123 Fitness St', city: 'Healthville' },
         { name: 'Facility 2', address: '456 Swim Ln', city: 'Aquatown' },
         { name: 'Facility 3', address: '789 Book Rd', city: 'Readville' },
         { name: 'Facility 4', address: '101 Food Ave', city: 'Tastytown' },
