@@ -4,14 +4,15 @@
       <v-col cols="6" class="header-org">
         {{ userInfo.organizationName }}
       </v-col>
-      <v-col class="header-facility" cols="6">
+      <v-col v-if="!isChangeFacilityRouteExemption()" class="header-facility" cols="6">
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
           <template v-slot:activator="{ props }">
             <v-btn color="primary" id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">
+            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId"
+              @click="changeFacility(facility)">
               <v-list-item-title>{{ facility.facilityName }}</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -21,8 +22,11 @@
   </v-container>
 </template>
 <script>
+import { useRoute } from 'vue-router'
 import { mapState, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { CHANGE_FACILITY_ROUTE_EXEMPTIONS } from '@/utils/constants'
+
 export default {
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated', 'userInfo']),
@@ -32,6 +36,9 @@ export default {
     changeFacility(facility) {
       this.currentFacility = facility
     },
+    isChangeFacilityRouteExemption() {
+      return CHANGE_FACILITY_ROUTE_EXEMPTIONS.includes(useRoute().name)
+    },
   },
 }
 </script>
@@ -39,6 +46,7 @@ export default {
 .facility-container {
   max-width: 100%;
 }
+
 .header-org {
   display: flex;
   align-items: flex-end;

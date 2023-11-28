@@ -50,7 +50,7 @@ export const ROLES = Object.freeze({
   REPORTING: 4,
 })
 
-export const FACILITY_HEADER_ROUTE_EXEMPTIONS = ['settings']
+export const CHANGE_FACILITY_ROUTE_EXEMPTIONS = ['settings']
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
 

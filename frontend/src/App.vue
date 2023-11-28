@@ -14,7 +14,7 @@
         v-if="isAuthenticated && userInfo">
         <TheMenu />
       </v-navigation-drawer>
-      <TheFacilityHeader v-if="isActingProvider && !isFacilityHeaderRouteExemption()" />
+      <TheFacilityHeader v-if="isActingProvider" />
       <router-view class="align-start pt-8 px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
 import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
 
@@ -36,7 +35,6 @@ import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import HttpStatus from 'http-status-codes'
-import { FACILITY_HEADER_ROUTE_EXEMPTIONS } from '@/utils/constants'
 
 export default {
   name: 'App',
@@ -108,9 +106,6 @@ export default {
     },
     toTop() {
       this.$vuetify.goTo(0)
-    },
-    isFacilityHeaderRouteExemption() {
-      return FACILITY_HEADER_ROUTE_EXEMPTIONS.includes(useRoute().name)
     },
   },
 }
