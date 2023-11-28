@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { PAGE_TITLES } from '@/utils/constants'
+import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import ApplicationsView from '@/views/ApplicationsView.vue'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
@@ -130,6 +130,7 @@ const router = createRouter({
       meta: {
         pageTitle: 'Settings',
         requiresAuth: true,
+        role: ROLES.ACCOUNT_MANAGEMENT,
       },
     },
     {
@@ -226,6 +227,10 @@ router.beforeEach((to, _from, next) => {
               }
               // Validate Provider facilities
               if (!authStore.hasFacilities) {
+                return next('unauthorized')
+              }
+              // Validate specific role
+              if (to.meta.role && !authStore.hasRole(to.meta.role)) {
                 return next('unauthorized')
               }
             }

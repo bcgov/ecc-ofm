@@ -38,11 +38,16 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   CLOSED_CANCELLED: 6,
 })
 
-export const USER_ROLES = Object.freeze({
+export const ASSISTANCE_REQUEST_STATE_CODES = Object.freeze({
+  ACTIVE: 0,
+  INACTIVE: 1,
+})
+
+export const ROLES = Object.freeze({
   ADMIN: 1,
-  ACCOUNT_MANAGER: 3,
-  FINANCIAL: 4,
-  REPORTING: 5,
+  ACCOUNT_MANAGEMENT: 2,
+  FINANCIAL: 3,
+  REPORTING: 4,
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
