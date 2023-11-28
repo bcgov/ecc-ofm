@@ -28,7 +28,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
 import AppMenuItem from '@/components/ui/AppMenuItem.vue'
-import { USER_ROLES } from '@/utils/constants'
 
 export default {
   components: { AppMenuItem },

@@ -7,7 +7,10 @@
     </v-row>
     <v-row>
       <v-col cols="auto">
-        <v-btn @click="toggleShowFilter()">Filter by facility</v-btn>
+        <v-btn @click="toggleShowFilter()">
+          Filter by facility
+          <v-icon right>mdi-filter</v-icon>
+        </v-btn>
       </v-col>
       <v-col cols="3">
         <v-text-field
@@ -16,7 +19,7 @@
           placeholder="Filter by facility name"></v-text-field>
       </v-col>
       <v-col class="d-flex justify-end align-end">
-        <v-btn>+ Add new user</v-btn>
+        <span class="interactive-text-bold">+ Add new user</span>
       </v-col>
     </v-row>
     <v-row>
@@ -32,8 +35,11 @@
 
           <!-- Slot to customize expand row event -->
           <template v-slot:item.data-table-expand="{ item }">
-            <span @click.stop="toggleExpand(item)"
-              class="interactive-text">{{ this.expanded[0] == item.id ? 'hide details' : 'view' }}</span>
+            <span
+              class="interactive-text"
+              @click.stop="toggleExpand(item)">
+              {{ expanded[0] == item.id ? 'hide details' : 'view' }}
+            </span>
           </template>
 
           <!-- Slot to customize expand row content -->
@@ -77,8 +83,8 @@
         </tr>
         <tr>
           <td></td>
-          <td :colspan="columns.length" class="interactive-text">
-            <div style="text-align: left;">Add/remove facilities</div>
+          <td :colspan="columns.length">
+            <span class="interactive-text">Add/remove facilities</span>
           </td>
         </tr>
         </template>
@@ -131,11 +137,7 @@ export default {
     ...mapActions(useUsersStore, ['getUsersFacilitiesByOrganizationId']),
 
     async getUsersFacilities(organizationId) {
-      try {
-        await this.getUsersFacilitiesByOrganizationId(organizationId)
-      } catch (error) {
-        //this.setFailureAlert('An error occurred while trying to load users and facilities')
-      }
+      await this.getUsersFacilitiesByOrganizationId(organizationId)
     },
 
     toggleShowFilter() {
@@ -188,16 +190,23 @@ export default {
   font-size: .90em;
 }
 
-.interactive-text {
+.interactive-text,
+.interactive-text-bold {
   color: #6699cc;
+  cursor: pointer;
+}
+
+.interactive-text {
   font-weight: 500;
 }
 
-.interactive-text:hover {
-  color: #6699cc;
-  font-weight: 500;
+.interactive-text-bold {
+  font-weight: bold;
+}
+
+.interactive-text:hover,
+.interactive-text-bold:hover {
   text-decoration: underline;
-  cursor: pointer;
 }
 
 .no-border-bottom {
