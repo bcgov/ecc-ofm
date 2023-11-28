@@ -49,7 +49,20 @@
                 :rules="rules.listIsNotEmpty"
                 :items="facilities"
                 item-title="facilityName"
-                return-object></v-select>
+                return-object>
+                <template v-slot:prepend-item>
+                  <v-list-item title="Select All" @click="toggleFacilities">
+                    <template v-slot:prepend>
+                      <v-checkbox-btn
+                        :color="someFacilitiesSelected ? '#003366' : undefined"
+                        :indeterminate="someFacilitiesSelected && !allFacilitiesSelected"
+                        :model-value="someFacilitiesSelected"></v-checkbox-btn>
+                    </template>
+                  </v-list-item>
+
+                  <v-divider class="mt-2"></v-divider>
+                </template>
+              </v-select>
             </v-col>
           </v-row>
           <v-row no-gutters align="center">
@@ -133,6 +146,12 @@ export default {
     facilities() {
       return this.userInfo?.facilities
     },
+    allFacilitiesSelected() {
+      return this.newRequestModel.facilities.length == this.facilities.length
+    },
+    someFacilitiesSelected() {
+      return this.newRequestModel.facilities.length > 0
+    },
   },
   watch: {
     show: {
@@ -159,6 +178,13 @@ export default {
         facilities: [this.facilities?.find((facility) => facility.facilityId === this.currentFacility.facilityId)],
         contactMethod: '1',
         phone: this.userInfo?.phone,
+      }
+    },
+    toggleFacilities() {
+      if (this.allFacilitiesSelected) {
+        this.newRequestModel.facilities = []
+      } else {
+        this.newRequestModel.facilities = this.facilities.slice()
       }
     },
 
