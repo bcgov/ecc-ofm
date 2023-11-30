@@ -4,7 +4,7 @@
       <v-col cols="6" class="header-org">
         {{ userInfo.organizationName }}
       </v-col>
-      <v-col v-if="!isChangeFacilityRouteExemption()" class="header-facility" cols="6">
+      <v-col v-if="showFacility" class="header-facility" cols="6">
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
           <template v-slot:activator="{ props }">
@@ -28,6 +28,12 @@ import { useAuthStore } from '@/stores/auth'
 import { CHANGE_FACILITY_ROUTE_EXEMPTIONS } from '@/utils/constants'
 
 export default {
+  props: {
+    showFacility: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated', 'userInfo']),
     ...mapWritableState(useAuthStore, ['currentFacility']),

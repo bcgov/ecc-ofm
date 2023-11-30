@@ -14,7 +14,7 @@
         v-if="isAuthenticated && userInfo">
         <TheMenu />
       </v-navigation-drawer>
-      <TheFacilityHeader v-if="isActingProvider" />
+      <TheFacilityHeader v-if="isActingProvider" :showFacility="$route.meta.showFacility" />
       <router-view class="align-start pt-8 px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -107,6 +107,7 @@ export default {
     toTop() {
       this.$vuetify.goTo(0)
     },
+
   },
 }
 </script>

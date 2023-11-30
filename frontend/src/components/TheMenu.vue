@@ -57,9 +57,6 @@ export default {
     ...mapActions(useAuthStore, ['hasRole']),
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     ...mapActions(useNotificationsStore, ['getNotifications']),
-    isUserInRole(role) {
-      return this.userInfo?.roles?.includes(role)
-    },
   },
 }
 </script>

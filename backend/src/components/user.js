@@ -6,7 +6,14 @@ const axios = require('axios')
 const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
 // TODO... const { ORGANIZATION_PROVIDER_TYPES} = require('../util/constants')
-const { UserProfileMappings, UserProfileOrganizationMappings, UserProfileFacilityPermissionMappings, UserProfileFacilityMappings } = require('../util/mapping/Mappings')
+const {
+  UserProfileMappings,
+  UserProfileOrganizationMappings,
+  UserProfileFacilityPermissionMappings,
+  UserProfileFacilityMappings,
+  UserPermissionMappings,
+  FacilityMappings,
+} = require('../util/mapping/Mappings')
 
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
@@ -157,70 +164,32 @@ function parseFacilityPermissions(userResponse) {
     .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
-async function getUsersFacilitiesByOrganizationId(organizationId, response) {
-  let users = [
-    {
-      id: 1,
-      firstname: 'Jane',
-      lastname: 'Doe',
-      email: 'jdoe@email.com',
-      bceidusername: 'jdoe',
-      userrole: 'Account Manager',
-      expenseAuthority: true,
-      status: 'Active',
-      facilities: [
-        { name: 'Facility 1', address: '123 Fitness St', city: 'Healthville' },
-        { name: 'Facility 2', address: '456 Swim Ln', city: 'Aquatown' },
-      ],
-    },
-    {
-      id: 2,
-      firstname: 'John',
-      lastname: 'Grant',
-      email: 'jgrant@email.com',
-      bceidusername: 'jgrant',
-      userrole: 'Reporter',
-      expenseAuthority: false,
-      status: 'Active',
-      facilities: [{ name: 'Facility 3', address: '789 Book Rd', city: 'Readville' }],
-    },
-    {
-      id: 3,
-      firstname: 'Jack',
-      lastname: 'Smith',
-      email: 'jsmith@email.com',
-      bceidusername: 'jsmith',
-      userrole: 'Financial',
-      expenseAuthority: false,
-      status: 'Active',
-      facilities: [
-        { name: 'Facility 4', address: '123 Fitness St', city: 'Healthville' },
-        { name: 'Facility 5', address: '789 Book Rd', city: 'Readville' },
-        { name: 'Facility 6', address: '101 Food Ave', city: 'Tastytown' },
-      ],
-    },
-    {
-      id: 4,
-      firstname: 'Jill',
-      lastname: 'Lewis',
-      email: 'jlewis@email.com',
-      bceidusername: 'jlewis',
-      userrole: 'Reporter',
-      expenseAuthority: false,
-      status: 'Active',
-      facilities: [
-        { name: 'Facility 1', address: '123 Fitness St', city: 'Healthville' },
-        { name: 'Facility 2', address: '456 Swim Ln', city: 'Aquatown' },
-        { name: 'Facility 3', address: '789 Book Rd', city: 'Readville' },
-        { name: 'Facility 4', address: '101 Food Ave', city: 'Tastytown' },
-      ],
-    },
-  ]
+function mapUsersPermissionsFacilitiesObjectForFront(data) {
+  const usersPermissionsFacilities = new MappableObjectForFront(data, UserPermissionMappings).toJSON()
+  if (usersPermissionsFacilities?.facilities) {
+    usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
+      let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
+      facilityData.city = facilityData.address.address1_city
+      facilityData.address = facilityData.address.address1_line1
+      return facilityData
+    })
+  }
+  return usersPermissionsFacilities
+}
 
-  return response.status(HttpStatus.OK).json(users)
+async function getUsersPermissionsFacilities(req, res) {
+  try {
+    let usersPermissionsFacilities = []
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$expand=ofm_facility($select=address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const response = await getOperation(operation)
+    response?.value?.forEach((item) => usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item)))
+    return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
 }
 
 module.exports = {
   getUserInfo,
-  getUsersFacilitiesByOrganizationId,
+  getUsersPermissionsFacilities,
 }

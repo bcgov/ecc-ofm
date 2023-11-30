@@ -9,7 +9,7 @@ export const useUsersStore = defineStore('users', {
   }),
   getters: {},
   actions: {
-    async getUsersFacilitiesByOrganizationId(organizationId) {
+    async getUsersPermissionsFacilities(organizationId) {
       try {
         const response = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + organizationId)
         this.usersAndFacilities = response.data

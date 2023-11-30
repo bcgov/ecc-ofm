@@ -1,8 +1,6 @@
+import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
-import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import ApplicationsView from '@/views/ApplicationsView.vue'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
@@ -20,6 +18,8 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -131,6 +131,7 @@ const router = createRouter({
         pageTitle: 'Settings',
         requiresAuth: true,
         role: ROLES.ACCOUNT_MANAGEMENT,
+        showFacility: false,
       },
     },
     {
