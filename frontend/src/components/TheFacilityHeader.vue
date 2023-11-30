@@ -22,10 +22,8 @@
   </v-container>
 </template>
 <script>
-import { useRoute } from 'vue-router'
 import { mapState, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { CHANGE_FACILITY_ROUTE_EXEMPTIONS } from '@/utils/constants'
 
 export default {
   props: {
@@ -41,9 +39,6 @@ export default {
   methods: {
     changeFacility(facility) {
       this.currentFacility = facility
-    },
-    isChangeFacilityRouteExemption() {
-      return CHANGE_FACILITY_ROUTE_EXEMPTIONS.includes(useRoute().name)
     },
   },
 }

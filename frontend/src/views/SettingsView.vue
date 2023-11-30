@@ -112,9 +112,10 @@
 <script>
 import { mapActions, mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { useUsersStore } from '@/stores/users'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import { CRM_STATE_CODES } from '@/utils/constants'
+import { ApiRoutes } from '@/utils/constants'
+import ApiService from '@/common/apiService'
 
 export default {
   mixins: [rolesMixin],
@@ -122,6 +123,7 @@ export default {
     return {
       showFilterInput: false,
       facilityNameFilter: '',
+      usersAndFacilities: null,
       expanded: [],
       headersUsers: [
         { title: '', key: 'data-table-expand', width: '6%' },
@@ -141,7 +143,6 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useUsersStore, ['usersAndFacilities']),
 
     filteredUserFacilities() {
       return this.usersAndFacilities.filter(user =>
@@ -149,18 +150,14 @@ export default {
     },
   },
   async created() {
-    this.getUsersFacilities(this.organizationId)
+    try {
+      const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + this.userInfo.organizationId)
+      this.usersAndFacilities = res.data
+    } catch (error) {
+      console.log(`Failed to get the list of users by organization id - ${error}`)
+    }
   },
   methods: {
-    ...mapActions(useUsersStore, ['getUsersPermissionsFacilities']),
-
-    /**
-     * Get the users, permissions, and facilities for an organization
-     */
-    async getUsersFacilities(organizationId) {
-      await this.getUsersPermissionsFacilities(this.userInfo.organizationId)
-    },
-
     /**
      * Toggle the facility input filter
      */
@@ -187,13 +184,20 @@ export default {
       }
     },
 
+    /**
+     * Convert a comma separated string to an array of numbers
+     */
+    convertStringToArray(string) {
+      return string.split(',').map(Number);
+    },
+
     // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
     /**
      * Get the role description for role code(s)
      */
     getRoleDescriptions(roles) {
       const roleDescriptions = []
-      let rolesArray = roles.split(',').map(Number);
+      const rolesArray = this.convertStringToArray(roles)
       rolesArray.forEach(role => {
         switch (role) {
           case this.ROLES.ADMIN:
