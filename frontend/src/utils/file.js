@@ -19,8 +19,8 @@ export function getFileExtension(fileName) {
 }
 
 export function getFileExtensionWithDot(fileName) {
-  const extension = getFileExtension(fileName)
-  return extension.length > 0 ? '.' + extension : ''
+  if (fileName) return fileName.slice(fileName.lastIndexOf('.'))
+  return ''
 }
 
 export function getFileNameWithMaxNameLength(fileName, nameLength = 30, extensionLength = 10) {

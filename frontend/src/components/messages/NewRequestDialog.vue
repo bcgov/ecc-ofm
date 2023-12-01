@@ -107,7 +107,6 @@
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
-import { useDocumentsStore } from '@/stores/documents'
 import { useMessagesStore } from '@/stores/messages'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
@@ -116,6 +115,7 @@ import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
+import DocumentService from '@/services/documentService'
 
 export default {
   name: 'NewRequestDialog',
@@ -171,7 +171,6 @@ export default {
   },
   methods: {
     ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore']),
-    ...mapActions(useDocumentsStore, ['createDocuments']),
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
@@ -201,8 +200,8 @@ export default {
     },
 
     updateDocuments({ documents, areValidFilesUploaded }) {
-      console.log(documents)
-      console.log('areValidFilesUploaded = ' + areValidFilesUploaded)
+      // console.log(documents)
+      // console.log('areValidFilesUploaded = ' + areValidFilesUploaded)
       this.uploadedDocuments = documents
       this.areValidFilesUploaded = areValidFilesUploaded
     },
@@ -216,7 +215,7 @@ export default {
           document.entityId = assistanceRequestId
         })
         console.log(this.uploadedDocuments)
-        await this.createDocuments(this.uploadedDocuments)
+        await DocumentService.createDocuments(this.uploadedDocuments)
       } catch (error) {
         this.setFailureAlert('Failed to add documents to your assistance request')
       }
