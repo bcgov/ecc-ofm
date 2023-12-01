@@ -69,10 +69,7 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppButton id="upload-document" :primary="false" @click="false">
-              <v-icon class="mr-3">mdi-tray-arrow-up</v-icon>
-              Upload
-            </AppButton>
+            <AppDocumentUpload entity-name="ofm_assistance_requests" @updateDocuments="updateDocuments"></AppDocumentUpload>
           </v-row>
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 pb-0">
@@ -110,17 +107,19 @@
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
+import { useDocumentsStore } from '@/stores/documents'
 import { useMessagesStore } from '@/stores/messages'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'NewRequestDialog',
-  components: { AppButton, AppDialog, AppLabel, NewRequestConfirmationDialog },
+  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog },
   mixins: [alertMixin],
   props: {
     show: {
@@ -132,12 +131,14 @@ export default {
   data() {
     return {
       isFormComplete: false,
+      areValidFilesUploaded: true,
       newRequestModel: {},
       rules,
       isDisplayed: false,
       isLoading: false,
       showNewRequestConfirmationDialog: false,
       referenceNumber: '',
+      uploadedDocuments: [],
     }
   },
   computed: {
@@ -170,6 +171,7 @@ export default {
   },
   methods: {
     ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore']),
+    ...mapActions(useDocumentsStore, ['createDocuments']),
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
@@ -198,14 +200,41 @@ export default {
       this.$emit('close')
     },
 
+    updateDocuments({ documents, areValidFilesUploaded }) {
+      console.log(documents)
+      console.log('areValidFilesUploaded = ' + areValidFilesUploaded)
+      this.uploadedDocuments = documents
+      this.areValidFilesUploaded = areValidFilesUploaded
+    },
+
+    async createDocumentsForAssistanceRequest(assistanceRequestId) {
+      try {
+        console.log('THIS IS BEFORE =============== ')
+        console.log(this.uploadedDocuments)
+        console.log('THIS IS AFTER =============== ')
+        this.uploadedDocuments.forEach((document) => {
+          document.entityId = assistanceRequestId
+        })
+        console.log(this.uploadedDocuments)
+        await this.createDocuments(this.uploadedDocuments)
+      } catch (error) {
+        this.setFailureAlert('Failed to add documents to your assistance request')
+      }
+    },
+
     async submit() {
       this.$refs.newRequestForm?.validate()
-      if (this.isFormComplete) {
+      console.log(this.isFormComplete)
+      console.log(this.areValidFilesUploaded)
+      if (this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
-          const response = await this.createAssistanceRequest(this.newRequestModel)
-          this.referenceNumber = response?.referenceNumber
-          await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
+          // const response = await this.createAssistanceRequest(this.newRequestModel)
+          // this.referenceNumber = response?.referenceNumber
+          this.referenceNumber = 'RANDOM'
+          // await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
+          // await this.createDocumentsForAssistanceRequest(response?.assistanceRequestId)
+          await this.createDocumentsForAssistanceRequest('ec4b2a20-bd8f-ee11-8179-000d3a09d499')
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           this.setFailureAlert('Failed to create a new assistance request')

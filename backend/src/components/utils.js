@@ -201,11 +201,34 @@ async function patchOperationWithObjectId(operation, objectId, payload) {
   }
 }
 
+async function postDocuments(payload) {
+  const url = config.get('dynamicsApi:apiEndpoint') + '/api/documents'
+  log.info('postDocuments Url', url)
+  try {
+    const response = await axios.post(url, payload, getHttpHeader())
+    logResponse('postDocuments', response.data)
+    return response.data
+  } catch (e) {
+    log.error('postDocuments Error', e)
+    log.error('postDocuments Error', e.response ? e.response.status : e.message)
+    throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, { message: 'API Post error' }, e)
+  }
+}
+
 function getHttpHeader() {
   return {
     headers: {
       Accept: 'text/plain',
       'Content-Type': 'application/json',
+      [config.get('dynamicsApi:apiKeyHeader')]: config.get('dynamicsApi:apiKeyValue'),
+    },
+  }
+}
+
+function getHttpHeaderFormData() {
+  return {
+    headers: {
+      'Content-Type': 'multipart/form-data',
       [config.get('dynamicsApi:apiKeyHeader')]: config.get('dynamicsApi:apiKeyValue'),
     },
   }
@@ -260,6 +283,7 @@ const utils = {
   deleteOperationWithObjectId,
   deleteOperation,
   sleep,
+  postDocuments,
 }
 
 module.exports = utils
