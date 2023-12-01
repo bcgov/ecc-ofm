@@ -1,7 +1,7 @@
 <template>
   <v-btn class="text-none" :class="buttonClass" v-bind="$attrs">
     <slot />
-    <v-icon v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
+    <v-icon class="button-icon" v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
 </template>
 <script>
@@ -12,7 +12,7 @@ export default {
       return {
         'BC-Gov-PrimaryButton': this.$attrs.variant === undefined && this.primary,
         'BC-Gov-SecondaryButton': this.$attrs.variant === undefined && !this.primary,
-        'text-button': this.$attrs.variant !== '',
+        'text-app-button': this.$attrs.variant !== '',
       }
     },
   },
@@ -25,7 +25,11 @@ export default {
 }
 </script>
 <style scoped>
-.text-button {
+.button-icon {
+  font-size: 24px;
+}
+
+.text-app-button {
   color: #003366;
 }
 
@@ -37,6 +41,7 @@ export default {
   margin: 8px;
   /* ma-2 */
   padding: 0 12px;
+  font-size: 16px;
   /* px-3 */
   /* padding: 12px 32px;
   text-align: center;
