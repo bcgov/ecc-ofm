@@ -1,5 +1,5 @@
 <template>
-  <v-btn :class="[primary ? 'BC-Gov-PrimaryButton' : 'BC-Gov-SecondaryButton']" v-bind="$attrs">
+  <v-btn class="text-none" :class="buttonClass" v-bind="$attrs">
     <slot />
     <v-icon v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
@@ -7,15 +7,28 @@
 <script>
 export default {
   inheritAttrs: true,
+  computed: {
+    buttonClass() {
+      return {
+        'BC-Gov-PrimaryButton': this.$attrs.variant === undefined && this.primary,
+        'BC-Gov-SecondaryButton': this.$attrs.variant === undefined && !this.primary,
+        'text-button': this.$attrs.variant !== '',
+      }
+    },
+  },
   props: {
     primary: {
       type: Boolean,
-      default: true,
+      default: 'primary',
     },
   },
 }
 </script>
 <style scoped>
+.text-button {
+  color: #003366;
+}
+
 .BC-Gov-PrimaryButton {
   background-color: #003366;
   border: none;
@@ -46,7 +59,7 @@ export default {
   opacity: 0.8;
 }
 
-:focus {
+.BC-Gov-PrimaryButton:focus {
   outline: 4px solid #3b99fc;
   outline-offset: 1px;
 }
@@ -76,6 +89,11 @@ export default {
   text-decoration: underline;
   background-color: #003366;
   color: #ffffff;
+}
+
+.BC-Gov-SecondaryButton:focus {
+  outline: 4px solid #3b99fc;
+  outline-offset: 1px;
 }
 .BC-Gov-SecondaryButton:active {
   opacity: 1;
