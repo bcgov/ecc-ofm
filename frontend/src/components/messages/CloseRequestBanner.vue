@@ -11,14 +11,17 @@
         </v-col>
       </v-row>
     </v-alert>
-    <AppDialog v-model="showConfirmDialog" title="Confirm" :isLoading="isLoading" persistent max-width="40%" @close="toggleConfirmDialog">
+    <AppDialog v-model="showConfirmDialog" title="Confirm" :isLoading="isLoading" persistent max-width="40%"
+      @close="toggleConfirmDialog">
       <template #content>
         <div align="center" class="confirm-dialog-text">Are you sure you want to close this request?</div>
       </template>
       <template #button>
         <v-row class="mt-2" justify="space-around">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="170px" @click="toggleConfirmDialog" :loading="isLoading">Go back</AppButton>
-          <AppButton id="dialog-close-request" size="large" width="170px" @click="closeAssistanceRequest" :loading="isLoading">Close request</AppButton>
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="170px" @click="toggleConfirmDialog"
+            :loading="isLoading">Go back</AppButton>
+          <AppButton id="dialog-close-request" size="large" width="170px" @click="closeAssistanceRequest"
+            :loading="isLoading">Close request</AppButton>
         </v-row>
       </template>
     </AppDialog>
@@ -28,7 +31,7 @@
 import { mapActions } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
-import { ASSISTANCE_REQUEST_STATUS_CODES, ASSISTANCE_REQUEST_STATE_CODES } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
 import { useMessagesStore } from '@/stores/messages'
 import alertMixin from '@/mixins/alertMixin'
 
@@ -59,7 +62,7 @@ export default {
         this.isLoading = true
         const payload = {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
-          stateCode: ASSISTANCE_REQUEST_STATE_CODES.INACTIVE,
+          stateCode: CRM_STATE_CODES.INACTIVE,
         }
         await this.updateAssistanceRequest(this.assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(this.assistanceRequestId)
@@ -88,5 +91,4 @@ export default {
 .confirm-dialog-text {
   margin: 12px 0px;
   font-size: 1.1em;
-}
-</style>
+}</style>

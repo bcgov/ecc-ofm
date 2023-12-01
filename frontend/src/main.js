@@ -4,6 +4,7 @@ import '@/assets/css/main.css'
 import '@/assets/css/reset.css'
 
 import App from './App.vue'
+import { VDataTable } from 'vuetify/lib/labs/components.mjs'
 import { VDataTableVirtual } from 'vuetify/lib/labs/components.mjs'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 import { createApp } from 'vue'
@@ -17,6 +18,7 @@ const app = createApp(App)
 
 const pinia = createPinia()
 
+app.component('VDataTable', VDataTable)
 app.component('VDataTableVirtual', VDataTableVirtual)
 app.component('VSkeletonLoader', VSkeletonLoader)
 app.provide('$moment', moment)

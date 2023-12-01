@@ -1,0 +1,187 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TheMenu > all menu items visible 1`] = `
+"<div data-v-ca5eac82=\\"\\"><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-home-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Home
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!---->
+      <!--v-if-->
+      <div data-v-ca5eac82=\\"\\" class=\\"badge-wrapper\\"><i data-v-ca5eac82=\\"\\" class=\\"mdi-email-outline mdi v-icon notranslate v-theme--light badge-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"false\\"></i> Messaging </div>
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-text-box-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Reporting
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-currency-usd mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Funding
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-folder-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Documents
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-file-document-edit-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Applications
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-help mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Resources
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-cog-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Settings
+    </div>
+    <!---->
+  </a></div>"
+`;
+
+exports[`TheMenu > allMenuItems 1`] = `
+"<div data-v-ca5eac82=\\"\\"><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-home-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Home
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!---->
+      <!--v-if-->
+      <div data-v-ca5eac82=\\"\\" class=\\"badge-wrapper\\"><i data-v-ca5eac82=\\"\\" class=\\"mdi-email-outline mdi v-icon notranslate v-theme--light badge-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"false\\"></i> Messaging </div>
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-text-box-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Reporting
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-currency-usd mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Funding
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-folder-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Documents
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-file-document-edit-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Applications
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-help mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Resources
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-cog-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Settings
+    </div>
+    <!---->
+  </a></div>"
+`;
+
+exports[`TheMenu > allMenuItems 2`] = `
+"<div data-v-ca5eac82=\\"\\"><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-home-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Home
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!---->
+      <!--v-if-->
+      <div data-v-ca5eac82=\\"\\" class=\\"badge-wrapper\\"><i data-v-ca5eac82=\\"\\" class=\\"mdi-email-outline mdi v-icon notranslate v-theme--light badge-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"false\\"></i> Messaging </div>
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-text-box-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Reporting
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-currency-usd mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Funding
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-folder-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Documents
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-file-document-edit-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Applications
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-help mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Resources
+    </div>
+    <!---->
+  </a><a data-v-782d38a9=\\"\\" data-v-ca5eac82=\\"\\" class=\\"v-list-item v-list-item--link v-theme--light v-list-item--density-default v-list-item--variant-text menu-item\\" style=\\"color: #003366; caret-color: #003366;\\" tabindex=\\"0\\"><span class=\\"v-list-item__overlay\\"></span><span class=\\"v-list-item__underlay\\"></span>
+    <!---->
+    <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+      <!---->
+      <!----><i data-v-782d38a9=\\"\\" class=\\"mdi-cog-outline mdi v-icon notranslate v-theme--light menu-icon\\" style=\\"font-size: 30px; height: 30px; width: 30px;\\" aria-hidden=\\"true\\"></i>Settings
+    </div>
+    <!---->
+  </a></div>"
+`;
