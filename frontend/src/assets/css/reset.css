@@ -5,6 +5,15 @@ html {
 h1 {
   font-size: 1.25rem;
 }
+
+h3 {
+  color: #313132;
+}
+
+h4 {
+  color: #313132;
+}
+
 a {
   color: #1976d2;
 }
