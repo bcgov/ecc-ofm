@@ -58,45 +58,44 @@
 
             <!-- Slot to customize expand row content -->
             <template v-slot:expanded-row="{ columns, item }">
-              <v-row>
-                <v-col cols="1"></v-col>
-                <v-col cols="11">
-                  <h4>Current facility access</h4>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="1"></v-col>
-                <v-col cols="11">
-                  <!-- Facilities table -->
-                  <v-data-table
-                    :headers="headersFacilities"
-                    :items="item.facilities"
-                    item-key="facilityId"
-                    density="compact">
-                    <template v-slot:item="{ item }">
-                      <v-row>
-                        <v-col>{{ item.name }}</v-col>
-                        <v-col>{{ item.address }}, {{ item.city }}</v-col>
-                      </v-row>
-                    </template>
-                    <template v-slot:bottom><!-- no paging --></template>
-                  </v-data-table>
-                </v-col>
-                <v-col cols="1"></v-col>
-                <v-col cols="11">
+              <tr>
+                <td colspan="6">
+                  <v-row>
+                    <v-col cols="1"></v-col>
+                    <v-col cols="11" class="pt-5 pb-0">
+                      <h4>Current facility access</h4>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="1"></v-col>
+                    <v-col cols="11" class="pt-0 pb-0">
+                      <!-- Facilities table -->
+                      <v-data-table
+                        :headers="headersFacilities"
+                        :items="item.facilities"
+                        item-key="facilityId"
+                        density="compact">
+                        <template v-slot:item.address="{ item }">
+                          {{ item.address }}, {{ item.city }}
+                        </template>
+                        <template v-slot:bottom><!-- no paging --></template>
+                      </v-data-table>
+                    </v-col>
+                    <v-col cols="1"></v-col>
+                    <v-col cols="6">
+                      <AppButton variant="text">
+                        Add/remove facilities
+                      </AppButton>
+                    </v-col>
+                  </v-row>
+                </td>
+                <td></td>
+                <td class="pl-0">
                   <AppButton variant="text">
                     Deactivate user
                   </AppButton>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="1"></v-col>
-                <v-col cols="11">
-                  <AppButton variant="text">
-                    Add/remove facilities
-                  </AppButton>
-                </v-col>
-              </v-row>
+                </td>
+              </tr>
             </template>
           </v-data-table>
         </v-skeleton-loader>
