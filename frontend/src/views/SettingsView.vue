@@ -13,10 +13,7 @@
         </AppButton>
       </v-col>
       <v-col cols="3">
-        <v-text-field
-          v-if="showFilterInput"
-          v-model="facilityNameFilter"
-          placeholder="Filter by facility name"></v-text-field>
+        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name"></v-text-field>
       </v-col>
       <v-col class="d-flex justify-end align-end">
         <AppButton variant="text">
@@ -29,19 +26,11 @@
       <v-col>
         <!-- Users Table -->
         <v-skeleton-loader :loading="!usersAndFacilities" type="table-tbody">
-          <v-data-table
-            :headers="headersUsers"
-            :items="filteredUserFacilities"
-            item-key="contactId"
-            item-value="contactId"
-            show-expand
-            density="compact"
-            :expanded.sync="expanded">
-
+          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
               <AppButton @click.stop="toggleExpand(item)" variant="text">
-                {{ expanded[0] == item.contactId ? 'hide details' : 'view' }}
+                {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
 
@@ -50,7 +39,7 @@
               <span>{{ getRoleDescriptions(item.roles) }}</span>
             </template>
             <template v-slot:item.isExpenseAuthority="{ item }">
-              <span>{{ (item.isExpenseAuthority) ? 'Yes' : 'No' }}</span>
+              <span>{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</span>
             </template>
             <template v-slot:item.stateCode="{ item }">
               <span>{{ getStatusDescription(item.stateCode) }}</span>
@@ -59,42 +48,27 @@
             <!-- Slot to customize expand row content -->
             <template v-slot:expanded-row="{ columns, item }">
               <tr>
-                <td colspan="6">
+                <td></td>
+                <td colspan="6" class="pl-0">
                   <v-row>
-                    <v-col cols="1"></v-col>
                     <v-col cols="11" class="pt-5 pb-0">
                       <h4>Current facility access</h4>
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="1"></v-col>
                     <v-col cols="11" class="pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table
-                        :headers="headersFacilities"
-                        :items="item.facilities"
-                        item-key="facilityId"
-                        density="compact">
-                        <template v-slot:item.address="{ item }">
-                          {{ item.address }}, {{ item.city }}
-                        </template>
+                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" density="compact">
+                        <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
-                    <v-col cols="1"></v-col>
                     <v-col cols="6">
-                      <AppButton variant="text">
-                        Add/remove facilities
-                      </AppButton>
+                      <AppButton variant="text">Add/remove facilities</AppButton>
                     </v-col>
                   </v-row>
                 </td>
-                <td></td>
-                <td class="pl-0">
-                  <AppButton variant="text">
-                    Deactivate user
-                  </AppButton>
-                </td>
+                <td class="pl-0"><AppButton variant="text">Deactivate user</AppButton></td>
               </tr>
             </template>
           </v-data-table>
@@ -123,14 +97,14 @@ export default {
       usersAndFacilities: null,
       expanded: [],
       headersUsers: [
-        { title: '', key: 'data-table-expand', width: '6%' },
+        { title: '', key: 'data-table-expand', width: '135px' },
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
         { title: 'Email', key: 'email', width: '12%' },
         { title: 'Username', key: 'userName', width: '12%' },
         { title: 'Role', key: 'roles', width: '12%' },
         { title: 'Expense Authority', key: 'isExpenseAuthority', width: '12%' },
-        { title: 'Status', key: 'stateCode', width: '12%' },
+        { title: 'Status', key: 'stateCode', width: '16%' },
       ],
       headersFacilities: [
         { title: 'Facility Name', key: 'name', width: '40%' },
@@ -142,8 +116,7 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      return this.usersAndFacilities.filter(user =>
-        user.facilities.some(facility => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase())))
+      return this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase())))
     },
   },
   async created() {
@@ -171,13 +144,13 @@ export default {
      * Toggle expanded row
      */
     toggleExpand(item) {
-      const index = this.expanded.indexOf(item.contactId);
+      const index = this.expanded.indexOf(item.contactId)
       if (index > -1) {
         // Collapse if already expanded
-        this.expanded.splice(index, 1);
+        this.expanded.splice(index, 1)
       } else {
         // Expand the clicked row
-        this.expanded = [item.contactId];
+        this.expanded = [item.contactId]
       }
     },
 
@@ -185,7 +158,7 @@ export default {
      * Convert a comma separated string to an array of numbers
      */
     convertStringToArray(string) {
-      return string.split(',').map(Number);
+      return string.split(',').map(Number)
     },
 
     // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
@@ -195,7 +168,7 @@ export default {
     getRoleDescriptions(roles) {
       const roleDescriptions = []
       const rolesArray = this.convertStringToArray(roles)
-      rolesArray.forEach(role => {
+      rolesArray.forEach((role) => {
         roleDescriptions.push(this.getRoleDescription(role))
       })
       return roleDescriptions.join(', ')
@@ -233,7 +206,7 @@ export default {
 </script>
 
 <style scoped>
->>>div.v-data-table-footer {
+:deep(div.v-data-table-footer) {
   padding-top: 20px !important;
 }
 </style>
