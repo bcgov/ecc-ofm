@@ -3,6 +3,7 @@ const { postDocuments } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { DocumentFileMappings } = require('../util/mapping/Mappings')
 const formidable = require('formidable')
+const fs = require('fs')
 const FormData = require('form-data')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
@@ -30,12 +31,14 @@ async function createDocuments(req, res) {
     log.info('fileMapping = ', body['fileMapping'])
     for (let key in body) {
       if (key != 'fileMapping') {
-        payload.append(key, body[key].path)
-        log.info(key, body[key].path)
+        let tempFile = fs.createReadStream(body[key].path)
+        payload.append(key, tempFile, { filename: body[key].name })
+        log.info(key, body[key].name, tempFile)
       }
     }
     log.info('==============DONE=================')
-
+    log.info('THIS IS FILE PAYLOAD')
+    log.info(payload)
     let response = await postDocuments(payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {

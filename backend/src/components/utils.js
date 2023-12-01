@@ -205,7 +205,7 @@ async function postDocuments(payload) {
   const url = config.get('dynamicsApi:apiEndpoint') + '/api/documents'
   log.info('postDocuments Url', url)
   try {
-    const response = await axios.post(url, payload, getHttpHeader())
+    const response = await axios.post(url, payload, getHttpHeaderFormData())
     logResponse('postDocuments', response.data)
     return response.data
   } catch (e) {
@@ -228,7 +228,6 @@ function getHttpHeader() {
 function getHttpHeaderFormData() {
   return {
     headers: {
-      'Content-Type': 'multipart/form-data',
       [config.get('dynamicsApi:apiKeyHeader')]: config.get('dynamicsApi:apiKeyValue'),
     },
   }
