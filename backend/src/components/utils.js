@@ -201,11 +201,15 @@ async function patchOperationWithObjectId(operation, objectId, payload) {
   }
 }
 
-async function postDocuments(payload) {
+async function postDocuments(payload, headers) {
   const url = config.get('dynamicsApi:apiEndpoint') + '/api/documents'
   log.info('postDocuments Url', url)
+
   try {
-    const response = await axios.post(url, payload, getHttpHeaderFormData())
+    log.info('payload', payload)
+    const updatedHeaders = getHttpHeaderFormData(headers)
+    log.info('updatedheaders', updatedHeaders)
+    const response = await axios.post(url, payload, { headers: updatedHeaders })
     logResponse('postDocuments', response.data)
     return response.data
   } catch (e) {
@@ -225,12 +229,10 @@ function getHttpHeader() {
   }
 }
 
-function getHttpHeaderFormData() {
-  return {
-    headers: {
-      [config.get('dynamicsApi:apiKeyHeader')]: config.get('dynamicsApi:apiKeyValue'),
-    },
-  }
+function getHttpHeaderFormData(headers) {
+  const headerKey = config.get('dynamicsApi:apiKeyHeader')
+  headers[headerKey] = config.get('dynamicsApi:apiKeyValue')
+  return headers
 }
 
 function generateJWTToken(jwtid, subject, issuer, algorithm, payload) {
