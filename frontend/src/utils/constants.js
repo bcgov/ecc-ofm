@@ -13,6 +13,7 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
+  USER_FACILITIES: baseRoot + '/user/facilities',
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
   NOTIFICATIONS: baseRoot + '/notifications',
@@ -38,7 +39,7 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   CLOSED_CANCELLED: 6,
 })
 
-export const ASSISTANCE_REQUEST_STATE_CODES = Object.freeze({
+export const CRM_STATE_CODES = Object.freeze({
   ACTIVE: 0,
   INACTIVE: 1,
 })

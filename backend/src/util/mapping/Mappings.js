@@ -86,6 +86,26 @@ const DocumentFileMappings = [
   { back: 'regardingid', front: 'entityId' },
 ]
 
+const UserPermissionMappings = [
+  { back: 'contactid', front: 'contactId' },
+  { back: 'ofm_first_name', front: 'firstName' },
+  { back: 'ofm_last_name', front: 'lastName' },
+  { back: 'emailaddress1', front: 'email' },
+  { back: 'ccof_username', front: 'userName' },
+  { back: 'ofm_portal_role', front: 'roles' },
+  { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'ofm_facility_business_bceid', front: 'facilities' },
+]
+
+const FacilityMappings = [
+  { back: 'ofm_bceid_facilityid', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'name' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'ofm_facility', front: 'address' },
+]
+
 module.exports = {
   NotificationMappings,
   UserProfileMappings,
@@ -97,4 +117,6 @@ module.exports = {
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   DocumentFileMappings,
+  UserPermissionMappings,
+  FacilityMappings,
 }
