@@ -200,8 +200,6 @@ export default {
     },
 
     updateDocuments({ documents, areValidFilesUploaded }) {
-      // console.log(documents)
-      // console.log('areValidFilesUploaded = ' + areValidFilesUploaded)
       this.uploadedDocuments = documents
       this.areValidFilesUploaded = areValidFilesUploaded
     },
@@ -223,8 +221,6 @@ export default {
 
     async submit() {
       this.$refs.newRequestForm?.validate()
-      console.log(this.isFormComplete)
-      console.log(this.areValidFilesUploaded)
       if (this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
