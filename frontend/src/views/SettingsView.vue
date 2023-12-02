@@ -26,7 +26,7 @@
       <v-col>
         <!-- Users Table -->
         <v-skeleton-loader :loading="!usersAndFacilities" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
+          <v-data-table :headers="headersUsers" :items="sort(filteredUserFacilities)" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
               <AppButton @click.stop="toggleExpand(item)" variant="text">
@@ -68,7 +68,9 @@
                     </v-col>
                   </v-row>
                 </td>
-                <td class="pl-0"><AppButton variant="text">Deactivate user</AppButton></td>
+                <td class="pl-0">
+                  <AppButton variant="text">Deactivate user</AppButton>
+                </td>
               </tr>
             </template>
           </v-data-table>
@@ -201,6 +203,28 @@ export default {
           return 'Inactive'
       }
     },
+
+
+    /**
+     * Sort users by: account management role 1st, expense authority 2nd, last name 3rd
+     */
+    sort(users) {
+      return users.sort((a, b) => {
+        // Check for account management role and sort by it, with true values first
+        const roleA = a.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
+        const roleB = b.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
+        if (roleA && !roleB) return -1
+        if (!roleA && roleB) return 1
+
+        // If roles are the same, then sort by stateCode
+        if (a.stateCode !== b.stateCode) {
+          return a.stateCode - b.stateCode;
+        }
+
+        // If stateCode is the same, then sort by lastName
+        return a.lastName.localeCompare(b.lastName);
+      });
+    }
   },
 }
 </script>
