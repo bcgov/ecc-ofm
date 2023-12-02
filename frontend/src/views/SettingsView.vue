@@ -103,7 +103,7 @@ export default {
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
         { title: 'Email', key: 'email', width: '12%' },
-        { title: 'Username', key: 'userName', width: '12%' },
+        { title: 'BCeID', key: 'userName', width: '12%' },
         { title: 'Role', key: 'roles', width: '12%' },
         { title: 'Expense Authority', key: 'isExpenseAuthority', width: '12%' },
         { title: 'Status', key: 'stateCode', width: '16%' },
