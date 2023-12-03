@@ -210,7 +210,6 @@ async function postDocuments(payload, headers) {
     logResponse('postDocuments', response)
     return response.data
   } catch (e) {
-    log.error('postDocuments Error', e)
     log.error('postDocuments Error', e.response ? e.response.status : e.message)
     throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, { message: 'API Post error' }, e)
   }
