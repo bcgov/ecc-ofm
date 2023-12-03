@@ -53,7 +53,7 @@ export default {
       maxSize: 4194304, // 4 MB
       isValidForm: false,
       fileExtensionAccept: ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx'],
-      fileFormats: 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS and XLSX',
+      fileFormats: 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX',
       fileRules: [],
     }
   },

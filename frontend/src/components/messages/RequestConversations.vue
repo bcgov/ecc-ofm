@@ -258,6 +258,10 @@ export default {
   border-top: 1px solid #e0e0e0;
 }
 
+.border-bottom {
+  border-top: 1px solid #e0e0e0;
+}
+
 .reply-disabled {
   padding-right: 17px;
   font-size: 14px;

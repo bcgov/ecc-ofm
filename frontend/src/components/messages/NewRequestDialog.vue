@@ -220,17 +220,6 @@ export default {
       this.areValidFilesUploaded = areValidFilesUploaded
     },
 
-    async createDocumentsForAssistanceRequest(assistanceRequestId) {
-      try {
-        this.uploadedDocuments.forEach((document) => {
-          document.entityId = assistanceRequestId
-        })
-        await DocumentService.createDocuments(this.uploadedDocuments)
-      } catch (error) {
-        this.setFailureAlert('Failed to add documents to your assistance request')
-      }
-    },
-
     async submit() {
       this.$refs.newRequestForm?.validate()
       if (this.isFormComplete && this.areValidFilesUploaded) {
@@ -239,7 +228,7 @@ export default {
           const response = await this.createAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
           await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
-          await this.createDocumentsForAssistanceRequest(response?.assistanceRequestId)
+          await DocumentService.createDocumentsForAssistanceRequest(this.uploadedDocuments, response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           this.setFailureAlert('Failed to create a new assistance request')

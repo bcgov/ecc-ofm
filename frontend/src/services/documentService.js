@@ -40,4 +40,15 @@ export default {
       }
     }
   },
+
+  async createDocumentsForAssistanceRequest(documents, assistanceRequestId) {
+    try {
+      documents.forEach((document) => {
+        document.entityId = assistanceRequestId
+      })
+      await this.createDocuments(documents)
+    } catch (error) {
+      this.setFailureAlert('Failed to add documents to your assistance request')
+    }
+  },
 }
