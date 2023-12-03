@@ -28,27 +28,23 @@ function mapDocumentFileObjectForBack(documents) {
   return formData
 }
 
+function addEntityIdToDocument(documents, entityId) {
+  documents?.forEach((document) => {
+    document.entityId = entityId
+  })
+  return documents
+}
+
 export default {
-  async createDocuments(documents) {
-    const payload = mapDocumentFileObjectForBack(documents)
+  async createDocuments(documents, entityId) {
+    const updatedDocuments = addEntityIdToDocument(documents, entityId)
+    const payload = mapDocumentFileObjectForBack(updatedDocuments)
     if (!payload.has('fileMapping')) return
     try {
       const response = await ApiService.apiAxios.post(ApiRoutes.DOCUMENTS, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to create documents - ${error}`)
-      throw error
-    }
-  },
-
-  async createDocumentsForAssistanceRequest(documents, assistanceRequestId) {
-    try {
-      documents.forEach((document) => {
-        document.entityId = assistanceRequestId
-      })
-      await this.createDocuments(documents)
-    } catch (error) {
-      console.log(`Failed to add documents to your assistance request - ${error}`)
       throw error
     }
   },

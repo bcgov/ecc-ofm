@@ -228,7 +228,7 @@ export default {
           const response = await this.createAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
           await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
-          await DocumentService.createDocumentsForAssistanceRequest(this.uploadedDocuments, response?.assistanceRequestId)
+          await DocumentService.createDocuments(this.uploadedDocuments, response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           this.setFailureAlert('Failed to create a new assistance request')

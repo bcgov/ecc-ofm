@@ -106,7 +106,7 @@ export default {
         try {
           this.isLoading = true
           await this.createReply(this.assistanceRequestId)
-          await DocumentService.createDocumentsForAssistanceRequest(this.uploadedDocuments, this.assistanceRequestId)
+          await DocumentService.createDocuments(this.uploadedDocuments, this.assistanceRequestId)
           await this.updateStatusToAssigned(this.assistanceRequestId)
           await this.updateStoredAssistanceRequest(this.assistanceRequestId)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
