@@ -30,3 +30,13 @@ export function getFileNameWithMaxNameLength(fileName, nameLength = 30, extensio
 
   return name + extension
 }
+
+export function isHeicFile(fileName) {
+  const fileExtension = getFileExtension(fileName)
+  return fileExtension === 'heic'
+}
+
+export function updateHeicFileNameToJpg(filename) {
+  const regex = /\.heic(?![\s\S]*\.heic)/i //looks for last occurrence of .heic case-insensitive
+  return filename?.replace(regex, '.jpg')
+}

@@ -206,11 +206,8 @@ async function postDocuments(payload, headers) {
   log.info('postDocuments Url', url)
 
   try {
-    log.info('payload', payload)
-    const updatedHeaders = getHttpHeaderFormData(headers)
-    log.info('updatedheaders', updatedHeaders)
-    const response = await axios.post(url, payload, { headers: updatedHeaders })
-    logResponse('postDocuments', response.data)
+    const response = await axios.post(url, payload, { headers: headers })
+    logResponse('postDocuments', response)
     return response.data
   } catch (e) {
     log.error('postDocuments Error', e)
@@ -227,12 +224,6 @@ function getHttpHeader() {
       [config.get('dynamicsApi:apiKeyHeader')]: config.get('dynamicsApi:apiKeyValue'),
     },
   }
-}
-
-function getHttpHeaderFormData(headers) {
-  const headerKey = config.get('dynamicsApi:apiKeyHeader')
-  headers[headerKey] = config.get('dynamicsApi:apiKeyValue')
-  return headers
 }
 
 function generateJWTToken(jwtid, subject, issuer, algorithm, payload) {

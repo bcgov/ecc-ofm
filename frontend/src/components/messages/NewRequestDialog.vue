@@ -15,7 +15,8 @@
                 :items="requestCategories"
                 item-title="categoryName"
                 item-value="categoryId"
-                :rules="rules.required"></v-select>
+                :rules="rules.required"
+                :disabled="isLoading"></v-select>
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
@@ -23,7 +24,14 @@
               <AppLabel variant="modal">Subject:</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
-              <v-text-field v-model="newRequestModel.subject" placeholder="Brief summary of request" counter maxlength="100" variant="outlined" :rules="rules.required"></v-text-field>
+              <v-text-field
+                v-model="newRequestModel.subject"
+                placeholder="Brief summary of request"
+                counter
+                maxlength="100"
+                variant="outlined"
+                :rules="rules.required"
+                :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
@@ -31,7 +39,14 @@
               <AppLabel variant="modal">Request description:</AppLabel>
             </v-col>
             <v-col class="v-col-12">
-              <v-textarea v-model="newRequestModel.description" placeholder="Detailed description of request" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
+              <v-textarea
+                v-model="newRequestModel.description"
+                placeholder="Detailed description of request"
+                counter
+                maxlength="1000"
+                variant="outlined"
+                :rules="rules.required"
+                :disabled="isLoading"></v-textarea>
             </v-col>
           </v-row>
           <v-row no-gutters class="mt-2">
@@ -49,6 +64,7 @@
                 :rules="rules.listIsNotEmpty"
                 :items="facilities"
                 item-title="facilityName"
+                :disabled="isLoading"
                 return-object>
                 <template v-slot:prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilities">
@@ -69,14 +85,14 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload entity-name="ofm_assistance_requests" @updateDocuments="updateDocuments"></AppDocumentUpload>
+            <AppDocumentUpload entityName="ofm_assistance_requests" :loading="isLoading" @updateDocuments="updateDocuments"></AppDocumentUpload>
           </v-row>
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 pb-0">
               <AppLabel variant="modal">Preferred method of contact:</AppLabel>
             </v-col>
             <v-col class="v-col-12">
-              <v-radio-group v-model="newRequestModel.contactMethod" :rules="rules.required" inline color="primary">
+              <v-radio-group v-model="newRequestModel.contactMethod" :rules="rules.required" :disabled="isLoading" inline color="primary">
                 <v-radio label="Phone" value="2"></v-radio>
                 <v-radio label="Portal message" value="1"></v-radio>
               </v-radio-group>
@@ -87,7 +103,7 @@
               <AppLabel variant="modal">Business phone:</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
-              <v-text-field v-model="newRequestModel.phone" variant="outlined" :rules="[...rules.required, rules.phone]" />
+              <v-text-field v-model="newRequestModel.phone" variant="outlined" :rules="[...rules.required, rules.phone]" :disabled="isLoading" />
             </v-col>
           </v-row>
         </v-form>
@@ -206,13 +222,9 @@ export default {
 
     async createDocumentsForAssistanceRequest(assistanceRequestId) {
       try {
-        console.log('THIS IS BEFORE =============== ')
-        console.log(this.uploadedDocuments)
-        console.log('THIS IS AFTER =============== ')
         this.uploadedDocuments.forEach((document) => {
           document.entityId = assistanceRequestId
         })
-        console.log(this.uploadedDocuments)
         await DocumentService.createDocuments(this.uploadedDocuments)
       } catch (error) {
         this.setFailureAlert('Failed to add documents to your assistance request')
@@ -224,12 +236,10 @@ export default {
       if (this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
-          // const response = await this.createAssistanceRequest(this.newRequestModel)
-          // this.referenceNumber = response?.referenceNumber
-          this.referenceNumber = 'RANDOM'
-          // await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
-          // await this.createDocumentsForAssistanceRequest(response?.assistanceRequestId)
-          await this.createDocumentsForAssistanceRequest('ec4b2a20-bd8f-ee11-8179-000d3a09d499')
+          const response = await this.createAssistanceRequest(this.newRequestModel)
+          this.referenceNumber = response?.referenceNumber
+          await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
+          await this.createDocumentsForAssistanceRequest(response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           this.setFailureAlert('Failed to create a new assistance request')

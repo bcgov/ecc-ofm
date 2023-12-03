@@ -11,17 +11,18 @@
               prepend-icon="mdi-file-upload"
               :rules="[...fileRules]"
               :accept="fileExtensionAccept"
+              :disabled="loading"
               @update:modelValue="validateUploadedFile(item.id)"></v-file-input>
           </v-col>
           <v-col cols="11" md="6" class="pr-4">
-            <v-text-field v-model="item.description" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
+            <v-text-field v-model="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
           </v-col>
-          <v-col cols="1" class="pt-3">
+          <v-col v-if="!loading" cols="1" class="pt-3">
             <v-icon small @click="deleteFile(item.id)">mdi-delete</v-icon>
           </v-col>
         </v-row>
       </div>
-      <AppButton id="add-new-file" @click="addFile">
+      <AppButton v-if="!loading" id="add-new-file" @click="addFile">
         <v-icon>mdi-plus</v-icon>
         Add
       </AppButton>
@@ -40,12 +41,16 @@ export default {
       type: String,
       required: true,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['updateDocuments'],
   data() {
     return {
       documents: [],
-      maxSize: 4194304,
+      maxSize: 4194304, // 4 MB
       isValidForm: false,
       fileExtensionAccept: ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx'],
       fileFormats: 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS and XLSX',
