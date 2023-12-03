@@ -77,15 +77,6 @@ const NotificationMappings = [
   { back: 'ofm_is_read', front: 'isRead' },
 ]
 
-const DocumentFileMappings = [
-  { back: 'ofm_subject', front: 'name' },
-  { back: 'ofm_extension', front: 'extension' },
-  { back: 'ofm_file_size', front: 'size' },
-  { back: 'ofm_description', front: 'description' },
-  { back: 'entity_name_set', front: 'entityName' },
-  { back: 'regardingid', front: 'entityId' },
-]
-
 const UserPermissionMappings = [
   { back: 'contactid', front: 'contactId' },
   { back: 'ofm_first_name', front: 'firstName' },
@@ -116,7 +107,6 @@ module.exports = {
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
-  DocumentFileMappings,
   UserPermissionMappings,
   FacilityMappings,
 }
