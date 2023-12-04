@@ -17,6 +17,7 @@ export const ApiRoutes = Object.freeze({
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
   NOTIFICATIONS: baseRoot + '/notifications',
+  DOCUMENTS: baseRoot + '/documents',
 })
 
 // TODO (weskubo-cgi) Remove this if not using page titles in UI
