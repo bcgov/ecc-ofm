@@ -26,7 +26,7 @@
       <v-col>
         <!-- Users Table -->
         <v-skeleton-loader :loading="!usersAndFacilities" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="sort(filteredUserFacilities)" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
+          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
               <AppButton @click.stop="toggleExpand(item)" variant="text">
@@ -118,7 +118,8 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      return this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase())))
+      if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
+      return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
     },
   },
   async created() {
@@ -163,7 +164,6 @@ export default {
       return string.split(',').map(Number)
     },
 
-    // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
     /**
      * Get a comma separated list of role descriptions from a comma separated list of role codes
      */
@@ -176,6 +176,7 @@ export default {
       return roleDescriptions.join(', ')
     },
 
+    // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
     /**
      * Get the role description for a role code
      */
@@ -208,7 +209,7 @@ export default {
     /**
      * Sort users by: account management role 1st, expense authority 2nd, last name 3rd
      */
-    sort(users) {
+    sortUsers(users) {
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
         const roleA = a.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
