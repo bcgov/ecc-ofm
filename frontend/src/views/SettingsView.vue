@@ -68,7 +68,9 @@
                     </v-col>
                   </v-row>
                 </td>
-                <td class="pl-0"><AppButton variant="text">Deactivate user</AppButton></td>
+                <td class="pl-0">
+                  <AppButton variant="text">Deactivate user</AppButton>
+                </td>
               </tr>
             </template>
           </v-data-table>
@@ -101,7 +103,7 @@ export default {
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
         { title: 'Email', key: 'email', width: '12%' },
-        { title: 'Username', key: 'userName', width: '12%' },
+        { title: 'BCeID', key: 'userName', width: '12%' },
         { title: 'Role', key: 'roles', width: '12%' },
         { title: 'Expense Authority', key: 'isExpenseAuthority', width: '12%' },
         { title: 'Status', key: 'stateCode', width: '16%' },
@@ -116,7 +118,8 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      return this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase())))
+      if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
+      return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
     },
   },
   async created() {
@@ -161,7 +164,6 @@ export default {
       return string.split(',').map(Number)
     },
 
-    // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
     /**
      * Get a comma separated list of role descriptions from a comma separated list of role codes
      */
@@ -174,6 +176,7 @@ export default {
       return roleDescriptions.join(', ')
     },
 
+    // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
     /**
      * Get the role description for a role code
      */
@@ -201,6 +204,28 @@ export default {
           return 'Inactive'
       }
     },
+
+
+    /**
+     * Sort users by: account management role 1st, expense authority 2nd, last name 3rd
+     */
+    sortUsers(users) {
+      return users.sort((a, b) => {
+        // Check for account management role and sort by it, with true values first
+        const roleA = a.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
+        const roleB = b.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
+        if (roleA && !roleB) return -1
+        if (!roleA && roleB) return 1
+
+        // If roles are the same, then sort by stateCode
+        if (a.stateCode !== b.stateCode) {
+          return a.stateCode - b.stateCode;
+        }
+
+        // If stateCode is the same, then sort by lastName
+        return a.lastName.localeCompare(b.lastName);
+      });
+    }
   },
 }
 </script>
