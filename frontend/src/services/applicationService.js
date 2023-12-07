@@ -1,11 +1,10 @@
-import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
+import { ApiRoutes } from '@/utils/constants'
 
 export default {
   sortApplications(applications) {
     applications?.sort((app1, app2) => {
-      const latestActivityDateOrder = new Date(app2.latestActivity) - new Date(app1.latestActivity)
-      return latestActivityDateOrder
+      return new Date(app2.latestActivity) - new Date(app1.latestActivity)
     })
   },
 

@@ -4,11 +4,9 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
-
 import { createVuetify } from 'vuetify/dist/vuetify'
 import { fa } from 'vuetify/iconsets/fa'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 const myCustomLightTheme = {
   dark: false,

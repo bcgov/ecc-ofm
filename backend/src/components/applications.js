@@ -6,7 +6,7 @@ const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 
 function mapApplicationObjectForFront(data) {
-  let application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
+  const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
   const ministryLastUpdated = new Date(application?.ministryLastUpdated)
   const providerLastUpdated = new Date(application?.providerLastUpdated)
   application.latestActivity = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
@@ -16,7 +16,7 @@ function mapApplicationObjectForFront(data) {
 async function getApplicationsByFacilityId(req, res) {
   try {
     log.debug('getApplicationsByFacilityId: ', req.params.facilityId)
-    let applications = []
+    const applications = []
     const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,_ofm_facility_value&$filter=(_ofm_facility_value eq '${req.params.facilityId}')`
     log.debug('operation: ', operation)
     const response = await getOperation(operation)

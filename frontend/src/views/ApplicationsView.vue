@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <h3>Applications</h3>
+    <h1>Applications</h1>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applications)">You have no applications on file</div>
       <v-data-table v-else :headers="headers" :items="applications" item-key="applicationId" density="compact">
