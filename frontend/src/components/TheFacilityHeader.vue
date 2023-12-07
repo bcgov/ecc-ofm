@@ -8,7 +8,7 @@
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
           <template v-slot:activator="{ props }">
-            <v-btn color="primary" id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
+            <v-btn id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>
             <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">

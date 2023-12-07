@@ -5,14 +5,14 @@
       <TheHeader @menu-toggled="handleMenuToggled" />
       <TheSnackBar />
       <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
-      <TheEnvBar />
     </div>
 
     <v-main class="align-start">
+      <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated && userInfo">
-        <TheMenu />
-      </v-navigation-drawer>
+      <!-- <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated && userInfo">
+        <TheMenu v-show="false" />
+      </v-navigation-drawer> -->
       <TheFacilityHeader v-if="isActingProvider" />
       <router-view class="align-start pt-0 px-8 mb-0" />
     </v-main>
@@ -129,7 +129,7 @@ export default {
   top: 0px;
   position: fixed;
   width: 100%; */
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
   z-index: 1002;
 }

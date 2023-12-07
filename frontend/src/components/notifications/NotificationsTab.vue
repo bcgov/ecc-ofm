@@ -73,6 +73,9 @@ export default {
 </script>
 
 <style scoped>
+.border-right {
+  border-right: 1px solid #003366;
+}
 .flex-item {
   display: flex;
   align-items: left;

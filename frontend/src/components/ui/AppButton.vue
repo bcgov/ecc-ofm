@@ -12,7 +12,7 @@ export default {
       return {
         'BC-Gov-PrimaryButton': this.$attrs.variant === undefined && this.primary,
         'BC-Gov-SecondaryButton': this.$attrs.variant === undefined && !this.primary,
-        'text-button': this.$attrs.variant !== '',
+        'text-variant': this.$attrs.variant !== '',
       }
     },
   },
@@ -25,7 +25,7 @@ export default {
 }
 </script>
 <style scoped>
-.text-button {
+.text-variant {
   color: #003366;
 }
 
@@ -34,11 +34,7 @@ export default {
   border: none;
   border-radius: 4px;
   color: white;
-  margin: 8px;
-  /* ma-2 */
-  padding: 0 12px;
-  /* px-3 */
-  /* padding: 12px 32px;
+  padding: 10px 32px;
   text-align: center;
   text-decoration: none;
   display: block;
@@ -51,7 +47,7 @@ export default {
     sans-serif;
   font-weight: 700;
   letter-spacing: 1px;
-  cursor: pointer; */
+  cursor: pointer;
 }
 
 .BC-Gov-PrimaryButton:hover {
@@ -72,16 +68,20 @@ export default {
   background: none;
   border-radius: 4px;
   border: 2px solid #003366;
-  margin: 8px;
-  padding: 0 12px;
-  /* text-align: center;
+  padding: 10px 30px;
+  text-align: center;
   text-decoration: none;
   display: block;
   font-size: 18px;
-  Font-family: ‘BCSans’, ‘Noto Sans’, Verdana, Arial, sans-serif;
+  font-family:
+    ‘BCSans’,
+    ‘Noto Sans’,
+    Verdana,
+    Arial,
+    sans-serif;
   font-weight: 700;
   letter-spacing: 1px;
-  cursor: pointer; */
+  cursor: pointer;
   color: #003366;
 }
 .BC-Gov-SecondaryButton:hover {

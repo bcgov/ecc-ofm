@@ -59,7 +59,7 @@
               You must register for a Business BCeID before you can log in - it only takes a few minutes.
             </v-card-text>
             <v-card-actions>
-              <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" @click="clearStorage" width="250px">Register for a BCeID</AppButton>
+              <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" @click="clearStorage" width="300px">Register for a BCeID</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>

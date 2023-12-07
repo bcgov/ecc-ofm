@@ -81,7 +81,7 @@ export default {
 
 <style scoped>
 .border-right {
-  border-right: 2px solid #6699cc;
+  border-right: 1px solid #003366;
 }
 
 .flex-item {
