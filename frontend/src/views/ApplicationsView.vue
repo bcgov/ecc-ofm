@@ -20,7 +20,7 @@
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
           <v-btn v-if="isApplicationDeletable(item)" variant="text" @click="false">
-            <v-icon>mdi-trash-can-outline</v-icon>
+            <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -70,6 +70,7 @@ export default {
           this.applications = this.applications?.concat(response)
         }),
       )
+      ApplicationService.sortApplications(this.applications)
     } catch (error) {
       this.setFailureAlert(`Failed to load applications - ${error}`)
     } finally {
