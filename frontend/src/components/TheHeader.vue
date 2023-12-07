@@ -173,6 +173,10 @@ a {
   height: 80%;
 }
 
+.mainTitle {
+  color: #ffffff;
+}
+
 @media screen and (max-width: 801px) {
   .logo {
     width: 100px;
