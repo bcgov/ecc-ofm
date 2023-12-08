@@ -182,7 +182,7 @@ export default {
   background-color: white;
 }
 
-.menuRow /deep/ i {
+.menuRow :deep(i) {
   color: #003366;
 }
 
@@ -192,12 +192,11 @@ export default {
   background-color: white;
 }
 
-header /deep/ .v-toolbar__content {
+header :deep(.v-toolbar__content) {
   padding-left: 0 !important;
 }
 
-/* TODO comp error on... /deep/ .v-list-group__header:before { */
-.v-list-group__header:before {
+:deep(.v-list-group__header):before {
   background-color: #e9ebef;
 }
 
