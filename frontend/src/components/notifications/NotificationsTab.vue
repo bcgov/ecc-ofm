@@ -1,36 +1,32 @@
 <template>
-  <v-card>
-    <v-container class="pa-3" fluid>
+  <v-row>
+    <v-col cols="12" md="6" class="border-right pa-0" :class="borderClass">
       <v-row>
-        <v-col sm="12" md="6" class="border-right pa-0">
-          <v-row>
-            <v-col class="mt-1">
-              <div class="flex-item">
-                <AppButton @click="toggleMarkUnreadButtonInNotificationTable(false)" variant="text">
-                  <v-icon class="icon" left>mdi-email-outline</v-icon>
-                  <span class="btn-label">Mark unread</span>
-                </AppButton>
-                <AppButton @click="toggleMarkReadButton(true)" variant="text">
-                  <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-                  <span class="btn-label">Mark read</span>
-                </AppButton>
-              </div>
-            </v-col>
-          </v-row>
-          <v-skeleton-loader :loading="!notifications" type="table-tbody">
-            <NotificationsTable
-              :markReadButtonState="markReadButtonState"
-              :markUnreadButtonInNotificationTableState="markUnreadButtonInNotificationTableState"
-              :markUnreadButtonInNotificationDetailsState="markUnreadButtonInNotificationDetailsState"
-              @openNotificationDetails="openNotificationDetails" />
-          </v-skeleton-loader>
-        </v-col>
-        <v-col sm="12" md="6">
-          <NotificationDetails :notificationId="selectedNotificationId" @toggleMarkUnreadButtonInNotificationDetails="toggleMarkUnreadButtonInNotificationDetails" />
+        <v-col class="mt-1">
+          <div>
+            <AppButton @click="toggleMarkUnreadButtonInNotificationTable(false)" variant="text">
+              <v-icon class="icon" left>mdi-email-outline</v-icon>
+              <span class="btn-label">Mark unread</span>
+            </AppButton>
+            <AppButton @click="toggleMarkReadButton(true)" variant="text">
+              <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+              <span class="btn-label">Mark read</span>
+            </AppButton>
+          </div>
         </v-col>
       </v-row>
-    </v-container>
-  </v-card>
+      <v-skeleton-loader :loading="!notifications" type="table-tbody">
+        <NotificationsTable
+          :markReadButtonState="markReadButtonState"
+          :markUnreadButtonInNotificationTableState="markUnreadButtonInNotificationTableState"
+          :markUnreadButtonInNotificationDetailsState="markUnreadButtonInNotificationDetailsState"
+          @openNotificationDetails="openNotificationDetails" />
+      </v-skeleton-loader>
+    </v-col>
+    <v-col cols="12" md="6">
+      <NotificationDetails :notificationId="selectedNotificationId" @toggleMarkUnreadButtonInNotificationDetails="toggleMarkUnreadButtonInNotificationDetails" />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -53,6 +49,9 @@ export default {
   },
   computed: {
     ...mapState(useNotificationsStore, ['notifications']),
+    borderClass() {
+      return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
+    },
   },
   methods: {
     ...mapActions(useNotificationsStore, ['getNotifications']),
@@ -73,25 +72,10 @@ export default {
 </script>
 
 <style scoped>
+.border-bottom {
+  border-bottom: 2px solid #003366;
+}
 .border-right {
-  border-right: 1px solid #003366;
-}
-.flex-item {
-  display: flex;
-  align-items: left;
-}
-
-.btn-style:hover {
-  background-color: #ffffff;
-}
-
-.btn-style:hover .btn-label {
-  text-decoration: underline;
-}
-
-.btn-style .v-btn__content .icon {
-  padding: 0px;
-  margin: 0px;
-  font-size: 1.5em;
+  border-right: 2px solid #003366;
 }
 </style>

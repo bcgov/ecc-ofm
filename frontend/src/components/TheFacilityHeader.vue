@@ -1,18 +1,17 @@
 <template>
-  <v-container class="pa-2 ma-0 facility-container" v-if="isAuthenticated && userInfo">
+  <v-container v-if="isAuthenticated && userInfo" class="pb-5" fluid>
     <v-row align="end" justify="space-between">
-      <v-col cols="6" class="header-org">
+      <v-col cols="12" md="6" class="header-org">
         {{ userInfo.organizationName }}
       </v-col>
-      <v-col v-if="showFacility" class="header-facility" cols="6">
+      <v-col v-if="showFacility" class="header-facility justify-md-end justify-sm-start" cols="12" md="6">
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
           <template v-slot:activator="{ props }">
             <v-btn id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId"
-              @click="changeFacility(facility)">
+            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">
               <v-list-item-title>{{ facility.facilityName }}</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -35,6 +34,9 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated', 'userInfo']),
     ...mapWritableState(useAuthStore, ['currentFacility']),
+    borderClass() {
+      return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'flex-start' : 'flex-end'
+    },
   },
   methods: {
     changeFacility(facility) {
@@ -44,10 +46,6 @@ export default {
 }
 </script>
 <style scoped>
-.facility-container {
-  max-width: 100%;
-}
-
 .header-org {
   display: flex;
   align-items: flex-end;
@@ -60,7 +58,7 @@ export default {
 .header-facility {
   display: flex;
   align-items: flex-end;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   color: #003366;
   font-weight: 600;
   font-size: 1.3em;

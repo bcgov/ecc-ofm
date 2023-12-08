@@ -69,10 +69,10 @@ export default {
 }
 
 .BC-Gov-SecondaryButton {
-  background: none;
+  background-color: #ffffff;
   border-radius: 4px;
   border: 2px solid #003366;
-  padding: 10px 30px;
+  padding: 10px 32px;
   text-align: center;
   text-decoration: none;
   display: block;

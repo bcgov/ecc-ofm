@@ -1,6 +1,5 @@
 <template>
-  <v-app-bar absolute color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
-    <v-app-bar-nav-icon variant="text" class="d-md-none" @click="$emit('menuToggled')" />
+  <v-app-bar color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
     <!-- Navbar content -->
     <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" :fluid="true">
       <v-row class="justify-space-between">
@@ -17,23 +16,31 @@
         </v-row>
         <v-spacer></v-spacer>
         <div v-if="isAuthenticated && userInfo" class="mt-5">
-          <!--v-btn @click="goToMessagePage()" id="mail_box_button" rounded class="mr-5 elevation-0" dark>
-            <v-badge color="red" class="pt-0" :content="unreadMessageCount" bottom right overlap offset-x="8" offset-y="28">
-              <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
-            </v-badge>
-          </v-btn-->
-          <v-menu name="user_options" offset-y>
-            <template #activator="{ props }">
-              <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
-                <v-avatar left color="info">{{ userInfo.displayName[0] }}</v-avatar>
-                <span class="display-name pl-1">{{ userInfo.displayName }}</span>
-              </v-chip>
-            </template>
-            <v-list dark style="background-color: #003366; color: white">
-              <v-list-item id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
-              <v-list-item id="logout_button" :href="authRoutes.LOGOUT" title="Log Out" />
-            </v-list>
-          </v-menu>
+          <v-row>
+            <v-col style="width: 70px">
+              <v-btn @click="$router.push({ name: 'messaging' })" id="mail_box_button" rounded class="mr-5 elevation-0" dark v-if="!isNaN(messageNotificationCount)">
+                <v-badge color="red" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
+                  <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
+                </v-badge>
+              </v-btn>
+              <!-- Skeleton loader layout is off so render with custom style in if/else -->
+              <v-skeleton-loader type="chip" style="margin-top: -10px; background-color: #003366; width: 80px" v-else></v-skeleton-loader>
+            </v-col>
+            <v-col>
+              <v-menu name="user_options" offset-y>
+                <template #activator="{ props }">
+                  <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
+                    <v-avatar left color="info">{{ userInfo.displayName[0] }}</v-avatar>
+                    <span class="display-name pl-1">{{ userInfo.displayName }}</span>
+                  </v-chip>
+                </template>
+                <v-list dark style="background-color: #003366; color: white">
+                  <v-list-item class="user-link" id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
+                  <v-list-item class="user-link" id="logout_button" :href="authRoutes.LOGOUT" title="Log Out" />
+                </v-list>
+              </v-menu>
+            </v-col>
+          </v-row>
         </div>
       </v-row>
     </v-container>
@@ -41,9 +48,11 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
-import { AuthRoutes } from '@/utils/constants'
+import { mapActions, mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { useMessagesStore } from '@/stores/messages'
+import { useNotificationsStore } from '@/stores/notifications'
+import { AuthRoutes } from '@/utils/constants'
 
 export default {
   data() {
@@ -51,14 +60,12 @@ export default {
       authRoutes: AuthRoutes,
     }
   },
-  emits: ['menuToggled'],
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser']),
+    ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
+    ...mapState(useNotificationsStore, ['unreadNotificationCount']),
     dataReady: function () {
       return this.userInfo
-    },
-    unreadMessageCount() {
-      return Math.floor(Math.random() * 10)
     },
     appTitle() {
       return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
@@ -73,6 +80,29 @@ export default {
     xs() {
       return this.$vuetify.display.xs
     },
+    messageNotificationCount() {
+      console.log('mnc', this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount)
+      return this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount
+    },
+    // count of requests that are unread or are in the status of “Action required”
+    actionRequiredAndUnreadMessageCount() {
+      const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
+      return this.unreadMessageCount + readActionRequiredMessagesCount
+    },
+  },
+  async created() {
+    try {
+      await this.getUserInfo()
+      await this.getNotifications(this.userInfo.contactId)
+      await this.getAssistanceRequests(this.userInfo?.contactId)
+    } catch (error) {
+      console.info(error)
+    }
+  },
+  methods: {
+    ...mapActions(useAuthStore, ['getUserInfo']),
+    ...mapActions(useMessagesStore, ['getAssistanceRequests']),
+    ...mapActions(useNotificationsStore, ['getNotifications']),
   },
 }
 </script>
@@ -88,6 +118,10 @@ export default {
 
 a {
   text-decoration: none;
+}
+
+.user-link:hover {
+  color: #ffffff;
 }
 
 .logo {

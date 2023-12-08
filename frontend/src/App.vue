@@ -2,7 +2,7 @@
 <template>
   <v-app id="app">
     <div class="app-header">
-      <TheHeader @menu-toggled="handleMenuToggled" />
+      <TheHeader />
       <TheSnackBar />
       <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
     </div>
@@ -10,10 +10,7 @@
     <v-main class="align-start">
       <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <!-- <v-navigation-drawer class="site-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated && userInfo">
-        <TheMenu v-show="false" />
-      </v-navigation-drawer> -->
-      <TheFacilityHeader v-if="isActingProvider" />
+      <TheFacilityHeader v-if="isActingProvider" :showFacility="$route.meta.showFacility" />
       <router-view class="align-start pt-0 px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -50,7 +47,6 @@ export default {
 
   data() {
     return {
-      showMenu: true,
       showToTopBtn: false,
       deactivateMultipleDraggableDialog: null,
     }
@@ -68,10 +64,6 @@ export default {
       this.handleWebSocket()
     },
     */
-    mobile() {
-      // Reset the menu state on mobile change
-      this.showMenu = false
-    },
   },
   async created() {
     //this.setLoading(true);
@@ -95,9 +87,6 @@ export default {
   methods: {
     ...mapActions(useAppStore, ['getConfig', 'getLookupInfo']),
     ...mapActions(useAuthStore, ['getJwtToken']),
-    handleMenuToggled() {
-      this.showMenu = !this.showMenu
-    },
     onScroll(e) {
       if (typeof window === 'undefined') return
       const top = window.pageYOffset || e.target.scrollTop || 0
