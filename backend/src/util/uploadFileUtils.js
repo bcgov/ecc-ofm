@@ -1,42 +1,42 @@
-'use strict';
-const convert = require('heic-convert');
-const log = require('../components/logger');
+'use strict'
+const convert = require('heic-convert')
+const config = require('../config/index')
 
 function getFileExtension(fileName) {
-  if (fileName)
-    return fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
-  return '';
+  if (fileName) return fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase()
+  return ''
 }
 
-async function convertHeicDocumentToJpg(document) {
+function isHeicFile(fileName) {
+  const fileExtension = getFileExtension(fileName)
+  return fileExtension === 'heic'
+}
 
-  for (let expectedProperty of ['documentbody', 'filesize', 'filename']) {
-    if (!(expectedProperty in document)) {
-      console.warn(`convertHeicDocumentToJpg :: key: ${expectedProperty} was not found. Please check the document parameter`);
-    }
-  }
+function updateHeicFileNameToJpg(filename) {
+  const regex = /\.heic(?![\s\S]*\.heic)/i //looks for last occurrence of .heic case-insensitive
+  return filename?.replace(regex, '.jpg')
+}
 
-  const heicBuffer = Buffer.from(document.documentbody, 'base64');
+async function convertHeicBufferToJpg(heicFileBuffer) {
   const jpgBuffer = await convert({
-    buffer: heicBuffer,
+    buffer: heicFileBuffer,
     format: 'JPEG',
-    quality: 0.5
-  });
+    quality: 0.5,
+  })
+  return jpgBuffer
+}
 
-  log.verbose('convertHeicDocumentToJpg :: coverting from heic', {...document, documentbody: 'OMITTED'});
-
-  document.documentbody = jpgBuffer.toString('base64');
-  document.filesize = jpgBuffer.byteLength;
-  const regex = /\.heic(?![\s\S]*\.heic)/i; //looks for last occurrence of .heic case-insensitive
-  document.filename = document.filename.replace(regex,'.jpg');
-
-  log.verbose('convertHeicDocumentToJpg :: converted to jpg', {...document, documentbody: 'OMITTED'});
-
-  return document;
+function getPostDocumentsHeaders(formFile) {
+  let headers = formFile.getHeaders()
+  const headerKey = config.get('dynamicsApi:apiKeyHeader')
+  headers[headerKey] = config.get('dynamicsApi:apiKeyValue')
+  return headers
 }
 
 module.exports = {
-  convertHeicDocumentToJpg,
-  getFileExtension
-};
-
+  convertHeicBufferToJpg,
+  getFileExtension,
+  isHeicFile,
+  getPostDocumentsHeaders,
+  updateHeicFileNameToJpg,
+}

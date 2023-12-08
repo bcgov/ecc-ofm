@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-reserved-component-names -->
 <template>
   <v-app id="app">
-    <div class="header">
+    <div class="app-header">
       <TheHeader @menu-toggled="handleMenuToggled" />
       <TheSnackBar />
       <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
@@ -110,16 +110,8 @@ export default {
 }
 </script>
 
-<style>
-.site-menu {
-  margin-top: 2px;
-}
-
-.envBanner {
-  font-size: 0.8rem;
-}
-
-.header {
+<style scoped>
+.app-header {
   /* background-color: #036;
   border-bottom: 2px solid #fcba19;
   padding: 0 65px 0 65px;
@@ -132,5 +124,8 @@ export default {
   /* position: fixed; */
   width: 100%;
   z-index: 1002;
+}
+.app-menu {
+  margin-top: 2px;
 }
 </style>

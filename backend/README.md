@@ -12,9 +12,9 @@ You may see references to the EDUC-CCOF project until we get this properly clean
 
 **`Step 3`** Place local.json in src/config.
 
-**`Step 4`** Run `npm install` (or `yarn`) in command line from backend folder, to install required dependencies.
+**`Step 4`** Run `npm install` in command line from backend folder, to install required dependencies.
 
-**`Step 5`** Run `npm run serve` (or `yarn serve`) in command line from backend folder, to run the app.
+**`Step 5`** Run `npm run serve` in command line from backend folder, to run the app.
 
 **`Step 6`** Open http://localhost:8080/api/health to verify that the app is running.
 

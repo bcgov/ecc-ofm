@@ -63,10 +63,12 @@ function formatPhoneNumber(phoneNumber) {
 }
 
 function formatDate(date) {
+  if (!date) return '- - - -'
   return moment(date).format('YYYY-MMM-DD')
 }
 
 function formatDateTime(date) {
+  if (!date) return '- - - -'
   return moment(date).format('YYYY-MMM-DD hh:mm A')
 }
 

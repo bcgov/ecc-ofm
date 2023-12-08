@@ -4,14 +4,15 @@
       <v-col cols="6" class="header-org">
         {{ userInfo.organizationName }}
       </v-col>
-      <v-col class="header-facility" cols="6">
+      <v-col v-if="showFacility" class="header-facility" cols="6">
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
           <template v-slot:activator="{ props }">
             <v-btn id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">
+            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId"
+              @click="changeFacility(facility)">
               <v-list-item-title>{{ facility.facilityName }}</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -23,7 +24,14 @@
 <script>
 import { mapState, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+
 export default {
+  props: {
+    showFacility: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated', 'userInfo']),
     ...mapWritableState(useAuthStore, ['currentFacility']),
@@ -39,6 +47,7 @@ export default {
 .facility-container {
   max-width: 100%;
 }
+
 .header-org {
   display: flex;
   align-items: flex-end;

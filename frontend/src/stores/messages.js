@@ -73,6 +73,7 @@ export const useMessagesStore = defineStore('messages', {
       if (assistanceRequestIndex !== -1) {
         this.assistanceRequests[assistanceRequestIndex] = assistanceRequest
       }
+      sortAssistanceRequests(this.assistanceRequests)
     },
     async getAssistanceRequestConversation(assistanceRequestId) {
       try {

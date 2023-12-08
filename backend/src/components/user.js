@@ -6,7 +6,14 @@ const axios = require('axios')
 const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
 // TODO... const { ORGANIZATION_PROVIDER_TYPES} = require('../util/constants')
-const { UserProfileMappings, UserProfileOrganizationMappings, UserProfileFacilityPermissionMappings, UserProfileFacilityMappings } = require('../util/mapping/Mappings')
+const {
+  UserProfileMappings,
+  UserProfileOrganizationMappings,
+  UserProfileFacilityPermissionMappings,
+  UserProfileFacilityMappings,
+  UserPermissionMappings,
+  FacilityMappings,
+} = require('../util/mapping/Mappings')
 
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
@@ -157,6 +164,32 @@ function parseFacilityPermissions(userResponse) {
     .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
+function mapUsersPermissionsFacilitiesObjectForFront(data) {
+  const usersPermissionsFacilities = new MappableObjectForFront(data, UserPermissionMappings).toJSON()
+  if (usersPermissionsFacilities?.facilities) {
+    usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
+      let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
+      facilityData.city = facilityData.address.address1_city
+      facilityData.address = facilityData.address.address1_line1
+      return facilityData
+    })
+  }
+  return usersPermissionsFacilities
+}
+
+async function getUsersPermissionsFacilities(req, res) {
+  try {
+    let usersPermissionsFacilities = []
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const response = await getOperation(operation)
+    response?.value?.forEach((item) => usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item)))
+    return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getUserInfo,
+  getUsersPermissionsFacilities,
 }

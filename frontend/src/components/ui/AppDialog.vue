@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="dialog-title">
         <v-row no-gutters justify="space-between" align="center">
-          <h3>{{ title }}</h3>
+          <h3 class="dialog-header">{{ title }}</h3>
           <v-btn v-if="!isLoading" variant="text" icon="mdi-window-close" @click="$emit('close')" />
         </v-row>
       </v-card-title>
@@ -33,6 +33,9 @@ export default {
 }
 </script>
 <style scoped>
+.dialog-header {
+  color: white;
+}
 .dialog-title {
   background-color: #003366;
   color: white;

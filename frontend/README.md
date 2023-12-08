@@ -18,24 +18,12 @@ With NPM:
 npm install
 ```
 
-With Yarn:
-
-```sh
-yarn
-```
-
 ### Compile and Hot-Reload for Development
 
 With NPM:
 
 ```sh
 npm run dev
-```
-
-With Yarn:
-
-```sh
-yarn dev
 ```
 
 ### Compile and Minify for Production
@@ -46,24 +34,12 @@ With NPM:
 npm run build
 ```
 
-With Yarn:
-
-```sh
-yarn build
-```
-
 ### Lint with [ESLint](https://eslint.org/)
 
 With NPM:
 
 ```sh
 npm run lint
-```
-
-With Yarn:
-
-```sh
-yarn lint
 ```
 
 ### Docker
