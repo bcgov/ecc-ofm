@@ -97,6 +97,18 @@ const FacilityMappings = [
   { back: 'ofm_facility', front: 'address' },
 ]
 
+const ApplicationMappings = [
+  { back: 'ofm_applicationid', front: 'applicationId' },
+  { back: 'ofm_application', front: 'referenceNumber' },
+  { back: 'ofm_summary_submittedon', front: 'submittedDate' },
+  { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
+  { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
+]
+
 module.exports = {
   NotificationMappings,
   UserProfileMappings,
@@ -109,4 +121,5 @@ module.exports = {
   AssistanceRequestConversationMappings,
   UserPermissionMappings,
   FacilityMappings,
+  ApplicationMappings,
 }
