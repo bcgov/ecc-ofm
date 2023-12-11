@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="12" md="6" class="border-right pa-0" :class="borderClass">
       <v-row>
-        <v-col class="mt-1">
+        <v-col class="mt-3">
           <div>
             <AppButton @click="toggleMarkUnreadButtonInNotificationTable(false)" variant="text">
               <v-icon class="icon" left>mdi-email-outline</v-icon>

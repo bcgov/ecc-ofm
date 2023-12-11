@@ -2,7 +2,7 @@
   <v-row>
     <v-col sm="12" md="6" class="pa-0" :class="borderClass">
       <v-row>
-        <v-col class="mt-1">
+        <v-col class="mt-3 ml-3">
           <div>
             <AppButton variant="text" @click="toggleNewRequestDialog()">
               <v-icon class="icon" left>mdi-email-plus-outline</v-icon>

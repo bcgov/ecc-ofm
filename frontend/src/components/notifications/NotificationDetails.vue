@@ -6,7 +6,7 @@
           <strong>From:</strong>
           &nbsp;Operating Funding Model Program
         </v-col>
-        <v-col sm="12" lg="3" xl="2" class="pa-0 d-flex justify-end">
+        <v-col sm="12" lg="3" xl="2" class="pa-0 d-flex justify-end mt-1">
           <AppButton v-if="notification?.isRead" variant="text" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
             <v-icon class="icon" left>mdi-email-outline</v-icon>
             <span class="btn-label">Mark Unread</span>

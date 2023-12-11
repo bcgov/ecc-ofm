@@ -1,11 +1,11 @@
 <template>
   <v-container v-if="assistanceRequest">
     <v-row>
-      <v-col cols="10" class="d-flex align-center pl-0 pt-0 pb-0">
+      <v-col cols="9" class="d-flex align-center pl-0 pt-0 pb-0">
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
-      <v-col cols="2" class="d-flex flex-column align-start pb-0 pt-0">
-        <AppButton variant="text" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
+      <v-col cols="3" class="d-flex flex-column align-end pb-0 pt-0">
+        <AppButton variant="text" width="150px" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
@@ -17,7 +17,7 @@
             </div>
           </template>
         </v-tooltip>
-        <AppButton variant="text" v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="btn-style pl-0 pr-15">
+        <AppButton variant="text" v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="pl-0 pr-15">
           <v-icon class="icon" left>mdi-reply</v-icon>
           <span>Reply</span>
         </AppButton>
@@ -42,7 +42,7 @@
     <v-row>
       <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center">
         <span class="font-weight-bold">Sort By:</span>
-        <AppButton variant="text" class="btn-style" @click="toggleSort()">
+        <AppButton variant="text" @click="toggleSort()">
           <span>{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
           <v-icon v-if="isSortedDesc" class="icon">mdi-arrow-up</v-icon>
           <v-icon v-else class="icon">mdi-arrow-down</v-icon>
