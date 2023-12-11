@@ -24,7 +24,6 @@ async function createDocuments(req, res) {
     const response = await postDocuments(formFile, getPostDocumentsHeaders(formFile))
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
-    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
