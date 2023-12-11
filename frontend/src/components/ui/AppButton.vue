@@ -1,6 +1,6 @@
 <template>
   <v-btn class="text-none" :class="buttonClass" v-bind="$attrs">
-    <slot />
+    <span class="button-text"><slot /></span>
     <v-icon class="button-icon" v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
 </template>
@@ -31,6 +31,7 @@ export default {
 
 .text-app-button {
   color: #003366;
+  font-size: 1rem;
 }
 
 .BC-Gov-PrimaryButton {
@@ -55,8 +56,11 @@ export default {
 }
 
 .BC-Gov-PrimaryButton:hover {
-  text-decoration: underline;
   opacity: 0.8;
+}
+
+.BC-Gov-PrimaryButton:hover .button-text {
+  text-decoration: underline;
 }
 
 .BC-Gov-PrimaryButton:focus {
@@ -93,6 +97,10 @@ export default {
   text-decoration: underline;
   background-color: #003366;
   color: #ffffff;
+}
+
+.BC-Gov-SecondaryButton:hover .button-text {
+  text-decoration: underline;
 }
 
 .BC-Gov-SecondaryButton:focus {

@@ -10,6 +10,7 @@
     <v-main class="align-start">
       <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
+      <TheHeroImage v-if="$route.meta.showHeroImage" />
       <TheFacilityHeader v-if="isActingProvider" :showFacility="$route.meta.showFacility" />
       <router-view class="align-start pt-0 px-8 mb-0" />
     </v-main>
@@ -24,7 +25,7 @@ import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheFacilityHeader from '@/components/TheFacilityHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
-import TheMenu from './components/TheMenu.vue'
+import TheHeroImage from '@/components/TheHeroImage.vue'
 import TheModalIdle from '@/components/TheModalIdle.vue'
 import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
@@ -37,11 +38,11 @@ export default {
   components: {
     TheEnvBar,
     TheHeader,
+    TheHeroImage,
     TheSnackBar,
     TheNavBar,
     TheModalIdle,
     TheFooter,
-    TheMenu,
     TheFacilityHeader,
   },
 
@@ -57,13 +58,6 @@ export default {
     mobile() {
       return this.$vuetify.display.mobile
     },
-  },
-  watch: {
-    /*
-    isAuthenticated() {
-      this.handleWebSocket()
-    },
-    */
   },
   async created() {
     //this.setLoading(true);
@@ -113,8 +107,5 @@ export default {
   /* position: fixed; */
   width: 100%;
   z-index: 1002;
-}
-.app-menu {
-  margin-top: 2px;
 }
 </style>
