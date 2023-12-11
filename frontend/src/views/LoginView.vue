@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="full-height">
+  <v-container fluid>
     <!-- login article -->
     <!-- <article id="login-banner" class="top-banner"> -->
     <!-- <v-row align="center" justify="center">
@@ -117,10 +117,6 @@ export default {
   background-size: cover;
   align-items: center;
   display: flex;
-}
-
-.full-height {
-  height: 100%;
 }
 
 .containerWidth1450 {

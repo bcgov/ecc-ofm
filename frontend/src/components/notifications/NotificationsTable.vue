@@ -6,11 +6,10 @@
     :items="notifications"
     item-key="notificationId"
     item-value="notificationId"
-    height="65vh"
     show-select
     hover
     fixed-header
-    class="tableText"
+    class="table"
     density="compact"
     @click:row="rowClickHandler">
     <template #item.isRead="{ item }">
@@ -158,8 +157,9 @@ export default {
 </script>
 
 <style scoped>
-.tableText {
-  font-size: small;
+.table {
+  margin-left: 1px;
+  max-height: 62vh;
 }
 :deep(.v-data-table-header__content:hover) {
   font-weight: bold;

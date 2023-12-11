@@ -6,11 +6,10 @@
     :items="assistanceRequests"
     item-key="assistanceRequestId"
     item-value="assistanceRequestId"
-    height="65vh"
     show-select
     hover
     fixed-header
-    class="tableText"
+    class="table"
     density="compact"
     @click:row="rowClickHandler">
     <template #item.status="{ item }">
@@ -145,8 +144,9 @@ export default {
 </script>
 
 <style scoped>
-.tableText {
-  font-size: small;
+.table {
+  padding-left: 1px;
+  max-height: 62vh;
 }
 
 :deep(.v-data-table-header__content:hover) {
