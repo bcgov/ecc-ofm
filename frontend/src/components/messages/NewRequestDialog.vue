@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" min-width="350px" @close="closeNewRequestDialog">
       <template #content>
-        <v-form ref="newRequestForm" v-model="isFormComplete" class="px-12 mx-8">
+        <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-12 mx-lg-8">
           <v-row no-gutters class="mt-4">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-3">
               <AppLabel variant="modal">Topic:</AppLabel>
@@ -231,9 +231,7 @@ export default {
           await DocumentService.createDocuments(this.uploadedDocuments, response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
-          this.setFailureAlert('Failed to create a new assistance request')
-          console.log(`Failed to create a new Assistance Request - ${error}`)
-          throw error
+          this.setFailureAlert('Failed to create a new assistance request', error)
         } finally {
           this.closeNewRequestDialog()
           this.isLoading = false

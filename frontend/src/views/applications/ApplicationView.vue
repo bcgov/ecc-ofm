@@ -28,7 +28,7 @@ export default {
       this.loading = true
       await this.getApplication(this.$route.params.applicationGuid)
     } catch (error) {
-      this.setFailureAlert('Failed to load the application')
+      this.setFailureAlert('Failed to load the application', error)
     } finally {
       this.loading = false
     }

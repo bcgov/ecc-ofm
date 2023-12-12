@@ -26,7 +26,7 @@
       </v-data-table>
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
-    <AppButton id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
+    <AppButton id="back-home-button" class="mt-2" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
   </v-container>
 </template>
 
@@ -65,7 +65,7 @@ export default {
       this.loading = true
       this.applications = await ApplicationService.getApplications()
     } catch (error) {
-      this.setFailureAlert('Failed to get the list of applications')
+      this.setFailureAlert('Failed to get the list of applications', error)
     } finally {
       this.loading = false
     }

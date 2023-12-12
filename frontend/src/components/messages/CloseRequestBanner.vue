@@ -65,8 +65,7 @@ export default {
         await this.updateAssistanceRequestInStore(this.assistanceRequestId)
         this.setSuccessAlert('Request closed successfully')
       } catch (error) {
-        this.setFailureAlert('Failed to close your request')
-        console.log(`Failed to close your request - ${error}`)
+        this.setFailureAlert('Failed to close your request', error)
       } finally {
         this.toggleConfirmDialog()
         this.isLoading = false
