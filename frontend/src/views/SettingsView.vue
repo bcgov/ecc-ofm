@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="usersAndFacilities" class="pa-2 ma-0 w-100">
+  <v-container v-if="usersAndFacilities" fluid>
     <v-row>
       <v-col class="pt-0">
         <h3>Manage users</h3>
@@ -88,6 +88,7 @@
       @close="toggleDialog"
       @close-refresh="closeDialogAndRefresh"
       @update-success-event="updateSuccessEvent" />
+    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
   </v-container>
 </template>
 
@@ -217,7 +218,7 @@ export default {
 
         // If roles are the same, then sort by stateCode
         if (a.stateCode !== b.stateCode) {
-          return a.stateCode - b.stateCode;
+          return a.stateCode - b.stateCode
         }
 
         // If stateCode is the same, then sort by lastName

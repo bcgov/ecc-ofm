@@ -40,7 +40,7 @@
 import { mapActions, mapState } from 'pinia'
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
-import AppButton from '../components/ui/AppButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
   name: 'MinistryLoginView',

@@ -1,7 +1,7 @@
 <template>
-  <v-footer color="#003366" dark absolute height="20px" style="z-index: 1006">
+  <v-footer absolute color="#003366" style="min-height: 46px">
     <v-row no-gutters>
-      <v-col class="d-flex justify-center">
+      <v-col class="d-flex flex-wrap justify-center">
         <v-btn id="footer-home" variant="text" color="white" href="https://www.gov.bc.ca/">Home</v-btn>
         <v-btn id="footer-about" variant="text" color="white" href="https://www2.gov.bc.ca/gov/content/about-gov-bc-ca">About gov.bc.ca</v-btn>
         <v-btn id="footer-disclaimer" variant="text" color="white" href="http://gov.bc.ca/disclaimer">Disclaimer</v-btn>
@@ -22,15 +22,10 @@ export default {}
 .v-footer {
   border-top: 2px solid rgb(252, 186, 25) !important;
   min-width: 100%;
-  max-height: 3em;
+  flex-grow: 0;
+  min-height: 46px;
 }
-/*
-.footer {
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-}
-*/
+
 .v-btn--active.footer:before,
 .v-btn.footer:focus:before,
 .v-btn.footer:hover:before {

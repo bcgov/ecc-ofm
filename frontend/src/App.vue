@@ -2,19 +2,17 @@
 <template>
   <v-app id="app">
     <div class="app-header">
-      <TheHeader @menu-toggled="handleMenuToggled" />
+      <TheHeader />
       <TheSnackBar />
       <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
-      <TheEnvBar />
     </div>
 
     <v-main class="align-start">
+      <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <v-navigation-drawer class="app-menu" :width="200" :model-value="showMenu" :scrim="false" v-if="isAuthenticated && userInfo">
-        <TheMenu />
-      </v-navigation-drawer>
+      <TheHeroImage v-if="$route.meta.showHeroImage" />
       <TheFacilityHeader v-if="isActingProvider" :showFacility="$route.meta.showFacility" />
-      <router-view class="align-start pt-8 px-8 mb-0" />
+      <router-view class="align-start pt-0 px-8 mb-0" />
     </v-main>
     <TheFooter />
   </v-app>
@@ -27,7 +25,7 @@ import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheFacilityHeader from '@/components/TheFacilityHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
-import TheMenu from './components/TheMenu.vue'
+import TheHeroImage from '@/components/TheHeroImage.vue'
 import TheModalIdle from '@/components/TheModalIdle.vue'
 import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
@@ -40,17 +38,16 @@ export default {
   components: {
     TheEnvBar,
     TheHeader,
+    TheHeroImage,
     TheSnackBar,
     TheNavBar,
     TheModalIdle,
     TheFooter,
-    TheMenu,
     TheFacilityHeader,
   },
 
   data() {
     return {
-      showMenu: true,
       showToTopBtn: false,
       deactivateMultipleDraggableDialog: null,
     }
@@ -60,17 +57,6 @@ export default {
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
     mobile() {
       return this.$vuetify.display.mobile
-    },
-  },
-  watch: {
-    /*
-    isAuthenticated() {
-      this.handleWebSocket()
-    },
-    */
-    mobile() {
-      // Reset the menu state on mobile change
-      this.showMenu = false
     },
   },
   async created() {
@@ -95,9 +81,6 @@ export default {
   methods: {
     ...mapActions(useAppStore, ['getConfig', 'getLookupInfo']),
     ...mapActions(useAuthStore, ['getJwtToken']),
-    handleMenuToggled() {
-      this.showMenu = !this.showMenu
-    },
     onScroll(e) {
       if (typeof window === 'undefined') return
       const top = window.pageYOffset || e.target.scrollTop || 0
@@ -121,11 +104,8 @@ export default {
   top: 0px;
   position: fixed;
   width: 100%; */
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
   z-index: 1002;
-}
-.app-menu {
-  margin-top: 2px;
 }
 </style>
