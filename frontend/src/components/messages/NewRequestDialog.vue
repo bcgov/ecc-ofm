@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" min-width="350px" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-12 mx-lg-8">
           <v-row no-gutters class="mt-4">
@@ -110,8 +110,12 @@
       </template>
       <template #button>
         <v-row justify="space-around">
-          <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
+          </v-col>
         </v-row>
       </template>
     </AppDialog>

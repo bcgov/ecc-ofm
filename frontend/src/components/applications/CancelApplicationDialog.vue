@@ -4,9 +4,13 @@
       <div align="center" class="confirm-dialog-text">Are you sure you want to cancel this application?</div>
     </template>
     <template #button>
-      <v-row class="mt-2" justify="space-around">
-        <AppButton id="dialog-go-back" :primary="false" size="large" width="200px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
-        <AppButton id="dialog-cancel-application" size="large" width="200px" :loading="isLoading" @click="cancel">Cancel application</AppButton>
+      <v-row justify="space-around">
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
+        </v-col>
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="dialog-cancel-application" size="large" width="250px" :loading="isLoading" @click="cancel">Cancel application</AppButton>
+        </v-col>
       </v-row>
     </template>
   </AppDialog>
@@ -62,7 +66,7 @@ export default {
         this.$emit('cancel')
         this.setSuccessAlert('Application is cancelled successfully')
       } catch (error) {
-        this.setFailureAlert('Failed to cancel your application')
+        this.setFailureAlert('Failed to cancel your application', error)
       } finally {
         this.isLoading = false
         this.closeDialog()
