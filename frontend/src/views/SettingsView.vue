@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="usersAndFacilities" fluid>
+  <v-container fluid>
     <v-row>
       <v-col class="pt-0">
         <h3>Manage users</h3>
@@ -7,16 +7,16 @@
     </v-row>
     <v-row>
       <v-col cols="auto">
-        <AppButton @click="toggleShowFilter()" variant="text">
+        <AppButton @click="toggleShowFilter()" variant="text" :disabled="isLoading">
           Filter by facility
           <v-icon right>mdi-filter</v-icon>
         </AppButton>
       </v-col>
       <v-col cols="3">
-        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact"></v-text-field>
+        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
       </v-col>
       <v-col class="d-flex justify-end align-end">
-        <AppButton variant="text" @click="toggleDialog({})">
+        <AppButton variant="text" @click="toggleDialog({})" :disabled="isLoading">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
@@ -94,6 +94,7 @@
 
 <script>
 import { mapState } from 'pinia'
+import { useAppStore } from '@/stores/app'
 import AppButton from '@/components/ui/AppButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import rolesMixin from '@/mixins/rolesMixin.js'
@@ -255,6 +256,15 @@ export default {
         this.setFailureAlert('User update failed.', error)
       }
     },
+
+    /**
+     * Get the role name by id
+     */
+    getRoleNameById(roleId) {
+      const appStore = useAppStore()
+      return appStore.getRoleNameById(roleId)
+    },
+
   },
 }
 </script>

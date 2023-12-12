@@ -1,23 +1,27 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="addingNewUser ? 'Add new User' : 'Edit User'" :isLoading="isLoading" persistent min-width="350px" max-width="50%" @close="closeManageUserDialog">
+    <AppDialog v-model="isDisplayed" :title="dialogTitle" :isLoading="isLoading" persistent min-width="350px" max-width="50%" @close="closeManageUserDialog">
       <template #content>
         <v-form ref="userForm" v-model="isFormComplete">
-          <v-row no-gutters :class="{ 'mt-5': true, 'mb-6': !addingNewUser }">
+          <v-row v-if="isAddingUser">
+            <v-col cols="12" class="pl-0 d-flex align-center justify-center">Note: users must have an active Business BCeID to gain access to the portal.</v-col>
+          </v-row>
+          <v-row no-gutters>
             <v-col cols="12" md="3">
               <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
-            <v-col cols="12" md="9">
+            <v-col v-if="isAddingUser" cols="12" md="9">
               <v-text-field
                 id="bceid"
-                v-if="addingNewUser"
                 v-model="user.userName"
                 placeholder="BCeID"
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
                 :disabled="isLoading"></v-text-field>
-              <span v-else>{{ user.userName }}</span>
+            </v-col>
+            <v-col v-else cols="12" md="9">
+              <span>{{ user.userName }}</span>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -70,15 +74,13 @@
                 variant="outlined"></v-select>
             </v-col>
           </v-row>
-          <v-row v-if="addingNewUser" no-gutters>
-            <v-col cols="12" class="pl-0 d-flex align-center justify-center">A user must have an active Business BCeID to gain access to the portal</v-col>
-          </v-row>
-          <v-row v-else no-gutters>
+          <v-row v-if="isUpdatingUser" no-gutters>
             <v-col cols="12" md="3">
               <AppLabel>Facility:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
               <v-select
+                multiple
                 :items="facilities"
                 v-model="user.facilityId"
                 item-title="facilityName"
@@ -90,6 +92,9 @@
                 variant="outlined"></v-select>
             </v-col>
           </v-row>
+          <v-row v-else-if="wasNewUserAdded" no-gutters>
+            <v-col cols="12" class="pl-0 d-flex align-center justify-center">{{ getAddUserSuccessMsg() }}</v-col>
+          </v-row>
         </v-form>
       </template>
       <template #button>
@@ -98,7 +103,8 @@
             <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeManageUserDialog()" :loading="isLoading">Cancel</AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ addingNewUser ? 'Add' : 'Update' }}</AppButton>
+            <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ isAddingUser ? 'Add' : 'Update' }}</AppButton>
+            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'updating'" :loading="isLoading">Next</AppButton>
           </v-col>
         </v-row>
       </template>
@@ -117,6 +123,9 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
+import { setTransitionHooks } from 'vue'
+
+const ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
 
 export default {
   name: 'ManageUserDialog',
@@ -143,13 +152,22 @@ export default {
       isDisplayed: false,
       isLoading: false,
       facilities: [],
-      addingNewUser: false,
-      isNewUser: false,
+      userOperationType: '', // Can be 'adding', 'updating'
+      wasNewUserAdded: false,
     }
   },
   computed: {
     ...mapState(useAppStore, ['userRoles']),
     ...mapState(useAuthStore, ['userInfo']),
+    isAddingUser() {
+      return this.userOperationType === 'adding';
+    },
+    isUpdatingUser() {
+      return this.userOperationType === 'updating';
+    },
+    dialogTitle() {
+      return this.isAddingUser ? 'Add new user' : 'Edit user'
+    },
   },
   watch: {
     show: {
@@ -159,8 +177,7 @@ export default {
     },
     user: {
       handler() {
-        if (Object.keys(this.user).length === 0) this.addingNewUser = true
-        else this.addingNewUser = false
+        this.userOperationType = Object.keys(this.user).length === 0 ? 'adding' : 'updating';
       },
     },
   },
@@ -178,8 +195,8 @@ export default {
      */
     closeManageUserDialog() {
       this.$refs.userForm?.reset()
-      if (this.isNewUser) {
-        this.isNewUser = false
+      if (this.wasNewUserAdded) {
+        this.wasNewUserAdded = false
         this.$emit('close-refresh')
       } else {
         this.$emit('close')
@@ -194,11 +211,10 @@ export default {
       if (this.isFormComplete) {
         try {
           this.isLoading = true
-          if (this.addingNewUser) {
+          if (this.isAddingUser) {
             await this.createUser()
-            this.addingNewUser = false
-            this.isNewUser = true
-          } else {
+            this.wasNewUserAdded = true
+          } else if (this.isUpdatingUser) {
             await this.updateUser()
             this.closeManageUserDialog()
           }
@@ -215,7 +231,7 @@ export default {
       try {
         this.user.organizationId = this.userInfo.organizationId
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
-        this.setSuccessAlert('User account creation successful. You can now proceed to assign facilities to the new user.')
+        this.setSuccessAlert(ADD_USER_SUCCESS_MSG)
       } catch (error) {
         this.setFailureAlert('User account creation failed.', error)
       }
@@ -250,6 +266,13 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to sort facilities', error)
       }
+    },
+
+    /**
+     * Get the add user success message constant.
+     */
+    getAddUserSuccessMsg() {
+      return ADD_USER_SUCCESS_MSG
     },
   },
 }

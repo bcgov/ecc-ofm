@@ -1,5 +1,6 @@
-import ApiService from '@/common/apiService'
 import { defineStore } from 'pinia'
+
+import ApiService from '@/common/apiService'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -23,6 +24,14 @@ export const useAppStore = defineStore('app', {
 
     config: '',
   }),
+  getters: {
+    getRoleNameById: (state) => {
+      return (id) => {
+        const role = state.userRoles.find((role) => role.id === id)
+        return role ? role.description : null
+      }
+    },
+  },
   actions: {
     async getLookupInfo() {
       if (localStorage.getItem('jwtToken')) {
