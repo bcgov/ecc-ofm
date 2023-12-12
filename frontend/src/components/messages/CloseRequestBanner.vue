@@ -16,9 +16,13 @@
         <div align="center" class="confirm-dialog-text">Are you sure you want to close this request?</div>
       </template>
       <template #button>
-        <v-row class="mt-2" justify="space-around">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="170px" @click="toggleConfirmDialog" :loading="isLoading">Go back</AppButton>
-          <AppButton id="dialog-close-request" size="large" width="170px" @click="closeAssistanceRequest" :loading="isLoading">Close request</AppButton>
+        <v-row justify="space-around">
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="dialog-go-back" :primary="false" size="large" width="200px" @click="toggleConfirmDialog" :loading="isLoading">Go back</AppButton>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="dialog-close-request" size="large" width="200px" @click="closeAssistanceRequest" :loading="isLoading">Close request</AppButton>
+          </v-col>
         </v-row>
       </template>
     </AppDialog>
@@ -65,8 +69,7 @@ export default {
         await this.updateAssistanceRequestInStore(this.assistanceRequestId)
         this.setSuccessAlert('Request closed successfully')
       } catch (error) {
-        this.setFailureAlert('Failed to close your request')
-        console.log(`Failed to close your request - ${error}`)
+        this.setFailureAlert('Failed to close your request', error)
       } finally {
         this.toggleConfirmDialog()
         this.isLoading = false

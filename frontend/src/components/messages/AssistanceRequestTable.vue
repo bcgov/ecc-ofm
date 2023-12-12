@@ -147,12 +147,7 @@ export default {
 .table {
   padding-left: 1px;
   max-height: 62vh;
-}
-
-:deep(.v-data-table-header__content:hover) {
-  font-weight: bold;
-  color: black;
-  cursor: pointer;
+  min-height: 45vh;
 }
 
 .unread-message {

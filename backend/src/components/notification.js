@@ -3,7 +3,6 @@ const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { NotificationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
-const log = require('./logger')
 
 async function getNotifications(req, res) {
   try {
@@ -13,13 +12,11 @@ async function getNotifications(req, res) {
       '))&$filter=(statecode eq 1) and (email_activity_parties/any(o1:(o1/_partyid_value eq ' +
       req.params.contactId +
       ')))'
-    log.debug('operation: ', operation)
     const response = await getOperation(operation)
     let notifications = []
     response?.value?.forEach((item) => notifications.push(new MappableObjectForFront(item, NotificationMappings).toJSON()))
     return res.status(HttpStatus.OK).json(notifications)
   } catch (e) {
-    log.error('failed with error', e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

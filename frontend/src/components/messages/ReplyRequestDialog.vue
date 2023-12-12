@@ -20,9 +20,13 @@
         </v-form>
       </template>
       <template #button>
-        <v-row class="mt-6" justify="space-around">
-          <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeReplyRequestDialog()" :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-reply-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
+        <v-row class="mt-1" justify="space-around">
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeReplyRequestDialog()" :loading="isLoading">Cancel</AppButton>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="submit-reply-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
+          </v-col>
         </v-row>
       </template>
     </AppDialog>

@@ -160,11 +160,7 @@ export default {
 .table {
   margin-left: 1px;
   max-height: 62vh;
-}
-:deep(.v-data-table-header__content:hover) {
-  font-weight: bold;
-  color: black;
-  cursor: pointer;
+  min-height: 45vh;
 }
 .unread-notification {
   font-weight: bold;
