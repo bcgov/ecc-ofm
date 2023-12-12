@@ -1,55 +1,64 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="addingNewUser ? 'Add new User' : 'Edit User'" :isLoading="isLoading" persistent max-width="35%" @close="closeManageUserDialog">
+    <AppDialog v-model="isDisplayed" :title="addingNewUser ? 'Add new User' : 'Edit User'" :isLoading="isLoading" persistent min-width="350px" max-width="50%" @close="closeManageUserDialog">
       <template #content>
-        <v-form ref="userForm" v-model="isFormComplete" class="px-4">
+        <v-form ref="userForm" v-model="isFormComplete">
           <v-row no-gutters :class="{ 'mt-5': true, 'mb-6': !addingNewUser }">
-            <v-col cols="3">
-              <AppLabel variant="modal">BCeID:</AppLabel>
+            <v-col cols="12" md="3">
+              <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
-            <v-col cols="9">
-              <v-text-field v-if="addingNewUser" v-model="user.userName" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+            <v-col cols="12" md="9">
+              <v-text-field
+                id="bceid"
+                v-if="addingNewUser"
+                v-model="user.userName"
+                placeholder="BCeID"
+                variant="outlined"
+                density="compact"
+                :rules="rules.required"
+                :disabled="isLoading"></v-text-field>
               <span v-else>{{ user.userName }}</span>
             </v-col>
           </v-row>
           <v-row no-gutters>
-            <v-col cols="3">
-              <AppLabel variant="modal">First Name:</AppLabel>
+            <v-col cols="12" md="3">
+              <AppLabel for="firstName">First Name:</AppLabel>
             </v-col>
-            <v-col cols="9">
-              <v-text-field v-model="user.firstName" placeholder="First Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="3">
-              <AppLabel variant="modal">Last Name:</AppLabel>
-            </v-col>
-            <v-col cols="9">
-              <v-text-field v-model="user.lastName" placeholder="Last Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+            <v-col cols="12" md="9">
+              <v-text-field id="firstName" v-model="user.firstName" placeholder="First Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
-            <v-col cols="3">
-              <AppLabel variant="modal">Phone:</AppLabel>
+            <v-col cols="12" md="3">
+              <AppLabel for="lastName">Last Name:</AppLabel>
             </v-col>
-            <v-col cols="9">
-              <v-text-field v-model="user.phone" placeholder="###-###-####" :rules="[rules.phone]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="3">
-              <AppLabel variant="modal">Email:</AppLabel>
-            </v-col>
-            <v-col cols="9">
-              <v-text-field v-model="user.email" placeholder="user@domain.com" :rules="rules.email" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+            <v-col cols="12" md="9">
+              <v-text-field id="lastName" v-model="user.lastName" placeholder="Last Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
-            <v-col cols="3">
-              <AppLabel variant="modal">Role:</AppLabel>
+            <v-col cols="12" md="3">
+              <AppLabel for="phone">Phone:</AppLabel>
             </v-col>
-            <v-col cols="9">
+            <v-col cols="12" md="9">
+              <v-text-field id="phone" v-model="user.phone" placeholder="###-###-####" :rules="[rules.phone]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="12" md="3">
+              <AppLabel for="email">Email:</AppLabel>
+            </v-col>
+            <v-col cols="12" md="9">
+              <v-text-field id="email" v-model="user.email" placeholder="user@domain.com" :rules="rules.email" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="12" md="3">
+              <AppLabel for="role">Role:</AppLabel>
+            </v-col>
+            <v-col cols="12" md="9">
               <v-select
+                id="role"
                 :items="userRoles"
                 v-model="user.role"
                 item-title="description"
@@ -62,15 +71,13 @@
             </v-col>
           </v-row>
           <v-row v-if="addingNewUser" no-gutters>
-            <v-col cols="12" class="pl-0 d-flex align-center justify-center">
-              A user must have an active Business BCeID to gain access to the portal
-            </v-col>
+            <v-col cols="12" class="pl-0 d-flex align-center justify-center">A user must have an active Business BCeID to gain access to the portal</v-col>
           </v-row>
           <v-row v-else no-gutters>
-            <v-col cols="3">
-              <AppLabel variant="modal">Facility:</AppLabel>
+            <v-col cols="12" md="3">
+              <AppLabel>Facility:</AppLabel>
             </v-col>
-            <v-col cols="9">
+            <v-col cols="12" md="9">
               <v-select
                 :items="facilities"
                 v-model="user.facilityId"
@@ -86,9 +93,13 @@
         </v-form>
       </template>
       <template #button>
-        <v-row class="mt-6" justify="space-around">
-          <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeManageUserDialog()" :loading="isLoading">Cancel</AppButton>
-          <AppButton id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ addingNewUser ? 'Add' : 'Update' }}</AppButton>
+        <v-row justify="space-around">
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeManageUserDialog()" :loading="isLoading">Cancel</AppButton>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ addingNewUser ? 'Add' : 'Update' }}</AppButton>
+          </v-col>
         </v-row>
       </template>
     </AppDialog>
@@ -212,7 +223,7 @@ export default {
 
     /**
      * Update user and emit success/fail event.
-    */
+     */
     async updateUser() {
       try {
         //TODO - complete when API is ready
@@ -232,14 +243,14 @@ export default {
         return facilities.sort((a, b) => {
           const nameComparison = a.facilityName.localeCompare(b.facilityName)
           if (nameComparison !== 0) {
-            return nameComparison;
+            return nameComparison
           }
-          return a.address.localeCompare(b.address);
+          return a.address.localeCompare(b.address)
         })
       } catch (error) {
         this.setFailureAlert('Failed to sort facilities', error)
       }
-    }
+    },
   },
 }
 </script>

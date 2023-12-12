@@ -81,7 +81,6 @@ export default {
       return this.$vuetify.display.xs
     },
     messageNotificationCount() {
-      console.log('mnc', this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount)
       return this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount
     },
     // count of requests that are unread or are in the status of “Action required”
