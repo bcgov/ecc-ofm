@@ -1,14 +1,14 @@
 <template>
-  <v-container v-if="assistanceRequest" class="pa-3">
+  <v-container v-if="assistanceRequest">
     <v-row>
-      <v-col cols="10" class="d-flex align-center pl-0 pt-0 pb-0">
+      <v-col cols="9" class="d-flex align-center pl-0 pt-0 pb-0">
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
-      <v-col cols="2" class="d-flex flex-column align-start pb-0 pt-0">
-        <v-btn v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')" class="btn-style">
+      <v-col cols="3" class="d-flex flex-column align-end pb-0 pt-0">
+        <AppButton variant="text" width="150px" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon class="icon" left>mdi-email-outline</v-icon>
-          <span class="btn-label">Mark unread</span>
-        </v-btn>
+          <span>Mark unread</span>
+        </AppButton>
         <v-tooltip v-if="showTooltip" content-class="tooltip" :text="getReplyDisabledText()">
           <template v-slot:activator="{ props }">
             <div v-bind="props" class="reply-disabled">
@@ -17,10 +17,10 @@
             </div>
           </template>
         </v-tooltip>
-        <v-btn v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="btn-style pl-0 pr-15">
+        <AppButton variant="text" v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="pl-0 pr-15">
           <v-icon class="icon" left>mdi-reply</v-icon>
-          <span class="btn-label">Reply</span>
-        </v-btn>
+          <span>Reply</span>
+        </AppButton>
         <div v-else class="reply-disabled">
           <v-icon left>mdi-reply</v-icon>
           <span>Reply</span>
@@ -42,11 +42,11 @@
     <v-row>
       <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center">
         <span class="font-weight-bold">Sort By:</span>
-        <v-btn class="btn-style" @click="toggleSort()">
-          <span class="btn-label">{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
+        <AppButton variant="text" @click="toggleSort()">
+          <span>{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
           <v-icon v-if="isSortedDesc" class="icon">mdi-arrow-up</v-icon>
           <v-icon v-else class="icon">mdi-arrow-down</v-icon>
-        </v-btn>
+        </AppButton>
       </v-col>
     </v-row>
     <v-row v-if="showCloseRequestBanner">
@@ -92,6 +92,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 import CloseRequestBanner from '@/components/messages/CloseRequestBanner.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
 import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
@@ -99,7 +100,7 @@ import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES
 export default {
   mixins: [alertMixin],
   format: [format],
-  components: { ReplyRequestDialog, CloseRequestBanner },
+  components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
   props: {
     assistanceRequestId: {
       type: String,
@@ -224,33 +225,6 @@ export default {
   font-size: 20px;
   font-weight: bold;
   color: #003466;
-}
-
-.btn-style .v-btn__content .icon {
-  padding: 0px;
-  margin: 0px;
-  font-size: 1.5em;
-}
-
-.btn-style {
-  padding: 0px 6px;
-  margin: 0px;
-  font-size: 14px;
-  background-color: #ffffff;
-  color: #6699cc;
-  font-weight: bold;
-  text-transform: none;
-  max-height: 28px;
-  border: none;
-  box-shadow: none;
-}
-
-.btn-style:hover {
-  background-color: #ffffff;
-}
-
-.btn-style:hover .btn-label {
-  text-decoration: underline;
 }
 
 .border-top {

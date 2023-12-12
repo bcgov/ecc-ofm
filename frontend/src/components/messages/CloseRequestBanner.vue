@@ -1,27 +1,24 @@
 <template>
   <v-container>
     <v-alert icon="mdi-information-slab-circle-outline" density="compact" prominent variant="outlined">
-      <v-row no-gutters>
+      <v-row no-gutters align="center">
         <v-col cols="12" lg="8" xl="9">
           <div class="text-body-1">Has this request been resolved?</div>
           <div class="text-body-2">After 21 days of inactivity, this request will be closed automatically.</div>
         </v-col>
         <v-col cols="12" lg="4" xl="3" align="right">
-          <AppButton id="banner-close-request" @click="toggleConfirmDialog">Close request</AppButton>
+          <AppButton id="banner-close-request" size="large" @click="toggleConfirmDialog">Close request</AppButton>
         </v-col>
       </v-row>
     </v-alert>
-    <AppDialog v-model="showConfirmDialog" title="Confirm" :isLoading="isLoading" persistent max-width="40%"
-      @close="toggleConfirmDialog">
+    <AppDialog v-model="showConfirmDialog" title="Confirm" :isLoading="isLoading" persistent max-width="40%" @close="toggleConfirmDialog">
       <template #content>
         <div align="center" class="confirm-dialog-text">Are you sure you want to close this request?</div>
       </template>
       <template #button>
         <v-row class="mt-2" justify="space-around">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="170px" @click="toggleConfirmDialog"
-            :loading="isLoading">Go back</AppButton>
-          <AppButton id="dialog-close-request" size="large" width="170px" @click="closeAssistanceRequest"
-            :loading="isLoading">Close request</AppButton>
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="170px" @click="toggleConfirmDialog" :loading="isLoading">Go back</AppButton>
+          <AppButton id="dialog-close-request" size="large" width="170px" @click="closeAssistanceRequest" :loading="isLoading">Close request</AppButton>
         </v-row>
       </template>
     </AppDialog>
@@ -91,4 +88,5 @@ export default {
 .confirm-dialog-text {
   margin: 12px 0px;
   font-size: 1.1em;
-}</style>
+}
+</style>

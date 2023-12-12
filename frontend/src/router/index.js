@@ -33,6 +33,7 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.DASHBOARD,
         requiresAuth: true,
+        showHeroImage: true,
       },
     },
     {
@@ -40,8 +41,9 @@ const router = createRouter({
       name: 'login',
       component: LoginView,
       meta: {
-        requiresAuth: false,
         pageTitle: PAGE_TITLES.LOGIN,
+        requiresAuth: false,
+        showHeroImage: true,
       },
     },
     {
@@ -51,6 +53,7 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.LOGIN,
         requiresAuth: false,
+        showHeroImage: true,
       },
     },
     {

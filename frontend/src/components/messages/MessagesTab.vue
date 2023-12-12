@@ -1,39 +1,37 @@
 <template>
-  <v-container fluid class="pa-3">
-    <v-row>
-      <v-col cols="6" class="border-right pa-0">
-        <v-row>
-          <v-col class="mt-1">
-            <div class="flex-item">
-              <v-btn class="btn-style" @click="toggleNewRequestDialog()">
-                <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
-                <span class="btn-label">New message</span>
-              </v-btn>
-              <v-btn class="btn-style" @click="toggleMarkUnreadButtonInMessageTable()">
-                <v-icon class="icon" left>mdi-email-outline</v-icon>
-                <span class="btn-label">Mark unread</span>
-              </v-btn>
-              <v-btn class="btn-style" @click="toggleMarkReadButton()">
-                <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-                <span class="btn-label">Mark read</span>
-              </v-btn>
-            </div>
-          </v-col>
-        </v-row>
-        <v-skeleton-loader :loading="!assistanceRequests" type="table-tbody">
-          <AssistanceRequestTable
-            :markReadButtonState="markReadButtonState"
-            :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
-            :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
-            @openRequestConversation="openRequestConversation" />
-        </v-skeleton-loader>
-      </v-col>
-      <v-col cols="6">
-        <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
-      </v-col>
-    </v-row>
-    <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
-  </v-container>
+  <v-row>
+    <v-col sm="12" md="6" class="pa-0" :class="borderClass">
+      <v-row>
+        <v-col class="mt-3 ml-3">
+          <div>
+            <AppButton variant="text" @click="toggleNewRequestDialog()">
+              <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
+              <span class="btn-label">New message</span>
+            </AppButton>
+            <AppButton variant="text" @click="toggleMarkUnreadButtonInMessageTable()">
+              <v-icon class="icon" left>mdi-email-outline</v-icon>
+              <span class="btn-label">Mark unread</span>
+            </AppButton>
+            <AppButton variant="text" class="btn-style" @click="toggleMarkReadButton()">
+              <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+              <span class="btn-label">Mark read</span>
+            </AppButton>
+          </div>
+        </v-col>
+      </v-row>
+      <v-skeleton-loader :loading="!assistanceRequests" type="table-tbody">
+        <AssistanceRequestTable
+          :markReadButtonState="markReadButtonState"
+          :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
+          :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
+          @openRequestConversation="openRequestConversation" />
+      </v-skeleton-loader>
+    </v-col>
+    <v-col sm="12" md="6">
+      <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
+    </v-col>
+  </v-row>
+  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
 </template>
 
 <script>
@@ -43,9 +41,11 @@ import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
 import RequestConversations from '@/components/messages/RequestConversations.vue'
 
+import AppButton from '@/components/ui/AppButton.vue'
+
 export default {
   name: 'MessagesTab',
-  components: { NewRequestDialog, AssistanceRequestTable, RequestConversations },
+  components: { AppButton, NewRequestDialog, AssistanceRequestTable, RequestConversations },
   data() {
     return {
       showNewRequestDialog: false,
@@ -57,6 +57,9 @@ export default {
   },
   computed: {
     ...mapState(useMessagesStore, ['assistanceRequests']),
+    borderClass() {
+      return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
+    },
   },
   methods: {
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
@@ -81,38 +84,10 @@ export default {
 
 <style scoped>
 .border-right {
-  border-right: 2px solid #6699cc;
+  border-right: 2px solid #003366;
 }
 
-.flex-item {
-  display: flex;
-  align-items: left;
-}
-
-.btn-style:hover .btn-label {
-  text-decoration: underline;
-}
-
-.btn-style {
-  padding: 0px 6px;
-  margin: 0px;
-  font-size: 14px;
-  background-color: #ffffff;
-  color: #6699cc;
-  font-weight: bold;
-  text-transform: none;
-  max-height: 28px;
-  border: none;
-  box-shadow: none;
-}
-
-.btn-style:hover {
-  background-color: #ffffff;
-}
-
-.btn-style .v-btn__content .icon {
-  padding: 0px;
-  margin: 0px;
-  font-size: 1.5em;
+.border-bottom {
+  border-bottom: 2px solid #003366;
 }
 </style>
