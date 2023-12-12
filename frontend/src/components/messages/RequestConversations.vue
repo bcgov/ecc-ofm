@@ -1,10 +1,10 @@
 <template>
   <v-container v-if="assistanceRequest">
     <v-row>
-      <v-col cols="9" class="d-flex align-center pl-0 pt-0 pb-0">
+      <v-col cols="9" class="d-flex align-center pl-0 pt-0 pb-4">
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
-      <v-col cols="3" class="d-flex flex-column align-end pb-0 pt-0">
+      <v-col cols="3" class="d-flex flex-column align-end pa-0">
         <AppButton variant="text" width="150px" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span>Mark unread</span>
@@ -17,7 +17,7 @@
             </div>
           </template>
         </v-tooltip>
-        <AppButton variant="text" v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="pl-0 pr-15">
+        <AppButton variant="text" v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="pr-2">
           <v-icon class="icon" left>mdi-reply</v-icon>
           <span>Reply</span>
         </AppButton>
@@ -50,7 +50,7 @@
       </v-col>
     </v-row>
     <v-row v-if="showCloseRequestBanner">
-      <CloseRequestBanner :assistanceRequestId="assistanceRequestId" class="px-0" />
+      <CloseRequestBanner :assistanceRequestId="assistanceRequestId" class="pa-0 mb-4" />
     </v-row>
     <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
@@ -58,7 +58,7 @@
           <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table">
             <template #headers></template>
             <template #item="{ item }">
-              <v-row class="border-bottom mr-0">
+              <v-row class="border-bottom ma-0">
                 <v-col>
                   <div>
                     <span class="font-weight-bold">From:</span>
@@ -218,7 +218,7 @@ export default {
 
 <style scoped>
 .data-table {
-  max-height: 635px;
+  max-height: 48vh;
 }
 
 .subject-header {
@@ -228,7 +228,6 @@ export default {
 }
 
 .border-top {
-  padding-top: 12px;
   border-top: 1px solid #e0e0e0;
 }
 
@@ -237,7 +236,7 @@ export default {
 }
 
 .reply-disabled {
-  padding-right: 17px;
+  padding-right: 10px;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 1.25px;

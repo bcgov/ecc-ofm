@@ -146,6 +146,7 @@ export default {
 <style scoped>
 .table {
   padding-left: 1px;
+  margin-bottom: 12px;
   max-height: 62vh;
   min-height: 45vh;
 }
@@ -161,7 +162,7 @@ export default {
 .highlighted-row {
   display: flex;
   align-items: center;
-  background: #d4eaff;
+  background: #eeeeee;
   height: 100%;
 }
 
