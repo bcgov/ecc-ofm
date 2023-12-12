@@ -1,0 +1,245 @@
+<template>
+  <v-container>
+    <AppDialog v-model="isDisplayed" :title="addingNewUser ? 'Add new User' : 'Edit User'" :isLoading="isLoading" persistent max-width="35%" @close="closeManageUserDialog">
+      <template #content>
+        <v-form ref="userForm" v-model="isFormComplete" class="px-4">
+          <v-row no-gutters :class="{ 'mt-5': true, 'mb-6': !addingNewUser }">
+            <v-col cols="3">
+              <AppLabel variant="modal">BCeID:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field v-if="addingNewUser" v-model="user.userName" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+              <span v-else>{{ user.userName }}</span>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <AppLabel variant="modal">First Name:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field v-model="user.firstName" placeholder="First Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <AppLabel variant="modal">Last Name:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field v-model="user.lastName" placeholder="Last Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <AppLabel variant="modal">Phone:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field v-model="user.phone" placeholder="###-###-####" :rules="[rules.phone]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <AppLabel variant="modal">Email:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field v-model="user.email" placeholder="user@domain.com" :rules="rules.email" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="3">
+              <AppLabel variant="modal">Role:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-select
+                :items="userRoles"
+                v-model="user.role"
+                item-title="description"
+                item-value="id"
+                label="Select Role"
+                :rules="rules.required"
+                :disabled="isLoading"
+                density="compact"
+                variant="outlined"></v-select>
+            </v-col>
+          </v-row>
+          <v-row v-if="addingNewUser" no-gutters>
+            <v-col cols="12" class="pl-0 d-flex align-center justify-center">
+              A user must have an active Business BCeID to gain access to the portal
+            </v-col>
+          </v-row>
+          <v-row v-else no-gutters>
+            <v-col cols="3">
+              <AppLabel variant="modal">Facility:</AppLabel>
+            </v-col>
+            <v-col cols="9">
+              <v-select
+                :items="facilities"
+                v-model="user.facilityId"
+                item-title="facilityName"
+                item-value="id"
+                label="Select one or more facilities"
+                :rules="rules.required"
+                :disabled="isLoading"
+                density="compact"
+                variant="outlined"></v-select>
+            </v-col>
+          </v-row>
+        </v-form>
+      </template>
+      <template #button>
+        <v-row class="mt-6" justify="space-around">
+          <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeManageUserDialog()" :loading="isLoading">Cancel</AppButton>
+          <AppButton id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ addingNewUser ? 'Add' : 'Update' }}</AppButton>
+        </v-row>
+      </template>
+    </AppDialog>
+  </v-container>
+</template>
+
+<script>
+import { mapState } from 'pinia'
+import ApiService from '@/common/apiService'
+import alertMixin from '@/mixins/alertMixin'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
+import rules from '@/utils/rules'
+import { ApiRoutes } from '@/utils/constants'
+
+export default {
+  name: 'ManageUserDialog',
+  components: { AppButton, AppDialog, AppLabel },
+  mixins: [alertMixin],
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+    user: {
+      type: Object,
+      required: true,
+      default: () => {
+        return {}
+      },
+    },
+  },
+  emits: ['close', 'close-refresh', 'update-success-event'],
+  data() {
+    return {
+      isFormComplete: false,
+      rules,
+      isDisplayed: false,
+      isLoading: false,
+      facilities: [],
+      addingNewUser: false,
+      isNewUser: false,
+    }
+  },
+  computed: {
+    ...mapState(useAppStore, ['userRoles']),
+    ...mapState(useAuthStore, ['userInfo']),
+  },
+  watch: {
+    show: {
+      handler(value) {
+        this.isDisplayed = value
+      },
+    },
+    user: {
+      handler() {
+        if (Object.keys(this.user).length === 0) this.addingNewUser = true
+        else this.addingNewUser = false
+      },
+    },
+  },
+  async created() {
+    try {
+      const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + this.userInfo.contactId)
+      this.facilities = this.sortFacilities(res.data)
+    } catch (error) {
+      this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
+    }
+  },
+  methods: {
+    /**
+     * Close the dialog.
+     */
+    closeManageUserDialog() {
+      this.$refs.userForm?.reset()
+      if (this.isNewUser) {
+        this.isNewUser = false
+        this.$emit('close-refresh')
+      } else {
+        this.$emit('close')
+      }
+    },
+
+    /**
+     * Create or update user.
+     */
+    async saveUser() {
+      this.$refs.userForm?.validate()
+      if (this.isFormComplete) {
+        try {
+          this.isLoading = true
+          if (this.addingNewUser) {
+            await this.createUser()
+            this.addingNewUser = false
+            this.isNewUser = true
+          } else {
+            await this.updateUser()
+            this.closeManageUserDialog()
+          }
+        } finally {
+          this.isLoading = false
+        }
+      }
+    },
+
+    /**
+     * Create a new user and emit success/fail event.
+     */
+    async createUser() {
+      try {
+        this.user.organizationId = this.userInfo.organizationId
+        const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
+        this.setSuccessAlert('User account creation successful. You can now proceed to assign facilities to the new user.')
+      } catch (error) {
+        this.setFailureAlert('User account creation failed.', error)
+      }
+    },
+
+    /**
+     * Update user and emit success/fail event.
+    */
+    async updateUser() {
+      try {
+        //TODO - complete when API is ready
+        //this.user.organizationId = this.userInfo.organizationId
+        //const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
+        this.$emit('update-success-event', true)
+      } catch (error) {
+        this.$emit('update-success-event', false, error)
+      }
+    },
+
+    /**
+     * Sort facilities by name and address.
+     */
+    sortFacilities(facilities) {
+      try {
+        return facilities.sort((a, b) => {
+          const nameComparison = a.facilityName.localeCompare(b.facilityName)
+          if (nameComparison !== 0) {
+            return nameComparison;
+          }
+          return a.address.localeCompare(b.address);
+        })
+      } catch (error) {
+        this.setFailureAlert('Failed to sort facilities', error)
+      }
+    }
+  },
+}
+</script>

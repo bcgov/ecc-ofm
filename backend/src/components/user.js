@@ -1,5 +1,5 @@
 'use strict'
-const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation } = require('./utils')
+const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation } = require('./utils')
 const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
@@ -7,15 +7,16 @@ const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
 // TODO... const { ORGANIZATION_PROVIDER_TYPES} = require('../util/constants')
 const {
+  FacilityMappings,
+  UserFacilityMappings,
+  UserFacilityDetailMappings,
+  UserMappings,
+  UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
-  UserProfileFacilityPermissionMappings,
-  UserProfileFacilityMappings,
-  UserPermissionMappings,
-  FacilityMappings,
 } = require('../util/mapping/Mappings')
 
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
 
 const USER_NOT_FOUND = 'User not found.'
@@ -165,7 +166,7 @@ function parseFacilityPermissions(userResponse) {
 }
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
-  const usersPermissionsFacilities = new MappableObjectForFront(data, UserPermissionMappings).toJSON()
+  const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
       let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
@@ -174,7 +175,10 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
       return facilityData
     })
   }
-  return usersPermissionsFacilities
+  return {
+    ...usersPermissionsFacilities,
+    role: Number(usersPermissionsFacilities.role),
+  }
 }
 
 async function getUsersPermissionsFacilities(req, res) {
@@ -182,14 +186,55 @@ async function getUsersPermissionsFacilities(req, res) {
     let usersPermissionsFacilities = []
     const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
-    response?.value?.forEach((item) => usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item)))
+    response?.value?.forEach((item) => {
+      usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
+    })
     return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
+function mapUserFacilityObjectForFront(data) {
+  let userFacilities = new MappableObjectForFront(data, UserFacilityMappings).toJSON()
+  delete userFacilities.ofmFacility
+  const userFacilityDetails = new MappableObjectForFront(data.ofm_facility, UserFacilityDetailMappings).toJSON()
+  userFacilities = { ...userFacilities, ...userFacilityDetails }
+  return userFacilities
+}
+
+async function getUserFacilities(req, res) {
+  try {
+    let userFacilities = []
+    const operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
+    const response = await getOperation(operation)
+    response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
+    return res.status(HttpStatus.OK).json(userFacilities)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+function mapUserObjectForBack(data) {
+  let newUser = new MappableObjectForBack(data, UserMappings).toJSON()
+  newUser.ofm_portal_role = String(newUser.ofm_portal_role)
+  newUser['parentcustomerid_account@odata.bind'] = `/accounts(${data?.organizationId})`
+  return newUser
+}
+
+async function createUser(req, res) {
+  try {
+    const payload = mapUserObjectForBack(req.body)
+    let response = await postOperation('contacts', JSON.stringify(payload))
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
+  createUser,
+  getUserFacilities,
   getUserInfo,
   getUsersPermissionsFacilities,
 }

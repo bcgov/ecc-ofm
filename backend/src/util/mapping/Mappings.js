@@ -18,12 +18,6 @@ const UserProfileOrganizationMappings = [
   { back: 'statuscode', front: 'organizationStatus' },
 ]
 
-// TODO (weskubo-cgi) Remove this
-const UserProfileFacilityPermissionMappings = [
-  { back: 'statecode', front: 'stateCode' },
-  { back: 'statuscode', front: 'statusCode' },
-]
-
 const UserProfileFacilityMappings = [
   { back: 'accountid', front: 'facilityId' },
   { back: 'accountnumber', front: 'facilityAccountNumber' },
@@ -77,36 +71,50 @@ const NotificationMappings = [
   { back: 'ofm_is_read', front: 'isRead' },
 ]
 
-const UserPermissionMappings = [
+const UserMappings = [
   { back: 'contactid', front: 'contactId' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
   { back: 'emailaddress1', front: 'email' },
+  { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'ofm_portal_role', front: 'roles' },
+  { back: 'ofm_portal_role', front: 'role' },
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]
 
+const UserFacilityMappings = [
+  { back: 'ofm_bceid_facilityid', front: 'facilityId' },
+  { back: 'ofm_facility', front: 'ofmFacility' },
+]
+
+const UserFacilityDetailMappings = [
+  { back: 'accountid', front: 'accountId' },
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'facilityName' },
+  { back: 'address1_composite', front: 'address' },
+]
+
 const FacilityMappings = [
   { back: 'ofm_bceid_facilityid', front: 'facilityId' },
-  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'name' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_facility', front: 'address' },
 ]
 
 module.exports = {
-  NotificationMappings,
-  UserProfileMappings,
-  UserProfileOrganizationMappings,
-  UserProfileFacilityPermissionMappings,
-  UserProfileFacilityMappings,
-  RequestCategoryMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
-  UserPermissionMappings,
   FacilityMappings,
+  NotificationMappings,
+  UserFacilityMappings,
+  UserFacilityDetailMappings,
+  UserMappings,
+  UserProfileFacilityMappings,
+  UserProfileMappings,
+  UserProfileOrganizationMappings,
+  RequestCategoryMappings,
 }

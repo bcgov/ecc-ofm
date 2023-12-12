@@ -17,8 +17,9 @@ export const useAppStore = defineStore('app', {
     alertNotificationQueue: [],
     alertNotification: false,
 
-    // Lookup Table Details
+    // Lookup data from Dynamics365
     requestCategories: {},
+    userRoles: {},
 
     config: '',
   }),
@@ -28,6 +29,7 @@ export const useAppStore = defineStore('app', {
         // DONT Call api if there is no token.
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
+        this.userRoles = lookupInfo?.data?.userRoles
       }
     },
     async setConfig(config) {

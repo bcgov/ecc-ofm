@@ -4,7 +4,7 @@ const HttpStatus = require('http-status-codes')
 const _ = require('lodash')
 const cache = require('memory-cache')
 const { PROGRAM_YEAR_STATUS_CODES, ORGANIZATION_PROVIDER_TYPES, CHANGE_REQUEST_TYPES } = require('../util/constants')
-const { ProgramYearMappings, SystemMessagesMappings, RequestCategoryMappings } = require('../util/mapping/Mappings')
+const { ProgramYearMappings, SystemMessagesMappings, RequestCategoryMappings, UserRoleMappings } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('../components/logger')
 
@@ -125,21 +125,32 @@ async function getRequestCategories() {
   return requestCategories
 }
 
+async function getUserRoles() {
+  let userRoles = lookupCache.get('userRoles')
+  if (!userRoles) {
+    userRoles = []
+    let response = await getOperation('GlobalOptionSetDefinitions(Name=%27ofm_portal_role%27)?$Select=Options')
+    userRoles = response?.Options?.map((item) => ({
+      id: Number(item.Value),
+      description: item.Label && item.Label.LocalizedLabels ? item.Label.LocalizedLabels[0].Label : null,
+    }))
+    lookupCache.put('userRoles', userRoles, 60 * 60 * 1000)
+  }
+  return userRoles
+}
+
+/**
+ * Look ups from Dynamics365.
+ */
 async function getLookupInfo(req, res) {
-  /**
-   * Look ups from Dynamics365.
-   * status code values are:
-   * 1 - Current
-   * 2 - Inactive
-   * 3 - Future
-   * 4 - Historica
-   */
   try {
     let resData = lookupCache.get('lookups')
     if (!resData) {
       let requestCategories = await getRequestCategories()
+      let userRoles = await getUserRoles()
       resData = {
         requestCategories: requestCategories,
+        userRoles: userRoles,
       }
       lookupCache.put('lookups', resData, 60 * 60 * 1000)
     }

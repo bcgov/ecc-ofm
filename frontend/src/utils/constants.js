@@ -13,6 +13,7 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
+  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions/facilities',
   USER_FACILITIES: baseRoot + '/user/facilities',
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
@@ -44,6 +45,7 @@ export const CRM_STATE_CODES = Object.freeze({
   INACTIVE: 1,
 })
 
+// TODO replace ids with string role name values and refactor
 export const ROLES = Object.freeze({
   ADMIN: 1,
   ACCOUNT_MANAGEMENT: 2,

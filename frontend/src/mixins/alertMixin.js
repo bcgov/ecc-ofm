@@ -1,6 +1,7 @@
-import { ALERT_NOTIFICATION_TYPES } from '@/utils/constants/AlertNotificationTypes'
 import { mapActions } from 'pinia'
+
 import { useAppStore } from '@/stores/app'
+import { ALERT_NOTIFICATION_TYPES } from '@/utils/constants/AlertNotificationTypes'
 
 export default {
   data() {
@@ -14,6 +15,11 @@ export default {
       this.addAlertNotification({ text: message, alertType: ALERT_NOTIFICATION_TYPES.SUCCESS })
     },
     setFailureAlert(message) {
+      console.log(message)
+      this.addAlertNotification({ text: message, alertType: ALERT_NOTIFICATION_TYPES.ERROR })
+    },
+    setFailureAlert(message, error) {
+      console.log(message + ` ${error ? ' - ' + error : ''}`)
       this.addAlertNotification({ text: message, alertType: ALERT_NOTIFICATION_TYPES.ERROR })
     },
     setWarningAlert(message) {

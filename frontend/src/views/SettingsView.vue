@@ -13,10 +13,10 @@
         </AppButton>
       </v-col>
       <v-col cols="3">
-        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name"></v-text-field>
+        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact"></v-text-field>
       </v-col>
       <v-col class="d-flex justify-end align-end">
-        <AppButton variant="text">
+        <AppButton variant="text" @click="toggleDialog({})">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
@@ -25,7 +25,7 @@
     <v-row>
       <v-col>
         <!-- Users Table -->
-        <v-skeleton-loader :loading="!usersAndFacilities" type="table-tbody">
+        <v-skeleton-loader :loading="isLoading" type="table-tbody">
           <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
@@ -33,10 +33,14 @@
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
-
+            <template v-slot:item.actions="{ item }">
+              <AppButton @click.stop="toggleDialog(item)" variant="text">
+                edit
+              </AppButton>
+            </template>
             <!-- Slots to translate specific column values into display values -->
-            <template v-slot:item.roles="{ item }">
-              <span>{{ getRoleDescriptions(item.roles) }}</span>
+            <template v-slot:item.role="{ item }">
+              <span>{{ getRoleNameById(item.role) }}</span>
             </template>
             <template v-slot:item.isExpenseAuthority="{ item }">
               <span>{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</span>
@@ -77,6 +81,13 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
+    <ManageUserDialog
+      class="pa-0"
+      :show="showManageUserDialog"
+      :user="userToUpdate"
+      @close="toggleDialog"
+      @close-refresh="closeDialogAndRefresh"
+      @update-success-event="updateSuccessEvent" />
   </v-container>
 </template>
 
@@ -85,31 +96,38 @@ import { mapState } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import rolesMixin from '@/mixins/rolesMixin.js'
+import alertMixin from '@/mixins/alertMixin'
 import { CRM_STATE_CODES } from '@/utils/constants'
 import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
+import ManageUserDialog from '../components/settings/ManageUserDialog.vue'
 
 export default {
-  components: { AppButton },
-  mixins: [rolesMixin],
+  components: { AppButton, ManageUserDialog },
+  mixins: [rolesMixin, alertMixin],
   data() {
     return {
+      isLoading: false,
       showFilterInput: false,
       facilityNameFilter: '',
       usersAndFacilities: null,
       expanded: [],
+      showManageUserDialog: false,
+      editedIndex: -1,
+      userToUpdate: {},
       headersUsers: [
-        { title: '', key: 'data-table-expand', width: '135px' },
+        { title: '', key: 'data-table-expand', width: '87px' },
+        { title: '', key: 'actions', width: '30px' },
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
         { title: 'Email', key: 'email', width: '12%' },
         { title: 'BCeID', key: 'userName', width: '12%' },
-        { title: 'Role', key: 'roles', width: '12%' },
+        { title: 'Role', key: 'role', width: '12%' },
         { title: 'Expense Authority', key: 'isExpenseAuthority', width: '12%' },
         { title: 'Status', key: 'stateCode', width: '16%' },
       ],
       headersFacilities: [
-        { title: 'Facility Name', key: 'name', width: '40%' },
+        { title: 'Facility Name', key: 'facilityName', width: '40%' },
         { title: 'Address', key: 'address', width: '60%' },
       ],
     }
@@ -118,19 +136,36 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
-      return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.name.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
+      this.isLoading = true
+      try {
+        if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
+        return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
+      } catch (error) {
+        this.setFailureAlert('Failed to filter users by facility name', error)
+      } finally {
+        this.isLoading = false
+      }
     },
   },
   async created() {
-    try {
-      const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + this.userInfo.organizationId)
-      this.usersAndFacilities = res.data
-    } catch (error) {
-      console.log(`Failed to get the list of users by organization id - ${error}`)
-    }
+    await this.getUsersAndFacilities()
   },
   methods: {
+    /**
+     * Get the list of users and facilities
+     */
+    async getUsersAndFacilities() {
+      try {
+        this.isLoading = true
+        const res = await ApiService.apiAxios.get(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + this.userInfo.organizationId)
+        this.usersAndFacilities = res.data
+      } catch (error) {
+        this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+
     /**
      * Toggle the facility input filter
      */
@@ -158,42 +193,6 @@ export default {
     },
 
     /**
-     * Convert a comma separated string to an array of numbers
-     */
-    convertStringToArray(string) {
-      return string.split(',').map(Number)
-    },
-
-    /**
-     * Get a comma separated list of role descriptions from a comma separated list of role codes
-     */
-    getRoleDescriptions(roles) {
-      const roleDescriptions = []
-      const rolesArray = this.convertStringToArray(roles)
-      rolesArray.forEach((role) => {
-        roleDescriptions.push(this.getRoleDescription(role))
-      })
-      return roleDescriptions.join(', ')
-    },
-
-    // TODO: Hard coding of role names in this method is temporary. Will be replaced with endpoint call to get role names.
-    /**
-     * Get the role description for a role code
-     */
-    getRoleDescription(role) {
-      switch (role) {
-        case this.ROLES.ADMIN:
-          return 'Admin'
-        case this.ROLES.ACCOUNT_MANAGEMENT:
-          return 'Account Management'
-        case this.ROLES.FINANCIAL:
-          return 'Financial'
-        case this.ROLES.REPORTING:
-          return 'Reporting'
-      }
-    },
-
-    /**
      * Get the status description for a status code
      */
     getStatusDescription(statusCode) {
@@ -205,15 +204,14 @@ export default {
       }
     },
 
-
     /**
      * Sort users by: account management role 1st, expense authority 2nd, last name 3rd
      */
     sortUsers(users) {
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
-        const roleA = a.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
-        const roleB = b.roles.includes(this.ROLES.ACCOUNT_MANAGEMENT)
+        const roleA = (a.role === this.ROLES.ACCOUNT_MANAGEMENT)
+        const roleB = (b.role === this.ROLES.ACCOUNT_MANAGEMENT)
         if (roleA && !roleB) return -1
         if (!roleA && roleB) return 1
 
@@ -225,7 +223,37 @@ export default {
         // If stateCode is the same, then sort by lastName
         return a.lastName.localeCompare(b.lastName);
       });
-    }
+    },
+
+    /**
+     * Toggles the manage user dialog opened/closed while passing in the user to edit.
+     */
+    toggleDialog(user) {
+      this.editedIndex = this.usersAndFacilities.indexOf(user)
+      this.userToUpdate = Object.assign({}, user)
+      this.showManageUserDialog = !this.showManageUserDialog
+    },
+
+    /**
+    * Close the manage user dialog and refresh the user list.
+    */
+    closeDialogAndRefresh() {
+      this.showManageUserDialog = false
+      this.getUsersAndFacilities()
+    },
+
+    /**
+     * Called when the manage user dialog emits a user update was success or fail.
+    */
+    async updateSuccessEvent(isSuccess, error) {
+      if (isSuccess) {
+        this.setSuccessAlert('User updated successfully.')
+        // A user has been updated, get the latest data for UI.
+        await this.getUsersAndFacilities()
+      } else {
+        this.setFailureAlert('User update failed.', error)
+      }
+    },
   },
 }
 </script>
