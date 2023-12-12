@@ -1,17 +1,26 @@
 html {
   font-family: 'BCSans', Verdana, Arial, sans-serif !important;
+  font-size: 16px;
 }
 
 h1 {
-  font-size: 1.25rem;
+  color: #313132;
+  font-size: 2.074em;
+}
+
+h2 {
+  color: #313132;
+  font-size: 1.728em;
 }
 
 h3 {
   color: #313132;
+  font-size: 1.44em;
 }
 
 h4 {
   color: #313132;
+  font-size: 1.2em;
 }
 
 a {

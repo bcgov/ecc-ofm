@@ -25,7 +25,7 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <AppButton id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
+    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
   </v-container>
 </template>
 
