@@ -106,6 +106,7 @@ const ApplicationMappings = [
   { back: '_ofm_facility_value', front: 'facilityId' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
 ]
 

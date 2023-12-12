@@ -1,5 +1,5 @@
 <template>
-  <v-dialog>
+  <v-dialog min-width="350px">
     <v-card>
       <v-card-title class="dialog-title">
         <v-row no-gutters justify="space-between" align="center">

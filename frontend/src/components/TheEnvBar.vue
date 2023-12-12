@@ -1,10 +1,9 @@
 <template>
-  <v-app-bar class="env-bar" v-if="bannerColor !== ''" :color="bannerColor" height="20">
+  <v-app-bar class="env-bar" v-if="bannerColor" :color="bannerColor" height="20">
     <div>
       <h3 class="env-text">{{ bannerEnvironment }} Environment</h3>
     </div>
   </v-app-bar>
-
   <div>
     <h3 class="subBanner" v-if="subtitleBanner != ''">{{ subtitleBanner }}</h3>
   </div>

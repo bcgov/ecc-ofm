@@ -1,20 +1,27 @@
 <template>
   <v-card v-if="notification" variant="flat">
     <v-card-title class="notification-details-header">
-      <div class="d-flex align-center justify-space-between w-100">
-        <div class="d-flex align-center">
+      <v-row>
+        <v-col sm="12" lg="9" xl="10" class="from-text pa-0">
           <strong>From:</strong>
           &nbsp;Operating Funding Model Program
-        </div>
-        <v-btn v-if="notification?.isRead" class="btn-style" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
-          <v-icon class="icon" left>mdi-email-outline</v-icon>
-          <span class="btn-label">Mark Unread</span>
-        </v-btn>
-      </div>
-      <div class="subject-text">
-        {{ notification?.subject }}
-      </div>
+        </v-col>
+        <v-col sm="12" lg="3" xl="2" class="pa-0 d-flex justify-end mt-1">
+          <AppButton v-if="notification?.isRead" variant="text" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
+            <v-icon class="icon" left>mdi-email-outline</v-icon>
+            <span class="btn-label">Mark Unread</span>
+          </AppButton>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <div class="subject-text">
+            {{ notification?.subject }}
+          </div>
+        </v-col>
+      </v-row>
     </v-card-title>
+
     <v-card-text v-html="notification?.notificationContent" />
   </v-card>
 </template>
@@ -24,8 +31,10 @@ import { mapState } from 'pinia'
 import { useNotificationsStore } from '@/stores/notifications'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
+import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
+  components: { AppButton },
   mixins: [alertMixin],
   format: [format],
   props: {
@@ -56,39 +65,22 @@ export default {
 
 <style scoped>
 .notification-details-header {
-  border-bottom: 1px solid #6699cc;
+  border-bottom: 1px solid #003366;
   padding-bottom: 6px;
   margin-bottom: 12px;
 }
 
-.btn-style {
-  padding: 0px 6px;
-  margin: 0px;
-  font-size: 14px;
-  background-color: #ffffff;
-  color: #6699cc;
-  font-weight: bold;
-  text-transform: none;
-  max-height: 28px;
-  border: none;
-  box-shadow: none;
+.notification-button {
+  display: flex;
+  justify-content: end;
 }
 
-.btn-style:hover {
-  background-color: #ffffff;
-}
-
-.btn-style:hover .btn-label {
-  text-decoration: underline;
-}
-
-.btn-style .v-btn__content .icon {
-  padding: 0px;
-  margin: 0px;
-  font-size: 1.5em;
+.from-text {
+  white-space: pre-wrap;
 }
 
 .subject-text {
-  font-size: 18px;
+  font-size: 1.1rem;
+  white-space: pre-wrap;
 }
 </style>

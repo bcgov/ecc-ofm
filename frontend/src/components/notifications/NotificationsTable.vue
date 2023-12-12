@@ -6,11 +6,10 @@
     :items="notifications"
     item-key="notificationId"
     item-value="notificationId"
-    height="65vh"
     show-select
     hover
     fixed-header
-    class="tableText"
+    class="table"
     density="compact"
     @click:row="rowClickHandler">
     <template #item.isRead="{ item }">
@@ -158,13 +157,10 @@ export default {
 </script>
 
 <style scoped>
-.tableText {
-  font-size: small;
-}
-:deep(.v-data-table-header__content:hover) {
-  font-weight: bold;
-  color: black;
-  cursor: pointer;
+.table {
+  margin-left: 1px;
+  max-height: 62vh;
+  min-height: 45vh;
 }
 .unread-notification {
   font-weight: bold;
@@ -172,7 +168,7 @@ export default {
 .highlighted-row {
   display: flex;
   align-items: center;
-  background: #d4eaff;
+  background: #eeeeee;
   height: 100%;
 }
 :deep(.v-data-table__td) {

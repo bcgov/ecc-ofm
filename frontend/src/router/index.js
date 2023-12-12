@@ -1,7 +1,8 @@
-import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ApplicationsView from '@/views/ApplicationsView.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
 import ErrorView from '@/views/ErrorView.vue'
@@ -18,8 +19,9 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
+import ApplicationView from '@/views/applications/ApplicationView.vue'
+import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
+import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -32,6 +34,7 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.DASHBOARD,
         requiresAuth: true,
+        showHeroImage: true,
       },
     },
     {
@@ -39,8 +42,9 @@ const router = createRouter({
       name: 'login',
       component: LoginView,
       meta: {
-        requiresAuth: false,
         pageTitle: PAGE_TITLES.LOGIN,
+        requiresAuth: false,
+        showHeroImage: true,
       },
     },
     {
@@ -50,6 +54,7 @@ const router = createRouter({
       meta: {
         pageTitle: PAGE_TITLES.LOGIN,
         requiresAuth: false,
+        showHeroImage: true,
       },
     },
     {
@@ -108,9 +113,25 @@ const router = createRouter({
     {
       path: '/applications',
       name: 'applications',
-      component: ApplicationsView,
+      component: ApplicationsHistoryView,
       meta: {
-        pageTitle: 'Applications',
+        pageTitle: 'Applications History',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/applications/:applicationGuid',
+      name: 'application',
+      component: ApplicationView,
+      children: [
+        {
+          path: 'facility-details',
+          name: 'facility-details',
+          component: FacilityDetailsView,
+        },
+      ],
+      meta: {
+        pageTitle: 'Application',
         requiresAuth: true,
       },
     },
