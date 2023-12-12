@@ -1,8 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ApplicationsView from '@/components/applications/ApplicationsView.vue'
-import FacilityDetails from '@/components/applications/FacilityDetails.vue'
-import { PATHS, getApplicationUrl } from '@/services/routingService'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { PAGE_TITLES, ROLES } from '@/utils/constants'
@@ -22,6 +19,8 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import ApplicationsView from '@/views/applications/ApplicationsView.vue'
+import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -117,11 +116,17 @@ const router = createRouter({
       },
     },
     {
-      path: getApplicationUrl(PATHS.FACILITY_DETAILS, ':applicationGuid'),
-      name: 'facility-details',
-      component: FacilityDetails,
+      path: '/applications/:applicationGuid',
+      name: 'application',
+      children: [
+        {
+          path: 'facility-details',
+          name: 'facility-details',
+          component: FacilityDetailsView,
+        },
+      ],
       meta: {
-        pageTitle: 'Facility Details',
+        pageTitle: 'Application',
         requiresAuth: true,
       },
     },

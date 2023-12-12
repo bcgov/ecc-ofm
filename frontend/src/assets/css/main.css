@@ -166,3 +166,7 @@ input[type='number'] {
   background-color: #003466 !important;
   color: #ffffff !important;
 }
+
+.v-data-table__th {
+  font-weight: 600 !important;
+}

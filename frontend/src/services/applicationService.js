@@ -12,8 +12,7 @@ export default {
   async getApplicationsByFacilityId(facilityId) {
     try {
       const response = await ApiService.apiAxios.get(ApiRoutes.APPLICATIONS + '/facility/' + facilityId)
-      let applications = response?.data
-      return applications
+      return response?.data
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)
       throw error
@@ -45,6 +44,16 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the application by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async updateApplication(applicationId, payload) {
+    try {
+      const response = await ApiService.apiAxios.put(ApiRoutes.APPLICATIONS + '/' + applicationId, payload)
+      return response
+    } catch (error) {
+      console.log(`Failed to update the application - ${error}`)
       throw error
     }
   },

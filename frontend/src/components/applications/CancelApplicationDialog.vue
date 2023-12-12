@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
-import { useApplicationsStore } from '@/stores/applications'
 import alertMixin from '@/mixins/alertMixin'
+import { APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import ApplicationService from '@/services/applicationService'
 
 export default {
   name: 'CancelApplicationDialog',
@@ -33,7 +33,7 @@ export default {
       default: '',
     },
   },
-  emits: ['close'],
+  emits: ['close', 'cancel'],
   data() {
     return {
       isLoading: false,
@@ -48,14 +48,18 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['cancelApplication']),
     closeDialog() {
       this.$emit('close')
     },
     async cancel() {
       try {
         this.isLoading = true
-        await this.cancelApplication(this.applicationId)
+        const payload = {
+          statusCode: APPLICATION_STATUS_CODES.CANCELLED,
+          stateCode: CRM_STATE_CODES.INACTIVE,
+        }
+        await ApplicationService.updateApplication(this.applicationId, payload)
+        this.$emit('cancel')
         this.setSuccessAlert('Application is cancelled successfully')
       } catch (error) {
         this.setFailureAlert('Failed to cancel your application')

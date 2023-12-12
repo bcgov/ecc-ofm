@@ -13,7 +13,7 @@ import { mapState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 
 export default {
-  name: 'FacilityDetails',
+  name: 'FacilityDetailsView',
   data() {
     return {
       loading: false,
