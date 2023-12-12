@@ -19,7 +19,8 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
-import ApplicationsView from '@/views/applications/ApplicationsView.vue'
+import ApplicationView from '@/views/applications/ApplicationView.vue'
+import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
 
 const router = createRouter({
@@ -112,15 +113,16 @@ const router = createRouter({
     {
       path: '/applications',
       name: 'applications',
-      component: ApplicationsView,
+      component: ApplicationsHistoryView,
       meta: {
-        pageTitle: 'Applications',
+        pageTitle: 'Applications History',
         requiresAuth: true,
       },
     },
     {
       path: '/applications/:applicationGuid',
       name: 'application',
+      component: ApplicationView,
       children: [
         {
           path: 'facility-details',
