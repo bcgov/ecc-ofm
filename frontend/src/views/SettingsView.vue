@@ -222,7 +222,7 @@ export default {
         }
 
         // If stateCode is the same, then sort by lastName
-        return a.lastName.localeCompare(b.lastName);
+        return a.lastName.localeCompare(b.lastName)
       });
     },
 
