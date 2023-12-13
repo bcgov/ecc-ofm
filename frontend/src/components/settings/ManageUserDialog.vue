@@ -6,7 +6,7 @@
           <v-row v-if="isAddingUser">
             <v-col cols="12" class="pl-0 d-flex align-center justify-center">Note: users must have an active Business BCeID to gain access to the portal.</v-col>
           </v-row>
-          <v-row no-gutters>
+          <v-row no-gutters class="mt-5">
             <v-col cols="12" md="3">
               <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
@@ -20,7 +20,7 @@
                 :rules="rules.required"
                 :disabled="isLoading"></v-text-field>
             </v-col>
-            <v-col v-else cols="12" md="9">
+            <v-col v-else cols="12" md="9" class="mb-5">
               <span>{{ user.userName }}</span>
             </v-col>
           </v-row>
@@ -213,7 +213,6 @@ export default {
           this.isLoading = true
           if (this.isAddingUser) {
             await this.createUser()
-            this.wasNewUserAdded = true
           } else if (this.isUpdatingUser) {
             await this.updateUser()
             this.closeManageUserDialog()
@@ -231,6 +230,7 @@ export default {
       try {
         this.user.organizationId = this.userInfo.organizationId
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
+        this.wasNewUserAdded = true
         this.setSuccessAlert(ADD_USER_SUCCESS_MSG)
       } catch (error) {
         this.setFailureAlert('User account creation failed.', error)
