@@ -23,7 +23,7 @@ const rules = {
   maxLength(number) {
     return (v) => !v || v.length <= number || 'Max length exceeded'
   },
-  phone: (v) => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) || 'A valid phone number is required', // https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s02.html
+  phone: (v) => !v || /^\(?([0-9]{3})\)?-([0-9]{3})-([0-9]{4})$/.test(v) || 'Must be a valid phone number in the format ###-###-####',
   listIsNotEmpty: [(v) => v.length > 0 || 'This field is required'],
 }
 
