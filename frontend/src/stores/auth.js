@@ -43,16 +43,6 @@ export const useAuthStore = defineStore('auth', {
         localStorage.removeItem('isAuthorizedUser')
       }
     },
-    // TODO Remove setter. Just use state
-    async setAuthorizedWebsocketUser(isAuthorizedWebsocketUser) {
-      if (isAuthorizedWebsocketUser) {
-        this.isAuthorizedWebsocketUser = true
-        localStorage.setItem('isAuthorizedWebsocketUser', 'true')
-      } else {
-        this.isAuthorizedWebsocketUser = false
-        localStorage.removeItem('isAuthorizedWebsocketUser')
-      }
-    },
     //sets the token required for refreshing expired json web tokens
     async logout() {
       localStorage.removeItem('jwtToken')
