@@ -5,7 +5,7 @@ const ApiError = require('./error')
 const axios = require('axios')
 const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
-// TODO... const { ORGANIZATION_PROVIDER_TYPES} = require('../util/constants')
+
 const {
   FacilityMappings,
   UserFacilityMappings,
