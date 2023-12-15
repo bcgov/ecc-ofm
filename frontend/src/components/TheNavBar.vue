@@ -47,7 +47,6 @@
         {{ title }}
       </v-toolbar-title>
       <v-spacer />
-      <TheSetNavigation />
     </v-app-bar>
     <!-- <v-app-bar v-if="bannerColor !== ''" style="color: white" :color="bannerColor" sticky dense height="20rem" clipped-left>
       <div>
@@ -60,16 +59,12 @@
 <script>
 import { PAGE_TITLES /*, REQUEST_TYPES*/ } from '@/utils/constants'
 import { mapState } from 'pinia'
-import TheSetNavigation from '@/components/TheSetNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import StaticConfig from '@/common/staticConfig.js'
 
 export default {
   name: 'NavBar',
-  components: {
-    TheSetNavigation,
-  },
   props: {
     title: {
       type: String,
@@ -186,7 +181,6 @@ export default {
   color: #003366;
 }
 
-/* TODO comp error on... /deep/ .active { */
 .active {
   border-left: 4px solid #fcba19;
   background-color: white;
