@@ -17,7 +17,7 @@
         <v-spacer></v-spacer>
         <div v-if="isAuthenticated && userInfo" class="mt-5">
           <v-row>
-            <v-col style="width: 70px">
+            <v-col v-if="showMessagingIcon" style="width: 70px">
               <v-btn @click="$router.push({ name: 'messaging' })" id="mail_box_button" rounded class="mr-5 elevation-0" dark v-if="!isNaN(messageNotificationCount)">
                 <v-badge color="red" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
                   <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
@@ -85,12 +85,17 @@ export default {
       const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
+    showMessagingIcon() {
+      return this.isAuthenticated && this.userInfo && !this.isMinistryUser
+    },
   },
   async created() {
     try {
       await this.getUserInfo()
-      await this.getNotifications(this.userInfo.contactId)
-      await this.getAssistanceRequests(this.userInfo?.contactId)
+      if (this.showMessagingIcon) {
+        await this.getNotifications(this.userInfo?.contactId)
+        await this.getAssistanceRequests(this.userInfo?.contactId)
+      }
     } catch (error) {
       console.log(error)
     }
