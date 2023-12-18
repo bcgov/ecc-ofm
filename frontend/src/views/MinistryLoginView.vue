@@ -2,7 +2,6 @@
   <v-container fluid>
     <v-row>
       <v-col class="xs-12 lg-6 xl-2">
-        <v-divider></v-divider>
         <v-card flat class="d-flex flex-column justify-center align-center">
           <v-card-title class="gov-header">
             <h4 id="login_text">Ministry</h4>
