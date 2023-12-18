@@ -1,18 +1,5 @@
 <template>
   <v-container fluid>
-    <!-- login article -->
-    <!-- <article id="login-banner" class="top-banner"> -->
-    <!-- <v-row align="center" justify="center">
-      <v-col cols="12" align="center" class="pt-0">
-        <v-img src="@/assets/images/login-header-img-resized.jpg" max-width="1448" class="align-end">
-          <v-col align="center" style="background-color: rgb(28, 115, 158, 0.85)">
-            <span class="text-h4 text-white font-weight-bold" style="font-family: BCSans">Early Childhood Care - Operating Funding Model</span>
-            <br />
-            <span class="text-h6 text-white">Welcome</span>
-          </v-col>
-        </v-img>
-      </v-col>
-    </v-row> -->
     <v-row>
       <v-col class="xs-12 lg-6 xl-2">
         <v-divider></v-divider>
@@ -29,7 +16,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- </article> -->
   </v-container>
 </template>
 
@@ -60,22 +46,7 @@ export default {
 </script>
 
 <style scoped>
-.login-card {
-  max-width: 400px;
-}
-
 .gov-header {
   color: #003366;
-}
-
-.top-banner {
-  min-height: 500px;
-  background-size: cover;
-  align-items: center;
-  display: flex;
-}
-
-.containerWidth1450 {
-  max-width: 1450px;
 }
 </style>
