@@ -1,5 +1,5 @@
 'use strict'
-const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation } = require('./utils')
+const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation, postBatches } = require('./utils')
 const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
@@ -14,6 +14,7 @@ const {
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
+  ContactMappings,
 } = require('../util/mapping/Mappings')
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
@@ -166,10 +167,14 @@ function parseFacilityPermissions(userResponse) {
 }
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
-  const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
+  /* log.info('***************************************************************************************************')
+  log.info('mapUsersPermissionsFacilitiesObjectForFront data:', data)
+  log.info('***************************************************************************************************')
+   */ const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
       let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
+      facilityData.accountNumber = facilityData.address.accountnumber
       facilityData.city = facilityData.address.address1_city
       facilityData.address = facilityData.address.address1_line1
       return facilityData
@@ -184,12 +189,18 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=accountnumber,address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
+    log.info('***************************************************************************************************')
+    log.info('getUsersPermissionsFacilities response:', response.value)
+    log.info('***************************************************************************************************')
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
     })
-    return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
+    /*     log.info('***************************************************************************************************')
+    log.info('getUsersPermissionsFacilities response:', usersPermissionsFacilities)
+    log.info('***************************************************************************************************')
+ */ return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -203,10 +214,13 @@ function mapUserFacilityObjectForFront(data) {
   return userFacilities
 }
 
-async function getUserFacilities(req, res) {
+async function getUserFacilities(req, res, onlyWithPortalAccess) {
   try {
     let userFacilities = []
-    const operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
+    let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
+    if (onlyWithPortalAccess) {
+      operation = operation + ` and (ofm_portal_access eq true)`
+    }
     const response = await getOperation(operation)
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
     return res.status(HttpStatus.OK).json(userFacilities)
@@ -232,9 +246,61 @@ async function createUser(req, res) {
   }
 }
 
+function mapContactForBack(data) {
+  let contact = new MappableObjectForBack(data, ContactMappings)
+  contact.entityNameSet = 'contacts'
+  contact.actionMode = 'Update'
+  return contact
+}
+
+function mapContactFacilitiesForBack(data) {
+  let facilitiesForBack = []
+  data.facilities.forEach((facilityFromFront) => {
+    let facility = {}
+    facility.entityID = facilityFromFront.bceidFacilityId
+    facility.ofm_portal_access = facilityFromFront.ofmPortalAccess
+    facility.entityNameSet = 'ofm_bceid_facilities'
+    facility.actionMode = 'Update'
+    facilitiesForBack.push(facility)
+  })
+  return facilitiesForBack
+}
+
+async function updateUser(req, res) {
+  try {
+    let payload = {
+      batchTypeId: 101,
+      feature: 'AccountManagement',
+      function: 'UserEdit',
+      actionMode: 'Update',
+      scope: 'Parent-Child',
+      data: {
+        contact: {},
+        ofm_bceid_facility: [],
+      },
+    }
+    const updatedContact = mapContactForBack(req.body)
+    const updatedFacilities = mapContactFacilitiesForBack(req.body)
+    log.info('updatedContact updatedContact:', JSON.stringify(updatedContact, null, 2))
+    payload.data.contact = updatedContact
+    log.info('contact type:', typeof updatedContact)
+    payload.data.ofm_bceid_facility = updatedFacilities
+    log.info('facilities type:', typeof updatedFacilities)
+    log.info('***************************************************************************************************')
+    log.info('updateUser payload2:', JSON.stringify(payload, null, 2))
+    log.info('***************************************************************************************************')
+    let response = await postBatches('batches', payload)
+
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   createUser,
   getUserFacilities,
   getUserInfo,
   getUsersPermissionsFacilities,
+  updateUser,
 }

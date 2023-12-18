@@ -241,7 +241,8 @@ export default {
     */
     closeDialogAndRefresh() {
       this.showManageUserDialog = false
-      this.getUsersAndFacilities()
+      //TODO temp comment out for debugging batches endpoint failure...
+      //this.getUsersAndFacilities()
     },
 
     /**

@@ -80,11 +80,11 @@
             </v-col>
             <v-col cols="12" md="9">
               <v-select
-                multiple
-                :items="facilities"
-                v-model="user.facilityId"
+                :items="facilitiesToAdminister"
+                v-model="facilitiesModel"
                 item-title="facilityName"
-                item-value="id"
+                item-value="facilityId"
+                multiple
                 label="Select one or more facilities"
                 :rules="rules.required"
                 :disabled="isLoading"
@@ -123,7 +123,6 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
-import { setTransitionHooks } from 'vue'
 
 const ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
 
@@ -151,7 +150,9 @@ export default {
       rules,
       isDisplayed: false,
       isLoading: false,
-      facilities: [],
+      facilitiesModel: [],
+      facilitiesToAdminister: [],
+      facilitiesUser: [],
       userOperationType: '', // Can be 'adding', 'updating'
       wasNewUserAdded: false,
     }
@@ -176,18 +177,17 @@ export default {
       },
     },
     user: {
-      handler() {
+      handler(value) {
         this.userOperationType = Object.keys(this.user).length === 0 ? 'adding' : 'updating';
+        this.facilitiesModel = value.facilities
+        console.log('user = ', JSON.stringify(value, null, 2))
+        console.log('users facilities = ', JSON.stringify(this.facilitiesUser, null, 2))
       },
     },
   },
   async created() {
-    try {
-      const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + this.userInfo.contactId)
-      this.facilities = this.sortFacilities(res.data)
-    } catch (error) {
-      this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
-    }
+    this.facilitiesToAdminister = await this.getUserFacilities(this.userInfo.contactId, true)
+    //console.log('facilities to administer = ', this.facilitiesToAdminister)
   },
   methods: {
     /**
@@ -214,13 +214,78 @@ export default {
           if (this.isAddingUser) {
             await this.createUser()
           } else if (this.isUpdatingUser) {
-            await this.updateUser()
+            //console.log('IS UPDATING!!!!')
+            if (this.hasUserFacilityAccessChanged(this.facilitiesModel, this.user.facilities)) {
+              console.log('facilities updated!!!!')
+              this.user.facilities = await this.getUpdatedFacilityAccess(this.facilitiesModel, this.user.facilities)
+              //console.log('updateUser X = ', JSON.stringify(this.user, null, 2))
+            } else {
+              console.log('facilities NOT updated!!!!')
+            }
+            await this.updateUser(this.user)
             this.closeManageUserDialog()
           }
         } finally {
           this.isLoading = false
         }
       }
+    },
+
+    /**
+     * Returns true if users facility access has changed, false otherwise.
+     */
+    hasUserFacilityAccessChanged(facilitiesModel, userFacilities) {
+      if (facilitiesModel.length !== userFacilities.length) {
+        return true;
+      } else {
+        for (let facilityId of facilitiesModel) {
+          if (!userFacilities.includes(facilityId)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+    /**
+     * Get updated user facility access.
+     */
+    async getUpdatedFacilityAccess(facilitiesModel, userFacilities) {
+
+      //TODO this is going to get refactored before committing for code QA...
+
+      facilitiesModel = this.facilitiesToAdminister.filter(facility => this.facilitiesModel.includes(facility.facilityId))
+      console.log('facilitiesModel = ', JSON.stringify(facilitiesModel, null, 2))
+      const facilitiesToAdd = facilitiesModel.filter(facilityModel => {
+        return !userFacilities.some(userFacility => {
+          return userFacility.facilityId === facilityModel.facilityId;
+        });
+      });
+      console.log('facilitiesToAdd = ', JSON.stringify(facilitiesToAdd, null, 2))
+      const facilitiesToRemove = userFacilities.filter(userFacility =>
+        !facilitiesModel.some(model => model.facilityId === userFacility.facilityId)
+      );
+      console.log('facilitiesToRemove = ', JSON.stringify(facilitiesToRemove, null, 2))
+
+
+      const userFacilitiesWithbceidFacilityId = await this.getUserFacilities(this.user.contactId, false)
+
+      // Update ofmPortalAccess for matching facilities
+      facilitiesToRemove?.forEach(facilityToRemove => {
+        let userFacility = userFacilitiesWithbceidFacilityId.find(facility => facility.facilityId === facilityToRemove.facilityId)
+        facilityToRemove.bceidFacilityId = userFacility.bceidFacilityId
+        facilityToRemove.ofmPortalAccess = false
+      })
+      // Update ofmPortalAccess for matching facilities
+      facilitiesToAdd?.forEach(facilityToAdd => {
+        let userFacility = userFacilitiesWithbceidFacilityId.find(facility => facility.facilityId === facilityToAdd.facilityId)
+        //console.log('userFacility ******** = ', JSON.stringify(userFacility, null, 2))
+        facilityToAdd.bceidFacilityId = userFacility.bceidFacilityId
+        facilityToAdd.ofmPortalAccess = true
+      })
+      let y = [...facilitiesToAdd, ...facilitiesToRemove]
+      //console.log('y = ', JSON.stringify(y, null, 2))
+      return y
     },
 
     /**
@@ -240,14 +305,22 @@ export default {
     /**
      * Update user and emit success/fail event.
      */
-    async updateUser() {
+    async updateUser(user) {
       try {
-        //TODO - complete when API is ready
-        //this.user.organizationId = this.userInfo.organizationId
-        //const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
+        console.log('updateUser = ', JSON.stringify(user, null, 2))
+        const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
         this.$emit('update-success-event', true)
       } catch (error) {
         this.$emit('update-success-event', false, error)
+      }
+    },
+
+    async getUserFacilities(contactId, onlyWithPortalAccess) {
+      try {
+        const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + onlyWithPortalAccess + '/' + contactId)
+        return this.sortFacilities(res.data)
+      } catch (error) {
+        this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
       }
     },
 
