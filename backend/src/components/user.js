@@ -207,13 +207,17 @@ function mapUserFacilityObjectForFront(data) {
 
 async function getUserFacilities(req, res, onlyWithPortalAccess) {
   try {
+    log.verbose('getUserFacilities 1')
     let userFacilities = []
     let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
     if (onlyWithPortalAccess) {
       operation = operation + ` and (ofm_portal_access eq true)`
     }
+    log.verbose('getUserFacilities 2')
     const response = await getOperation(operation)
+    log.verbose('getUserFacilities 3')
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
+    log.verbose('getUserFacilities 4')
     return res.status(HttpStatus.OK).json(userFacilities)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -230,8 +234,8 @@ function mapUserObjectForBack(data) {
 async function createUser(req, res) {
   try {
     const payload = mapUserObjectForBack(req.body)
-    let response = await postOperation('contacts', payload)
-    let returnVal = new MappableObjectForFront(response, UserMappings).toJSON()
+    const response = await postOperation('contacts', payload)
+    const returnVal = new MappableObjectForFront(response, UserMappings).toJSON()
     returnVal.role = Number(returnVal.role)
     return res.status(HttpStatus.OK).json(returnVal)
   } catch (e) {
@@ -240,14 +244,14 @@ async function createUser(req, res) {
 }
 
 function mapContactForBack(data) {
-  let contact = new MappableObjectForBack(data, ContactMappings).toJSON()
+  const contact = new MappableObjectForBack(data, ContactMappings).toJSON()
   contact.entityNameSet = 'contacts'
   contact.actionMode = 'Update'
   return contact
 }
 
 function mapContactFacilitiesForBack(data) {
-  let facilitiesForBack = []
+  const facilitiesForBack = []
   data.facilities.forEach((facilityFromFront) => {
     let facility = {}
     facility.entityID = facilityFromFront.bceidFacilityId
@@ -272,15 +276,9 @@ async function updateUser(req, res) {
         ofm_bceid_facility: [],
       },
     }
-    const updatedContact = mapContactForBack(req.body)
-    const updatedFacilities = mapContactFacilitiesForBack(req.body)
-    log.info('updatedContact updatedContact:', JSON.stringify(updatedContact, null, 2))
-    payload.data.contact = updatedContact
-    log.info('contact type:', typeof updatedContact)
-    payload.data.ofm_bceid_facility = updatedFacilities
-    log.info('facilities type:', typeof updatedFacilities)
+    payload.data.contact = mapContactForBack(req.body)
+    payload.data.ofm_bceid_facility = mapContactFacilitiesForBack(req.body)
     let response = await postBatches(payload)
-
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)

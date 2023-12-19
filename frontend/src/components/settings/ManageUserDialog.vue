@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="dialogTitle" :isLoading="isLoading" persistent min-width="350px" max-width="50%" @close="closeManageUserDialog">
+    <AppDialog v-model="isDisplayed" :title="dialogTitle" :isLoading="isLoading" persistent max-width="50%" @close="closeManageUserDialog">
       <template #content>
         <v-form ref="userForm" v-model="isFormComplete">
           <v-row v-if="isAddingUser">
@@ -104,7 +104,7 @@
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
             <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ isAddingUser ? 'Add' : 'Update' }}</AppButton>
-            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'updating'" :loading="isLoading">Next</AppButton>
+            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'update'" :loading="isLoading">Next</AppButton>
           </v-col>
         </v-row>
       </template>
@@ -154,7 +154,7 @@ export default {
       selectedFacilityIds: [],
       facilitiesToAdminister: [],
       facilitiesUser: [],
-      userOperationType: '', // Can be 'adding', 'updating'
+      userOperationType: '', // Can be 'add', 'update'
       wasNewUserAdded: false,
     }
   },
@@ -162,10 +162,10 @@ export default {
     ...mapState(useAppStore, ['userRoles']),
     ...mapState(useAuthStore, ['userInfo']),
     isAddingUser() {
-      return this.userOperationType === 'adding';
+      return this.userOperationType === 'add';
     },
     isUpdatingUser() {
-      return this.userOperationType === 'updating';
+      return this.userOperationType === 'update';
     },
     dialogTitle() {
       return this.isAddingUser ? 'Add new user' : 'Edit user'
@@ -179,7 +179,7 @@ export default {
     },
     updatingUser: {
       handler(value) {
-        this.userOperationType = Object.keys(value).length === 0 ? 'adding' : 'updating';
+        this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update';
         this.selectedFacilityIds = value.facilities
         this.user = value
       },
@@ -206,24 +206,26 @@ export default {
      * Create or update user.
      */
     async saveUser() {
-      this.$refs.userForm?.validate()
-      if (this.isFormComplete) {
-        try {
-          this.isLoading = true
-          if (this.isAddingUser) {
-            await this.createUser()
-          } else if (this.isUpdatingUser) {
-            if (this.hasUserFacilityAccessChanged(this.selectedFacilityIds, this.user.facilities)) {
-              this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds)
-            }
-            await this.updateUser(this.user)
-            this.closeManageUserDialog()
+      this.$refs.userForm?.validate();
+      if (!this.isFormComplete) {
+        return;
+      }
+      try {
+        this.isLoading = true;
+        if (this.isAddingUser) {
+          await this.createUser();
+        } else if (this.isUpdatingUser) {
+          if (this.hasUserFacilityAccessChanged(this.selectedFacilityIds, this.user.facilities)) {
+            this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds);
           }
-        } finally {
-          this.isLoading = false
+          await this.updateUser(this.user);
+          this.closeManageUserDialog();
         }
+      } finally {
+        this.isLoading = false;
       }
     },
+
 
     /**
      * Create a new user and emit success/fail event.
@@ -246,7 +248,7 @@ export default {
      */
     async updateUser(user) {
       try {
-        const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
+        await ApiService.apiAxios.post(ApiRoutes.USER + '/update', user)
         this.$emit('update-success-event', true)
       } catch (error) {
         this.$emit('update-success-event', false, error)
@@ -295,15 +297,15 @@ export default {
     hasUserFacilityAccessChanged(selectedFacilityIds, userFacilities) {
       if (selectedFacilityIds?.length !== userFacilities?.length) {
         return true;
-      } else {
-        for (let facilityId of selectedFacilityIds) {
-          if (!userFacilities.includes(facilityId)) {
-            return true;
-          }
+      }
+      for (const facilityId of selectedFacilityIds) {
+        if (!userFacilities.includes(facilityId)) {
+          return true;
         }
       }
       return false;
     },
+
 
     /**
      * Get updated user facility access.
@@ -315,7 +317,8 @@ export default {
       const selectedFacilities = this.getSelectedFacilitiesByIds(selectedFacilityIds)
       // Get users current facilities
       const userFacilities = await this.getUserFacilities(user.contactId, false)
-      if (Object.keys(user.facilities).length === 0 && user.facilities.constructor === Object) {
+      // If user has no facilities, all selectedFacilities are to be added
+      if (Object.keys(user.facilities).length === 0) {
         facilitiesToAdd = selectedFacilities;
       } else {
         // Determine any new facilities to add/remove by comparing selectedFacilities to userFacilities

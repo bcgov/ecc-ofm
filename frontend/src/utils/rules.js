@@ -1,13 +1,15 @@
+const REQUIRED_MSG = 'This field is required'
 const rules = {
   email: [(v) => /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required'], // https://emailregex.com/
   required: [
     function (v) {
       if (v === 0) {
         return true
+      } else if (Array.isArray(v)) {
+        return v.length > 0 || REQUIRED_MSG
       } else if (!v) {
-        return 'This field is required'
+        return REQUIRED_MSG
       }
-
       return true
     },
   ],
