@@ -85,23 +85,24 @@ const UserMappings = [
 ]
 
 const UserFacilityMappings = [
-  { back: 'ofm_bceid_facilityid', front: 'facilityId' },
-  { back: 'ofm_facility', front: 'ofmFacility' },
+  { back: 'ofm_bceid_facilityid', front: 'bceidFacilityId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
 ]
 
 const UserFacilityDetailMappings = [
-  { back: 'accountid', front: 'accountId' },
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'address1_composite', front: 'address' },
 ]
 
 const FacilityMappings = [
-  { back: 'ofm_bceid_facilityid', front: 'facilityId' },
+  { back: 'ofm_bceid_facilityid', front: 'bceidFacilityId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_facility', front: 'address' },
+  { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
 ]
 
 const ApplicationMappings = [
@@ -117,11 +118,21 @@ const ApplicationMappings = [
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
 ]
 
+const ContactMappings = [
+  { back: 'entityID', front: 'contactId' },
+  { back: 'ofm_first_name', front: 'firstName' },
+  { back: 'ofm_last_name', front: 'lastName' },
+  { back: 'telephone1', front: 'phone' },
+  { back: 'emailaddress1', front: 'email' },
+  { back: 'ofm_portal_role', front: 'role' },
+]
+
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
+  ContactMappings,
   FacilityMappings,
   NotificationMappings,
   UserFacilityMappings,

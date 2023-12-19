@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="dialogTitle" :isLoading="isLoading" persistent min-width="350px" max-width="50%" @close="closeManageUserDialog">
+    <AppDialog v-model="isDisplayed" :title="dialogTitle" :isLoading="isLoading" persistent max-width="50%" @close="closeManageUserDialog">
       <template #content>
         <v-form ref="userForm" v-model="isFormComplete">
           <v-row v-if="isAddingUser">
@@ -80,11 +80,11 @@
             </v-col>
             <v-col cols="12" md="9">
               <v-select
-                multiple
-                :items="facilities"
-                v-model="user.facilityId"
+                :items="facilitiesToAdminister"
+                v-model="selectedFacilityIds"
                 item-title="facilityName"
-                item-value="id"
+                item-value="facilityId"
+                multiple
                 label="Select one or more facilities"
                 :rules="rules.required"
                 :disabled="isLoading"
@@ -104,7 +104,7 @@
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
             <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ isAddingUser ? 'Add' : 'Update' }}</AppButton>
-            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'updating'" :loading="isLoading">Next</AppButton>
+            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'update'" :loading="isLoading">Next</AppButton>
           </v-col>
         </v-row>
       </template>
@@ -123,7 +123,6 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
-import { setTransitionHooks } from 'vue'
 
 const ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
 
@@ -136,7 +135,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    user: {
+    updatingUser: {
       type: Object,
       required: true,
       default: () => {
@@ -151,8 +150,11 @@ export default {
       rules,
       isDisplayed: false,
       isLoading: false,
-      facilities: [],
-      userOperationType: '', // Can be 'adding', 'updating'
+      user: {},
+      selectedFacilityIds: [],
+      facilitiesToAdminister: [],
+      facilitiesUser: [],
+      userOperationType: '', // Can be 'add', 'update'
       wasNewUserAdded: false,
     }
   },
@@ -160,10 +162,10 @@ export default {
     ...mapState(useAppStore, ['userRoles']),
     ...mapState(useAuthStore, ['userInfo']),
     isAddingUser() {
-      return this.userOperationType === 'adding';
+      return this.userOperationType === 'add';
     },
     isUpdatingUser() {
-      return this.userOperationType === 'updating';
+      return this.userOperationType === 'update';
     },
     dialogTitle() {
       return this.isAddingUser ? 'Add new user' : 'Edit user'
@@ -175,19 +177,16 @@ export default {
         this.isDisplayed = value
       },
     },
-    user: {
-      handler() {
-        this.userOperationType = Object.keys(this.user).length === 0 ? 'adding' : 'updating';
+    updatingUser: {
+      handler(value) {
+        this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update';
+        this.selectedFacilityIds = value.facilities
+        this.user = value
       },
     },
   },
   async created() {
-    try {
-      const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + this.userInfo.contactId)
-      this.facilities = this.sortFacilities(res.data)
-    } catch (error) {
-      this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
-    }
+    this.facilitiesToAdminister = await this.getUserFacilities(this.userInfo.contactId, true)
   },
   methods: {
     /**
@@ -207,19 +206,23 @@ export default {
      * Create or update user.
      */
     async saveUser() {
-      this.$refs.userForm?.validate()
-      if (this.isFormComplete) {
-        try {
-          this.isLoading = true
-          if (this.isAddingUser) {
-            await this.createUser()
-          } else if (this.isUpdatingUser) {
-            await this.updateUser()
-            this.closeManageUserDialog()
+      this.$refs.userForm?.validate();
+      if (!this.isFormComplete) {
+        return;
+      }
+      try {
+        this.isLoading = true;
+        if (this.isAddingUser) {
+          await this.createUser();
+        } else if (this.isUpdatingUser) {
+          if (this.hasUserFacilityAccessChanged(this.selectedFacilityIds, this.user.facilities)) {
+            this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds);
           }
-        } finally {
-          this.isLoading = false
+          await this.updateUser(this.user);
+          this.closeManageUserDialog();
         }
+      } finally {
+        this.isLoading = false;
       }
     },
 
@@ -230,6 +233,8 @@ export default {
       try {
         this.user.organizationId = this.userInfo.organizationId
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
+        this.user = response.data
+        this.user.facilities = {}
         this.wasNewUserAdded = true
         this.setSuccessAlert(ADD_USER_SUCCESS_MSG)
       } catch (error) {
@@ -240,14 +245,24 @@ export default {
     /**
      * Update user and emit success/fail event.
      */
-    async updateUser() {
+    async updateUser(user) {
       try {
-        //TODO - complete when API is ready
-        //this.user.organizationId = this.userInfo.organizationId
-        //const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
+        await ApiService.apiAxios.post(ApiRoutes.USER + '/update', user)
         this.$emit('update-success-event', true)
       } catch (error) {
         this.$emit('update-success-event', false, error)
+      }
+    },
+
+    /**
+     * Get the list of facilities by contact id. If onlyWithPortalAccess is true, only return facilities with portal access.
+     */
+    async getUserFacilities(contactId, onlyWithPortalAccess) {
+      try {
+        const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + onlyWithPortalAccess + '/' + contactId)
+        return this.sortFacilities(res.data)
+      } catch (error) {
+        this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
       }
     },
 
@@ -274,6 +289,77 @@ export default {
     getAddUserSuccessMsg() {
       return ADD_USER_SUCCESS_MSG
     },
+
+    /**
+     * Returns true if users facility access has changed, false otherwise.
+     */
+    hasUserFacilityAccessChanged(selectedFacilityIds, userFacilities) {
+      if (selectedFacilityIds?.length !== userFacilities?.length) {
+        return true;
+      }
+      return selectedFacilityIds.some(facilityId => !userFacilities.includes(facilityId));
+    },
+
+    /**
+     * Get updated user facility access.
+     */
+    async getUpdatedFacilityAccess(user, selectedFacilityIds) {
+      let facilitiesToAdd = []
+      let facilitiesToRemove = []
+      // Get facility objects selected by facilityIds
+      const selectedFacilities = this.getSelectedFacilitiesByIds(selectedFacilityIds)
+      // Get users current facilities
+      const userFacilities = await this.getUserFacilities(user.contactId, false)
+      // If user has no facilities, all selectedFacilities are to be added
+      if (Object.keys(user.facilities).length === 0) {
+        facilitiesToAdd = selectedFacilities;
+      } else {
+        // Determine any new facilities to add/remove by comparing selectedFacilities to userFacilities
+        facilitiesToAdd = this.getFacilitiesToAdd(selectedFacilities, user.facilities);
+        facilitiesToRemove = this.getFacilitiesToRemove(selectedFacilities, userFacilities)
+        // Update facilities to remove with bceidFacilityId and ofmPortalAccess (true)
+        this.updateFacilitiesAccess(facilitiesToRemove, userFacilities, false)
+      }
+      // Update facilities to add with bceidFacilityId and ofmPortalAccess (false)
+      this.updateFacilitiesAccess(facilitiesToAdd, userFacilities, true)
+      return [...facilitiesToAdd, ...facilitiesToRemove]
+    },
+
+    /**
+     * Filter facilities to administer.
+     */
+    getSelectedFacilitiesByIds(selectedFacilityIds) {
+      return this.facilitiesToAdminister.filter(facility => selectedFacilityIds.includes(facility.facilityId))
+    },
+
+    /**
+     * Get facilities to add.
+     */
+    getFacilitiesToAdd(selectedFacilities, userFacilities) {
+      return selectedFacilities?.filter(selectedFacility =>
+        !userFacilities?.some(userFacility => userFacility.facilityId === selectedFacility.facilityId))
+    },
+
+    /**
+     * Get facilities to remove.
+     */
+    getFacilitiesToRemove(selectedFacility, userFacilities) {
+      return userFacilities?.filter(userFacility =>
+        !selectedFacility?.some(selectedFacility => selectedFacility.facilityId === userFacility.facilityId))
+    },
+
+    /**
+     * Update facilities to add/remove access (i.e. ofmPortalAccess = true/false), and update bceidFacilityId value from userFacilities
+     */
+    updateFacilitiesAccess(facilitiesToAddOrRemove, userFacilities, accessStatus) {
+      facilitiesToAddOrRemove?.forEach(facilityToAddOrRemove => {
+        const userFacility = userFacilities.find(fac => fac.facilityId === facilityToAddOrRemove.facilityId)
+        if (userFacility) {
+          facilityToAddOrRemove.bceidFacilityId = userFacility.bceidFacilityId
+          facilityToAddOrRemove.ofmPortalAccess = accessStatus
+        }
+      });
+    }
   },
 }
 </script>
