@@ -246,7 +246,6 @@ export default {
      */
     async updateUser(user) {
       try {
-        console.log('updateUser = ', JSON.stringify(user, null, 2))
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
         this.$emit('update-success-event', true)
       } catch (error) {
