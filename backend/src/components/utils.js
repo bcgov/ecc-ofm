@@ -256,7 +256,7 @@ async function postBatches(payload) {
   log.info('postBatches Url', url)
 
   if (log.isInfoEnabled) {
-    //log.verbose(`postOperation post data for ${url}  :: is :: `, minify(payload))
+    log.verbose(`postBatches post data for ${url}  :: is :: `, minify(payload))
   }
   try {
     const response = await axios.post(url, payload, getHttpHeader())

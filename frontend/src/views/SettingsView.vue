@@ -84,7 +84,7 @@
     <ManageUserDialog
       class="pa-0"
       :show="showManageUserDialog"
-      :user="userToUpdate"
+      :updatingUser="userToUpdate"
       @close="toggleDialog"
       @close-refresh="closeDialogAndRefresh"
       @update-success-event="updateSuccessEvent" />
@@ -241,8 +241,7 @@ export default {
     */
     closeDialogAndRefresh() {
       this.showManageUserDialog = false
-      //TODO temp comment out for debugging batches endpoint failure...
-      //this.getUsersAndFacilities()
+      this.getUsersAndFacilities()
     },
 
     /**

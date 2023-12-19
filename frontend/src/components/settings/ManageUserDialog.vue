@@ -81,7 +81,7 @@
             <v-col cols="12" md="9">
               <v-select
                 :items="facilitiesToAdminister"
-                v-model="facilitiesModel"
+                v-model="selectedFacilityIds"
                 item-title="facilityName"
                 item-value="facilityId"
                 multiple
@@ -135,7 +135,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    user: {
+    updatingUser: {
       type: Object,
       required: true,
       default: () => {
@@ -150,7 +150,8 @@ export default {
       rules,
       isDisplayed: false,
       isLoading: false,
-      facilitiesModel: [],
+      user: {},
+      selectedFacilityIds: [],
       facilitiesToAdminister: [],
       facilitiesUser: [],
       userOperationType: '', // Can be 'adding', 'updating'
@@ -176,18 +177,16 @@ export default {
         this.isDisplayed = value
       },
     },
-    user: {
+    updatingUser: {
       handler(value) {
-        this.userOperationType = Object.keys(this.user).length === 0 ? 'adding' : 'updating';
-        this.facilitiesModel = value.facilities
-        console.log('user = ', JSON.stringify(value, null, 2))
-        console.log('users facilities = ', JSON.stringify(this.facilitiesUser, null, 2))
+        this.userOperationType = Object.keys(value).length === 0 ? 'adding' : 'updating';
+        this.selectedFacilityIds = value.facilities
+        this.user = value
       },
     },
   },
   async created() {
     this.facilitiesToAdminister = await this.getUserFacilities(this.userInfo.contactId, true)
-    //console.log('facilities to administer = ', this.facilitiesToAdminister)
   },
   methods: {
     /**
@@ -214,13 +213,8 @@ export default {
           if (this.isAddingUser) {
             await this.createUser()
           } else if (this.isUpdatingUser) {
-            //console.log('IS UPDATING!!!!')
-            if (this.hasUserFacilityAccessChanged(this.facilitiesModel, this.user.facilities)) {
-              console.log('facilities updated!!!!')
-              this.user.facilities = await this.getUpdatedFacilityAccess(this.facilitiesModel, this.user.facilities)
-              //console.log('updateUser X = ', JSON.stringify(this.user, null, 2))
-            } else {
-              console.log('facilities NOT updated!!!!')
+            if (this.hasUserFacilityAccessChanged(this.selectedFacilityIds, this.user.facilities)) {
+              this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds)
             }
             await this.updateUser(this.user)
             this.closeManageUserDialog()
@@ -232,69 +226,14 @@ export default {
     },
 
     /**
-     * Returns true if users facility access has changed, false otherwise.
-     */
-    hasUserFacilityAccessChanged(facilitiesModel, userFacilities) {
-      if (facilitiesModel.length !== userFacilities.length) {
-        return true;
-      } else {
-        for (let facilityId of facilitiesModel) {
-          if (!userFacilities.includes(facilityId)) {
-            return true;
-          }
-        }
-      }
-      return false;
-    },
-
-    /**
-     * Get updated user facility access.
-     */
-    async getUpdatedFacilityAccess(facilitiesModel, userFacilities) {
-
-      //TODO this is going to get refactored before committing for code QA...
-
-      facilitiesModel = this.facilitiesToAdminister.filter(facility => this.facilitiesModel.includes(facility.facilityId))
-      console.log('facilitiesModel = ', JSON.stringify(facilitiesModel, null, 2))
-      const facilitiesToAdd = facilitiesModel.filter(facilityModel => {
-        return !userFacilities.some(userFacility => {
-          return userFacility.facilityId === facilityModel.facilityId;
-        });
-      });
-      console.log('facilitiesToAdd = ', JSON.stringify(facilitiesToAdd, null, 2))
-      const facilitiesToRemove = userFacilities.filter(userFacility =>
-        !facilitiesModel.some(model => model.facilityId === userFacility.facilityId)
-      );
-      console.log('facilitiesToRemove = ', JSON.stringify(facilitiesToRemove, null, 2))
-
-
-      const userFacilitiesWithbceidFacilityId = await this.getUserFacilities(this.user.contactId, false)
-
-      // Update ofmPortalAccess for matching facilities
-      facilitiesToRemove?.forEach(facilityToRemove => {
-        let userFacility = userFacilitiesWithbceidFacilityId.find(facility => facility.facilityId === facilityToRemove.facilityId)
-        facilityToRemove.bceidFacilityId = userFacility.bceidFacilityId
-        facilityToRemove.ofmPortalAccess = false
-      })
-      // Update ofmPortalAccess for matching facilities
-      facilitiesToAdd?.forEach(facilityToAdd => {
-        let userFacility = userFacilitiesWithbceidFacilityId.find(facility => facility.facilityId === facilityToAdd.facilityId)
-        //console.log('userFacility ******** = ', JSON.stringify(userFacility, null, 2))
-        facilityToAdd.bceidFacilityId = userFacility.bceidFacilityId
-        facilityToAdd.ofmPortalAccess = true
-      })
-      let y = [...facilitiesToAdd, ...facilitiesToRemove]
-      //console.log('y = ', JSON.stringify(y, null, 2))
-      return y
-    },
-
-    /**
      * Create a new user and emit success/fail event.
      */
     async createUser() {
       try {
         this.user.organizationId = this.userInfo.organizationId
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
+        this.user = response.data
+        this.user.facilities = {}
         this.wasNewUserAdded = true
         this.setSuccessAlert(ADD_USER_SUCCESS_MSG)
       } catch (error) {
@@ -315,6 +254,9 @@ export default {
       }
     },
 
+    /**
+     * Get the list of facilities by contact id. If onlyWithPortalAccess is true, only return facilities with portal access.
+     */
     async getUserFacilities(contactId, onlyWithPortalAccess) {
       try {
         const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES + '/' + onlyWithPortalAccess + '/' + contactId)
@@ -347,6 +289,82 @@ export default {
     getAddUserSuccessMsg() {
       return ADD_USER_SUCCESS_MSG
     },
+
+    /**
+     * Returns true if users facility access has changed, false otherwise.
+     */
+    hasUserFacilityAccessChanged(selectedFacilityIds, userFacilities) {
+      if (selectedFacilityIds?.length !== userFacilities?.length) {
+        return true;
+      } else {
+        for (let facilityId of selectedFacilityIds) {
+          if (!userFacilities.includes(facilityId)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+
+    /**
+     * Get updated user facility access.
+     */
+    async getUpdatedFacilityAccess(user, selectedFacilityIds) {
+      let facilitiesToAdd = []
+      let facilitiesToRemove = []
+      // Get facility objects selected by facilityIds
+      const selectedFacilities = this.getSelectedFacilitiesByIds(selectedFacilityIds)
+      // Get users current facilities
+      const userFacilities = await this.getUserFacilities(user.contactId, false)
+      if (Object.keys(user.facilities).length === 0 && user.facilities.constructor === Object) {
+        facilitiesToAdd = selectedFacilities;
+      } else {
+        // Determine any new facilities to add/remove by comparing selectedFacilities to userFacilities
+        facilitiesToAdd = this.getFacilitiesToAdd(selectedFacilities, user.facilities);
+        facilitiesToRemove = this.getFacilitiesToRemove(selectedFacilities, userFacilities)
+        // Update facilities to remove with bceidFacilityId and ofmPortalAccess (true)
+        this.updateFacilitiesAccess(facilitiesToRemove, userFacilities, false)
+      }
+      // Update facilities to add with bceidFacilityId and ofmPortalAccess (false)
+      this.updateFacilitiesAccess(facilitiesToAdd, userFacilities, true)
+      return [...facilitiesToAdd, ...facilitiesToRemove]
+    },
+
+    /**
+     * Filter facilities to administer.
+     */
+    getSelectedFacilitiesByIds(selectedFacilityIds) {
+      return this.facilitiesToAdminister.filter(facility => selectedFacilityIds.includes(facility.facilityId))
+    },
+
+    /**
+     * Get facilities to add.
+     */
+    getFacilitiesToAdd(selectedFacilities, userFacilities) {
+      return selectedFacilities?.filter(selectedFacility =>
+        !userFacilities?.some(userFacility => userFacility.facilityId === selectedFacility.facilityId))
+    },
+
+    /**
+     * Get facilities to remove.
+     */
+    getFacilitiesToRemove(selectedFacility, userFacilities) {
+      return userFacilities?.filter(userFacility =>
+        !selectedFacility?.some(selectedFacility => selectedFacility.facilityId === userFacility.facilityId))
+    },
+
+    /**
+     * Update facilities to add/remove access (i.e. ofmPortalAccess = true/false), and update bceidFacilityId value from userFacilities
+     */
+    updateFacilitiesAccess(facilitiesToAddOrRemove, userFacilities, accessStatus) {
+      facilitiesToAddOrRemove?.forEach(facilityToAddOrRemove => {
+        const userFacility = userFacilities.find(fac => fac.facilityId === facilityToAddOrRemove.facilityId)
+        if (userFacility) {
+          facilityToAddOrRemove.bceidFacilityId = userFacility.bceidFacilityId
+          facilityToAddOrRemove.ofmPortalAccess = accessStatus
+        }
+      });
+    }
   },
 }
 </script>

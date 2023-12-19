@@ -167,10 +167,7 @@ function parseFacilityPermissions(userResponse) {
 }
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
-  /* log.info('***************************************************************************************************')
-  log.info('mapUsersPermissionsFacilitiesObjectForFront data:', data)
-  log.info('***************************************************************************************************')
-   */ const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
+  const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
       let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
@@ -191,16 +188,10 @@ async function getUsersPermissionsFacilities(req, res) {
     let usersPermissionsFacilities = []
     const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=accountnumber,address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
-    log.info('***************************************************************************************************')
-    log.info('getUsersPermissionsFacilities response:', response.value)
-    log.info('***************************************************************************************************')
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
     })
-    /*     log.info('***************************************************************************************************')
-    log.info('getUsersPermissionsFacilities response:', usersPermissionsFacilities)
-    log.info('***************************************************************************************************')
- */ return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
+    return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -239,15 +230,17 @@ function mapUserObjectForBack(data) {
 async function createUser(req, res) {
   try {
     const payload = mapUserObjectForBack(req.body)
-    let response = await postOperation('contacts', JSON.stringify(payload))
-    return res.status(HttpStatus.OK).json(response)
+    let response = await postOperation('contacts', payload)
+    let returnVal = new MappableObjectForFront(response, UserMappings).toJSON()
+    returnVal.role = Number(returnVal.role)
+    return res.status(HttpStatus.OK).json(returnVal)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 function mapContactForBack(data) {
-  let contact = new MappableObjectForBack(data, ContactMappings)
+  let contact = new MappableObjectForBack(data, ContactMappings).toJSON()
   contact.entityNameSet = 'contacts'
   contact.actionMode = 'Update'
   return contact
@@ -286,10 +279,7 @@ async function updateUser(req, res) {
     log.info('contact type:', typeof updatedContact)
     payload.data.ofm_bceid_facility = updatedFacilities
     log.info('facilities type:', typeof updatedFacilities)
-    log.info('***************************************************************************************************')
-    log.info('updateUser payload2:', JSON.stringify(payload, null, 2))
-    log.info('***************************************************************************************************')
-    let response = await postBatches('batches', payload)
+    let response = await postBatches(payload)
 
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
