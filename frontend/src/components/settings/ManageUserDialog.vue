@@ -226,7 +226,6 @@ export default {
       }
     },
 
-
     /**
      * Create a new user and emit success/fail event.
      */
@@ -298,14 +297,8 @@ export default {
       if (selectedFacilityIds?.length !== userFacilities?.length) {
         return true;
       }
-      for (const facilityId of selectedFacilityIds) {
-        if (!userFacilities.includes(facilityId)) {
-          return true;
-        }
-      }
-      return false;
+      return selectedFacilityIds.some(facilityId => !userFacilities.includes(facilityId));
     },
-
 
     /**
      * Get updated user facility access.
