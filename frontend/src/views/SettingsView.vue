@@ -68,7 +68,6 @@
                       </v-data-table>
                     </v-col>
                     <v-col cols="6">
-                      <AppButton variant="text">Add/remove facilities</AppButton>
                     </v-col>
                   </v-row>
                 </td>
