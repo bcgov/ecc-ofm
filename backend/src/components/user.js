@@ -265,7 +265,7 @@ function mapContactFacilitiesForBack(data) {
 
 async function updateUser(req, res) {
   try {
-    let payload = {
+    const payload = {
       batchTypeId: 101,
       feature: 'AccountManagement',
       function: 'UserEdit',
@@ -278,7 +278,7 @@ async function updateUser(req, res) {
     }
     payload.data.contact = mapContactForBack(req.body)
     payload.data.ofm_bceid_facility = mapContactFacilitiesForBack(req.body)
-    let response = await postBatches(payload)
+    const response = await postBatches(payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
