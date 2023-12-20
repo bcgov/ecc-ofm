@@ -1,9 +1,10 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <h1>Organization/Facilities</h1>
     <v-row>
       <v-col>
-        <h3>Organization: {{ userInfo.organizationName }}</h3>
+        <AppLabel>Organization:</AppLabel>
+        {{ userInfo.organizationName }}
       </v-col>
     </v-row>
     <v-row>
@@ -16,13 +17,14 @@
 
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
 
 import { mapState } from 'pinia'
 
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  components: { AppButton },
+  components: { AppButton, AppLabel },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
   },
