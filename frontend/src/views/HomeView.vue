@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <v-row align="center" justify="center"></v-row>
     <v-row>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -56,7 +55,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4" v-if="hasRole(ROLES.ACCOUNT_MANAGEMENT)">
-        <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Settings" @click="$router.push({ name: 'settings' })">
+        <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
           <v-card-text>
             Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
           </v-card-text>

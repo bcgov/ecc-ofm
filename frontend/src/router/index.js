@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
+import EmptyRouterView from '@/views/EmptyRouterView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import FundingView from '@/views/FundingView.vue'
 import HomeView from '@/views/HomeView.vue'
@@ -19,6 +20,8 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
+import OrganizationFacilityView from '@/views/account-mgmt/OrganizationFacilityView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
@@ -144,6 +147,7 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
+    // TODO (jgstorey) Incorporate into account-mgmt
     {
       path: '/settings',
       name: 'settings',
@@ -154,6 +158,28 @@ const router = createRouter({
         role: ROLES.ACCOUNT_MANAGEMENT,
         showFacility: false,
       },
+      children: [],
+    },
+    {
+      path: '/account-mgmt',
+      component: EmptyRouterView,
+      meta: {
+        requiresAuth: true,
+        role: ROLES.ACCOUNT_MANAGEMENT,
+        showFacility: false,
+      },
+      children: [
+        {
+          path: '',
+          name: 'account-mgmt',
+          component: AccountMgmtView,
+        },
+        {
+          path: 'organization-facility',
+          name: 'organization-facility',
+          component: OrganizationFacilityView,
+        },
+      ],
     },
     {
       path: '/session-expired',
@@ -199,19 +225,6 @@ const router = createRouter({
       path: '/token-expired',
       name: 'backend-session-expired',
       component: BackendSessionExpiredView,
-    },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // eventually be removed...
-    {
-      path: '/intake',
-      name: 'intake',
-      //component: Intake,
-      meta: {
-        pageTitle: PAGE_TITLES.INTAKE,
-        requiresAuth: true,
-        role: 'CCP_ROLE',
-      },
     },
   ],
 })

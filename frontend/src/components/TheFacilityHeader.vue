@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="isAuthenticated && userInfo" class="pb-5" fluid>
+  <v-container v-if="isAuthenticated && userInfo" class="py-2" fluid>
     <v-row align="end" justify="space-between">
       <v-col cols="12" md="6" class="header-org">
         {{ userInfo.organizationName }}
