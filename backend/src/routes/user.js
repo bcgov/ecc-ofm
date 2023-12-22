@@ -4,13 +4,36 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { createUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities } = require('../components/user')
+const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities } = require('../components/user')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 const createUserSchema = {
   userName: {
     in: ['body'],
     exists: { errorMessage: '[userName] is required' },
+  },
+  firstName: {
+    in: ['body'],
+    exists: { errorMessage: '[firstName] is required' },
+  },
+  lastName: {
+    in: ['body'],
+    exists: { errorMessage: '[lastName] is required' },
+  },
+  email: {
+    in: ['body'],
+    exists: { errorMessage: '[email] is required' },
+  },
+  role: {
+    in: ['body'],
+    exists: { errorMessage: '[role] is required' },
+  },
+}
+
+const updateUserSchema = {
+  contactId: {
+    in: ['body'],
+    exists: { errorMessage: '[contactId] is required' },
   },
   firstName: {
     in: ['body'],
@@ -55,12 +78,19 @@ router.get(
 )
 
 /**
- * Get all facilities for a contact. i.e. a contact is also referred to as a user
+ * Get all facilities for a user. NOTE: if onlyWithPortalAccess is true, then only facilities with portal access will be returned.
  */
-router.get('/facilities/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getUserFacilities(req, res)
-})
+router.get(
+  '/facilities/:onlyWithPortalAccess/:contactId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('contactId', 'URL param: [contactId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    const onlyWithPortalAccess = req.params.onlyWithPortalAccess === 'true'
+    return getUserFacilities(req, res, onlyWithPortalAccess)
+  },
+)
 
 /**
  * Create a new user/contact
@@ -68,6 +98,14 @@ router.get('/facilities/:contactId', passport.authenticate('jwt', { session: fal
 router.post('/create', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(createUserSchema)], (req, res) => {
   validationResult(req).throw()
   return createUser(req, res)
+})
+
+/**
+ * Update a user/contact
+ */
+router.post('/update', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(updateUserSchema)], (req, res) => {
+  validationResult(req).throw()
+  return updateUser(req, res)
 })
 
 module.exports = router

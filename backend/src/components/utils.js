@@ -251,6 +251,27 @@ function errorResponse(res, msg, code) {
   })
 }
 
+async function postBatches(payload) {
+  const url = config.get('dynamicsApi:apiEndpoint') + '/api/batches'
+  log.info('postBatches Url', url)
+
+  if (log.isInfoEnabled) {
+    log.verbose(`postBatches post data for ${url}  :: is :: `, minify(payload))
+  }
+  try {
+    const response = await axios.post(url, payload, getHttpHeader())
+    if (log.isVerboseEnabled) {
+      log.verbose('Status for postBatches :: is :: ', response.status)
+      log.verbose('StatusText for postBatches  :: is :: ', response.statusText)
+      log.verbose('Response for postBatches  :: is :: ', response.data)
+    }
+    return response.data
+  } catch (e) {
+    log.error('postBatches Error', e.response ? e.response.status : e.message)
+    throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, { message: 'API Post error' }, e)
+  }
+}
+
 const utils = {
   getOidcDiscovery,
   prettyStringify: (obj, indent = 2) => JSON.stringify(obj, null, indent),
@@ -263,6 +284,7 @@ const utils = {
   getOperationWithObjectId,
   getOperation,
   postOperation,
+  postBatches,
   patchOperationWithObjectId,
   generateJWTToken,
   formatCommentTimestamp,

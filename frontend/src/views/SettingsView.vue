@@ -68,7 +68,6 @@
                       </v-data-table>
                     </v-col>
                     <v-col cols="6">
-                      <AppButton variant="text">Add/remove facilities</AppButton>
                     </v-col>
                   </v-row>
                 </td>
@@ -84,7 +83,7 @@
     <ManageUserDialog
       class="pa-0"
       :show="showManageUserDialog"
-      :user="userToUpdate"
+      :updatingUser="userToUpdate"
       @close="toggleDialog"
       @close-refresh="closeDialogAndRefresh"
       @update-success-event="updateSuccessEvent" />
