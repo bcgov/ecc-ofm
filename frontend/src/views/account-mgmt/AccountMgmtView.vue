@@ -7,13 +7,13 @@
           <template v-slot:prepend>
             <v-icon>mdi-office-building</v-icon>
           </template>
-          <router-link :to="{ name: 'organization-facility' }">Maintain Organization/Facilities</router-link>
+          <router-link :to="{ name: 'organization-facility' }">Manage Organization/Facilities</router-link>
         </v-list-item>
         <v-list-item>
           <template v-slot:prepend>
             <v-icon>mdi-account-group</v-icon>
           </template>
-          <router-link :to="{ name: 'home' }">Maintain Users</router-link>
+          <router-link :to="{ name: 'home' }">Manage Users</router-link>
         </v-list-item>
       </v-list>
     </v-card>
