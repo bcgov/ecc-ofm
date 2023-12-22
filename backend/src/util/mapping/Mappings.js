@@ -117,6 +117,24 @@ const ApplicationMappings = [
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
 ]
 
+const OrganizationMappings = [
+  { back: 'accountid', front: 'organizationId' },
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'name' },
+  { back: 'emailaddress1', front: 'email' },
+  { back: 'ofm_businesstype', front: 'businessTypeCode' },
+  { back: 'ofm_businesstype@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'telephone1', front: 'phoneLandline' },
+  { back: 'telephone2', front: 'phoneCell' },
+  { back: 'address1_line1', front: 'streetAddress1' },
+  { back: 'address1_line2', front: 'streetAddress2' },
+  { back: 'address1_city', front: 'city' },
+  { back: 'address1_postalcode', front: 'postalCode' },
+  { back: 'address1_stateorprovince', front: 'province' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
@@ -124,6 +142,7 @@ module.exports = {
   AssistanceRequestConversationMappings,
   FacilityMappings,
   NotificationMappings,
+  OrganizationMappings,
   UserFacilityMappings,
   UserFacilityDetailMappings,
   UserMappings,

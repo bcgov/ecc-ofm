@@ -32,7 +32,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="View Applications" @click="$router.push({ name: 'applications' })">
+        <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="View Applications" @click="$router.push({ name: 'applications-history' })">
           <v-card-text>
             Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. Duis aliquet non ipsum a feugiat. Mauris felis mi, feugiat eu placerat non,
             tempor a velit.
@@ -40,7 +40,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-file-document-edit-outline" title="New Application" @click="$router.push({ name: 'applications' })">
+        <v-card class="home-card" prepend-icon="mdi-file-document-edit-outline" title="New Application" @click="$router.push({ name: 'select-facility' })">
           <v-card-text>
             Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex,
             sed consectetur leo odio in magna.

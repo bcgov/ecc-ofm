@@ -22,6 +22,11 @@ import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
+import LicencesView from '@/views/applications/LicencesView.vue'
+import OperatingCostsView from '@/views/applications/OperatingCostsView.vue'
+import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
+import StaffingView from '@/views/applications/StaffingView.vue'
+import SubmitApplicationView from '@/views/applications/SubmitApplicationView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -112,7 +117,7 @@ const router = createRouter({
     },
     {
       path: '/applications',
-      name: 'applications',
+      name: 'applications-history',
       component: ApplicationsHistoryView,
       meta: {
         pageTitle: 'Applications History',
@@ -120,14 +125,39 @@ const router = createRouter({
       },
     },
     {
-      path: '/applications/:applicationGuid',
+      path: '/application',
       name: 'application',
       component: ApplicationView,
       children: [
         {
-          path: 'facility-details',
+          path: 'select-facility',
+          name: 'select-facility',
+          component: SelectFacilityView,
+        },
+        {
+          path: ':applicationGuid/facility-details',
           name: 'facility-details',
           component: FacilityDetailsView,
+        },
+        {
+          path: ':applicationGuid/licences',
+          name: 'licences',
+          component: LicencesView,
+        },
+        {
+          path: ':applicationGuid/operating-costs',
+          name: 'operating-costs',
+          component: OperatingCostsView,
+        },
+        {
+          path: ':applicationGuid/staffing',
+          name: 'staffing',
+          component: StaffingView,
+        },
+        {
+          path: ':applicationGuid/submit',
+          name: 'submit-application',
+          component: SubmitApplicationView,
         },
       ],
       meta: {

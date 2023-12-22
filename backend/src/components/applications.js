@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
@@ -44,8 +44,22 @@ async function updateApplication(req, res) {
   }
 }
 
+async function createApplication(req, res) {
+  try {
+    const payload = {
+      'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
+    }
+    let response = await postOperation('ofm_applications', payload)
+    response = new MappableObjectForFront(response, ApplicationMappings).toJSON()
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getApplicationsByFacilityId,
   getApplication,
   updateApplication,
+  createApplication,
 }
