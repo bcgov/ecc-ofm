@@ -11,14 +11,7 @@
               <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
             <v-col v-if="isAddingUser" cols="12" md="9">
-              <v-text-field
-                id="bceid"
-                v-model="user.userName"
-                placeholder="BCeID"
-                variant="outlined"
-                density="compact"
-                :rules="rules.required"
-                :disabled="isLoading"></v-text-field>
+              <v-text-field id="bceid" v-model="user.userName" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
             </v-col>
             <v-col v-else cols="12" md="9" class="mb-5">
               <span>{{ user.userName }}</span>
@@ -69,7 +62,7 @@
                 item-value="id"
                 label="Select Role"
                 :rules="rules.required"
-                :disabled="isLoading"
+                :disabled="isLoading || isSameUser"
                 density="compact"
                 variant="outlined"></v-select>
             </v-col>
@@ -80,6 +73,7 @@
             </v-col>
             <v-col cols="12" md="9">
               <v-select
+                chips
                 :items="facilitiesToAdminister"
                 v-model="selectedFacilityIds"
                 item-title="facilityName"
@@ -87,7 +81,7 @@
                 multiple
                 label="Select one or more facilities"
                 :rules="rules.required"
-                :disabled="isLoading"
+                :disabled="isLoading || isSameUser"
                 density="compact"
                 variant="outlined"></v-select>
             </v-col>
@@ -103,7 +97,9 @@
             <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeManageUserDialog()" :loading="isLoading">Cancel</AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">{{ isAddingUser ? 'Add' : 'Update' }}</AppButton>
+            <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">
+              {{ isAddingUser ? 'Add' : 'Update' }}
+            </AppButton>
             <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'update'" :loading="isLoading">Next</AppButton>
           </v-col>
         </v-row>
@@ -162,13 +158,16 @@ export default {
     ...mapState(useAppStore, ['userRoles']),
     ...mapState(useAuthStore, ['userInfo']),
     isAddingUser() {
-      return this.userOperationType === 'add';
+      return this.userOperationType === 'add'
     },
     isUpdatingUser() {
-      return this.userOperationType === 'update';
+      return this.userOperationType === 'update'
     },
     dialogTitle() {
       return this.isAddingUser ? 'Add new user' : 'Edit user'
+    },
+    isSameUser() {
+      return this.user.userName === this.userInfo.userName
     },
   },
   watch: {
@@ -179,7 +178,7 @@ export default {
     },
     updatingUser: {
       handler(value) {
-        this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update';
+        this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update'
         this.selectedFacilityIds = value.facilities
         this.user = value
       },
@@ -206,23 +205,23 @@ export default {
      * Create or update user.
      */
     async saveUser() {
-      this.$refs.userForm?.validate();
+      this.$refs.userForm?.validate()
       if (!this.isFormComplete) {
-        return;
+        return
       }
       try {
-        this.isLoading = true;
+        this.isLoading = true
         if (this.isAddingUser) {
-          await this.createUser();
+          await this.createUser()
         } else if (this.isUpdatingUser) {
           if (this.hasUserFacilityAccessChanged(this.selectedFacilityIds, this.user.facilities)) {
-            this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds);
+            this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds)
           }
-          await this.updateUser(this.user);
-          this.closeManageUserDialog();
+          await this.updateUser(this.user)
+          this.closeManageUserDialog()
         }
       } finally {
-        this.isLoading = false;
+        this.isLoading = false
       }
     },
 
@@ -295,9 +294,9 @@ export default {
      */
     hasUserFacilityAccessChanged(selectedFacilityIds, userFacilities) {
       if (selectedFacilityIds?.length !== userFacilities?.length) {
-        return true;
+        return true
       }
-      return selectedFacilityIds.some(facilityId => !userFacilities.includes(facilityId));
+      return selectedFacilityIds.some((facilityId) => !userFacilities.includes(facilityId))
     },
 
     /**
@@ -312,10 +311,10 @@ export default {
       const userFacilities = await this.getUserFacilities(user.contactId, false)
       // If user has no facilities, all selectedFacilities are to be added
       if (Object.keys(user.facilities).length === 0) {
-        facilitiesToAdd = selectedFacilities;
+        facilitiesToAdd = selectedFacilities
       } else {
         // Determine any new facilities to add/remove by comparing selectedFacilities to userFacilities
-        facilitiesToAdd = this.getFacilitiesToAdd(selectedFacilities, user.facilities);
+        facilitiesToAdd = this.getFacilitiesToAdd(selectedFacilities, user.facilities)
         facilitiesToRemove = this.getFacilitiesToRemove(selectedFacilities, userFacilities)
         // Update facilities to remove with bceidFacilityId and ofmPortalAccess (true)
         this.updateFacilitiesAccess(facilitiesToRemove, userFacilities, false)
@@ -329,37 +328,35 @@ export default {
      * Filter facilities to administer.
      */
     getSelectedFacilitiesByIds(selectedFacilityIds) {
-      return this.facilitiesToAdminister.filter(facility => selectedFacilityIds.includes(facility.facilityId))
+      return this.facilitiesToAdminister.filter((facility) => selectedFacilityIds.includes(facility.facilityId))
     },
 
     /**
      * Get facilities to add.
      */
     getFacilitiesToAdd(selectedFacilities, userFacilities) {
-      return selectedFacilities?.filter(selectedFacility =>
-        !userFacilities?.some(userFacility => userFacility.facilityId === selectedFacility.facilityId))
+      return selectedFacilities?.filter((selectedFacility) => !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId))
     },
 
     /**
      * Get facilities to remove.
      */
     getFacilitiesToRemove(selectedFacility, userFacilities) {
-      return userFacilities?.filter(userFacility =>
-        !selectedFacility?.some(selectedFacility => selectedFacility.facilityId === userFacility.facilityId))
+      return userFacilities?.filter((userFacility) => !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId))
     },
 
     /**
      * Update facilities to add/remove access (i.e. ofmPortalAccess = true/false), and update bceidFacilityId value from userFacilities
      */
     updateFacilitiesAccess(facilitiesToAddOrRemove, userFacilities, accessStatus) {
-      facilitiesToAddOrRemove?.forEach(facilityToAddOrRemove => {
-        const userFacility = userFacilities.find(fac => fac.facilityId === facilityToAddOrRemove.facilityId)
+      facilitiesToAddOrRemove?.forEach((facilityToAddOrRemove) => {
+        const userFacility = userFacilities.find((fac) => fac.facilityId === facilityToAddOrRemove.facilityId)
         if (userFacility) {
           facilityToAddOrRemove.bceidFacilityId = userFacility.bceidFacilityId
           facilityToAddOrRemove.ofmPortalAccess = accessStatus
         }
-      });
-    }
+      })
+    },
   },
 }
 </script>
