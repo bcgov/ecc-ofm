@@ -74,7 +74,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'operating-costs', params: { applicationGuid: this.currentApplication?.applicationId } })
+        this.$router.push({ name: 'operating-costs', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -84,7 +84,7 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'submit-application', params: { applicationGuid: this.currentApplication?.applicationId } })
+        this.$router.push({ name: 'submit-application', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },

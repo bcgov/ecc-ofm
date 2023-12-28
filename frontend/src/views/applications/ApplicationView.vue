@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    <ApplicationHeader />
     <v-row v-if="loading" justify="center">
       <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="loading-screen"></v-progress-circular>
     </v-row>
@@ -35,12 +36,12 @@ import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
-
+import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'ApplicationView',
-  components: { ApplicationNavBar, AppNavButtons, CancelApplicationDialog },
+  components: { ApplicationNavBar, ApplicationHeader, AppNavButtons, CancelApplicationDialog },
   mixins: [alertMixin],
   data() {
     return {

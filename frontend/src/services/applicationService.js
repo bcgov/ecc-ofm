@@ -14,7 +14,7 @@ export default {
   async getApplicationsByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(ApiRoutes.APPLICATIONS + '/facility/' + facilityId)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)

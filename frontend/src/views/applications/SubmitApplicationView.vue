@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormComplete">
-    <h1>Staffing</h1>
+    <h1>Submit</h1>
     <v-row no-gutters class="mt-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
     <v-row class="mt-4">
       <v-col>
@@ -65,12 +65,12 @@ export default {
     isFormComplete: {
       handler(value) {
         if (!this.currentApplication) return
-        this.currentApplication.isStaffingComplete = value
+        this.currentApplication.isSubmitApplicationComplete = value
       },
     },
     back: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.currentApplication?.applicationId } })
+        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     submit: {

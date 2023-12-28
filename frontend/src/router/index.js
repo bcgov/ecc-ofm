@@ -116,7 +116,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/applications',
+      path: '/applications/applications-history',
       name: 'applications-history',
       component: ApplicationsHistoryView,
       meta: {
@@ -125,9 +125,10 @@ const router = createRouter({
       },
     },
     {
-      path: '/application',
-      name: 'application',
+      path: '/applications',
+      name: 'applications',
       component: ApplicationView,
+      redirect: '/applications/select-facility',
       children: [
         {
           path: 'select-facility',

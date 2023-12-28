@@ -2,11 +2,11 @@
   <v-container fluid>
     <div v-for="item in navBarItems" :key="item.id">
       <v-row no-gutters>
-        <v-col cols="2" :class="getClass(item) === 'current' ? 'current-icon' : getClass(item)">
+        <v-col cols="2" :class="getNavIconClass(item)">
           <v-icon>{{ getNavIcon(item) }}</v-icon>
         </v-col>
         <v-col cols="10">
-          <router-link :to="getRouterLink(item)" :class="getClass(item) === 'current' ? 'current-text' : getClass(item)">
+          <router-link :to="getRouterLink(item)" :class="getNavTextClass(item)">
             {{ item.name }}
           </router-link>
         </v-col>
@@ -79,14 +79,24 @@ export default {
       return { name: item.routeName, params: { applicationGuid: this.$route.params.applicationGuid } }
     },
 
-    getClass(item) {
+    getNavIconClass(item) {
       if (this.loading) {
         return 'disabled'
       }
       if (this.isSelectFacilityPage) {
-        return item.routeName === 'facility-details' ? 'current' : 'disabled'
+        return item.routeName === 'facility-details' ? 'current-icon' : 'disabled'
       }
-      return item.routeName === this.$route.name ? 'current' : 'active'
+      return item.routeName === this.$route.name ? 'current-icon' : 'active'
+    },
+
+    getNavTextClass(item) {
+      if (this.loading) {
+        return 'disabled'
+      }
+      if (this.isSelectFacilityPage) {
+        return item.routeName === 'facility-details' ? 'current-text' : 'disabled'
+      }
+      return item.routeName === this.$route.name ? 'current-text' : 'active'
     },
 
     getNavIcon(item) {

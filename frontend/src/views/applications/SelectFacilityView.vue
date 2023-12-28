@@ -108,10 +108,10 @@ export default {
               facilityId: this.model.facilityId,
             }
             const response = await ApplicationService.createApplication(payload)
-            this.setSuccessAlert('Create a new application sucessfully')
+            this.setSuccessAlert('Started a new application successfully')
             this.$router.push({ name: 'facility-details', params: { applicationGuid: response?.applicationId } })
           } catch (error) {
-            this.setFailureAlert('Failed to create a new application', error)
+            this.setFailureAlert('Failed to start a new application', error)
           } finally {
             this.$emit('process', false)
           }

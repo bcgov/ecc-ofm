@@ -74,7 +74,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'licences', params: { applicationGuid: this.currentApplication?.applicationId } })
+        this.$router.push({ name: 'licences', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -84,7 +84,7 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.currentApplication?.applicationId } })
+        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
