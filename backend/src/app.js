@@ -28,6 +28,7 @@ const messageRouter = require('./routes/message')
 const notificationRouter = require('./routes/notification')
 const applicationsRouter = require('./routes/applications')
 const organizationsRouter = require('./routes/organizations')
+const facilitiesRouter = require('./routes/facilities')
 
 const connectRedis = require('connect-redis')
 const promMid = require('express-prometheus-middleware')
@@ -194,6 +195,7 @@ apiRouter.use('/messages', messageRouter)
 apiRouter.use('/notifications', notificationRouter)
 apiRouter.use('/applications', applicationsRouter)
 apiRouter.use('/organizations', organizationsRouter)
+apiRouter.use('/facilities', facilitiesRouter)
 
 //Handle 500 error
 app.use((err, _req, res, next) => {
