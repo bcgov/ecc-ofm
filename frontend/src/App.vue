@@ -30,7 +30,6 @@ import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { useApplicationsStore } from '@/stores/applications'
 import HttpStatus from 'http-status-codes'
 
 export default {
@@ -55,7 +54,6 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isActingProvider']),
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
-    ...mapState(useApplicationsStore, ['currentApplication']),
     mobile() {
       return this.$vuetify.display.mobile
     },

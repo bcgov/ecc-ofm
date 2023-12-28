@@ -8,7 +8,7 @@ const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
 
-const newApplicationSchema = {
+const createApplicationSchema = {
   facilityId: {
     in: ['body'],
     exists: { errorMessage: '[facilityId] is required' },
@@ -26,7 +26,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Create a new Application
  */
-router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(newApplicationSchema)], (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(createApplicationSchema)], (req, res) => {
   validationResult(req).throw()
   return createApplication(req, res)
 })
