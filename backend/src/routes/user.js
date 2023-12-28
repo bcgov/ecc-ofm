@@ -80,17 +80,11 @@ router.get(
 /**
  * Get all facilities for a user. NOTE: if onlyWithPortalAccess is true, then only facilities with portal access will be returned.
  */
-router.get(
-  '/facilities/:onlyWithPortalAccess/:contactId',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  [param('contactId', 'URL param: [contactId] is required').not().isEmpty()],
-  (req, res) => {
-    validationResult(req).throw()
-    const onlyWithPortalAccess = req.params.onlyWithPortalAccess === 'true'
-    return getUserFacilities(req, res, onlyWithPortalAccess)
-  },
-)
+router.get('/:contactId/facilities', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
+  validationResult(req).throw()
+  const onlyWithPortalAccess = req.query.onlyWithPortalAccess === 'true'
+  return getUserFacilities(req, res, onlyWithPortalAccess)
+})
 
 /**
  * Create a new user/contact
