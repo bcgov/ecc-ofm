@@ -3,7 +3,7 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row no-gutters>
-          <v-col v-if="organizationInfo?.name" cols="12" md="6">
+          <v-col v-if="organizationInfo?.name" cols="9" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
                 <AppLabel>Organization legal name:</AppLabel>
@@ -11,6 +11,14 @@
               <v-col cols="12" md="6" lg="7" xl="8">{{ organizationInfo?.name }}</v-col>
             </v-row>
           </v-col>
+          <v-col v-if="!isApplicationPage" cols="3" md="6">
+            <v-row no-gutters justify="end">
+              <v-icon icon="fa:fa-regular fa-pen-to-square" class="mr-4"></v-icon>
+              <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-row no-gutters>
           <v-col v-if="organizationInfo?.businessType" cols="12" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
@@ -18,6 +26,16 @@
               </v-col>
               <v-col cols="12" md="6" lg="7" xl="8">
                 {{ organizationInfo?.businessType }}
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col v-if="organizationInfo?.email" cols="12" md="6">
+            <v-row no-gutters class="ma-2">
+              <v-col cols="12" md="6" lg="5" xl="4">
+                <AppLabel>Email address:</AppLabel>
+              </v-col>
+              <v-col cols="12" md="6" lg="7" xl="8">
+                {{ organizationInfo?.email }}
               </v-col>
             </v-row>
           </v-col>
@@ -40,18 +58,6 @@
               </v-col>
               <v-col cols="12" md="6" lg="7" xl="8">
                 {{ organizationInfo?.phoneCell }}
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col v-if="organizationInfo?.email" cols="12" md="6">
-            <v-row no-gutters class="ma-2">
-              <v-col cols="12" md="6" lg="5" xl="4">
-                <AppLabel>Email address:</AppLabel>
-              </v-col>
-              <v-col cols="12" md="6" lg="7" xl="8">
-                {{ organizationInfo?.email }}
               </v-col>
             </v-row>
           </v-col>
@@ -201,6 +207,9 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    isApplicationPage() {
+      return this.$route.path?.includes('/applications/')
+    },
   },
   async created() {
     await this.loadOrganizationInfo()
