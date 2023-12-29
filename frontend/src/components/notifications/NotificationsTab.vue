@@ -24,7 +24,7 @@
       </v-skeleton-loader>
     </v-col>
     <v-col cols="12" md="6">
-      <NotificationDetails :notificationId="selectedNotificationId" @toggleMarkUnreadButtonInNotificationDetails="toggleMarkUnreadButtonInNotificationDetails" />
+      <NotificationDetails id="notification-details" :notificationId="selectedNotificationId" @toggleMarkUnreadButtonInNotificationDetails="toggleMarkUnreadButtonInNotificationDetails" />
     </v-col>
   </v-row>
 </template>
