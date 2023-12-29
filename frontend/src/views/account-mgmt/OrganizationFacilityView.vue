@@ -1,10 +1,16 @@
 <template>
   <v-container fluid>
-    <h1>Organization/Facilities</h1>
+    <h1>Update Organization Information</h1>
     <v-row>
-      <v-col>
-        <AppLabel>Organization:</AppLabel>
-        {{ userInfo.organizationName }}
+      <v-col class="ml-6">
+        <h4>Organization Details</h4>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="ml-6">
+        <v-card>
+          org info
+        </v-card>
       </v-col>
     </v-row>
     <v-row>

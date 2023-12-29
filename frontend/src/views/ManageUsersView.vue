@@ -87,7 +87,7 @@
       @close="toggleDialog"
       @close-refresh="closeDialogAndRefresh"
       @update-success-event="updateSuccessEvent" />
-    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
+    <AppButton id="back-account-mgn-button" class="mt-2" :primary="false" size="large" width="400px" :to="{ name: 'account-mgmt' }">&larr; Back to Account Management</AppButton>
   </v-container>
 </template>
 
@@ -101,7 +101,7 @@ import alertMixin from '@/mixins/alertMixin'
 import { CRM_STATE_CODES } from '@/utils/constants'
 import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
-import ManageUserDialog from '../components/settings/ManageUserDialog.vue'
+import ManageUserDialog from '../components/account-mgmt/ManageUserDialog.vue'
 
 export default {
   components: { AppButton, ManageUserDialog },

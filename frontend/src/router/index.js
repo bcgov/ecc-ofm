@@ -12,12 +12,12 @@ import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import ManageUsersView from '@/views/ManageUsersView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import ReportingView from '@/views/ReportingView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
-import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
@@ -147,13 +147,12 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
-    // TODO (jgstorey) Incorporate into account-mgmt
     {
-      path: '/settings',
-      name: 'settings',
-      component: SettingsView,
+      path: '/manage-users',
+      name: 'manage-users',
+      component: ManageUsersView,
       meta: {
-        pageTitle: 'Settings',
+        pageTitle: 'Manage Users',
         requiresAuth: true,
         role: ROLES.ACCOUNT_MANAGEMENT,
         showFacility: false,

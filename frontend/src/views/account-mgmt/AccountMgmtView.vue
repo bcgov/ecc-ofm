@@ -13,7 +13,7 @@
           <template v-slot:prepend>
             <v-icon>mdi-account-group</v-icon>
           </template>
-          <router-link :to="{ name: 'home' }">Manage Users</router-link>
+          <router-link :to="{ name: 'manage-users' }">Manage Users</router-link>
         </v-list-item>
       </v-list>
     </v-card>
