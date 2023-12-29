@@ -1,21 +1,23 @@
 'use strict'
-const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation } = require('./utils')
+const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation, postBatches } = require('./utils')
 const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
 const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
-// TODO... const { ORGANIZATION_PROVIDER_TYPES} = require('../util/constants')
+
 const {
+  UsersPermissionsFacilityMappings,
+  UserFacilityMappings,
+  UserFacilityDetailMappings,
+  UserMappings,
+  UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
-  UserProfileFacilityPermissionMappings,
-  UserProfileFacilityMappings,
-  UserPermissionMappings,
-  FacilityMappings,
+  ContactMappings,
 } = require('../util/mapping/Mappings')
 
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
 
 const USER_NOT_FOUND = 'User not found.'
@@ -117,8 +119,8 @@ async function getDynamicsUserByEmail(req) {
     //If for some reason, an email is not associated with the IDIR, just use IDR@gov.bc.ca
     email = `${req.session.passport.user._json.idir_username}@gov.bc.ca`
   }
-  // eslint-disable-next-line quotes,
-  email.includes("'") ? (email = email.replace("'", "''")) : email
+  // Sanitize email to prevent SQL injection
+  email = email.replace(/'/g, "''")
   try {
     let response = await getOperation(`systemusers?$select=firstname,domainname,lastname&$filter=internalemailaddress eq '${email}'`)
     return response
@@ -165,31 +167,128 @@ function parseFacilityPermissions(userResponse) {
 }
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
-  const usersPermissionsFacilities = new MappableObjectForFront(data, UserPermissionMappings).toJSON()
+  const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
-      let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
+      let facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
+      facilityData.accountNumber = facilityData.address.accountnumber
       facilityData.city = facilityData.address.address1_city
       facilityData.address = facilityData.address.address1_line1
       return facilityData
     })
   }
-  return usersPermissionsFacilities
+  return {
+    ...usersPermissionsFacilities,
+    role: Number(usersPermissionsFacilities.role),
+  }
 }
 
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,telephone1,ofm_is_expense_authority,statecode&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$filter=(ofm_portal_access eq true);$expand=ofm_facility($select=accountnumber,address1_line1,address1_line2,address1_line3,address1_city))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
-    response?.value?.forEach((item) => usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item)))
+    response?.value?.forEach((item) => {
+      usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
+    })
     return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
+function mapUserFacilityObjectForFront(data) {
+  let userFacilities = new MappableObjectForFront(data, UserFacilityMappings).toJSON()
+  delete userFacilities.ofmFacility
+  const userFacilityDetails = new MappableObjectForFront(data.ofm_facility, UserFacilityDetailMappings).toJSON()
+  userFacilities = { ...userFacilities, ...userFacilityDetails }
+  return userFacilities
+}
+
+async function getUserFacilities(req, res, onlyWithPortalAccess) {
+  try {
+    log.verbose('getUserFacilities 1')
+    let userFacilities = []
+    let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
+    if (onlyWithPortalAccess) {
+      operation = operation + ` and (ofm_portal_access eq true)`
+    }
+    log.verbose('getUserFacilities 2')
+    const response = await getOperation(operation)
+    log.verbose('getUserFacilities 3')
+    response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
+    log.verbose('getUserFacilities 4')
+    return res.status(HttpStatus.OK).json(userFacilities)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+function mapUserObjectForBack(data) {
+  let newUser = new MappableObjectForBack(data, UserMappings).toJSON()
+  newUser.ofm_portal_role = String(newUser.ofm_portal_role)
+  newUser['parentcustomerid_account@odata.bind'] = `/accounts(${data?.organizationId})`
+  return newUser
+}
+
+async function createUser(req, res) {
+  try {
+    const payload = mapUserObjectForBack(req.body)
+    const response = await postOperation('contacts', payload)
+    const returnVal = new MappableObjectForFront(response, UserMappings).toJSON()
+    returnVal.role = Number(returnVal.role)
+    return res.status(HttpStatus.OK).json(returnVal)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+function mapContactForBack(data) {
+  const contact = new MappableObjectForBack(data, ContactMappings).toJSON()
+  contact.entityNameSet = 'contacts'
+  contact.actionMode = 'Update'
+  return contact
+}
+
+function mapContactFacilitiesForBack(data) {
+  const facilitiesForBack = []
+  data.facilities.forEach((facilityFromFront) => {
+    let facility = {}
+    facility.entityID = facilityFromFront.bceidFacilityId
+    facility.ofm_portal_access = facilityFromFront.ofmPortalAccess
+    facility.entityNameSet = 'ofm_bceid_facilities'
+    facility.actionMode = 'Update'
+    facilitiesForBack.push(facility)
+  })
+  return facilitiesForBack
+}
+
+async function updateUser(req, res) {
+  try {
+    const payload = {
+      batchTypeId: 101,
+      feature: 'AccountManagement',
+      function: 'UserEdit',
+      actionMode: 'Update',
+      scope: 'Parent-Child',
+      data: {
+        contact: {},
+        ofm_bceid_facility: [],
+      },
+    }
+    payload.data.contact = mapContactForBack(req.body)
+    payload.data.ofm_bceid_facility = mapContactFacilitiesForBack(req.body)
+    const response = await postBatches(payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
+  createUser,
+  getUserFacilities,
   getUserInfo,
   getUsersPermissionsFacilities,
+  updateUser,
 }

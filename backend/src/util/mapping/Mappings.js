@@ -18,12 +18,6 @@ const UserProfileOrganizationMappings = [
   { back: 'statuscode', front: 'organizationStatus' },
 ]
 
-// TODO (weskubo-cgi) Remove this
-const UserProfileFacilityPermissionMappings = [
-  { back: 'statecode', front: 'stateCode' },
-  { back: 'statuscode', front: 'statusCode' },
-]
-
 const UserProfileFacilityMappings = [
   { back: 'accountid', front: 'facilityId' },
   { back: 'accountnumber', front: 'facilityAccountNumber' },
@@ -77,24 +71,38 @@ const NotificationMappings = [
   { back: 'ofm_is_read', front: 'isRead' },
 ]
 
-const UserPermissionMappings = [
+const UserMappings = [
   { back: 'contactid', front: 'contactId' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
   { back: 'emailaddress1', front: 'email' },
+  { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'ofm_portal_role', front: 'roles' },
+  { back: 'ofm_portal_role', front: 'role' },
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]
 
-const FacilityMappings = [
-  { back: 'ofm_bceid_facilityid', front: 'facilityId' },
-  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'name' },
+const UserFacilityMappings = [
+  { back: 'ofm_bceid_facilityid', front: 'bceidFacilityId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+]
+
+const UserFacilityDetailMappings = [
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'facilityName' },
+  { back: 'address1_composite', front: 'address' },
+]
+
+const UsersPermissionsFacilityMappings = [
+  { back: 'ofm_bceid_facilityid', front: 'bceidFacilityId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_facility', front: 'address' },
+  { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
 ]
 
 const ApplicationMappings = [
@@ -110,17 +118,73 @@ const ApplicationMappings = [
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
 ]
 
+const OrganizationMappings = [
+  { back: 'accountid', front: 'organizationId' },
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'name' },
+  { back: 'emailaddress1', front: 'email' },
+  { back: 'ofm_business_type', front: 'businessTypeCode' },
+  { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'telephone1', front: 'phoneLandline' },
+  { back: 'telephone2', front: 'phoneCell' },
+  { back: 'address1_line1', front: 'streetAddress1' },
+  { back: 'address1_line2', front: 'streetAddress2' },
+  { back: 'address1_city', front: 'city' },
+  { back: 'address1_postalcode', front: 'postalCode' },
+  { back: 'address1_stateorprovince', front: 'province' },
+  { back: 'ofm_is_mailing_address_different', front: 'isMailingAddressDifferent' },
+  { back: 'address2_line1', front: 'mailingStreetAddress1' },
+  { back: 'address2_line2', front: 'mailingStreetAddress2' },
+  { back: 'address2_city', front: 'mailingCity' },
+  { back: 'address2_postalcode', front: 'mailingPostalCode' },
+  { back: 'address2_stateorprovince', front: 'mailingProvince' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
+const FacilityMappings = [
+  { back: 'accountid', front: 'facilityId' },
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'name' },
+  { back: 'address1_line1', front: 'streetAddress1' },
+  { back: 'address1_line2', front: 'streetAddress2' },
+  { back: 'address1_city', front: 'city' },
+  { back: 'address1_postalcode', front: 'postalCode' },
+  { back: 'address1_stateorprovince', front: 'province' },
+  { back: 'ofm_is_mailing_address_different', front: 'isMailingAddressDifferent' },
+  { back: 'address2_line1', front: 'mailingStreetAddress1' },
+  { back: 'address2_line2', front: 'mailingStreetAddress2' },
+  { back: 'address2_city', front: 'mailingCity' },
+  { back: 'address2_postalcode', front: 'mailingPostalCode' },
+  { back: 'address2_stateorprovince', front: 'mailingProvince' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
+const ContactMappings = [
+  { back: 'entityID', front: 'contactId' },
+  { back: 'ofm_first_name', front: 'firstName' },
+  { back: 'ofm_last_name', front: 'lastName' },
+  { back: 'telephone1', front: 'phone' },
+  { back: 'emailaddress1', front: 'email' },
+  { back: 'ofm_portal_role', front: 'role' },
+]
+
 module.exports = {
-  NotificationMappings,
-  UserProfileMappings,
-  UserProfileOrganizationMappings,
-  UserProfileFacilityPermissionMappings,
-  UserProfileFacilityMappings,
-  RequestCategoryMappings,
+  ApplicationMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
-  UserPermissionMappings,
+  ContactMappings,
   FacilityMappings,
-  ApplicationMappings,
+  UsersPermissionsFacilityMappings,
+  NotificationMappings,
+  OrganizationMappings,
+  UserFacilityMappings,
+  UserFacilityDetailMappings,
+  UserMappings,
+  UserProfileFacilityMappings,
+  UserProfileMappings,
+  UserProfileOrganizationMappings,
+  RequestCategoryMappings,
 }

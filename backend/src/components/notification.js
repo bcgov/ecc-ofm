@@ -11,7 +11,7 @@ async function getNotifications(req, res) {
       req.params.contactId +
       '))&$filter=(statecode eq 1) and (email_activity_parties/any(o1:(o1/_partyid_value eq ' +
       req.params.contactId +
-      ')))'
+      ')))&pageSize=500'
     const response = await getOperation(operation)
     let notifications = []
     response?.value?.forEach((item) => notifications.push(new MappableObjectForFront(item, NotificationMappings).toJSON()))

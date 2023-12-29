@@ -1,23 +1,23 @@
 <template>
-  <v-app-bar color="rgb(0, 51, 102)" class="pl-10 pr-10 sysBar" style="z-index: 1002">
+  <v-app-bar color="rgb(0, 51, 102)" class="pl-10 pr-10 sys-bar" style="z-index: 1002">
     <!-- Navbar content -->
-    <v-container class="ma-0" :class="{ sizingForIconXLScreen: xl }" style="width: 100%" :fluid="true">
+    <v-container :class="{ sizingForIconXLScreen: xl }" :fluid="true">
       <v-row class="justify-space-between">
         <a tabindex="-1" href="/">
           <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
         </a>
-        <v-row class="verticalLine my-auto">
+        <v-row class="vertical-line my-auto">
           <v-row class="my-auto">
             <v-toolbar-title fill-height style="font-size: 14px">
-              <h6 v-if="xs"><span v-html="appTitleXs" /></h6>
-              <h2 class="mainTitle" v-else>{{ appTitle }}</h2>
+              <h5 v-if="xs"><span v-html="appTitleXs" /></h5>
+              <h2 class="main-title" v-else>{{ appTitle }}</h2>
             </v-toolbar-title>
           </v-row>
         </v-row>
         <v-spacer></v-spacer>
         <div v-if="isAuthenticated && userInfo" class="mt-5">
           <v-row>
-            <v-col style="width: 70px">
+            <v-col v-if="showMessagingIcon" style="width: 70px">
               <v-btn @click="$router.push({ name: 'messaging' })" id="mail_box_button" rounded class="mr-5 elevation-0" dark v-if="!isNaN(messageNotificationCount)">
                 <v-badge color="red" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
                   <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
@@ -30,7 +30,7 @@
               <v-menu name="user_options" offset-y>
                 <template #activator="{ props }">
                   <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
-                    <v-avatar left color="info">{{ userInfo.displayName[0] }}</v-avatar>
+                    <v-icon aria-hidden="false" icon="mdi-account-circle" size="30" color="white" />
                     <span class="display-name pl-1">{{ userInfo.displayName }}</span>
                   </v-chip>
                 </template>
@@ -64,9 +64,6 @@ export default {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser']),
     ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
-    dataReady: function () {
-      return this.userInfo
-    },
     appTitle() {
       return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
     },
@@ -81,7 +78,6 @@ export default {
       return this.$vuetify.display.xs
     },
     messageNotificationCount() {
-      console.log('mnc', this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount)
       return this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount
     },
     // count of requests that are unread or are in the status of “Action required”
@@ -89,14 +85,19 @@ export default {
       const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
+    showMessagingIcon() {
+      return this.isAuthenticated && this.userInfo && !this.isMinistryUser
+    },
   },
   async created() {
     try {
       await this.getUserInfo()
-      await this.getNotifications(this.userInfo.contactId)
-      await this.getAssistanceRequests(this.userInfo?.contactId)
+      if (this.showMessagingIcon) {
+        await this.getNotifications(this.userInfo?.contactId)
+        await this.getAssistanceRequests(this.userInfo?.contactId)
+      }
     } catch (error) {
-      console.info(error)
+      console.log(error)
     }
   },
   methods: {
@@ -108,16 +109,8 @@ export default {
 </script>
 
 <style scoped>
-.gov-header .v-icon {
-  padding-left: 10px;
-}
-
-.sizingForIconXLScreen {
-  width: 1470px;
-}
-
-a {
-  text-decoration: none;
+.v-chip:hover {
+  background-color: rgb(255, 255, 255, 0.05);
 }
 
 .user-link:hover {
@@ -151,72 +144,32 @@ a {
   text-decoration: none;
 }
 
-.verticalLine {
+.vertical-line {
   border-left: 1px solid #dfb433;
   height: 50px;
   margin-left: 12px;
   padding-left: 24px;
 }
 
-.gov-header .title {
-  color: #fff;
-  text-decoration: none;
-}
-
-.sysBar {
+.sys-bar {
   border-bottom: 2px solid rgb(252, 186, 25) !important;
   z-index: 8;
-}
-
-.gov-header .v-btn,
-.v-btn--active.title:before,
-.v-btn.title:focus:before,
-.v-btn.title:hover:before {
-  color: #fff;
-  background: none;
-}
-
-/** Add active/hover styles to v-chip since Vuetify doesn't apply by default */
-.v-chip .v-chip__content {
-  padding-right: 12px;
-}
-
-.v-chip .v-chip__content:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-}
-
-.v-chip .v-chip__content:active {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.secondary_color {
-  background-color: var(--v-secondary-base);
-}
-
-.v-input__slot {
-  padding-top: 10px;
 }
 
 .display-name {
   color: white;
 }
 
-.top-down {
-  padding-top: 20px;
-  height: 80%;
-}
-
-.mainTitle {
+.main-title {
   color: #ffffff;
 }
 
-@media screen and (max-width: 801px) {
+@media screen and (max-width: 959px) {
   .logo {
     width: 100px;
   }
 
-  .mainTitle {
+  .main-title {
     font-size: 1rem;
   }
 

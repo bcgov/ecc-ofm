@@ -1,5 +1,6 @@
-import ApiService from '@/common/apiService'
 import { defineStore } from 'pinia'
+
+import ApiService from '@/common/apiService'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -17,17 +18,27 @@ export const useAppStore = defineStore('app', {
     alertNotificationQueue: [],
     alertNotification: false,
 
-    // Lookup Table Details
+    // Lookup data from Dynamics365
     requestCategories: {},
+    userRoles: {},
 
     config: '',
   }),
+  getters: {
+    getRoleNameById: (state) => {
+      return (id) => {
+        const role = state.userRoles.find((role) => role.id === id)
+        return role ? role.description : null
+      }
+    },
+  },
   actions: {
     async getLookupInfo() {
       if (localStorage.getItem('jwtToken')) {
         // DONT Call api if there is no token.
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
+        this.userRoles = lookupInfo?.data?.userRoles
       }
     },
     async setConfig(config) {

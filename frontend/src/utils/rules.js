@@ -1,13 +1,15 @@
+const REQUIRED_MSG = 'This field is required'
 const rules = {
   email: [(v) => /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required'], // https://emailregex.com/
   required: [
     function (v) {
       if (v === 0) {
         return true
+      } else if (Array.isArray(v)) {
+        return v.length > 0 || REQUIRED_MSG
       } else if (!v) {
-        return 'This field is required'
+        return REQUIRED_MSG
       }
-
       return true
     },
   ],
@@ -23,7 +25,7 @@ const rules = {
   maxLength(number) {
     return (v) => !v || v.length <= number || 'Max length exceeded'
   },
-  phone: (v) => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) || 'A valid phone number is required', // https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s02.html
+  phone: (v) => !v || /^\(?([0-9]{3})\)?-([0-9]{3})-([0-9]{4})$/.test(v) || 'Must be a valid phone number in the format ###-###-####',
   listIsNotEmpty: [(v) => v.length > 0 || 'This field is required'],
 }
 

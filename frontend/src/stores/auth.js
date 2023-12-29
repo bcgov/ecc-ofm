@@ -16,10 +16,10 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
-    hasRoles: (state) => state.userInfo && state.userInfo.roles && state.userInfo.roles.length > 0,
-    hasFacilities: (state) => state.userInfo && state.userInfo.facilities && state.userInfo.facilities.length > 0,
+    hasRoles: (state) => state.userInfo?.roles?.length > 0,
+    hasFacilities: (state) => state.userInfo?.facilities?.length > 0,
     hasRole: (state) => {
-      return (role) => state.userInfo && state.userInfo.roles.includes(role)
+      return (role) => state.userInfo?.roles?.includes(role)
     },
   },
   actions: {
@@ -41,16 +41,6 @@ export const useAuthStore = defineStore('auth', {
       } else {
         this.isAuthorizedUser = false
         localStorage.removeItem('isAuthorizedUser')
-      }
-    },
-    // TODO Remove setter. Just use state
-    async setAuthorizedWebsocketUser(isAuthorizedWebsocketUser) {
-      if (isAuthorizedWebsocketUser) {
-        this.isAuthorizedWebsocketUser = true
-        localStorage.setItem('isAuthorizedWebsocketUser', 'true')
-      } else {
-        this.isAuthorizedWebsocketUser = false
-        localStorage.removeItem('isAuthorizedWebsocketUser')
       }
     },
     //sets the token required for refreshing expired json web tokens

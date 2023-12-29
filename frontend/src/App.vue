@@ -11,8 +11,8 @@
       <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
       <TheHeroImage v-if="$route.meta.showHeroImage" />
-      <TheFacilityHeader v-if="isActingProvider" :showFacility="$route.meta.showFacility" />
-      <router-view class="align-start pt-0 px-8 mb-0" />
+      <TheFacilityHeader v-if="isActingProvider && !isApplicationPage" :showFacility="$route.meta.showFacility" />
+      <router-view class="align-start pt-5 px-8 mb-0" />
     </v-main>
     <TheFooter />
   </v-app>
@@ -21,7 +21,6 @@
 <script>
 import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
-
 import TheFacilityHeader from '@/components/TheFacilityHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
@@ -53,10 +52,13 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isAuthorizedWebsocketUser', 'isActingProvider']),
+    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isActingProvider']),
     ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
     mobile() {
       return this.$vuetify.display.mobile
+    },
+    isApplicationPage() {
+      return this.$route.path?.includes('/applications/')
     },
   },
   async created() {
