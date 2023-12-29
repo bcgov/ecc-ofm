@@ -1,14 +1,7 @@
 <template>
   <v-form ref="form" v-model="isFormComplete">
-    <div>
-      <h4 class="my-4">
-        Your facility:
-        <span class="facility-name ml-6">{{ currentApplication.facilityName }}</span>
-      </h4>
-    </div>
-    <h4>Facility information</h4>
-    <FacilityInfo />
-    <v-row no-gutters class="my-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
+    <h1>Submit</h1>
+    <v-row no-gutters class="mt-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
     <v-row class="mt-4">
       <v-col>
         <v-text-field v-model="model.field1" :disabled="readonly" outlined :rules="rules.required" label="Field 1" />
@@ -39,24 +32,18 @@
 
 <script>
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
-import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 
 export default {
-  name: 'FacilityDetailsView',
-  components: { FacilityInfo },
+  name: 'SubmitApplicationView',
   props: {
     back: {
       type: Boolean,
       default: false,
     },
-    next: {
-      type: Boolean,
-      default: false,
-    },
-    save: {
+    submit: {
       type: Boolean,
       default: false,
     },
@@ -78,48 +65,19 @@ export default {
     isFormComplete: {
       handler(value) {
         if (!this.currentApplication) return
-        this.currentApplication.isFacilityDetailsComplete = value
+        this.currentApplication.isSubmitApplicationComplete = value
       },
     },
     back: {
       handler() {
-        this.$router.push({ name: 'applications-history' })
+        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
-    save: {
+    submit: {
       handler() {
-        this.$refs.form?.validate()
+        this.$router.push({ name: 'home' })
       },
-    },
-    next: {
-      handler() {
-        this.$router.push({ name: 'licences', params: { applicationGuid: this.$route.params.applicationGuid } })
-      },
-    },
-  },
-  async created() {
-    await this.loadApplication()
-  },
-  methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
-    async loadApplication() {
-      try {
-        if (!this.$route.params.applicationGuid || this.currentApplication?.applicationId === this.$route.params.applicationGuid) return
-        this.loading = true
-        await this.getApplication(this.$route.params.applicationGuid)
-      } catch (error) {
-        this.setFailureAlert('Failed to load the application', error)
-      } finally {
-        this.loading = false
-      }
     },
   },
 }
 </script>
-<style scoped>
-.facility-name {
-  color: #003366;
-  font-size: 1.3em;
-  text-decoration: underline;
-}
-</style>

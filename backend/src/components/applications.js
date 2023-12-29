@@ -1,8 +1,9 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
+const { isEmpty } = require('lodash')
 
 function mapApplicationObjectForFront(data) {
   const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
@@ -12,10 +13,21 @@ function mapApplicationObjectForFront(data) {
   return application
 }
 
-async function getApplicationsByFacilityId(req, res) {
+function buildGetApplicationsFilterQuery(query) {
+  let filterQuery = 'statuscode ne 2'
+  if (isEmpty(query)) return filterQuery
+  const mappedQuery = new MappableObjectForBack(query, ApplicationMappings).toJSON()
+  Object.entries(mappedQuery)?.forEach(([key, value]) => {
+    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
+  })
+  return filterQuery
+}
+
+async function getApplications(req, res) {
   try {
     const applications = []
-    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(_ofm_facility_value eq '${req.params.facilityId}' and statuscode ne 2)`
+    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(
+      ${buildGetApplicationsFilterQuery(req?.query)} )`
     const response = await getOperation(operation)
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)
@@ -44,8 +56,21 @@ async function updateApplication(req, res) {
   }
 }
 
+async function createApplication(req, res) {
+  try {
+    const payload = {
+      'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
+    }
+    const response = await postOperation('ofm_applications', payload)
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
-  getApplicationsByFacilityId,
+  getApplications,
   getApplication,
   updateApplication,
+  createApplication,
 }

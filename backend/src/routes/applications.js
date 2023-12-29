@@ -3,17 +3,32 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getApplicationsByFacilityId, getApplication, updateApplication } = require('../components/applications')
-const { param, validationResult } = require('express-validator')
+const { getApplications, getApplication, updateApplication, createApplication } = require('../components/applications')
+const { param, validationResult, checkSchema } = require('express-validator')
 
 module.exports = router
 
+const createApplicationSchema = {
+  facilityId: {
+    in: ['body'],
+    exists: { errorMessage: '[facilityId] is required' },
+  },
+}
+
 /**
- * Get the list of applications filtered by facilityId
+ * Get the list of applications
  */
-router.get('/facility/:facilityId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
-  return getApplicationsByFacilityId(req, res)
+  return getApplications(req, res)
+})
+
+/**
+ * Create a new Application
+ */
+router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(createApplicationSchema)], (req, res) => {
+  validationResult(req).throw()
+  return createApplication(req, res)
 })
 
 /**

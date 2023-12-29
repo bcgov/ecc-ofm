@@ -7,7 +7,7 @@ const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
 
 const {
-  FacilityMappings,
+  UsersPermissionsFacilityMappings,
   UserFacilityMappings,
   UserFacilityDetailMappings,
   UserMappings,
@@ -170,7 +170,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
   const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
-      let facilityData = new MappableObjectForFront(facility, FacilityMappings).toJSON()
+      let facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
       facilityData.accountNumber = facilityData.address.accountnumber
       facilityData.city = facilityData.address.address1_city
       facilityData.address = facilityData.address.address1_line1

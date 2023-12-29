@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash'
+
 import ApiService from '@/common/apiService'
 import { useAuthStore } from '@/stores/auth'
 import { ApiRoutes } from '@/utils/constants'
@@ -11,7 +13,8 @@ function sortApplications(applications) {
 export default {
   async getApplicationsByFacilityId(facilityId) {
     try {
-      const response = await ApiService.apiAxios.get(ApiRoutes.APPLICATIONS + '/facility/' + facilityId)
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)
@@ -40,6 +43,7 @@ export default {
 
   async getApplication(applicationId) {
     try {
+      if (!applicationId) return
       const response = await ApiService.apiAxios.get(ApiRoutes.APPLICATIONS + '/' + applicationId)
       return response?.data
     } catch (error) {
@@ -50,10 +54,22 @@ export default {
 
   async updateApplication(applicationId, payload) {
     try {
+      if (!applicationId || isEmpty(payload)) return
       const response = await ApiService.apiAxios.put(ApiRoutes.APPLICATIONS + '/' + applicationId, payload)
       return response
     } catch (error) {
       console.log(`Failed to update the application - ${error}`)
+      throw error
+    }
+  },
+
+  async createApplication(payload) {
+    try {
+      if (isEmpty(payload)) return
+      const response = await ApiService.apiAxios.post(ApiRoutes.APPLICATIONS + '/', payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to create a new application - ${error}`)
       throw error
     }
   },

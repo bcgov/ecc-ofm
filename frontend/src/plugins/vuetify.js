@@ -8,7 +8,7 @@ import { createVuetify } from 'vuetify/dist/vuetify'
 import { fa } from 'vuetify/iconsets/fa'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
-const myCustomLightTheme = {
+const ofmLightTheme = {
   dark: false,
   colors: {
     primary: '#003366',
@@ -30,9 +30,9 @@ export default createVuetify({
     },
   },
   theme: {
-    defaultTheme: 'myCustomLightTheme',
+    defaultTheme: 'ofmLightTheme',
     themes: {
-      myCustomLightTheme,
+      ofmLightTheme,
     },
   },
 })
