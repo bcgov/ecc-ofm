@@ -229,7 +229,7 @@ describe('MessagesTab', () => {
 
     await wrapper.get('#new-message-button').trigger('click')
     console.log('==================AFTER===================')
-    console.log(document.body.modal)
+    console.log(wrapper.html())
 
     expect(document.querySelector('#new-request-dialog')).not.toBeNull()
     // const newRequestDialog = wrapper.getComponent(NewRequestDialog)
