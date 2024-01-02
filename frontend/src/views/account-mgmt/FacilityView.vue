@@ -1,19 +1,19 @@
 <template>
   <v-container fluid>
-    <h1>Update Organization Information</h1>
+    <h1>Update Facility Information</h1>
     <v-row>
       <v-col class="ml-6 mt-6 pb-0">
-        <h4>Organization Details</h4>
+        <h4>Facility Details</h4>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        <OrganizationInfo />
+        FACILITY CARD...
       </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6">
-        <h4>Facilities</h4>
+        <h4>Licenses</h4>
       </v-col>
     </v-row>
     <v-row>

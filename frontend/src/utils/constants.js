@@ -28,7 +28,7 @@ export const ApiRoutes = Object.freeze({
 export const PAGE_TITLES = Object.freeze({
   LOGIN: 'Login',
   INTAKE: 'Intake',
-  CONTRACT_MANAGEMENT: 'Contrct Management',
+  CONTRACT_MANAGEMENT: 'Contract Management',
   PAYMENTS: 'Payments',
   REPORTING: 'Reporting',
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
