@@ -213,9 +213,7 @@ async function getUserFacilities(req, res, onlyWithPortalAccess) {
       operation = operation + ` and (ofm_portal_access eq true)`
     }
     const response = await getOperation(operation)
-    log.verbose('getUserFacilities 1 response: ****************', response)
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
-    log.verbose('getUserFacilities 2 response: ****************', response)
     return res.status(HttpStatus.OK).json(userFacilities)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)

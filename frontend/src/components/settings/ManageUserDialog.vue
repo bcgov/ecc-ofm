@@ -258,7 +258,7 @@ export default {
      */
     async getUserFacilities(contactId, onlyWithPortalAccess) {
       try {
-        const res = await ApiService.apiAxios.get(ApiRoutes.USER_FACILITIES.replace(':contactId', contactId) + '/' + '?onlyWithPortalAccess=' + onlyWithPortalAccess)
+        const res = await ApiService.apiAxios.get(`${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`);
         return this.sortFacilities(res.data)
       } catch (error) {
         this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)

@@ -82,8 +82,7 @@ router.get(
  */
 router.get('/:contactId/facilities', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()
-  const onlyWithPortalAccess = req.query.onlyWithPortalAccess === 'true'
-  return getUserFacilities(req, res, onlyWithPortalAccess)
+  return getUserFacilities(req, res, req.query.onlyWithPortalAccess === 'true')
 })
 
 /**
