@@ -3,11 +3,11 @@
     <div>
       <h4 class="my-4">
         Your facility:
-        <span class="facility-name ml-6">{{ currentApplication.facilityName }}</span>
+        <span class="facility-name ml-6">{{ currentApplication?.facilityName }}</span>
       </h4>
     </div>
     <h4>Facility information</h4>
-    <FacilityInfo />
+    <FacilityInfo :facilityId="currentApplication?.facilityId" />
     <v-row no-gutters class="my-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
     <v-row class="mt-4">
       <v-col>

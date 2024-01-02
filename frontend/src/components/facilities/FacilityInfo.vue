@@ -146,8 +146,6 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
-import { useApplicationsStore } from '@/stores/applications'
 import alertMixin from '@/mixins/alertMixin'
 import FacilityService from '@/services/facilityService'
 import AppLabel from '@/components/ui/AppLabel.vue'
@@ -155,6 +153,12 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 export default {
   components: { AppLabel },
   mixins: [alertMixin],
+  props: {
+    facilityId: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       facilityInfo: undefined,
@@ -162,7 +166,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
     isApplicationPage() {
       return this.$route.path?.includes('/applications/')
     },
@@ -174,7 +177,7 @@ export default {
     async loadFacilityInfo() {
       try {
         this.loading = true
-        this.facilityInfo = await FacilityService.getFacility(this.currentApplication?.facilityId)
+        this.facilityInfo = await FacilityService.getFacility(this.facilityId)
       } catch (error) {
         this.setFailureAlert('Failed to get your facility information', error)
       } finally {
