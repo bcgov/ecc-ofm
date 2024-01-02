@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
@@ -62,7 +62,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     toggleNewRequestDialog() {
       this.showNewRequestDialog = !this.showNewRequestDialog
     },

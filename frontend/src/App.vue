@@ -12,7 +12,7 @@
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
       <TheHeroImage v-if="$route.meta.showHeroImage" />
       <TheFacilityHeader v-if="isActingProvider" :showFacility="$route.meta.showFacility" />
-      <router-view class="align-start pt-0 px-8 mb-0" />
+      <router-view class="align-start pt-5 px-8 mb-0" />
     </v-main>
     <TheFooter />
   </v-app>

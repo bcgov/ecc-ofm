@@ -174,3 +174,11 @@ input[type='number'] {
 .v-table .v-table__wrapper {
   font-size: 1rem;
 }
+
+a.v-btn--active > .v-btn__overlay {
+  opacity: 0;
+}
+
+html body .v-theme--ofmLightTheme {
+  --v-disabled-opacity: 0.8;
+}

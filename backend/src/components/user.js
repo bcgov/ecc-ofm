@@ -5,7 +5,7 @@ const ApiError = require('./error')
 const axios = require('axios')
 const HttpStatus = require('http-status-codes')
 const log = require('../components/logger')
-// TODO... const { ORGANIZATION_PROVIDER_TYPES} = require('../util/constants')
+
 const {
   FacilityMappings,
   UserFacilityMappings,
@@ -119,8 +119,8 @@ async function getDynamicsUserByEmail(req) {
     //If for some reason, an email is not associated with the IDIR, just use IDR@gov.bc.ca
     email = `${req.session.passport.user._json.idir_username}@gov.bc.ca`
   }
-  // eslint-disable-next-line quotes,
-  email.includes("'") ? (email = email.replace("'", "''")) : email
+  // Sanitize email to prevent SQL injection
+  email = email.replace(/'/g, "''")
   try {
     let response = await getOperation(`systemusers?$select=firstname,domainname,lastname&$filter=internalemailaddress eq '${email}'`)
     return response
