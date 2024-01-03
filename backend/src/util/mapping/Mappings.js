@@ -95,7 +95,7 @@ const UserFacilityDetailMappings = [
   { back: 'address1_composite', front: 'address' },
 ]
 
-const FacilityMappings = [
+const UsersPermissionsFacilityMappings = [
   { back: 'ofm_bceid_facilityid', front: 'bceidFacilityId' },
   { back: '_ofm_facility_value', front: 'facilityId' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
@@ -118,6 +118,49 @@ const ApplicationMappings = [
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
 ]
 
+const OrganizationMappings = [
+  { back: 'accountid', front: 'organizationId' },
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'name' },
+  { back: 'emailaddress1', front: 'email' },
+  { back: 'ofm_business_type', front: 'businessTypeCode' },
+  { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'telephone1', front: 'phoneLandline' },
+  { back: 'telephone2', front: 'phoneCell' },
+  { back: 'address1_line1', front: 'streetAddress1' },
+  { back: 'address1_line2', front: 'streetAddress2' },
+  { back: 'address1_city', front: 'city' },
+  { back: 'address1_postalcode', front: 'postalCode' },
+  { back: 'address1_stateorprovince', front: 'province' },
+  { back: 'ofm_is_mailing_address_different', front: 'isMailingAddressDifferent' },
+  { back: 'address2_line1', front: 'mailingStreetAddress1' },
+  { back: 'address2_line2', front: 'mailingStreetAddress2' },
+  { back: 'address2_city', front: 'mailingCity' },
+  { back: 'address2_postalcode', front: 'mailingPostalCode' },
+  { back: 'address2_stateorprovince', front: 'mailingProvince' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
+const FacilityMappings = [
+  { back: 'accountid', front: 'facilityId' },
+  { back: 'accountnumber', front: 'accountNumber' },
+  { back: 'name', front: 'name' },
+  { back: 'address1_line1', front: 'streetAddress1' },
+  { back: 'address1_line2', front: 'streetAddress2' },
+  { back: 'address1_city', front: 'city' },
+  { back: 'address1_postalcode', front: 'postalCode' },
+  { back: 'address1_stateorprovince', front: 'province' },
+  { back: 'ofm_is_mailing_address_different', front: 'isMailingAddressDifferent' },
+  { back: 'address2_line1', front: 'mailingStreetAddress1' },
+  { back: 'address2_line2', front: 'mailingStreetAddress2' },
+  { back: 'address2_city', front: 'mailingCity' },
+  { back: 'address2_postalcode', front: 'mailingPostalCode' },
+  { back: 'address2_stateorprovince', front: 'mailingProvince' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
 const ContactMappings = [
   { back: 'entityID', front: 'contactId' },
   { back: 'ofm_first_name', front: 'firstName' },
@@ -134,7 +177,9 @@ module.exports = {
   AssistanceRequestConversationMappings,
   ContactMappings,
   FacilityMappings,
+  UsersPermissionsFacilityMappings,
   NotificationMappings,
+  OrganizationMappings,
   UserFacilityMappings,
   UserFacilityDetailMappings,
   UserMappings,

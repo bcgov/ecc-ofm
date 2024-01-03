@@ -10,8 +10,10 @@ export default {
   computed: {
     buttonClass() {
       return {
-        'BC-Gov-PrimaryButton': this.$attrs.variant === undefined && this.primary,
-        'BC-Gov-SecondaryButton': this.$attrs.variant === undefined && !this.primary,
+        'BC-Gov-PrimaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && this.primary,
+        'BC-Gov-PrimaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && this.primary,
+        'BC-Gov-SecondaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
+        'BC-Gov-SecondaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'text-app-button': this.$attrs.variant !== '',
       }
     },
@@ -109,5 +111,48 @@ export default {
 }
 .BC-Gov-SecondaryButton:active {
   opacity: 1;
+}
+
+.BC-Gov-PrimaryButton-disabled {
+  background-color: #003366;
+  opacity: 0.3;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 12px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 18px;
+  font-family:
+    ‘BCSans’,
+    ‘Noto Sans’,
+    Verdana,
+    Arial,
+    sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  /* cursor: not-allowed; */
+}
+
+.BC-Gov-SecondaryButton-disabled {
+  background-color: white;
+  opacity: 0.3;
+  border: 2px solid #003366;
+  border-radius: 4px;
+  color: #003366;
+  padding: 10px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 18px;
+  font-family:
+    ‘Noto Sans’,
+    Verdana,
+    Arial,
+    sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: not-allowed;
 }
 </style>
