@@ -21,7 +21,7 @@
         <v-row no-gutters>
           <v-col cols="12">
             <v-row no-gutters class="ma-2">
-              <AppLabel class="address-label">Physical address:</AppLabel>
+              <h4>Physical address</h4>
             </v-row>
             <v-row no-gutters>
               <v-col cols="12" md="6">
@@ -79,10 +79,11 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-divider />
         <v-row no-gutters>
           <v-col cols="12">
             <v-row no-gutters class="ma-2">
-              <AppLabel class="address-label">Mailing address:</AppLabel>
+              <h4>Mailing address</h4>
             </v-row>
             <v-row no-gutters>
               <v-col cols="12" md="6">
@@ -187,8 +188,3 @@ export default {
   },
 }
 </script>
-<style scoped>
-.address-label {
-  text-decoration: underline;
-}
-</style>
