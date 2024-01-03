@@ -109,6 +109,11 @@ export default {
       },
     },
   },
+  created() {
+    if (this.userInfo?.facilities?.length === 1) {
+      this.facilityId = this.userInfo?.facilities[0].facilityId
+    }
+  },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
   },
