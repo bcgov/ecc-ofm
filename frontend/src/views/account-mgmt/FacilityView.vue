@@ -8,7 +8,7 @@
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        FACILITY CARD...
+        <FacilityInfo :facilityId="facilityId" />
       </v-col>
     </v-row>
     <v-row>
@@ -19,27 +19,45 @@
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6" variant="outlined">
-          <v-row>
-            <v-col cols="11">
-              <v-card v-for="(item, index) in userInfo.facilities"
-                :key="index"
-                clickable
-                hover
-                class="facility-card mr-4">{{ item.facilityName }}</v-card>
-            </v-col>
-            <v-col cols="1">
-              <v-row justify="end">
-                <v-icon>mdi-plus</v-icon>
-                <v-icon>mdi-delete</v-icon>
-              </v-row>
-            </v-col>
-          </v-row>
+          Licenses
         </v-card>
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <AppButton :primary="false" size="large" width="400px" :to="{ name: 'account-mgmt' }">&larr; Back to Account Management</AppButton>
+      <v-col class="ml-6">
+        <h4>Expense Authority</h4>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" class="ml-6 pr-9 pt-0">
+        <v-card class="pa-6" variant="outlined">
+          Expense Authority
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="ml-6">
+        <h4>Primary Contact</h4>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" class="ml-6 pr-9 pt-0">
+        <v-card class="pa-6 mb-3" variant="outlined">
+          Primary Contact
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="10">
+        <v-row>
+          <AppButton id="back-to-account-mgmt" :primary="false" size="medium" width="400px" :to="{ name: 'account-mgmt' }">&larr; Back to Account Management</AppButton>
+        </v-row>
+      </v-col>
+      <v-col cols="2">
+        <v-row>
+          <AppButton id="cancel" :primary="true" size="large" :to="{ name: 'organization-facility' }" class="mr-6">Cancel</AppButton>
+          <AppButton id="save" :primary="true" size="large" :to="{ name: 'account-mgmt' }">Save</AppButton>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -48,31 +66,41 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
-
+import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
+import FacilityService from '@/services/facilityService'
 import { mapState } from 'pinia'
-
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  name: 'OrganizationFacilityView',
-  components: { AppButton, AppLabel, OrganizationInfo },
+  name: 'FacilityView',
+  components: { AppButton, AppLabel, FacilityInfo },
+  data() {
+    return {
+      facilityId: null,
+      facilityContacts: undefined,
+      loading: false,
+    }
+  },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+  },
+  created() {
+    this.facilityId = this.$route.params.facilityId
+    this.loadFacilityContacts()
+  },
+  methods: {
+    async loadFacilityContacts() {
+      try {
+        this.loading = true
+        this.facilityContacts = await FacilityService.getFacilityContacts(this.facilityId)
+      } catch (error) {
+        this.setFailureAlert('Failed to get Primary and Expense Authority contacts for facilityId = ' + this.facilityId, error)
+      } finally {
+        this.loading = false
+      }
+    },
   },
 }
 </script>
 
-<style>
-.facility-card {
-  display: inline-block;
-  max-width: 200px;
-  width: auto;
-  min-width: 0;
-  height: auto;
-  padding: 8px;
-  border: 1px solid black;
-  box-shadow: none;
-  margin-right: 4px;
-}
-</style>
+<style></style>

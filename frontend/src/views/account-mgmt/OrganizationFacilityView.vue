@@ -22,6 +22,7 @@
           <v-row>
             <v-col cols="11">
               <v-card v-for="(item, index) in userInfo.facilities"
+                :to="{ name: 'facility', params: { facilityId: item.facilityId } }"
                 :key="index"
                 clickable
                 hover
@@ -47,7 +48,6 @@
 
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
-import AppLabel from '@/components/ui/AppLabel.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 
 import { mapState } from 'pinia'
@@ -56,7 +56,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'OrganizationFacilityView',
-  components: { AppButton, AppLabel, OrganizationInfo },
+  components: { AppButton, OrganizationInfo },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
   },

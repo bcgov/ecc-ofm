@@ -21,6 +21,7 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
+import FacilityView from '@/views/account-mgmt/FacilityView.vue'
 import OrganizationFacilityView from '@/views/account-mgmt/OrganizationFacilityView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
@@ -208,6 +209,11 @@ const router = createRouter({
           path: 'organization-facility',
           name: 'organization-facility',
           component: OrganizationFacilityView,
+        },
+        {
+          path: 'facility/:facilityId',
+          name: 'facility',
+          component: FacilityView,
         },
       ],
     },
