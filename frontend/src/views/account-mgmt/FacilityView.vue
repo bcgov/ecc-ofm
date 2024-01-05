@@ -12,8 +12,14 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="licence-card-header">
+      <v-col class="licence-card-header align-self-end">
         <h4>Licences</h4>
+      </v-col>
+      <v-col class="d-flex justify-end align-end licence-card-header">
+        <AppButton variant="text" :disabled="loading">
+          <v-icon left>mdi-plus</v-icon>
+          Add New License
+        </AppButton>
       </v-col>
     </v-row>
     <v-row>
@@ -71,7 +77,7 @@
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6 w-100" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
-            <div class="w-100">
+            <div class="w-100"> <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
               <v-row>
                 <v-col>
                   <AppLabel>Current expense authority:</AppLabel>
@@ -111,7 +117,7 @@
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6 mb-3" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
-            <div class="w-100">
+            <div class="w-100"> <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
               <v-row>
                 <v-col>
                   <AppLabel>Current primary contact info:</AppLabel>
@@ -150,7 +156,7 @@
       <v-col cols="2">
         <v-row>
           <AppButton id="cancel" :primary="true" size="large" :to="{ name: 'organization-facility' }" :loading="loading" class="mr-6">Cancel</AppButton>
-          <AppButton id="save" :primary="true" size="large" :to="{ name: 'account-mgmt' }" :loading="loading">Save</AppButton>
+          <AppButton id="save" :disabled="true" :primary="true" size="large" :to="{ name: 'account-mgmt' }" :loading="loading">Save</AppButton>
         </v-row>
       </v-col>
     </v-row>
@@ -230,7 +236,6 @@ export default {
     async getLicences() {
       try {
         this.licences = await FacilityService.getLicences(this.facilityId)
-        console.log('getLicences = ', JSON.stringify(this.licences, null, 2))
       } catch (error) {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
       }

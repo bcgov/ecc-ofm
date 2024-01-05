@@ -8,7 +8,7 @@
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        <OrganizationInfo class="mt-1" />
+        <OrganizationInfo class="mt-1" :editable="true" />
       </v-col>
     </v-row>
     <v-row>
@@ -88,7 +88,6 @@ export default {
       }
     },
   },
-
 }
 </script>
 
