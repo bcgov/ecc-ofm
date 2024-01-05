@@ -12,4 +12,15 @@ export default {
       throw error
     }
   },
+
+  async getOrganizationFacilities(organizationId) {
+    try {
+      if (!organizationId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.ORGANIZATIONS_FACILITIES.replace(':organizationId', organizationId))
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the organization's facilities by organization/account id - ${error}`)
+      throw error
+    }
+  },
 }

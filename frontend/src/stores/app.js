@@ -21,6 +21,7 @@ export const useAppStore = defineStore('app', {
     // Lookup data from Dynamics365
     requestCategories: {},
     userRoles: {},
+    healthAuthorities: {},
 
     config: '',
   }),
@@ -39,6 +40,7 @@ export const useAppStore = defineStore('app', {
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.userRoles = lookupInfo?.data?.userRoles
+        this.healthAuthorities = lookupInfo?.data?.healthAuthorities
       }
     },
     async setConfig(config) {

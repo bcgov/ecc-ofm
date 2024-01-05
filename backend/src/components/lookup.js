@@ -8,6 +8,7 @@ const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('../components/logger')
 
 const lookupCache = new cache.Cache()
+const ONE_HOUR_MS = 60 * 60 * 1000 // Cache timeout set for one hour
 
 async function getRequestCategories() {
   let requestCategories = lookupCache.get('requestCategories')
@@ -20,18 +21,30 @@ async function getRequestCategories() {
   return requestCategories
 }
 
-async function getUserRoles() {
-  let userRoles = lookupCache.get('userRoles')
-  if (!userRoles) {
-    userRoles = []
-    let response = await getOperation('GlobalOptionSetDefinitions(Name=%27ofm_portal_role%27)?$Select=Options')
-    userRoles = response?.Options?.map((item) => ({
-      id: Number(item.Value),
-      description: item.Label && item.Label.LocalizedLabels ? item.Label.LocalizedLabels[0].Label : null,
-    }))
-    lookupCache.put('userRoles', userRoles, 60 * 60 * 1000)
+async function fetchAndCacheData(cacheKey, operationName) {
+  let data = lookupCache.get(cacheKey)
+  if (!data) {
+    try {
+      const response = await getOperation(`GlobalOptionSetDefinitions(Name='${operationName}')`)
+      data =
+        response?.Options?.map((item) => ({
+          id: Number(item.Value),
+          description: item.Label?.LocalizedLabels?.[0]?.Label ?? null,
+        })) || []
+      lookupCache.put(cacheKey, data, ONE_HOUR_MS)
+    } catch (error) {
+      log.error(`Error fetching data for ${cacheKey}:`, error)
+    }
   }
-  return userRoles
+  return data
+}
+
+async function getUserRoles() {
+  return fetchAndCacheData('userRoles', 'ofm_portal_role')
+}
+
+async function getHealthAuthorities() {
+  return fetchAndCacheData('healthAuthorities', 'ecc_health_authorities')
 }
 
 /**
@@ -43,9 +56,11 @@ async function getLookupInfo(req, res) {
     if (!resData) {
       let requestCategories = await getRequestCategories()
       let userRoles = await getUserRoles()
+      let healthAuthorities = await getHealthAuthorities()
       resData = {
         requestCategories: requestCategories,
         userRoles: userRoles,
+        healthAuthorities: healthAuthorities,
       }
       lookupCache.put('lookups', resData, 60 * 60 * 1000)
     }
