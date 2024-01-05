@@ -21,15 +21,12 @@
         <v-card class="pa-6" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-row>
-              <v-col cols="11">
-                <v-card v-for="(item, index) in this.facilities"
-                  :to="{ name: 'facility', params: { facilityId: item.facilityId } }"
-                  :key="index"
-                  clickable
-                  hover
-                  class="facility-card mr-4">{{ item.name }}</v-card>
+              <v-col cols="9" md="11">
+                <v-card v-for="(item, index) in this.facilities" :to="{ name: 'facility', params: { facilityId: item.facilityId } }" :key="index" clickable hover class="facility-card mr-4">
+                  {{ item.name }}
+                </v-card>
               </v-col>
-              <v-col cols="1">
+              <v-col cols="3" md="1">
                 <v-row justify="end">
                   <v-icon icon="fa:fa-regular fa-plus" class="mr-4"></v-icon>
                   <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
