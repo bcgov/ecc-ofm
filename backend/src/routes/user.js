@@ -35,22 +35,6 @@ const updateUserSchema = {
     in: ['body'],
     exists: { errorMessage: '[contactId] is required' },
   },
-  firstName: {
-    in: ['body'],
-    exists: { errorMessage: '[firstName] is required' },
-  },
-  lastName: {
-    in: ['body'],
-    exists: { errorMessage: '[lastName] is required' },
-  },
-  email: {
-    in: ['body'],
-    exists: { errorMessage: '[email] is required' },
-  },
-  role: {
-    in: ['body'],
-    exists: { errorMessage: '[role] is required' },
-  },
 }
 
 /**

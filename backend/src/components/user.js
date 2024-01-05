@@ -179,7 +179,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
   }
   return {
     ...usersPermissionsFacilities,
-    role: Number(usersPermissionsFacilities.role),
+    role: usersPermissionsFacilities.role ? Number(usersPermissionsFacilities.role) : usersPermissionsFacilities.role,
   }
 }
 
