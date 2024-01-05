@@ -39,7 +39,7 @@
 
 <script>
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
@@ -95,23 +95,6 @@ export default {
       handler() {
         this.$router.push({ name: 'licences', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
-    },
-  },
-  async created() {
-    await this.loadApplication()
-  },
-  methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
-    async loadApplication() {
-      try {
-        if (!this.$route.params.applicationGuid || this.currentApplication?.applicationId === this.$route.params.applicationGuid) return
-        this.loading = true
-        await this.getApplication(this.$route.params.applicationGuid)
-      } catch (error) {
-        this.setFailureAlert('Failed to load the application', error)
-      } finally {
-        this.loading = false
-      }
     },
   },
 }

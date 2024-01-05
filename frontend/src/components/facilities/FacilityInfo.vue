@@ -3,7 +3,7 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row v-if="!isApplicationPage" no-gutters>
-          <v-col v-if="facilityInfo?.name" cols="9" lg="6">
+          <v-col cols="9" lg="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="4" lg="5" xl="4">
                 <AppLabel>Facility name:</AppLabel>
@@ -19,12 +19,12 @@
           </v-col>
         </v-row>
         <v-row no-gutters>
-          <v-col v-if="facilityInfo" cols="12">
+          <v-col cols="12">
             <v-row no-gutters class="ma-2">
-              <AppLabel>Physical address:</AppLabel>
+              <h4>Physical address</h4>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="facilityInfo?.streetAddress1" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 1:</AppLabel>
@@ -34,7 +34,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="facilityInfo?.streetAddress2" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 2:</AppLabel>
@@ -46,7 +46,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="facilityInfo?.city" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>City:</AppLabel>
@@ -56,7 +56,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="facilityInfo?.province" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Province:</AppLabel>
@@ -66,7 +66,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="facilityInfo?.postalCode" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Postal code:</AppLabel>
@@ -79,61 +79,62 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-divider />
         <v-row no-gutters>
-          <v-col v-if="facilityInfo?.isMailingAddressDifferent" cols="12">
+          <v-col cols="12">
             <v-row no-gutters class="ma-2">
-              <AppLabel>Mailing address:</AppLabel>
+              <h4>Mailing address</h4>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="facilityInfo?.mailingStreetAddress1" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 1:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.mailingStreetAddress1 }}
+                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingStreetAddress1 : facilityInfo?.streetAddress1 }}
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="facilityInfo?.mailingStreetAddress2" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 2:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.mailingStreetAddress2 }}
+                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingStreetAddress2 : facilityInfo?.streetAddress2 }}
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="facilityInfo?.mailingCity" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.mailingCity }}
+                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingCity : facilityInfo?.city }}
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="facilityInfo?.mailingProvince" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Province:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.mailingProvince }}
+                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingProvince : facilityInfo?.province }}
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="facilityInfo?.mailingPostalCode" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Postal code:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.mailingPostalCode }}
+                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingPostalCode : facilityInfo?.postalCode }}
                   </v-col>
                 </v-row>
               </v-col>

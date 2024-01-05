@@ -3,7 +3,7 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row no-gutters>
-          <v-col v-if="organizationInfo?.name" cols="9" md="6">
+          <v-col cols="9" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
                 <AppLabel>Organization legal name:</AppLabel>
@@ -11,7 +11,7 @@
               <v-col cols="12" md="6" lg="7" xl="8">{{ organizationInfo?.name }}</v-col>
             </v-row>
           </v-col>
-          <v-col v-if="!isApplicationPage" cols="3" md="6">
+          <v-col v-if="editable" cols="3" md="6">
             <v-row no-gutters justify="end">
               <v-icon icon="fa:fa-regular fa-pen-to-square" class="mr-4"></v-icon>
               <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
@@ -19,7 +19,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters>
-          <v-col v-if="organizationInfo?.businessType" cols="12" md="6">
+          <v-col cols="12" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
                 <AppLabel>Doing business as:</AppLabel>
@@ -29,7 +29,7 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col v-if="organizationInfo?.email" cols="12" md="6">
+          <v-col cols="12" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
                 <AppLabel>Email address:</AppLabel>
@@ -41,7 +41,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters>
-          <v-col v-if="organizationInfo?.phoneLandline" cols="12" md="6">
+          <v-col cols="12" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
                 <AppLabel>Phone (landline):</AppLabel>
@@ -51,7 +51,7 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col v-if="organizationInfo?.phoneCell" cols="12" md="6">
+          <v-col cols="12" md="6">
             <v-row no-gutters class="ma-2">
               <v-col cols="12" md="6" lg="5" xl="4">
                 <AppLabel>Phone (cell):</AppLabel>
@@ -62,13 +62,14 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-divider />
         <v-row no-gutters>
-          <v-col v-if="organizationInfo" cols="12">
+          <v-col cols="12">
             <v-row no-gutters class="ma-2">
-              <AppLabel>Physical address:</AppLabel>
+              <h4>Physical address</h4>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="organizationInfo?.streetAddress1" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 1:</AppLabel>
@@ -78,7 +79,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="organizationInfo?.streetAddress2" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 2:</AppLabel>
@@ -90,7 +91,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="organizationInfo?.city" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>City:</AppLabel>
@@ -100,7 +101,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="organizationInfo?.province" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Province:</AppLabel>
@@ -110,7 +111,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="organizationInfo?.postalCode" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Postal code:</AppLabel>
@@ -123,61 +124,62 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-divider />
         <v-row no-gutters>
-          <v-col v-if="organizationInfo?.isMailingAddressDifferent" cols="12">
+          <v-col cols="12">
             <v-row no-gutters class="ma-2">
-              <AppLabel>Mailing address:</AppLabel>
+              <h4>Mailing address</h4>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="organizationInfo?.mailingStreetAddress1" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 1:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ organizationInfo?.mailingStreetAddress1 }}
+                    {{ organizationInfo?.isMailingAddressDifferent ? organizationInfo?.mailingStreetAddress1 : organizationInfo?.streetAddress1 }}
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="organizationInfo?.mailingStreetAddress2" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Street address 2:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ organizationInfo?.mailingStreetAddress2 }}
+                    {{ organizationInfo?.isMailingAddressDifferent ? organizationInfo?.mailingStreetAddress2 : organizationInfo?.streetAddress2 }}
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-if="organizationInfo?.mailingCity" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ organizationInfo?.mailingCity }}
+                    {{ organizationInfo?.isMailingAddressDifferent ? organizationInfo?.mailingCity : organizationInfo?.city }}
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="organizationInfo?.mailingProvince" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Province:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ organizationInfo?.mailingProvince }}
+                    {{ organizationInfo?.isMailingAddressDifferent ? organizationInfo?.mailingProvince : organizationInfo?.province }}
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col v-if="organizationInfo?.mailingPostalCode" cols="12" md="6">
+              <v-col cols="12" md="6">
                 <v-row no-gutters class="ma-2">
                   <v-col cols="12" md="6" lg="5" xl="4">
                     <AppLabel>Postal code:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ organizationInfo?.mailingPostalCode }}
+                    {{ organizationInfo?.isMailingAddressDifferent ? organizationInfo?.mailingPostalCode : organizationInfo?.postalCode }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -199,6 +201,12 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 export default {
   components: { AppLabel },
   mixins: [alertMixin],
+  props: {
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       organizationInfo: undefined,
@@ -207,9 +215,6 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    isApplicationPage() {
-      return this.$route.path?.includes('/applications/')
-    },
   },
   async created() {
     await this.loadOrganizationInfo()

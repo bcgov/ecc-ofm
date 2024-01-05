@@ -100,6 +100,9 @@ export default {
     },
 
     getNavIcon(item) {
+      if (this.isSelectFacilityPage) {
+        return `mdi-numeric-${item.id}-circle`
+      }
       switch (item.routeName) {
         case 'facility-details':
           return this.currentApplication?.isFacilityDetailsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
