@@ -18,7 +18,7 @@
       <v-col class="d-flex justify-end align-end licence-card-header">
         <AppButton variant="text" :disabled="loading">
           <v-icon left>mdi-plus</v-icon>
-          Add New License
+          Add New Licence
         </AppButton>
       </v-col>
     </v-row>
@@ -29,7 +29,7 @@
             <v-row>
               <v-col>
                 <AppLabel>Current licences:</AppLabel>
-                <v-card v-for="(item, index) in this.licences" :key="index" class="licence-card">
+                <v-card v-for="(item) in this.licences" :key="item.licence" class="licence-card">
                   <v-row>
                     <v-col cols="auto">
                       <AppLabel>Licence Number: </AppLabel>
@@ -148,14 +148,14 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="10">
-        <v-row>
+      <v-col cols="12" md="6">
+        <v-row justify="center" justify-md="start" class="pb-2">
           <AppButton id="back-to-account-mgmt" :primary="false" size="medium" width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">&larr; Back to Account Management</AppButton>
         </v-row>
       </v-col>
-      <v-col cols="2">
-        <v-row>
-          <AppButton id="cancel" :primary="true" size="large" :to="{ name: 'organization-facility' }" :loading="loading" class="mr-6">Cancel</AppButton>
+      <v-col cols="12" md="6">
+        <v-row justify="center" justify-md="end" class="pb-2">
+          <AppButton id="cancel" :primary="false" size="large" :to="{ name: 'manage-organization' }" :loading="loading" class="mr-6">Cancel</AppButton>
           <AppButton id="save" :disabled="true" :primary="true" size="large" :to="{ name: 'account-mgmt' }" :loading="loading">Save</AppButton>
         </v-row>
       </v-col>
@@ -174,14 +174,14 @@ import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  name: 'FacilityView',
+  name: 'ManageFacilityView',
   components: { AppButton, AppLabel, FacilityInfo },
   mixins: [alertMixin],
   data() {
     return {
       facilityId: null,
-      licences: undefined,
-      contacts: undefined,
+      licences: [],
+      contacts: [],
       loading: false,
     }
   },
@@ -195,10 +195,10 @@ export default {
       return this.contacts?.filter(contact => contact.isPrimaryContact)
     },
     isEditablePrimaryContact() {
-      return this.primaryContact && this.primaryContact.length !== 0
+      return this.primaryContact?.length !== 0
     },
     isEditableExpenseAuthority() {
-      return this.expenseAuthorities && this.expenseAuthorities.length !== 0
+      return this.expenseAuthorities?.length !== 0
     },
   },
   created() {
@@ -240,7 +240,6 @@ export default {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
       }
     },
-
 
     /**
      * Get the role name by id

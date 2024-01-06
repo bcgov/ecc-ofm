@@ -18,7 +18,7 @@ async function getFacilityContacts(req, res) {
   try {
     const operation = `ofm_bceid_facilities?$select=_ofm_facility_value&$expand=ofm_bceid($select=ofm_first_name,ofm_is_expense_authority,ofm_is_primary_contact,ofm_last_name,ofm_portal_role)&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (ofm_bceid/ofm_is_expense_authority eq true or ofm_bceid/ofm_is_primary_contact eq true) and (ofm_portal_access eq true)`
     const response = await getOperation(operation)
-    let contacts = []
+    const contacts = []
     response?.value?.forEach((item) => contacts.push(new MappableObjectForFront(item.ofm_bceid, UserMappings).toJSON()))
     return res.status(HttpStatus.OK).json(contacts)
   } catch (e) {
@@ -30,7 +30,7 @@ async function getFacilityLicences(req, res) {
   try {
     const operation = `ofm_licences?$select=ofm_health_authority,ofm_licence,ofm_licenceid,statuscode&$filter=(_ofm_facility_value eq ${req.params.facilityId})`
     const response = await getOperation(operation)
-    let licences = []
+    const licences = []
     response?.value?.forEach((item) => licences.push(new MappableObjectForFront(item, LicenceMappings).toJSON()))
     return res.status(HttpStatus.OK).json(licences)
   } catch (e) {

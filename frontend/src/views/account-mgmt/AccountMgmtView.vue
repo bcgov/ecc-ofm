@@ -7,7 +7,7 @@
           <template v-slot:prepend>
             <v-icon>mdi-office-building</v-icon>
           </template>
-          <router-link :to="{ name: 'organization-facility' }">Manage Organization/Facilities</router-link>
+          <router-link :to="{ name: 'manage-organization' }">Manage Organization/Facilities</router-link>
         </v-list-item>
         <v-list-item>
           <template v-slot:prepend>

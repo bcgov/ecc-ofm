@@ -21,8 +21,8 @@ import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
-import FacilityView from '@/views/account-mgmt/FacilityView.vue'
-import OrganizationFacilityView from '@/views/account-mgmt/OrganizationFacilityView.vue'
+import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
+import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
@@ -206,14 +206,14 @@ const router = createRouter({
           component: AccountMgmtView,
         },
         {
-          path: 'organization-facility',
-          name: 'organization-facility',
-          component: OrganizationFacilityView,
+          path: 'manage-organization',
+          name: 'manage-organization',
+          component: ManageOrganizationView,
         },
         {
           path: 'facility/:facilityId',
-          name: 'facility',
-          component: FacilityView,
+          name: 'manage-facility',
+          component: ManageFacilityView,
         },
       ],
     },

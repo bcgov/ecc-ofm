@@ -22,9 +22,9 @@
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-row>
               <v-col cols="11">
-                <v-card v-for="(item, index) in this.facilities"
-                  :to="{ name: 'facility', params: { facilityId: item.facilityId } }"
-                  :key="index"
+                <v-card v-for="(item) in this.facilities"
+                  :key="item.facilityId"
+                  @click="navigateToFacility(item.facilityId)"
                   clickable
                   hover
                   class="facility-card mr-4">{{ item.name }}</v-card>
@@ -38,6 +38,7 @@
             </v-row>
           </v-skeleton-loader>
         </v-card>
+
       </v-col>
     </v-row>
     <v-row>
@@ -58,12 +59,12 @@ import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  name: 'OrganizationFacilityView',
+  name: 'ManageOrganizationView',
   components: { AppButton, OrganizationInfo },
   mixins: [alertMixin],
   data() {
     return {
-      facilities: undefined,
+      facilities: [],
       loading: false,
     }
   },
@@ -87,11 +88,19 @@ export default {
         this.loading = false
       }
     },
+
+    /**
+     * Navigates to the Manage Facility page
+     */
+    navigateToFacility(facilityId) {
+      this.$router.push({ name: 'manage-facility', params: { facilityId } });
+    }
   },
 }
 </script>
 
 <style>
+/*
 .facility-card {
   display: inline-block;
   vertical-align: top;
@@ -103,5 +112,13 @@ export default {
   border: 1px solid black;
   box-shadow: none;
   margin-right: 4px;
+}*/
+.facility-card {
+  display: inline-block;
+  vertical-align: top;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 8px;
+  margin: 4px;
 }
 </style>

@@ -50,7 +50,7 @@ async function getHealthAuthorities() {
 /**
  * Look ups from Dynamics365.
  */
-async function getLookupInfo(req, res) {
+async function getLookupInfo(_req, res) {
   try {
     let resData = lookupCache.get('lookups')
     if (!resData) {
