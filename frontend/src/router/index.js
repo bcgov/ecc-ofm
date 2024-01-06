@@ -211,7 +211,7 @@ const router = createRouter({
           component: ManageOrganizationView,
         },
         {
-          path: 'facility/:facilityId',
+          path: 'manage-facility/:facilityId',
           name: 'manage-facility',
           component: ManageFacilityView,
         },
