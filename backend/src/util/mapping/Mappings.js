@@ -169,6 +169,7 @@ const ContactMappings = [
   { back: 'telephone1', front: 'phone' },
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_portal_role', front: 'role' },
+  { back: 'statecode', front: 'stateCode' },
 ]
 
 const LicenceMappings = [
