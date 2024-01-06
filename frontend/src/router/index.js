@@ -5,20 +5,24 @@ import { useAuthStore } from '@/stores/auth'
 import { PAGE_TITLES, ROLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
+import EmptyRouterView from '@/views/EmptyRouterView.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import FundingView from '@/views/FundingView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import ManageUsersView from '@/views/ManageUsersView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import ReportingView from '@/views/ReportingView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
-import SettingsView from '@/views/SettingsView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
+import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
+import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
@@ -176,15 +180,42 @@ const router = createRouter({
       },
     },
     {
-      path: '/settings',
-      name: 'settings',
-      component: SettingsView,
+      path: '/manage-users',
+      name: 'manage-users',
+      component: ManageUsersView,
       meta: {
-        pageTitle: 'Settings',
+        pageTitle: 'Manage Users',
         requiresAuth: true,
         role: ROLES.ACCOUNT_MANAGEMENT,
         showFacility: false,
       },
+      children: [],
+    },
+    {
+      path: '/account-mgmt',
+      component: EmptyRouterView,
+      meta: {
+        requiresAuth: true,
+        role: ROLES.ACCOUNT_MANAGEMENT,
+        showFacility: false,
+      },
+      children: [
+        {
+          path: '',
+          name: 'account-mgmt',
+          component: AccountMgmtView,
+        },
+        {
+          path: 'manage-organization',
+          name: 'manage-organization',
+          component: ManageOrganizationView,
+        },
+        {
+          path: 'facility/:facilityId',
+          name: 'manage-facility',
+          component: ManageFacilityView,
+        },
+      ],
     },
     {
       path: '/session-expired',
@@ -230,19 +261,6 @@ const router = createRouter({
       path: '/token-expired',
       name: 'backend-session-expired',
       component: BackendSessionExpiredView,
-    },
-    //TODO: the following is a temp route which doesn't resolve to a component, its only purpose
-    // to provide example content to the navbar in the 1st draft of frontend and is expacted to
-    // eventually be removed...
-    {
-      path: '/intake',
-      name: 'intake',
-      //component: Intake,
-      meta: {
-        pageTitle: PAGE_TITLES.INTAKE,
-        requiresAuth: true,
-        role: 'CCP_ROLE',
-      },
     },
   ],
 })

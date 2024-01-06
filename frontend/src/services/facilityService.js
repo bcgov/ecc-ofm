@@ -12,4 +12,26 @@ export default {
       throw error
     }
   },
+
+  async getContacts(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.FACILITIES_CONTACTS.replace(':facilityId', facilityId))
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the contacts by facilityId - ${error}`)
+      throw error
+    }
+  },
+
+  async getLicences(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.FACILITIES_LICENCES.replace(':facilityId', facilityId))
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the licences by facilityId - ${error}`)
+      throw error
+    }
+  },
 }
