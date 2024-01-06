@@ -29,7 +29,7 @@
                   hover
                   class="facility-card mr-4">{{ item.name }}</v-card>
               </v-col>
-              <v-col cols="1">
+              <v-col cols="3" md="1">
                 <v-row justify="end">
                   <v-icon icon="fa:fa-regular fa-plus" class="mr-4"></v-icon>
                   <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
@@ -100,19 +100,6 @@ export default {
 </script>
 
 <style>
-/*
-.facility-card {
-  display: inline-block;
-  vertical-align: top;
-  max-width: 375px;
-  width: auto;
-  min-width: 0;
-  height: auto;
-  padding: 8px;
-  border: 1px solid black;
-  box-shadow: none;
-  margin-right: 4px;
-}*/
 .facility-card {
   display: inline-block;
   vertical-align: top;
