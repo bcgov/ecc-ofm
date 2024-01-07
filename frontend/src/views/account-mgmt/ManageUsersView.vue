@@ -77,7 +77,7 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
-    <ManageUserDialog class="pa-0" :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
+    <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
     <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
   </v-container>
@@ -93,7 +93,7 @@ import alertMixin from '@/mixins/alertMixin'
 import { CRM_STATE_CODES } from '@/utils/constants'
 import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
-import ManageUserDialog from '../components/account-mgmt/ManageUserDialog.vue'
+import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 
 export default {
