@@ -25,8 +25,6 @@
                 <v-card v-for="(item) in this.facilities"
                   :key="item.facilityId"
                   @click="navigateToFacility(item.facilityId)"
-                  clickable
-                  hover
                   class="facility-card mr-4">{{ item.name }}</v-card>
               </v-col>
               <v-col cols="3" md="1">
