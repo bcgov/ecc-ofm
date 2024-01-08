@@ -1,23 +1,22 @@
+import { describe, test } from 'vitest'
+import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-import { describe, test } from 'vitest'
-
-import SettingsView from '@/views/SettingsView.vue'
-import { createTestingPinia } from '@pinia/testing'
-import { createVuetify } from 'vuetify'
-import { mount } from '@vue/test-utils'
 import { useAuthStore } from '@/stores/auth.js'
+import ManageUsersView from '@/views/ManageUsersView.vue'
+import { createTestingPinia } from '@pinia/testing'
+import { mount } from '@vue/test-utils'
 
 const vuetify = createVuetify({ components, directives })
 
-describe('SettingsVuew', () => {
+describe('Manage Users screen', () => {
   const global = { global: { plugins: [createTestingPinia(), vuetify] } }
   const authStore = useAuthStore()
 
   test('BceID User', async () => {
     authStore.userInfo = { organziationId: '6fbddbd7-5f8e-ee11-8179-000d3a09d699' }
-    const wrapper = mount(SettingsView, global)
+    const wrapper = mount(ManageUsersView, global)
     console.log(wrapper.html())
   })
 

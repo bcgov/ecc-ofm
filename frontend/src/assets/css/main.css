@@ -162,11 +162,13 @@ input[type='number'] {
   background-color: rgba(0, 0, 0, 0.12) !important;
 }
 
+/** Shared classes */
 .tooltip {
   background-color: #003466 !important;
   color: #ffffff !important;
 }
 
+/** Vuetify overrides */
 .v-data-table__th {
   font-weight: 600 !important;
 }

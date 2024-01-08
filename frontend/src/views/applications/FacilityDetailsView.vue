@@ -3,11 +3,11 @@
     <div>
       <h4 class="my-4">
         Your facility:
-        <span class="facility-name ml-6">{{ currentApplication.facilityName }}</span>
+        <span class="facility-name ml-6">{{ currentApplication?.facilityName }}</span>
       </h4>
     </div>
     <h4>Facility information</h4>
-    <FacilityInfo />
+    <FacilityInfo :facilityId="currentApplication?.facilityId" />
     <v-row no-gutters class="my-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
     <v-row class="mt-4">
       <v-col>
@@ -39,7 +39,7 @@
 
 <script>
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
@@ -95,23 +95,6 @@ export default {
       handler() {
         this.$router.push({ name: 'licences', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
-    },
-  },
-  async created() {
-    await this.loadApplication()
-  },
-  methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
-    async loadApplication() {
-      try {
-        if (!this.$route.params.applicationGuid || this.currentApplication?.applicationId === this.$route.params.applicationGuid) return
-        this.loading = true
-        await this.getApplication(this.$route.params.applicationGuid)
-      } catch (error) {
-        this.setFailureAlert('Failed to load the application', error)
-      } finally {
-        this.loading = false
-      }
     },
   },
 }

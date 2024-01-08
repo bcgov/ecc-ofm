@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
-const { OrganizationMappings } = require('../util/mapping/Mappings')
+const { OrganizationMappings, FacilityMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
 async function getOrganization(req, res) {
@@ -14,6 +14,19 @@ async function getOrganization(req, res) {
   }
 }
 
+async function getOrganizationFacilities(req, res) {
+  try {
+    const operation = `accounts?$select=accountid,accountnumber,name,ccof_accounttype&$filter=(_parentaccountid_value eq ${req.params.organizationId})`
+    const response = await getOperation(operation)
+    let orgFacilities = []
+    response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))
+    return res.status(HttpStatus.OK).json(orgFacilities)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getOrganization,
+  getOrganizationFacilities,
 }

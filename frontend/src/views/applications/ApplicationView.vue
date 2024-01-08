@@ -112,7 +112,7 @@ export default {
       this.submit = !this.submit
     },
     completeForm(isFormComplete) {
-      this.disableNext = this.$route.name === 'select-facility' && !isFormComplete
+      this.disableNext = !isFormComplete
     },
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog

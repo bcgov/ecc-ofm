@@ -4,8 +4,8 @@
     <div class="mt-8">
       <h4>Organization information</h4>
       <div>
-        <v-icon>mdi-information-slab-circle-outline</v-icon>
-        Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.
+        <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+        <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
       </div>
       <OrganizationInfo />
       <v-checkbox :value="1" :rules="rules.required" label="I confirm that Organization information is correct."></v-checkbox>
@@ -13,8 +13,8 @@
     <div class="mb-6">
       <h4>To start your application, select a facility</h4>
       <div>
-        <v-icon>mdi-information-slab-circle-outline</v-icon>
-        If your facility is not listed, contact your Account Manager.
+        <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+        <span>If your facility is not listed, contact your Account Manager.</span>
       </div>
       <v-row no-gutters class="mt-4">
         <v-col cols="12" md="4" lg="2">
@@ -23,12 +23,11 @@
         <v-col cols="12" md="8" lg="10">
           <v-select
             id="facility"
-            v-model="model.facilityId"
-            :items="facilities"
+            v-model="facilityId"
+            :items="userInfo?.facilities"
             item-title="facilityName"
             item-value="facilityId"
             :rules="rules.required"
-            chips
             placeholder="Select facility"
             density="compact"
             variant="outlined"></v-select>
@@ -42,8 +41,7 @@
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
 
-import { mapState } from 'pinia'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { mapState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
@@ -72,20 +70,12 @@ export default {
     return {
       rules,
       loading: false,
-      model: {},
+      facilityId: undefined,
       isFormComplete: false,
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
     ...mapState(useAuthStore, ['userInfo']),
-
-    readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
-    },
-    facilities() {
-      return this.userInfo?.facilities
-    },
   },
   watch: {
     isFormComplete: {
@@ -101,23 +91,31 @@ export default {
     next: {
       async handler() {
         this.$refs.form?.validate()
-        if (this.isFormComplete) {
-          try {
-            this.$emit('process', true)
-            const payload = {
-              facilityId: this.model.facilityId,
-            }
-            const response = await ApplicationService.createApplication(payload)
-            this.setSuccessAlert('Started a new application successfully')
-            this.$router.push({ name: 'facility-details', params: { applicationGuid: response?.applicationId } })
-          } catch (error) {
-            this.setFailureAlert('Failed to start a new application', error)
-          } finally {
-            this.$emit('process', false)
+        if (!this.isFormComplete) return
+        try {
+          this.$emit('process', true)
+          const payload = {
+            facilityId: this.facilityId,
           }
+          const response = await ApplicationService.createApplication(payload)
+          await this.getApplication(response?.applicationId)
+          this.setSuccessAlert('Started a new application successfully')
+          this.$router.push({ name: 'facility-details', params: { applicationGuid: response?.applicationId } })
+        } catch (error) {
+          this.setFailureAlert('Failed to start a new application', error)
+        } finally {
+          this.$emit('process', false)
         }
       },
     },
+  },
+  created() {
+    if (this.userInfo?.facilities?.length === 1) {
+      this.facilityId = this.userInfo?.facilities[0].facilityId
+    }
+  },
+  methods: {
+    ...mapActions(useApplicationsStore, ['getApplication']),
   },
 }
 </script>

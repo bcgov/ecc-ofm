@@ -14,7 +14,7 @@ export const AuthRoutes = Object.freeze({
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions/facilities',
-  USER_FACILITIES: baseRoot + '/user/facilities',
+  USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
   NOTIFICATIONS: baseRoot + '/notifications',
@@ -22,13 +22,16 @@ export const ApiRoutes = Object.freeze({
   APPLICATIONS: baseRoot + '/applications',
   ORGANIZATIONS: baseRoot + '/organizations',
   FACILITIES: baseRoot + '/facilities',
+  ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
+  FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
+  FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
 })
 
 // TODO (weskubo-cgi) Remove this if not using page titles in UI
 export const PAGE_TITLES = Object.freeze({
   LOGIN: 'Login',
   INTAKE: 'Intake',
-  CONTRACT_MANAGEMENT: 'Contrct Management',
+  CONTRACT_MANAGEMENT: 'Contract Management',
   PAYMENTS: 'Payments',
   REPORTING: 'Reporting',
   ACCOUNT_MAINTENANCE: 'Account Maintenance',

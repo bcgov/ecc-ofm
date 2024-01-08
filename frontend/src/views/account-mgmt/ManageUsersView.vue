@@ -34,9 +34,7 @@
               </AppButton>
             </template>
             <template v-slot:item.actions="{ item }">
-              <AppButton @click.stop="toggleDialog(item)" variant="text">
-                edit
-              </AppButton>
+              <AppButton @click.stop="toggleDialog(item)" variant="text">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
             <template v-slot:item.role="{ item }">
@@ -46,7 +44,7 @@
               <span>{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</span>
             </template>
             <template v-slot:item.stateCode="{ item }">
-              <span>{{ getStatusDescription(item.stateCode) }}</span>
+              <span>{{ getStatusDescription(item) }}</span>
             </template>
 
             <!-- Slot to customize expand row content -->
@@ -67,12 +65,11 @@
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
-                    <v-col cols="6">
-                    </v-col>
+                    <v-col cols="6"></v-col>
                   </v-row>
                 </td>
                 <td class="pl-0">
-                  <AppButton variant="text">Deactivate user</AppButton>
+                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="toggleDeactivateUserDialog(item)">Deactivate user</AppButton>
                 </td>
               </tr>
             </template>
@@ -80,13 +77,8 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
-    <ManageUserDialog
-      class="pa-0"
-      :show="showManageUserDialog"
-      :updatingUser="userToUpdate"
-      @close="toggleDialog"
-      @close-refresh="closeDialogAndRefresh"
-      @update-success-event="updateSuccessEvent" />
+    <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
+    <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
     <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
   </v-container>
 </template>
@@ -101,10 +93,11 @@ import alertMixin from '@/mixins/alertMixin'
 import { CRM_STATE_CODES } from '@/utils/constants'
 import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
-import ManageUserDialog from '../components/settings/ManageUserDialog.vue'
+import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
+import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 
 export default {
-  components: { AppButton, ManageUserDialog },
+  components: { AppButton, ManageUserDialog, DeactivateUserDialog },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {
@@ -114,8 +107,10 @@ export default {
       usersAndFacilities: null,
       expanded: [],
       showManageUserDialog: false,
+      showDeactivateUserDialog: false,
       editedIndex: -1,
       userToUpdate: {},
+      userToDeactivate: {},
       headersUsers: [
         { title: '', key: 'data-table-expand', width: '87px' },
         { title: '', key: 'actions', width: '30px' },
@@ -152,6 +147,18 @@ export default {
     await this.getUsersAndFacilities()
   },
   methods: {
+    isDeactivatedUser(user) {
+      return user?.facilities?.length === 0 && !user?.role
+    },
+
+    isSameUser(user) {
+      return user?.userName === this.userInfo?.userName
+    },
+
+    showDeactivateUserButton(user) {
+      return !this.isDeactivatedUser(user) && !this.isSameUser(user) && user?.stateCode === CRM_STATE_CODES.ACTIVE
+    },
+
     /**
      * Get the list of users and facilities
      */
@@ -196,13 +203,11 @@ export default {
     /**
      * Get the status description for a status code
      */
-    getStatusDescription(statusCode) {
-      switch (statusCode) {
-        case CRM_STATE_CODES.ACTIVE:
-          return 'Active'
-        case CRM_STATE_CODES.INACTIVE:
-          return 'Inactive'
+    getStatusDescription(user) {
+      if (this.isDeactivatedUser(user) || user?.stateCode === CRM_STATE_CODES.INACTIVE) {
+        return 'Inactive'
       }
+      return 'Active'
     },
 
     /**
@@ -211,8 +216,8 @@ export default {
     sortUsers(users) {
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
-        const roleA = (a.role === this.ROLES.ACCOUNT_MANAGEMENT)
-        const roleB = (b.role === this.ROLES.ACCOUNT_MANAGEMENT)
+        const roleA = a.role === this.ROLES.ACCOUNT_MANAGEMENT
+        const roleB = b.role === this.ROLES.ACCOUNT_MANAGEMENT
         if (roleA && !roleB) return -1
         if (!roleA && roleB) return 1
 
@@ -223,7 +228,7 @@ export default {
 
         // If stateCode is the same, then sort by lastName
         return a.lastName.localeCompare(b.lastName)
-      });
+      })
     },
 
     /**
@@ -235,9 +240,14 @@ export default {
       this.showManageUserDialog = !this.showManageUserDialog
     },
 
+    toggleDeactivateUserDialog(user) {
+      this.showDeactivateUserDialog = !this.showDeactivateUserDialog
+      this.userToDeactivate = user
+    },
+
     /**
-    * Close the manage user dialog and refresh the user list.
-    */
+     * Close the manage user dialog and refresh the user list.
+     */
     closeDialogAndRefresh() {
       this.showManageUserDialog = false
       this.getUsersAndFacilities()
@@ -245,7 +255,7 @@ export default {
 
     /**
      * Called when the manage user dialog emits a user update was success or fail.
-    */
+     */
     async updateSuccessEvent(isSuccess, error) {
       if (isSuccess) {
         this.setSuccessAlert('User updated successfully.')
@@ -263,7 +273,6 @@ export default {
       const appStore = useAppStore()
       return appStore.getRoleNameById(roleId)
     },
-
   },
 }
 </script>

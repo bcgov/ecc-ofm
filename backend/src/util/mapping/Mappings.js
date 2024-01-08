@@ -82,6 +82,7 @@ const UserMappings = [
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
+  { back: 'ofm_is_primary_contact', front: 'isPrimaryContact' },
 ]
 
 const UserFacilityMappings = [
@@ -168,6 +169,14 @@ const ContactMappings = [
   { back: 'telephone1', front: 'phone' },
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_portal_role', front: 'role' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const LicenceMappings = [
+  { back: 'ofm_licenceid', front: 'licenceId' },
+  { back: 'ofm_licence', front: 'licence' },
+  { back: 'ofm_health_authority', front: 'healthAuthorityId' },
+  { back: 'statuscode', front: 'statusCode' },
 ]
 
 module.exports = {
@@ -177,12 +186,13 @@ module.exports = {
   AssistanceRequestConversationMappings,
   ContactMappings,
   FacilityMappings,
-  UsersPermissionsFacilityMappings,
+  LicenceMappings,
   NotificationMappings,
   OrganizationMappings,
-  UserFacilityMappings,
   UserFacilityDetailMappings,
+  UserFacilityMappings,
   UserMappings,
+  UsersPermissionsFacilityMappings,
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
