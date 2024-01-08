@@ -50,7 +50,7 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
-import OrganizationService from '@/services/OrganizationService'
+import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 import { mapState } from 'pinia'
 
