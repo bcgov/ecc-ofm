@@ -34,5 +34,6 @@ export default defineConfig({
         inline: ['vuetify'],
       },
     },
+    setupFiles: './test/utils/setupTests.js',
   },
 })
