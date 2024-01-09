@@ -19,6 +19,41 @@
           </v-col>
         </v-row>
         <v-row no-gutters>
+          <v-col cols="12" md="6">
+            <v-row no-gutters class="ma-2">
+              <v-col cols="12" md="6" lg="5" xl="4">
+                <AppLabel>Phone (landline):</AppLabel>
+              </v-col>
+              <v-col cols="12" md="6" lg="7" xl="8">
+                {{ facilityInfo?.phoneLandline }}
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-row no-gutters class="ma-2">
+              <v-col cols="12" md="6" lg="5" xl="4">
+                <AppLabel>Phone (cell):</AppLabel>
+              </v-col>
+              <v-col cols="12" md="6" lg="7" xl="8">
+                {{ facilityInfo?.phoneCell }}
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col cols="12" md="6">
+            <v-row no-gutters class="ma-2">
+              <v-col cols="12" md="6" lg="5" xl="4">
+                <AppLabel>Email Address:</AppLabel>
+              </v-col>
+              <v-col cols="12" md="6" lg="7" xl="8">
+                {{ facilityInfo?.email }}
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-divider />
+        <v-row no-gutters>
           <v-col cols="12">
             <v-row no-gutters class="ma-2">
               <h4>Physical address</h4>
