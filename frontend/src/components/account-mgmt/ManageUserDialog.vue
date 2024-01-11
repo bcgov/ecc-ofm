@@ -88,8 +88,8 @@
                   <v-list-item title="Select All" @click="toggleFacilitiesToAdminister">
                     <template v-slot:prepend>
                       <v-checkbox-btn
-                        :color="someFacilitiesSelected ? '#003366' : undefined"
-                        :indeterminate="someFacilitiesSelected && !allFacilitiesSelected"
+                        :color="!allFacilitiesSelected ? '#003366' : undefined"
+                        :indeterminate="!allFacilitiesSelected"
                         :model-value="allFacilitiesSelected"></v-checkbox-btn>
                     </template>
                   </v-list-item>
@@ -184,9 +184,6 @@ export default {
     },
     allFacilitiesSelected() {
       return this.selectedFacilityIds.length === this.facilitiesToAdminister.length
-    },
-    someFacilitiesSelected() {
-      return this.selectedFacilityIds.length !== this.facilitiesToAdminister.length
     },
   },
   watch: {
