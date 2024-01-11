@@ -93,7 +93,6 @@
                         :model-value="someFacilitiesSelected"></v-checkbox-btn>
                     </template>
                   </v-list-item>
-
                   <v-divider class="mt-2"></v-divider>
                 </template>
               </v-select>
