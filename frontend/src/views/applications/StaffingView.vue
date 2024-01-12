@@ -215,9 +215,7 @@ export default {
     },
 
     sanitizeInput(key) {
-      if (isNaN(this.model[key])) {
-        this.model[key] = this.model[key]?.replace(/[^0-9]/g, '')
-      }
+      this.model[key] = this.model[key]?.replace(/[^0-9]/g, '')
       this.model[key] = Number(this.model[key])
       if (this.model[key] > 99) {
         this.model[key] = 99
