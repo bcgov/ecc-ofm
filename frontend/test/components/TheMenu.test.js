@@ -20,7 +20,7 @@ describe('TheMenu', () => {
   test('all menu items visible', async () => {
     authStore.userInfo = {
       organizationName: 'UT Org',
-      roles: [1, 2, 3, 4],
+      role: 2,
     }
     const wrapper = mount(TheMenu, global)
     expect(wrapper.text()).toContain('Home')
@@ -39,7 +39,7 @@ describe('TheMenu', () => {
   test('Settings menu item hidden', async () => {
     authStore.userInfo = {
       organizationName: 'UT Org',
-      roles: [1, 3, 4],
+      role: 1,
     }
     const wrapper = mount(TheMenu, global)
     expect(wrapper.text()).toContain('Home')
