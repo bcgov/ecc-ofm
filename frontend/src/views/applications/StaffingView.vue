@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" v-model="isFormComplete">
+  <v-form ref="form">
     <v-row no-gutters class="mt-4"><strong>Please provide staffing information for the selected facility:</strong></v-row>
     <v-card class="my-6 pa-4" variant="outlined">
       <v-row no-gutters>
@@ -19,21 +19,19 @@
         </v-col>
         <v-col cols="3" align="center" class="px-2">
           <v-text-field
-            v-model.number="model.staffingInfantECEducatorFullTime"
+            v-model="model.staffingInfantECEducatorFullTime"
             variant="outlined"
             density="compact"
-            type="number"
             :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+            @input="sanitizeInput('staffingInfantECEducatorFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
           <v-text-field
-            v-model.number="model.staffingInfantECEducatorPartTime"
+            v-model="model.staffingInfantECEducatorPartTime"
             variant="outlined"
             density="compact"
-            type="number"
             :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+            @input="sanitizeInput('staffingInfantECEducatorPartTime')"></v-text-field>
         </v-col>
       </v-row>
       <v-row no-gutters class="mt-1">
@@ -41,22 +39,10 @@
           <p>Early Childhood Educator</p>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
-          <v-text-field
-            v-model.number="model.staffingECEducatorFullTime"
-            variant="outlined"
-            density="compact"
-            type="number"
-            :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+          <v-text-field v-model="model.staffingECEducatorFullTime" variant="outlined" density="compact" :disabled="readonly" @input="sanitizeInput('staffingECEducatorFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
-          <v-text-field
-            v-model.number="model.staffingECEducatorPartTime"
-            variant="outlined"
-            density="compact"
-            type="number"
-            :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+          <v-text-field v-model="model.staffingECEducatorPartTime" variant="outlined" density="compact" :disabled="readonly" @input="sanitizeInput('staffingECEducatorPartTime')"></v-text-field>
         </v-col>
       </v-row>
       <v-row no-gutters class="mt-1">
@@ -65,21 +51,19 @@
         </v-col>
         <v-col cols="3" align="center" class="px-2">
           <v-text-field
-            v-model.number="model.staffingECEducatorAssistantFullTime"
+            v-model="model.staffingECEducatorAssistantFullTime"
             variant="outlined"
             density="compact"
-            type="number"
             :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+            @input="sanitizeInput('staffingECEducatorAssistantFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
           <v-text-field
-            v-model.number="model.staffingECEducatorAssistantPartTime"
+            v-model="model.staffingECEducatorAssistantPartTime"
             variant="outlined"
             density="compact"
-            type="number"
             :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+            @input="sanitizeInput('staffingECEducatorAssistantPartTime')"></v-text-field>
         </v-col>
       </v-row>
       <v-row no-gutters class="mt-1">
@@ -88,21 +72,19 @@
         </v-col>
         <v-col cols="3" align="center" class="px-2">
           <v-text-field
-            v-model.number="model.staffingResponsibleAdultFullTime"
+            v-model="model.staffingResponsibleAdultFullTime"
             variant="outlined"
             density="compact"
-            type="number"
             :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+            @input="sanitizeInput('staffingResponsibleAdultFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
           <v-text-field
-            v-model.number="model.staffingResponsibleAdultPartTime"
+            v-model="model.staffingResponsibleAdultPartTime"
             variant="outlined"
             density="compact"
-            type="number"
             :disabled="readonly"
-            :rules="[...rules.required, rules.min(0), rules.max(99), rules.wholeNumber]"></v-text-field>
+            @input="sanitizeInput('staffingResponsibleAdultPartTime')"></v-text-field>
         </v-col>
       </v-row>
       <v-row no-gutters class="mt-1">
@@ -129,7 +111,6 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
-import rules from '@/utils/rules'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 
@@ -160,9 +141,7 @@ export default {
   emits: ['process'],
   data() {
     return {
-      rules,
       model: {},
-      isFormComplete: false,
     }
   },
   computed: {
@@ -171,34 +150,14 @@ export default {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
     },
     totalFullTimePosition() {
-      return (
-        Number(this.model.staffingInfantECEducatorFullTime) +
-        Number(this.model.staffingECEducatorFullTime) +
-        Number(this.model.staffingECEducatorAssistantFullTime) +
-        Number(this.model.staffingResponsibleAdultFullTime)
-      )
+      return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime
     },
     totalPartTimePosition() {
-      return (
-        Number(this.model.staffingInfantECEducatorPartTime) +
-        Number(this.model.staffingECEducatorPartTime) +
-        Number(this.model.staffingECEducatorAssistantPartTime) +
-        Number(this.model.staffingResponsibleAdultPartTime)
-      )
+      return this.model.staffingInfantECEducatorPartTime + this.model.staffingECEducatorPartTime + this.model.staffingECEducatorAssistantPartTime + this.model.staffingResponsibleAdultPartTime
     },
     isStaffingComplete() {
       const totalStaffs = this.totalFullTimePosition + this.totalPartTimePosition
-      return totalStaffs > 0 && this.isFormComplete
-    },
-    // Remove all invalid values from payload before sending it to CRM
-    sanitizedModel() {
-      const sanitizedModel = Object.assign({}, this.model)
-      Object.entries(sanitizedModel)?.forEach(([key, value]) => {
-        if (typeof value != 'number' || value < 0 || value > 99) {
-          delete sanitizedModel[key]
-        }
-      })
-      return sanitizedModel
+      return totalStaffs > 0
     },
   },
   watch: {
@@ -240,9 +199,9 @@ export default {
 
     async saveApplication(showAlert = false) {
       try {
-        if (ApplicationService.isApplicationUpdated(this.sanitizedModel)) {
+        if (ApplicationService.isApplicationUpdated(this.model)) {
           this.$emit('process', true)
-          await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.sanitizedModel)
+          await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
           await this.getApplication(this.$route.params.applicationGuid)
         }
         if (showAlert) {
@@ -252,6 +211,16 @@ export default {
         this.setFailureAlert('Failed to save your application', error)
       } finally {
         this.$emit('process', false)
+      }
+    },
+
+    sanitizeInput(key) {
+      if (isNaN(this.model[key])) {
+        this.model[key] = this.model[key]?.replace(/[^0-9]/g, '')
+      }
+      this.model[key] = Number(this.model[key])
+      if (this.model[key] > 99) {
+        this.model[key] = 99
       }
     },
   },

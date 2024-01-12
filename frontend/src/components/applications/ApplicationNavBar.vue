@@ -101,19 +101,19 @@ export default {
 
     getNavIcon(item) {
       if (this.isSelectFacilityPage) {
-        return `mdi-numeric-${item.id}-circle`
+        return 'mdi-circle'
       }
       switch (item.routeName) {
         case 'facility-details':
-          return this.isFacilityDetailsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isFacilityDetailsComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'licences':
-          return this.isLicencesComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isLicencesComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'operating-costs':
-          return this.isOperatingCostsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isOperatingCostsComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'staffing':
-          return this.isStaffingComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isStaffingComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'submit-application':
-          return this.isSubmitApplicationComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isSubmitApplicationComplete ? 'mdi-check-circle' : 'mdi-circle'
       }
     },
   },
