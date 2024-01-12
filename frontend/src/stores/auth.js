@@ -16,10 +16,9 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
-    hasRoles: (state) => state.userInfo?.roles?.length > 0,
     hasFacilities: (state) => state.userInfo?.facilities?.length > 0,
     hasRole: (state) => {
-      return (role) => state.userInfo?.roles?.includes(role)
+      return (role) => state.userInfo?.role === role
     },
   },
   actions: {

@@ -182,10 +182,10 @@ export default {
       return this.user.userName === this.userInfo.userName
     },
     allFacilitiesSelected() {
-      return this.selectedFacilityIds.length === this.facilitiesToAdminister.length
+      return this.selectedFacilityIds?.length === this.facilitiesToAdminister?.length
     },
     someFacilitiesSelected() {
-      return this.selectedFacilityIds.length > 0
+      return this.selectedFacilityIds?.length > 0
     },
   },
   watch: {
@@ -314,7 +314,7 @@ export default {
       if (selectedFacilityIds?.length !== userFacilities?.length) {
         return true
       }
-      return selectedFacilityIds.some((facilityId) => !userFacilities.includes(facilityId))
+      return selectedFacilityIds?.some((facilityId) => !userFacilities?.includes(facilityId))
     },
 
     /**
@@ -346,7 +346,7 @@ export default {
      * Filter facilities to administer.
      */
     getSelectedFacilitiesByIds(selectedFacilityIds) {
-      return this.facilitiesToAdminister.filter((facility) => selectedFacilityIds.includes(facility.facilityId))
+      return this.facilitiesToAdminister?.filter((facility) => selectedFacilityIds?.includes(facility.facilityId))
     },
 
     /**
@@ -379,7 +379,7 @@ export default {
       if (this.allFacilitiesSelected) {
         this.selectedFacilityIds = []
       } else {
-        this.selectedFacilityIds = this.facilitiesToAdminister.map(facility => facility.facilityId);
+        this.selectedFacilityIds = this.facilitiesToAdminister?.map((facility) => facility.facilityId)
       }
     },
   },

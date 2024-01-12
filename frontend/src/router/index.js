@@ -293,7 +293,7 @@ router.beforeEach((to, _from, next) => {
           .then(() => {
             if (!authStore.isMinistryUser) {
               // Validate Provider roles
-              if (!authStore.hasRoles) {
+              if (!authStore.userInfo?.role) {
                 return next('unauthorized')
               }
               // Validate Provider facilities

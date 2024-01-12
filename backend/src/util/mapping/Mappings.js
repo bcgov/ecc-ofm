@@ -5,7 +5,7 @@ const UserProfileMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
-  { back: 'ofm_portal_role', front: 'roles' },
+  { back: 'ofm_portal_role', front: 'role' },
   { back: 'telephone1', front: 'phone' },
 ]
 
