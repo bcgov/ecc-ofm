@@ -27,6 +27,7 @@ const rules = {
   },
   phone: (v) => !v || /^\(?([0-9]{3})\)?-([0-9]{3})-([0-9]{4})$/.test(v) || 'Must be a valid phone number in the format ###-###-####',
   listIsNotEmpty: [(v) => v.length > 0 || 'This field is required'],
+  wholeNumber: (v) => !v || /^\d+$/.test(v) || 'A valid whole number is required',
 }
 
 export default rules

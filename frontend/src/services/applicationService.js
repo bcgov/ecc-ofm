@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
+import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
 import { ApiRoutes } from '@/utils/constants'
 
@@ -52,9 +53,16 @@ export default {
     }
   },
 
+  isApplicationUpdated(updatedApplication) {
+    const applicationsStore = useApplicationsStore()
+    const currentApplication = applicationsStore?.currentApplication
+    const index = Object.entries(updatedApplication)?.findIndex(([key, value]) => key in currentApplication && currentApplication[key] != value)
+    return index > -1
+  },
+
   async updateApplication(applicationId, payload) {
     try {
-      if (!applicationId || isEmpty(payload)) return
+      if (!applicationId || isEmpty(payload) || !this.isApplicationUpdated(payload)) return
       const response = await ApiService.apiAxios.put(ApiRoutes.APPLICATIONS + '/' + applicationId, payload)
       return response
     } catch (error) {

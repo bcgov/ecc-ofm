@@ -117,6 +117,14 @@ const ApplicationMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
+  { back: 'ofm_staff_infant_ec_educator_ft', front: 'staffingInfantECEducatorFullTime' },
+  { back: 'ofm_staff_infant_ec_educator_pt', front: 'staffingInfantECEducatorPartTime' },
+  { back: 'ofm_staff_ec_educator_ft', front: 'staffingECEducatorFullTime' },
+  { back: 'ofm_staff_ec_educator_pt', front: 'staffingECEducatorPartTime' },
+  { back: 'ofm_staff_ec_educator_assistant_ft', front: 'staffingECEducatorAssistantFullTime' },
+  { back: 'ofm_staff_ec_educator_assistant_pt', front: 'staffingECEducatorAssistantPartTime' },
+  { back: 'ofm_staff_responsible_adult_ft', front: 'staffingResponsibleAdultFullTime' },
+  { back: 'ofm_staff_responsible_adult_pt', front: 'staffingResponsibleAdultPartTime' },
 ]
 
 const OrganizationMappings = [
