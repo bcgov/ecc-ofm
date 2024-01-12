@@ -65,7 +65,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isLicencesComplete', 'isOperatingCostsComplete', 'isStaffingComplete', 'isSubmitApplicationComplete']),
 
     isSelectFacilityPage() {
       return this.$route.name === 'select-facility'
@@ -105,15 +105,15 @@ export default {
       }
       switch (item.routeName) {
         case 'facility-details':
-          return this.currentApplication?.isFacilityDetailsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isFacilityDetailsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
         case 'licences':
-          return this.currentApplication?.isLicencesComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isLicencesComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
         case 'operating-costs':
-          return this.currentApplication?.isOperatingCostsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isOperatingCostsComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
         case 'staffing':
-          return this.currentApplication?.isStaffingComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isStaffingComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
         case 'submit-application':
-          return this.currentApplication?.isSubmitApplicationComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
+          return this.isSubmitApplicationComplete ? 'mdi-check-circle' : `mdi-numeric-${item.id}-circle`
       }
     },
   },

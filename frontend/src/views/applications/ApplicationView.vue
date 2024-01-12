@@ -81,12 +81,13 @@ export default {
     await this.loadApplication()
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
+    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
     async loadApplication() {
       try {
         if (!this.$route.params.applicationGuid || this.currentApplication?.applicationId === this.$route.params.applicationGuid) return
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
+        this.checkApplicationComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {

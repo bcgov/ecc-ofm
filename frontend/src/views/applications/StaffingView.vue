@@ -186,8 +186,9 @@ export default {
         Number(this.model.staffingResponsibleAdultPartTime)
       )
     },
-    hasAtLeastOneStaff() {
-      return this.totalFullTimePosition + this.totalPartTimePosition > 0
+    isStaffingComplete() {
+      const totalStaffs = this.totalFullTimePosition + this.totalPartTimePosition
+      return totalStaffs > 0 && this.isFormComplete
     },
     // Remove all invalid values from payload before sending it to CRM
     sanitizedModel() {
@@ -201,16 +202,9 @@ export default {
     },
   },
   watch: {
-    isFormComplete: {
+    isStaffingComplete: {
       handler(value) {
-        if (!this.currentApplication) return
-        this.currentApplication.isStaffingComplete = value && this.hasAtLeastOneStaff
-      },
-    },
-    hasAtLeastOneStaff: {
-      handler(value) {
-        if (!this.currentApplication) return
-        this.currentApplication.isStaffingComplete = value && this.isFormComplete
+        this.setIsStaffingComplete(value)
       },
     },
     back: {
@@ -242,7 +236,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
+    ...mapActions(useApplicationsStore, ['getApplication', 'setIsStaffingComplete']),
 
     async saveApplication(showAlert = false) {
       try {
