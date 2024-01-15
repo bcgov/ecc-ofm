@@ -23,6 +23,7 @@
             variant="outlined"
             density="compact"
             :disabled="readonly"
+            maxlength="2"
             @input="sanitizeInput('staffingInfantECEducatorFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
@@ -31,6 +32,7 @@
             variant="outlined"
             density="compact"
             :disabled="readonly"
+            maxlength="2"
             @input="sanitizeInput('staffingInfantECEducatorPartTime')"></v-text-field>
         </v-col>
       </v-row>
@@ -39,10 +41,22 @@
           <p>Early Childhood Educator</p>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
-          <v-text-field v-model="model.staffingECEducatorFullTime" variant="outlined" density="compact" :disabled="readonly" @input="sanitizeInput('staffingECEducatorFullTime')"></v-text-field>
+          <v-text-field
+            v-model="model.staffingECEducatorFullTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingECEducatorFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
-          <v-text-field v-model="model.staffingECEducatorPartTime" variant="outlined" density="compact" :disabled="readonly" @input="sanitizeInput('staffingECEducatorPartTime')"></v-text-field>
+          <v-text-field
+            v-model="model.staffingECEducatorPartTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingECEducatorPartTime')"></v-text-field>
         </v-col>
       </v-row>
       <v-row no-gutters class="mt-1">
@@ -55,6 +69,7 @@
             variant="outlined"
             density="compact"
             :disabled="readonly"
+            maxlength="2"
             @input="sanitizeInput('staffingECEducatorAssistantFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
@@ -63,6 +78,7 @@
             variant="outlined"
             density="compact"
             :disabled="readonly"
+            maxlength="2"
             @input="sanitizeInput('staffingECEducatorAssistantPartTime')"></v-text-field>
         </v-col>
       </v-row>
@@ -76,6 +92,7 @@
             variant="outlined"
             density="compact"
             :disabled="readonly"
+            maxlength="2"
             @input="sanitizeInput('staffingResponsibleAdultFullTime')"></v-text-field>
         </v-col>
         <v-col cols="3" align="center" class="px-2">
@@ -84,6 +101,7 @@
             variant="outlined"
             density="compact"
             :disabled="readonly"
+            maxlength="2"
             @input="sanitizeInput('staffingResponsibleAdultPartTime')"></v-text-field>
         </v-col>
       </v-row>
@@ -205,7 +223,7 @@ export default {
           await this.getApplication(this.$route.params.applicationGuid)
         }
         if (showAlert) {
-          this.setSuccessAlert('Application is saved successfully')
+          this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
         this.setFailureAlert('Failed to save your application', error)
@@ -217,9 +235,6 @@ export default {
     sanitizeInput(key) {
       this.model[key] = this.model[key]?.replace(/[^0-9]/g, '')
       this.model[key] = Number(this.model[key])
-      if (this.model[key] > 99) {
-        this.model[key] = 99
-      }
     },
   },
 }
