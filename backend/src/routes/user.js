@@ -40,9 +40,7 @@ const updateUserSchema = {
 /**
  * Get profile information for the logged in user
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
-  getUserInfo(req, res)
-})
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, getUserInfo)
 
 /**
  * Get profile information for a given user name
