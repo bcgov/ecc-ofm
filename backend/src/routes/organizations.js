@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getOrganization, getOrganizationFacilities } = require('../components/organizations')
+const { getOrganization, getOrganizationFacilities, getOrganizationUsers } = require('../components/organizations')
 const { param, validationResult } = require('express-validator')
 
 module.exports = router
@@ -27,5 +27,19 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getOrganizationFacilities(req, res)
+  },
+)
+
+/**
+ * Get an organization's users by organizationId and optional query parameters (userName, firstName, lastName, emailAddress).
+ */
+router.get(
+  '/:organizationId/users',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getOrganizationUsers(req, res)
   },
 )

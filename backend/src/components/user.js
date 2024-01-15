@@ -281,8 +281,22 @@ async function updateUser(req, res) {
   }
 }
 
+async function getUserByBCeID(req, res) {
+  try {
+    const operation = `contacts?$select=contactid,ccof_username,ofm_first_name,ofm_last_name,emailaddress1&$filter=ccof_username eq '${req.params.queryUserName}'`
+    const response = await getOperation(operation)
+    const user = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
+    return res.status(HttpStatus.OK).json(user)
+  } catch (e) {
+    log.info('Error in getUserByBCeID:', e)
+    const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
+  }
+}
+
 module.exports = {
   createUser,
+  getUserByBCeID,
   getUserFacilities,
   getUserInfo,
   getUsersPermissionsFacilities,
