@@ -23,4 +23,15 @@ export default {
       throw error
     }
   },
+
+  async updateOrganization(organizationId, organization) {
+    try {
+      if (!organizationId) return
+      const response = await ApiService.apiAxios.put(ApiRoutes.ORGANIZATIONS + '/' + organizationId, organization)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to update organization by organization/account id - ${error}`)
+      throw error
+    }
+  },
 }

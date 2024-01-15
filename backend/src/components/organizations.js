@@ -1,6 +1,6 @@
 'use strict'
-const { getOperation } = require('./utils')
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { getOperation, patchOperationWithObjectId } = require('./utils')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { OrganizationMappings, FacilityMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
@@ -26,7 +26,37 @@ async function getOrganizationFacilities(req, res) {
   }
 }
 
+function mapOrganizationForBack(data) {
+  let organizationForBack = new MappableObjectForBack(data, OrganizationMappings).toJSON()
+  if (organizationForBack.ccof_facilitystartdate) {
+    organizationForBack.ccof_facilitystartdate = `${organizationForBack.ccof_facilitystartdate}-01-01`
+  }
+  return organizationForBack
+}
+
+async function updateOrganization(req, res) {
+  let organization = mapOrganizationForBack(req.body)
+  //organization.ccof_accounttype = ACCOUNT_TYPE.ORGANIZATION;
+  console.log('*********************************************************************')
+  console.log('*********************************************************************')
+  console.log('*********************************************************************')
+  console.log('*********************************************************************')
+  console.log('organization', organization)
+  console.log('*********************************************************************')
+  console.log('*********************************************************************')
+  console.log('*********************************************************************')
+  console.log('*********************************************************************')
+  try {
+    let orgResponse = await patchOperationWithObjectId('accounts', req.params.organizationId, organization)
+    orgResponse = new MappableObjectForFront(orgResponse, OrganizationMappings)
+    return res.status(HttpStatus.OK).json(orgResponse)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getOrganization,
   getOrganizationFacilities,
+  updateOrganization,
 }
