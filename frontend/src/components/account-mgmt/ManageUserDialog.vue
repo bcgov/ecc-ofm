@@ -296,7 +296,7 @@ export default {
      */
     async getUserFacilities(contactId, onlyWithPortalAccess) {
       try {
-        const res = await ApiService.apiAxios.get(`${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`)
+        const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`)
         return this.sortFacilities(res.data)
       } catch (error) {
         this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
@@ -409,19 +409,11 @@ export default {
     async checkBCeIDExists(userName) {
       try {
         if (this.user.userName) {
-          const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`);
-          if (res.data.length >= 1) {
-            this.errorMessages = ['A user with this BCeID already exists.'];
-          } else {
-            this.errorMessages = [];
-          }
+          const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`)
+          this.errorMessages = (res.data.length >= 1) ? ['A user with this BCeID already exists.'] : []
         }
       } catch (error) {
-        if (error.response.status === 404) {
-          this.errorMessages = [];
-        } else {
-          this.setFailureAlert('Failed to check if BCeID already exists in provider organization: ' + userName, error)
-        }
+        this.setFailureAlert('Failed to check if BCeID already exists in provider organization: ' + userName, error)
       }
     },
 
@@ -430,18 +422,14 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
-        const res = await ApiService.apiAxios.get(`${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`);
+        const res = await ApiService.apiAxios.get(`${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`);
         if (Array.isArray(res.data) && res.data.length >= 1) {
           return true
         }
+        this.errorMessages = [];
         return false
       } catch (error) {
-        if (error.response.status === 404) {
-          this.errorMessages = [];
-          return false
-        } else {
-          this.setFailureAlert('Failed to check if user already exists in provider organization', error)
-        }
+        this.setFailureAlert('Failed to check if user already exists in provider organization', error)
       }
     },
 

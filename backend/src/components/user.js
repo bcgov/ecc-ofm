@@ -288,7 +288,7 @@ async function getUserByBCeID(req, res) {
     const user = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
     return res.status(HttpStatus.OK).json(user)
   } catch (e) {
-    log.info('Error in getOrganizationUsers:', e)
+    log.info('Error in getUserByBCeID:', e)
     const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
   }

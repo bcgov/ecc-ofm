@@ -6,10 +6,10 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-continue" :primary="false" size="large" width="250px" :loading="isLoading" @click="proceed">Continue</AppButton>
+          <AppButton id="dialog-cancel" size="large" width="250px" :loading="isLoading" @click="closeDialog">Cancel</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel" size="large" width="250px" :loading="isLoading" @click="closeDialog">Cancel</AppButton>
+          <AppButton id="dialog-continue" :primary="false" size="large" width="250px" :loading="isLoading" @click="proceed">Continue</AppButton>
         </v-col>
       </v-row>
     </template>

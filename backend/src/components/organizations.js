@@ -41,9 +41,6 @@ async function getOrganizationUsers(req, res) {
     }
     const operation = `contacts?$select=contactid,ccof_username,ofm_first_name,ofm_last_name,emailaddress1&$filter=${filterCriteria.join(' and ')}`
     const response = await getOperation(operation)
-    if (!response?.value) {
-      return res.status(HttpStatus.NOT_FOUND).json({ error: 'No users found' })
-    }
     const orgUsers = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
     return res.status(HttpStatus.OK).json(orgUsers)
   } catch (e) {
