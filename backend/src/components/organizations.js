@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { OrganizationMappings, FacilityMappings } = require('../util/mapping/Mappings')
+const { OrganizationMappings, FacilityMappings, UserProfileMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
 async function getOrganization(req, res) {
@@ -55,8 +55,33 @@ async function updateOrganization(req, res) {
   }
 }
 
+async function getOrganizationUsers(req, res) {
+  try {
+    const { firstName, lastName, email } = req.query
+    let filterCriteria = [`parentcustomerid_account/accountid eq '${req.params.organizationId}'`]
+    if (firstName) {
+      filterCriteria.push(`ofm_first_name eq '${firstName}'`)
+    }
+    if (lastName) {
+      filterCriteria.push(`ofm_last_name eq '${lastName}'`)
+    }
+    if (email) {
+      filterCriteria.push(`emailaddress1 eq '${email}'`)
+    }
+    const operation = `contacts?$select=contactid,ccof_username,ofm_first_name,ofm_last_name,emailaddress1&$filter=${filterCriteria.join(' and ')}`
+    const response = await getOperation(operation)
+    const orgUsers = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
+    return res.status(HttpStatus.OK).json(orgUsers)
+  } catch (e) {
+    log.info('Error in getOrganizationUsers:', e)
+    const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
+  }
+}
+
 module.exports = {
   getOrganization,
   getOrganizationFacilities,
   updateOrganization,
+  getOrganizationUsers,
 }
