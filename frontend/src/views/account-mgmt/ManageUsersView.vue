@@ -41,7 +41,7 @@
               <span>{{ getRoleNameById(item.role) }}</span>
             </template>
             <template v-slot:item.isExpenseAuthority="{ item }">
-              <span>{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</span>
+              <span>{{ isExpenseAuthority(item) }}</span>
             </template>
             <template v-slot:item.stateCode="{ item }">
               <span>{{ getStatusDescription(item) }}</span>
@@ -62,6 +62,7 @@
                       <!-- Facilities table -->
                       <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
+                        <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
@@ -125,6 +126,7 @@ export default {
       headersFacilities: [
         { title: 'Facility Name', key: 'facilityName', width: '40%' },
         { title: 'Address', key: 'address', width: '60%' },
+        { title: 'Expense Authority', key: 'isExpenseAuthority', width: '60%' },
       ],
     }
   },
@@ -272,6 +274,13 @@ export default {
     getRoleNameById(roleId) {
       const appStore = useAppStore()
       return appStore.getRoleNameById(roleId)
+    },
+
+    /**
+     * Checks if the user is an Expense Authority for any facility.
+     */
+    isExpenseAuthority(user) {
+      return user.facilities.find((facility) => facility.isExpenseAuthority) ? 'Yes' : 'No'
     },
   },
 }

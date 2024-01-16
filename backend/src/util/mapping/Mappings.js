@@ -79,10 +79,8 @@ const UserMappings = [
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
   { back: 'ofm_portal_role', front: 'role' },
-  { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
-  { back: 'ofm_is_primary_contact', front: 'isPrimaryContact' },
 ]
 
 const UserFacilityMappings = [
@@ -104,6 +102,7 @@ const UsersPermissionsFacilityMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_facility', front: 'address' },
   { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
+  { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
 ]
 
 const ApplicationMappings = [

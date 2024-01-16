@@ -29,10 +29,10 @@
             <v-row>
               <v-col>
                 <AppLabel>Current licences:</AppLabel>
-                <v-card v-for="(item) in this.licences" :key="item.licence" class="licence-card">
+                <v-card v-for="item in this.licences" :key="item.licence" class="licence-card">
                   <v-row>
                     <v-col cols="auto">
-                      <AppLabel>Licence Number: </AppLabel>
+                      <AppLabel>Licence Number:</AppLabel>
                     </v-col>
                     <v-col cols="2">
                       {{ item.licence }}
@@ -77,7 +77,8 @@
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6 w-100" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
-            <div class="w-100"> <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
+            <div class="w-100">
+              <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
               <v-row>
                 <v-col>
                   <AppLabel>Current expense authority:</AppLabel>
@@ -91,11 +92,9 @@
               </v-row>
               <v-row v-for="(item, index) in this.expenseAuthorities" :key="index">
                 <v-col cols="auto">
-                  <AppLabel>Name: </AppLabel>
+                  <AppLabel>Name:</AppLabel>
                 </v-col>
-                <v-col cols="2">
-                  {{ item.firstName }} {{ item.lastName }}
-                </v-col>
+                <v-col cols="2">{{ item.firstName }} {{ item.lastName }}</v-col>
                 <v-col cols="auto">
                   <AppLabel>Role:</AppLabel>
                 </v-col>
@@ -117,7 +116,8 @@
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6 mb-3" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
-            <div class="w-100"> <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
+            <div class="w-100">
+              <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
               <v-row>
                 <v-col>
                   <AppLabel>Current primary contact info:</AppLabel>
@@ -130,11 +130,9 @@
               </v-row>
               <v-row v-for="(item, index) in this.primaryContact" :key="index">
                 <v-col cols="auto">
-                  <AppLabel>Name: </AppLabel>
+                  <AppLabel>Name:</AppLabel>
                 </v-col>
-                <v-col cols="2">
-                  {{ item.firstName }} {{ item.lastName }}
-                </v-col>
+                <v-col cols="2">{{ item.firstName }} {{ item.lastName }}</v-col>
                 <v-col cols="auto">
                   <AppLabel>Role:</AppLabel>
                 </v-col>
@@ -189,10 +187,10 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['healthAuthorities']),
     expenseAuthorities() {
-      return this.contacts?.filter(contact => contact.isExpenseAuthority)
+      return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
     primaryContact() {
-      return this.contacts?.filter(contact => contact.isPrimaryContact)
+      return this.facility?.primaryContact
     },
     isEditablePrimaryContact() {
       return this.primaryContact?.length !== 0
@@ -249,7 +247,6 @@ export default {
       return appStore.getRoleNameById(Number(roleId))
     },
   },
-
 }
 </script>
 
