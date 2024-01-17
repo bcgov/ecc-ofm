@@ -1,12 +1,12 @@
 'use strict'
 const { getOperation } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
-const { FacilityMappings, UserMappings, LicenceMappings } = require('../util/mapping/Mappings')
+const { FacilityMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
 async function getFacility(req, res) {
   try {
-    const operation = `accounts(${req.params.accountId})?$select=accountid,accountnumber,name,telephone1,telephone2,emailaddress1,address1_line1,address1_line2,address1_city,address1_postalcode,address1_stateorprovince,ofm_is_mailing_address_different,address2_line1,address2_line2,address2_city,address2_postalcode,address2_stateorprovince,statecode,statuscode`
+    const operation = `accounts(${req.params.accountId})?$select=accountid,_ofm_primarycontact_value,accountnumber,name,telephone1,telephone2,emailaddress1,address1_line1,address1_line2,address1_city,address1_postalcode,address1_stateorprovince,ofm_is_mailing_address_different,address2_line1,address2_line2,address2_city,address2_postalcode,address2_stateorprovince,statecode,statuscode`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FacilityMappings).toJSON())
   } catch (e) {
@@ -16,10 +16,15 @@ async function getFacility(req, res) {
 
 async function getFacilityContacts(req, res) {
   try {
-    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value&$expand=ofm_bceid($select=ofm_first_name,ofm_is_expense_authority,ofm_is_primary_contact,ofm_last_name,ofm_portal_role)&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (ofm_bceid/ofm_is_expense_authority eq true or ofm_bceid/ofm_is_primary_contact eq true) and (ofm_portal_access eq true)`
+    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,ofm_portal_role,emailaddress1,telephone1,ccof_username)&$filter=(_ofm_facility_value eq ${req?.params?.facilityId}) and (ofm_portal_access eq true)`
     const response = await getOperation(operation)
     const contacts = []
-    response?.value?.forEach((item) => contacts.push(new MappableObjectForFront(item.ofm_bceid, UserMappings).toJSON()))
+    response?.value?.forEach((item) =>
+      contacts.push({
+        ...new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON(),
+        ...new MappableObjectForFront(item.ofm_bceid, UserMappings).toJSON(),
+      }),
+    )
     return res.status(HttpStatus.OK).json(contacts)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
