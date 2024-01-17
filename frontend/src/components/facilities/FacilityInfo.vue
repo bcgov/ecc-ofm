@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-4 pa-4" variant="outlined">
+  <v-card class="mt-2 pa-4" variant="outlined">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row v-if="!isApplicationPage" no-gutters>
@@ -182,43 +182,26 @@
 </template>
 
 <script>
-import alertMixin from '@/mixins/alertMixin'
-import FacilityService from '@/services/facilityService'
 import AppLabel from '@/components/ui/AppLabel.vue'
 
 export default {
   components: { AppLabel },
-  mixins: [alertMixin],
   props: {
-    facilityId: {
-      type: String,
+    facilityInfo: {
+      type: Object,
       required: true,
+      default: () => {
+        return {}
+      },
     },
-  },
-  data() {
-    return {
-      facilityInfo: undefined,
-      loading: false,
-    }
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isApplicationPage() {
       return this.$route.path?.includes('/applications/')
-    },
-  },
-  async created() {
-    await this.loadFacilityInfo()
-  },
-  methods: {
-    async loadFacilityInfo() {
-      try {
-        this.loading = true
-        this.facilityInfo = await FacilityService.getFacility(this.facilityId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get your facility information', error)
-      } finally {
-        this.loading = false
-      }
     },
   },
 }

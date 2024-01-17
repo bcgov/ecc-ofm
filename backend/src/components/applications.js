@@ -49,6 +49,14 @@ async function getApplication(req, res) {
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
+    if (payload['_ofm_contact_value']) {
+      payload['ofm_contact@odata.bind'] = `/contacts(${payload['_ofm_contact_value']})`
+      delete payload['_ofm_contact_value']
+    }
+    if (payload['_ofm_secondary_contact_value']) {
+      payload['ofm_secondary_contact@odata.bind'] = `/contacts(${payload['_ofm_secondary_contact_value']})`
+      delete payload['_ofm_secondary_contact_value']
+    }
     const response = await patchOperationWithObjectId('ofm_applications', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
