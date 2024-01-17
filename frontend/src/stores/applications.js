@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 
 function checkFacilityDetailsComplete(application) {
-  return application?.primaryContactId ? true : false
+  return application?.primaryContactId
 }
 
 function checkStaffingComplete(application) {

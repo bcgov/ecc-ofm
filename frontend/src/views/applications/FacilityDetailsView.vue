@@ -8,7 +8,7 @@
     </div>
     <div>
       <h4>Facility Information</h4>
-      <FacilityInfo :loading="loading" :facilityInfo="facilityInfo" />
+      <FacilityInfo :loading="loading" :facility="facility" />
     </div>
     <div class="mt-8">
       <h4>Primary Contact</h4>
@@ -105,7 +105,7 @@ export default {
       rules,
       model: {},
       isFormComplete: false,
-      facilityInfo: undefined,
+      facility: undefined,
       contacts: [],
       loading: false,
       primaryContact: undefined,
@@ -113,6 +113,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
@@ -161,7 +162,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        await Promise.all([this.getFacilityInfo(), this.getContacts()])
+        await Promise.all([this.getFacility(), this.getContacts()])
       } finally {
         this.loading = false
       }
@@ -171,25 +172,20 @@ export default {
       try {
         this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
         this.contacts?.forEach((contact) => {
-          contact.fullName = contact.firstName + ' ' + contact.lastName
-          contact.roleName = this.getRoleNameById(contact.role)
+          contact.fullName = `${contact.firstName} ${contact.lastName}`
+          contact.roleName = this.getRoleNameById(Number(contact.role))
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
       }
     },
 
-    async getFacilityInfo() {
+    async getFacility() {
       try {
-        this.facilityInfo = await FacilityService.getFacility(this.currentApplication?.facilityId)
+        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
       } catch (error) {
         this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
       }
-    },
-
-    getRoleNameById(roleId) {
-      const appStore = useAppStore()
-      return appStore.getRoleNameById(Number(roleId))
     },
 
     async saveApplication(showAlert = false) {

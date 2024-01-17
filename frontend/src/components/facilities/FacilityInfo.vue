@@ -8,7 +8,7 @@
               <v-col cols="12" md="4" lg="5" xl="4">
                 <AppLabel>Facility name:</AppLabel>
               </v-col>
-              <v-col cols="12" md="8" lg="7" xl="8">{{ facilityInfo?.name }}</v-col>
+              <v-col cols="12" md="8" lg="7" xl="8">{{ facility?.name }}</v-col>
             </v-row>
           </v-col>
           <v-col cols="3" lg="6">
@@ -25,7 +25,7 @@
                 <AppLabel>Phone (landline):</AppLabel>
               </v-col>
               <v-col cols="12" md="6" lg="7" xl="8">
-                {{ facilityInfo?.phoneLandline }}
+                {{ facility?.phoneLandline }}
               </v-col>
             </v-row>
           </v-col>
@@ -35,7 +35,7 @@
                 <AppLabel>Phone (cell):</AppLabel>
               </v-col>
               <v-col cols="12" md="6" lg="7" xl="8">
-                {{ facilityInfo?.phoneCell }}
+                {{ facility?.phoneCell }}
               </v-col>
             </v-row>
           </v-col>
@@ -47,7 +47,7 @@
                 <AppLabel>Email Address:</AppLabel>
               </v-col>
               <v-col cols="12" md="6" lg="7" xl="8">
-                {{ facilityInfo?.email }}
+                {{ facility?.email }}
               </v-col>
             </v-row>
           </v-col>
@@ -65,7 +65,7 @@
                     <AppLabel>Street address 1:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.streetAddress1 }}
+                    {{ facility?.streetAddress1 }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -75,7 +75,7 @@
                     <AppLabel>Street address 2:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.streetAddress2 }}
+                    {{ facility?.streetAddress2 }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -87,7 +87,7 @@
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.city }}
+                    {{ facility?.city }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -97,7 +97,7 @@
                     <AppLabel>Province:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.province }}
+                    {{ facility?.province }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -107,7 +107,7 @@
                     <AppLabel>Postal code:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.postalCode }}
+                    {{ facility?.postalCode }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -127,7 +127,7 @@
                     <AppLabel>Street address 1:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingStreetAddress1 : facilityInfo?.streetAddress1 }}
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress1 : facility?.streetAddress1 }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -137,7 +137,7 @@
                     <AppLabel>Street address 2:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingStreetAddress2 : facilityInfo?.streetAddress2 }}
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress2 : facility?.streetAddress2 }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -149,7 +149,7 @@
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingCity : facilityInfo?.city }}
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingCity : facility?.city }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -159,7 +159,7 @@
                     <AppLabel>Province:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingProvince : facilityInfo?.province }}
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingProvince : facility?.province }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -169,7 +169,7 @@
                     <AppLabel>Postal code:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facilityInfo?.isMailingAddressDifferent ? facilityInfo?.mailingPostalCode : facilityInfo?.postalCode }}
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingPostalCode : facility?.postalCode }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -187,7 +187,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 export default {
   components: { AppLabel },
   props: {
-    facilityInfo: {
+    facility: {
       type: Object,
       required: true,
       default: () => {

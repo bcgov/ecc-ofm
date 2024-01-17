@@ -49,6 +49,7 @@ async function getApplication(req, res) {
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
+    // these fields are lookup fields in CRM, so we need to replace those field names with data binding syntax
     if (payload['_ofm_contact_value']) {
       payload['ofm_contact@odata.bind'] = `/contacts(${payload['_ofm_contact_value']})`
       delete payload['_ofm_contact_value']

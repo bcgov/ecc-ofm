@@ -8,7 +8,7 @@
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0 pb-0">
-        <FacilityInfo :loading="loading" :facilityInfo="facilityInfo" class="mt-0" />
+        <FacilityInfo :loading="loading" :facility="facility" class="mt-0" />
       </v-col>
     </v-row>
     <v-row>
@@ -180,7 +180,7 @@ export default {
       facilityId: null,
       licences: [],
       contacts: [],
-      facilityInfo: undefined,
+      facility: undefined,
       loading: false,
     }
   },
@@ -191,7 +191,7 @@ export default {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
     primaryContact() {
-      return this.contacts?.find((contact) => contact.contactId === this.facilityInfo?.primaryContactId)
+      return this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)
     },
     isEditableExpenseAuthority() {
       return this.expenseAuthorities?.length !== 0
@@ -208,7 +208,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        await Promise.all([this.getFacilityInfo(), this.getContacts(), this.getLicences()])
+        await Promise.all([this.getFacility(), this.getContacts(), this.getLicences()])
       } finally {
         this.loading = false
       }
@@ -236,9 +236,9 @@ export default {
       }
     },
 
-    async getFacilityInfo() {
+    async getFacility() {
       try {
-        this.facilityInfo = await FacilityService.getFacility(this.facilityId)
+        this.facility = await FacilityService.getFacility(this.facilityId)
       } catch (error) {
         this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.facilityId, error)
       }
