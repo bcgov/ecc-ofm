@@ -66,7 +66,7 @@
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAppStore } from '@/stores/app'
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
@@ -115,6 +115,7 @@ export default {
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
     },
@@ -126,7 +127,7 @@ export default {
   watch: {
     isFormComplete: {
       handler(value) {
-        this.setIsFacilityDetailsComplete(value)
+        this.isFacilityDetailsComplete = value
       },
     },
     back: {
@@ -157,14 +158,16 @@ export default {
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'setIsFacilityDetailsComplete']),
+    ...mapActions(useApplicationsStore, ['getApplication']),
 
     async loadData() {
       try {
+        this.$emit('process', true)
         this.loading = true
         await Promise.all([this.getFacility(), this.getContacts()])
       } finally {
         this.loading = false
+        this.$emit('process', false)
       }
     },
 

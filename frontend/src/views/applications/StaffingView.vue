@@ -127,7 +127,7 @@
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
@@ -164,6 +164,7 @@ export default {
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
     },
@@ -173,15 +174,15 @@ export default {
     totalPartTimePosition() {
       return this.model.staffingInfantECEducatorPartTime + this.model.staffingECEducatorPartTime + this.model.staffingECEducatorAssistantPartTime + this.model.staffingResponsibleAdultPartTime
     },
-    isStaffingComplete() {
+    isFormComplete() {
       const totalStaffs = this.totalFullTimePosition + this.totalPartTimePosition
       return totalStaffs > 0
     },
   },
   watch: {
-    isStaffingComplete: {
+    isFormComplete: {
       handler(value) {
-        this.setIsStaffingComplete(value)
+        this.isStaffingComplete = value
       },
     },
     back: {
@@ -213,7 +214,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'setIsStaffingComplete']),
+    ...mapActions(useApplicationsStore, ['getApplication']),
 
     async saveApplication(showAlert = false) {
       try {

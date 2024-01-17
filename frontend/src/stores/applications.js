@@ -49,16 +49,8 @@ export const useApplicationsStore = defineStore('applications', {
   }),
   actions: {
     checkApplicationComplete() {
-      this.setIsFacilityDetailsComplete(checkFacilityDetailsComplete(this.currentApplication))
-      this.setIsStaffingComplete(checkStaffingComplete(this.currentApplication))
-    },
-
-    setIsStaffingComplete(value) {
-      this.isStaffingComplete = value
-    },
-
-    setIsFacilityDetailsComplete(value) {
-      this.isFacilityDetailsComplete = value
+      this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
+      this.isStaffingComplete = checkStaffingComplete(this.currentApplication)
     },
 
     async getApplication(applicationId) {
