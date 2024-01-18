@@ -127,6 +127,8 @@ const ApplicationMappings = [
   { back: 'ofm_staff_responsible_adult_pt', front: 'staffingResponsibleAdultPartTime' },
   { back: '_ofm_contact_value', front: 'primaryContactId' },
   { back: '_ofm_secondary_contact_value', front: 'secondaryContactId' },
+  { back: 'ofm_provider_type', front: 'providerType' },
+  { back: 'ofm_summary_ownership', front: 'ownership' },
 ]
 
 const OrganizationMappings = [
@@ -151,6 +153,8 @@ const OrganizationMappings = [
   { back: 'address2_stateorprovince', front: 'mailingProvince' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'ofm_provider_type', front: 'providerType' },
+  { back: 'ofm_ownership', front: 'ownership' },
 ]
 
 const FacilityMappings = [

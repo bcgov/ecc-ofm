@@ -195,8 +195,8 @@ export default {
       try {
         this.$emit('process', true)
         const payload = {
-          primaryContactId: this.primaryContact?.contactId,
-          secondaryContactId: this.secondaryContact?.contactId,
+          primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
+          secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)

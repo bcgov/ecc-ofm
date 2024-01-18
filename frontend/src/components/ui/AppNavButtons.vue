@@ -2,14 +2,20 @@
   <v-row class="sticky py-1 mt-4">
     <v-col cols="5">
       <v-row justify="start">
-        <AppButton v-if="showBack" :primary="false" :loading="loading" size="large" class="navButton" @click="back()">&larr; Back</AppButton>
+        <AppButton v-if="showBack" :primary="false" :loading="loading" size="large" class="navButton" @click="back()">
+          <v-icon class="pb-1">mdi-arrow-left</v-icon>
+          Back
+        </AppButton>
         <AppButton v-if="showCancel" :primary="false" :loading="loading" :disabled="disableCancel" size="large" class="navButton" @click="cancel()">Cancel</AppButton>
       </v-row>
     </v-col>
     <v-col cols="7">
       <v-row justify="end" class="mr-4">
         <AppButton v-if="showSave" :primary="false" :loading="loading" :disabled="disableSave" size="large" class="navButton" @click="save()">Save</AppButton>
-        <AppButton v-if="showNext" :loading="loading" :disabled="disableNext" size="large" class="navButton" @click="next()">Next &rarr;</AppButton>
+        <AppButton v-if="showNext" :loading="loading" :disabled="disableNext" size="large" class="navButton" @click="next()">
+          Next
+          <v-icon class="pb-1">mdi-arrow-right</v-icon>
+        </AppButton>
         <AppButton v-if="showSubmit" :loading="loading" :disabled="disableSubmit" size="large" class="navButton" @click="submit()">Submit</AppButton>
       </v-row>
     </v-col>
