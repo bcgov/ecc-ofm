@@ -148,7 +148,10 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-row justify="center" justify-md="start" class="pb-2">
-          <AppButton id="back-to-account-mgmt" :primary="false" size="medium" width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">&larr; Back to Account Management</AppButton>
+          <AppButton id="back-to-account-mgmt" :primary="false" size="large" width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">
+            <v-icon class="pb-1">mdi-arrow-left</v-icon>
+            Back to Account Management
+          </AppButton>
         </v-row>
       </v-col>
       <v-col cols="12" md="6">

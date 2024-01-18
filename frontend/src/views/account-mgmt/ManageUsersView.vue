@@ -80,7 +80,10 @@
     </v-row>
     <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
+    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="220px" :to="{ name: 'home' }">
+      <v-icon class="pb-1">mdi-arrow-left</v-icon>
+      Back to Home
+    </AppButton>
   </v-container>
 </template>
 
