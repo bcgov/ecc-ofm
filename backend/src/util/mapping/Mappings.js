@@ -103,6 +103,7 @@ const UsersPermissionsFacilityMappings = [
   { back: 'ofm_facility', front: 'address' },
   { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
+  { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
 ]
 
 const ApplicationMappings = [
@@ -124,6 +125,8 @@ const ApplicationMappings = [
   { back: 'ofm_staff_ec_educator_assistant_pt', front: 'staffingECEducatorAssistantPartTime' },
   { back: 'ofm_staff_responsible_adult_ft', front: 'staffingResponsibleAdultFullTime' },
   { back: 'ofm_staff_responsible_adult_pt', front: 'staffingResponsibleAdultPartTime' },
+  { back: '_ofm_contact_value', front: 'primaryContactId' },
+  { back: '_ofm_secondary_contact_value', front: 'secondaryContactId' },
 ]
 
 const OrganizationMappings = [
@@ -170,6 +173,7 @@ const FacilityMappings = [
   { back: 'address2_stateorprovince', front: 'mailingProvince' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
 ]
 
 const ContactMappings = [

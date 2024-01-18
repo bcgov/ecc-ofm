@@ -8,7 +8,7 @@
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0 pb-0">
-        <FacilityInfo :facilityId="facilityId" class="mt-0" />
+        <FacilityInfo :loading="loading" :facility="facility" class="mt-0" />
       </v-col>
     </v-row>
     <v-row>
@@ -124,20 +124,20 @@
                 </v-col>
                 <v-col>
                   <v-row no-gutters justify="end">
-                    <v-icon v-if="isEditablePrimaryContact" icon="fa:fa-regular fa-edit" class="mr-4"></v-icon>
+                    <v-icon v-if="primaryContact" icon="fa:fa-regular fa-edit" class="mr-4"></v-icon>
                   </v-row>
                 </v-col>
               </v-row>
-              <v-row v-for="(item, index) in this.primaryContact" :key="index">
+              <v-row>
                 <v-col cols="auto">
                   <AppLabel>Name:</AppLabel>
                 </v-col>
-                <v-col cols="2">{{ item.firstName }} {{ item.lastName }}</v-col>
+                <v-col cols="2">{{ primaryContact?.firstName }} {{ primaryContact?.lastName }}</v-col>
                 <v-col cols="auto">
                   <AppLabel>Role:</AppLabel>
                 </v-col>
                 <v-col cols="auto">
-                  {{ getRoleNameById(item.role) }}
+                  {{ getRoleNameById(primaryContact?.role) }}
                 </v-col>
               </v-row>
             </div>
@@ -180,6 +180,7 @@ export default {
       facilityId: null,
       licences: [],
       contacts: [],
+      facility: undefined,
       loading: false,
     }
   },
@@ -190,18 +191,15 @@ export default {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
     primaryContact() {
-      return this.facility?.primaryContact
-    },
-    isEditablePrimaryContact() {
-      return this.primaryContact?.length !== 0
+      return this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)
     },
     isEditableExpenseAuthority() {
       return this.expenseAuthorities?.length !== 0
     },
   },
-  created() {
+  async created() {
     this.facilityId = this.$route.params.facilityId
-    this.loadData()
+    await this.loadData()
   },
   methods: {
     /**
@@ -210,21 +208,20 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.getContacts()
-        this.getLicences()
+        await Promise.all([this.getFacility(), this.getContacts(), this.getLicences()])
       } finally {
         this.loading = false
       }
     },
 
     /**
-     * Get the contacts (Expense Authorities and Primary Contact) for the facility
+     * Get the contacts for the facility
      */
     async getContacts() {
       try {
         this.contacts = await FacilityService.getContacts(this.facilityId)
       } catch (error) {
-        this.setFailureAlert('Failed to get Primary and Expense Authority contacts for facilityId = ' + this.facilityId, error)
+        this.setFailureAlert('Failed to get contacts for facilityId = ' + this.facilityId, error)
       }
     },
 
@@ -236,6 +233,14 @@ export default {
         this.licences = await FacilityService.getLicences(this.facilityId)
       } catch (error) {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
+      }
+    },
+
+    async getFacility() {
+      try {
+        this.facility = await FacilityService.getFacility(this.facilityId)
+      } catch (error) {
+        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.facilityId, error)
       }
     },
 
