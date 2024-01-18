@@ -26,26 +26,8 @@ async function getOrganizationFacilities(req, res) {
   }
 }
 
-function mapOrganizationForBack(data) {
-  let organizationForBack = new MappableObjectForBack(data, OrganizationMappings).toJSON()
-  if (organizationForBack.ccof_facilitystartdate) {
-    organizationForBack.ccof_facilitystartdate = `${organizationForBack.ccof_facilitystartdate}-01-01`
-  }
-  return organizationForBack
-}
-
 async function updateOrganization(req, res) {
-  let organization = mapOrganizationForBack(req.body)
-  //organization.ccof_accounttype = ACCOUNT_TYPE.ORGANIZATION;
-  console.log('*********************************************************************')
-  console.log('*********************************************************************')
-  console.log('*********************************************************************')
-  console.log('*********************************************************************')
-  console.log('organization', organization)
-  console.log('*********************************************************************')
-  console.log('*********************************************************************')
-  console.log('*********************************************************************')
-  console.log('*********************************************************************')
+  let organization = new MappableObjectForBack(req.body, OrganizationMappings).toJSON()
   try {
     let orgResponse = await patchOperationWithObjectId('accounts', req.params.organizationId, organization)
     orgResponse = new MappableObjectForFront(orgResponse, OrganizationMappings)
