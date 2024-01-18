@@ -1,49 +1,43 @@
 <template>
-  <!--v-col v-if="editable" cols="3" md="6">
-              <v-row no-gutters justify="end">
-                <v-icon v-show="!editMode" icon="fa:fa-regular fa-pen-to-square" @click="toggleEditMode()" class="mr-4"></v-icon>
-              </v-row>
-            </v-col-->
   <v-card class="my-4 pa-4" variant="outlined">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-form ref="organizationForm" v-model="isFormComplete">
           <v-row no-gutters>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="6" lg="6">
               <v-card variant="flat">
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Organization legal name:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="orgLegalName" v-model="organizationInfoEdit.name" placeholder="Organization legal name" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
-                      </template>
-                      <template v-else -->
+                      <v-text-field id="name" v-model="organizationInfoEdit.name" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                    </template>
+                    <template v-else-->
                     {{ organizationInfo?.name }}
-                    <!--/template-->
-                  </v-col>
+                    <!--/template--> </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Doing business as:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="businessType" v-model="organizationInfoEdit.businessType" placeholder="Doing business as" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="businessType" v-model="organizationInfoEdit.businessType" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
-                      <template v-else-->
+                    <template v-else-->
                     {{ organizationInfo?.businessType }}
                     <!--/template-->
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Email address:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <template v-if="editMode">
-                      <v-text-field id="email" v-model="organizationInfoEdit.email" placeholder="Email Address" variant="outlined" density="compact" :rules="rules.email" :disabled="loading"></v-text-field>
+                      <v-text-field id="email" v-model="organizationInfoEdit.email" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else>
                       {{ organizationInfo?.email }}
@@ -51,12 +45,12 @@
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Phone (landline):</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <template v-if="editMode">
-                      <v-text-field id="phoneLandline" v-model="organizationInfoEdit.phoneLandline" placeholder="Phone (landline)" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="loading"></v-text-field>
+                      <v-text-field id="phoneLandline" v-model="organizationInfoEdit.phoneLandline" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else>
                       {{ organizationInfo?.phoneLandline }}
@@ -64,12 +58,12 @@
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Phone (cell):</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <template v-if="editMode">
-                      <v-text-field id="phoneCell" v-model="organizationInfoEdit.phoneCell" placeholder="Phone (cell)" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="loading"></v-text-field>
+                      <v-text-field id="phoneCell" v-model="organizationInfoEdit.phoneCell" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else>
                       {{ organizationInfo?.phoneCell }}
@@ -78,25 +72,26 @@
                 </v-row>
               </v-card>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="6" lg="6">
               <v-card variant="flat">
                 <v-row no-gutters>
-                  <v-col cols="12" sm="2" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Mailing Address:</AppLabel>
                   </v-col>
-                  <v-col v-if="editable">
+                  <v-col></v-col>
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <v-row no-gutters justify="end">
                       <v-icon v-show="!editMode" icon="fa:fa-regular fa-pen-to-square" @click="toggleEditMode()"></v-icon>
                     </v-row>
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="2" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Street Address 1:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingStreetAddress1" v-model="organizationInfoEdit.mailingStreetAddress2" placeholder="Street Address 2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingStreetAddress1" v-model="organizationInfoEdit.mailingStreetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.mailingStreetAddress1 }}
@@ -104,12 +99,12 @@
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Street Address 2:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingStreetAddress2" v-model="organizationInfoEdit.mailingStreetAddress2" placeholder="Street Address 2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingStreetAddress2" v-model="organizationInfoEdit.mailingStreetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.mailingStreetAddress2 }}
@@ -117,12 +112,12 @@
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="auto" class="ma-2">
+                  <v-col cols="auto" sm="auto" md="auto" lg="auto" class="ma-2">
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingCity" v-model="organizationInfoEdit.mailingCity" placeholder="City" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingCity" v-model="organizationInfoEdit.mailingCity" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.mailingCity }}
@@ -133,7 +128,7 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingProv" v-model="organizationInfoEdit.mailingProvince" placeholder="Prov" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingProv" v-model="organizationInfoEdit.mailingProvince" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.mailingProvince }}
@@ -144,7 +139,7 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingPostalCode" v-model="organizationInfoEdit.mailingPostalCode" placeholder="Postal Code" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingPostalCode" v-model="organizationInfoEdit.mailingPostalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.mailingPostalCode }}
@@ -153,17 +148,17 @@
                 </v-row>
                 <v-row><v-col></v-col></v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="2" class="ma-2">
+                  <v-col cols="12" sm="3" class="ma-2">
                     <AppLabel>Physical Address:</AppLabel>
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="2" class="ma-2">
+                  <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                     <AppLabel>Street Address 1:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="streetAddress1" v-model="organizationInfoEdit.streetAddress1" placeholder="Street Address 2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="streetAddress1" v-model="organizationInfoEdit.streetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.streetAddress1 }}
@@ -171,12 +166,12 @@
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
-                  <v-col cols="12" sm="3" class="ma-2">
+                  <v-col cols="12" sm="3" md="2" lg="3" class="ma-2">
                     <AppLabel>Street Address 2:</AppLabel>
                   </v-col>
-                  <v-col cols="12" sm="8" class="ma-2">
+                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="streetAddress2" v-model="organizationInfoEdit.streetAddress2" placeholder="Street Address 2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="streetAddress2" v-model="organizationInfoEdit.streetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.streetAddress2 }}
@@ -189,7 +184,7 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="city" v-model="organizationInfoEdit.city" placeholder="City" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="city" v-model="organizationInfoEdit.city" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.city }}
@@ -200,7 +195,7 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="province" v-model="organizationInfoEdit.province" placeholder="Prov" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="province" v-model="organizationInfoEdit.province" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.province }}
@@ -211,7 +206,7 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="postalCode" v-model="organizationInfoEdit.postalCode" placeholder="Postal Code" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="postalCode" v-model="organizationInfoEdit.postalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
                     </template>
                     <template v-else-->
                     {{ organizationInfo?.postalCode }}
