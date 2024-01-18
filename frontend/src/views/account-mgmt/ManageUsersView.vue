@@ -58,7 +58,7 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="11" class="pt-0 pb-0">
+                    <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
                       <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
@@ -66,7 +66,7 @@
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
-                    <v-col cols="6"></v-col>
+                    <v-col cols="12"></v-col>
                   </v-row>
                 </td>
                 <td class="pl-0">
@@ -124,9 +124,9 @@ export default {
         { title: 'Status', key: 'stateCode', width: '16%' },
       ],
       headersFacilities: [
-        { title: 'Facility Name', key: 'facilityName', width: '40%' },
-        { title: 'Address', key: 'address', width: '60%' },
-        { title: 'Expense Authority', key: 'isExpenseAuthority', width: '60%' },
+        { title: 'Facility Name', key: 'facilityName', width: '35%' },
+        { title: 'Address', key: 'address', width: '45%' },
+        { title: 'Expense Authority', key: 'isExpenseAuthority', width: '15%' },
       ],
     }
   },
@@ -273,7 +273,7 @@ export default {
      * Checks if the user is an Expense Authority for any facility.
      */
     isExpenseAuthority(user) {
-      return user.facilities.find((facility) => facility.isExpenseAuthority) ? 'Yes' : 'No'
+      return user.facilities.some((facility) => facility.isExpenseAuthority) ? 'Yes' : 'No'
     },
   },
 }
