@@ -186,7 +186,7 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['healthAuthorities']),
+    ...mapState(useAppStore, ['getRoleNameById', 'healthAuthorities']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
@@ -242,14 +242,6 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.facilityId, error)
       }
-    },
-
-    /**
-     * Get the role name by id
-     */
-    getRoleNameById(roleId) {
-      const appStore = useAppStore()
-      return appStore.getRoleNameById(Number(roleId))
     },
   },
 }

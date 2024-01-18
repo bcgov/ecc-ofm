@@ -131,6 +131,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
@@ -266,14 +267,6 @@ export default {
       } else {
         this.setFailureAlert('User update failed.', error)
       }
-    },
-
-    /**
-     * Get the role name by id
-     */
-    getRoleNameById(roleId) {
-      const appStore = useAppStore()
-      return appStore.getRoleNameById(roleId)
     },
 
     /**
