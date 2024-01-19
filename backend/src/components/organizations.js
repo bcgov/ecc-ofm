@@ -27,11 +27,10 @@ async function getOrganizationFacilities(req, res) {
 }
 
 async function updateOrganization(req, res) {
-  let organization = new MappableObjectForBack(req.body, OrganizationMappings).toJSON()
+  const organization = new MappableObjectForBack(req.body, OrganizationMappings).toJSON()
   try {
-    let orgResponse = await patchOperationWithObjectId('accounts', req.params.organizationId, organization)
-    orgResponse = new MappableObjectForFront(orgResponse, OrganizationMappings)
-    return res.status(HttpStatus.OK).json(orgResponse)
+    const response = await patchOperationWithObjectId('accounts', req.params.organizationId, organization)
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, OrganizationMappings))
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
