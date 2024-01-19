@@ -79,7 +79,7 @@
                     <AppLabel>Mailing Address:</AppLabel>
                   </v-col>
                   <v-col></v-col>
-                  <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                  <v-col v-if="editable" cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <v-row no-gutters justify="end">
                       <v-icon v-show="!editMode" icon="fa:fa-regular fa-pen-to-square" @click="toggleEditMode()"></v-icon>
                     </v-row>
@@ -94,7 +94,7 @@
                       <v-text-field id="mailingStreetAddress1" v-model="organizationEdit.mailingStreetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationReadOnly?.mailingStreetAddress1 }}
+                    {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingStreetAddress1 : organizationReadOnly?.streetAddress1 }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -107,7 +107,7 @@
                       <v-text-field id="mailingStreetAddress2" v-model="organizationEdit.mailingStreetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationReadOnly?.mailingStreetAddress2 }}
+                    {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingStreetAddress2 : organizationReadOnly?.streetAddress2 }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -120,7 +120,7 @@
                       <v-text-field id="mailingCity" v-model="organizationEdit.mailingCity" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationReadOnly?.mailingCity }}
+                    {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingCity : organizationReadOnly?.city }}
                     <!--/template-->
                   </v-col>
                   <v-col cols="auto" class="ma-2">
@@ -131,7 +131,7 @@
                       <v-text-field id="mailingProv" v-model="organizationEdit.mailingProvince" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationReadOnly?.mailingProvince }}
+                    {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingProvince : organizationReadOnly?.province }}
                     <!--/template-->
                   </v-col>
                   <v-col cols="auto" class="ma-2">
@@ -142,7 +142,7 @@
                       <v-text-field id="mailingPostalCode" v-model="organizationEdit.mailingPostalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationReadOnly?.mailingPostalCode }}
+                    {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingPostalCode : organizationReadOnly?.postalCode }}
                     <!--/template-->
                   </v-col>
                 </v-row>
