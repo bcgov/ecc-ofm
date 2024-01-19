@@ -1,6 +1,6 @@
 <template>
   <v-card class="my-4 pa-4" variant="outlined">
-    <v-skeleton-loader :loading="loading" type="table-tbody">
+    <v-skeleton-loader :loading="isLoading()" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-form ref="organizationForm" v-model="isFormComplete">
           <v-row no-gutters>
@@ -12,10 +12,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="name" v-model="organizationInfoEdit.name" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="name" v-model="organizationEdit.name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.name }}
+                    {{ organizationReadOnly?.name }}
                     <!--/template--> </v-col>
                 </v-row>
                 <v-row no-gutters>
@@ -24,10 +24,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="businessType" v-model="organizationInfoEdit.businessType" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="businessType" v-model="organizationEdit.businessType" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.businessType }}
+                    {{ organizationReadOnly?.businessType }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -37,10 +37,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <template v-if="editMode">
-                      <v-text-field id="email" v-model="organizationInfoEdit.email" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="email" v-model="organizationEdit.email" variant="outlined" density="compact" :rules="rules.email" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else>
-                      {{ organizationInfo?.email }}
+                      {{ organizationReadOnly?.email }}
                     </template>
                   </v-col>
                 </v-row>
@@ -50,10 +50,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <template v-if="editMode">
-                      <v-text-field id="phoneLandline" v-model="organizationInfoEdit.phoneLandline" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="phoneLandline" v-model="organizationEdit.phoneLandline" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else>
-                      {{ organizationInfo?.phoneLandline }}
+                      {{ organizationReadOnly?.phoneLandline }}
                     </template>
                   </v-col>
                 </v-row>
@@ -63,10 +63,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <template v-if="editMode">
-                      <v-text-field id="phoneCell" v-model="organizationInfoEdit.phoneCell" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="phoneCell" v-model="organizationEdit.phoneCell" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else>
-                      {{ organizationInfo?.phoneCell }}
+                      {{ organizationReadOnly?.phoneCell }}
                     </template>
                   </v-col>
                 </v-row>
@@ -91,10 +91,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingStreetAddress1" v-model="organizationInfoEdit.mailingStreetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingStreetAddress1" v-model="organizationEdit.mailingStreetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.mailingStreetAddress1 }}
+                    {{ organizationReadOnly?.mailingStreetAddress1 }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -104,10 +104,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingStreetAddress2" v-model="organizationInfoEdit.mailingStreetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingStreetAddress2" v-model="organizationEdit.mailingStreetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.mailingStreetAddress2 }}
+                    {{ organizationReadOnly?.mailingStreetAddress2 }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -117,10 +117,10 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingCity" v-model="organizationInfoEdit.mailingCity" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingCity" v-model="organizationEdit.mailingCity" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.mailingCity }}
+                    {{ organizationReadOnly?.mailingCity }}
                     <!--/template-->
                   </v-col>
                   <v-col cols="auto" class="ma-2">
@@ -128,10 +128,10 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingProv" v-model="organizationInfoEdit.mailingProvince" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingProv" v-model="organizationEdit.mailingProvince" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.mailingProvince }}
+                    {{ organizationReadOnly?.mailingProvince }}
                     <!--/template-->
                   </v-col>
                   <v-col cols="auto" class="ma-2">
@@ -139,10 +139,10 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="mailingPostalCode" v-model="organizationInfoEdit.mailingPostalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="mailingPostalCode" v-model="organizationEdit.mailingPostalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.mailingPostalCode }}
+                    {{ organizationReadOnly?.mailingPostalCode }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -158,10 +158,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="streetAddress1" v-model="organizationInfoEdit.streetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="streetAddress1" v-model="organizationEdit.streetAddress1" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.streetAddress1 }}
+                    {{ organizationReadOnly?.streetAddress1 }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -171,10 +171,10 @@
                   </v-col>
                   <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="streetAddress2" v-model="organizationInfoEdit.streetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="streetAddress2" v-model="organizationEdit.streetAddress2" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.streetAddress2 }}
+                    {{ organizationReadOnly?.streetAddress2 }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -184,10 +184,10 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="city" v-model="organizationInfoEdit.city" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="city" v-model="organizationEdit.city" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.city }}
+                    {{ organizationReadOnly?.city }}
                     <!--/template-->
                   </v-col>
                   <v-col cols="auto" class="ma-2">
@@ -195,10 +195,10 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="province" v-model="organizationInfoEdit.province" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="province" v-model="organizationEdit.province" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.province }}
+                    {{ organizationReadOnly?.province }}
                     <!--/template-->
                   </v-col>
                   <v-col cols="auto" class="ma-2">
@@ -206,10 +206,10 @@
                   </v-col>
                   <v-col cols="auto" class="ma-2">
                     <!--template v-if="editMode">
-                      <v-text-field id="postalCode" v-model="organizationInfoEdit.postalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="loading"></v-text-field>
+                      <v-text-field id="postalCode" v-model="organizationEdit.postalCode" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading()"></v-text-field>
                     </template>
                     <template v-else-->
-                    {{ organizationInfo?.postalCode }}
+                    {{ organizationReadOnly?.postalCode }}
                     <!--/template-->
                   </v-col>
                 </v-row>
@@ -218,8 +218,8 @@
           </v-row>
           <v-row v-if="editMode">
             <v-col cols="12" class="d-flex justify-center">
-              <AppButton id="cancel-edit" :primary="false" size="large" width="200px" @click="toggleEditMode()" :loading="loading" class="mr-6">Cancel</AppButton>
-              <AppButton id="save" size="large" width="200px" @click="update()" :loading="loading">Save</AppButton>
+              <AppButton id="cancel-edit" :primary="false" size="large" width="200px" @click="toggleEditMode()" :loading="isLoading()" class="mr-6">Cancel</AppButton>
+              <AppButton id="save" size="large" width="200px" @click="update()" :loading="isLoading()">Save</AppButton>
             </v-col>
           </v-row>
         </v-form>
@@ -245,13 +245,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    organization: {
+      type: Object,
+      required: true,
+      default: () => {
+        return {}
+      },
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       isFormComplete: false,
-      organizationInfo: undefined,
-      organizationInfoEdit: undefined,
-      loading: false,
+      organizationReadOnly: undefined,
+      organizationEdit: undefined,
+      localLoading: false,
       rules,
       editMode: false,
     }
@@ -259,42 +270,35 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
   },
-  async created() {
-    await this.loadOrganizationInfo()
+  async updated() {
+    this.organizationReadOnly = JSON.parse(JSON.stringify(this.organization))
   },
   methods: {
-    async loadOrganizationInfo() {
-      try {
-        this.loading = true
-        this.organizationInfo = await OrganizationService.getOrganization(this.userInfo?.organizationId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get your organization information', error)
-      } finally {
-        this.loading = false
-      }
-    },
-
     async update() {
       this.$refs.organizationForm?.validate()
       if (!this.isFormComplete) {
         return
       }
       try {
-        this.loading = true
-        await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationInfoEdit)
-        this.organizationInfo = { ...this.organizationInfoEdit }
+        this.localLoading = true
+        await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationEdit)
+        this.organizationReadOnly = { ...this.organizationEdit }
         this.editMode = false
         this.setSuccessAlert('Organization information updated successfully')
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
-        this.loading = false
+        this.localLoading = false
       }
     },
 
     toggleEditMode() {
-      this.organizationInfoEdit = { ...this.organizationInfo }
+      this.organizationEdit = JSON.parse(JSON.stringify(this.organization))
       this.editMode = !this.editMode
+    },
+
+    isLoading() {
+      return this.loading || this.localLoading
     },
 
   },

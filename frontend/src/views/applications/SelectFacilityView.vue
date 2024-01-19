@@ -7,7 +7,7 @@
         <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
         <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
       </div>
-      <OrganizationInfo />
+      <OrganizationInfo :loading="loading" :organization="organization" />
       <v-checkbox :value="1" :rules="rules.required" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
     <div class="mb-6">
@@ -45,6 +45,7 @@ import { mapState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
+import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
@@ -72,6 +73,7 @@ export default {
       loading: false,
       facilityId: undefined,
       isFormComplete: false,
+      organization: undefined,
     }
   },
   computed: {
@@ -96,6 +98,9 @@ export default {
           this.$emit('process', true)
           const payload = {
             facilityId: this.facilityId,
+            organizationId: this.organization?.organizationId,
+            providerType: this.organization?.providerType,
+            ownership: this.organization?.ownership,
           }
           const response = await ApplicationService.createApplication(payload)
           await this.getApplication(response?.applicationId)
@@ -109,13 +114,24 @@ export default {
       },
     },
   },
-  created() {
+  async created() {
     if (this.userInfo?.facilities?.length === 1) {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }
+    await this.getOrganization()
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
+    async getOrganization() {
+      try {
+        this.loading = true
+        this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
+      } catch (error) {
+        this.setFailureAlert('Failed to get your organization information', error)
+      } finally {
+        this.loading = false
+      }
+    },
   },
 }
 </script>

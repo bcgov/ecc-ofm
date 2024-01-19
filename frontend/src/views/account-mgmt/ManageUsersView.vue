@@ -41,7 +41,7 @@
               <span>{{ getRoleNameById(item.role) }}</span>
             </template>
             <template v-slot:item.isExpenseAuthority="{ item }">
-              <span>{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</span>
+              <span>{{ isExpenseAuthority(item) }}</span>
             </template>
             <template v-slot:item.stateCode="{ item }">
               <span>{{ getStatusDescription(item) }}</span>
@@ -58,14 +58,15 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="11" class="pt-0 pb-0">
+                    <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
                       <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
+                        <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
-                    <v-col cols="6"></v-col>
+                    <v-col cols="12"></v-col>
                   </v-row>
                 </td>
                 <td class="pl-0">
@@ -79,7 +80,10 @@
     </v-row>
     <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
+    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="220px" :to="{ name: 'home' }">
+      <v-icon class="pb-1">mdi-arrow-left</v-icon>
+      Back to Home
+    </AppButton>
   </v-container>
 </template>
 
@@ -123,12 +127,14 @@ export default {
         { title: 'Status', key: 'stateCode', width: '16%' },
       ],
       headersFacilities: [
-        { title: 'Facility Name', key: 'facilityName', width: '40%' },
-        { title: 'Address', key: 'address', width: '60%' },
+        { title: 'Facility Name', key: 'facilityName', width: '35%' },
+        { title: 'Address', key: 'address', width: '45%' },
+        { title: 'Expense Authority', key: 'isExpenseAuthority', width: '15%' },
       ],
     }
   },
   computed: {
+    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
@@ -267,11 +273,10 @@ export default {
     },
 
     /**
-     * Get the role name by id
+     * Checks if the user is an Expense Authority for any facility.
      */
-    getRoleNameById(roleId) {
-      const appStore = useAppStore()
-      return appStore.getRoleNameById(roleId)
+    isExpenseAuthority(user) {
+      return user.facilities.some((facility) => facility.isExpenseAuthority) ? 'Yes' : 'No'
     },
   },
 }

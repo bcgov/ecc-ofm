@@ -14,7 +14,7 @@ export const AuthRoutes = Object.freeze({
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
   USER_FACILITIES: '/:contactId/facilities',
-  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions/facilities',
+  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
   NOTIFICATIONS: baseRoot + '/notifications',

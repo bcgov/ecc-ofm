@@ -57,7 +57,7 @@ router.get('/:queryUserName', passport.authenticate('jwt', { session: false }), 
  * Get all users, permissions, and facilities for an organization.
  */
 router.get(
-  '/permissions/facilities/:organizationId',
+  '/permissions-facilities/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],

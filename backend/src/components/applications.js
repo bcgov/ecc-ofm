@@ -49,6 +49,13 @@ async function getApplication(req, res) {
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
+    // ofm_contact and ofm_secondary_contact fields are lookup fields in CRM, so we need to replace them with data binding syntax
+    if ('_ofm_contact_value' in payload || '_ofm_secondary_contact_value' in payload) {
+      payload['ofm_contact@odata.bind'] = payload['_ofm_contact_value'] ? `/contacts(${payload['_ofm_contact_value']})` : null
+      payload['ofm_secondary_contact@odata.bind'] = payload['_ofm_secondary_contact_value'] ? `/contacts(${payload['_ofm_secondary_contact_value']})` : null
+      delete payload['_ofm_contact_value']
+      delete payload['_ofm_secondary_contact_value']
+    }
     const response = await patchOperationWithObjectId('ofm_applications', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
@@ -60,6 +67,9 @@ async function createApplication(req, res) {
   try {
     const payload = {
       'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
+      'ofm_organization@odata.bind': `/accounts(${req.body?.organizationId})`,
+      ofm_provider_type: req.body?.providerType,
+      ofm_summary_ownership: req.body?.ownership,
     }
     const response = await postOperation('ofm_applications', payload)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())

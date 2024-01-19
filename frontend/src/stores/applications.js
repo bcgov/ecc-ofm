@@ -2,6 +2,10 @@ import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 
+function checkFacilityDetailsComplete(application) {
+  return application?.primaryContactId
+}
+
 function checkStaffingComplete(application) {
   const totalStaffs =
     application?.staffingInfantECEducatorFullTime +
@@ -45,11 +49,8 @@ export const useApplicationsStore = defineStore('applications', {
   }),
   actions: {
     checkApplicationComplete() {
-      this.setIsStaffingComplete(checkStaffingComplete(this.currentApplication))
-    },
-
-    setIsStaffingComplete(value) {
-      this.isStaffingComplete = value
+      this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
+      this.isStaffingComplete = checkStaffingComplete(this.currentApplication)
     },
 
     async getApplication(applicationId) {
