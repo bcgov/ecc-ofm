@@ -92,7 +92,6 @@ async function getUserInfo(req, res) {
       userResponse = await getUserProfile(userGuid, userName)
     } catch (e) {
       log.error('getUserProfile Error', e.response ? e.response.status : e.message)
-
       return res.status(HttpStatus.UNAUTHORIZED).json(resData)
     }
   }
