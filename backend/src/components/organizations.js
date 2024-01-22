@@ -28,6 +28,7 @@ async function getOrganizationFacilities(req, res) {
 
 async function updateOrganization(req, res) {
   const organization = new MappableObjectForBack(req.body, OrganizationMappings).toJSON()
+  delete organization['ofm_business_type@OData.Community.Display.V1.FormattedValue']
   try {
     const response = await patchOperationWithObjectId('accounts', req.params.organizationId, organization)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, OrganizationMappings))
