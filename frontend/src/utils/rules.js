@@ -17,10 +17,10 @@ const rules = {
   YYYY: [(v) => (v > 1900 && v < 2100) || 'A valid year is required'],
   notRequired: [() => true],
   max(number) {
-    return (v) => !v || v <= number || 'Max exceeded'
+    return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
   },
   min(number) {
-    return (v) => !v || v >= number || 'Min exceeded'
+    return (v) => !v || v >= number || `Min exceeded: ${number.toLocaleString('en-ca')}`
   },
   maxLength(number) {
     return (v) => !v || v.length <= number || 'Max length exceeded'

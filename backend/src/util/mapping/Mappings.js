@@ -129,6 +129,19 @@ const ApplicationMappings = [
   { back: '_ofm_secondary_contact_value', front: 'secondaryContactId' },
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_summary_ownership', front: 'ownership' },
+  { back: 'ofm_costs_facility_type', front: 'facilityType' },
+  { back: 'ofm_costs_property_insurance', front: 'insuranceCost' },
+  { back: 'ofm_costs_upkeep_labour_supplies', front: 'upkeepLabourSuppliesCost' },
+  { back: 'ofm_costs_utilities', front: 'utilitiesCost' },
+  { back: 'ofm_costs_maintenance_repairs', front: 'maintenanceRepairsCost' },
+  { back: 'ofm_costs_furniture_equipment', front: 'furnitureEquipmentsCost' },
+  { back: 'ofm_costs_yearly_operating_costs', front: 'totalYearlyOperatingCosts' },
+  { back: 'ofm_costs_rent_lease', front: 'rentLeaseCost' },
+  { back: 'ofm_costs_mortgage', front: 'mortgageCost' },
+  { back: 'ofm_costs_property_municipal_tax', front: 'propertyTax' },
+  { back: 'ofm_costs_strata_fee', front: 'strataFee' },
+  { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
+  { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
 ]
 
 const OrganizationMappings = [

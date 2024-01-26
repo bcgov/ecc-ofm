@@ -37,6 +37,10 @@ function checkStaffingComplete(application) {
   )
 }
 
+function checkOperatingCostsComplete(application) {
+  return application?.facilityType && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
+}
+
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
   state: () => ({
@@ -51,6 +55,7 @@ export const useApplicationsStore = defineStore('applications', {
     checkApplicationComplete() {
       this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
       this.isStaffingComplete = checkStaffingComplete(this.currentApplication)
+      this.isOperatingCostsComplete = checkOperatingCostsComplete(this.currentApplication)
     },
 
     async getApplication(applicationId) {
