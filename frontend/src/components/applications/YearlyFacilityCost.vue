@@ -19,7 +19,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('rentLeaseCost')"></v-text-field>
+                @input="sanitizeNumber('rentLeaseCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -42,7 +42,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('mortgageCost')"></v-text-field>
+                @input="sanitizeNumber('mortgageCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -61,7 +61,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('propertyTax')"></v-text-field>
+                @input="sanitizeNumber('propertyTax')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -80,7 +80,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('strataFee')"></v-text-field>
+                @input="sanitizeNumber('strataFee')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -103,7 +103,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('propertyTax')"></v-text-field>
+                @input="sanitizeNumber('propertyTax')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -122,7 +122,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('strataFee')"></v-text-field>
+                @input="sanitizeNumber('strataFee')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -145,7 +145,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('applicableFee')"></v-text-field>
+                @input="sanitizeNumber('applicableFee')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -164,7 +164,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('propertyTax')"></v-text-field>
+                @input="sanitizeNumber('propertyTax')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -183,7 +183,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('strataFee')"></v-text-field>
+                @input="sanitizeNumber('strataFee')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -232,7 +232,6 @@ export default {
   data() {
     return {
       rules,
-      FACILITY_TYPES,
       fieldNumberFormat: {
         nullValue: 0,
         min: 0,
@@ -283,9 +282,10 @@ export default {
       strataFee: this.currentApplication?.strataFee ?? 0,
       applicableFee: this.currentApplication?.applicableFee ?? 0,
     }
+    this.FACILITY_TYPES = FACILITY_TYPES
   },
   methods: {
-    sanitizeInput(key) {
+    sanitizeNumber(key) {
       if (typeof this.model[key] === 'number') return
       this.model[key] = this.model[key]?.replace(/,/g, '')
     },

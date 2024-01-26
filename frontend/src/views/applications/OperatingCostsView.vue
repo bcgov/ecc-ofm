@@ -73,8 +73,6 @@ export default {
     return {
       rules,
       model: {},
-      costsModel: {},
-      FACILITY_TYPE_INFO_TXT: 'This is a placeholder message',
     }
   },
   computed: {
@@ -94,7 +92,9 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
-      const totalCosts = Object.values(this.costsModel)?.reduce((total, cost) => total + Number(cost), 0)
+      const costsModel = Object.assign({}, this.model)
+      delete costsModel?.facilityType
+      const totalCosts = Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
       return this.model.facilityType && totalCosts > 0
     },
   },
@@ -122,6 +122,7 @@ export default {
   },
   created() {
     this.model.facilityType = this.currentApplication?.facilityType
+    this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
@@ -144,12 +145,8 @@ export default {
     },
 
     updateModel(updatedModel) {
-      Object.entries(updatedModel)?.forEach(([key, value]) => {
-        this.costsModel[key] = Number(value)
-        this.model[key] = Number(value)
-      })
+      Object.entries(updatedModel)?.forEach(([key, value]) => (this.model[key] = Number(value)))
     },
   },
 }
 </script>
-<style scoped></style>

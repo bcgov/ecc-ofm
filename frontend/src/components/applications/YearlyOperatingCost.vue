@@ -18,7 +18,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('insuranceCost')"></v-text-field>
+                @input="sanitizeNumber('insuranceCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -44,7 +44,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('upkeepLabourSuppliesCost')"></v-text-field>
+                @input="sanitizeNumber('upkeepLabourSuppliesCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -72,7 +72,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('utilitiesCost')"></v-text-field>
+                @input="sanitizeNumber('utilitiesCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -98,7 +98,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('maintenanceRepairsCost')"></v-text-field>
+                @input="sanitizeNumber('maintenanceRepairsCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -126,7 +126,7 @@
                 prefix="$"
                 maxlength="12"
                 :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('furnitureEquipmentsCost')"></v-text-field>
+                @input="sanitizeNumber('furnitureEquipmentsCost')"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -182,10 +182,6 @@ export default {
         prefix: '$ ',
       },
       model: {},
-      UTILITIES_INFO_TXT: 'This is a placeholder message',
-      FURNITURE_INFO_TXT: 'This is a placeholder message',
-      UPKEEP_INFO_TXT: 'This is a placeholder message',
-      MAINTENANCE_INFO_TXT: 'This is a placeholder message',
     }
   },
   computed: {
@@ -212,9 +208,13 @@ export default {
       maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost ?? 0,
       furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost ?? 0,
     }
+    this.UTILITIES_INFO_TXT = 'This is a placeholder message'
+    this.FURNITURE_INFO_TXT = 'This is a placeholder message'
+    this.UPKEEP_INFO_TXT = 'This is a placeholder message'
+    this.MAINTENANCE_INFO_TXT = 'This is a placeholder message'
   },
   methods: {
-    sanitizeInput(key) {
+    sanitizeNumber(key) {
       if (typeof this.model[key] === 'number') return
       this.model[key] = this.model[key]?.replace(/,/g, '')
     },
