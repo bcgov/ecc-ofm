@@ -80,6 +80,7 @@ export default {
   components: { AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
+    if (this.loading) return
     if (!this.readonly) {
       await this.saveApplication()
     }
@@ -127,6 +128,7 @@ export default {
   watch: {
     isFormComplete: {
       handler(value) {
+        if (this.loading) return
         this.isFacilityDetailsComplete = value
       },
     },

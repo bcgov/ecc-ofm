@@ -16,7 +16,7 @@ async function getRequestCategories() {
     requestCategories = []
     let response = await getOperation('ofm_request_categories')
     response?.value?.forEach((item) => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)))
-    lookupCache.put('requestCategories', requestCategories, 60 * 60 * 1000)
+    lookupCache.put('requestCategories', requestCategories, ONE_HOUR_MS)
   }
   return requestCategories
 }
@@ -47,22 +47,21 @@ async function getHealthAuthorities() {
   return fetchAndCacheData('healthAuthorities', 'ecc_health_authorities')
 }
 
+async function getFacilityTypes() {
+  return fetchAndCacheData('applicationFacilityTypes', 'ofm_facility_type')
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    let resData = lookupCache.get('lookups')
-    if (!resData) {
-      let requestCategories = await getRequestCategories()
-      let userRoles = await getUserRoles()
-      let healthAuthorities = await getHealthAuthorities()
-      resData = {
-        requestCategories: requestCategories,
-        userRoles: userRoles,
-        healthAuthorities: healthAuthorities,
-      }
-      lookupCache.put('lookups', resData, 60 * 60 * 1000)
+    const [requestCategories, userRoles, healthAuthorities, facilityTypes] = await Promise.all([getRequestCategories(), getUserRoles(), getHealthAuthorities(), getFacilityTypes()])
+    const resData = {
+      requestCategories: requestCategories,
+      userRoles: userRoles,
+      healthAuthorities: healthAuthorities,
+      facilityTypes: facilityTypes,
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {
