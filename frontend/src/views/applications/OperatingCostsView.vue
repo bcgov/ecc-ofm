@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
     <YearlyOperatingCost v-if="model.facilityType" :readonly="readonly" @update="updateModel" />
-    <YearlyFacilityCost v-if="model.facilityType" class="my-8" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
+    <YearlyFacilityCost v-if="model.facilityType" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
   </v-form>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container fluid class="pa-0 my-8">
     <AppLabel>Yearly Facility Cost</AppLabel>
     <v-card class="my-2" variant="outlined">
       <!-- RENT/LEASE -->
