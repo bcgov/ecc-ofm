@@ -67,6 +67,13 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   APPROVED: 5,
 })
 
+export const FACILITY_TYPES = Object.freeze({
+  RENT_LEASE: 1,
+  OWNED_WITH_MORTGAGE: 2,
+  OWNED_WITHOUT_MORTGAGE: 3,
+  PROVIDED_FREE_OF_CHARGE: 4,
+})
+
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
 
 export const OFM_PROGRAM = 'OFM Program'

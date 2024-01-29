@@ -22,6 +22,7 @@ export const useAppStore = defineStore('app', {
     requestCategories: {},
     userRoles: {},
     healthAuthorities: {},
+    facilityTypes: {},
 
     config: '',
   }),
@@ -41,6 +42,7 @@ export const useAppStore = defineStore('app', {
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.userRoles = lookupInfo?.data?.userRoles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
+        this.facilityTypes = lookupInfo?.data?.facilityTypes
       }
     },
     async setConfig(config) {

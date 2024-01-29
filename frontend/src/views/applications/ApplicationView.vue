@@ -9,7 +9,7 @@
         <ApplicationNavBar class="navBar" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
-        <router-view :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @completeForm="completeForm" @process="process"></router-view>
+        <router-view class="router-view" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @completeForm="completeForm" @process="process"></router-view>
         <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
         <AppNavButtons
           :loading="processing"
@@ -135,6 +135,10 @@ export default {
 }
 
 .loading-screen {
+  min-height: 45vh;
+}
+
+.router-view {
   min-height: 45vh;
 }
 </style>
