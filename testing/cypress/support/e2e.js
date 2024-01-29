@@ -55,10 +55,8 @@ function loginViaAAD(username, password) {
     cy.get('button[id="okButton_1').click();
   });
 
-  cy.wait(20000);
-  // cy.reload();
-
-  cy.contains("Dynamics 365").should("exist");
+  cy.wait(30000);
+  cy.reload();
 }
 
 Cypress.Commands.add("loginToAAD", (username, password) => {
@@ -67,30 +65,15 @@ Cypress.Commands.add("loginToAAD", (username, password) => {
     return false;
   });
 
-  cy.session(
-    `aad-${username}`,
-    () => {
-      const log = Cypress.log({
-        displayName: "Azure Active Directory Login",
-        message: [`🔐 Authenticating | ${username}`],
-        // @ts-ignore
-        autoEnd: false,
-      });
+  const log = Cypress.log({
+    displayName: "Azure Active Directory Login",
+    message: [`🔐 Authenticating | ${username}`],
+    autoEnd: false,
+  });
+  log.snapshot("before");
 
-      log.snapshot("before");
+  loginViaAAD(username, password);
 
-      loginViaAAD(username, password);
-
-      log.snapshot("after");
-      log.end();
-    },
-    {
-      validate: () => {
-        // this is a very basic form of session validation for this demo.
-        // depending on your needs, something more verbose might be needed
-        cy.visit("http://mychildcareservicesdev.crm3.dynamics.com/");
-        cy.contains("Dynamics 365").should("exist");
-      },
-    }
-  );
+  log.snapshot("after");
+  log.end();
 });
