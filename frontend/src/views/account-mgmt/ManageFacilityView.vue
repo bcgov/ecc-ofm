@@ -298,7 +298,7 @@ export default {
         this.Loading = true
         this.facility.primaryContactId = this.primaryContact?.contactId
         await FacilityService.updateFacilityPrimaryContact(this.facility.facilityId, this.facility.primaryContactId)
-        this.primaryContactLastSaved
+        this.primaryContactLastSaved = this.primaryContact
         this.editModePrimaryContact = false
         this.setSuccessAlert('Primary contact updated successfully')
       } catch (error) {
