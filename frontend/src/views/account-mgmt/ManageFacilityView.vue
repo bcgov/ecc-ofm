@@ -79,11 +79,11 @@
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <div class="w-100">
               <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
-              <v-row>
+              <v-row v-if="editModePrimaryContact">
                 <v-col cols="auto">
                   <AppLabel>Name:</AppLabel>
                 </v-col>
-                <v-col cols="2" class="pb-0">
+                <v-col cols="3" class="pb-0">
                   <v-select v-if="editModePrimaryContact"
                     id="primary-contact"
                     v-model="primaryContact"
@@ -100,13 +100,12 @@
                     {{ primaryContact?.firstName }} {{ primaryContact?.lastName }}
                   </template>
                 </v-col>
-                <v-col cols="auto" class="pb-0">
-                  <AppLabel>Role:</AppLabel>
+              </v-row>
+              <v-row>
+                <v-col cols="11">
+                  <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
                 </v-col>
-                <v-col cols="2" class="pb-0">
-                  {{ getRoleNameById(primaryContact?.role) }}
-                </v-col>
-                <v-col class="pb-0">
+                <v-col cols="1">
                   <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
                     <v-icon icon="fa:fa-regular fa-edit" @click="toggleEditPrimaryContact()"></v-icon>
                   </v-row>
@@ -116,7 +115,7 @@
                 <v-col cols="12">
                   <v-row justify="end">
                     <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="toggleEditPrimaryContact()">Cancel</AppButton>
-                    <AppButton id="save" :primary="true" size="large" :loading="loading" :disabled="hasPrimaryContactChanged" class="mr-4" @click="savePrimaryContact()">Save</AppButton>
+                    <AppButton id="save" :primary="true" size="large" :loading="loading" :disabled="!hasPrimaryContactChanged" class="mr-4" @click="savePrimaryContact()">Save</AppButton>
                   </v-row>
                 </v-col>
               </v-row>
@@ -125,13 +124,13 @@
         </v-card>
       </v-col>
     </v-row>
-    <ManageContactFacilityPermissions
+    <EditFacilityContacts
       :loading="loading"
       title="Expense Authorities"
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       @save-contact-updates="saveExpenseAuthorityUpdates" />
-    <ManageContactFacilityPermissions
+    <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
       :contacts="additionalContacts"
@@ -142,7 +141,7 @@
         <v-row justify="center" justify-md="start" class="pb-2">
           <AppButton id="back-to-manage-organization" :primary="false" size="large" width="515px" :to="{ name: 'manage-organization' }" :loading="loading">
             <v-icon class="pb-1">mdi-arrow-left</v-icon>
-            Back to Update Organization Information
+            Back to Organization Information
           </AppButton>
         </v-row>
       </v-col>
@@ -154,7 +153,7 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
-import ManageContactFacilityPermissions from '@/components/account-mgmt/ManageContactFacilityPermissions.vue'
+import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
 import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 import FacilityService from '@/services/facilityService'
@@ -163,12 +162,14 @@ import rules from '@/utils/rules'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import ContactInfo from '@/components/applications/ContactInfo.vue'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppLabel, FacilityInfo, ManageContactFacilityPermissions },
+  components: { AppButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
   mixins: [alertMixin],
   data() {
+    const CONTACT_TYPES = ['Expense Authority', 'Additional Contact']
     return {
       facilityId: null,
       licences: [],
@@ -179,6 +180,7 @@ export default {
       loading: false,
       rules,
       editModePrimaryContact: false,
+      contactTypes: CONTACT_TYPES,
     }
   },
   computed: {
@@ -191,17 +193,17 @@ export default {
       return this.contacts?.filter((contact) => contact.isAdditionalContact)
     },
     additionalContactsAvailableForAdd() {
-      return this.contacts?.filter((contact) => !contact.isPrimaryContact && !contact.isAdditionalContact)
+      return this.contacts?.filter((contact) => !contact.isAdditionalContact)
     },
     expenseAuthoritiesAvailableForAdd() {
       return this.contacts?.filter((contact) => !contact.isExpenseAuthority)
     },
     hasPrimaryContactChanged() {
-      return this.primaryContact === this.primaryContactLastSaved
+      return this.primaryContact !== this.primaryContactLastSaved
     },
     sortedContacts() {
       if (!this.contacts) return []
-      const contactsCopy = this.contacts.slice()
+      const contactsCopy = [...this.contacts]
       return contactsCopy.sort((a, b) => {
         return a.firstName.localeCompare(b.firstName)
       })
@@ -270,23 +272,6 @@ export default {
       this.primaryContact = this.primaryContactLastSaved
     },
 
-    /**
-     * Format property name for display. i.e. property isExpenseAuthority becomes 'Expense Authority'
-     */
-    formatPropertyForDisplay(str) {
-      // Remove 'is' prefix if it exists
-      if (str.startsWith('is')) {
-        str = str.substring(2)
-      }
-      // Split CamelCase into words and capitalize the first letter of each word
-      return str
-        // Insert a space before all caps and convert to lower case
-        .replace(/([A-Z])/g, ' $1').toLowerCase()
-        // Capitalize the first letter of each word
-        .replace(/^./, str => str.toUpperCase())
-        .replace(/\s./g, str => str.toUpperCase())
-    },
-
     /** 
      * Save primary contact updates
      */
@@ -314,24 +299,25 @@ export default {
      * @param {*} contactsToAdd - contacts to set incoming property to true
      * @param {*} contactsToRemove - contacts to set incoming property to false
      */
-    async saveContactUpdates(property, contactsToAdd, contactsToRemove) {
+    async saveContactUpdates(property, contactType, contactsToAdd, contactsToRemove) {
       this.loading = true
       try {
         contactsToAdd.forEach(obj => obj[property] = true)
         contactsToRemove?.forEach(obj => obj[property] = false)
         const contactsToUpdate = (contactsToRemove?.length === 0) ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
-        for (const contact of contactsToUpdate) {
+        let updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
             await ApiService.apiAxios.patch(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + contact.bceidFacilityId, contact)
-            this.getContacts()
           } catch (error) {
             this.setFailureAlert(`Failed to update ${property} for contactId = ` + contact.contactId, error)
             throw error
           }
-        }
-        this.setSuccessAlert(`${this.formatPropertyForDisplay(property)} updates have been saved successfully`)
+        })
+        await Promise.all(updateContactsTasks)
+        this.getContacts()
+        this.setSuccessAlert(`${contactType} updates have been saved successfully`)
       } catch (error) {
-        this.setFailureAlert(`Failure occurred while updating ${this.formatPropertyForDisplay(property)}`, error)
+        this.setFailureAlert(`Failure occurred while updating ${contactType}`, error)
       } finally {
         this.loading = false
       }
@@ -341,14 +327,14 @@ export default {
      * Save expense authority contact updates
      */
     async saveExpenseAuthorityUpdates(contactsToAdd, contactsToRemove) {
-      await this.saveContactUpdates('isExpenseAuthority', contactsToAdd, contactsToRemove)
+      await this.saveContactUpdates('isExpenseAuthority', this.contactTypes[0], contactsToAdd, contactsToRemove)
     },
 
     /**
      * Save additional contact updates
      */
     async saveAdditionalContactUpdates(contactsToAdd, contactsToRemove) {
-      await this.saveContactUpdates('isAdditionalContact', contactsToAdd, contactsToRemove)
+      await this.saveContactUpdates('isAdditionalContact', this.contactTypes[1], contactsToAdd, contactsToRemove)
     },
   }
 }

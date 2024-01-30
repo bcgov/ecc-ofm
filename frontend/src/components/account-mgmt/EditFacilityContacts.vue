@@ -7,7 +7,7 @@
   <v-row>
     <v-col cols="12" class="ml-6 pr-9 pt-0">
       <v-card elevation="0" variant="outlined">
-        <v-expansion-panels variant="accordion" v-model="isPanelOpenAdditionalContacts">
+        <v-expansion-panels variant="accordion" v-model="isPanelOpen">
           <v-expansion-panel elevation="0">
             <v-expansion-panel-title>
             </v-expansion-panel-title>
@@ -41,7 +41,7 @@
                         :items="sortedContacts"
                         density="compact">
                         <template v-slot:item.name="{ item }">
-                          {{ item.firstName + ' ' + item.lastName }}
+                          {{ `${item.firstName} ${item.lastName}` }}
                         </template>
                         <template v-slot:item.role="{ item }">
                           {{ getRoleNameById(item.role) }}
@@ -85,7 +85,7 @@ import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
 
 export default {
-  name: 'ManageContactFacilityPermissions',
+  name: 'EditFacilityContacts',
   components: { AppButton, AppLabel },
   props: {
     loading: {
@@ -115,8 +115,7 @@ export default {
       updatedContactsToRemove: [],
       rules,
       editMode: false,
-      isPanelOpenAdditionalContacts: 0,
-      panel: null,
+      isPanelOpen: 0,
       headers: [
         { title: 'Name', value: 'name', width: '20%' },
         { title: 'Role', value: 'role', width: '30%' },
@@ -139,13 +138,13 @@ export default {
   watch: {
     contacts: {
       handler: function (val) {
-        this.contactsToDisplay = val
+        this.contactsToDisplay = [...val]
       },
       deep: true,
     },
     contactsForAdd: {
       handler: function (val) {
-        this.contactsAvailableForAdd = val
+        this.contactsAvailableForAdd = [...val]
       },
       deep: true,
     },
@@ -162,15 +161,6 @@ export default {
     },
 
     /**
-     * Filter function for the autocomplete type ahead
-     */
-    typeAheadContactsFilter(item, queryText, itemText) {
-      const text = itemText.toLowerCase();
-      const query = queryText.toLowerCase();
-      return text.indexOf(query) > -1;
-    },
-
-    /**
      * Remove focus from the autocomplete input
      * NOTE: This is a workaround for the autocomplete component not triggering update event until the input loses focus.
      */
@@ -183,17 +173,6 @@ export default {
     },
 
     /**
-     * Remove a contact from inputted list by contactId
-     */
-    removeFromList(contacts, contactId) {
-      const index = contacts.findIndex(obj => obj.contactId === contactId)
-      if (index !== -1) {
-        contacts.splice(index, 1);
-      }
-      return contacts
-    },
-
-    /**
      * Add a contact to the list of contacts to display and remove from the list of contacts available for add
      */
     addContact() {
@@ -203,7 +182,7 @@ export default {
       const contactToAdd = this.contactsAvailableForAdd.find(item => item.contactId === this.contactId)
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
-      this.contactsAvailableForAdd = this.removeFromList(this.contactsAvailableForAdd, this.contactId)
+      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => JSON.stringify(obj) !== JSON.stringify(contactToAdd));
       this.contactId = null
       this.removeFocus()
     },
@@ -212,15 +191,19 @@ export default {
      * Remove a contact from the list of contacts to display and add to the list of contacts available for add
      */
     deleteContact(contact) {
-      this.contactsToDisplay = this.removeFromList(this.contactsToDisplay, contact.contactId)
+      this.contactsToDisplay = this.contactsToDisplay.filter(obj => JSON.stringify(obj) !== JSON.stringify(contact));
       this.updatedContactsToRemove.push(contact)
-      this.contactsAvailableForAdd.push(contact)
+      this.contactsAvailableForAdd = [...this.contactsAvailableForAdd, contact]
     },
 
     /**
      * Cancel edit mode and reset the contactId
      */
     cancelEditContacts() {
+      this.contactsToDisplay = this.contacts
+      this.contactsAvailableForAdd = this.contactsForAdd
+      this.updatedContactsToAdd = []
+      this.updatedContactsToRemove = []
       this.contactId = null
       this.editMode = false
     },
