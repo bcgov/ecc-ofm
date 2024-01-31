@@ -1,7 +1,8 @@
 <template>
   <v-row>
-    <v-col class="ml-6 pr-9 pt-0 pb-0">
-      <h4>{{ title }}</h4>
+    <v-col class="ml-6 pr-9 pb-0 d-flex flex-row align-center">
+      <h4 class="mr-2">{{ title }}</h4>
+      <h5>&nbsp;{{ titleInfo }}</h5>
     </v-col>
   </v-row>
   <v-row>
@@ -10,15 +11,18 @@
         <v-expansion-panels variant="accordion" v-model="isPanelOpen">
           <v-expansion-panel elevation="0">
             <v-expansion-panel-title>
+              <template v-if="isPanelOpen !== 0">
+                {{ `${contacts?.length} ${title}` }}
+              </template>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-skeleton-loader :loading="loading" type="table-tbody">
                 <div class="w-100">
                   <v-row v-if="editMode">
-                    <v-col cols="auto">
+                    <v-col cols="auto" class="pb-0">
                       <AppLabel>Add {{ title }}:</AppLabel>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="3" class="pb-0">
                       <v-autocomplete
                         id="additional-contact"
                         ref="autoComplete"
@@ -93,6 +97,10 @@ export default {
       default: false,
     },
     title: {
+      type: String,
+      required: true
+    },
+    titleInfo: {
       type: String,
       required: true
     },
@@ -182,7 +190,7 @@ export default {
       const contactToAdd = this.contactsAvailableForAdd.find(item => item.contactId === this.contactId)
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
-      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => JSON.stringify(obj) !== JSON.stringify(contactToAdd));
+      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => obj.contactId !== contactToAdd.contactId);
       this.contactId = null
       this.removeFocus()
     },
@@ -191,7 +199,7 @@ export default {
      * Remove a contact from the list of contacts to display and add to the list of contacts available for add
      */
     deleteContact(contact) {
-      this.contactsToDisplay = this.contactsToDisplay.filter(obj => JSON.stringify(obj) !== JSON.stringify(contact));
+      this.contactsToDisplay = this.contactsToDisplay.filter(obj => obj.contactId !== contact.contactId);
       this.updatedContactsToRemove.push(contact)
       this.contactsAvailableForAdd = [...this.contactsAvailableForAdd, contact]
     },

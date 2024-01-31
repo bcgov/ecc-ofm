@@ -69,21 +69,22 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="ml-6 pr-9 pb-0">
-        <h4>Primary Contact</h4>
+      <v-col class="ml-6 pr-9 pb-0 d-flex flex-row align-center">
+        <h4 class="mr-2">Primary Contact</h4>
+        <h5>&nbsp;(You can only have one primary contact)</h5>
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-6 pr-9 pt-0">
+      <v-col cols="12" class="ml-6 pr-9 pt-0 pb-0">
         <v-card class="pa-6 mb-3" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <div class="w-100">
               <!-- NOTE: div was required due to dynamic v-row within v-skeleton-loader, otherwise intended row formatting breaks -->
               <v-row v-if="editModePrimaryContact">
                 <v-col cols="auto">
-                  <AppLabel>Name:</AppLabel>
+                  <AppLabel>Change primary contact:</AppLabel>
                 </v-col>
-                <v-col cols="3" class="pb-0">
+                <v-col cols="4" class="pb-0">
                   <v-select v-if="editModePrimaryContact"
                     id="primary-contact"
                     v-model="primaryContact"
@@ -127,12 +128,14 @@
     <EditFacilityContacts
       :loading="loading"
       title="Expense Authorities"
+      titleInfo="(You can have more than one expense authority)"
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       @save-contact-updates="saveExpenseAuthorityUpdates" />
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
+      titleInfo="(You can have more than one additional contact)"
       :contacts="additionalContacts"
       :contactsForAdd="additionalContactsAvailableForAdd"
       @save-contact-updates="saveAdditionalContactUpdates" />
@@ -169,7 +172,6 @@ export default {
   components: { AppButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
   mixins: [alertMixin],
   data() {
-    const CONTACT_TYPES = ['Expense Authority', 'Additional Contact']
     return {
       facilityId: null,
       licences: [],
@@ -180,7 +182,6 @@ export default {
       loading: false,
       rules,
       editModePrimaryContact: false,
-      contactTypes: CONTACT_TYPES,
     }
   },
   computed: {
@@ -236,6 +237,7 @@ export default {
         this.contacts = await FacilityService.getContacts(this.facilityId)
         this.contacts?.forEach((contact) => {
           contact.fullName = `${contact.firstName} ${contact.lastName}`
+          contact.roleName = this.getRoleNameById(Number(contact.role))
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.facilityId, error)
@@ -327,14 +329,14 @@ export default {
      * Save expense authority contact updates
      */
     async saveExpenseAuthorityUpdates(contactsToAdd, contactsToRemove) {
-      await this.saveContactUpdates('isExpenseAuthority', this.contactTypes[0], contactsToAdd, contactsToRemove)
+      await this.saveContactUpdates('isExpenseAuthority', 'Expense Authority', contactsToAdd, contactsToRemove)
     },
 
     /**
      * Save additional contact updates
      */
     async saveAdditionalContactUpdates(contactsToAdd, contactsToRemove) {
-      await this.saveContactUpdates('isAdditionalContact', this.contactTypes[1], contactsToAdd, contactsToRemove)
+      await this.saveContactUpdates('isAdditionalContact', 'Additional Contact', contactsToAdd, contactsToRemove)
     },
   }
 }
