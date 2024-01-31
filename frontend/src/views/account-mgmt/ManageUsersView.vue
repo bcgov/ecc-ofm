@@ -220,6 +220,7 @@ export default {
      * Sort users by: account management role 1st, expense authority 2nd, last name 3rd
      */
     sortUsers(users) {
+      if (!users) return []
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
         const roleA = a.role === this.ROLES.ACCOUNT_MANAGEMENT
