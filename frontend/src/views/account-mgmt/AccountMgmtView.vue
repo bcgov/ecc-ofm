@@ -17,17 +17,14 @@
         </v-list-item>
       </v-list>
     </v-card>
-    <AppButton id="back-home-button" class="mt-2" :primary="false" size="large" width="220px" :to="{ name: 'home' }">
-      <v-icon class="pb-1">mdi-arrow-left</v-icon>
-      Back to Home
-    </AppButton>
+    <AppBackButton id="back-home-button" size="large" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
-  components: { AppButton },
+  components: { AppBackButton },
 }
 </script>
