@@ -2,7 +2,7 @@
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
       <div>The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.</div>
-      <AppButton v-if="!loading" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+      <AppButton v-if="!loading && !readonly" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
       <div v-if="documents.length > 0" class="mt-6">
         <v-row v-for="item in documents" :key="item.id" no-gutters>
           <v-col cols="12" md="3" class="pr-4">
@@ -18,7 +18,7 @@
           <v-col cols="11" md="6" class="pr-4">
             <v-text-field v-model="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
           </v-col>
-          <v-col v-if="!loading" cols="1" class="pt-3">
+          <v-col v-if="!loading && !readonly" cols="1" class="pt-3">
             <v-icon small @click="deleteFile(item.id)">mdi-delete</v-icon>
           </v-col>
         </v-row>
@@ -27,7 +27,7 @@
         <AppLabel>Uploaded Documents</AppLabel>
         <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" density="compact">
           <template #item.actionButtons="{ item }">
-            <v-icon small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
+            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
           </template>
           <template v-slot:bottom><!-- no paging --></template>
         </v-data-table>
@@ -49,6 +49,10 @@ export default {
       required: true,
     },
     loading: {
+      type: Boolean,
+      default: false,
+    },
+    readonly: {
       type: Boolean,
       default: false,
     },

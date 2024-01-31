@@ -33,6 +33,7 @@
       <AppDocumentUpload
         entityName="ofm_applications"
         :loading="processing"
+        :readonly="readonly"
         :uploadedDocuments="uploadedDocuments"
         @updateDocuments="updateDocumentsToUpload"
         @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
@@ -86,12 +87,10 @@ export default {
       rules,
       FACILITY_TYPES,
       model: {},
-      costsModel: {},
       uploadedDocuments: [],
       documentsToUpload: [],
       documentsToDelete: [],
       processing: false,
-      FACILITY_TYPE_INFO_TXT: 'This is a placeholder message',
     }
   },
   computed: {
@@ -144,8 +143,8 @@ export default {
   },
   async created() {
     this.model.facilityType = this.currentApplication?.facilityType
-    await this.getDocuments()
     this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
+    await this.getDocuments()
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
