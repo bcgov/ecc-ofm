@@ -10,16 +10,7 @@
               <p>Rent/Lease</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.rentLeaseCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('rentLeaseCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.rentLeaseCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -33,35 +24,17 @@
               <p>Mortgage</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.mortgageCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('mortgageCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.mortgageCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Property/municipal Tax</p>
+              <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.propertyTax"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('propertyTax')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -71,16 +44,7 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.strataFee"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('strataFee')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -91,19 +55,10 @@
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Property/municipal Tax</p>
+              <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.propertyTax"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('propertyTax')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -113,16 +68,7 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.strataFee"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('strataFee')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -136,35 +82,17 @@
               <p>Fee (If Applicable)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.applicableFee"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('applicableFee')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.applicableFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Property/municipal Tax</p>
+              <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.propertyTax"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('propertyTax')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -174,16 +102,7 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.strataFee"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeNumber('strataFee')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -196,7 +115,7 @@
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
             <v-col cols="6" xl="7" class="pl-6">
-              <v-text-field v-number="totalNumberFormat" class="totalYearlyCost" :value="totalYearlyCost" variant="plain" density="compact" readonly></v-text-field>
+              <AppNumberInput :value="totalYearlyCost" :format="totalNumberFormat" variant="plain" readonly class="totalYearlyCost"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -209,15 +128,12 @@
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
-import { directive as VNumber } from '@coders-tm/vue-number-format'
+import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
 import { FACILITY_TYPES } from '@/utils/constants'
 
 export default {
-  components: { AppLabel },
-  directives: {
-    number: VNumber,
-  },
+  components: { AppLabel, AppNumberInput },
   props: {
     readonly: {
       type: Boolean,
@@ -233,7 +149,7 @@ export default {
     return {
       rules,
       fieldNumberFormat: {
-        nullValue: 0,
+        nullValue: '0.00',
         min: 0,
         decimal: '.',
         separator: ',',
@@ -251,8 +167,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication']),
     totalYearlyCost() {
       const totalYearlyCost = Object.values(this.model)?.reduce((total, cost) => total + Number(cost), 0)
-      // show decimal point only if totalYearlyCost is a decimal number
-      return totalYearlyCost % 1 != 0 ? totalYearlyCost.toFixed(2) : totalYearlyCost
+      return totalYearlyCost.toFixed(2)
     },
   },
   watch: {
@@ -265,30 +180,24 @@ export default {
     facilityType: {
       handler() {
         this.model = {
-          rentLeaseCost: 0,
-          mortgageCost: 0,
-          propertyTax: 0,
-          strataFee: 0,
-          applicableFee: 0,
+          rentLeaseCost: '0.00',
+          mortgageCost: '0.00',
+          propertyTax: '0.00',
+          strataFee: '0.00',
+          applicableFee: '0.00',
         }
       },
     },
   },
   created() {
     this.model = {
-      rentLeaseCost: this.currentApplication?.rentLeaseCost ?? 0,
-      mortgageCost: this.currentApplication?.mortgageCost ?? 0,
-      propertyTax: this.currentApplication?.propertyTax ?? 0,
-      strataFee: this.currentApplication?.strataFee ?? 0,
-      applicableFee: this.currentApplication?.applicableFee ?? 0,
+      rentLeaseCost: this.currentApplication?.rentLeaseCost ? this.currentApplication?.rentLeaseCost?.toFixed(2) : '0.00',
+      mortgageCost: this.currentApplication?.mortgageCost ? this.currentApplication?.mortgageCost?.toFixed(2) : '0.00',
+      propertyTax: this.currentApplication?.propertyTax ? this.currentApplication?.propertyTax?.toFixed(2) : '0.00',
+      strataFee: this.currentApplication?.strataFee ? this.currentApplication?.strataFee?.toFixed(2) : '0.00',
+      applicableFee: this.currentApplication?.applicableFee ? this.currentApplication?.applicableFee?.toFixed(2) : '0.00',
     }
     this.FACILITY_TYPES = FACILITY_TYPES
-  },
-  methods: {
-    sanitizeNumber(key) {
-      if (typeof this.model[key] === 'number') return
-      this.model[key] = this.model[key]?.replace(/,/g, '')
-    },
   },
 }
 </script>
