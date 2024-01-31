@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, getUserByBCeID } = require('../components/user')
+const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, getUserByBCeID, updateUserFacilityPermission } = require('../components/user')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 const createUserSchema = {
@@ -64,6 +64,17 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getUsersPermissionsFacilities(req, res)
+  },
+)
+
+router.patch(
+  '/permissions-facilities/:bceidFacilityId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('bceidFacilityId', 'URL param: [bceidFacilityId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateUserFacilityPermission(req, res)
   },
 )
 
