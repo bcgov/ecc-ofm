@@ -3,7 +3,7 @@
     <v-row no-gutters class="mt-4"><strong>Please provide operating costs for the selected facility:</strong></v-row>
     <v-row no-gutters class="mt-4">
       <v-col cols="12" md="3" lg="2" class="mt-4">
-        <AppLabel>Facility type:</AppLabel>
+        <AppLabel>Facility Type:</AppLabel>
       </v-col>
       <v-col cols="10" md="7" lg="5" class="mt-3">
         <v-select
@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
     <YearlyOperatingCost v-if="model.facilityType" :readonly="readonly" @update="updateModel" />
-    <YearlyFacilityCost v-if="model.facilityType" class="my-8" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
+    <YearlyFacilityCost v-if="model.facilityType" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
     <v-row v-if="model.facilityType === FACILITY_TYPES.RENT_LEASE" no-gutters class="pb-6">
       <AppLabel>Supporting Documents</AppLabel>
       <AppDocumentUpload
@@ -111,7 +111,9 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
-      const totalCosts = Object.values(this.costsModel)?.reduce((total, cost) => total + Number(cost), 0)
+      const costsModel = Object.assign({}, this.model)
+      delete costsModel?.facilityType
+      const totalCosts = Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
       const isDocumentUploaded =
         this.model.facilityType != FACILITY_TYPES.RENT_LEASE || (this.model.facilityType === FACILITY_TYPES.RENT_LEASE && this.documentsToUpload?.length + this.uploadedDocuments?.length > 0)
       return this.model.facilityType && totalCosts > 0 && isDocumentUploaded
@@ -143,6 +145,7 @@ export default {
   async created() {
     this.model.facilityType = this.currentApplication?.facilityType
     await this.getDocuments()
+    this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
@@ -211,12 +214,8 @@ export default {
     },
 
     updateModel(updatedModel) {
-      Object.entries(updatedModel)?.forEach(([key, value]) => {
-        this.costsModel[key] = Number(value)
-        this.model[key] = Number(value)
-      })
+      Object.entries(updatedModel)?.forEach(([key, value]) => (this.model[key] = Number(value)))
     },
   },
 }
 </script>
-<style scoped></style>

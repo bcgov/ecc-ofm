@@ -9,16 +9,7 @@
               <p>Insurance</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.insuranceCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('insuranceCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.insuranceCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -26,7 +17,7 @@
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
               <p>
-                Upkeep And Labour Supplies
+                Upkeep and Labour
                 <v-tooltip content-class="tooltip" :text="UPKEEP_INFO_TXT">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
@@ -35,16 +26,7 @@
               </p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.upkeepLabourSuppliesCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('upkeepLabourSuppliesCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.upkeepLabourCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -63,16 +45,7 @@
               </p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.utilitiesCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('utilitiesCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.utilitiesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -80,7 +53,7 @@
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
               <p>
-                Maintenance And Repairs
+                Maintenance and Repairs
                 <v-tooltip content-class="tooltip" :text="MAINTENANCE_INFO_TXT">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
@@ -89,16 +62,7 @@
               </p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.maintenanceRepairsCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('maintenanceRepairsCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.maintenanceRepairsCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -108,7 +72,7 @@
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
               <p>
-                Furniture And Equipments
+                Furniture and Equipment
                 <v-tooltip content-class="tooltip" :text="FURNITURE_INFO_TXT">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
@@ -117,16 +81,17 @@
               </p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field
-                v-model.lazy="model.furnitureEquipmentsCost"
-                v-number="fieldNumberFormat"
-                variant="outlined"
-                density="compact"
-                :disabled="readonly"
-                prefix="$"
-                maxlength="12"
-                :rules="[rules.max(5000000)]"
-                @input="sanitizeInput('furnitureEquipmentsCost')"></v-text-field>
+              <AppNumberInput v-model.lazy="model.furnitureEquipmentsCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>Supplies</p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.suppliesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -138,7 +103,7 @@
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
             <v-col cols="6" xl="7" class="pl-6">
-              <v-text-field v-number="totalNumberFormat" class="totalYearlyCost" :value="totalYearlyCost" variant="plain" density="compact" readonly></v-text-field>
+              <AppNumberInput :value="totalYearlyCost" :format="totalNumberFormat" variant="plain" readonly class="totalYearlyCost"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -149,16 +114,13 @@
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
-import { directive as VNumber } from '@coders-tm/vue-number-format'
 import rules from '@/utils/rules'
 
 export default {
-  components: { AppLabel },
-  directives: {
-    number: VNumber,
-  },
+  components: { AppLabel, AppNumberInput },
   props: {
     readonly: {
       type: Boolean,
@@ -170,7 +132,7 @@ export default {
     return {
       rules,
       fieldNumberFormat: {
-        nullValue: 0,
+        nullValue: '0.00',
         min: 0,
         decimal: '.',
         separator: ',',
@@ -182,18 +144,13 @@ export default {
         prefix: '$ ',
       },
       model: {},
-      UTILITIES_INFO_TXT: 'This is a placeholder message',
-      FURNITURE_INFO_TXT: 'This is a placeholder message',
-      UPKEEP_INFO_TXT: 'This is a placeholder message',
-      MAINTENANCE_INFO_TXT: 'This is a placeholder message',
     }
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
     totalYearlyCost() {
       const totalYearlyCost = Object.values(this.model)?.reduce((total, cost) => total + Number(cost), 0)
-      // show decimal point only if totalYearlyCost is a decimal number
-      return totalYearlyCost % 1 != 0 ? totalYearlyCost.toFixed(2) : totalYearlyCost
+      return totalYearlyCost.toFixed(2)
     },
   },
   watch: {
@@ -206,18 +163,17 @@ export default {
   },
   created() {
     this.model = {
-      insuranceCost: this.currentApplication?.insuranceCost ?? 0,
-      upkeepLabourSuppliesCost: this.currentApplication?.upkeepLabourSuppliesCost ?? 0,
-      utilitiesCost: this.currentApplication?.utilitiesCost ?? 0,
-      maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost ?? 0,
-      furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost ?? 0,
+      insuranceCost: this.currentApplication?.insuranceCost ? this.currentApplication?.insuranceCost?.toFixed(2) : '0.00',
+      upkeepLabourCost: this.currentApplication?.upkeepLabourCost ? this.currentApplication?.upkeepLabourCost?.toFixed(2) : '0.00',
+      suppliesCost: this.currentApplication?.suppliesCost ? this.currentApplication?.suppliesCost?.toFixed(2) : '0.00',
+      utilitiesCost: this.currentApplication?.utilitiesCost ? this.currentApplication?.utilitiesCost?.toFixed(2) : '0.00',
+      maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost ? this.currentApplication?.maintenanceRepairsCost?.toFixed(2) : '0.00',
+      furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost ? this.currentApplication?.furnitureEquipmentsCost?.toFixed(2) : '0.00',
     }
-  },
-  methods: {
-    sanitizeInput(key) {
-      if (typeof this.model[key] === 'number') return
-      this.model[key] = this.model[key]?.replace(/,/g, '')
-    },
+    this.UTILITIES_INFO_TXT = 'This is a placeholder message'
+    this.FURNITURE_INFO_TXT = 'This is a placeholder message'
+    this.UPKEEP_INFO_TXT = 'This is a placeholder message'
+    this.MAINTENANCE_INFO_TXT = 'This is a placeholder message'
   },
 }
 </script>
