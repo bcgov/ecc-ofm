@@ -5,7 +5,7 @@
       <AppButton v-if="!loading && !readonly" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
       <div v-if="documents.length > 0" class="mt-6">
         <v-row v-for="item in documents" :key="item.id" no-gutters>
-          <v-col cols="12" md="3" class="pr-4">
+          <v-col cols="12" md="4" class="pr-4">
             <v-file-input
               v-model="item.file"
               label="Select a file"
@@ -15,7 +15,7 @@
               :disabled="loading"
               @update:modelValue="validateFile(item.id)"></v-file-input>
           </v-col>
-          <v-col cols="11" md="6" class="pr-4">
+          <v-col cols="11" md="7" class="pr-4">
             <v-text-field v-model="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
           </v-col>
           <v-col v-if="!loading && !readonly" cols="1" class="pt-3">
