@@ -209,6 +209,7 @@ const LicenceMappings = [
   { back: 'ofm_licence', front: 'licence' },
   { back: 'ofm_health_authority', front: 'healthAuthorityId' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
 ]
 
 const DocumentMappings = [
