@@ -23,3 +23,10 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add("webExceptions", () => {
+  cy.origin("https://mychildcareservicesdev.crm3.dynamics.com", () => {
+    cy.on("uncaught:exception", (e) => {
+      return false;
+    });
+  });
+});

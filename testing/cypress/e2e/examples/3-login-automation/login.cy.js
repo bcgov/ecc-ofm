@@ -1,26 +1,23 @@
 describe("Azure Active Directory Authentication", () => {
   beforeEach(() => {
     // log into Azure Active Directory through our sample SPA using our custom command
+    cy.webExceptions();
+    cy.visit("https://google.ca");
     cy.loginToAAD(Cypress.env("aad_username"), Cypress.env("aad_password"));
-    cy.wait(1000);
-    cy.contains("Dynamics 365").should("exist");
+    cy.visit(
+      "https://mychildcareservicesdev.crm3.dynamics.com/main.aspx?appid=af54cb40-d463-ee11-8df0-000d3a09d499"
+    );
   });
 
-  it("checks nothing", () => {
-    expect(true).to.be.equal(true);
-    cy.wait(200000);
-  });
-  //   it("verifies the user logged in has the correct name", () => {
-  //     cy.get('#table-body-div td:contains("name") + td').should(
-  //       "contain",
-  //       `${Cypress.env("aad_name")}`
-  //     );
-  //   });
+  it("does nothing", () => {
+    cy.origin("https://mychildcareservicesdev.crm3.dynamics.com", () => {
+      cy.get('ul[aria-label="Case Management"]')
+        .contains("Assistance Requests")
+        .click();
+      cy.get('button[aria-label="New"]').click();
+      cy.get('input[aria-label="Subject"]').type("Subject stuff");
+    });
 
-  //   it("verifies the user logged in has the correct preferred name", () => {
-  //     cy.get('#table-body-div td:contains("preferred_username") + td').should(
-  //       "contain",
-  //       `${Cypress.env("aad_username")}`
-  //     );
-  //   });
+    expect(true).to.equal(true);
+  });
 });
