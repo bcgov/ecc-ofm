@@ -28,7 +28,7 @@
     </v-row>
     <YearlyOperatingCost v-if="model.facilityType" :readonly="readonly" @update="updateModel" />
     <YearlyFacilityCost v-if="model.facilityType" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
-    <v-row v-if="model.facilityType === FACILITY_TYPES.RENT_LEASE" no-gutters class="pb-6">
+    <v-row v-if="isRentLease" no-gutters class="pb-6">
       <AppLabel>Supporting Documents</AppLabel>
       <AppDocumentUpload
         entityName="ofm_applications"
@@ -113,9 +113,11 @@ export default {
       const costsModel = Object.assign({}, this.model)
       delete costsModel?.facilityType
       const totalCosts = Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
-      const isDocumentUploaded =
-        this.model.facilityType != FACILITY_TYPES.RENT_LEASE || (this.model.facilityType === FACILITY_TYPES.RENT_LEASE && this.documentsToUpload?.length + this.uploadedDocuments?.length > 0)
+      const isDocumentUploaded = !this.isRentLease || (this.isRentLease && this.documentsToUpload?.length + this.uploadedDocuments?.length > 0)
       return this.model.facilityType && totalCosts > 0 && isDocumentUploaded
+    },
+    isRentLease() {
+      return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
     },
   },
   watch: {
@@ -170,13 +172,12 @@ export default {
     },
 
     async getDocuments() {
-      if (this.model.facilityType != FACILITY_TYPES.RENT_LEASE) return
       try {
         this.$emit('process', true)
         this.processing = true
         this.uploadedDocuments = await DocumentService.getDocuments(this.$route.params.applicationGuid)
       } catch (error) {
-        this.setFailureAlert('Failed to get your document', error)
+        this.setFailureAlert('Failed to retrieve supporting documents', error)
       } finally {
         this.processing = false
         this.$emit('process', false)
@@ -197,7 +198,7 @@ export default {
 
     // Only service providers who rent, or lease space need to upload documents (i.e.: a copy of my rent/lease agreement).
     async processDocuments() {
-      if (this.model.facilityType != FACILITY_TYPES.RENT_LEASE || (isEmpty(this.documentsToUpload) && isEmpty(this.documentsToDelete))) return
+      if (!this.isRentLease || (isEmpty(this.documentsToUpload) && isEmpty(this.documentsToDelete))) return
       if (!isEmpty(this.documentsToUpload)) {
         await DocumentService.createDocuments(this.documentsToUpload, this.$route.params.applicationGuid)
       }
