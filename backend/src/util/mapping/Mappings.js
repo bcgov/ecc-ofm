@@ -211,12 +211,25 @@ const LicenceMappings = [
   { back: 'statuscode', front: 'statusCode' },
 ]
 
+const DocumentMappings = [
+  { back: 'ofm_documentid', front: 'documentId' },
+  { back: 'ofm_name', front: 'referenceNumber' },
+  { back: 'ofm_file_name', front: 'fileName' },
+  { back: 'ofm_subject', front: 'subject' },
+  { back: 'ofm_description', front: 'description' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: '_ofm_regardingid_value', front: 'regardingId' },
+]
+
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
+  DocumentMappings,
   FacilityMappings,
   LicenceMappings,
   NotificationMappings,
