@@ -176,9 +176,9 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
       let facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
-      facilityData.accountNumber = facilityData.address.accountnumber
-      facilityData.city = facilityData.address.address1_city
-      facilityData.address = facilityData.address.address1_line1
+      facilityData.accountNumber = facilityData?.address.accountnumber
+      facilityData.city = facilityData.address?.address1_city
+      facilityData.address = facilityData?.address.address1_line1
       return facilityData
     })
   }

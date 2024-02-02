@@ -34,7 +34,8 @@
                         label="Select contact to add"
                         density="compact"
                         variant="outlined"
-                        @update:modelValue="addContact">
+                        @update:modelValue="addContact"
+                        :error-messages="errorMessage">
                       </v-autocomplete>
                     </v-col>
                   </v-row>
@@ -129,6 +130,11 @@ export default {
         { title: 'Role', value: 'role', width: '30%' },
         { title: '', value: 'actions', width: '50%' }
       ],
+      errorMessage: '',
+      atLeastOneContactRules: [
+        v => !!v || 'At least one expense authority is required for a facility.',
+      ],
+
     }
   },
   computed: {
@@ -177,6 +183,9 @@ export default {
       if (autoComplete) {
         autoComplete.focus();
         autoComplete.blur();
+        if (this.contactsToDisplay?.length > 0) {
+          this.errorMessage = ''
+        }
       }
     },
 
@@ -214,14 +223,19 @@ export default {
       this.updatedContactsToRemove = []
       this.contactId = null
       this.editMode = false
+      this.errorMessage = ''
     },
 
     /**
      * Send emit to save the updated contacts to add and remove
      */
     saveContactsToUpdate() {
-      this.$emit('save-contact-updates', this.updatedContactsToAdd, this.updatedContactsToRemove)
-      this.editMode = false
+      if (this.contactsToDisplay?.length === 0) {
+        this.errorMessage = 'At least one expense authority is required';
+      } else {
+        this.$emit('save-contact-updates', this.updatedContactsToAdd, this.updatedContactsToRemove)
+        this.editMode = false
+      }
     },
 
     /**
