@@ -284,40 +284,38 @@ export default {
      * Deactivates a user if they are not the last Expense Authority for any facility.
      */
     deactivateUser(user) {
-      const { isLastExpenseAuthority, facilityNames } = this.isUserLastExpenseAuthority(user.contactId);
-      if (isLastExpenseAuthority) {
-        this.setFailureAlert(`Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`);
+      const facilityNames = this.getLastExpenseAuthoritiesForUser(user)
+      if (facilityNames.length > 0) {
+        this.setFailureAlert(`Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`)
       } else {
-        this.toggleDeactivateUserDialog(user);
+        this.toggleDeactivateUserDialog(user)
       }
     },
 
     /**
-     * Checks if the user is the last Expense Authority for facilities they are currently assigned.
-     * Returns an object with a boolean indicating if they are the last expense authority, and an array of facility names.
-     */
-    isUserLastExpenseAuthority(contactId) {
+     * Get the last expense authority facility names for a user
+    */
+    getLastExpenseAuthoritiesForUser(user) {
       // Find target users's facilities that are marked as isExpenseAuthority
-      const targetFacilities = this.usersAndFacilities.find(user => user.contactId === contactId)?.facilities.filter(f => f.isExpenseAuthority) || [];
+      const targetFacilities = this.usersAndFacilities.find(userToCheck => userToCheck.contactId === user.contactId)?.facilities.filter(f => f.isExpenseAuthority) || []
       // If no facilities with isExpenseAuthority true, return false
       if (targetFacilities.length === 0) {
-        return { isLastExpenseAuthority: false, facilityNames: [] };
+        return { isLastExpenseAuthority: false, facilityNames: [] }
       }
-      const lastExpenseAuthorityFacilityNames = [];
+      const lastExpenseAuthorityFacilityNames = []
       // Check for each of the target's facilities with isExpenseAuthority true
-      for (const facility of targetFacilities) {
+      targetFacilities.forEach(facility => {
         // Check if any other user has a facility with the same facilityId and isExpenseAuthority true
-        const hasOtherUserWithAuthority = this.usersAndFacilities.some(user =>
-          user.contactId !== contactId &&
-          user.facilities.some(f => f.facilityId === facility.facilityId && f.isExpenseAuthority));
+        const hasOtherUserWithAuthority = this.usersAndFacilities.some(userToCheck =>
+          userToCheck.contactId !== user.contactId &&
+          userToCheck.facilities.some(f => f.facilityId === facility.facilityId && f.isExpenseAuthority))
         if (!hasOtherUserWithAuthority) {
-          lastExpenseAuthorityFacilityNames.push(facility.facilityName);
+          lastExpenseAuthorityFacilityNames.push(facility.facilityName)
         }
-      }
-      const isLastExpenseAuthority = lastExpenseAuthorityFacilityNames.length > 0;
-      return { isLastExpenseAuthority, facilityNames: lastExpenseAuthorityFacilityNames };
+      })
+      return lastExpenseAuthorityFacilityNames
     },
-  },
+  }
 }
 </script>
 

@@ -131,6 +131,7 @@
       titleInfo="(You can have more than one expense authority)"
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
+      :atLeastOneContactMandatory="true"
       @save-contact-updates="saveExpenseAuthorityUpdates" />
     <EditFacilityContacts
       :loading="loading"
