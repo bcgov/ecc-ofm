@@ -87,6 +87,7 @@
 <script>
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
+import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import rolesMixin from '@/mixins/rolesMixin.js'
@@ -98,7 +99,7 @@ import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 
 export default {
-  components: { AppBackButton, ManageUserDialog, DeactivateUserDialog },
+  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {
@@ -294,7 +295,7 @@ export default {
     */
     getLastExpenseAuthoritiesForUser(user) {
       // Find target users's facilities that are marked as isExpenseAuthority
-      const targetFacilities = this.usersAndFacilities.find(userToCheck => userToCheck.contactId === user.contactId)?.facilities.filter(f => f.isExpenseAuthority) || []
+      const targetFacilities = user.facilities.filter(f => f.isExpenseAuthority) || []
       // If no facilities with isExpenseAuthority true, return false
       if (targetFacilities.length === 0) {
         return { isLastExpenseAuthority: false, facilityNames: [] }

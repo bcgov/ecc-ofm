@@ -149,6 +149,7 @@
 </template>
 
 <script>
+import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
@@ -165,7 +166,7 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
+  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
   mixins: [alertMixin],
   data() {
     return {
