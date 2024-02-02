@@ -4,7 +4,6 @@
     <div class="app-header">
       <TheHeader />
       <TheSnackBar />
-      <TheNavBar v-if="pageTitle && isAuthenticated && showNavBar" :title="pageTitle" />
     </div>
 
     <v-main class="align-start">
@@ -26,7 +25,6 @@ import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import TheHeroImage from '@/components/TheHeroImage.vue'
 import TheModalIdle from '@/components/TheModalIdle.vue'
-import TheNavBar from '@/components/TheNavBar.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
@@ -39,7 +37,6 @@ export default {
     TheHeader,
     TheHeroImage,
     TheSnackBar,
-    TheNavBar,
     TheModalIdle,
     TheFooter,
     TheFacilityHeader,
@@ -53,7 +50,6 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isActingProvider']),
-    ...mapState(useAppStore, ['pageTitle', 'showNavBar']),
     mobile() {
       return this.$vuetify.display.mobile
     },

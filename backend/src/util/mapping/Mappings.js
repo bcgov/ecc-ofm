@@ -131,7 +131,8 @@ const ApplicationMappings = [
   { back: 'ofm_summary_ownership', front: 'ownership' },
   { back: 'ofm_costs_facility_type', front: 'facilityType' },
   { back: 'ofm_costs_property_insurance', front: 'insuranceCost' },
-  { back: 'ofm_costs_upkeep_labour_supplies', front: 'upkeepLabourSuppliesCost' },
+  { back: 'ofm_costs_upkeep_labour_supplies', front: 'upkeepLabourCost' },
+  { back: 'ofm_costs_supplies', front: 'suppliesCost' },
   { back: 'ofm_costs_utilities', front: 'utilitiesCost' },
   { back: 'ofm_costs_maintenance_repairs', front: 'maintenanceRepairsCost' },
   { back: 'ofm_costs_furniture_equipment', front: 'furnitureEquipmentsCost' },
@@ -208,6 +209,19 @@ const LicenceMappings = [
   { back: 'ofm_licence', front: 'licence' },
   { back: 'ofm_health_authority', front: 'healthAuthorityId' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const DocumentMappings = [
+  { back: 'ofm_documentid', front: 'documentId' },
+  { back: 'ofm_name', front: 'referenceNumber' },
+  { back: 'ofm_file_name', front: 'fileName' },
+  { back: 'ofm_subject', front: 'subject' },
+  { back: 'ofm_description', front: 'description' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: '_ofm_regardingid_value', front: 'regardingId' },
 ]
 
 module.exports = {
@@ -216,6 +230,7 @@ module.exports = {
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
+  DocumentMappings,
   FacilityMappings,
   LicenceMappings,
   NotificationMappings,

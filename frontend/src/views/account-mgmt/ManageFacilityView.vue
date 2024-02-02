@@ -85,7 +85,8 @@
                   <AppLabel>Change primary contact:</AppLabel>
                 </v-col>
                 <v-col cols="4" class="pb-0">
-                  <v-select v-if="editModePrimaryContact"
+                  <v-select
+                    v-if="editModePrimaryContact"
                     id="primary-contact"
                     v-model="primaryContact"
                     :items="sortedContacts"
@@ -95,11 +96,8 @@
                     :rules="rules.required"
                     density="compact"
                     variant="outlined"
-                    return-object>
-                  </v-select>
-                  <template v-else>
-                    {{ primaryContact?.firstName }} {{ primaryContact?.lastName }}
-                  </template>
+                    return-object></v-select>
+                  <template v-else>{{ primaryContact?.firstName }} {{ primaryContact?.lastName }}</template>
                 </v-col>
               </v-row>
               <v-row>
@@ -143,10 +141,7 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-row justify="center" justify-md="start" class="pb-2">
-          <AppButton id="back-to-manage-organization" :primary="false" size="large" width="515px" :to="{ name: 'manage-organization' }" :loading="loading">
-            <v-icon class="pb-1">mdi-arrow-left</v-icon>
-            Back to Organization Information
-          </AppButton>
+          <AppBackButton id="back-to-manage-organization" width="450px" :to="{ name: 'manage-organization' }" :loading="loading">Organization Information</AppBackButton>
         </v-row>
       </v-col>
     </v-row>
@@ -154,7 +149,7 @@
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
@@ -170,7 +165,7 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
+  components: { AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
   mixins: [alertMixin],
   data() {
     return {
@@ -275,7 +270,7 @@ export default {
       this.primaryContact = this.primaryContactLastSaved
     },
 
-    /** 
+    /**
      * Save primary contact updates
      */
     async savePrimaryContact() {
@@ -305,9 +300,9 @@ export default {
     async saveContactUpdates(property, contactType, contactsToAdd, contactsToRemove) {
       this.loading = true
       try {
-        contactsToAdd.forEach(obj => obj[property] = true)
-        contactsToRemove?.forEach(obj => obj[property] = false)
-        const contactsToUpdate = (contactsToRemove?.length === 0) ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
+        contactsToAdd.forEach((obj) => (obj[property] = true))
+        contactsToRemove?.forEach((obj) => (obj[property] = false))
+        const contactsToUpdate = contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
         let updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
             await ApiService.apiAxios.patch(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + contact.bceidFacilityId, contact)
@@ -339,7 +334,7 @@ export default {
     async saveAdditionalContactUpdates(contactsToAdd, contactsToRemove) {
       await this.saveContactUpdates('isAdditionalContact', 'Additional Contact', contactsToAdd, contactsToRemove)
     },
-  }
+  },
 }
 </script>
 
