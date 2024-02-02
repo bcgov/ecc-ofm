@@ -34,7 +34,8 @@
                         label="Select contact to add"
                         density="compact"
                         variant="outlined"
-                        @update:modelValue="addContact">
+                        @update:modelValue="addContact"
+                        :error-messages="errorMessage">
                       </v-autocomplete>
                     </v-col>
                   </v-row>
@@ -112,6 +113,11 @@ export default {
       type: Array,
       required: true
     },
+    atLeastOneContactMandatory: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   emits: ['save-contact-updates'],
   data() {
@@ -129,6 +135,11 @@ export default {
         { title: 'Role', value: 'role', width: '30%' },
         { title: '', value: 'actions', width: '50%' }
       ],
+      errorMessage: '',
+      atLeastOneContactRules: [
+        v => !!v || 'At least one expense authority is required for a facility.',
+      ],
+
     }
   },
   computed: {
@@ -173,10 +184,13 @@ export default {
      * NOTE: This is a workaround for the autocomplete component not triggering update event until the input loses focus.
      */
     removeFocus() {
-      const autoComplete = this.$refs.autoComplete;
+      const autoComplete = this.$refs.autoComplete
       if (autoComplete) {
-        autoComplete.focus();
-        autoComplete.blur();
+        autoComplete.focus()
+        autoComplete.blur()
+        if (this.contactsToDisplay?.length > 0) {
+          this.errorMessage = ''
+        }
       }
     },
 
@@ -190,7 +204,7 @@ export default {
       const contactToAdd = this.contactsAvailableForAdd.find(item => item.contactId === this.contactId)
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
-      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => obj.contactId !== contactToAdd.contactId);
+      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => obj.contactId !== contactToAdd.contactId)
       this.contactId = null
       this.removeFocus()
     },
@@ -199,7 +213,7 @@ export default {
      * Remove a contact from the list of contacts to display and add to the list of contacts available for add
      */
     deleteContact(contact) {
-      this.contactsToDisplay = this.contactsToDisplay.filter(obj => obj.contactId !== contact.contactId);
+      this.contactsToDisplay = this.contactsToDisplay.filter(obj => obj.contactId !== contact.contactId)
       this.updatedContactsToRemove.push(contact)
       this.contactsAvailableForAdd = [...this.contactsAvailableForAdd, contact]
     },
@@ -214,14 +228,19 @@ export default {
       this.updatedContactsToRemove = []
       this.contactId = null
       this.editMode = false
+      this.errorMessage = ''
     },
 
     /**
      * Send emit to save the updated contacts to add and remove
      */
     saveContactsToUpdate() {
-      this.$emit('save-contact-updates', this.updatedContactsToAdd, this.updatedContactsToRemove)
-      this.editMode = false
+      if (this.atLeastOneContactMandatory && this.contactsToDisplay?.length === 0) {
+        this.errorMessage = 'At least one expense authority is required'
+      } else {
+        this.$emit('save-contact-updates', this.updatedContactsToAdd, this.updatedContactsToRemove)
+        this.editMode = false
+      }
     },
 
     /**
