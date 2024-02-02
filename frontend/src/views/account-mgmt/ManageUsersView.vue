@@ -80,17 +80,14 @@
     </v-row>
     <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="220px" :to="{ name: 'home' }">
-      <v-icon class="pb-1">mdi-arrow-left</v-icon>
-      Back to Home
-    </AppButton>
+    <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
   </v-container>
 </template>
 
 <script>
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
-import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import alertMixin from '@/mixins/alertMixin'
@@ -101,7 +98,7 @@ import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 
 export default {
-  components: { AppButton, ManageUserDialog, DeactivateUserDialog },
+  components: { AppBackButton, ManageUserDialog, DeactivateUserDialog },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {

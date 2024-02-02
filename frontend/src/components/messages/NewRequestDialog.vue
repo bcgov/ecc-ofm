@@ -25,7 +25,7 @@
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
               <v-text-field
-                v-model="newRequestModel.subject"
+                v-model.trim="newRequestModel.subject"
                 placeholder="Brief summary of request"
                 counter
                 maxlength="100"
@@ -40,7 +40,7 @@
             </v-col>
             <v-col class="v-col-12">
               <v-textarea
-                v-model="newRequestModel.description"
+                v-model.trim="newRequestModel.description"
                 placeholder="Detailed description of request"
                 counter
                 maxlength="1000"

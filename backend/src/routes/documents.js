@@ -3,12 +3,20 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { createDocuments } = require('../components/documents')
-const { validationResult } = require('express-validator')
+const { getDocuments, createDocuments, deleteDocument } = require('../components/documents')
+const { param, validationResult } = require('express-validator')
 const multer = require('multer')
 const upload = multer()
 
 module.exports = router
+
+/**
+ * Get the list of documents
+ */
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  validationResult(req).throw()
+  return getDocuments(req, res)
+})
 
 /**
  * Create new documents
@@ -16,6 +24,14 @@ module.exports = router
 router.post('/', upload.any(), passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
   return createDocuments(req, res)
+})
+
+/**
+ * Delete uploaded document
+ */
+router.delete('/:documentId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('documentId', 'URL param: [documentId] is required').not().isEmpty()], (req, res) => {
+  validationResult(req).throw()
+  return deleteDocument(req, res)
 })
 
 module.exports = router
