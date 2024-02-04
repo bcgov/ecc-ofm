@@ -9,7 +9,7 @@
         <ApplicationNavBar class="navBar" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
-        <router-view :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @completeForm="completeForm" @process="process"></router-view>
+        <router-view class="router-view" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @completeForm="completeForm" @process="process"></router-view>
         <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
         <AppNavButtons
           :loading="processing"
@@ -81,12 +81,13 @@ export default {
     await this.loadApplication()
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
+    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
     async loadApplication() {
       try {
         if (!this.$route.params.applicationGuid || this.currentApplication?.applicationId === this.$route.params.applicationGuid) return
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
+        this.checkApplicationComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
@@ -134,6 +135,10 @@ export default {
 }
 
 .loading-screen {
+  min-height: 45vh;
+}
+
+.router-view {
   min-height: 45vh;
 }
 </style>

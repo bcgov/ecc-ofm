@@ -1,6 +1,12 @@
 import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 
+function sortContactsByName(contacts) {
+  return contacts?.sort(function (a, b) {
+    return a.lastName?.localeCompare(b.lastName)
+  })
+}
+
 export default {
   async getFacility(accountId) {
     try {
@@ -17,7 +23,7 @@ export default {
     try {
       if (!facilityId) return
       const response = await ApiService.apiAxios.get(ApiRoutes.FACILITIES_CONTACTS.replace(':facilityId', facilityId))
-      return response?.data
+      return sortContactsByName(response?.data)
     } catch (error) {
       console.log(`Failed to get the contacts by facilityId - ${error}`)
       throw error
@@ -31,6 +37,17 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the licences by facilityId - ${error}`)
+      throw error
+    }
+  },
+
+  async updateFacilityPrimaryContact(facilityId, primaryContactId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.put(`${ApiRoutes.FACILITIES}/${facilityId}`, primaryContactId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to update facility primary contact by facility/account id - ${error}`)
       throw error
     }
   },

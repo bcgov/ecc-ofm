@@ -1,7 +1,7 @@
-import { ApiRoutes, AuthRoutes } from '@/utils/constants'
+import axios from 'axios'
 
 import AuthService from '@/common/authService'
-import axios from 'axios'
+import { ApiRoutes, AuthRoutes } from '@/utils/constants'
 
 // Buffer concurrent requests while refresh token is being acquired
 let failedQueue = []
@@ -49,6 +49,7 @@ const intercept = apiAxios.interceptors.response.use(
   },
 )
 
+// TODO (weskubo-cgi) Remove if unused
 function getCodes(url) {
   return async function getCodesHandler(query) {
     try {
@@ -92,10 +93,6 @@ export default {
       throw e
     }
   },
-
-  // TODO: consider weather we want to do codes this way when we address code list/description functionality...
-  //getAllActiveInstituteProvinceCodes: getCodes(`${Routes.cache.PROVINCES_URL}?active=true`),
-  //getAllActiveInstituteCountryCodes: getCodes(`${Routes.cache.COUNTRIES_URL}?active=true`),
 
   async getConfig() {
     try {

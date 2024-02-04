@@ -10,8 +10,8 @@
             <v-col cols="12" md="3">
               <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
-            <v-col v-if="isAddingUser" cols="12" md="9">
-              <v-text-field id="bceid" v-model="user.userName" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+            <v-col v-if="isAddingUser && !wasNewUserAdded" cols="12" md="9">
+              <v-text-field id="bceid" v-model="user.userName" @blur="checkBCeIDExists(user.userName)" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :error-messages="errorMessages" :disabled="isLoading"></v-text-field>
             </v-col>
             <v-col v-else cols="12" md="9" class="mb-5">
               <span>{{ user.userName }}</span>
@@ -83,7 +83,19 @@
                 :rules="rules.required"
                 :disabled="isLoading || isSameUser"
                 density="compact"
-                variant="outlined"></v-select>
+                variant="outlined">
+                <template v-slot:prepend-item>
+                  <v-list-item title="Select All" @click="toggleFacilitiesToAdminister">
+                    <template v-slot:prepend>
+                      <v-checkbox-btn
+                        :color="someFacilitiesSelected ? '#003366' : undefined"
+                        :indeterminate="someFacilitiesSelected && !allFacilitiesSelected"
+                        :model-value="someFacilitiesSelected"></v-checkbox-btn>
+                    </template>
+                  </v-list-item>
+                  <v-divider class="mt-2"></v-divider>
+                </template>
+              </v-select>
             </v-col>
           </v-row>
           <v-row v-else-if="wasNewUserAdded" no-gutters>
@@ -105,6 +117,7 @@
         </v-row>
       </template>
     </AppDialog>
+    <DuplicateUserDialog :show="showDuplicateUserDialog" @close="toggleDuplicateUserDialog()" @proceed-confirmed="closeDialogAndSaveUser()" />
   </v-container>
 </template>
 
@@ -119,12 +132,13 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
+import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
 
 const ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
 
 export default {
   name: 'ManageUserDialog',
-  components: { AppButton, AppDialog, AppLabel },
+  components: { AppButton, AppDialog, AppLabel, DuplicateUserDialog },
   mixins: [alertMixin],
   props: {
     show: {
@@ -152,6 +166,9 @@ export default {
       facilitiesUser: [],
       userOperationType: '', // Can be 'add', 'update'
       wasNewUserAdded: false,
+      errorMessages: [],
+      showDuplicateUserDialog: false,
+      continueSaveConfirmed: false,
     }
   },
   computed: {
@@ -168,6 +185,12 @@ export default {
     },
     isSameUser() {
       return this.user.userName === this.userInfo.userName
+    },
+    allFacilitiesSelected() {
+      return this.selectedFacilityIds?.length === this.facilitiesToAdminister?.length
+    },
+    someFacilitiesSelected() {
+      return this.selectedFacilityIds?.length > 0
     },
   },
   watch: {
@@ -226,10 +249,25 @@ export default {
     },
 
     /**
+     * Close the duplicate user dialog and save the user.
+     */
+    async closeDialogAndSaveUser() {
+      this.continueSaveConfirmed = true
+      this.toggleDuplicateUserDialog()
+      this.saveUser()
+    },
+
+    /**
      * Create a new user and emit success/fail event.
      */
     async createUser() {
       try {
+        // Check if user already exists, if so, prompt to confirm they wish to continue
+        const userExists = await this.doesUserExist(this.user.firstName, this.user.lastName, this.user.email)
+        if (!this.continueSaveConfirmed && userExists) {
+          this.toggleDuplicateUserDialog()
+          return
+        }
         this.user.organizationId = this.userInfo.organizationId
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
         this.user = response.data
@@ -258,7 +296,7 @@ export default {
      */
     async getUserFacilities(contactId, onlyWithPortalAccess) {
       try {
-        const res = await ApiService.apiAxios.get(`${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`);
+        const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`)
         return this.sortFacilities(res.data)
       } catch (error) {
         this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
@@ -296,7 +334,7 @@ export default {
       if (selectedFacilityIds?.length !== userFacilities?.length) {
         return true
       }
-      return selectedFacilityIds.some((facilityId) => !userFacilities.includes(facilityId))
+      return selectedFacilityIds?.some((facilityId) => !userFacilities?.includes(facilityId))
     },
 
     /**
@@ -328,7 +366,7 @@ export default {
      * Filter facilities to administer.
      */
     getSelectedFacilitiesByIds(selectedFacilityIds) {
-      return this.facilitiesToAdminister.filter((facility) => selectedFacilityIds.includes(facility.facilityId))
+      return this.facilitiesToAdminister?.filter((facility) => selectedFacilityIds?.includes(facility.facilityId))
     },
 
     /**
@@ -357,6 +395,51 @@ export default {
         }
       })
     },
+    toggleFacilitiesToAdminister() {
+      if (this.allFacilitiesSelected) {
+        this.selectedFacilityIds = []
+      } else {
+        this.selectedFacilityIds = this.facilitiesToAdminister?.map((facility) => facility.facilityId)
+      }
+    },
+
+    /**
+     * Check if BCeID exists in provider organization, if so raise error message.
+     */
+    async checkBCeIDExists(userName) {
+      try {
+        if (this.user.userName) {
+          const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`)
+          this.errorMessages = (res.data.length >= 1) ? ['A user with this BCeID already exists.'] : []
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed to check if BCeID already exists in provider organization: ' + userName, error)
+      }
+    },
+
+    /**
+     * Check if user already exists in provider organization by first name, last name, and email.
+     */
+    async doesUserExist(firstName, lastName, email) {
+      try {
+        const res = await ApiService.apiAxios.get(`${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`);
+        if (Array.isArray(res.data) && res.data.length >= 1) {
+          return true
+        }
+        this.errorMessages = [];
+        return false
+      } catch (error) {
+        this.setFailureAlert('Failed to check if user already exists in provider organization', error)
+      }
+    },
+
+    /**
+     * Toggle the duplicate user dialog.
+     */
+    toggleDuplicateUserDialog() {
+      this.showDuplicateUserDialog = !this.showDuplicateUserDialog
+    },
+
   },
 }
 </script>

@@ -1,5 +1,5 @@
 'use strict'
-const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation, postBatches } = require('./utils')
+const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation, postBatches, patchOperationWithObjectId } = require('./utils')
 const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
@@ -87,8 +87,13 @@ async function getUserInfo(req, res) {
   } else {
     // This is a BCeID user: if the userGuid cannot be found in dyanmics, then dyanmics will check if the userName exists,
     // if userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
-    log.verbose('BCEID User guid: ' + userGuid + ' username: ' + userName)
-    userResponse = await getUserProfile(userGuid, userName)
+    try {
+      log.verbose('BCEID User guid: ' + userGuid + ' username: ' + userName)
+      userResponse = await getUserProfile(userGuid, userName)
+    } catch (e) {
+      log.error('getUserProfile Error', e.response ? e.response.status : e.message)
+      return res.status(HttpStatus.UNAUTHORIZED).json(resData)
+    }
   }
 
   if (log.isVerboseEnabled) {
@@ -186,7 +191,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_is_expense_authority,ofm_is_primary_contact,ofm_last_name,ofm_portal_role,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,ofm_portal_role,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
@@ -281,10 +286,37 @@ async function updateUser(req, res) {
   }
 }
 
+async function getUserByBCeID(req, res) {
+  try {
+    const operation = `contacts?$select=contactid,ccof_username,ofm_first_name,ofm_last_name,emailaddress1&$filter=ccof_username eq '${req.params.queryUserName}'`
+    const response = await getOperation(operation)
+    const user = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
+    return res.status(HttpStatus.OK).json(user)
+  } catch (e) {
+    log.info('Error in getUserByBCeID:', e)
+    const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
+  }
+}
+
+async function updateUserFacilityPermission(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, UsersPermissionsFacilityMappings).toJSON()
+    delete payload['_ofm_facility_value@OData.Community.Display.V1.FormattedValue']
+    delete payload['_ofm_facility_value']
+    const response = await patchOperationWithObjectId('ofm_bceid_facilities', req.params.bceidFacilityId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   createUser,
+  getUserByBCeID,
   getUserFacilities,
   getUserInfo,
   getUsersPermissionsFacilities,
   updateUser,
+  updateUserFacilityPermission,
 }

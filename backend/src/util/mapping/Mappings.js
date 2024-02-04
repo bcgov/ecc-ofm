@@ -5,7 +5,7 @@ const UserProfileMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
-  { back: 'ofm_portal_role', front: 'roles' },
+  { back: 'ofm_portal_role', front: 'role' },
   { back: 'telephone1', front: 'phone' },
 ]
 
@@ -79,10 +79,8 @@ const UserMappings = [
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
   { back: 'ofm_portal_role', front: 'role' },
-  { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
-  { back: 'ofm_is_primary_contact', front: 'isPrimaryContact' },
 ]
 
 const UserFacilityMappings = [
@@ -104,6 +102,8 @@ const UsersPermissionsFacilityMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_facility', front: 'address' },
   { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
+  { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
+  { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
 ]
 
 const ApplicationMappings = [
@@ -117,6 +117,32 @@ const ApplicationMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'status' },
+  { back: 'ofm_staff_infant_ec_educator_ft', front: 'staffingInfantECEducatorFullTime' },
+  { back: 'ofm_staff_infant_ec_educator_pt', front: 'staffingInfantECEducatorPartTime' },
+  { back: 'ofm_staff_ec_educator_ft', front: 'staffingECEducatorFullTime' },
+  { back: 'ofm_staff_ec_educator_pt', front: 'staffingECEducatorPartTime' },
+  { back: 'ofm_staff_ec_educator_assistant_ft', front: 'staffingECEducatorAssistantFullTime' },
+  { back: 'ofm_staff_ec_educator_assistant_pt', front: 'staffingECEducatorAssistantPartTime' },
+  { back: 'ofm_staff_responsible_adult_ft', front: 'staffingResponsibleAdultFullTime' },
+  { back: 'ofm_staff_responsible_adult_pt', front: 'staffingResponsibleAdultPartTime' },
+  { back: '_ofm_contact_value', front: 'primaryContactId' },
+  { back: '_ofm_secondary_contact_value', front: 'secondaryContactId' },
+  { back: 'ofm_provider_type', front: 'providerType' },
+  { back: 'ofm_summary_ownership', front: 'ownership' },
+  { back: 'ofm_costs_facility_type', front: 'facilityType' },
+  { back: 'ofm_costs_property_insurance', front: 'insuranceCost' },
+  { back: 'ofm_costs_upkeep_labour_supplies', front: 'upkeepLabourCost' },
+  { back: 'ofm_costs_supplies', front: 'suppliesCost' },
+  { back: 'ofm_costs_utilities', front: 'utilitiesCost' },
+  { back: 'ofm_costs_maintenance_repairs', front: 'maintenanceRepairsCost' },
+  { back: 'ofm_costs_furniture_equipment', front: 'furnitureEquipmentsCost' },
+  { back: 'ofm_costs_yearly_operating_costs', front: 'totalYearlyOperatingCosts' },
+  { back: 'ofm_costs_rent_lease', front: 'rentLeaseCost' },
+  { back: 'ofm_costs_mortgage', front: 'mortgageCost' },
+  { back: 'ofm_costs_property_municipal_tax', front: 'propertyTax' },
+  { back: 'ofm_costs_strata_fee', front: 'strataFee' },
+  { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
+  { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
 ]
 
 const OrganizationMappings = [
@@ -141,12 +167,17 @@ const OrganizationMappings = [
   { back: 'address2_stateorprovince', front: 'mailingProvince' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'ofm_provider_type', front: 'providerType' },
+  { back: 'ofm_ownership', front: 'ownership' },
 ]
 
 const FacilityMappings = [
   { back: 'accountid', front: 'facilityId' },
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'name' },
+  { back: 'telephone1', front: 'phoneLandline' },
+  { back: 'telephone2', front: 'phoneCell' },
+  { back: 'emailaddress1', front: 'email' },
   { back: 'address1_line1', front: 'streetAddress1' },
   { back: 'address1_line2', front: 'streetAddress2' },
   { back: 'address1_city', front: 'city' },
@@ -160,6 +191,7 @@ const FacilityMappings = [
   { back: 'address2_stateorprovince', front: 'mailingProvince' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
 ]
 
 const ContactMappings = [
@@ -177,6 +209,19 @@ const LicenceMappings = [
   { back: 'ofm_licence', front: 'licence' },
   { back: 'ofm_health_authority', front: 'healthAuthorityId' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const DocumentMappings = [
+  { back: 'ofm_documentid', front: 'documentId' },
+  { back: 'ofm_name', front: 'referenceNumber' },
+  { back: 'ofm_file_name', front: 'fileName' },
+  { back: 'ofm_subject', front: 'subject' },
+  { back: 'ofm_description', front: 'description' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: '_ofm_regardingid_value', front: 'regardingId' },
 ]
 
 module.exports = {
@@ -185,6 +230,7 @@ module.exports = {
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
+  DocumentMappings,
   FacilityMappings,
   LicenceMappings,
   NotificationMappings,

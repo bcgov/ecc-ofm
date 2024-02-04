@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities } = require('../components/user')
+const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, getUserByBCeID, updateUserFacilityPermission } = require('../components/user')
 const { param, validationResult, checkSchema } = require('express-validator')
 
 const createUserSchema = {
@@ -45,19 +45,36 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Get profile information for a given user name
  */
-router.get('/:queryUserName', passport.authenticate('jwt', { session: false }), isValidBackendToken, getUserInfo)
+router.get('/:queryUserName', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  if (req.query.providerProfile === 'false') {
+    getUserByBCeID(req, res)
+  } else {
+    getUserInfo(req, res)
+  }
+})
 
 /**
  * Get all users, permissions, and facilities for an organization.
  */
 router.get(
-  '/permissions/facilities/:organizationId',
+  '/permissions-facilities/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getUsersPermissionsFacilities(req, res)
+  },
+)
+
+router.patch(
+  '/permissions-facilities/:bceidFacilityId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('bceidFacilityId', 'URL param: [bceidFacilityId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateUserFacilityPermission(req, res)
   },
 )
 

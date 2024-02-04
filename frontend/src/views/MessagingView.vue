@@ -24,7 +24,7 @@
         </v-window>
       </v-card-text>
     </v-card>
-    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">&larr; Back to Home</AppButton>
+    <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
 </template>
 <script>
@@ -33,10 +33,10 @@ import MessagesTab from '@/components/messages/MessagesTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
-import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
-  components: { AppButton, MessagesTab, NotificationsTab },
+  components: { AppBackButton, MessagesTab, NotificationsTab },
   data() {
     return {
       tab: null,

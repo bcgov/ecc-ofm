@@ -1,5 +1,5 @@
-# OFM Frontend TEST workflow
-name: 2 TEST - Deploy Frontend
+# OFM Frontend QA workflow
+name: 2 QA - Deploy Frontend
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.

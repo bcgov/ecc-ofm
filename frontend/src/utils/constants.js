@@ -13,8 +13,8 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   USER: baseRoot + '/user',
-  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions/facilities',
-  USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
+  USER_FACILITIES: '/:contactId/facilities',
+  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
   MESSAGES: baseRoot + '/messages',
   LOOKUP: baseRoot + '/config/lookup',
   NOTIFICATIONS: baseRoot + '/notifications',
@@ -23,19 +23,9 @@ export const ApiRoutes = Object.freeze({
   ORGANIZATIONS: baseRoot + '/organizations',
   FACILITIES: baseRoot + '/facilities',
   ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
+  ORGANIZATIONS_USERS: '/:organizationId/users',
   FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
   FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
-})
-
-// TODO (weskubo-cgi) Remove this if not using page titles in UI
-export const PAGE_TITLES = Object.freeze({
-  LOGIN: 'Login',
-  INTAKE: 'Intake',
-  CONTRACT_MANAGEMENT: 'Contract Management',
-  PAYMENTS: 'Payments',
-  REPORTING: 'Reporting',
-  ACCOUNT_MAINTENANCE: 'Account Maintenance',
-  MAINTENANCE_REQUEST_EXCEPTION_STREAM: 'Maint Request Exp Stream',
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
@@ -64,6 +54,13 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   SUBMITTED: 3,
   IN_REVIEW: 4,
   APPROVED: 5,
+})
+
+export const FACILITY_TYPES = Object.freeze({
+  RENT_LEASE: 1,
+  OWNED_WITH_MORTGAGE: 2,
+  OWNED_WITHOUT_MORTGAGE: 3,
+  PROVIDED_FREE_OF_CHARGE: 4,
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'

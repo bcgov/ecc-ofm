@@ -1,43 +1,147 @@
 <template>
-  <v-form ref="form" v-model="isFormComplete">
-    <h1>Staffing</h1>
-    <v-row no-gutters class="mt-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
-    <v-row class="mt-4">
-      <v-col>
-        <v-text-field v-model="model.field1" :disabled="readonly" outlined :rules="rules.required" label="Field 1" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field v-model="model.field2" :disabled="readonly" outlined :rules="rules.required" label="Field 2" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field v-model="model.field3" :disabled="readonly" outlined :rules="rules.required" label="Field 3" />
-      </v-col>
-    </v-row>
-    <v-row no-gutters class="my-6">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-        sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </p>
-    </v-row>
-    <v-row no-gutters class="my-6">
-      <p>Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.</p>
-    </v-row>
+  <v-form ref="form">
+    <v-row no-gutters class="mt-4"><strong>Please provide staffing information for the selected facility:</strong></v-row>
+    <v-card class="my-6 pa-4" variant="outlined">
+      <v-row no-gutters>
+        <v-col cols="5">
+          <h4>Employee Category</h4>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <h4>Full-Time Position</h4>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <h4>Part-Time Position</h4>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-6">
+        <v-col cols="5">
+          <p>Infant/Toddler Early Childhood Educator</p>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingInfantECEducatorFullTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingInfantECEducatorFullTime')"></v-text-field>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingInfantECEducatorPartTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingInfantECEducatorPartTime')"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-1">
+        <v-col cols="5">
+          <p>Early Childhood Educator</p>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingECEducatorFullTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingECEducatorFullTime')"></v-text-field>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingECEducatorPartTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingECEducatorPartTime')"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-1">
+        <v-col cols="5">
+          <p>Early Childhood Educator Assistant</p>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingECEducatorAssistantFullTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingECEducatorAssistantFullTime')"></v-text-field>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingECEducatorAssistantPartTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingECEducatorAssistantPartTime')"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-1">
+        <v-col cols="5">
+          <p>Responsible Adult</p>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingResponsibleAdultFullTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingResponsibleAdultFullTime')"></v-text-field>
+        </v-col>
+        <v-col cols="3" align="center" class="px-2">
+          <v-text-field
+            v-model="model.staffingResponsibleAdultPartTime"
+            variant="outlined"
+            density="compact"
+            :disabled="readonly"
+            maxlength="2"
+            @input="sanitizeInput('staffingResponsibleAdultPartTime')"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-1">
+        <v-col cols="5">
+          <AppLabel>Total</AppLabel>
+        </v-col>
+        <v-col cols="3" class="px-2">
+          <p align="center">
+            <strong>{{ totalFullTimePosition }}</strong>
+          </p>
+        </v-col>
+        <v-col cols="3" class="px-2">
+          <p align="center">
+            <strong>{{ totalPartTimePosition }}</strong>
+          </p>
+        </v-col>
+      </v-row>
+    </v-card>
   </v-form>
 </template>
 
 <script>
+import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState } from 'pinia'
+import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
-import rules from '@/utils/rules'
+import ApplicationService from '@/services/applicationService'
+import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'StaffingView',
+  components: { AppLabel },
+  mixins: [alertMixin],
+  async beforeRouteLeave(_to, _from, next) {
+    if (!this.readonly) {
+      await this.saveApplication()
+    }
+    next()
+  },
   props: {
     back: {
       type: Boolean,
@@ -52,24 +156,33 @@ export default {
       default: false,
     },
   },
+  emits: ['process'],
   data() {
     return {
-      rules,
       model: {},
-      isFormComplete: false,
     }
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+    },
+    totalFullTimePosition() {
+      return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime
+    },
+    totalPartTimePosition() {
+      return this.model.staffingInfantECEducatorPartTime + this.model.staffingECEducatorPartTime + this.model.staffingECEducatorAssistantPartTime + this.model.staffingResponsibleAdultPartTime
+    },
+    isFormComplete() {
+      const totalStaffs = this.totalFullTimePosition + this.totalPartTimePosition
+      return totalStaffs > 0
     },
   },
   watch: {
     isFormComplete: {
       handler(value) {
-        if (!this.currentApplication) return
-        this.currentApplication.isStaffingComplete = value
+        this.isStaffingComplete = value
       },
     },
     back: {
@@ -78,8 +191,8 @@ export default {
       },
     },
     save: {
-      handler() {
-        this.$refs.form?.validate()
+      async handler() {
+        await this.saveApplication(true)
       },
     },
     next: {
@@ -88,5 +201,50 @@ export default {
       },
     },
   },
+  created() {
+    this.model = {
+      staffingInfantECEducatorFullTime: this.currentApplication?.staffingInfantECEducatorFullTime ?? 0,
+      staffingInfantECEducatorPartTime: this.currentApplication?.staffingInfantECEducatorPartTime ?? 0,
+      staffingECEducatorFullTime: this.currentApplication?.staffingECEducatorFullTime ?? 0,
+      staffingECEducatorPartTime: this.currentApplication?.staffingECEducatorPartTime ?? 0,
+      staffingECEducatorAssistantFullTime: this.currentApplication?.staffingECEducatorAssistantFullTime ?? 0,
+      staffingECEducatorAssistantPartTime: this.currentApplication?.staffingECEducatorAssistantPartTime ?? 0,
+      staffingResponsibleAdultFullTime: this.currentApplication?.staffingResponsibleAdultFullTime ?? 0,
+      staffingResponsibleAdultPartTime: this.currentApplication?.staffingResponsibleAdultPartTime ?? 0,
+    }
+  },
+  methods: {
+    ...mapActions(useApplicationsStore, ['getApplication']),
+
+    async saveApplication(showAlert = false) {
+      try {
+        if (ApplicationService.isApplicationUpdated(this.model)) {
+          this.$emit('process', true)
+          await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
+          await this.getApplication(this.$route.params.applicationGuid)
+        }
+        if (showAlert) {
+          this.setSuccessAlert('Application saved successfully')
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed to save your application', error)
+      } finally {
+        this.$emit('process', false)
+      }
+    },
+
+    sanitizeInput(key) {
+      this.model[key] = this.model[key]?.replace(/[^0-9]/g, '')
+      this.model[key] = Number(this.model[key])
+    },
+  },
 }
 </script>
+<style scoped>
+:deep(input) {
+  text-align: center;
+}
+:deep(.v-text-field) {
+  max-width: 200px;
+}
+</style>
