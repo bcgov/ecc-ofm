@@ -300,6 +300,7 @@ export default {
       this.endDate = new Date()
       this.menuFromDate = false
       this.menuEndDate = false
+      this.selectedFacility = this.currentFacility.facilityId
     },
   },
 }
