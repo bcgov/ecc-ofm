@@ -51,7 +51,8 @@ describe('Application - Operating Costs View', () => {
   test('Verify uploaded documents when facility type is Rent/Lease', async () => {
     const wrapper = mount(OperatingCostsView, global)
     await flushPromises()
-    console.log(wrapper.text())
+    // console.log(wrapper.text())
+    // TO-DO
     expect(wrapper.text()).toContain('Supporting Documents')
   })
 

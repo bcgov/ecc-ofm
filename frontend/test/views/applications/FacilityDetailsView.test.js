@@ -82,7 +82,7 @@ describe('Application - Facility Details View', () => {
     const wrapper = mount(FacilityDetailsView, global)
     await flushPromises()
     const primaryContact = getContactsResponse.find((contact) => getApplicationResponse.primaryContactId === contact.contactId)
-    const roleName = appStore.getRoleNameById(primaryContact.role)
+    const roleName = appStore.getRoleNameById(primaryContact?.role)
     expect(wrapper.text()).toContain(primaryContact?.firstName)
     expect(wrapper.text()).toContain(primaryContact?.lastName)
     expect(wrapper.text()).toContain(primaryContact?.email)
@@ -95,7 +95,7 @@ describe('Application - Facility Details View', () => {
     const wrapper = mount(FacilityDetailsView, global)
     await flushPromises()
     const secondaryContact = getContactsResponse.find((contact) => getApplicationResponse.secondaryContactId === contact.contactId)
-    const secondaryContactFullName = `${secondaryContact.firstName} ${secondaryContact.lastName}`
+    const secondaryContactFullName = `${secondaryContact?.firstName} ${secondaryContact?.lastName}`
     expect(wrapper.get('#secondary-contact').wrapperElement._value).toEqual(secondaryContactFullName)
   })
 
@@ -103,7 +103,7 @@ describe('Application - Facility Details View', () => {
     const wrapper = mount(FacilityDetailsView, global)
     await flushPromises()
     const secondaryContact = getContactsResponse.find((contact) => getApplicationResponse.secondaryContactId === contact.contactId)
-    const roleName = appStore.getRoleNameById(secondaryContact.role)
+    const roleName = appStore.getRoleNameById(secondaryContact?.role)
     expect(wrapper.text()).toContain(secondaryContact?.firstName)
     expect(wrapper.text()).toContain(secondaryContact?.lastName)
     expect(wrapper.text()).toContain(secondaryContact?.email)

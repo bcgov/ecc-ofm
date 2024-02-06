@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, test } from 'vitest'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -26,12 +26,6 @@ describe('Application View', () => {
     },
   }
   const authStore = useAuthStore()
-
-  /*
-  ===============================================
-    Data Setup
-  ===============================================
-  */
   authStore.userInfo = getUserInfoResponse
 
   /*
@@ -39,9 +33,11 @@ describe('Application View', () => {
     TESTS
   ===============================================
   */
-  test('Verify Applications History table after getApplications() requests is called', async () => {
+  test('TO-DO', async () => {
     const wrapper = mount(ApplicationView, global)
     await flushPromises()
     console.log(wrapper.text())
   })
+  // TO-DO
+  // Vue Router (Navigation Bar): https://test-utils.vuejs.org/guide/advanced/vue-router.html
 })
