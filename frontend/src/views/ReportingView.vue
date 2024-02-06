@@ -7,10 +7,10 @@
     </v-row>
     <v-row>
       <v-col cols="auto" class="pb-0" />
-      <v-col cols="12" xs="12" sm="6" md="3" lg="1" xl="1" class="pb-0">
+      <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-0">
         <AppLabel>Facility:</AppLabel>
       </v-col>
-      <v-col cols="4" class="pb-0">
+      <v-col cols="12" xs="12" sm="6" md="4" lg="4" xl="4" class="pb-0">
         <v-select
           v-model="selectedFacility"
           :items="userInfo.facilities"
@@ -23,10 +23,10 @@
     </v-row>
     <v-row>
       <v-col cols="auto" class="pb-1 pt-0" />
-      <v-col cols="1" class="pb-1 pt-0">
+      <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-1 pt-0">
         <AppLabel>Report Types:</AppLabel>
       </v-col>
-      <v-col cols="3" class="pb-1 pt-0">
+      <v-col cols="12" xs="12" sm="6" md="5" lg="5" xl="5" class="pb-1 pt-0">
         <v-row>
           <v-col class="pb-0 pt-1">
             <v-checkbox v-model="isCheckedMonthly" density="compact" class="pl-8">Monthly</v-checkbox>
@@ -44,10 +44,10 @@
     </v-row>
     <v-row>
       <v-col cols="auto" class="pb-0 pt-0" />
-      <v-col cols="1" class="pb-0 pt-0">
+      <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-0 pt-0">
         <AppLabel>Date Range:</AppLabel>
       </v-col>
-      <v-col cols="2" class="pb-0 pt-0">
+      <v-col cols="12" xs="12" sm="3" md="2" lg="2" xl="2" class="pb-0 pt-0">
         <v-menu
           ref="menuFromDate"
           v-model="menuFromDate"
@@ -74,7 +74,7 @@
             :locale="locale"></v-date-picker>
         </v-menu>
       </v-col>
-      <v-col cols="2" class="pb-0 pt-0">
+      <v-col cols="12" xs="12" sm="3" md="2" lg="2" xl="2" class="pb-0 pt-0">
         <v-menu
           ref="menuEndDate"
           v-model="menuEndDate"
@@ -104,10 +104,10 @@
     </v-row>
     <v-row>
       <v-col cols="auto" class="pb-0 pt-0" />
-      <v-col cols="12" xs="12" sm="6" md="3" lg="2" xl="1" class="pb-0 pt-0">
+      <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-0 pt-0">
         <AppLabel>Status:</AppLabel>
       </v-col>
-      <v-col cols="2" class="pb-0 pt-0">
+      <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4" class="pb-0 pt-0">
         <v-select
           v-model="selectedStatus"
           :items="statusTypes"
@@ -115,10 +115,11 @@
           item-value="id"
           label="Select status to report on"
           density="compact"
-          variant="outlined" />
+          variant="outlined"
+          clearable />
       </v-col>
       <v-col cols="auto" class="pb-0 pt-0" />
-      <v-col cols="12" xs="12" sm="6" md="3" lg="2" xl="auto" class="pb-0 pt-0">
+      <v-col cols="auto" class="pb-0 pt-0">
         <AppLabel>Include Submitted:</AppLabel>
       </v-col>
       <v-col cols="auto" class="pb-0 pt-0 pl-0 d-flex align-top">
@@ -267,19 +268,11 @@ export default {
       }
     },
     filter() {
-      this.annualFacilities = this.facilities.filter(facility => facility.reportType === 'Annual')
-      this.monthlyFacilities = this.facilities.filter(facility => facility.reportType === 'Monthly')
-      this.otherFacilities = this.facilities.filter(facility => facility.reportType === 'Other')
-      this.displayedFacilities = []
-      if (this.isCheckedAnnual) {
-        this.displayedFacilities = this.displayedFacilities.concat(this.annualFacilities)
-      }
-      if (this.isCheckedMonthly) {
-        this.displayedFacilities = this.displayedFacilities.concat(this.monthlyFacilities)
-      }
-      if (this.isCheckedOther) {
-        this.displayedFacilities = this.displayedFacilities.concat(this.otherFacilities)
-      }
+      const reportTypes = []
+      if (this.isCheckedAnnual) reportTypes.push('Annual')
+      if (this.isCheckedMonthly) reportTypes.push('Monthly')
+      if (this.isCheckedOther) reportTypes.push('Other')
+      this.displayedFacilities = this.facilities.filter((facility) => reportTypes.includes(facility.reportType))
 
       if (this.selectedStatus) {
         const statusTitle = this.statusTypes.find(({ id }) => id === this.selectedStatus)?.title
