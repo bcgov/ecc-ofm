@@ -70,7 +70,7 @@
                   </v-row>
                 </td>
                 <td class="pl-0">
-                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="toggleDeactivateUserDialog(item)">Deactivate user</AppButton>
+                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="deactivateUser(item)">Deactivate user</AppButton>
                 </td>
               </tr>
             </template>
@@ -87,6 +87,7 @@
 <script>
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
+import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import rolesMixin from '@/mixins/rolesMixin.js'
@@ -98,7 +99,7 @@ import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 
 export default {
-  components: { AppBackButton, ManageUserDialog, DeactivateUserDialog },
+  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {
@@ -276,7 +277,43 @@ export default {
     isExpenseAuthority(user) {
       return user.facilities.some((facility) => facility.isExpenseAuthority) ? 'Yes' : 'No'
     },
-  },
+
+    /**
+     * Deactivates a user if they are not the last Expense Authority for any facility.
+     */
+    deactivateUser(user) {
+      const facilityNames = this.getLastExpenseAuthoritiesForUser(user)
+      if (facilityNames.length > 0) {
+        this.setFailureAlert(`Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`)
+      } else {
+        this.toggleDeactivateUserDialog(user)
+      }
+    },
+
+    /**
+     * Get the last expense authority facility names for a user
+    */
+    getLastExpenseAuthoritiesForUser(user) {
+      // Find target users's facilities that are marked as isExpenseAuthority
+      const targetFacilities = user.facilities.filter(f => f.isExpenseAuthority) || []
+      // If no facilities with isExpenseAuthority true, return false
+      if (targetFacilities.length === 0) {
+        return { isLastExpenseAuthority: false, facilityNames: [] }
+      }
+      const lastExpenseAuthorityFacilityNames = []
+      // Check for each of the target's facilities with isExpenseAuthority true
+      targetFacilities.forEach(facility => {
+        // Check if any other user has a facility with the same facilityId and isExpenseAuthority true
+        const hasOtherUserWithAuthority = this.usersAndFacilities.some(userToCheck =>
+          userToCheck.contactId !== user.contactId &&
+          userToCheck.facilities.some(f => f.facilityId === facility.facilityId && f.isExpenseAuthority))
+        if (!hasOtherUserWithAuthority) {
+          lastExpenseAuthorityFacilityNames.push(facility.facilityName)
+        }
+      })
+      return lastExpenseAuthorityFacilityNames
+    },
+  }
 }
 </script>
 

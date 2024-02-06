@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
+import DocumentService from '@/services/documentService'
+import { FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
   return application?.primaryContactId
@@ -38,7 +40,8 @@ function checkStaffingComplete(application) {
 }
 
 function checkOperatingCostsComplete(application) {
-  return application?.facilityType && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
+  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && application?.uploadedDocuments?.length > 0)
+  return application?.facilityType && isDocumentUploaded && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
 }
 
 export const useApplicationsStore = defineStore('applications', {
@@ -61,6 +64,9 @@ export const useApplicationsStore = defineStore('applications', {
     async getApplication(applicationId) {
       try {
         this.currentApplication = await ApplicationService.getApplication(applicationId)
+        if (this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE) {
+          this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
+        }
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error
