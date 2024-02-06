@@ -14,7 +14,7 @@ async function getFacilityReports(req, res) {
         reportId: 'AR-1104100006',
         status: '',
         lastActivityDate: '',
-        actions: 'Open (launches blank)',
+        actions: 'Open',
       },
       {
         alertType: 'Due',

@@ -63,7 +63,7 @@
               prepend-icon="mdi-calendar"
               readonly
               v-bind="attrs"
-              v-on="on"
+              v-on="{ ...on }"
               density="compact"
               variant="outlined"
               @click:prepend="menuFromDate = !menuFromDate"></v-text-field>
@@ -90,7 +90,7 @@
               prepend-icon="mdi-calendar"
               readonly
               v-bind="attrs"
-              v-on="on"
+              v-on="{ ...on }"
               density="compact"
               variant="outlined"
               @click:prepend="menuEndDate = !menuEndDate"></v-text-field>
@@ -130,8 +130,8 @@
       </v-col>
       <v-col cols="1" />
       <v-col>
-        <v-row class="d-flex" align="left" justify="start">
-          <AppButton id="reset" :primary="false" size="large" width="100px" class="mr-8" @click="resetFilters()">Clear</AppButton>
+        <v-row class="d-flex" justify="start">
+          <AppButton id="reset" :primary="false" size="large" width="100px" class="mr-8" @click="resetFilters()">Reset</AppButton>
           <AppButton id="run-report" size="large" :disabled="!selectedFacility" width="150px" @click="search()">Search</AppButton>
         </v-row>
       </v-col>
@@ -141,7 +141,7 @@
         <v-divider />
       </v-col>
     </v-row>
-    <v-row v-if="isReportRun">
+    <v-row v-if="isSearched">
       <v-skeleton-loader :loading="loading" type="table-tbody">
         <v-col>
           <v-data-table :headers="headers" :items="displayedFacilities" item-key="reportId" :items-per-page="15" density="compact">
@@ -184,15 +184,18 @@ export default {
       loading: false,
       facilities: [],
       displayedFacilities: [],
+      annualFacilities: [],
+      monthlyFacilities: [],
+      otherFacilities: [],
       selectedFacility: null,
       selectedStatus: null,
       isCheckedAnnual: true,
       isCheckedMonthly: true,
       isCheckedOther: true,
-      isReportRun: false,
+      isSearched: false,
       includeSubmitted: false,
-      fromDate: new Date(),
-      endDate: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+      fromDate: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+      endDate: new Date(),
       menuFromDate: false,
       menuEndDate: false,
       locale: 'en',
@@ -256,7 +259,7 @@ export default {
       try {
         await this.getFacilityReportsSummary(this.selectedFacility)
         this.filter()
-        this.isReportRun = true
+        this.isSearched = true
       } catch (error) {
         this.setFailureAlert('Failed to get latest reporting activity for facility = ' + this.selectedFacility, error)
       } finally {
@@ -264,45 +267,39 @@ export default {
       }
     },
     filter() {
-      this.displayedFacilities = this.facilities
-
-      if (!this.isCheckedMonthly && this.isCheckedAnnual && this.isCheckedOther) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.reportType !== 'Monthly')
-      } else if (!this.isCheckedAnnual && this.isCheckedMonthly && this.isCheckedOther) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.reportType !== 'Annual')
-      } else if (!this.isCheckedOther && this.isCheckedMonthly && this.isCheckedAnnual) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.reportType !== 'Other')
-      } else if (!this.isCheckedMonthly && !this.isCheckedAnnual && this.isCheckedOther) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.reportType === 'Other')
-      } else if (!this.isCheckedMonthly && this.isCheckedAnnual && !this.isCheckedOther) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.reportType === 'Annual')
-      } else if (this.isCheckedMonthly && !this.isCheckedAnnual && !this.isCheckedOther) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.reportType === 'Monthly')
-      } else if (!this.isCheckedMonthly && !this.isCheckedAnnual && !this.isCheckedOther) {
-        this.displayedFacilities = []
+      this.annualFacilities = this.facilities.filter(facility => facility.reportType === 'Annual')
+      this.monthlyFacilities = this.facilities.filter(facility => facility.reportType === 'Monthly')
+      this.otherFacilities = this.facilities.filter(facility => facility.reportType === 'Other')
+      this.displayedFacilities = []
+      if (this.isCheckedAnnual) {
+        this.displayedFacilities = this.displayedFacilities.concat(this.annualFacilities)
+      }
+      if (this.isCheckedMonthly) {
+        this.displayedFacilities = this.displayedFacilities.concat(this.monthlyFacilities)
+      }
+      if (this.isCheckedOther) {
+        this.displayedFacilities = this.displayedFacilities.concat(this.otherFacilities)
       }
 
-      if (this.selectedStatus === 3) {
-        this.displayedFacilities = []
-      } else if (this.selectedStatus === 2) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.status === 'Submitted')
-      } else if (this.selectedStatus === 1) {
-        this.displayedFacilities = this.facilities.filter(facility => facility.status === 'Draft')
+      if (this.selectedStatus) {
+        const statusTitle = this.statusTypes.find(({ id }) => id === this.selectedStatus)?.title
+        this.displayedFacilities = this.selectedStatus === 3 ? [] : this.facilities.filter(({ status }) => status === statusTitle)
       }
-
-      /*       if (this.includeSubmitted) {
-              this.displayedFacilities = this.facilities.filter(facility => facility.status === 'Draft' || facility.status === 'Submitted' || facility.status === '')
-            } else {
-              this.displayedFacilities = this.facilities.filter(facility => facility.status !== 'Submitted')
-            } */
     },
     resetFilters() {
+      this.facilities = []
+      this.displayedFacilities = []
       this.selectedFacility = null
+      this.selectedStatus = null
       this.isCheckedAnnual = true
       this.isCheckedMonthly = true
       this.isCheckedOther = true
-      this.isReportRun = false
-      this.selectedStatus = null
+      this.isSearched = false
+      this.includeSubmitted = false
+      this.fromDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+      this.endDate = new Date()
+      this.menuFromDate = false
+      this.menuEndDate = false
     },
   },
 }
