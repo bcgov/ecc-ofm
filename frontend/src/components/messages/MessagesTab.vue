@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mt-3 ml-3">
           <div>
-            <AppButton variant="text" @click="toggleNewRequestDialog()">
+            <AppButton id="new-message-button" variant="text" @click="toggleNewRequestDialog()">
               <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
               <span class="btn-label">New message</span>
             </AppButton>
@@ -28,10 +28,10 @@
       </v-skeleton-loader>
     </v-col>
     <v-col sm="12" md="6">
-      <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
+      <RequestConversations id="request-conversations" :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
     </v-col>
   </v-row>
-  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
+  <NewRequestDialog id="new-request-dialog" class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
 </template>
 
 <script>

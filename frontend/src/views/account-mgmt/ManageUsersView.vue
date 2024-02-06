@@ -292,28 +292,28 @@ export default {
 
     /**
      * Get the last expense authority facility names for a user
-    */
+     */
     getLastExpenseAuthoritiesForUser(user) {
       // Find target users's facilities that are marked as isExpenseAuthority
-      const targetFacilities = user.facilities.filter(f => f.isExpenseAuthority) || []
+      const targetFacilities = user.facilities.filter((f) => f.isExpenseAuthority) || []
       // If no facilities with isExpenseAuthority true, return false
       if (targetFacilities.length === 0) {
         return { isLastExpenseAuthority: false, facilityNames: [] }
       }
       const lastExpenseAuthorityFacilityNames = []
       // Check for each of the target's facilities with isExpenseAuthority true
-      targetFacilities.forEach(facility => {
+      targetFacilities.forEach((facility) => {
         // Check if any other user has a facility with the same facilityId and isExpenseAuthority true
-        const hasOtherUserWithAuthority = this.usersAndFacilities.some(userToCheck =>
-          userToCheck.contactId !== user.contactId &&
-          userToCheck.facilities.some(f => f.facilityId === facility.facilityId && f.isExpenseAuthority))
+        const hasOtherUserWithAuthority = this.usersAndFacilities.some(
+          (userToCheck) => userToCheck.contactId !== user.contactId && userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority),
+        )
         if (!hasOtherUserWithAuthority) {
           lastExpenseAuthorityFacilityNames.push(facility.facilityName)
         }
       })
       return lastExpenseAuthorityFacilityNames
     },
-  }
+  },
 }
 </script>
 

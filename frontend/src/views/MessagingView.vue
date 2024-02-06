@@ -2,13 +2,13 @@
   <v-container fluid>
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
-        <v-tab value="notifications">
+        <v-tab id="notifications-tab" value="notifications">
           Notifications
-          <div v-if="unreadNotificationCount > 0">&nbsp;({{ unreadNotificationCount }})</div>
+          <div id="unread-notifications-count" v-if="unreadNotificationCount > 0">&nbsp;({{ unreadNotificationCount }})</div>
         </v-tab>
-        <v-tab value="messages">
+        <v-tab id="messages-tab" value="messages">
           Messages
-          <div v-if="unreadMessageCount > 0">&nbsp;({{ unreadMessageCount }})</div>
+          <div id="unread-messages-count" v-if="unreadMessageCount > 0">&nbsp;({{ unreadMessageCount }})</div>
         </v-tab>
         <v-tab value="archive">Archive</v-tab>
       </v-tabs>
