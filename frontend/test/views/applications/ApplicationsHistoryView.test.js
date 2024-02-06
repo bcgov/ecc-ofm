@@ -1,6 +1,5 @@
-import axios from 'axios'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { useRouter } from 'vue-router'
+import moment from 'moment'
+import { describe, expect, test } from 'vitest'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -8,62 +7,52 @@ import * as directives from 'vuetify/directives'
 import { useAuthStore } from '@/stores/auth'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import { createTestingPinia } from '@pinia/testing'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+
+import { getApplicationsResponse } from '../../utils/mockResponses/applications'
+import { getUserInfoResponse } from '../../utils/mockResponses/auth'
 
 const vuetify = createVuetify({ components, directives })
-vi.mock('axios')
 
-describe('ApplicationsHistoryView', () => {
-  const global = { global: { plugins: [createTestingPinia(), vuetify] } }
+describe('Applications History View', () => {
+  const global = { global: { plugins: [createTestingPinia(), vuetify], stubs: ['router-link'] } }
   const authStore = useAuthStore()
-
-  // useRouter.mockReturnValue({
-  //   push: vi.fn(),
-  // })
-
-  // beforeEach(() => {
-  //   useRouter().push.mockReset()
-  // })
-
-  /*
-  ===============================================
-    Data Setup
-  ===============================================
-  */
-  authStore.userInfo = {
-    facilities: [
-      {
-        facilityId: 'c9ecef6c-437d-ee11-8179-000d3a09d132',
-        facilityAccountNumber: 'Test-Facility-1',
-        facilityName: 'Test OFM Facility #1',
-        facilityType: 0,
-        facilityStateCode: 0,
-        facilityStatusCode: 1,
-      },
-      {
-        facilityId: '6df8623a-447d-ee11-8179-000d3a09d499',
-        facilityAccountNumber: 'Test-Facility-2',
-        facilityName: 'Test OFM Facility #2',
-        facilityType: 0,
-        facilityStateCode: 0,
-        facilityStatusCode: 1,
-      },
-    ],
-  }
+  authStore.userInfo = getUserInfoResponse
 
   /*
   ===============================================
     TESTS
   ===============================================
   */
-  test('getApplications() requests are called', async () => {
+  test('Verify page labels', async () => {
     const wrapper = mount(ApplicationsHistoryView, global)
-    console.log(wrapper.text())
-    axios.get.mockResolvedValue({
-      data: mockApplications,
-    })
-
-    // expect(axios.get).toHaveBeenCalledTimes(2)
-    // expect(axios.get).toHaveBeenCalledWith('/api/get')
+    await flushPromises()
+    expect(wrapper.text()).toContain('Application ID')
+    expect(wrapper.text()).toContain('Facility')
+    expect(wrapper.text()).toContain('Status')
+    expect(wrapper.text()).toContain('Actions')
+    expect(wrapper.text()).toContain('Date submitted')
+    expect(wrapper.text()).toContain('Latest activity')
+    expect(wrapper.text()).toContain('Back to Home')
   })
+
+  test('Verify applications history table after receiving GET applications response', async () => {
+    const wrapper = mount(ApplicationsHistoryView, global)
+    await flushPromises()
+    getApplicationsResponse?.forEach((application) => {
+      // const action = application?.status === 'Draft' ? 'Continue application' : 'View submission'
+      const dateSubmitted = !application?.dateSubmitted ? '- - - -' : moment(application?.dateSubmitted).format('YYYY-MMM-DD')
+      const latestActivity = !application?.latestActivity ? '- - - -' : moment(application?.latestActivity).format('YYYY-MMM-DD')
+      expect(wrapper.text()).toContain(application.referenceNumber)
+      expect(wrapper.text()).toContain(application.facilityName)
+      expect(wrapper.text()).toContain(application.status)
+      // expect(wrapper.text()).toContain(action)
+      expect(wrapper.text()).toContain(dateSubmitted)
+      expect(wrapper.text()).toContain(latestActivity)
+    })
+  })
+
+  // TO-DO
+  // Cancel Application button
+  // Vue Router (Continue Application/View Submission/Back to Home): https://test-utils.vuejs.org/guide/advanced/vue-router.html
 })
