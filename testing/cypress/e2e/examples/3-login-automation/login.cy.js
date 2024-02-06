@@ -9,13 +9,26 @@ describe("Azure Active Directory Authentication", () => {
     );
   });
 
-  it("does nothing", () => {
+  it("goes to an organization", () => {
     cy.origin("https://mychildcareservicesdev.crm3.dynamics.com", () => {
-      cy.get('ul[aria-label="Case Management"]')
-        .contains("Assistance Requests")
+      cy.on("uncaught:exception", (e) => {
+        return false;
+      });
+
+      cy.get('ul[aria-label="Childcare Providers"]')
+        .contains("Organization-Facilities")
         .click();
-      cy.get('button[aria-label="New"]').click();
-      cy.get('input[aria-label="Subject"]').type("Subject stuff");
+      cy.get(
+        'input[aria-label="Organization-Facility Filter by keyword"]'
+      ).type("Test-1088 Organization{enter}");
+      cy.wait(5000);
+      cy.get('div[row-index="0"]')
+        .find('input[type="checkbox"]')
+        .click({ force: true });
+      cy.get('ul[aria-label="Organization-Facility Commands"]')
+        .find("button")
+        .contains("Edit")
+        .click();
     });
 
     expect(true).to.equal(true);

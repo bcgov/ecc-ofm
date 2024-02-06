@@ -4,11 +4,13 @@
   "description": "ECC OFM QA Testing",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "report": "npx cypress run --spec ./cypress/e2e/examples/3-login-automation/login.cy.js --browser electron --headed"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^13.3.0"
+    "cypress": "^13.3.0",
+    "mochawesome": "^7.1.3"
   }
 }

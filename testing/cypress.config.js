@@ -4,6 +4,13 @@ module.exports = defineConfig({
   e2e: {
     experimentalModifyObstructiveThirdPartyCode: true,
     defaultCommandTimeout: 10000,
+    reporter: "mochawesome",
+    reporterOptions: {
+      reportDir: "cypress/reports",
+      overwrite: true,
+      html: true,
+      json: false,
+    },
     setupNodeEvents(on, config) {},
   },
 });

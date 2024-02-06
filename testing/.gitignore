@@ -7,4 +7,5 @@ yarn-error.log*
 lerna-debug.log*
 
 node_modules
+cypress.env.json
 

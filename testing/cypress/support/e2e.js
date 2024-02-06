@@ -52,7 +52,6 @@ function loginViaAAD(username, password) {
         log: false,
       });
       cy.get('input[type="submit"]').click();
-      // cy.get('input[type="button"]').click();
       cy.get("#idBtn_Back").click();
     }
   );
