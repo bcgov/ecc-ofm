@@ -239,8 +239,11 @@ export default {
         this.errorMessage = 'At least one expense authority is required'
       } else {
         this.$emit('save-contact-updates', this.updatedContactsToAdd, this.updatedContactsToRemove)
+        this.updatedContactsToAdd = []
+        this.updatedContactsToRemove = []
         this.editMode = false
       }
+
     },
 
     /**
