@@ -205,6 +205,7 @@ export default {
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
       this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => obj.contactId !== contactToAdd.contactId)
+      this.updatedContactsToRemove = this.updatedContactsToRemove.filter(obj => obj.contactId !== contactToAdd.contactId)
       this.contactId = null
       this.removeFocus()
     },
