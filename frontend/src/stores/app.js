@@ -22,7 +22,7 @@ export const useAppStore = defineStore('app', {
     userRoles: {},
     healthAuthorities: {},
     facilityTypes: {},
-
+    licenceTypes: {},
     config: '',
   }),
   getters: {
@@ -30,6 +30,18 @@ export const useAppStore = defineStore('app', {
       return (id) => {
         const role = state.userRoles.find((role) => role.id === id)
         return role ? role.description : null
+      }
+    },
+    getLicenceTypeNameById: (state) => {
+      return (id) => {
+        const licenceType = state.licenceTypes.find((licenceType) => licenceType.id === id)
+        return licenceType ? licenceType.description : null
+      }
+    },
+    getHealthAuthorityNameById: (state) => {
+      return (id) => {
+        const healthAuthority = state.healthAuthorities.find((healthAuthority) => healthAuthority.id === id)
+        return healthAuthority ? healthAuthority.description : null
       }
     },
   },
@@ -42,6 +54,7 @@ export const useAppStore = defineStore('app', {
         this.userRoles = lookupInfo?.data?.userRoles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
+        this.licenceTypes = lookupInfo?.data?.licenceTypes
       }
     },
     async setConfig(config) {

@@ -25,9 +25,9 @@ import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
-import LicencesView from '@/views/applications/LicencesView.vue'
 import OperatingCostsView from '@/views/applications/OperatingCostsView.vue'
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
+import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
 import SubmitApplicationView from '@/views/applications/SubmitApplicationView.vue'
 
@@ -135,9 +135,9 @@ const router = createRouter({
           component: FacilityDetailsView,
         },
         {
-          path: ':applicationGuid/licences',
-          name: 'licences',
-          component: LicencesView,
+          path: ':applicationGuid/service-delivery',
+          name: 'service-delivery',
+          component: ServiceDeliveryView,
         },
         {
           path: ':applicationGuid/operating-costs',

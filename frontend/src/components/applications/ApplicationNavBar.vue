@@ -41,10 +41,10 @@ export default {
           routeName: 'facility-details',
           name: 'Facility details',
         },
-        licences: {
+        serviceDelivery: {
           id: 2,
-          routeName: 'licences',
-          name: 'Licences',
+          routeName: 'service-delivery',
+          name: 'Service Delivery',
         },
         operatingCosts: {
           id: 3,
@@ -65,7 +65,14 @@ export default {
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isLicencesComplete', 'isOperatingCostsComplete', 'isStaffingComplete', 'isSubmitApplicationComplete']),
+    ...mapState(useApplicationsStore, [
+      'currentApplication',
+      'isFacilityDetailsComplete',
+      'isServiceDeliveryComplete',
+      'isOperatingCostsComplete',
+      'isStaffingComplete',
+      'isSubmitApplicationComplete',
+    ]),
 
     isSelectFacilityPage() {
       return this.$route.name === 'select-facility'
@@ -106,8 +113,8 @@ export default {
       switch (item.routeName) {
         case 'facility-details':
           return this.isFacilityDetailsComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case 'licences':
-          return this.isLicencesComplete ? 'mdi-check-circle' : 'mdi-circle'
+        case 'service-delivery':
+          return this.isServiceDeliveryComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'operating-costs':
           return this.isOperatingCostsComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'staffing':
