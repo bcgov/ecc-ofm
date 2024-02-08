@@ -4,17 +4,17 @@
     <v-row no-gutters class="mt-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
     <v-row class="mt-4">
       <v-col>
-        <v-text-field v-model="model.field1" :disabled="readonly" outlined :rules="rules.required" label="Field 1" />
+        <v-text-field v-model.trim="model.field1" :disabled="readonly" outlined :rules="rules.required" label="Field 1" />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <v-text-field v-model="model.field2" :disabled="readonly" outlined :rules="rules.required" label="Field 2" />
+        <v-text-field v-model.trim="model.field2" :disabled="readonly" outlined :rules="rules.required" label="Field 2" />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <v-text-field v-model="model.field3" :disabled="readonly" outlined :rules="rules.required" label="Field 3" />
+        <v-text-field v-model.trim="model.field3" :disabled="readonly" outlined :rules="rules.required" label="Field 3" />
       </v-col>
     </v-row>
     <v-row no-gutters class="my-6">

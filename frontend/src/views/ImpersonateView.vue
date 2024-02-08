@@ -8,7 +8,7 @@
         <v-card class="impersonate-card">
           <v-row>
             <v-col>
-              <v-text-field outlined required v-model="businessBCeId" id="businessBCeId-field" :rules="rules.required" label="Business BCeID" v-on:keydown.enter="setBCeID()" />
+              <v-text-field id="businessBCeId-field" v-model.trim="businessBCeId" outlined required :rules="rules.required" label="Business BCeID" v-on:keydown.enter="setBCeID()" />
             </v-col>
             <v-col cols="4">
               <v-btn @click="setBCeID()" :disabled="!businessBCeId" id="bceid-search">Search</v-btn>
