@@ -11,7 +11,7 @@
               <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
             <v-col v-if="isAddingUser && !wasNewUserAdded" cols="12" md="9">
-              <v-text-field id="bceid" v-model="user.userName" @blur="checkBCeIDExists(user.userName)" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :error-messages="errorMessages" :disabled="isLoading"></v-text-field>
+              <v-text-field id="bceid" v-model.trim="user.userName" @blur="checkBCeIDExists(user.userName)" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :error-messages="errorMessages" :disabled="isLoading"></v-text-field>
             </v-col>
             <v-col v-else cols="12" md="9" class="mb-5">
               <span>{{ user.userName }}</span>
@@ -22,7 +22,7 @@
               <AppLabel for="firstName">First Name:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="firstName" v-model="user.firstName" placeholder="First Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+              <v-text-field id="firstName" v-model.trim="user.firstName" placeholder="First Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -30,7 +30,7 @@
               <AppLabel for="lastName">Last Name:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="lastName" v-model="user.lastName" placeholder="Last Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+              <v-text-field id="lastName" v-model.trim="user.lastName" placeholder="Last Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -38,7 +38,7 @@
               <AppLabel for="phone">Phone:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="phone" v-model="user.phone" placeholder="###-###-####" :rules="[rules.phone]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+              <v-text-field id="phone" v-model.trim="user.phone" placeholder="###-###-####" :rules="[rules.phone]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -46,7 +46,7 @@
               <AppLabel for="email">Email:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="email" v-model="user.email" placeholder="user@domain.com" :rules="rules.email" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+              <v-text-field id="email" v-model.trim="user.email" placeholder="user@domain.com" :rules="rules.email" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>

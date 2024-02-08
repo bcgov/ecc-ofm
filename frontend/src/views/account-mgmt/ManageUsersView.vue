@@ -13,7 +13,7 @@
         </AppButton>
       </v-col>
       <v-col cols="3">
-        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+        <v-text-field v-if="showFilterInput" v-model.trim="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
       </v-col>
       <v-col class="d-flex justify-end align-end">
         <AppButton variant="text" @click="toggleDialog({})" :disabled="isLoading">
