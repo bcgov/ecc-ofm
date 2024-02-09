@@ -11,7 +11,7 @@
                     <AppLabel>Organization legal name:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="name" v-model="organizationEdit.name" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="name" v-model.trim="organizationEdit.name" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.name }}
                     </template> </v-col>
@@ -21,7 +21,7 @@
                     <AppLabel>Doing business as:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="businessType" v-model="organizationEdit.businessType" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="businessType" v-model.trim="organizationEdit.businessType" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.businessType }}
                     </template>
@@ -32,7 +32,7 @@
                     <AppLabel>Email address:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="email" v-model="organizationEdit.email" variant="outlined" density="compact" :rules="rules.email" :disabled="isLoading()"></v-text-field>
+                    <v-text-field v-if="editMode" id="email" v-model.trim="organizationEdit.email" variant="outlined" density="compact" :rules="rules.email" :disabled="isLoading()"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.email }}
                     </template>
@@ -43,7 +43,7 @@
                     <AppLabel>Phone (landline):</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="phoneLandline" v-model="organizationEdit.phoneLandline" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="isLoading()"></v-text-field>
+                    <v-text-field v-if="editMode" id="phoneLandline" v-model.trim="organizationEdit.phoneLandline" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="isLoading()"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.phoneLandline }}
                     </template>
@@ -54,7 +54,7 @@
                     <AppLabel>Phone (cell):</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="phoneCell" v-model="organizationEdit.phoneCell" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="isLoading()"></v-text-field>
+                    <v-text-field v-if="editMode" id="phoneCell" v-model.trim="organizationEdit.phoneCell" variant="outlined" density="compact" :rules="[rules.phone]" :disabled="isLoading()"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.phoneCell }}
                     </template>
@@ -80,7 +80,7 @@
                     <AppLabel>Street Address 1:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="mailingStreetAddress1" v-model="organizationEdit.mailingStreetAddress1" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="mailingStreetAddress1" v-model.trim="organizationEdit.mailingStreetAddress1" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingStreetAddress1 : organizationReadOnly?.streetAddress1 }}
                     </template>
@@ -91,7 +91,7 @@
                     <AppLabel>Street Address 2:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="mailingStreetAddress2" v-model="organizationEdit.mailingStreetAddress2" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="mailingStreetAddress2" v-model.trim="organizationEdit.mailingStreetAddress2" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingStreetAddress2 : organizationReadOnly?.streetAddress2 }}
                     </template>
@@ -102,7 +102,7 @@
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="3" class="ma-2">
-                    <v-text-field v-if="editMode" id="mailingCity" v-model="organizationEdit.mailingCity" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="mailingCity" v-model.trim="organizationEdit.mailingCity" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingCity : organizationReadOnly?.city }}
                     </template>
@@ -111,7 +111,7 @@
                     <AppLabel>Prov:</AppLabel>
                   </v-col>
                   <v-col cols="auto" class="ma-2">
-                    <v-text-field v-if="editMode" id="mailingProv" v-model="organizationEdit.mailingProvince" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="mailingProv" v-model.trim="organizationEdit.mailingProvince" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingProvince : organizationReadOnly?.province }}
                     </template>
@@ -120,7 +120,7 @@
                     <AppLabel>Postal Code:</AppLabel>
                   </v-col>
                   <v-col cols="2" class="ma-2">
-                    <v-text-field v-if="editMode" id="mailingPostalCode" v-model="organizationEdit.mailingPostalCode" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="mailingPostalCode" v-model.trim="organizationEdit.mailingPostalCode" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.isMailingAddressDifferent ? organizationReadOnly?.mailingPostalCode : organizationReadOnly?.postalCode }}
                     </template>
@@ -137,7 +137,7 @@
                     <AppLabel>Street Address 1:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="streetAddress1" v-model="organizationEdit.streetAddress1" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="streetAddress1" v-model.trim="organizationEdit.streetAddress1" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.streetAddress1 }}
                     </template>
@@ -148,7 +148,7 @@
                     <AppLabel>Street Address 2:</AppLabel>
                   </v-col>
                   <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                    <v-text-field v-if="editMode" id="streetAddress2" v-model="organizationEdit.streetAddress2" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="streetAddress2" v-model.trim="organizationEdit.streetAddress2" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.streetAddress2 }}
                     </template>
@@ -159,7 +159,7 @@
                     <AppLabel>City:</AppLabel>
                   </v-col>
                   <v-col cols="3" class="ma-2">
-                    <v-text-field v-if="editMode" id="city" v-model="organizationEdit.city" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="city" v-model.trim="organizationEdit.city" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.city }}
                     </template>
@@ -168,7 +168,7 @@
                     <AppLabel>Prov:</AppLabel>
                   </v-col>
                   <v-col cols="auto" class="ma-2">
-                    <v-text-field v-if="editMode" id="province" v-model="organizationEdit.province" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="province" v-model.trim="organizationEdit.province" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.province }}
                     </template>
@@ -177,7 +177,7 @@
                     <AppLabel>Postal Code:</AppLabel>
                   </v-col>
                   <v-col cols="2" class="ma-2">
-                    <v-text-field v-if="editMode" id="postalCode" v-model="organizationEdit.postalCode" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
+                    <v-text-field v-if="editMode" id="postalCode" v-model.trim="organizationEdit.postalCode" variant="outlined" density="compact" :readonly="true" :disabled="isLoading() || editable"></v-text-field>
                     <template v-else>
                       {{ organizationReadOnly?.postalCode }}
                     </template>

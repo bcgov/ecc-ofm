@@ -205,6 +205,7 @@ export default {
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
       this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => obj.contactId !== contactToAdd.contactId)
+      this.updatedContactsToRemove = this.updatedContactsToRemove.filter(obj => obj.contactId !== contactToAdd.contactId)
       this.contactId = null
       this.removeFocus()
     },
@@ -239,8 +240,11 @@ export default {
         this.errorMessage = 'At least one expense authority is required'
       } else {
         this.$emit('save-contact-updates', this.updatedContactsToAdd, this.updatedContactsToRemove)
+        this.updatedContactsToAdd = []
+        this.updatedContactsToRemove = []
         this.editMode = false
       }
+
     },
 
     /**

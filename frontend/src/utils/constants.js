@@ -27,6 +27,7 @@ export const ApiRoutes = Object.freeze({
   FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
   FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
   LICENCES: baseRoot + '/licences',
+  REPORTS: baseRoot + '/reports',
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({

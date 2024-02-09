@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormComplete">
-    <h1>Submit</h1>
+    <h1>Licences</h1>
     <v-row no-gutters class="mt-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
     <v-row class="mt-4">
       <v-col>
@@ -37,13 +37,17 @@ import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 export default {
-  name: 'SubmitApplicationView',
+  name: 'LicencesView',
   props: {
     back: {
       type: Boolean,
       default: false,
     },
-    submit: {
+    next: {
+      type: Boolean,
+      default: false,
+    },
+    save: {
       type: Boolean,
       default: false,
     },
@@ -65,17 +69,22 @@ export default {
     isFormComplete: {
       handler(value) {
         if (!this.currentApplication) return
-        this.currentApplication.isSubmitApplicationComplete = value
+        this.currentApplication.isLicencesComplete = value
       },
     },
     back: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: 'facility-details', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
-    submit: {
+    save: {
       handler() {
-        this.$router.push({ name: 'home' })
+        this.$refs.form?.validate()
+      },
+    },
+    next: {
+      handler() {
+        this.$router.push({ name: 'operating-costs', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },

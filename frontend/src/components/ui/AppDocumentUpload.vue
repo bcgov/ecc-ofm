@@ -16,7 +16,7 @@
               @update:modelValue="validateFile(item.id)"></v-file-input>
           </v-col>
           <v-col cols="11" md="7" class="pr-4">
-            <v-text-field v-model="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
+            <v-text-field v-model.trim="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
           </v-col>
           <v-col v-if="!loading && !readonly" cols="1" class="pt-3">
             <v-icon small @click="deleteFile(item.id)">mdi-delete</v-icon>
@@ -25,7 +25,7 @@
       </div>
       <div v-if="uploadedDocuments.length > 0" class="mt-6 mx-4 mx-md-8 mx-lg-12">
         <AppLabel>Uploaded Documents</AppLabel>
-        <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" density="compact">
+        <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" items-per-page="-1" density="compact">
           <template #item.actionButtons="{ item }">
             <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
           </template>
