@@ -5,7 +5,7 @@ import DocumentService from '@/services/documentService'
 import { FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
-  return application?.primaryContactId
+  return application?.primaryContactId && application?.expenseAuthorityId
 }
 
 function checkStaffingComplete(application) {
