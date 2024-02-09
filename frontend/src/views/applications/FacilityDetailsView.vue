@@ -14,7 +14,7 @@
       <h4>Primary Contact</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
-        If your contact is not in this list, contact your organization Account Manager.
+        If your contact is not on this list, contact your organization Account Manager.
       </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">
