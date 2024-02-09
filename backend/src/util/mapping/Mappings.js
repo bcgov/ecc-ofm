@@ -127,6 +127,7 @@ const ApplicationMappings = [
   { back: 'ofm_staff_responsible_adult_pt', front: 'staffingResponsibleAdultPartTime' },
   { back: '_ofm_contact_value', front: 'primaryContactId' },
   { back: '_ofm_secondary_contact_value', front: 'secondaryContactId' },
+  { back: '_ofm_expense_authority_value', front: 'expenseAuthorityId' },
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_summary_ownership', front: 'ownership' },
   { back: 'ofm_costs_facility_type', front: 'facilityType' },
