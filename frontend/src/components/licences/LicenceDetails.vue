@@ -8,10 +8,10 @@
         <v-row no-gutters>
           <v-col cols="12" md="6" lg="4" xl="3">
             <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="6" class="pr-2">
+              <v-col cols="12" sm="6" class="pr-2">
                 <AppLabel>Licensed Spaces:</AppLabel>
               </v-col>
-              <v-col cols="12" sm="6" xl="6">{{ licence?.licenceSpaces }}</v-col>
+              <v-col cols="12" sm="6">{{ licence?.licenceSpaces }}</v-col>
             </v-row>
           </v-col>
           <v-col cols="12" md="6" lg="5" xl="6">
@@ -22,7 +22,7 @@
               <v-col cols="12" sm="6" xl="8">{{ licence?.weeksInOperation }}</v-col>
             </v-row>
           </v-col>
-          <v-col cols="12" md="6" lg="3" xl="3">
+          <v-col cols="12" md="6" lg="3">
             <v-row no-gutters class="mr-2 my-2">
               <v-col cols="12" sm="6" xl="5" class="pr-2">
                 <AppLabel>Care Type:</AppLabel>
@@ -32,10 +32,10 @@
           </v-col>
           <v-col cols="12" md="6" lg="4" xl="3">
             <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="6" class="pr-2">
+              <v-col cols="12" sm="6" class="pr-2">
                 <AppLabel>Operational Spaces:</AppLabel>
               </v-col>
-              <v-col cols="12" sm="6" xl="6">{{ licence?.operationalSpaces }}</v-col>
+              <v-col cols="12" sm="6">{{ licence?.operationalSpaces }}</v-col>
             </v-row>
           </v-col>
           <v-col cols="12" md="6" lg="5" xl="6">
@@ -46,7 +46,7 @@
               <v-col cols="12" sm="6" xl="8">{{ convertDaysToString(licence?.weekDays) }}</v-col>
             </v-row>
           </v-col>
-          <v-col cols="12" md="6" lg="3" xl="3">
+          <v-col cols="12" md="6" lg="3">
             <v-row no-gutters class="mr-2 my-2">
               <v-col cols="12" sm="6" xl="5" class="pr-2">
                 <AppLabel>Overnight Care:</AppLabel>
@@ -56,10 +56,10 @@
           </v-col>
           <v-col cols="12" md="6" lg="4" xl="3">
             <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="6" class="pr-2">
+              <v-col cols="12" sm="6" class="pr-2">
                 <AppLabel>Enrolled Spaces:</AppLabel>
               </v-col>
-              <v-col cols="12" sm="6" xl="6">{{ licence?.enrolledSpaces }}</v-col>
+              <v-col cols="12" sm="6">{{ licence?.enrolledSpaces }}</v-col>
             </v-row>
           </v-col>
           <v-col cols="12" md="6" lg="5" xl="6">

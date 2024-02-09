@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" v-model="isFormComplete">
+  <v-form ref="form">
     <h2 class="mb-4">Service Delivery Details</h2>
     <h4 class="mb-2">
       Your facility:
@@ -33,6 +33,7 @@
         </v-expansion-panels>
       </v-skeleton-loader>
     </div>
+    <v-checkbox v-model="confirmation" :value="1" :rules="rules.required" :disabled="readonly" label="I confirm that the above information is correct."></v-checkbox>
     <p class="mt-4">
       Your organization account manager can update licence details in
       <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
@@ -49,7 +50,7 @@ import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-
+import rules from '@/utils/rules'
 import LicenceService from '@/services/licenceService'
 import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
@@ -83,16 +84,16 @@ export default {
   emits: ['process'],
   data() {
     return {
+      rules,
       panel: [],
-      model: {},
-      isFormComplete: false,
+      confirmation: 0,
       loading: false,
     }
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
-    // ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
+    ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
     },
@@ -101,7 +102,7 @@ export default {
     },
   },
   watch: {
-    isFormComplete: {
+    confirmation: {
       handler(value) {
         if (this.loading) return
         this.isServiceDeliveryComplete = value
@@ -141,7 +142,7 @@ export default {
           }),
         )
       } catch (error) {
-        this.setFailureAlert('Failed to get licence(s) for facilityId = ' + this.currentApplication?.facilityId, error)
+        this.setFailureAlert('Failed to get licence(s) for your facility', error)
       } finally {
         this.loading = false
         this.$emit('process', false)
@@ -182,5 +183,8 @@ export default {
 }
 .header-label {
   font-size: 1.03em;
+}
+:deep(.v-label) {
+  opacity: 1;
 }
 </style>
