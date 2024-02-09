@@ -60,7 +60,7 @@
                   <v-row>
                     <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" density="compact">
+                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" items-per-page="-1" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
                         <template v-slot:bottom><!-- no paging --></template>
@@ -292,28 +292,28 @@ export default {
 
     /**
      * Get the last expense authority facility names for a user
-    */
+     */
     getLastExpenseAuthoritiesForUser(user) {
       // Find target users's facilities that are marked as isExpenseAuthority
-      const targetFacilities = user.facilities.filter(f => f.isExpenseAuthority) || []
+      const targetFacilities = user.facilities.filter((f) => f.isExpenseAuthority) || []
       // If no facilities with isExpenseAuthority true, return false
       if (targetFacilities.length === 0) {
         return { isLastExpenseAuthority: false, facilityNames: [] }
       }
       const lastExpenseAuthorityFacilityNames = []
       // Check for each of the target's facilities with isExpenseAuthority true
-      targetFacilities.forEach(facility => {
+      targetFacilities.forEach((facility) => {
         // Check if any other user has a facility with the same facilityId and isExpenseAuthority true
-        const hasOtherUserWithAuthority = this.usersAndFacilities.some(userToCheck =>
-          userToCheck.contactId !== user.contactId &&
-          userToCheck.facilities.some(f => f.facilityId === facility.facilityId && f.isExpenseAuthority))
+        const hasOtherUserWithAuthority = this.usersAndFacilities.some(
+          (userToCheck) => userToCheck.contactId !== user.contactId && userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority),
+        )
         if (!hasOtherUserWithAuthority) {
           lastExpenseAuthorityFacilityNames.push(facility.facilityName)
         }
       })
       return lastExpenseAuthorityFacilityNames
     },
-  }
+  },
 }
 </script>
 
