@@ -45,7 +45,7 @@ function checkOperatingCostsComplete(application) {
 }
 
 function checkServiceDeliveryComplete(application) {
-  return true
+  return application?.licenceDeclaration
 }
 
 export const useApplicationsStore = defineStore('applications', {

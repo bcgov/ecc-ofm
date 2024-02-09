@@ -33,8 +33,17 @@
         </v-expansion-panels>
       </v-skeleton-loader>
     </div>
-    <v-checkbox v-model="confirmation" :value="1" :rules="rules.required" :disabled="readonly" label="I confirm that the above information is correct."></v-checkbox>
-    <p class="mt-4">
+    <v-checkbox
+      v-model="licenceDeclaration"
+      :value="1"
+      :false-value="0"
+      :true-value="1"
+      color="primary"
+      :rules="rules.required"
+      :disabled="readonly"
+      label="I confirm that the above information is correct."
+      class="mt-4"></v-checkbox>
+    <p>
       Your organization account manager can update licence details in
       <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
       .
@@ -51,6 +60,7 @@ import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import rules from '@/utils/rules'
+import ApplicationService from '@/services/applicationService'
 import LicenceService from '@/services/licenceService'
 import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
@@ -62,9 +72,9 @@ export default {
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
     if (this.loading) return
-    // if (!this.readonly) {
-    //   await this.saveApplication()
-    // }
+    if (!this.readonly) {
+      await this.saveApplication()
+    }
     next()
   },
   props: {
@@ -86,7 +96,7 @@ export default {
     return {
       rules,
       panel: [],
-      confirmation: 0,
+      licenceDeclaration: undefined,
       loading: false,
     }
   },
@@ -102,7 +112,7 @@ export default {
     },
   },
   watch: {
-    confirmation: {
+    licenceDeclaration: {
       handler(value) {
         if (this.loading) return
         this.isServiceDeliveryComplete = value
@@ -125,6 +135,7 @@ export default {
     },
   },
   async created() {
+    this.licenceDeclaration = this.currentApplication?.licenceDeclaration
     await this.loadData()
     this.panel = this.allLicenceIDs
   },
@@ -137,7 +148,7 @@ export default {
         this.loading = true
         this.licences = await FacilityService.getLicences(this.currentApplication?.facilityId)
         await Promise.all(
-          this.licences.map(async (licence) => {
+          this.licences?.map(async (licence) => {
             licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
           }),
         )
@@ -152,14 +163,13 @@ export default {
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)
-        // const payload = {
-        //   primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
-        //   secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
-        // }
-        // if (ApplicationService.isApplicationUpdated(payload)) {
-        //   await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
-        //   await this.getApplication(this.$route.params.applicationGuid)
-        // }
+        const payload = {
+          licenceDeclaration: this.licenceDeclaration,
+        }
+        if (ApplicationService.isApplicationUpdated(payload)) {
+          await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
+          await this.getApplication(this.$route.params.applicationGuid)
+        }
         if (showAlert) {
           this.setSuccessAlert('Application saved successfully')
         }
