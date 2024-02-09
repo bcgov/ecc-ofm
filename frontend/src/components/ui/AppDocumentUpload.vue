@@ -25,7 +25,7 @@
       </div>
       <div v-if="uploadedDocuments.length > 0" class="mt-6 mx-4 mx-md-8 mx-lg-12">
         <AppLabel>Uploaded Documents</AppLabel>
-        <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" density="compact">
+        <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" items-per-page="-1" density="compact">
           <template #item.actionButtons="{ item }">
             <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
           </template>
