@@ -54,7 +54,6 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
@@ -101,7 +100,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     readonly() {

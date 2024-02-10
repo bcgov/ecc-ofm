@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="px-0">
-    <h4 class="mb-2">Licence {{ licence.licence }}</h4>
+    <h4 class="mb-2">Licence {{ licence?.licence }}</h4>
     <v-row no-gutters>
       <v-col cols="12" lg="6">
         <v-row no-gutters class="mr-2 my-2">

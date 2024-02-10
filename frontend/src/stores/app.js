@@ -28,20 +28,20 @@ export const useAppStore = defineStore('app', {
   getters: {
     getRoleNameById: (state) => {
       return (id) => {
-        const role = state.userRoles.find((role) => role.id === id)
-        return role ? role.description : null
+        const role = state.userRoles?.find((role) => role.id === id)
+        return role?.description
       }
     },
     getLicenceTypeNameById: (state) => {
       return (id) => {
-        const licenceType = state.licenceTypes.find((licenceType) => licenceType.id === id)
-        return licenceType ? licenceType.description : null
+        const licenceType = state.licenceTypes?.find((licenceType) => licenceType.id === id)
+        return licenceType?.description
       }
     },
     getHealthAuthorityNameById: (state) => {
       return (id) => {
-        const healthAuthority = state.healthAuthorities.find((healthAuthority) => healthAuthority.id === id)
-        return healthAuthority ? healthAuthority.description : null
+        const healthAuthority = state.healthAuthorities?.find((healthAuthority) => healthAuthority.id === id)
+        return healthAuthority?.description
       }
     },
   },
