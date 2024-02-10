@@ -120,7 +120,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'facility-details' })
+        this.$router.push({ name: 'facility-details', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
