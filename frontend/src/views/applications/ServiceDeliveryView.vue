@@ -92,6 +92,7 @@ export default {
   data() {
     return {
       rules,
+      licences: [],
       panel: [],
       licenceDeclaration: undefined,
       loading: false,
