@@ -35,16 +35,12 @@
                         density="compact"
                         variant="outlined"
                         @update:modelValue="addContact"
-                        :error-messages="errorMessage">
-                      </v-autocomplete>
+                        :error-messages="errorMessage"></v-autocomplete>
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col class="pt-2">
-                      <v-data-table
-                        :headers="headers"
-                        :items="sortedContacts"
-                        density="compact">
+                      <v-data-table :headers="headers" :items="sortedContacts" density="compact">
                         <template v-slot:item.name="{ item }">
                           {{ `${item.firstName} ${item.lastName}` }}
                         </template>
@@ -99,24 +95,24 @@ export default {
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     titleInfo: {
       type: String,
-      required: true
+      required: true,
     },
     contacts: {
       type: Array,
-      required: true
+      required: true,
     },
     contactsForAdd: {
       type: Array,
-      required: true
+      required: true,
     },
     atLeastOneContactMandatory: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
   },
   emits: ['save-contact-updates'],
@@ -133,13 +129,10 @@ export default {
       headers: [
         { title: 'Name', value: 'name', width: '20%' },
         { title: 'Role', value: 'role', width: '30%' },
-        { title: '', value: 'actions', width: '50%' }
+        { title: '', value: 'actions', width: '50%' },
       ],
       errorMessage: '',
-      atLeastOneContactRules: [
-        v => !!v || 'At least one expense authority is required for a facility.',
-      ],
-
+      atLeastOneContactRules: [(v) => !!v || 'At least one expense authority is required for a facility.'],
     }
   },
   computed: {
@@ -201,11 +194,11 @@ export default {
       if (!this.contactId) {
         return
       }
-      const contactToAdd = this.contactsAvailableForAdd.find(item => item.contactId === this.contactId)
+      const contactToAdd = this.contactsAvailableForAdd.find((item) => item.contactId === this.contactId)
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
-      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(obj => obj.contactId !== contactToAdd.contactId)
-      this.updatedContactsToRemove = this.updatedContactsToRemove.filter(obj => obj.contactId !== contactToAdd.contactId)
+      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter((obj) => obj.contactId !== contactToAdd.contactId)
+      this.updatedContactsToRemove = this.updatedContactsToRemove.filter((obj) => obj.contactId !== contactToAdd.contactId)
       this.contactId = null
       this.removeFocus()
     },
@@ -214,7 +207,7 @@ export default {
      * Remove a contact from the list of contacts to display and add to the list of contacts available for add
      */
     deleteContact(contact) {
-      this.contactsToDisplay = this.contactsToDisplay.filter(obj => obj.contactId !== contact.contactId)
+      this.contactsToDisplay = this.contactsToDisplay.filter((obj) => obj.contactId !== contact.contactId)
       this.updatedContactsToRemove.push(contact)
       this.contactsAvailableForAdd = [...this.contactsAvailableForAdd, contact]
     },
@@ -244,7 +237,6 @@ export default {
         this.updatedContactsToRemove = []
         this.editMode = false
       }
-
     },
 
     /**
@@ -255,10 +247,9 @@ export default {
         return []
       }
       return contacts.sort((a, b) => {
-        return a.firstName.localeCompare(b.firstName)
+        return a.firstName?.localeCompare(b.firstName)
       })
     },
   },
 }
 </script>
-
