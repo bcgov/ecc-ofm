@@ -5,7 +5,6 @@
       Your facility:
       <span class="facility-name ml-6">{{ currentApplication?.facilityName }}</span>
     </h4>
-
     <v-row v-if="!loading && licences?.length > 0" no-gutters class="mb-2">
       <v-col cols="12" align="right">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
@@ -46,7 +45,6 @@
     <p>
       Your organization account manager can update licence details in
       <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
-      .
     </p>
   </v-form>
 </template>
@@ -177,6 +175,7 @@ export default {
         this.$emit('process', false)
       }
     },
+
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allLicenceIDs : []
     },
