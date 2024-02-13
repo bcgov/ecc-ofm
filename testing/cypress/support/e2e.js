@@ -57,6 +57,19 @@ function loginViaAAD(username, password) {
   );
 }
 
+function loginToPortal(username, password) {
+  cy.visit(
+    "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/"
+  );
+  cy.get('a[id="bceid-login"]').click();
+  cy.wait(3000);
+
+  // brought to the BCeID login page
+  cy.get('input[id="user"]').type(username);
+  cy.get('input[id="password"]').type(password);
+  cy.get('input[type="submit"]').contains("Continue").click();
+}
+
 Cypress.Commands.add("loginToAAD", (username, password) => {
   cy.session(
     `aad${username}`,
@@ -82,6 +95,33 @@ Cypress.Commands.add("loginToAAD", (username, password) => {
           cy.contains("Dynamics 365").should("be.visible");
           cy.contains("Operating Funding Model").should("be.visible");
         });
+      },
+    }
+  );
+});
+
+Cypress.Commands.add("loginToPortal", (username, password) => {
+  cy.session(
+    `portal-${username}`,
+    () => {
+      const log = Cypress.log({
+        displayName: "Portal Login",
+        message: [`🔐 Authenticating | ${username}`],
+        autoEnd: false,
+      });
+      log.snapshot("before");
+
+      loginToPortal(username, password);
+
+      log.snapshot("after");
+      log.end();
+    },
+    {
+      validate: () => {
+        cy.visit(
+          "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/"
+        );
+        cy.contains("Operating Funding Model").should("exist");
       },
     }
   );
