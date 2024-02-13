@@ -51,17 +51,28 @@ async function getFacilityTypes() {
   return fetchAndCacheData('applicationFacilityTypes', 'ofm_facility_type')
 }
 
+async function getLicenceTypes() {
+  return fetchAndCacheData('licenceTypes', 'ecc_licence_type')
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, userRoles, healthAuthorities, facilityTypes] = await Promise.all([getRequestCategories(), getUserRoles(), getHealthAuthorities(), getFacilityTypes()])
+    const [requestCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
+      getRequestCategories(),
+      getUserRoles(),
+      getHealthAuthorities(),
+      getFacilityTypes(),
+      getLicenceTypes(),
+    ])
     const resData = {
       requestCategories: requestCategories,
       userRoles: userRoles,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
+      licenceTypes: licenceTypes,
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {

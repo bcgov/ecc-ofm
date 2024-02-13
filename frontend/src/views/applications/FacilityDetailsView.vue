@@ -183,7 +183,7 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'licences', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: 'service-delivery', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     primaryContact: {

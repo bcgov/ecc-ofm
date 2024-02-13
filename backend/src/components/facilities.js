@@ -33,7 +33,7 @@ async function getFacilityContacts(req, res) {
 
 async function getFacilityLicences(req, res) {
   try {
-    const operation = `ofm_licences?$select=ofm_health_authority,ofm_licence,ofm_licenceid,statuscode,statecode&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (statecode eq 0)`
+    const operation = `ofm_licences?$select=ofm_health_authority,ofm_licence,ofm_licenceid,ofm_tdad_funding_agreement_number,ofm_accb_providerid,ofm_ccof_organizationid,ofm_ccof_facilityid,statuscode,statecode&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (statecode eq 0)`
     const response = await getOperation(operation)
     const licences = []
     response?.value?.forEach((item) => licences.push(new MappableObjectForFront(item, LicenceMappings).toJSON()))

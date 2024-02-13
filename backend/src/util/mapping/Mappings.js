@@ -144,6 +144,7 @@ const ApplicationMappings = [
   { back: 'ofm_costs_strata_fee', front: 'strataFee' },
   { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
+  { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
 ]
 
 const OrganizationMappings = [
@@ -209,6 +210,26 @@ const LicenceMappings = [
   { back: 'ofm_licenceid', front: 'licenceId' },
   { back: 'ofm_licence', front: 'licence' },
   { back: 'ofm_health_authority', front: 'healthAuthorityId' },
+  { back: 'ofm_tdad_funding_agreement_number', front: 'tdadFundingAgreementNumber' },
+  { back: 'ofm_accb_providerid', front: 'accbProviderId' },
+  { back: 'ofm_ccof_organizationid', front: 'ccofOrganizationId' },
+  { back: 'ofm_ccof_facilityid', front: 'ccofFacilityId' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const LicenceDetailsMappings = [
+  { back: 'ofm_licence_detailid', front: 'licenceDetailId' },
+  { back: 'ofm_licence_type', front: 'licenceType' },
+  { back: 'ofm_licence_spaces', front: 'licenceSpaces' },
+  { back: 'ofm_operational_spaces', front: 'operationalSpaces' },
+  { back: 'ofm_enrolled_spaces', front: 'enrolledSpaces' },
+  { back: 'ofm_operation_from_time', front: 'operationFromTime' },
+  { back: 'ofm_operations_to_time', front: 'operationToTime' },
+  { back: 'ofm_week_days', front: 'weekDays' },
+  { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
+  { back: 'ofm_care_type', front: 'careType' },
+  { back: 'ofm_overnight_care', front: 'overnightCare' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -234,6 +255,7 @@ module.exports = {
   DocumentMappings,
   FacilityMappings,
   LicenceMappings,
+  LicenceDetailsMappings,
   NotificationMappings,
   OrganizationMappings,
   UserFacilityDetailMappings,

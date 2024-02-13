@@ -29,6 +29,7 @@ const notificationRouter = require('./routes/notification')
 const applicationsRouter = require('./routes/applications')
 const organizationsRouter = require('./routes/organizations')
 const facilitiesRouter = require('./routes/facilities')
+const licencesRouter = require('./routes/licences')
 const reportsRouter = require('./routes/reports')
 
 const connectRedis = require('connect-redis')
@@ -197,6 +198,7 @@ apiRouter.use('/notifications', notificationRouter)
 apiRouter.use('/applications', applicationsRouter)
 apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
+apiRouter.use('/licences', licencesRouter)
 apiRouter.use('/reports', reportsRouter)
 
 //Handle 500 error
