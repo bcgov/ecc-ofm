@@ -7,7 +7,7 @@
           <v-col cols="12" sm="6" class="pr-2 mt-1">
             <AppLabel>CCOF Facility ID:</AppLabel>
           </v-col>
-          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofFacilityId ? licence?.ccofFacilityId : '- - - -' }}</v-col>
+          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofFacilityId ? licence?.ccofFacilityId : blankField }}</v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="6">
@@ -15,7 +15,7 @@
           <v-col cols="12" sm="6" class="pr-2 mt-1">
             <AppLabel>CCOF Organization ID:</AppLabel>
           </v-col>
-          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : '- - - -' }}</v-col>
+          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : blankField }}</v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="6">
@@ -24,7 +24,7 @@
             <AppLabel>Health Authority:</AppLabel>
           </v-col>
           <v-col cols="12" sm="6" class="mt-1">
-            {{ getHealthAuthorityNameById(licence?.healthAuthorityId) ? getHealthAuthorityNameById(licence?.healthAuthorityId) : '- - - -' }}
+            {{ getHealthAuthorityNameById(licence?.healthAuthorityId) ? getHealthAuthorityNameById(licence?.healthAuthorityId) : blankField }}
           </v-col>
         </v-row>
       </v-col>
@@ -34,7 +34,7 @@
             <AppLabel>ACCB Provider ID:</AppLabel>
           </v-col>
           <v-col cols="12" sm="6" class="mt-1">
-            {{ licence?.accbProviderId ? licence?.accbProviderId : '- - - -' }}
+            {{ licence?.accbProviderId ? licence?.accbProviderId : blankField }}
           </v-col>
         </v-row>
       </v-col>
@@ -44,7 +44,7 @@
             <AppLabel>TDAD Funding Agreement Number:</AppLabel>
           </v-col>
           <v-col cols="12" sm="6" class="mt-1">
-            {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : '- - - -' }}
+            {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : blankField }}
           </v-col>
         </v-row>
       </v-col>
@@ -70,6 +70,9 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getHealthAuthorityNameById']),
+  },
+  created() {
+    this.blankField = '- - - -'
   },
 }
 </script>

@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId } = require('./utils')
+const { getOperation } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const { LicenceDetailsMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
