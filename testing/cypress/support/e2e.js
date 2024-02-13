@@ -121,7 +121,7 @@ Cypress.Commands.add("loginToPortal", (username, password) => {
         cy.visit(
           "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/"
         );
-        cy.contains("Operating Funding Model").should("exist");
+        cy.contains(Cypress.env("portal_username")).should("exist");
       },
     }
   );
