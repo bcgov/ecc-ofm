@@ -13,7 +13,7 @@
         </AppButton>
       </v-col>
       <v-col cols="3">
-        <v-text-field v-if="showFilterInput" v-model="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+        <v-text-field v-if="showFilterInput" v-model.trim="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
       </v-col>
       <v-col class="d-flex justify-end align-end">
         <AppButton variant="text" @click="toggleDialog({})" :disabled="isLoading">
@@ -60,7 +60,7 @@
                   <v-row>
                     <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" density="compact">
+                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" items-per-page="-1" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
                         <template v-slot:bottom><!-- no paging --></template>
@@ -70,7 +70,7 @@
                   </v-row>
                 </td>
                 <td class="pl-0">
-                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="toggleDeactivateUserDialog(item)">Deactivate user</AppButton>
+                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="deactivateUser(item)">Deactivate user</AppButton>
                 </td>
               </tr>
             </template>
@@ -80,10 +80,7 @@
     </v-row>
     <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppButton class="mt-2" id="back-home-button" :primary="false" size="large" width="220px" :to="{ name: 'home' }">
-      <v-icon class="pb-1">mdi-arrow-left</v-icon>
-      Back to Home
-    </AppButton>
+    <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
   </v-container>
 </template>
 
@@ -91,6 +88,7 @@
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
 import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import alertMixin from '@/mixins/alertMixin'
@@ -101,7 +99,7 @@ import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 
 export default {
-  components: { AppButton, ManageUserDialog, DeactivateUserDialog },
+  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {
@@ -220,6 +218,7 @@ export default {
      * Sort users by: account management role 1st, expense authority 2nd, last name 3rd
      */
     sortUsers(users) {
+      if (!users) return []
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
         const roleA = a.role === this.ROLES.ACCOUNT_MANAGEMENT
@@ -277,6 +276,42 @@ export default {
      */
     isExpenseAuthority(user) {
       return user.facilities.some((facility) => facility.isExpenseAuthority) ? 'Yes' : 'No'
+    },
+
+    /**
+     * Deactivates a user if they are not the last Expense Authority for any facility.
+     */
+    deactivateUser(user) {
+      const facilityNames = this.getLastExpenseAuthoritiesForUser(user)
+      if (facilityNames.length > 0) {
+        this.setFailureAlert(`Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`)
+      } else {
+        this.toggleDeactivateUserDialog(user)
+      }
+    },
+
+    /**
+     * Get the last expense authority facility names for a user
+     */
+    getLastExpenseAuthoritiesForUser(user) {
+      // Find target users's facilities that are marked as isExpenseAuthority
+      const targetFacilities = user.facilities.filter((f) => f.isExpenseAuthority) || []
+      // If no facilities with isExpenseAuthority true, return false
+      if (targetFacilities.length === 0) {
+        return { isLastExpenseAuthority: false, facilityNames: [] }
+      }
+      const lastExpenseAuthorityFacilityNames = []
+      // Check for each of the target's facilities with isExpenseAuthority true
+      targetFacilities.forEach((facility) => {
+        // Check if any other user has a facility with the same facilityId and isExpenseAuthority true
+        const hasOtherUserWithAuthority = this.usersAndFacilities.some(
+          (userToCheck) => userToCheck.contactId !== user.contactId && userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority),
+        )
+        if (!hasOtherUserWithAuthority) {
+          lastExpenseAuthorityFacilityNames.push(facility.facilityName)
+        }
+      })
+      return lastExpenseAuthorityFacilityNames
     },
   },
 }

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@bcgov/bc-sans": "^2.0.0",
+    "@coders-tm/vue-number-format": "^3.34.1",
     "@js-joda/core": "^5.5.3",
     "@vueuse/core": "^10.5.0",
     "axios": "^1.4.0",

@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { PAGE_TITLES, ROLES } from '@/utils/constants'
+import { ROLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
 import EmptyRouterView from '@/views/EmptyRouterView.vue'
@@ -26,9 +25,9 @@ import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
-import LicencesView from '@/views/applications/LicencesView.vue'
 import OperatingCostsView from '@/views/applications/OperatingCostsView.vue'
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
+import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
 import SubmitApplicationView from '@/views/applications/SubmitApplicationView.vue'
 
@@ -41,7 +40,6 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
-        pageTitle: PAGE_TITLES.DASHBOARD,
         requiresAuth: true,
         showHeroImage: true,
       },
@@ -51,7 +49,6 @@ const router = createRouter({
       name: 'login',
       component: LoginView,
       meta: {
-        pageTitle: PAGE_TITLES.LOGIN,
         requiresAuth: false,
         showHeroImage: true,
       },
@@ -61,7 +58,6 @@ const router = createRouter({
       name: 'ministry login',
       component: MinistryLoginView,
       meta: {
-        pageTitle: PAGE_TITLES.LOGIN,
         requiresAuth: false,
         showHeroImage: true,
       },
@@ -79,7 +75,6 @@ const router = createRouter({
       name: 'impersonate',
       component: ImpersonateView,
       meta: {
-        pageTitle: 'Impersonate a BCeID User',
         requiresAuth: true,
       },
     },
@@ -88,7 +83,6 @@ const router = createRouter({
       name: 'messaging',
       component: MessagingView,
       meta: {
-        pageTitle: 'Messaging',
         requiresAuth: true,
       },
     },
@@ -97,7 +91,6 @@ const router = createRouter({
       name: 'reporting',
       component: ReportingView,
       meta: {
-        pageTitle: 'Reporting',
         requiresAuth: true,
       },
     },
@@ -106,7 +99,6 @@ const router = createRouter({
       name: 'funding',
       component: FundingView,
       meta: {
-        pageTitle: 'Funding',
         requiresAuth: true,
       },
     },
@@ -115,7 +107,6 @@ const router = createRouter({
       name: 'documents',
       component: DocumentsView,
       meta: {
-        pageTitle: 'Documents',
         requiresAuth: true,
       },
     },
@@ -124,7 +115,6 @@ const router = createRouter({
       name: 'applications-history',
       component: ApplicationsHistoryView,
       meta: {
-        pageTitle: 'Applications History',
         requiresAuth: true,
       },
     },
@@ -145,9 +135,9 @@ const router = createRouter({
           component: FacilityDetailsView,
         },
         {
-          path: ':applicationGuid/licences',
-          name: 'licences',
-          component: LicencesView,
+          path: ':applicationGuid/service-delivery',
+          name: 'service-delivery',
+          component: ServiceDeliveryView,
         },
         {
           path: ':applicationGuid/operating-costs',
@@ -166,7 +156,6 @@ const router = createRouter({
         },
       ],
       meta: {
-        pageTitle: 'Application',
         requiresAuth: true,
       },
     },
@@ -175,7 +164,6 @@ const router = createRouter({
       name: 'resources',
       component: ResourcesView,
       meta: {
-        pageTitle: 'Resources',
         requiresAuth: true,
       },
     },
@@ -184,7 +172,6 @@ const router = createRouter({
       name: 'manage-users',
       component: ManageUsersView,
       meta: {
-        pageTitle: 'Manage Users',
         requiresAuth: true,
         role: ROLES.ACCOUNT_MANAGEMENT,
         showFacility: false,
@@ -266,14 +253,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from, next) => {
-  // this section is to set page title in vue store
-  const appStore = useAppStore()
-  if (to && to.meta.pageTitle) {
-    appStore.setPageTitle(to.meta.pageTitle)
-  } else {
-    appStore.setPageTitle('')
-  }
-
   // TODO (weskubo-cgi)
   // 1. Don't allow access to Logout page if not logged in
   // 2. Don't allow access to Login if Logged in

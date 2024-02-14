@@ -1,5 +1,5 @@
 'use strict'
-const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation, postBatches } = require('./utils')
+const { getSessionUser, getUserName, getBusinessName, getHttpHeader, minify, getUserGuid, isIdirUser, getOperation, postOperation, postBatches, patchOperationWithObjectId } = require('./utils')
 const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
@@ -176,9 +176,9 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
       let facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
-      facilityData.accountNumber = facilityData.address.accountnumber
-      facilityData.city = facilityData.address.address1_city
-      facilityData.address = facilityData.address.address1_line1
+      facilityData.accountNumber = facilityData.address?.accountnumber
+      facilityData.city = facilityData.address?.address1_city
+      facilityData.address = facilityData.address?.address1_line1
       return facilityData
     })
   }
@@ -299,6 +299,18 @@ async function getUserByBCeID(req, res) {
   }
 }
 
+async function updateUserFacilityPermission(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, UsersPermissionsFacilityMappings).toJSON()
+    delete payload['_ofm_facility_value@OData.Community.Display.V1.FormattedValue']
+    delete payload['_ofm_facility_value']
+    const response = await patchOperationWithObjectId('ofm_bceid_facilities', req.params.bceidFacilityId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   createUser,
   getUserByBCeID,
@@ -306,4 +318,5 @@ module.exports = {
   getUserInfo,
   getUsersPermissionsFacilities,
   updateUser,
+  updateUserFacilityPermission,
 }

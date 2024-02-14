@@ -1,0 +1,184 @@
+<template>
+  <v-container fluid class="pa-0">
+    <AppLabel>Yearly Operating Cost</AppLabel>
+    <v-card class="my-2" variant="outlined">
+      <v-row no-gutters class="mt-2 pt-2">
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>Insurance</p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.insuranceCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>
+                Upkeep and Labour
+                <v-tooltip content-class="tooltip" :text="UPKEEP_INFO_TXT">
+                  <template v-slot:activator="{ props }">
+                    <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.upkeepLabourCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-2">
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>
+                Utilities
+                <v-tooltip content-class="tooltip" :text="UTILITIES_INFO_TXT">
+                  <template v-slot:activator="{ props }">
+                    <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.utilitiesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>
+                Maintenance and Repairs
+                <v-tooltip content-class="tooltip" :text="MAINTENANCE_INFO_TXT">
+                  <template v-slot:activator="{ props }">
+                    <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.maintenanceRepairsCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-2">
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>
+                Furniture and Equipment
+                <v-tooltip content-class="tooltip" :text="FURNITURE_INFO_TXT">
+                  <template v-slot:activator="{ props }">
+                    <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.furnitureEquipmentsCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <p>Supplies</p>
+            </v-col>
+            <v-col cols="6" xl="7" align="center" class="px-2">
+              <AppNumberInput v-model.lazy="model.suppliesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-2">
+        <v-col cols="12" lg="6" class="px-4">
+          <v-row no-gutters>
+            <v-col cols="6" xl="5" class="pt-2">
+              <AppLabel>Total Yearly Costs</AppLabel>
+            </v-col>
+            <v-col cols="6" xl="7" class="pl-6">
+              <AppNumberInput :value="totalYearlyCost" :format="totalNumberFormat" variant="plain" readonly class="totalYearlyCost"></AppNumberInput>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-container>
+</template>
+
+<script>
+import AppLabel from '@/components/ui/AppLabel.vue'
+import AppNumberInput from '@/components/ui/AppNumberInput.vue'
+import { useApplicationsStore } from '@/stores/applications'
+import { mapState } from 'pinia'
+import rules from '@/utils/rules'
+
+export default {
+  components: { AppLabel, AppNumberInput },
+  props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update'],
+  data() {
+    return {
+      rules,
+      fieldNumberFormat: {
+        nullValue: '0.00',
+        min: 0,
+        decimal: '.',
+        separator: ',',
+        precision: 2,
+      },
+      totalNumberFormat: {
+        decimal: '.',
+        separator: ',',
+        prefix: '$ ',
+      },
+      model: {},
+    }
+  },
+  computed: {
+    ...mapState(useApplicationsStore, ['currentApplication']),
+    totalYearlyCost() {
+      const totalYearlyCost = Object.values(this.model)?.reduce((total, cost) => total + Number(cost), 0)
+      return totalYearlyCost.toFixed(2)
+    },
+  },
+  watch: {
+    model: {
+      handler(value) {
+        this.$emit('update', value)
+      },
+      deep: true,
+    },
+  },
+  created() {
+    this.model = {
+      insuranceCost: this.currentApplication?.insuranceCost ? this.currentApplication?.insuranceCost?.toFixed(2) : '0.00',
+      upkeepLabourCost: this.currentApplication?.upkeepLabourCost ? this.currentApplication?.upkeepLabourCost?.toFixed(2) : '0.00',
+      suppliesCost: this.currentApplication?.suppliesCost ? this.currentApplication?.suppliesCost?.toFixed(2) : '0.00',
+      utilitiesCost: this.currentApplication?.utilitiesCost ? this.currentApplication?.utilitiesCost?.toFixed(2) : '0.00',
+      maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost ? this.currentApplication?.maintenanceRepairsCost?.toFixed(2) : '0.00',
+      furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost ? this.currentApplication?.furnitureEquipmentsCost?.toFixed(2) : '0.00',
+    }
+    this.UTILITIES_INFO_TXT = 'This is a placeholder message'
+    this.FURNITURE_INFO_TXT = 'This is a placeholder message'
+    this.UPKEEP_INFO_TXT = 'This is a placeholder message'
+    this.MAINTENANCE_INFO_TXT = 'This is a placeholder message'
+  },
+}
+</script>
+<style scoped>
+.totalYearlyCost {
+  font-weight: 700;
+}
+</style>

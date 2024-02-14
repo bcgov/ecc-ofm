@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
+import DocumentService from '@/services/documentService'
+import { FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
-  return application?.primaryContactId
+  return application?.primaryContactId && application?.expenseAuthorityId
 }
 
 function checkStaffingComplete(application) {
@@ -37,12 +39,21 @@ function checkStaffingComplete(application) {
   )
 }
 
+function checkOperatingCostsComplete(application) {
+  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && application?.uploadedDocuments?.length > 0)
+  return application?.facilityType && isDocumentUploaded && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
+}
+
+function checkServiceDeliveryComplete(application) {
+  return application?.licenceDeclaration
+}
+
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
   state: () => ({
     currentApplication: undefined,
     isFacilityDetailsComplete: false,
-    isLicencesComplete: false,
+    isServiceDeliveryComplete: false,
     isOperatingCostsComplete: false,
     isStaffingComplete: false,
     isSubmitApplicationComplete: false,
@@ -50,12 +61,17 @@ export const useApplicationsStore = defineStore('applications', {
   actions: {
     checkApplicationComplete() {
       this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
+      this.isServiceDeliveryComplete = checkServiceDeliveryComplete(this.currentApplication)
+      this.isOperatingCostsComplete = checkOperatingCostsComplete(this.currentApplication)
       this.isStaffingComplete = checkStaffingComplete(this.currentApplication)
     },
 
     async getApplication(applicationId) {
       try {
         this.currentApplication = await ApplicationService.getApplication(applicationId)
+        if (this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE) {
+          this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
+        }
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error

@@ -127,8 +127,24 @@ const ApplicationMappings = [
   { back: 'ofm_staff_responsible_adult_pt', front: 'staffingResponsibleAdultPartTime' },
   { back: '_ofm_contact_value', front: 'primaryContactId' },
   { back: '_ofm_secondary_contact_value', front: 'secondaryContactId' },
+  { back: '_ofm_expense_authority_value', front: 'expenseAuthorityId' },
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_summary_ownership', front: 'ownership' },
+  { back: 'ofm_costs_facility_type', front: 'facilityType' },
+  { back: 'ofm_costs_property_insurance', front: 'insuranceCost' },
+  { back: 'ofm_costs_upkeep_labour_supplies', front: 'upkeepLabourCost' },
+  { back: 'ofm_costs_supplies', front: 'suppliesCost' },
+  { back: 'ofm_costs_utilities', front: 'utilitiesCost' },
+  { back: 'ofm_costs_maintenance_repairs', front: 'maintenanceRepairsCost' },
+  { back: 'ofm_costs_furniture_equipment', front: 'furnitureEquipmentsCost' },
+  { back: 'ofm_costs_yearly_operating_costs', front: 'totalYearlyOperatingCosts' },
+  { back: 'ofm_costs_rent_lease', front: 'rentLeaseCost' },
+  { back: 'ofm_costs_mortgage', front: 'mortgageCost' },
+  { back: 'ofm_costs_property_municipal_tax', front: 'propertyTax' },
+  { back: 'ofm_costs_strata_fee', front: 'strataFee' },
+  { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
+  { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
+  { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
 ]
 
 const OrganizationMappings = [
@@ -194,7 +210,40 @@ const LicenceMappings = [
   { back: 'ofm_licenceid', front: 'licenceId' },
   { back: 'ofm_licence', front: 'licence' },
   { back: 'ofm_health_authority', front: 'healthAuthorityId' },
+  { back: 'ofm_tdad_funding_agreement_number', front: 'tdadFundingAgreementNumber' },
+  { back: 'ofm_accb_providerid', front: 'accbProviderId' },
+  { back: 'ofm_ccof_organizationid', front: 'ccofOrganizationId' },
+  { back: 'ofm_ccof_facilityid', front: 'ccofFacilityId' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const LicenceDetailsMappings = [
+  { back: 'ofm_licence_detailid', front: 'licenceDetailId' },
+  { back: 'ofm_licence_type', front: 'licenceType' },
+  { back: 'ofm_licence_spaces', front: 'licenceSpaces' },
+  { back: 'ofm_operational_spaces', front: 'operationalSpaces' },
+  { back: 'ofm_enrolled_spaces', front: 'enrolledSpaces' },
+  { back: 'ofm_operation_from_time', front: 'operationFromTime' },
+  { back: 'ofm_operations_to_time', front: 'operationToTime' },
+  { back: 'ofm_week_days', front: 'weekDays' },
+  { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
+  { back: 'ofm_care_type', front: 'careType' },
+  { back: 'ofm_overnight_care', front: 'overnightCare' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const DocumentMappings = [
+  { back: 'ofm_documentid', front: 'documentId' },
+  { back: 'ofm_name', front: 'referenceNumber' },
+  { back: 'ofm_file_name', front: 'fileName' },
+  { back: 'ofm_subject', front: 'subject' },
+  { back: 'ofm_description', front: 'description' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: '_ofm_regardingid_value', front: 'regardingId' },
 ]
 
 module.exports = {
@@ -203,8 +252,10 @@ module.exports = {
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
+  DocumentMappings,
   FacilityMappings,
   LicenceMappings,
+  LicenceDetailsMappings,
   NotificationMappings,
   OrganizationMappings,
   UserFacilityDetailMappings,

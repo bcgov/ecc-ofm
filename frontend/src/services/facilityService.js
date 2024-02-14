@@ -40,4 +40,15 @@ export default {
       throw error
     }
   },
+
+  async updateFacilityPrimaryContact(facilityId, primaryContactId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.put(`${ApiRoutes.FACILITIES}/${facilityId}`, primaryContactId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to update facility primary contact by facility/account id - ${error}`)
+      throw error
+    }
+  },
 }

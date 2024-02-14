@@ -14,12 +14,12 @@ export function humanFileSize(bytes, decimals = 2) {
 }
 
 export function getFileExtension(fileName) {
-  if (fileName) return fileName.slice(fileName.lastIndexOf('.') + 1)
+  if (fileName) return fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase()
   return ''
 }
 
 export function getFileExtensionWithDot(fileName) {
-  if (fileName) return fileName.slice(fileName.lastIndexOf('.'))
+  if (fileName) return fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
   return ''
 }
 

@@ -12,14 +12,18 @@
     </div>
     <div class="mt-8">
       <h4>Primary Contact</h4>
+      <p>
+        <v-icon>mdi-information-slab-circle-outline</v-icon>
+        If your contact is not on this list, contact your organization Account Manager.
+      </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">
           <v-col cols="12" md="6" lg="5" xl="4" class="mb-4 pr-4">
-            <AppLabel>Select contact who to contact about your application:</AppLabel>
+            <AppLabel>Choose a primary contact for this application:</AppLabel>
           </v-col>
           <v-col cols="12" md="6" lg="7" xl="8">
             <v-select
-              id="primary-contact"
+              id="select-primary-contact"
               v-model="primaryContact"
               :items="contacts"
               :disabled="readonly || loading"
@@ -36,15 +40,18 @@
     </div>
     <div class="mt-8">
       <h4>Secondary Contact (Recommended)</h4>
-      <p>If your contact is not in this list, contact your organization Account Manager.</p>
+      <p>
+        <v-icon>mdi-information-slab-circle-outline</v-icon>
+        This is a backup contact in case the primary cannot be reached.
+      </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">
           <v-col cols="12" md="6" lg="5" xl="4" class="mb-4 pr-4">
-            <AppLabel>Select contact:</AppLabel>
+            <AppLabel>Choose a secondary contact for this application:</AppLabel>
           </v-col>
           <v-col cols="12" md="6" lg="7" xl="8">
             <v-select
-              id="secondary-contact"
+              id="select-secondary-contact"
               v-model="secondaryContact"
               :items="availableSecondaryContacts"
               :disabled="readonly || loading"
@@ -57,6 +64,34 @@
           </v-col>
         </v-row>
         <ContactInfo v-if="secondaryContact" :loading="loading" :contact="secondaryContact" />
+      </v-card>
+    </div>
+    <div class="mt-8">
+      <h4>Expense Authority</h4>
+      <p>
+        <v-icon>mdi-information-slab-circle-outline</v-icon>
+        This person may be the same as your primary or secondary contact.
+      </p>
+      <v-card class="mt-2 pa-4" variant="outlined">
+        <v-row no-gutters class="mt-4">
+          <v-col cols="12" md="6" lg="5" xl="4" class="mb-4 pr-4">
+            <AppLabel>Choose an expense authority for this application:</AppLabel>
+          </v-col>
+          <v-col cols="12" md="6" lg="7" xl="8">
+            <v-select
+              id="select-expense-authority"
+              v-model="expenseAuthority"
+              :items="availableExpenseAuthorities"
+              :disabled="readonly || loading"
+              item-title="fullName"
+              label="Select Expense Authority"
+              :rules="rules.required"
+              density="compact"
+              variant="outlined"
+              return-object></v-select>
+          </v-col>
+        </v-row>
+        <ContactInfo v-if="expenseAuthority" :loading="loading" :contact="expenseAuthority" />
       </v-card>
     </div>
   </v-form>
@@ -80,6 +115,7 @@ export default {
   components: { AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
+    if (this.loading) return
     if (!this.readonly) {
       await this.saveApplication()
     }
@@ -110,6 +146,7 @@ export default {
       loading: false,
       primaryContact: undefined,
       secondaryContact: undefined,
+      expenseAuthority: undefined,
     }
   },
   computed: {
@@ -123,10 +160,14 @@ export default {
     availableSecondaryContacts() {
       return this.contacts?.filter((contact) => contact?.contactId != this.primaryContact?.contactId)
     },
+    availableExpenseAuthorities() {
+      return this.contacts?.filter((contact) => contact?.isExpenseAuthority)
+    },
   },
   watch: {
     isFormComplete: {
       handler(value) {
+        if (this.loading) return
         this.isFacilityDetailsComplete = value
       },
     },
@@ -142,7 +183,7 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'licences', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: 'service-delivery', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     primaryContact: {
@@ -156,6 +197,7 @@ export default {
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
+    this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
@@ -197,6 +239,7 @@ export default {
         const payload = {
           primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
+          expenseAuthorityId: this.expenseAuthority?.contactId ? this.expenseAuthority?.contactId : null,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)

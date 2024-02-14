@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-2 pa-2" variant="outlined">
+  <v-card class="my-2 pa-2" :variant="vCardVariant">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row no-gutters>
@@ -81,6 +81,10 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    vCardVariant: {
+      type: String,
+      default: 'outlined',
     },
   },
 }

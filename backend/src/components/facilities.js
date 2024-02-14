@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation } = require('./utils')
+const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const { FacilityMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
@@ -33,7 +33,7 @@ async function getFacilityContacts(req, res) {
 
 async function getFacilityLicences(req, res) {
   try {
-    const operation = `ofm_licences?$select=ofm_health_authority,ofm_licence,ofm_licenceid,statuscode&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (statuscode eq 1)`
+    const operation = `ofm_licences?$select=ofm_health_authority,ofm_licence,ofm_licenceid,ofm_tdad_funding_agreement_number,ofm_accb_providerid,ofm_ccof_organizationid,ofm_ccof_facilityid,statuscode,statecode&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (statecode eq 0)`
     const response = await getOperation(operation)
     const licences = []
     response?.value?.forEach((item) => licences.push(new MappableObjectForFront(item, LicenceMappings).toJSON()))
@@ -43,8 +43,21 @@ async function getFacilityLicences(req, res) {
   }
 }
 
+async function updateFacilityPrimaryContact(req, res) {
+  try {
+    const payload = {}
+    const primaryContactId = Object.keys(req.body)[0]
+    payload['ofm_primarycontact@odata.bind'] = `/contacts(${primaryContactId})`
+    const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getFacility,
   getFacilityContacts,
   getFacilityLicences,
+  updateFacilityPrimaryContact,
 }

@@ -5,12 +5,11 @@ import ApiService from '@/common/apiService'
 export const useAppStore = defineStore('app', {
   namespaced: true,
   state: () => ({
+    // TODO (weskubo-cgi) Remove unused state
     request: {},
     selectedRequest: null,
     messages: [],
-    pageTitle: '',
     subtitleBanner: '',
-    showNavBar: false,
     stickyInfoPanelHeight: null,
 
     // Alert Notifications
@@ -22,14 +21,27 @@ export const useAppStore = defineStore('app', {
     requestCategories: {},
     userRoles: {},
     healthAuthorities: {},
-
+    facilityTypes: {},
+    licenceTypes: {},
     config: '',
   }),
   getters: {
     getRoleNameById: (state) => {
       return (id) => {
-        const role = state.userRoles.find((role) => role.id === id)
-        return role ? role.description : null
+        const role = state.userRoles?.find((role) => role.id === id)
+        return role?.description
+      }
+    },
+    getLicenceTypeNameById: (state) => {
+      return (id) => {
+        const licenceType = state.licenceTypes?.find((licenceType) => licenceType.id === id)
+        return licenceType?.description
+      }
+    },
+    getHealthAuthorityNameById: (state) => {
+      return (id) => {
+        const healthAuthority = state.healthAuthorities?.find((healthAuthority) => healthAuthority.id === id)
+        return healthAuthority?.description
       }
     },
   },
@@ -41,6 +53,8 @@ export const useAppStore = defineStore('app', {
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.userRoles = lookupInfo?.data?.userRoles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
+        this.facilityTypes = lookupInfo?.data?.facilityTypes
+        this.licenceTypes = lookupInfo?.data?.licenceTypes
       }
     },
     async setConfig(config) {
@@ -58,9 +72,6 @@ export const useAppStore = defineStore('app', {
     async setMessages(messages) {
       this.messages = messages || []
     },
-    async setPageTitle(pageTitle) {
-      this.pageTitle = pageTitle
-    },
     async setStickyInfoPanelHeight(stickyInfoPanelHeight) {
       this.stickyInfoPanelHeight = stickyInfoPanelHeight
     },
@@ -74,21 +85,6 @@ export const useAppStore = defineStore('app', {
       this.alertNotificationQueue.push(text)
       if (!this.alertNotification) {
         this.alertNotification = true
-      }
-    },
-    async getCodes() {
-      if (localStorage.getItem('jwtToken')) {
-        // DONT Call api if there is not token.
-        /*TODO: get application code lists from backend i.e....
-        if (this.activeSchools.length === 0) {
-          const response = await ApiService.getActiveSchools();
-          await this.setActiveSchools(response.data);
-        }
-        if(this.districtMap.size === 0) {
-          const response = await ApiService.getDistricts();
-          await this.setDistricts(response.data);
-        }
-        */
       }
     },
     async getConfig() {

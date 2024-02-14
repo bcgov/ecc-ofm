@@ -37,17 +37,14 @@
     </v-row>
     <v-row>
       <v-col>
-        <AppButton :primary="false" size="large" width="400px" :to="{ name: 'account-mgmt' }">
-          <v-icon class="pb-1">mdi-arrow-left</v-icon>
-          Back to Account Management
-        </AppButton>
+        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
@@ -57,7 +54,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppButton, OrganizationInfo },
+  components: { AppBackButton, OrganizationInfo },
   mixins: [alertMixin],
   data() {
     return {
