@@ -66,7 +66,7 @@ export default {
       default: false,
     },
   },
-  emits: ['completeForm', 'process'],
+  emits: ['complete', 'process'],
   data() {
     return {
       rules,
@@ -82,7 +82,7 @@ export default {
   watch: {
     isFormComplete: {
       handler(value) {
-        this.$emit('completeForm', value)
+        this.$emit('complete', value)
       },
     },
     cancel: {

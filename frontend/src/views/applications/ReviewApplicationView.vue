@@ -75,7 +75,7 @@ export default {
       default: false,
     },
   },
-  emits: ['process'],
+  emits: ['process', 'complete'],
   data() {
     return {
       panel: [],
@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete', 'isApplicationComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.pages?.map((page) => page.id)
@@ -126,6 +126,7 @@ export default {
   async created() {
     await this.loadData()
     this.panel = this.allPageIDs
+    this.$emit('complete', this.isApplicationComplete)
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
