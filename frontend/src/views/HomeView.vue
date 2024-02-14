@@ -1,5 +1,12 @@
 <template>
   <v-container>
+    <v-file-input
+        v-model="file"
+        chips
+        multiple
+        name="fileList"
+    />
+    <v-btn @click="submit">Submit</v-btn>
     <v-row>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -70,11 +77,36 @@ import { mapActions } from 'pinia'
 
 import rolesMixin from '@/mixins/rolesMixin.js'
 import { useAuthStore } from '@/stores/auth'
+import ApiService from "@/common/apiService";
 
 export default {
   mixins: [rolesMixin],
+  data() {
+    return {
+      file: null
+    }
+  },
   methods: {
     ...mapActions(useAuthStore, ['hasRole']),
+    submit() {
+      let formData = new FormData();
+      let fileList = this.file.map((data, index) => {
+        console.log(data);
+        let myFile = {
+          name: data.name,
+          size: data.size,
+          file: data
+        }
+        console.log('adding' + data.name);
+
+        formData.append(`file${index}`, data);
+        return myFile
+      });
+      // formData.append('file1', this.file[0]);
+      // formData.append('file2', this.file[0]);
+      // formData.append('fileList', JSON.stringify(fileList));
+      ApiService.apiAxios.post('/api/documents/test', formData);
+    }
   },
 }
 </script>
