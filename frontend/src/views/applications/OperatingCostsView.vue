@@ -127,7 +127,7 @@ export default {
       return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
     },
     isDocumentUploaded() {
-      return !this.isRentLease || (this.isRentLease && this.documentsToUpload?.length + this.uploadedDocuments?.length > 0)
+      return !this.isRentLease || (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocuments)))
     },
   },
   watch: {

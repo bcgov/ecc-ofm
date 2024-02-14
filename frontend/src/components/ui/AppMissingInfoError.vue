@@ -1,6 +1,6 @@
 <template>
   <div class="error-message">
-    <ul>
+    <ul class="ml-8 my-4">
       <li><slot></slot></li>
     </ul>
     <div v-if="!isEmpty(to)" align="right" class="mt-4">

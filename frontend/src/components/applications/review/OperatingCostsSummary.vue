@@ -36,6 +36,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { isEmpty } from 'lodash'
 
 export default {
   components: { AppMissingInfoError },
@@ -62,7 +63,7 @@ export default {
       }
     },
     isUploadedDocumentsComplete() {
-      return !this.isRentLease || (this.isRentLease && this.documents?.length > 0)
+      return !this.isRentLease || (this.isRentLease && !isEmpty(this.documents))
     },
     isRentLease() {
       return this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE

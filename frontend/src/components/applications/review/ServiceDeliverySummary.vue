@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-2">
-    <div v-if="currentApplication?.licences?.length === 0">
+    <div v-if="isEmpty(currentApplication?.licences)">
       <AppMissingInfoError :to="{ name: 'service-delivery', hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
       </AppMissingInfoError>
@@ -29,6 +29,7 @@ import { mapState } from 'pinia'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { isEmpty } from 'lodash'
 
 export default {
   components: { AppMissingInfoError, LicenceHeader, LicenceDetails },
@@ -52,6 +53,9 @@ export default {
   async created() {
     this.panel = this.allLicenceIDs
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+  },
+  methods: {
+    isEmpty,
   },
 }
 </script>

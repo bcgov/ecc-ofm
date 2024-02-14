@@ -6,7 +6,7 @@
       <span class="facility-name ml-6">{{ currentApplication?.facilityName }}</span>
     </h4>
 
-    <div v-if="currentApplication?.licences?.length > 0">
+    <div v-if="!isEmpty(currentApplication?.licences)">
       <v-row no-gutters class="mb-2">
         <v-col cols="12" align="right">
           <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
@@ -34,8 +34,6 @@
         id="confirmation"
         v-model="licenceDeclaration"
         :value="1"
-        :false-value="0"
-        :true-value="1"
         color="primary"
         :rules="rules.required"
         :disabled="readonly || processing"
@@ -43,7 +41,7 @@
         class="mt-4"></v-checkbox>
     </div>
 
-    <AppMissingInfoError v-else-if="validation">{{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}</AppMissingInfoError>
+    <AppMissingInfoError v-else-if="validation && !processing">{{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}</AppMissingInfoError>
 
     <p id="account-management">
       Your organization account manager can update licence details in
@@ -134,7 +132,7 @@ export default {
     },
   },
   created() {
-    this.licenceDeclaration = this.currentApplication?.licenceDeclaration
+    this.licenceDeclaration = this.currentApplication?.licenceDeclaration ? 1 : undefined
     this.panel = this.allLicenceIDs
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
   },
@@ -150,7 +148,7 @@ export default {
       try {
         this.$emit('process', true)
         const payload = {
-          licenceDeclaration: this.licenceDeclaration,
+          licenceDeclaration: this.licenceDeclaration ? 1 : 0,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)

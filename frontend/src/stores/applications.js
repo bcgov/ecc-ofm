@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
@@ -23,18 +24,19 @@ function checkStaffingComplete(application) {
 }
 
 function checkOperatingCostsComplete(application) {
-  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && application?.uploadedDocuments?.length > 0)
+  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && !isEmpty(application?.uploadedDocuments))
   return application?.facilityType && isDocumentUploaded && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
 }
 
 function checkServiceDeliveryComplete(application) {
-  return application?.licenceDeclaration && application?.licences?.length > 0
+  return application?.licenceDeclaration && !isEmpty(application?.licences)
 }
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
   state: () => ({
     currentApplication: undefined,
+    isSelectFacilityComplete: false,
     isFacilityDetailsComplete: false,
     isServiceDeliveryComplete: false,
     isOperatingCostsComplete: false,

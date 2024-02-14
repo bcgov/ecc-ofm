@@ -116,8 +116,7 @@ export default {
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
     this.processing = true
-    if (this.loading) return
-    if (!this.readonly) {
+    if (!this.readonly && !this.loading) {
       await this.saveApplication()
     }
     next()
@@ -200,8 +199,6 @@ export default {
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
     this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
-  },
-  async mounted() {
     if (this.validation) {
       await this.$refs.form?.validate()
     }

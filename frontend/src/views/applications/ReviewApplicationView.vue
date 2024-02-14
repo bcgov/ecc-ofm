@@ -25,7 +25,7 @@
               <div v-else>
                 <span class="header-label">{{ page.title }}</span>
                 <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
-                <span class="error-message">Your information is missing required information.</span>
+                <span class="error-message">Your form is missing required information.</span>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
@@ -61,7 +61,6 @@ export default {
   components: { AppButton, FacilityDetailsSummary, ServiceDeliverySummary, OperatingCostsSummary, StaffingSummary },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    if (this.loading) return
     this.validation = true
     next()
   },
@@ -75,7 +74,7 @@ export default {
       default: false,
     },
   },
-  emits: ['process', 'complete'],
+  emits: ['process'],
   data() {
     return {
       panel: [],
@@ -126,7 +125,6 @@ export default {
   async created() {
     await this.loadData()
     this.panel = this.allPageIDs
-    this.$emit('complete', this.isApplicationComplete)
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),

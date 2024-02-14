@@ -9,7 +9,7 @@
         <ApplicationNavBar class="navBar" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
-        <router-view class="router-view" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @complete="complete" @process="process"></router-view>
+        <router-view class="router-view" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process"></router-view>
         <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
         <AppNavButtons
           :loading="processing"
@@ -52,20 +52,16 @@ export default {
       next: false,
       save: false,
       submit: false,
-      disableNext: false,
       showCancelDialog: false,
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete']),
     showBack() {
       return ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name)
     },
     showCancel() {
-      return (
-        this.$route.name === 'select-facility' ||
-        (!this.readonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name))
-      )
+      return this.isSelectFacilityPage || (!this.readonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name))
     },
     showNext() {
       return ['select-facility', 'facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application'].includes(this.$route.name)
@@ -78,6 +74,21 @@ export default {
     },
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+    },
+    disableNext() {
+      if (this.isSelectFacilityPage) {
+        return !this.isSelectFacilityComplete
+      }
+      if (this.isReviewApplicationPage) {
+        return !this.isApplicationComplete
+      }
+      return false
+    },
+    isSelectFacilityPage() {
+      return this.$route.name === 'select-facility'
+    },
+    isReviewApplicationPage() {
+      return this.$route.name === 'review-application'
     },
   },
   async created() {
@@ -99,7 +110,7 @@ export default {
     },
     toggleCancel() {
       this.cancel = !this.cancel
-      if (this.$route.name != 'select-facility') {
+      if (!this.isSelectFacilityPage) {
         this.toggleCancelDialog()
       }
     },
@@ -114,9 +125,6 @@ export default {
     },
     toggleSubmit() {
       this.submit = !this.submit
-    },
-    complete(isComplete) {
-      this.disableNext = !isComplete
     },
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
