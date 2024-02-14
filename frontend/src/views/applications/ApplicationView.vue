@@ -59,19 +59,22 @@ export default {
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
     showBack() {
-      return ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'submit-application'].includes(this.$route.name)
+      return ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name)
     },
     showCancel() {
-      return this.$route.name === 'select-facility' || (!this.readonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'submit-application'].includes(this.$route.name))
+      return (
+        this.$route.name === 'select-facility' ||
+        (!this.readonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name))
+      )
     },
     showNext() {
-      return ['select-facility', 'facility-details', 'service-delivery', 'operating-costs', 'staffing'].includes(this.$route.name)
+      return ['select-facility', 'facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application'].includes(this.$route.name)
     },
     showSave() {
       return !this.readonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing'].includes(this.$route.name)
     },
     showSubmit() {
-      return ['submit-application'].includes(this.$route.name) && !this.readonly
+      return ['declare-submit'].includes(this.$route.name) && !this.readonly
     },
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT

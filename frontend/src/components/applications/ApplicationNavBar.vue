@@ -13,7 +13,7 @@
       </v-row>
       <v-row v-if="item.id < Object.keys(navBarItems).length" no-gutters>
         <v-col cols="2">
-          <div :class="!isSelectFacilityPage ? 'vertical-line-active' : 'vertical-line-disabled'"></div>
+          <div :class="getVerticalLineClass(item)"></div>
         </v-col>
         <v-col cols="10"></v-col>
       </v-row>
@@ -56,10 +56,15 @@ export default {
           routeName: 'staffing',
           name: 'Staffing',
         },
-        submit: {
+        review: {
           id: 5,
-          routeName: 'submit-application',
-          name: 'Submit',
+          routeName: 'review-application',
+          name: 'Review',
+        },
+        submit: {
+          id: 6,
+          routeName: 'declare-submit',
+          name: 'Declare & Submit',
         },
       },
     }
@@ -71,7 +76,8 @@ export default {
       'isServiceDeliveryComplete',
       'isOperatingCostsComplete',
       'isStaffingComplete',
-      'isSubmitApplicationComplete',
+      'isDeclareSubmitComplete',
+      'isApplicationComplete',
     ]),
 
     isSelectFacilityPage() {
@@ -93,6 +99,9 @@ export default {
       if (this.isSelectFacilityPage) {
         return item.routeName === 'facility-details' ? 'current-icon' : 'disabled'
       }
+      if (item.routeName === 'declare-submit' && this.$route.name != 'declare-submit') {
+        return this.isApplicationComplete ? 'active' : 'disabled'
+      }
       return item.routeName === this.$route.name ? 'current-icon' : 'active'
     },
 
@@ -103,7 +112,17 @@ export default {
       if (this.isSelectFacilityPage) {
         return item.routeName === 'facility-details' ? 'current-text' : 'disabled'
       }
+      if (item.routeName === 'declare-submit' && this.$route.name != 'declare-submit') {
+        return this.isApplicationComplete ? 'active' : 'disabled'
+      }
       return item.routeName === this.$route.name ? 'current-text' : 'active'
+    },
+
+    getVerticalLineClass(item) {
+      if (this.isSelectFacilityPage || (item.routeName === 'review-application' && !this.isApplicationComplete)) {
+        return 'vertical-line-disabled'
+      }
+      return 'vertical-line-active'
     },
 
     getNavIcon(item) {
@@ -119,8 +138,10 @@ export default {
           return this.isOperatingCostsComplete ? 'mdi-check-circle' : 'mdi-circle'
         case 'staffing':
           return this.isStaffingComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case 'submit-application':
-          return this.isSubmitApplicationComplete ? 'mdi-check-circle' : 'mdi-circle'
+        case 'review-application':
+          return this.isApplicationComplete ? 'mdi-check-circle' : 'mdi-circle'
+        case 'declare-submit':
+          return this.isDeclareSubmitComplete ? 'mdi-check-circle' : 'mdi-circle'
       }
     },
   },

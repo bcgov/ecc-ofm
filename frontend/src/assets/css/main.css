@@ -15,17 +15,31 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
-.noticeAlertIcon {
-  color: #d40d19 !important;
+.check-icon {
+  color: #2e8540 !important;
 }
+
+.error-message {
+  padding: 24px 36px;
+  color: #d8292f;
+}
+
+.error-message:hover {
+  color: #d8292f;
+}
+
+.alert-icon {
+  color: #d8292f !important;
+}
+
 .noticeAlert {
   font-size: medium;
-  color: #d40d19;
+  color: #d8292f;
   font-family: 'BCSans', Verdana, Arial, sans-serif;
   padding-top: 8px;
   padding-bottom: 8px;
   background-color: #f2dede;
-  border: 1px solid #d40d19;
+  border: 1px solid #d8292f;
 }
 
 .noticeWaringIcon {

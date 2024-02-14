@@ -24,16 +24,31 @@ import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.
 import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
+import DeclareSubmitView from '@/views/applications/DeclareSubmitView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
 import OperatingCostsView from '@/views/applications/OperatingCostsView.vue'
+import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vue'
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
-import SubmitApplicationView from '@/views/applications/SubmitApplicationView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
+  scrollBehavior: function (to, from, savedPosition) {
+    if (to.hash) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({
+            el: to.hash,
+            behavior: 'smooth',
+          })
+        }, 700)
+      })
+    } else {
+      return { x: 0, y: 0 }
+    }
+  },
   routes: [
     {
       path: '/',
@@ -150,9 +165,14 @@ const router = createRouter({
           component: StaffingView,
         },
         {
-          path: ':applicationGuid/submit',
-          name: 'submit-application',
-          component: SubmitApplicationView,
+          path: ':applicationGuid/review',
+          name: 'review-application',
+          component: ReviewApplicationView,
+        },
+        {
+          path: ':applicationGuid/declare-submit',
+          name: 'declare-submit',
+          component: DeclareSubmitView,
         },
       ],
       meta: {

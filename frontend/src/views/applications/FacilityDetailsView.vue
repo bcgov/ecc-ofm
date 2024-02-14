@@ -10,7 +10,7 @@
       <h4>Facility Information</h4>
       <FacilityInfo :loading="loading" :facility="facility" />
     </div>
-    <div class="mt-8">
+    <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
@@ -26,7 +26,7 @@
               id="select-primary-contact"
               v-model="primaryContact"
               :items="contacts"
-              :disabled="readonly || loading"
+              :disabled="readonly || loading || processing"
               item-title="fullName"
               label="Select Primary Contact"
               :rules="rules.required"
@@ -38,7 +38,7 @@
         <ContactInfo v-if="primaryContact" :loading="loading" :contact="primaryContact" />
       </v-card>
     </div>
-    <div class="mt-8">
+    <div id="secondary-contact" class="mt-8">
       <h4>Secondary Contact (Recommended)</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
@@ -54,7 +54,7 @@
               id="select-secondary-contact"
               v-model="secondaryContact"
               :items="availableSecondaryContacts"
-              :disabled="readonly || loading"
+              :disabled="readonly || loading || processing"
               item-title="fullName"
               label="Select Secondary Contact"
               density="compact"
@@ -66,7 +66,7 @@
         <ContactInfo v-if="secondaryContact" :loading="loading" :contact="secondaryContact" />
       </v-card>
     </div>
-    <div class="mt-8">
+    <div id="expense-authority" class="mt-8">
       <h4>Expense Authority</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
@@ -82,7 +82,7 @@
               id="select-expense-authority"
               v-model="expenseAuthority"
               :items="availableExpenseAuthorities"
-              :disabled="readonly || loading"
+              :disabled="readonly || loading || processing"
               item-title="fullName"
               label="Select Expense Authority"
               :rules="rules.required"
@@ -115,6 +115,7 @@ export default {
   components: { AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
+    this.processing = true
     if (this.loading) return
     if (!this.readonly) {
       await this.saveApplication()
@@ -144,6 +145,7 @@ export default {
       facility: undefined,
       contacts: [],
       loading: false,
+      processing: false,
       primaryContact: undefined,
       secondaryContact: undefined,
       expenseAuthority: undefined,
@@ -151,7 +153,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
@@ -198,6 +200,11 @@ export default {
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
     this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
+  },
+  async mounted() {
+    if (this.validation) {
+      await this.$refs.form?.validate()
+    }
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
