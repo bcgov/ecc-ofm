@@ -48,7 +48,6 @@
     <p id="account-management">
       Your organization account manager can update licence details in
       <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
-      .
     </p>
   </v-form>
 </template>
@@ -58,7 +57,6 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 
 import { useApplicationsStore } from '@/stores/applications'
-import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
@@ -104,7 +102,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     readonly() {
@@ -122,7 +119,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'facility-details' })
+        this.$router.push({ name: 'facility-details', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -168,6 +165,7 @@ export default {
         this.$emit('process', false)
       }
     },
+
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allLicenceIDs : []
     },

@@ -2,7 +2,7 @@
   <v-expansion-panels v-model="panel" multiple>
     <v-expansion-panel v-for="licence in licenceDetails" :key="licence.licenceDetailId" :value="licence.licenceDetailId">
       <v-expansion-panel-title class="header-label">
-        <AppLabel>{{ getLicenceTypeNameById(licence.licenceType) }}</AppLabel>
+        <AppLabel>{{ getLicenceTypeNameById(licence?.licenceType) }}</AppLabel>
       </v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-row no-gutters>
