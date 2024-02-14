@@ -41,7 +41,7 @@
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
 
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapWritableState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
@@ -66,7 +66,7 @@ export default {
       default: false,
     },
   },
-  emits: ['completeForm', 'process'],
+  emits: ['process'],
   data() {
     return {
       rules,
@@ -78,11 +78,12 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
   },
   watch: {
     isFormComplete: {
       handler(value) {
-        this.$emit('completeForm', value)
+        this.isSelectFacilityComplete = value
       },
     },
     cancel: {
@@ -115,6 +116,7 @@ export default {
     },
   },
   async created() {
+    this.isSelectFacilityComplete = false
     if (this.userInfo?.facilities?.length === 1) {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }

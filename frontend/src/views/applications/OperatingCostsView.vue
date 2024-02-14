@@ -1,16 +1,16 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mt-4"><strong>Please provide operating costs for the selected facility:</strong></v-row>
-    <v-row no-gutters class="mt-4">
+    <v-row id="facility-types" no-gutters class="mt-4">
       <v-col cols="12" md="3" lg="2" class="mt-4">
         <AppLabel>Facility Type:</AppLabel>
       </v-col>
       <v-col cols="10" md="7" lg="5" class="mt-3">
         <v-select
-          id="facility-types"
+          id="select-facility-types"
           v-model="model.facilityType"
           :items="facilityTypes"
-          :disabled="readonly"
+          :disabled="readonly || processing"
           item-title="description"
           item-value="id"
           label="Select a facility type"
@@ -26,18 +26,23 @@
         </v-tooltip>
       </v-col>
     </v-row>
-    <YearlyOperatingCost v-if="model.facilityType" :readonly="readonly" @update="updateModel" />
-    <YearlyFacilityCost v-if="model.facilityType" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
-    <v-row v-if="isRentLease" no-gutters class="pb-6">
-      <AppLabel>Supporting Documents</AppLabel>
-      <AppDocumentUpload
-        entityName="ofm_applications"
-        :loading="processing"
-        :readonly="readonly"
-        :uploadedDocuments="uploadedDocuments"
-        @updateDocuments="updateDocumentsToUpload"
-        @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-    </v-row>
+    <div v-if="model.facilityType">
+      <AppMissingInfoError v-if="validation && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
+      <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly || processing" @update="updateModel" />
+      <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly || processing" :facilityType="model.facilityType" @update="updateModel" />
+      <div v-if="isRentLease" no-gutters class="pb-6">
+        <AppLabel>Supporting Documents</AppLabel>
+        <AppMissingInfoError v-if="validation && !isDocumentUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
+        <AppDocumentUpload
+          id="application-document-upload"
+          entityName="ofm_applications"
+          :loading="processing"
+          :readonly="readonly"
+          :uploadedDocuments="uploadedDocuments"
+          @updateDocuments="updateDocumentsToUpload"
+          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+      </div>
+    </div>
   </v-form>
 </template>
 
@@ -52,19 +57,21 @@ import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
 import { isEmpty } from 'lodash'
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
-  components: { AppLabel, AppDocumentUpload, YearlyOperatingCost, YearlyFacilityCost },
+  components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    if (!this.readonly) {
+    if (!this.readonly && !this.processing) {
       await this.saveApplication()
     }
+    this.processing = true
     next()
   },
   props: {
@@ -85,7 +92,6 @@ export default {
   data() {
     return {
       rules,
-      FACILITY_TYPES,
       model: {},
       uploadedDocuments: [],
       documentsToUpload: [],
@@ -95,7 +101,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['facilityTypes']),
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
@@ -110,14 +116,18 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
+      return this.model.facilityType && this.totalOperationalCost > 0 && this.isDocumentUploaded
+    },
+    totalOperationalCost() {
       const costsModel = Object.assign({}, this.model)
       delete costsModel?.facilityType
-      const totalCosts = Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
-      const isDocumentUploaded = !this.isRentLease || (this.isRentLease && this.documentsToUpload?.length + this.uploadedDocuments?.length > 0)
-      return this.model.facilityType && totalCosts > 0 && isDocumentUploaded
+      return Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
     },
     isRentLease() {
       return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
+    },
+    isDocumentUploaded() {
+      return !this.isRentLease || (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocuments)))
     },
   },
   watch: {
@@ -143,41 +153,44 @@ export default {
       },
     },
   },
-  async created() {
+  created() {
+    this.$emit('process', false)
     this.model.facilityType = this.currentApplication?.facilityType
     this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
-    await this.getDocuments()
+    this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+    this.uploadedDocuments = this.currentApplication?.uploadedDocuments
+  },
+  async mounted() {
+    if (this.validation) {
+      await this.$refs.form?.validate()
+    }
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
 
+    // Only service providers who rent, or lease space need to upload documents (i.e.: a copy of my rent/lease agreement).
     async saveApplication(showAlert = false) {
       try {
+        let reloadApplication = false
         this.$emit('process', true)
         this.processing = true
-        await this.processDocuments()
+        if (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.documentsToDelete))) {
+          await this.processDocuments()
+          reloadApplication = true
+        }
         if (ApplicationService.isApplicationUpdated(this.sanitizedModel)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.sanitizedModel)
+          reloadApplication = true
+        }
+        if (reloadApplication) {
           await this.getApplication(this.$route.params.applicationGuid)
+          this.uploadedDocuments = this.currentApplication?.uploadedDocuments
         }
         if (showAlert) {
           this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
         this.setFailureAlert('Failed to save your application', error)
-      } finally {
-        this.processing = false
-        this.$emit('process', false)
-      }
-    },
-
-    async getDocuments() {
-      try {
-        this.$emit('process', true)
-        this.processing = true
-        this.uploadedDocuments = await DocumentService.getDocuments(this.$route.params.applicationGuid)
-      } catch (error) {
-        this.setFailureAlert('Failed to retrieve supporting documents', error)
       } finally {
         this.processing = false
         this.$emit('process', false)
@@ -196,11 +209,10 @@ export default {
       }
     },
 
-    // Only service providers who rent, or lease space need to upload documents (i.e.: a copy of my rent/lease agreement).
     async processDocuments() {
-      if (!this.isRentLease || (isEmpty(this.documentsToUpload) && isEmpty(this.documentsToDelete))) return
       if (!isEmpty(this.documentsToUpload)) {
         await DocumentService.createDocuments(this.documentsToUpload, this.$route.params.applicationGuid)
+        this.documentsToUpload = []
       }
       if (!isEmpty(this.documentsToDelete)) {
         await Promise.all(
@@ -210,7 +222,6 @@ export default {
         )
         this.documentsToDelete = []
       }
-      await this.getDocuments()
     },
 
     updateModel(updatedModel) {

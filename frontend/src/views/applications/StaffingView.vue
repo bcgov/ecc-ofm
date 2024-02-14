@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mt-4"><strong>Please provide staffing information for the selected facility:</strong></v-row>
+    <AppMissingInfoError v-if="validation && !isStaffingComplete">Staffing information required</AppMissingInfoError>
     <v-card class="my-6 pa-4" variant="outlined">
       <v-row no-gutters>
         <v-col cols="5">
@@ -22,7 +23,7 @@
             v-model="model.staffingInfantECEducatorFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingInfantECEducatorFullTime')"></v-text-field>
         </v-col>
@@ -31,7 +32,7 @@
             v-model="model.staffingInfantECEducatorPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingInfantECEducatorPartTime')"></v-text-field>
         </v-col>
@@ -45,7 +46,7 @@
             v-model="model.staffingECEducatorFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorFullTime')"></v-text-field>
         </v-col>
@@ -54,7 +55,7 @@
             v-model="model.staffingECEducatorPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorPartTime')"></v-text-field>
         </v-col>
@@ -68,7 +69,7 @@
             v-model="model.staffingECEducatorAssistantFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorAssistantFullTime')"></v-text-field>
         </v-col>
@@ -77,7 +78,7 @@
             v-model="model.staffingECEducatorAssistantPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorAssistantPartTime')"></v-text-field>
         </v-col>
@@ -91,7 +92,7 @@
             v-model="model.staffingResponsibleAdultFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingResponsibleAdultFullTime')"></v-text-field>
         </v-col>
@@ -100,7 +101,7 @@
             v-model="model.staffingResponsibleAdultPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly"
+            :disabled="readonly || processing"
             maxlength="2"
             @input="sanitizeInput('staffingResponsibleAdultPartTime')"></v-text-field>
         </v-col>
@@ -126,6 +127,8 @@
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
+
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
@@ -134,12 +137,13 @@ import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'StaffingView',
-  components: { AppLabel },
+  components: { AppLabel, AppMissingInfoError },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    if (!this.readonly) {
+    if (!this.readonly && !this.processing) {
       await this.saveApplication()
     }
+    this.processing = true
     next()
   },
   props: {
@@ -160,10 +164,11 @@ export default {
   data() {
     return {
       model: {},
+      processing: false,
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
     readonly() {
       return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
@@ -197,11 +202,12 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'submit-application', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: 'review-application', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
   created() {
+    this.$emit('process', false)
     this.model = {
       staffingInfantECEducatorFullTime: this.currentApplication?.staffingInfantECEducatorFullTime ?? 0,
       staffingInfantECEducatorPartTime: this.currentApplication?.staffingInfantECEducatorPartTime ?? 0,
@@ -220,6 +226,7 @@ export default {
       try {
         if (ApplicationService.isApplicationUpdated(this.model)) {
           this.$emit('process', true)
+          this.processing = true
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
           await this.getApplication(this.$route.params.applicationGuid)
         }
@@ -230,6 +237,7 @@ export default {
         this.setFailureAlert('Failed to save your application', error)
       } finally {
         this.$emit('process', false)
+        this.processing = false
       }
     },
 

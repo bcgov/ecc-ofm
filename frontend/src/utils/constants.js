@@ -65,6 +65,17 @@ export const FACILITY_TYPES = Object.freeze({
   PROVIDED_FREE_OF_CHARGE: 4,
 })
 
+export const APPLICATION_ERROR_MESSAGES = Object.freeze({
+  PRIMARY_CONTACT: 'Primary contact required',
+  EXPENSE_AUTHORITY: 'Expense authority required',
+  LICENCE_INFO: 'Licence information required',
+  LICENCE_CONFIRMATION: 'Confirmation of licence information required',
+  DOCUMENT_UPLOAD: 'Document upload required',
+  FACILITY_TYPE: 'Facility type required',
+  OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
+  STAFFING: 'Staffing information required',
+})
+
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
 
 export const OFM_PROGRAM = 'OFM Program'

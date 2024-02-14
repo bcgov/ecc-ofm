@@ -1,0 +1,67 @@
+<template>
+  <v-container fluid class="pa-2 pb-0">
+    <AppMissingInfoError v-if="!currentApplication?.facilityType" :to="{ name: 'operating-costs', hash: '#select-facility-types', params: { applicationGuid: $route.params.applicationGuid } }">
+      {{ APPLICATION_ERROR_MESSAGES.FACILITY_TYPE }}
+    </AppMissingInfoError>
+    <div v-else>
+      <h4 class="mb-6 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
+      <AppMissingInfoError v-if="totalOperationalCost === 0" :to="{ name: 'operating-costs', hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
+      </AppMissingInfoError>
+      <div v-else>
+        <div class="mt-2 mb-0">
+          <h4>Yearly Operating Cost</h4>
+          <div>This is a placeholder for Yearly Operating Cost summary</div>
+        </div>
+        <hr class="my-4" />
+        <div class="mt-2 mb-0">
+          <h4>Yearly Facility Cost</h4>
+          <div>This is a placeholder for Yearly Facility Cost summary</div>
+        </div>
+      </div>
+      <div v-if="isRentLease">
+        <hr class="my-4" />
+        <h4>Uploaded Document(s)</h4>
+        <div v-if="isUploadedDocumentsComplete">This is a placeholder for Uploaded Document summary</div>
+        <AppMissingInfoError v-else :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
+        </AppMissingInfoError>
+      </div>
+    </div>
+  </v-container>
+</template>
+
+<script>
+import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
+import { useAppStore } from '@/stores/app'
+import { useApplicationsStore } from '@/stores/applications'
+import { mapState } from 'pinia'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { isEmpty } from 'lodash'
+
+export default {
+  components: { AppMissingInfoError },
+  props: {
+    documents: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  computed: {
+    ...mapState(useAppStore, ['getFacilityTypeNameById']),
+    ...mapState(useApplicationsStore, ['currentApplication']),
+    isUploadedDocumentsComplete() {
+      return !this.isRentLease || (this.isRentLease && !isEmpty(this.documents))
+    },
+    isRentLease() {
+      return this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE
+    },
+    totalOperationalCost() {
+      return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
+    },
+  },
+  created() {
+    this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+  },
+}
+</script>

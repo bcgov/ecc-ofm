@@ -37,7 +37,7 @@ import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 export default {
-  name: 'SubmitApplicationView',
+  name: 'DeclareSubmitView',
   props: {
     back: {
       type: Boolean,
@@ -65,7 +65,7 @@ export default {
     isFormComplete: {
       handler(value) {
         if (!this.currentApplication) return
-        this.currentApplication.isSubmitApplicationComplete = value
+        this.currentApplication.isDeclareSubmitComplete = value
       },
     },
     back: {

@@ -1,7 +1,9 @@
+import { isEmpty } from 'lodash'
 import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
+import LicenceService from '@/services/licenceService'
 import { FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
@@ -9,7 +11,7 @@ function checkFacilityDetailsComplete(application) {
 }
 
 function checkStaffingComplete(application) {
-  const totalStaffs =
+  const totalStaff =
     application?.staffingInfantECEducatorFullTime +
     application?.staffingInfantECEducatorPartTime +
     application?.staffingECEducatorFullTime +
@@ -18,46 +20,33 @@ function checkStaffingComplete(application) {
     application?.staffingECEducatorAssistantPartTime +
     application?.staffingResponsibleAdultFullTime +
     application?.staffingResponsibleAdultPartTime
-  return (
-    totalStaffs > 0 &&
-    application?.staffingInfantECEducatorFullTime >= 0 &&
-    application?.staffingInfantECEducatorFullTime <= 99 &&
-    application?.staffingInfantECEducatorPartTime >= 0 &&
-    application?.staffingInfantECEducatorPartTime <= 99 &&
-    application?.staffingECEducatorFullTime >= 0 &&
-    application?.staffingECEducatorFullTime <= 99 &&
-    application?.staffingECEducatorPartTime >= 0 &&
-    application?.staffingECEducatorPartTime <= 99 &&
-    application?.staffingECEducatorAssistantFullTime >= 0 &&
-    application?.staffingECEducatorAssistantFullTime <= 99 &&
-    application?.staffingECEducatorAssistantPartTime >= 0 &&
-    application?.staffingECEducatorAssistantPartTime <= 99 &&
-    application?.staffingResponsibleAdultFullTime >= 0 &&
-    application?.staffingResponsibleAdultFullTime <= 99 &&
-    application?.staffingResponsibleAdultPartTime >= 0 &&
-    application?.staffingResponsibleAdultPartTime <= 99
-  )
+  return totalStaff > 0
 }
 
 function checkOperatingCostsComplete(application) {
-  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && application?.uploadedDocuments?.length > 0)
+  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && !isEmpty(application?.uploadedDocuments))
   return application?.facilityType && isDocumentUploaded && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
 }
 
 function checkServiceDeliveryComplete(application) {
-  return application?.licenceDeclaration
+  return application?.licenceDeclaration && !isEmpty(application?.licences)
 }
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
   state: () => ({
     currentApplication: undefined,
+    isSelectFacilityComplete: false,
     isFacilityDetailsComplete: false,
     isServiceDeliveryComplete: false,
     isOperatingCostsComplete: false,
     isStaffingComplete: false,
-    isSubmitApplicationComplete: false,
+    isDeclareSubmitComplete: false,
+    validation: false,
   }),
+  getters: {
+    isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+  },
   actions: {
     checkApplicationComplete() {
       this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
@@ -69,9 +58,11 @@ export const useApplicationsStore = defineStore('applications', {
     async getApplication(applicationId) {
       try {
         this.currentApplication = await ApplicationService.getApplication(applicationId)
+        if (!this.currentApplication) return
         if (this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE) {
           this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
         }
+        this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error

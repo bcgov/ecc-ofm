@@ -62,7 +62,7 @@ export default {
 
   async updateApplication(applicationId, payload) {
     try {
-      if (!applicationId || isEmpty(payload) || !this.isApplicationUpdated(payload)) return
+      if (!applicationId || isEmpty(payload)) return
       const response = await ApiService.apiAxios.put(ApiRoutes.APPLICATIONS + '/' + applicationId, payload)
       return response
     } catch (error) {

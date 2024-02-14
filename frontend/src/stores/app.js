@@ -44,6 +44,12 @@ export const useAppStore = defineStore('app', {
         return healthAuthority?.description
       }
     },
+    getFacilityTypeNameById: (state) => {
+      return (id) => {
+        const facilityType = state.facilityTypes?.find((facilityType) => facilityType.id === id)
+        return facilityType?.description
+      }
+    },
   },
   actions: {
     async getLookupInfo() {
