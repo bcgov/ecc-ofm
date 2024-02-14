@@ -69,10 +69,10 @@ export default {
   components: { AppButton, AppMissingInfoError, LicenceHeader, LicenceDetails },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    this.processing = true
-    if (!this.readonly) {
+    if (!this.readonly && !this.processing) {
       await this.saveApplication()
     }
+    this.processing = true
     next()
   },
   props: {
@@ -132,6 +132,7 @@ export default {
     },
   },
   created() {
+    this.$emit('process', false)
     this.licenceDeclaration = this.currentApplication?.licenceDeclaration ? 1 : undefined
     this.panel = this.allLicenceIDs
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
@@ -147,6 +148,7 @@ export default {
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)
+        this.processing = true
         const payload = {
           licenceDeclaration: this.licenceDeclaration ? 1 : 0,
         }
@@ -161,6 +163,7 @@ export default {
         this.setFailureAlert('Failed to save your application', error)
       } finally {
         this.$emit('process', false)
+        this.processing = false
       }
     },
 

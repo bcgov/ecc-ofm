@@ -31,7 +31,7 @@
             <v-expansion-panel-text>
               <FacilityDetailsSummary v-if="page.id === 'facility-details'" :facility="facility" :contacts="contacts" />
               <ServiceDeliverySummary v-if="page.id === 'service-delivery'" :licences="currentApplication?.licences" />
-              <OperatingCostsSummary v-if="page.id === 'operating-costs'" :documents="documents" />
+              <OperatingCostsSummary v-if="page.id === 'operating-costs'" :documents="currentApplication?.uploadedDocuments" />
               <StaffingSummary v-if="page.id === 'staffing'" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -50,11 +50,9 @@ import FacilityDetailsSummary from '@/components/applications/review/FacilityDet
 import ServiceDeliverySummary from '@/components/applications/review/ServiceDeliverySummary.vue'
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
-import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty } from 'lodash'
-import { FACILITY_TYPES } from '@/utils/constants'
 
 export default {
   name: 'ReviewApplicationView',
@@ -81,7 +79,6 @@ export default {
       loading: false,
       facility: undefined,
       contacts: [],
-      documents: [],
       pages: [
         {
           title: 'Facility',
@@ -104,7 +101,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete', 'isApplicationComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.pages?.map((page) => page.id)
@@ -135,9 +132,6 @@ export default {
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
         await Promise.all([this.getFacility(), this.getContacts()])
-        if (this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE) {
-          this.documents = await DocumentService.getDocuments(this.$route.params.applicationGuid)
-        }
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
@@ -186,17 +180,9 @@ export default {
 }
 </script>
 <style scoped>
-.facility-name {
-  color: #003366;
-  font-size: 30px;
-  text-decoration: underline;
-}
 .header-label {
   font-weight: 700;
   font-size: 20px;
   margin-right: 12px;
-}
-:deep(.v-label) {
-  opacity: 1;
 }
 </style>

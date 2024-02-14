@@ -68,10 +68,10 @@ export default {
   components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    this.processing = true
-    if (!this.readonly) {
+    if (!this.readonly && !this.processing) {
       await this.saveApplication()
     }
+    this.processing = true
     next()
   },
   props: {
@@ -153,11 +153,12 @@ export default {
       },
     },
   },
-  async created() {
+  created() {
+    this.$emit('process', false)
     this.model.facilityType = this.currentApplication?.facilityType
     this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
-    await this.getDocuments()
+    this.uploadedDocuments = this.currentApplication?.uploadedDocuments
   },
   async mounted() {
     if (this.validation) {
@@ -167,33 +168,29 @@ export default {
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
 
+    // Only service providers who rent, or lease space need to upload documents (i.e.: a copy of my rent/lease agreement).
     async saveApplication(showAlert = false) {
       try {
+        let reloadApplication = false
         this.$emit('process', true)
         this.processing = true
-        await this.processDocuments()
+        if (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.documentsToDelete))) {
+          await this.processDocuments()
+          reloadApplication = true
+        }
         if (ApplicationService.isApplicationUpdated(this.sanitizedModel)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.sanitizedModel)
+          reloadApplication = true
+        }
+        if (reloadApplication) {
           await this.getApplication(this.$route.params.applicationGuid)
+          this.uploadedDocuments = this.currentApplication?.uploadedDocuments
         }
         if (showAlert) {
           this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
         this.setFailureAlert('Failed to save your application', error)
-      } finally {
-        this.processing = false
-        this.$emit('process', false)
-      }
-    },
-
-    async getDocuments() {
-      try {
-        this.$emit('process', true)
-        this.processing = true
-        this.uploadedDocuments = await DocumentService.getDocuments(this.$route.params.applicationGuid)
-      } catch (error) {
-        this.setFailureAlert('Failed to retrieve supporting documents', error)
       } finally {
         this.processing = false
         this.$emit('process', false)
@@ -212,11 +209,10 @@ export default {
       }
     },
 
-    // Only service providers who rent, or lease space need to upload documents (i.e.: a copy of my rent/lease agreement).
     async processDocuments() {
-      if (!this.isRentLease || (isEmpty(this.documentsToUpload) && isEmpty(this.documentsToDelete))) return
       if (!isEmpty(this.documentsToUpload)) {
         await DocumentService.createDocuments(this.documentsToUpload, this.$route.params.applicationGuid)
+        this.documentsToUpload = []
       }
       if (!isEmpty(this.documentsToDelete)) {
         await Promise.all(
@@ -226,7 +222,6 @@ export default {
         )
         this.documentsToDelete = []
       }
-      await this.getDocuments()
     },
 
     updateModel(updatedModel) {

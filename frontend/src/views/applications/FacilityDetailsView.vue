@@ -115,10 +115,10 @@ export default {
   components: { AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    this.processing = true
-    if (!this.readonly && !this.loading) {
+    if (!this.readonly && !this.loading && !this.processing) {
       await this.saveApplication()
     }
+    this.processing = true
     next()
   },
   props: {
@@ -195,6 +195,7 @@ export default {
     },
   },
   async created() {
+    this.$emit('process', false)
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
@@ -240,6 +241,7 @@ export default {
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)
+        this.processing = true
         const payload = {
           primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
@@ -256,6 +258,7 @@ export default {
         this.setFailureAlert('Failed to save your application', error)
       } finally {
         this.$emit('process', false)
+        this.processing = false
       }
     },
   },

@@ -140,10 +140,10 @@ export default {
   components: { AppLabel, AppMissingInfoError },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    this.processing = true
-    if (!this.readonly) {
+    if (!this.readonly && !this.processing) {
       await this.saveApplication()
     }
+    this.processing = true
     next()
   },
   props: {
@@ -207,6 +207,7 @@ export default {
     },
   },
   created() {
+    this.$emit('process', false)
     this.model = {
       staffingInfantECEducatorFullTime: this.currentApplication?.staffingInfantECEducatorFullTime ?? 0,
       staffingInfantECEducatorPartTime: this.currentApplication?.staffingInfantECEducatorPartTime ?? 0,
@@ -225,6 +226,7 @@ export default {
       try {
         if (ApplicationService.isApplicationUpdated(this.model)) {
           this.$emit('process', true)
+          this.processing = true
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
           await this.getApplication(this.$route.params.applicationGuid)
         }
@@ -235,6 +237,7 @@ export default {
         this.setFailureAlert('Failed to save your application', error)
       } finally {
         this.$emit('process', false)
+        this.processing = false
       }
     },
 
