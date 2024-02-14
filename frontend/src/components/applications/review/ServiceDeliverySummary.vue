@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-2">
+  <v-container fluid class="pa-2 pb-0">
     <AppMissingInfoError v-if="isEmpty(currentApplication?.licences)" :to="{ name: 'service-delivery', hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
     </AppMissingInfoError>
@@ -8,7 +8,7 @@
     </AppMissingInfoError>
     <v-expansion-panels v-else v-model="panel" multiple>
       <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
-        <v-expansion-panel-title class="header-label">
+        <v-expansion-panel-title>
           <LicenceHeader :licence="licence" />
         </v-expansion-panel-title>
         <v-expansion-panel-text>
@@ -57,8 +57,3 @@ export default {
   },
 }
 </script>
-<style scoped>
-.header-label {
-  font-size: 1.03em;
-}
-</style>

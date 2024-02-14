@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panels v-model="panel" multiple>
     <v-expansion-panel v-for="licence in licenceDetails" :key="licence.licenceDetailId" :value="licence.licenceDetailId">
-      <v-expansion-panel-title class="header-label">
+      <v-expansion-panel-title>
         <AppLabel>{{ getLicenceTypeNameById(licence?.licenceType) }}</AppLabel>
       </v-expansion-panel-title>
       <v-expansion-panel-text>
@@ -112,8 +112,3 @@ export default {
   },
 }
 </script>
-<style scoped>
-.header-label {
-  font-size: 1em;
-}
-</style>

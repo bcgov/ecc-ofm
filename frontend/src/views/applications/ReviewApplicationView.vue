@@ -16,7 +16,7 @@
     <div>
       <v-skeleton-loader :loading="loading" type="table-tbody">
         <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel v-for="page in pages" :key="page.id" :value="page.id">
+          <v-expansion-panel v-for="page in PAGES" :key="page.id" :value="page.id">
             <v-expansion-panel-title>
               <div v-if="isPageComplete(page)">
                 <span class="header-label">{{ page.title }}</span>
@@ -79,24 +79,6 @@ export default {
       loading: false,
       facility: undefined,
       contacts: [],
-      pages: [
-        {
-          title: 'Facility',
-          id: 'facility-details',
-        },
-        {
-          title: 'Service Delivery Details',
-          id: 'service-delivery',
-        },
-        {
-          title: 'Operating Costs',
-          id: 'operating-costs',
-        },
-        {
-          title: 'Staffing',
-          id: 'staffing',
-        },
-      ],
     }
   },
   computed: {
@@ -104,7 +86,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
-      return this.pages?.map((page) => page.id)
+      return this.PAGES?.map((page) => page.id)
     },
   },
   watch: {
@@ -120,6 +102,24 @@ export default {
     },
   },
   async created() {
+    this.PAGES = [
+      {
+        title: 'Facility',
+        id: 'facility-details',
+      },
+      {
+        title: 'Service Delivery Details',
+        id: 'service-delivery',
+      },
+      {
+        title: 'Operating Costs',
+        id: 'operating-costs',
+      },
+      {
+        title: 'Staffing',
+        id: 'staffing',
+      },
+    ]
     await this.loadData()
     this.panel = this.allPageIDs
   },

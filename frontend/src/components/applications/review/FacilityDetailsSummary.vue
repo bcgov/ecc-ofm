@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-2">
+  <v-container fluid class="pa-2 pb-0">
     <h4 class="mb-2">Facility: {{ currentApplication?.facilityName }}</h4>
     <div class="mt-4">
       <h4 class="text-decoration-underline">Locations</h4>
@@ -12,14 +12,14 @@
         {{ APPLICATION_ERROR_MESSAGES.PRIMARY_CONTACT }}
       </AppMissingInfoError>
     </div>
-    <hr />
-    <div class="mt-2">
+    <hr class="my-4" />
+    <div>
       <h4 class="text-decoration-underline">Secondary Contact</h4>
       <ContactInfo v-if="currentApplication?.secondaryContactId" :contact="secondaryContact" vCardVariant="flat" class="mt-0 pb-0" />
       <div v-else class="ma-6">No contact selected</div>
     </div>
-    <hr />
-    <div class="mt-2">
+    <hr class="my-4" />
+    <div>
       <h4 class="text-decoration-underline">Expense Authority</h4>
       <ContactInfo v-if="currentApplication?.expenseAuthorityId" :contact="expenseAuthority" vCardVariant="flat" class="mt-0 pb-0" />
       <AppMissingInfoError v-else :to="{ name: 'facility-details', hash: '#expense-authority', params: { applicationGuid: $route.params.applicationGuid } }">

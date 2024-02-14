@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-2">
+  <v-container fluid class="pa-2 pb-0">
     <AppMissingInfoError v-if="!isStaffingComplete" :to="{ name: 'staffing', params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
     </AppMissingInfoError>

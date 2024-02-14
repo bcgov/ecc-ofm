@@ -21,7 +21,7 @@
       </v-row>
       <v-expansion-panels v-model="panel" multiple>
         <v-expansion-panel v-for="licence in currentApplication?.licences" :key="licence.licenceId" :value="licence.licenceId">
-          <v-expansion-panel-title class="header-label">
+          <v-expansion-panel-title>
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
@@ -178,9 +178,6 @@ export default {
   color: #003366;
   font-size: 1.3em;
   text-decoration: underline;
-}
-.header-label {
-  font-size: 1.03em;
 }
 :deep(.v-label) {
   opacity: 1;
