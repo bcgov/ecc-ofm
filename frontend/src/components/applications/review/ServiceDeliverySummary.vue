@@ -1,11 +1,12 @@
 <template>
   <v-container fluid class="pa-2">
-    <div v-if="isEmpty(currentApplication?.licences)">
-      <AppMissingInfoError :to="{ name: 'service-delivery', hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
-      </AppMissingInfoError>
-    </div>
-    <v-expansion-panels v-else-if="currentApplication?.licenceDeclaration" v-model="panel" multiple>
+    <AppMissingInfoError v-if="isEmpty(currentApplication?.licences)" :to="{ name: 'service-delivery', hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
+      {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
+    </AppMissingInfoError>
+    <AppMissingInfoError v-else-if="!currentApplication?.licenceDeclaration" :to="{ name: 'service-delivery', hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
+      {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
+    </AppMissingInfoError>
+    <v-expansion-panels v-else v-model="panel" multiple>
       <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
         <v-expansion-panel-title class="header-label">
           <LicenceHeader :licence="licence" />
@@ -16,9 +17,6 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <AppMissingInfoError v-else :to="{ name: 'service-delivery', hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
-      {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
-    </AppMissingInfoError>
   </v-container>
 </template>
 
