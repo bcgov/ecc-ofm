@@ -26,6 +26,7 @@
               <LicenceHeader :licence="licence" />
             </v-expansion-panel-title>
             <v-expansion-panel-text>
+              <LicenceSubHeader :licence="licence" />
               <h4 class="mb-2 text-decoration-underline">Category Details</h4>
               <LicenceDetails :licenceDetails="licence.licenceDetails" />
             </v-expansion-panel-text>
@@ -48,6 +49,7 @@ import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
+import LicenceSubHeader from '@/components/licences/LicenceSubHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 
 import LicenceService from '@/services/licenceService'
@@ -57,7 +59,7 @@ import { isEmpty } from 'lodash'
 
 export default {
   name: 'ServiceDeliveryView',
-  components: { AppButton, LicenceHeader, LicenceDetails },
+  components: { AppButton, LicenceHeader, LicenceSubHeader, LicenceDetails },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
     if (this.loading) return
@@ -180,6 +182,7 @@ export default {
   font-size: 1.3em;
   text-decoration: underline;
 }
+
 .header-label {
   font-size: 1.03em;
 }

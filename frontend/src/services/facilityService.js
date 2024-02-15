@@ -41,6 +41,17 @@ export default {
     }
   },
 
+  async getLicence(facilityId, licenceId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FACILITIES_LICENCES.replace(':facilityId', facilityId)}/${licenceId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the licence by facilityId and licenceId - ${error}`)
+      throw error
+    }
+  },
+
   async updateFacilityPrimaryContact(facilityId, primaryContactId) {
     try {
       if (!facilityId) return

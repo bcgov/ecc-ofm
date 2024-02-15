@@ -20,6 +20,7 @@ import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
 import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
+import ManageLicenceView from '@/views/account-mgmt/ManageLicenceView.vue'
 import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
 import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
@@ -201,6 +202,11 @@ const router = createRouter({
           path: 'manage-facility/:facilityId',
           name: 'manage-facility',
           component: ManageFacilityView,
+        },
+        {
+          path: 'manage-licence/:facilityId/:licenceId?',
+          name: 'manage-licence',
+          component: ManageLicenceView,
         },
       ],
     },

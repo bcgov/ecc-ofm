@@ -43,6 +43,17 @@ async function getFacilityLicences(req, res) {
   }
 }
 
+async function getFacilityLicence(req, res) {
+  try {
+    const operation = `ofm_licences?$select=ofm_health_authority,ofm_licence,ofm_licenceid,ofm_tdad_funding_agreement_number,ofm_accb_providerid,ofm_ccof_organizationid,ofm_ccof_facilityid,statuscode,statecode&$filter=(_ofm_facility_value eq ${req.params.facilityId}) and (ofm_licenceid eq ${req.params.licenceId}) and (statecode eq 0)`
+    const response = await getOperation(operation)
+    const licence = response?.value?.length ? new MappableObjectForFront(response.value[0], LicenceMappings).toJSON() : null
+    return res.status(HttpStatus.OK).json(licence)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function updateFacilityPrimaryContact(req, res) {
   try {
     const payload = {}
@@ -59,5 +70,6 @@ module.exports = {
   getFacility,
   getFacilityContacts,
   getFacilityLicences,
+  getFacilityLicence,
   updateFacilityPrimaryContact,
 }
