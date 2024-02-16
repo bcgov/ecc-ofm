@@ -155,7 +155,7 @@ import { isEmpty } from 'lodash'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, isEmpty },
+  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails },
   mixins: [alertMixin],
   data() {
     return {
@@ -343,11 +343,7 @@ export default {
     },
 
     togglePanels() {
-      if (this.panel.length === 0) {
-        this.panel = this.allLicenceIDs
-      } else {
-        this.panel = []
-      }
+      this.panel = this.panel.length === 0 ? this.allLicenceIDs : []
     },
   },
 }
