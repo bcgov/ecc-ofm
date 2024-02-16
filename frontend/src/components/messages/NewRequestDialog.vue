@@ -235,7 +235,11 @@ export default {
           await DocumentService.createDocuments(this.uploadedDocuments, response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
-          this.setFailureAlert('Failed to create a new assistance request', error)
+          if (error?.response?.data?.status === 422) {
+            this.setWarningAlert('Supporting documents failed virus scan and were not uploaded with your assistance request')
+          } else {
+            this.setFailureAlert('Failed to create a new assistance request', error)
+          }
         } finally {
           this.closeNewRequestDialog()
           this.isLoading = false

@@ -40,6 +40,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
+import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
 import { ASSISTANCE_REQUEST_STATUS_CODES } from '@/utils/constants'
 import DocumentService from '@/services/documentService'
@@ -47,6 +48,7 @@ import DocumentService from '@/services/documentService'
 export default {
   name: 'ReplyRequestDialog',
   components: { AppButton, AppDialog, AppDocumentUpload, AppLabel },
+  mixins: [alertMixin],
   props: {
     show: {
       type: Boolean,
@@ -109,13 +111,17 @@ export default {
       if (this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
+          await DocumentService.createDocuments(this.uploadedDocuments, this.assistanceRequestId) //TODO fail earlier
           await this.createReply(this.assistanceRequestId)
-          await DocumentService.createDocuments(this.uploadedDocuments, this.assistanceRequestId)
           await this.updateStatusToAssigned(this.assistanceRequestId)
           await this.updateStoredAssistanceRequest(this.assistanceRequestId)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
-          console.log(`Submit processing for reply failed  - ${error}`)
+          if (error?.response?.data?.status === 422) {
+            this.setFailureAlert('Submit processing for reply failed supporting documents failed virus scan', error)
+          } else {
+            this.setFailureAlert('Submit processing for reply failed', error)
+          }
           throw error
         } finally {
           this.closeReplyRequestDialog()
