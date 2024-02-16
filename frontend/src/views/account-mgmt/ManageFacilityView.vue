@@ -7,63 +7,46 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="ml-6 pt-0">
+      <v-col class="ml-6 pt-0 pb-0">
         <FacilityInfo :loading="loading" :facility="facility" class="mt-0" />
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="licence-card-header align-self-end">
+      <v-col class="ml-6 pb-1 pt-6">
         <h4>Licences</h4>
       </v-col>
-      <v-col class="d-flex justify-end align-end licence-card-header">
-        <AppButton variant="text" :disabled="loading">
+      <v-col class="d-flex justify-end align-end pb-1 pt-0">
+        <AppButton id="add-licence-button" :primary="false" size="large" width="250px" class="mr-4" @click="addEditLicense()">
           <v-icon left>mdi-plus</v-icon>
           Add New Licence
+        </AppButton>
+        <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+          <v-icon>mdi-arrow-expand-vertical</v-icon>
+          Expand All
+        </AppButton>
+        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+          <v-icon>mdi-arrow-collapse-vertical</v-icon>
+          Collapse All
         </AppButton>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
-        <v-card class="pa-6 mt-0" variant="outlined">
+        <v-card elevation="0" variant="outlined" class="w-100">
           <v-skeleton-loader :loading="loading" type="table-tbody">
-            <v-row>
-              <v-col>
-                <AppLabel>Current licences:</AppLabel>
-                <v-card v-for="item in this.licences" :key="item.licence" class="licence-card">
-                  <v-row>
-                    <v-col cols="auto">
-                      <AppLabel>Licence Number:</AppLabel>
-                    </v-col>
-                    <v-col cols="2">
-                      {{ item.licence }}
-                    </v-col>
-                    <v-col cols="auto">
-                      <v-icon icon="fa:fa-regular fa-pen-to-square" class="mr-4"></v-icon>
-                    </v-col>
-                    <v-col cols="1" />
-                    <v-col cols="auto">
-                      <AppLabel>Health Authority:</AppLabel>
-                    </v-col>
-                    <v-col cols="2" class="pb-0">
-                      <v-select
-                        id="health-authority"
-                        :items="healthAuthorities"
-                        v-model="item.healthAuthorityId"
-                        item-title="description"
-                        item-value="id"
-                        :disabled="true"
-                        density="compact"
-                        variant="outlined"></v-select>
-                    </v-col>
-                    <v-col>
-                      <v-row no-gutters justify="end">
-                        <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-card>
-              </v-col>
-            </v-row>
+            <v-expansion-panels v-model="panel" multiple>
+              <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
+                <v-expansion-panel-title class="header-label">
+                  <LicenceHeader :licence="licence" />
+                  <v-col cols="auto">
+                    <v-icon icon="fa:fa-regular fa-pen-to-square" class="" @click.stop="addEditLicense(licence.licenceId)"></v-icon>
+                  </v-col>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <LicenceDetails :licence="licence" />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-skeleton-loader>
         </v-card>
       </v-col>
@@ -152,38 +135,44 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
-import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
-import ApiService from '@/common/apiService'
-import { ApiRoutes } from '@/utils/constants'
-import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
+import { ApiRoutes } from '@/utils/constants'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import ApiService from '@/common/apiService'
+import FacilityService from '@/services/facilityService'
+import LicenceService from '@/services/licenceService'
+import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
+import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
+import LicenceHeader from '@/components/licences/LicenceHeader.vue'
+import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
+  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, isEmpty },
   mixins: [alertMixin],
   data() {
     return {
       facilityId: null,
       licences: [],
       contacts: [],
+      panel: [],
       primaryContact: undefined,
       primaryContactLastSaved: undefined,
       facility: undefined,
       loading: false,
       rules,
       editModePrimaryContact: false,
+      isEmpty,
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['getRoleNameById', 'healthAuthorities', 'userRoles']),
+    ...mapState(useAppStore, ['getRoleNameById', 'healthAuthorities', 'userRoles', 'getHealthAuthorityNameById']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
@@ -198,6 +187,9 @@ export default {
     },
     hasPrimaryContactChanged() {
       return this.primaryContact !== this.primaryContactLastSaved
+    },
+    allLicenceIDs() {
+      return this.licences?.map((licence) => licence.licenceId)
     },
     sortedContacts() {
       if (!this.contacts) return []
@@ -247,6 +239,11 @@ export default {
     async getLicences() {
       try {
         this.licences = await FacilityService.getLicences(this.facilityId)
+        await Promise.all(
+          this.licences.map(async (licence) => {
+            licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
+          }),
+        )
       } catch (error) {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
       }
@@ -335,22 +332,21 @@ export default {
     async saveAdditionalContactUpdates(contactsToAdd, contactsToRemove) {
       await this.saveContactUpdates('isAdditionalContact', 'Additional Contact', contactsToAdd, contactsToRemove)
     },
+
+    /**
+     * Add a new licence category
+     */
+    addEditLicense(licenceId) {
+      this.setWarningAlert('This feature is not yet implemented')
+    },
+
+    togglePanels() {
+      if (this.panel.length === 0) {
+        this.panel = this.allLicenceIDs
+      } else {
+        this.panel = []
+      }
+    },
   },
 }
 </script>
-
-<style>
-.licence-card-header {
-  margin-left: 24px;
-  padding-right: 9px;
-  padding-top: 0px;
-  padding-bottom: 1px;
-}
-
-.licence-card {
-  margin-top: 12px;
-  padding: 10px;
-  border: 1px solid black;
-  box-shadow: none;
-}
-</style>

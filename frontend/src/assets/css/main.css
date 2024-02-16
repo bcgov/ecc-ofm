@@ -197,3 +197,8 @@ a.v-btn--active > .v-btn__overlay {
 html body .v-theme--ofmLightTheme {
   --v-disabled-opacity: 0.8;
 }
+
+.v-expansion-panel-title__icon .v-icon {
+  font-size: 2.25em !important;
+  /* Adjust this value to change the size of the icon */
+}
