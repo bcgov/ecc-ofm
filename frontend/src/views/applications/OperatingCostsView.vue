@@ -190,7 +190,11 @@ export default {
           this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
-        this.setFailureAlert('Failed to save your application', error)
+        if (error?.response?.data?.status === 422) {
+          this.setFailureAlert('Supporting documents failed virus scan, application not saved', error)
+        } else {
+          this.setFailureAlert('Failed to save your application', error)
+        }
       } finally {
         this.processing = false
         this.$emit('process', false)

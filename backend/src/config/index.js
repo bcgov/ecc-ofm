@@ -66,5 +66,9 @@ nconf.defaults({
     clustered: process.env.REDIS_USE_CLUSTERED,
     facilityTTL: process.env.REDIS_FACILITY_TTL,
   },
+  clamav: {
+    host: process.env.CLAMAV_HOST,
+    port: process.env.CLAMAV_PORT,
+  },
 })
 module.exports = nconf
