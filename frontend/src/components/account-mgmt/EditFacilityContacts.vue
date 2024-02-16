@@ -56,7 +56,7 @@
                         </template>
                         <template v-slot:[`header.actions`]>
                           <v-row v-if="!editMode" justify="end">
-                            <AppButton variant="text" :disabled="disableEdit || loading">
+                            <AppButton variant="text" :disabled="parentInEditMode || loading">
                               <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
                             </AppButton>
                           </v-row>
@@ -118,7 +118,7 @@ export default {
       required: false,
       default: false,
     },
-    disableEdit: {
+    parentInEditMode: {
       type: Boolean,
       required: false,
       default: false,

@@ -93,7 +93,7 @@
                 </v-col>
                 <v-col cols="1">
                   <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
-                    <AppButton variant="text" :disabled="loading">
+                    <AppButton variant="text" :disabled="disableEditPrimaryContact || loading">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditPrimaryContact()"></v-icon>
                     </AppButton>
                   </v-row>
@@ -119,18 +119,18 @@
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       :atLeastOneContactMandatory="true"
-      :disableEdit="disableEditExpenseAuthorities"
+      :parentInEditMode="editMode"
       @save-contact-updates="saveExpenseAuthorityUpdates"
-      @edit-mode-changed="editModeChangeExpAuth" />
+      @edit-mode-changed="contactEditModeChange" />
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
       titleInfo="(You can have more than one additional contact)"
       :contacts="additionalContacts"
       :contactsForAdd="additionalContactsAvailableForAdd"
-      :disableEdit="disableEditAdditionalContacts"
+      :parentInEditMode="editMode"
       @save-contact-updates="saveAdditionalContactUpdates"
-      @edit-mode-changed="editModeChangeAddContacts" />
+      @edit-mode-changed="contactEditModeChange" />
     <v-row>
       <v-col cols="12" md="6">
         <v-row justify="center" justify-md="start" class="pb-2">
@@ -176,11 +176,10 @@ export default {
       facility: undefined,
       loading: false,
       rules,
+      editMode: false,
       editModePrimaryContact: false,
-      isEmpty,
       disableEditPrimaryContact: false,
-      disableEditExpenseAuthorities: false,
-      disableEditAdditionalContacts: false,
+      isEmpty,
     }
   },
   computed: {
@@ -279,6 +278,7 @@ export default {
     toggleEditPrimaryContact() {
       this.editModePrimaryContact = !this.editModePrimaryContact
       this.primaryContact = this.primaryContactLastSaved
+      this.editMode = (this.editModePrimaryContact)
     },
 
     /**
@@ -294,6 +294,7 @@ export default {
         await FacilityService.updateFacilityPrimaryContact(this.facility.facilityId, this.facility.primaryContactId)
         this.primaryContactLastSaved = this.primaryContact
         this.editModePrimaryContact = false
+        this.editMode = false
         this.setSuccessAlert('Primary contact updated successfully')
       } catch (error) {
         this.setFailureAlert('Failed to update Primary Contact', error)
@@ -372,6 +373,14 @@ export default {
      */
     editModeChangeAddContacts(editMode) {
       this.disableEditExpenseAuthorities = (editMode === true) ? true : false
+    },
+
+    /**
+     * Handle edit mode change for component
+     */
+    contactEditModeChange(editMode) {
+      this.editMode = editMode
+      this.disableEditPrimaryContact = editMode
     },
   },
 }
