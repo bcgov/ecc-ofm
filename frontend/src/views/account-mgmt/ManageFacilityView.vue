@@ -20,11 +20,12 @@
           <v-icon left>mdi-plus</v-icon>
           Add New Licence
         </AppButton>
-        <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+
+        <AppButton v-if="licences?.length > 0 && isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanels()">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
-        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+        <AppButton v-else-if="licences?.length > 0" id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanels()">
           <v-icon>mdi-arrow-collapse-vertical</v-icon>
           Collapse All
         </AppButton>
@@ -33,7 +34,7 @@
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card elevation="0" variant="outlined" class="w-100">
-          <v-skeleton-loader :loading="loading" type="table-tbody">
+          <v-skeleton-loader v-if="licences?.length > 0" :loading="loading" type="table-tbody">
             <v-expansion-panels v-model="panel" multiple>
               <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
                 <v-expansion-panel-title class="header-label">
@@ -48,6 +49,7 @@
               </v-expansion-panel>
             </v-expansion-panels>
           </v-skeleton-loader>
+          <div v-else class="pa-5">0 Licences</div>
         </v-card>
       </v-col>
     </v-row>
