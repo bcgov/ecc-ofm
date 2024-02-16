@@ -111,7 +111,7 @@ export default {
       if (this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
-          await DocumentService.createDocuments(this.uploadedDocuments, this.assistanceRequestId) //TODO fail earlier
+          await DocumentService.createDocuments(this.uploadedDocuments, this.assistanceRequestId)
           await this.createReply(this.assistanceRequestId)
           await this.updateStatusToAssigned(this.assistanceRequestId)
           await this.updateStoredAssistanceRequest(this.assistanceRequestId)
