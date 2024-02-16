@@ -7,6 +7,7 @@ const { getDocuments, createDocuments, deleteDocument } = require('../components
 const { param, validationResult } = require('express-validator')
 const multer = require('multer')
 const upload = multer()
+const { scanFilePayload } = require('../components/fileUtils')
 
 module.exports = router
 
@@ -21,7 +22,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Create new documents
  */
-router.post('/', upload.any(), passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.post('/', upload.any(), passport.authenticate('jwt', { session: false }), scanFilePayload, isValidBackendToken, (req, res) => {
   validationResult(req).throw()
   return createDocuments(req, res)
 })
