@@ -73,7 +73,6 @@
                 </v-col>
                 <v-col cols="4" class="pb-0">
                   <v-select
-                    v-if="editModePrimaryContact"
                     id="primary-contact"
                     v-model="primaryContact"
                     :items="sortedContacts"
@@ -84,7 +83,6 @@
                     density="compact"
                     variant="outlined"
                     return-object></v-select>
-                  <template v-else>{{ primaryContact?.firstName }} {{ primaryContact?.lastName }}</template>
                 </v-col>
               </v-row>
               <v-row>
@@ -93,7 +91,7 @@
                 </v-col>
                 <v-col cols="1">
                   <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
-                    <AppButton variant="text" :disabled="disableEditPrimaryContact || loading">
+                    <AppButton variant="text" :disabled="editMode || loading">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditPrimaryContact()"></v-icon>
                     </AppButton>
                   </v-row>
@@ -178,7 +176,6 @@ export default {
       rules,
       editMode: false,
       editModePrimaryContact: false,
-      disableEditPrimaryContact: false,
       isEmpty,
     }
   },
@@ -278,7 +275,7 @@ export default {
     toggleEditPrimaryContact() {
       this.editModePrimaryContact = !this.editModePrimaryContact
       this.primaryContact = this.primaryContactLastSaved
-      this.editMode = (this.editModePrimaryContact)
+      this.editMode = this.editModePrimaryContact
     },
 
     /**
@@ -362,25 +359,10 @@ export default {
     },
 
     /**
-     * Handle edit mode change for expense authorities
-     */
-    editModeChangeExpAuth(editMode) {
-      this.disableEditAdditionalContacts = (editMode === true) ? true : false
-    },
-
-    /**
-     * Handle edit mode change for additional contacts
-     */
-    editModeChangeAddContacts(editMode) {
-      this.disableEditExpenseAuthorities = (editMode === true) ? true : false
-    },
-
-    /**
      * Handle edit mode change for component
      */
     contactEditModeChange(editMode) {
       this.editMode = editMode
-      this.disableEditPrimaryContact = editMode
     },
   },
 }
