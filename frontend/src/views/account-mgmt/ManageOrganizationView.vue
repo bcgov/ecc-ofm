@@ -27,7 +27,6 @@
               <v-col cols="3" md="1">
                 <v-row justify="end">
                   <v-icon icon="fa:fa-regular fa-plus" class="mr-4"></v-icon>
-                  <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
                 </v-row>
               </v-col>
             </v-row>
