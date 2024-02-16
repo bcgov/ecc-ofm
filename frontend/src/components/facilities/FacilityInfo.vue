@@ -13,8 +13,12 @@
           </v-col>
           <v-col cols="3" lg="6">
             <v-row no-gutters justify="end">
-              <v-icon icon="fa:fa-regular fa-pen-to-square" class="mr-4"></v-icon>
-              <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
+              <AppButton variant="text" :disabled="loading">
+                <v-icon icon="fa:fa-regular fa-pen-to-square" class="transaction-icon" @click="editFacility()"></v-icon>
+              </AppButton>
+              <AppButton variant="text" :disabled="loading">
+                <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon" @click="deleteFacility()"></v-icon>
+              </AppButton>
             </v-row>
           </v-col>
         </v-row>
@@ -183,9 +187,12 @@
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import alertMixin from '@/mixins/alertMixin'
 
 export default {
-  components: { AppLabel },
+  components: { AppLabel, AppButton },
+  mixins: [alertMixin],
   props: {
     facility: {
       type: Object,
@@ -203,6 +210,16 @@ export default {
     isApplicationPage() {
       return this.$route.path?.includes('/applications/')
     },
+  },
+  methods: {
+    editFacility() {
+      this.setWarningAlert('This feature is not yet implemented')
+    },
+
+    deleteFacility() {
+      this.setWarningAlert('This feature is not yet implemented')
+    },
+
   },
 }
 </script>

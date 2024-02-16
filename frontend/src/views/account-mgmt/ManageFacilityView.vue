@@ -34,13 +34,15 @@
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card elevation="0" variant="outlined" class="w-100">
-          <v-skeleton-loader v-if="licences?.length > 0" :loading="loading" type="table-tbody">
-            <v-expansion-panels v-model="panel" multiple>
+          <v-skeleton-loader :loading="loading" type="table-tbody">
+            <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
               <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
                 <v-expansion-panel-title class="header-label">
                   <LicenceHeader :licence="licence" />
                   <v-col cols="auto">
-                    <v-icon icon="fa:fa-regular fa-pen-to-square" class="" @click.stop="addEditLicense(licence.licenceId)"></v-icon>
+                    <AppButton variant="text" :disabled="loading">
+                      <v-icon icon="fa:fa-regular fa-pen-to-square" class="transaction-icon" @click.stop="addEditLicense(licence.licenceId)"></v-icon>
+                    </AppButton>
                   </v-col>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -48,8 +50,8 @@
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
+            <div v-else class="pa-5">0 Licences</div>
           </v-skeleton-loader>
-          <div v-else class="pa-5">0 Licences</div>
         </v-card>
       </v-col>
     </v-row>
@@ -91,7 +93,9 @@
                 </v-col>
                 <v-col cols="1">
                   <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
-                    <v-icon icon="fa:fa-regular fa-edit" @click="toggleEditPrimaryContact()"></v-icon>
+                    <AppButton variant="text" :disabled="loading">
+                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditPrimaryContact()"></v-icon>
+                    </AppButton>
                   </v-row>
                 </v-col>
               </v-row>
@@ -115,14 +119,18 @@
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       :atLeastOneContactMandatory="true"
-      @save-contact-updates="saveExpenseAuthorityUpdates" />
+      :disableEdit="disableEditExpenseAuthorities"
+      @save-contact-updates="saveExpenseAuthorityUpdates"
+      @edit-mode-changed="editModeChangeExpAuth" />
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
       titleInfo="(You can have more than one additional contact)"
       :contacts="additionalContacts"
       :contactsForAdd="additionalContactsAvailableForAdd"
-      @save-contact-updates="saveAdditionalContactUpdates" />
+      :disableEdit="disableEditAdditionalContacts"
+      @save-contact-updates="saveAdditionalContactUpdates"
+      @edit-mode-changed="editModeChangeAddContacts" />
     <v-row>
       <v-col cols="12" md="6">
         <v-row justify="center" justify-md="start" class="pb-2">
@@ -170,6 +178,9 @@ export default {
       rules,
       editModePrimaryContact: false,
       isEmpty,
+      disableEditPrimaryContact: false,
+      disableEditExpenseAuthorities: false,
+      disableEditAdditionalContacts: false,
     }
   },
   computed: {
@@ -342,8 +353,25 @@ export default {
       this.setWarningAlert('This feature is not yet implemented')
     },
 
+    /**
+     * Toggle expansion panels
+     */
     togglePanels() {
       this.panel = this.panel.length === 0 ? this.allLicenceIDs : []
+    },
+
+    /**
+     * Handle edit mode change for expense authorities
+     */
+    editModeChangeExpAuth(editMode) {
+      this.disableEditAdditionalContacts = (editMode === true) ? true : false
+    },
+
+    /**
+     * Handle edit mode change for additional contacts
+     */
+    editModeChangeAddContacts(editMode) {
+      this.disableEditExpenseAuthorities = (editMode === true) ? true : false
     },
   },
 }
