@@ -12,8 +12,7 @@
           <LicenceHeader :licence="licence" />
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-          <h4 class="mb-2 text-decoration-underline">Category Details</h4>
-          <LicenceDetails :licenceDetails="licence.licenceDetails" />
+          <LicenceDetails :licence="licence" />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>

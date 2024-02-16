@@ -8,7 +8,7 @@
 
     <div v-if="!isEmpty(currentApplication?.licences)">
       <v-row no-gutters class="mb-2">
-        <v-col cols="12" align="right">
+        <v-col cols="12">
           <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
             <v-icon>mdi-arrow-expand-vertical</v-icon>
             Expand All
@@ -25,8 +25,7 @@
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <h4 class="mb-2 text-decoration-underline">Category Details</h4>
-            <LicenceDetails :licenceDetails="licence.licenceDetails" />
+            <LicenceDetails :licence="licence" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -179,6 +178,7 @@ export default {
   font-size: 1.3em;
   text-decoration: underline;
 }
+
 :deep(.v-label) {
   opacity: 1;
 }
