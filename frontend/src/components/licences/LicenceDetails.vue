@@ -1,79 +1,140 @@
 <template>
-  <v-expansion-panels v-model="panel" multiple>
-    <v-expansion-panel v-for="licence in licenceDetails" :key="licence.licenceDetailId" :value="licence.licenceDetailId">
-      <v-expansion-panel-title>
-        <AppLabel>{{ getLicenceTypeNameById(licence?.licenceType) }}</AppLabel>
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
-        <v-row no-gutters>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" class="pr-2">
-                <AppLabel>Licensed Spaces:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6">{{ licence?.licenceSpaces }}</v-col>
-            </v-row>
+  <v-container fluid class="pt-0">
+    <v-row no-gutters>
+      <v-col cols="12" lg="6">
+        <v-row no-gutters class="mr-2 my-2">
+          <v-col cols="12" sm="6" class="pr-2 mt-1">
+            <AppLabel>CCOF Facility ID:</AppLabel>
           </v-col>
-          <v-col cols="12" md="6" lg="5" xl="6">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="4" class="pr-2">
-                <AppLabel>Weeks in Operation:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6" xl="8">{{ licence?.weeksInOperation }}</v-col>
-            </v-row>
+          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofFacilityId ? licence?.ccofFacilityId : '- - - -' }}</v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" lg="6">
+        <v-row no-gutters class="mr-2 my-2">
+          <v-col cols="12" sm="6" class="pr-2 mt-1">
+            <AppLabel>CCOF Organization ID:</AppLabel>
           </v-col>
-          <v-col cols="12" md="6" lg="3">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="5" class="pr-2">
-                <AppLabel>Care Type:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6" xl="7">{{ licence?.careType === 1 ? 'Full-Time' : 'Part-Time' }}</v-col>
-            </v-row>
+          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : '- - - -' }}</v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" lg="6">
+        <v-row no-gutters class="mr-2 my-2">
+          <v-col cols="12" sm="6" class="pr-2 mt-1">
+            <AppLabel>Health Authority:</AppLabel>
           </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" class="pr-2">
-                <AppLabel>Operational Spaces:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6">{{ licence?.operationalSpaces }}</v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="12" md="6" lg="5" xl="6">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="4" class="pr-2">
-                <AppLabel>Days of Week:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6" xl="8">{{ convertDaysToString(licence?.weekDays) }}</v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="12" md="6" lg="3">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="5" class="pr-2">
-                <AppLabel>Overnight Care:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6" xl="7">{{ licence?.overnightCare ? 'Yes' : 'No' }}</v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" class="pr-2">
-                <AppLabel>Enrolled Spaces:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6">{{ licence?.enrolledSpaces }}</v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="12" md="6" lg="5" xl="6">
-            <v-row no-gutters class="mr-2 my-2">
-              <v-col cols="12" sm="6" xl="4" class="pr-2">
-                <AppLabel>Hours:</AppLabel>
-              </v-col>
-              <v-col cols="12" sm="6" xl="8">{{ licence?.operationFromTime }} - {{ licence?.operationToTime }}</v-col>
-            </v-row>
+          <v-col cols="12" sm="6" class="mt-1">
+
           </v-col>
         </v-row>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
+      </v-col>
+      <v-col cols="12" lg="6">
+        <v-row no-gutters class="mr-2 my-2">
+          <v-col cols="12" sm="6" class="pr-2 mt-1">
+            <AppLabel>ACCB Provider ID:</AppLabel>
+          </v-col>
+          <v-col cols="12" sm="6" class="mt-1">
+            {{ licence?.accbProviderId ? licence?.accbProviderId : '- - - -' }}
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="12" lg="6">
+        <v-row no-gutters class="mr-2 my-2">
+          <v-col cols="12" sm="6" class="pr-2 mt-1">
+            <AppLabel>TDAD Funding Agreement Number:</AppLabel>
+          </v-col>
+          <v-col cols="12" sm="6" class="mt-1">
+            {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : '- - - -' }}
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-container fluid class="pl-0 pt-0">
+    <v-row>
+      <v-col class="pb-0">
+        <h4 class="mb-2 text-decoration-underline">Category Details</h4>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="pt-0">
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel v-for="licenceDetail in licence.licenceDetails" :key="licenceDetail.licenceDetailId" :value="licenceDetail.licenceDetailId">
+            <v-expansion-panel-title>
+              <AppLabel>{{ getLicenceTypeNameById(licenceDetail.licenceType) }}</AppLabel>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" lg="4" xl="3">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="6" class="pr-2">
+                      <AppLabel>Licensed Spaces:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="6">{{ licenceDetail?.licenceSpaces }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="5" xl="6">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="4" class="pr-2">
+                      <AppLabel>Weeks in Operation:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="8">{{ licenceDetail?.weeksInOperation }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="3" xl="3">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="5" class="pr-2">
+                      <AppLabel>Care Type:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="7">{{ licenceDetail?.careType === 1 ? 'Full-Time' : 'Part-Time' }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="4" xl="3">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="6" class="pr-2">
+                      <AppLabel>Operational Spaces:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="6">{{ licenceDetail?.operationalSpaces }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="5" xl="6">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="4" class="pr-2">
+                      <AppLabel>Days of Week:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="8">{{ convertDaysToString(licenceDetail?.weekDays) }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="3" xl="3">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="5" class="pr-2">
+                      <AppLabel>Overnight Care:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="7">{{ licenceDetail?.overnightCare ? 'Yes' : 'No' }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="4" xl="3">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="6" class="pr-2">
+                      <AppLabel>Enrolled Spaces:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="6">{{ licenceDetail?.enrolledSpaces }}</v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="5" xl="6">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="6" xl="4" class="pr-2">
+                      <AppLabel>Hours:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="6" xl="8">{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -84,10 +145,13 @@ import { useAppStore } from '@/stores/app'
 export default {
   components: { AppLabel },
   props: {
-    licenceDetails: {
-      type: Array,
-      default: () => [],
-    },
+    licence: {
+      type: Object,
+      required: true,
+      default: () => {
+        return {}
+      },
+    }
   },
   data() {
     return {
@@ -97,7 +161,7 @@ export default {
   computed: {
     ...mapState(useAppStore, ['getLicenceTypeNameById']),
     allLicenceDetailsID() {
-      return this.licenceDetails.map((licence) => licence.licenceDetailId)
+      return this.licence.licenceDetails.map((licenceDetails) => licenceDetails.licenceDetailId)
     },
   },
   async created() {
