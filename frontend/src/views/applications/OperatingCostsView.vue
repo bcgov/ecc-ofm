@@ -191,7 +191,7 @@ export default {
         }
       } catch (error) {
         if (error?.response?.data?.status === 422) {
-          this.setFailureAlert('Failed to save your application supporting documents failed virus scan', error)
+          this.setFailureAlert('Supporting documents failed virus scan, application not saved', error)
         } else {
           this.setFailureAlert('Failed to save your application', error)
         }

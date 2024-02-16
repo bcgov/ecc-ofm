@@ -118,9 +118,9 @@ export default {
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
           if (error?.response?.data?.status === 422) {
-            this.setFailureAlert('Submit processing for reply failed supporting documents failed virus scan', error)
+            this.setFailureAlert('Supporting documents failed virus scan, submit reply failed', error)
           } else {
-            this.setFailureAlert('Submit processing for reply failed', error)
+            this.setFailureAlert('Submit reply failed', error)
           }
           throw error
         } finally {

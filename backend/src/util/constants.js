@@ -4,6 +4,11 @@ const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   ACTION_REQUIRED: [3], // 3 = With Provider
 })
 
+const SCAN_RESULTS = Object.freeze({
+  VIRUS_FOUND: 'FOUND',
+})
+
 module.exports = {
   ASSISTANCE_REQUEST_STATUS_CODES,
+  SCAN_RESULTS,
 }

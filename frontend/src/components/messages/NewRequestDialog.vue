@@ -236,7 +236,7 @@ export default {
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           if (error?.response?.data?.status === 422) {
-            this.setWarningAlert('Supporting documents failed virus scan and were not uploaded with your assistance request')
+            this.setWarningAlert('Supporting documents not saved, virus scan failed')
           } else {
             this.setFailureAlert('Failed to create a new assistance request', error)
           }
