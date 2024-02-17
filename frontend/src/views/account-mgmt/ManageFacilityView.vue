@@ -34,13 +34,15 @@
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card elevation="0" variant="outlined" class="w-100">
-          <v-skeleton-loader v-if="licences?.length > 0" :loading="loading" type="table-tbody">
-            <v-expansion-panels v-model="panel" multiple>
+          <v-skeleton-loader :loading="loading" type="table-tbody">
+            <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
               <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
                 <v-expansion-panel-title class="header-label">
                   <LicenceHeader :licence="licence" />
                   <v-col cols="auto">
-                    <v-icon icon="fa:fa-regular fa-pen-to-square" class="" @click.stop="addEditLicense(licence.licenceId)"></v-icon>
+                    <AppButton variant="text" :disabled="loading">
+                      <v-icon icon="fa:fa-regular fa-pen-to-square" class="transaction-icon" @click.stop="addEditLicense(licence.licenceId)"></v-icon>
+                    </AppButton>
                   </v-col>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -48,8 +50,8 @@
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
+            <div v-else class="pa-5">0 Licences</div>
           </v-skeleton-loader>
-          <div v-else class="pa-5">0 Licences</div>
         </v-card>
       </v-col>
     </v-row>
@@ -71,7 +73,6 @@
                 </v-col>
                 <v-col cols="4" class="pb-0">
                   <v-select
-                    v-if="editModePrimaryContact"
                     id="primary-contact"
                     v-model="primaryContact"
                     :items="sortedContacts"
@@ -82,7 +83,6 @@
                     density="compact"
                     variant="outlined"
                     return-object></v-select>
-                  <template v-else>{{ primaryContact?.firstName }} {{ primaryContact?.lastName }}</template>
                 </v-col>
               </v-row>
               <v-row>
@@ -91,7 +91,9 @@
                 </v-col>
                 <v-col cols="1">
                   <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
-                    <v-icon icon="fa:fa-regular fa-edit" @click="toggleEditPrimaryContact()"></v-icon>
+                    <AppButton variant="text" :disabled="editMode || loading">
+                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditPrimaryContact()"></v-icon>
+                    </AppButton>
                   </v-row>
                 </v-col>
               </v-row>
@@ -115,14 +117,18 @@
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       :atLeastOneContactMandatory="true"
-      @save-contact-updates="saveExpenseAuthorityUpdates" />
+      :parentInEditMode="editMode"
+      @save-contact-updates="saveExpenseAuthorityUpdates"
+      @edit-mode-changed="contactEditModeChange" />
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
       titleInfo="(You can have more than one additional contact)"
       :contacts="additionalContacts"
       :contactsForAdd="additionalContactsAvailableForAdd"
-      @save-contact-updates="saveAdditionalContactUpdates" />
+      :parentInEditMode="editMode"
+      @save-contact-updates="saveAdditionalContactUpdates"
+      @edit-mode-changed="contactEditModeChange" />
     <v-row>
       <v-col cols="12" md="6">
         <v-row justify="center" justify-md="start" class="pb-2">
@@ -168,6 +174,7 @@ export default {
       facility: undefined,
       loading: false,
       rules,
+      editMode: false,
       editModePrimaryContact: false,
       isEmpty,
     }
@@ -268,6 +275,7 @@ export default {
     toggleEditPrimaryContact() {
       this.editModePrimaryContact = !this.editModePrimaryContact
       this.primaryContact = this.primaryContactLastSaved
+      this.editMode = this.editModePrimaryContact
     },
 
     /**
@@ -283,6 +291,7 @@ export default {
         await FacilityService.updateFacilityPrimaryContact(this.facility.facilityId, this.facility.primaryContactId)
         this.primaryContactLastSaved = this.primaryContact
         this.editModePrimaryContact = false
+        this.editMode = false
         this.setSuccessAlert('Primary contact updated successfully')
       } catch (error) {
         this.setFailureAlert('Failed to update Primary Contact', error)
@@ -342,8 +351,18 @@ export default {
       this.setWarningAlert('This feature is not yet implemented')
     },
 
+    /**
+     * Toggle expansion panels
+     */
     togglePanels() {
       this.panel = this.panel.length === 0 ? this.allLicenceIDs : []
+    },
+
+    /**
+     * Handle edit mode change for component
+     */
+    contactEditModeChange(editMode) {
+      this.editMode = editMode
     },
   },
 }

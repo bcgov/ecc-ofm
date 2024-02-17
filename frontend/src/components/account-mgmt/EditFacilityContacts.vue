@@ -49,12 +49,16 @@
                         </template>
                         <template v-slot:item.actions="{ item }">
                           <v-row v-if="editMode" justify="end">
-                            <v-icon icon="fa:fa-regular fa-trash-can" @click="deleteContact(item)"></v-icon>
+                            <AppButton variant="text" :disabled="loading">
+                              <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon" @click="deleteContact(item)"></v-icon>
+                            </AppButton>
                           </v-row>
                         </template>
                         <template v-slot:[`header.actions`]>
                           <v-row v-if="!editMode" justify="end">
-                            <v-icon icon="fa:fa-regular fa-edit" @click="toggleEditMode()"></v-icon>
+                            <AppButton variant="text" :disabled="parentInEditMode || loading">
+                              <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
+                            </AppButton>
                           </v-row>
                         </template>
                       </v-data-table>
@@ -114,8 +118,13 @@ export default {
       required: false,
       default: false,
     },
+    parentInEditMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
-  emits: ['save-contact-updates'],
+  emits: ['save-contact-updates', 'edit-mode-changed'],
   data() {
     return {
       contactId: null,
@@ -170,6 +179,7 @@ export default {
      */
     toggleEditMode() {
       this.editMode = !this.editMode
+      this.$emit('edit-mode-changed', this.editMode)
     },
 
     /**
@@ -223,6 +233,7 @@ export default {
       this.contactId = null
       this.editMode = false
       this.errorMessage = ''
+      this.$emit('edit-mode-changed', this.editMode)
     },
 
     /**
@@ -236,6 +247,7 @@ export default {
         this.updatedContactsToAdd = []
         this.updatedContactsToRemove = []
         this.editMode = false
+        this.$emit('edit-mode-changed', this.editMode)
       }
     },
 
