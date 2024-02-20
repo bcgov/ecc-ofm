@@ -22,9 +22,7 @@
           <v-col cols="12" sm="6" class="pr-2 mt-1">
             <AppLabel>Health Authority:</AppLabel>
           </v-col>
-          <v-col cols="12" sm="6" class="mt-1">
-            {{ getHealthAuthorityNameById(licence?.healthAuthorityId) ? getHealthAuthorityNameById(licence?.healthAuthorityId) : BLANK_FIELD }}
-          </v-col>
+          <v-col cols="12" sm="6" class="mt-1">{{ healthAuthority }}</v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="6">
@@ -160,7 +158,12 @@ export default {
     ...mapState(useAppStore, ['getLicenceTypeNameById', 'getHealthAuthorityNameById']),
 
     allLicenceDetailsID() {
-      return this.licence.licenceDetails.map((licenceDetails) => licenceDetails.licenceDetailId)
+      return this.licence?.licenceDetails?.map((licenceDetail) => licenceDetail.licenceDetailId)
+    },
+
+    healthAuthority() {
+      const healthAuthority = this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
+      return healthAuthority ? healthAuthority : this.BLANK_FIELD
     },
   },
   async created() {
