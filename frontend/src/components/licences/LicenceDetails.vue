@@ -6,7 +6,7 @@
           <v-col cols="12" sm="6" class="pr-2 mt-1">
             <AppLabel>CCOF Facility ID:</AppLabel>
           </v-col>
-          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofFacilityId ? licence?.ccofFacilityId : '- - - -' }}</v-col>
+          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofFacilityId ? licence?.ccofFacilityId : BLANK_FIELD }}</v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="6">
@@ -14,7 +14,7 @@
           <v-col cols="12" sm="6" class="pr-2 mt-1">
             <AppLabel>CCOF Organization ID:</AppLabel>
           </v-col>
-          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : '- - - -' }}</v-col>
+          <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : BLANK_FIELD }}</v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="6">
@@ -23,7 +23,7 @@
             <AppLabel>Health Authority:</AppLabel>
           </v-col>
           <v-col cols="12" sm="6" class="mt-1">
-
+            {{ getHealthAuthorityNameById(licence?.healthAuthorityId) ? getHealthAuthorityNameById(licence?.healthAuthorityId) : BLANK_FIELD }}
           </v-col>
         </v-row>
       </v-col>
@@ -33,7 +33,7 @@
             <AppLabel>ACCB Provider ID:</AppLabel>
           </v-col>
           <v-col cols="12" sm="6" class="mt-1">
-            {{ licence?.accbProviderId ? licence?.accbProviderId : '- - - -' }}
+            {{ licence?.accbProviderId ? licence?.accbProviderId : BLANK_FIELD }}
           </v-col>
         </v-row>
       </v-col>
@@ -48,8 +48,6 @@
         </v-row>
       </v-col>
     </v-row>
-  </v-container>
-  <v-container fluid class="pl-0 pt-0">
     <v-row>
       <v-col class="pb-0">
         <h4 class="mb-2 text-decoration-underline">Category Details</h4>
@@ -151,7 +149,7 @@ export default {
       default: () => {
         return {}
       },
-    }
+    },
   },
   data() {
     return {
@@ -159,13 +157,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getLicenceTypeNameById']),
+    ...mapState(useAppStore, ['getLicenceTypeNameById', 'getHealthAuthorityNameById']),
+
     allLicenceDetailsID() {
       return this.licence.licenceDetails.map((licenceDetails) => licenceDetails.licenceDetailId)
     },
   },
   async created() {
     this.panel = this.allLicenceDetailsID
+    this.BLANK_FIELD = '- - - -'
   },
   methods: {
     convertDaysToString(days) {

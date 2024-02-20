@@ -32,7 +32,7 @@
       <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly || processing" :facilityType="model.facilityType" @update="updateModel" />
       <div v-if="isRentLease" no-gutters class="pb-6">
         <AppLabel>Supporting Documents</AppLabel>
-        <AppMissingInfoError v-if="validation && !isDocumentUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
         <AppDocumentUpload
           id="application-document-upload"
           entityName="ofm_applications"

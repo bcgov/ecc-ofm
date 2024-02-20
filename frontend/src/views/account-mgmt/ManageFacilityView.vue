@@ -148,7 +148,6 @@ import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
 import ApiService from '@/common/apiService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
@@ -180,8 +179,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['getRoleNameById', 'healthAuthorities', 'userRoles', 'getHealthAuthorityNameById']),
+    ...mapState(useAppStore, ['getRoleNameById']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },

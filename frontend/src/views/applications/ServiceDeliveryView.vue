@@ -8,7 +8,7 @@
 
     <div v-if="!isEmpty(currentApplication?.licences)">
       <v-row no-gutters class="mb-2">
-        <v-col cols="12">
+        <v-col cols="12" align="right">
           <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
             <v-icon>mdi-arrow-expand-vertical</v-icon>
             Expand All
