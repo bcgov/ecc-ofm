@@ -39,7 +39,7 @@ export default {
         facilityDetails: {
           id: 1,
           routeName: 'facility-details',
-          name: 'Facility details',
+          name: 'Facility Details',
         },
         serviceDelivery: {
           id: 2,
@@ -49,7 +49,7 @@ export default {
         operatingCosts: {
           id: 3,
           routeName: 'operating-costs',
-          name: 'Operating costs',
+          name: 'Operating Costs',
         },
         staffing: {
           id: 4,
