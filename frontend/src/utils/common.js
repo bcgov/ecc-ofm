@@ -6,6 +6,6 @@
  * If "decimalNumber" is not a Number, it will be set to 0 as the default value.
  */
 export function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
-  let formattedNumber = isNaN(Number(decimalNumber)) ? 0 : Number(decimalNumber)
+  const formattedNumber = isNaN(Number(decimalNumber)) ? 0 : Number(decimalNumber)
   return formattedNumber.toLocaleString('en-CA', { minimumFractionDigits: numberOfFractionDigits, maximumFractionDigits: numberOfFractionDigits })
 }
