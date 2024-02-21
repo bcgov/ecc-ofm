@@ -1,39 +1,11 @@
 'use strict'
 
-import { DateTimeFormatter, LocalDate } from '@js-joda/core'
-import { filter, isPlainObject, sortBy } from 'lodash'
-
-import ApiService from '@/common/apiService'
-import rfdc from 'rfdc/default'
-
-export function deepCloneObject(objectToBeCloned) {
-  const cloned = rfdc(objectToBeCloned)
-  return cloned
-}
-
-export function equalsIgnoreCase(param1, param2) {
-  return param1?.toLowerCase() === param2?.toLowerCase()
-}
-
-export function sortArrayByDate(array, dateFieldName, isAscending, datePattern = 'uuuuMMdd') {
-  return array.sort((a, b) => {
-    const dateA = getLocalDateFromString(a[`${dateFieldName}`].toString(), datePattern)
-    const dateB = getLocalDateFromString(b[`${dateFieldName}`].toString(), datePattern)
-    return isAscending ? dateA.compareTo(dateB) : dateB.compareTo(dateA)
-  })
-}
-
-export function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-}
-
 /**
- * This function will return the first letter of each word in the camel case string, like "penRequestBatch" will return "prb"
+ * This function will return a decimal number in this format ###,###,###.## (e.g.: 123,456,999.12).
+ * You can specify the number of fraction digits using "numberOfFractionDigits". Default is 2 fractional digits
+ * If "decimalNumber" is not a Number, it will be set to 0 as the default value.
  */
-export function abbreviateCamelCase(string) {
-  return string
-    .replace(/([A-Z])/g, ' $1')
-    .match(/\b(\w)/g)
-    .join('')
-    .toLowerCase()
+export function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
+  let formattedNumber = isNaN(Number(decimalNumber)) ? 0 : Number(decimalNumber)
+  return formattedNumber.toLocaleString('en-CA', { minimumFractionDigits: numberOfFractionDigits, maximumFractionDigits: numberOfFractionDigits })
 }

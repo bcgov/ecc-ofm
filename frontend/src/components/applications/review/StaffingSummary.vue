@@ -3,8 +3,8 @@
     <AppMissingInfoError v-if="!isStaffingComplete" :to="{ name: 'staffing', params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
     </AppMissingInfoError>
-    <v-card v-else class="pa-4" variant="outlined">
-      <v-row no-gutters>
+    <v-card v-else class="px-4 py-2" variant="outlined">
+      <v-row no-gutters class="pa-1">
         <v-col cols="6">
           <AppLabel>Employee Category</AppLabel>
         </v-col>
@@ -15,7 +15,7 @@
           <AppLabel>Part-Time Position</AppLabel>
         </v-col>
       </v-row>
-      <v-row no-gutters class="mt-2">
+      <v-row no-gutters class="pa-1">
         <v-col cols="6">
           <p>Infant/Toddler Early Childhood Educator</p>
         </v-col>
@@ -26,7 +26,7 @@
           {{ currentApplication?.staffingInfantECEducatorPartTime }}
         </v-col>
       </v-row>
-      <v-row no-gutters class="mt-1">
+      <v-row no-gutters class="pa-1">
         <v-col cols="6">
           <p>Early Childhood Educator</p>
         </v-col>
@@ -37,7 +37,7 @@
           {{ currentApplication?.staffingECEducatorPartTime }}
         </v-col>
       </v-row>
-      <v-row no-gutters class="mt-1">
+      <v-row no-gutters class="pa-1">
         <v-col cols="6">
           <p>Early Childhood Educator Assistant</p>
         </v-col>
@@ -48,7 +48,7 @@
           {{ currentApplication?.staffingECEducatorAssistantPartTime }}
         </v-col>
       </v-row>
-      <v-row no-gutters class="mt-1">
+      <v-row no-gutters class="pa-1">
         <v-col cols="6">
           <p>Responsible Adult</p>
         </v-col>
@@ -59,7 +59,7 @@
           {{ currentApplication?.staffingResponsibleAdultPartTime }}
         </v-col>
       </v-row>
-      <v-row no-gutters class="mt-1">
+      <v-row no-gutters class="pa-1">
         <v-col cols="6">
           <AppLabel>Total</AppLabel>
         </v-col>
