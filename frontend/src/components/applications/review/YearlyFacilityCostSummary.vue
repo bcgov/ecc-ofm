@@ -135,9 +135,11 @@ export default {
   components: { AppLabel },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
+    facilityType() {
+      return this.currentApplication?.facilityType
+    },
   },
   created() {
-    this.facilityType = this.currentApplication?.facilityType
     this.FACILITY_TYPES = FACILITY_TYPES
   },
   methods: {
