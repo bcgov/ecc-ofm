@@ -4,25 +4,19 @@
       {{ APPLICATION_ERROR_MESSAGES.FACILITY_TYPE }}
     </AppMissingInfoError>
     <div v-else>
-      <h4 class="mb-6 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
+      <h4 class="mb-4 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
       <AppMissingInfoError v-if="totalOperationalCost === 0" :to="{ name: 'operating-costs', hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
       </AppMissingInfoError>
       <div v-else>
-        <div class="mt-2 mb-0">
-          <h4>Yearly Operating Cost</h4>
-          <div>This is a placeholder for Yearly Operating Cost summary</div>
-        </div>
-        <hr class="my-4" />
-        <div class="mt-2 mb-0">
-          <h4>Yearly Facility Cost</h4>
-          <div>This is a placeholder for Yearly Facility Cost summary</div>
-        </div>
+        <YearlyOperatingCostSummary />
+        <YearlyFacilityCostSummary class="mt-4" />
       </div>
-      <div v-if="isRentLease">
-        <hr class="my-4" />
+      <div v-if="isRentLease" class="mt-4">
         <h4>Uploaded Document(s)</h4>
-        <div v-if="isUploadedDocumentsComplete">This is a placeholder for Uploaded Document summary</div>
+        <v-card v-if="isUploadedDocumentsComplete" class="my-1 pa-2" variant="outlined">
+          <div v-for="document in documents" :key="document.documentId" class="px-2 py-1">{{ document.fileName }}</div>
+        </v-card>
         <AppMissingInfoError v-else :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
         </AppMissingInfoError>
@@ -33,6 +27,8 @@
 
 <script>
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
+import YearlyOperatingCostSummary from '@/components/applications/review/YearlyOperatingCostSummary.vue'
+import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFacilityCostSummary.vue'
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
@@ -40,7 +36,7 @@ import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
-  components: { AppMissingInfoError },
+  components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary },
   props: {
     documents: {
       type: Array,
