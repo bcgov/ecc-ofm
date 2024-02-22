@@ -110,6 +110,7 @@ const ApplicationMappings = [
   { back: 'ofm_applicationid', front: 'applicationId' },
   { back: 'ofm_application', front: 'referenceNumber' },
   { back: 'ofm_summary_submittedon', front: 'submittedDate' },
+  { back: 'ofm_summary_submittedby', front: 'submittedBy' },
   { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
   { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
   { back: '_ofm_facility_value', front: 'facilityId' },
@@ -145,6 +146,7 @@ const ApplicationMappings = [
   { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
+  { back: 'ofm_summary_declaration_a_status', front: 'applicationDeclaration' },
 ]
 
 const OrganizationMappings = [

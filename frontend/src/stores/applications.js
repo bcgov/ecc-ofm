@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
-import { FACILITY_TYPES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
   return application?.primaryContactId && application?.expenseAuthorityId
@@ -32,6 +32,10 @@ function checkServiceDeliveryComplete(application) {
   return application?.licenceDeclaration && !isEmpty(application?.licences)
 }
 
+function checkDeclareSubmitComplete(application) {
+  return application?.applicationDeclaration
+}
+
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
   state: () => ({
@@ -46,6 +50,7 @@ export const useApplicationsStore = defineStore('applications', {
   }),
   getters: {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+    isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
   },
   actions: {
     checkApplicationComplete() {
@@ -53,6 +58,7 @@ export const useApplicationsStore = defineStore('applications', {
       this.isServiceDeliveryComplete = checkServiceDeliveryComplete(this.currentApplication)
       this.isOperatingCostsComplete = checkOperatingCostsComplete(this.currentApplication)
       this.isStaffingComplete = checkStaffingComplete(this.currentApplication)
+      this.isDeclareSubmitComplete = checkDeclareSubmitComplete(this.currentApplication)
     },
 
     async getApplication(applicationId) {

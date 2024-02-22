@@ -22,6 +22,7 @@ import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
 import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
 import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
 import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
+import ApplicationConfirmationView from '@/views/applications/ApplicationConfirmationView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import DeclareSubmitView from '@/views/applications/DeclareSubmitView.vue'
@@ -31,6 +32,7 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
+import SupplementaryApplicationView from '@/views/supp-applications/SupplementaryApplicationView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -174,7 +176,20 @@ const router = createRouter({
           name: 'declare-submit',
           component: DeclareSubmitView,
         },
+        {
+          path: ':applicationGuid/confirmation',
+          name: 'application-confirmation',
+          component: ApplicationConfirmationView,
+        },
       ],
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/supp-applications',
+      name: 'supp-applications',
+      component: SupplementaryApplicationView,
       meta: {
         requiresAuth: true,
       },
