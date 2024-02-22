@@ -140,11 +140,11 @@ export default {
   components: { AppLabel, AppMissingInfoError },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
+    // "!this.processing" to avoid duplicate saveApplication request when users click on the navBar multiple times
     if (!this.readonly && !this.processing) {
       await this.saveApplication()
     }
-    this.processing = true
-    next()
+    next(!this.processing) // only go to the next page after saveApplication is complete
   },
   props: {
     back: {
