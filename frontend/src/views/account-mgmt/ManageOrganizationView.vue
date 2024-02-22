@@ -31,7 +31,7 @@
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
-                <v-expansion-panels v-show="otherFacilities?.length > 0" v-model="panelOtherFacilities" multiple>
+                <v-expansion-panels v-if="otherFacilities?.length > 0" v-model="panelOtherFacilities" multiple>
                   <v-expansion-panel>
                     <v-expansion-panel-title class="header-label">
                       <h4>Other Facilities (read-only)</h4>

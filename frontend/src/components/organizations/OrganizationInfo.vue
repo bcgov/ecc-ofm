@@ -71,7 +71,7 @@
                   <v-col></v-col>
                   <v-col v-if="editable" cols="11" sm="8" md="8" lg="8" class="ma-2">
                     <v-row no-gutters justify="end">
-                      <v-icon v-show="!editMode" icon="fa:fa-regular fa-pen-to-square" @click="toggleEditMode()"></v-icon>
+                      <v-icon v-if="!editMode" icon="fa:fa-regular fa-pen-to-square" @click="toggleEditMode()"></v-icon>
                     </v-row>
                   </v-col>
                 </v-row>
