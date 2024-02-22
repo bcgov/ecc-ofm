@@ -54,7 +54,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" lg="4" v-if="hasRole(ROLES.ACCOUNT_MANAGEMENT)">
+      <v-col cols="12" md="6" lg="4">
         <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
           <v-card-text>
             Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
@@ -66,16 +66,7 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia'
-
-import rolesMixin from '@/mixins/rolesMixin.js'
-import { useAuthStore } from '@/stores/auth'
-
 export default {
-  mixins: [rolesMixin],
-  methods: {
-    ...mapActions(useAuthStore, ['hasRole']),
-  },
 }
 </script>
 

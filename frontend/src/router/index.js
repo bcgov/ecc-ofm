@@ -203,7 +203,6 @@ const router = createRouter({
       component: EmptyRouterView,
       meta: {
         requiresAuth: true,
-        role: ROLES.ACCOUNT_MANAGEMENT,
         showFacility: false,
       },
       children: [

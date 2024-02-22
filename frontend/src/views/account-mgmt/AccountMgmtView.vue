@@ -9,7 +9,7 @@
           </template>
           <router-link :to="{ name: 'manage-organization' }">Manage Organization/Facilities</router-link>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-show="isAccountManager">
           <template v-slot:prepend>
             <v-icon>mdi-account-group</v-icon>
           </template>
@@ -23,8 +23,20 @@
 
 <script>
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import rolesMixin from '@/mixins/rolesMixin.js'
+import { mapActions } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: { AppBackButton },
+  mixins: [rolesMixin],
+  computed: {
+    isAccountManager() {
+      return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT)
+    },
+  },
+  methods: {
+    ...mapActions(useAuthStore, ['hasRole']),
+  },
 }
 </script>
