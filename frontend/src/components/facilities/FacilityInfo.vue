@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-2 pa-4" variant="outlined">
+  <v-card class="pa-4" variant="outlined">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row v-if="!isApplicationPage" no-gutters>
@@ -12,7 +12,7 @@
             </v-row>
           </v-col>
           <v-col cols="3" lg="6">
-            <v-row no-gutters justify="end">
+            <v-row v-if="editable" no-gutters justify="end">
               <AppButton variant="text" :disabled="loading">
                 <v-icon icon="fa:fa-regular fa-pen-to-square" class="transaction-icon" @click="editFacility()"></v-icon>
               </AppButton>
@@ -200,6 +200,11 @@ export default {
       default: () => {
         return {}
       },
+    },
+    editable: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     loading: {
       type: Boolean,
