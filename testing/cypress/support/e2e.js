@@ -1,24 +1,22 @@
 import "./commands";
 
 // add cypress log into CRM command
-Cypress.Commands.add("loginToAAD", (username, password) => {
-  loginViaAAD(username, password);
+Cypress.Commands.add("loginToAAD", (username, password, crmUrl, crmBaseUrl) => {
+  loginViaAAD(username, password, crmUrl, crmBaseUrl);
 });
 
 // add cypress log into Portal command
-Cypress.Commands.add("loginToPortal", (username, password) => {
-  loginViaPortal(username, password);
+Cypress.Commands.add("loginToPortal", (username, password, portalUrl) => {
+  loginViaPortal(username, password, portalUrl);
 });
 
 // CRM log in function
-function loginViaAAD(username, password) {
+function loginViaAAD(username, password, crmUrl, crmBaseUrl) {
   // create CRM seesion
   cy.session([username, password], () => {
-    cy.visit(
-      "https://mychildcareservicesdev.crm3.dynamics.com/main.aspx?appid=af54cb40-d463-ee11-8df0-000d3a09d499&pagetype=dashboard&id=4d508c50-eb78-ee11-8179-000d3a09d699&type=system&_canOverride=true"
-    );
+    cy.visit(crmUrl);
 
-    cy.origin("https://mychildcareservicesdev.crm3.dynamics.com", () => {
+    cy.origin(crmBaseUrl, () => {
       cy.on("uncaught:exception", (e) => {
         if (e.message.includes(" ")) {
           return false;
@@ -62,19 +60,14 @@ function loginViaAAD(username, password) {
 }
 
 // Portal log in function
-function loginViaPortal(username, password) {
+function loginViaPortal(username, password, portalUrl) {
   // visit portal log in page
-  cy.visit(
-    "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/login"
-  );
+  cy.visit(portalUrl);
 
   // click on log in button
-  cy.origin(
-    "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/",
-    () => {
-      cy.get('a[id="bceid-login"]').click();
-    }
-  );
+  cy.origin(portalUrl, () => {
+    cy.get('a[id="bceid-login"]').click();
+  });
 
   // enter username
   cy.origin(
