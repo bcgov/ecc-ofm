@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-2 pa-4" variant="outlined">
+  <v-card class="pa-4" variant="outlined">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row v-if="!isApplicationPage" no-gutters>

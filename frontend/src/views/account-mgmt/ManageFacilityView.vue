@@ -2,13 +2,18 @@
   <v-container fluid>
     <h1>Update Facility Information</h1>
     <v-row>
-      <v-col class="ml-6 mt-6 pb-0">
+      <v-col class="pl-9 pt-10 pb-0">
         <h4>Facility Details</h4>
       </v-col>
+      <!-- Uncomment when implementing change request functionality <v-col class="pb-1 pt-7">
+        <v-row no-gutters justify="end" class="">
+          <AppButton size="large" width="300px" :loading="loading">Submit a Change Request</AppButton>
+        </v-row>
+      </v-col-->
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0 pb-0">
-        <FacilityInfo :loading="loading" :facility="facility" class="mt-0" />
+        <FacilityInfo :loading="loading" :facility="facility" />
       </v-col>
     </v-row>
     <v-row>
@@ -360,7 +365,7 @@ export default {
      * Check if user has access to facility
      */
     hasAccessToFacility(facilityId) {
-      return this.userInfo?.facilities?.find((facility) => facility.facilityId === facilityId) !== undefined
+      return this.userInfo?.facilities?.some((facility) => facility.facilityId === facilityId)
     },
   },
 }
