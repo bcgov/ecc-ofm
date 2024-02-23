@@ -4,11 +4,11 @@
       <v-col class="ml-6 mt-10 pb-0">
         <h4>Organization Details</h4>
       </v-col>
-      <!-- Uncomment when implementing change request functionality      <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
+      <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
         <v-row no-gutters justify="end">
-          <AppButton size="large" width="200px" :loading="loading">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
         </v-row>
-      </v-col> -->
+      </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
@@ -96,7 +96,7 @@ export default {
       return this.userInfo.facilities
     },
     otherFacilities() {
-      return this.facilities.filter((f) => !this.userInfo.facilities.some(facility => facility.facilityId === f.facilityId))
+      return this.facilities.filter((f) => !this.accountManagerFacilities.some(facility => facility.facilityId === f.facilityId))
     },
 
   },
@@ -141,6 +141,13 @@ export default {
      */
     navigateToFacility(facilityId) {
       this.$router.push({ name: 'manage-facility', params: { facilityId } })
+    },
+
+    /**
+     * Open the Change Request dialog
+     */
+    openChangeRequestDialog() {
+      this.setWarningAlert('This feature is not yet implemented')
     },
   },
 }

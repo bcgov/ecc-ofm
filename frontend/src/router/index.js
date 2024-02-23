@@ -211,13 +211,12 @@ const router = createRouter({
           component: ManageFacilityView,
         },
         {
-          path: '/manage-users',
+          path: 'manage-users',
           name: 'manage-users',
           component: ManageUsersView,
           meta: {
             role: ROLES.ACCOUNT_MANAGEMENT,
           },
-          children: [],
         },
       ],
     },

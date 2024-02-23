@@ -5,11 +5,11 @@
       <v-col class="pl-9 pt-10 pb-0">
         <h4>Facility Details</h4>
       </v-col>
-      <!-- Uncomment when implementing change request functionality <v-col class="pb-1 pt-7">
+      <v-col v-if="editable" class="pb-1 pt-7">
         <v-row no-gutters justify="end" class="">
-          <AppButton size="large" width="300px" :loading="loading">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
         </v-row>
-      </v-col-->
+      </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0 pb-0">
@@ -366,6 +366,13 @@ export default {
      */
     hasAccessToFacility(facilityId) {
       return this.userInfo?.facilities?.some((facility) => facility.facilityId === facilityId)
+    },
+
+    /**
+     * Open the Change Request dialog
+    */
+    openChangeRequestDialog() {
+      this.setWarningAlert('This feature is not yet implemented')
     },
   },
 }
