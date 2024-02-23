@@ -136,7 +136,9 @@ export default {
       this.model.submittedBy = this.userInfo?.userName
       this.model.statusCode = APPLICATION_STATUS_CODES.SUBMITTED
       await this.saveApplication()
-      this.$router.push({ name: 'application-confirmation', params: { applicationGuid: this.$route.params.applicationGuid } })
+      if (this.currentApplication?.statusCode === APPLICATION_STATUS_CODES.SUBMITTED) {
+        this.$router.push({ name: 'application-confirmation', params: { applicationGuid: this.$route.params.applicationGuid } })
+      }
     },
 
     async saveApplication(showAlert = false) {

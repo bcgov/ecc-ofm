@@ -32,7 +32,7 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
-import SupplementaryApplicationView from '@/views/supp-applications/SupplementaryApplicationView.vue'
+import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -187,9 +187,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/supp-applications',
-      name: 'supp-applications',
-      component: SupplementaryApplicationView,
+      path: '/supp-allowances',
+      name: 'supp-allowances',
+      component: SupplementaryAllowanceView,
       meta: {
         requiresAuth: true,
       },

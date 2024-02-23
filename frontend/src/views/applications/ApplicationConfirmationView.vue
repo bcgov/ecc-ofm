@@ -19,7 +19,7 @@
             </p>
           </v-col>
           <v-col cols="12" md="4" align="right" class="my-4">
-            <AppButton id="apply-button" :primary="false" size="large" width="100px" :to="{ name: 'supp-applications', params: { applicationGuid: $route.params.applicationGuid } }">Apply</AppButton>
+            <AppButton id="apply-button" :primary="false" size="large" width="100px" :to="{ name: 'supp-allowances', params: { applicationGuid: $route.params.applicationGuid } }">Apply</AppButton>
           </v-col>
         </v-row>
       </v-card-text>
