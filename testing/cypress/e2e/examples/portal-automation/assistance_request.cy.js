@@ -1,12 +1,11 @@
 describe("Portal Assistance Request", () => {
   beforeEach(() => {
-    cy.loginToPortal(
-      Cypress.env("portal_username"),
-      Cypress.env("portal_password")
-    );
-    cy.visit(
-      "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/"
-    );
+    const USERNAME = Cypress.env("portal_username");
+    const PASSWORD = Cypress.env("portal_password");
+    const PORTAL_URL = Cypress.env("portal_url");
+
+    cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL);
+    cy.visit(PORTAL_URL);
     cy.get('button[id="mail_box_button"]').click();
     cy.get("button").contains("Messages").click();
   });
@@ -23,9 +22,7 @@ describe("Portal Assistance Request", () => {
       force: true,
     });
     cy.get('input[placeholder="Brief summary of request"]').type(subject);
-    cy.get('textarea[placeholder="Detailed description of request"]').type(
-      description
-    );
+    cy.get('textarea[placeholder^="Detailed description"]').type(description);
     cy.get('input[type="radio"]').first().check();
     cy.get('input[type="text"]').last().clear().type("403-403-4033");
     cy.get("button").contains("Submit").click();
@@ -68,7 +65,12 @@ describe("Portal Assistance Request", () => {
       "description"
     );
     cy.get("button").contains("Submit").click();
-    cy.contains("This field is required").should("exist");
+    cy.get("label")
+      .contains("Topic")
+      .parent()
+      .next()
+      .contains("This field is required")
+      .should("exist");
 
     // checks that the subject is mandatory
     cy.get('input[placeholder="[select a topic]"]').type(`Reporting{enter}`, {
@@ -76,18 +78,32 @@ describe("Portal Assistance Request", () => {
     });
     cy.get('input[placeholder="Brief summary of request"]').clear();
     cy.get("button").contains("Submit").click();
-    cy.contains("This field is required").should("exist");
+    cy.get("label")
+      .contains("Subject")
+      .parent()
+      .next()
+      .contains("This field is required")
+      .should("exist");
 
     // checks that the description is mandatory
     cy.get('input[placeholder="Brief summary of request"]').type("subject");
     cy.get('textarea[placeholder="Detailed description of request"]').clear();
     cy.get("button").contains("Submit").click();
-    cy.contains("This field is required").should("exist");
+    cy.get("label")
+      .contains("Request description")
+      .parent()
+      .next()
+      .contains("This field is required")
+      .should("exist");
   });
 
   it("Checks that the portal message radio is selected at the start", () => {
     cy.get("button").contains("New message").click();
-    cy.get('input[type="radio"]').last().should("be.checked");
+    cy.get("label")
+      .contains("Portal message")
+      .prev()
+      .find('input[type="radio"]')
+      .should("be.checked");
   });
 
   it("Lets you cancel the application", () => {
@@ -96,55 +112,34 @@ describe("Portal Assistance Request", () => {
   });
 
   it("Checks the different topics available", () => {
-    // Intake & Renewal
+    const topics = [
+      "Intake & Renewal",
+      "Reporting",
+      "Account Maintenance",
+      "Funding Agreement",
+      "Payments and Funding",
+      "Policy Question",
+      "Technical Support",
+      "Other",
+    ];
+
     cy.get("button").contains("New message").click();
     cy.get('div[class="v-field__input"]').first().as("topic");
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Intake & Renewal").click();
-    cy.contains("Intake & Renewal", { force: true }).should("exist");
 
-    // Reporting
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Reporting").click();
-    cy.contains("Reporting", { force: true }).should("exist");
-
-    // Account Maintenance
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Account Maintenance").click();
-    cy.contains("Account Maintenance", { force: true }).should("exist");
-
-    // Funding Agreement
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Funding Agreement").click();
-    cy.contains("Funding Agreement", { force: true }).should("exist");
-
-    // Payments and Funding
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Payments and Funding").click();
-    cy.contains("Payments and Funding", { force: true }).should("exist");
-
-    // Policy Question
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Policy Question").click();
-    cy.contains("Policy Question", { force: true }).should("exist");
-
-    // Technical Support
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Technical Support").click();
-    cy.contains("Technical Support", { force: true }).should("exist");
-
-    // Other
-    cy.get("@topic").click({ force: true });
-    cy.get(".v-list-item__content").contains("Other").click();
-    cy.contains("Other", { force: true }).should("exist");
+    for (let i = 0; i < topics.length; i++) {
+      cy.get("@topic").click({ force: true });
+      cy.get(".v-list-item__content").contains(topics[i]).click();
+      cy.contains(topics[i], { force: true }).should("exist");
+    }
   });
 
   it("Checks 100 max character count in the subject", () => {
     let word105 =
-      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      " testing 105 characters - aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
 
     cy.get("button").contains("New message").click();
     cy.get('input[placeholder="Brief summary of request"]').type(word105);
+
     cy.get('input[placeholder="Brief summary of request"]')
       .invoke("val")
       .then((val) => {
@@ -154,7 +149,7 @@ describe("Portal Assistance Request", () => {
 
   it("Checks 1000 max character count in the description", () => {
     let word1005 =
-      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      " testing 1005 characters - aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
 
     cy.get("button").contains("New message").click();
     cy.get('textarea[placeholder="Detailed description of request"]').type(
@@ -170,6 +165,10 @@ describe("Portal Assistance Request", () => {
   it("Allows you to select multiple facilities", () => {
     cy.get("button").contains("New message").click();
     cy.get('input[id="selectFacility"]').click({ force: true });
-    cy.get(".v-list-item__content").contains("Select All").click();
+    cy.get(".v-list-item").contains("Select All").click();
+    cy.get('input[id="selectFacility"]')
+      .parent()
+      .get('*[class="v-select__selection"]')
+      .should("have.length.at.least", 2);
   });
 });

@@ -19,10 +19,8 @@ import "./commands";
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-function loginViaAAD(username, password) {
-  cy.visit(
-    "https://mychildcareservicesdev.crm3.dynamics.com/main.aspx?appid=733af835-f8da-4763-b4ab-972ebdc95f65"
-  );
+function loginViaAAD(username, password, crmUrl) {
+  cy.visit(crmUrl);
 
   cy.origin(
     "login.microsoftonline.com",
@@ -57,22 +55,19 @@ function loginViaAAD(username, password) {
   );
 }
 
-function loginToPortal(username, password) {
-  cy.visit(
-    "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/"
-  );
+function loginToPortal(username, password, portalUrl) {
+  cy.visit(portalUrl);
   cy.get('a[id="bceid-login"]').click();
-  cy.wait(3000);
 
   // brought to the BCeID login page
-  cy.get('input[id="user"]').type(username);
+  cy.get('input[id="user"]', { timeout: 10000 }).type(username);
   cy.get('input[id="password"]').type(password);
   cy.get('input[type="submit"]').contains("Continue").click();
 }
 
-Cypress.Commands.add("loginToAAD", (username, password) => {
+Cypress.Commands.add("loginToAAD", (username, password, crmUrl, crmBaseUrl) => {
   cy.session(
-    `aad${username}`,
+    `aad-${username}`,
     () => {
       const log = Cypress.log({
         displayName: "Azure Active Directory Login",
@@ -81,17 +76,15 @@ Cypress.Commands.add("loginToAAD", (username, password) => {
       });
       log.snapshot("before");
 
-      loginViaAAD(username, password);
+      loginViaAAD(username, password, crmUrl);
 
       log.snapshot("after");
       log.end();
     },
     {
       validate: () => {
-        cy.visit(
-          "https://mychildcareservicesdev.crm3.dynamics.com/main.aspx?appid=af54cb40-d463-ee11-8df0-000d3a09d499"
-        );
-        cy.origin("https://mychildcareservicesdev.crm3.dynamics.com", () => {
+        cy.visit(crmUrl);
+        cy.origin(crmBaseUrl, () => {
           cy.contains("Dynamics 365").should("be.visible");
           cy.contains("Operating Funding Model").should("be.visible");
         });
@@ -100,7 +93,7 @@ Cypress.Commands.add("loginToAAD", (username, password) => {
   );
 });
 
-Cypress.Commands.add("loginToPortal", (username, password) => {
+Cypress.Commands.add("loginToPortal", (username, password, portalUrl) => {
   cy.session(
     `portal-${username}`,
     () => {
@@ -111,17 +104,18 @@ Cypress.Commands.add("loginToPortal", (username, password) => {
       });
       log.snapshot("before");
 
-      loginToPortal(username, password);
+      loginToPortal(username, password, portalUrl);
 
       log.snapshot("after");
       log.end();
     },
     {
       validate: () => {
-        cy.visit(
-          "https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/"
+        cy.visit(portalUrl);
+        cy.contains(username).should("exist");
+        cy.contains("Early Childhood Care - Operating Funding Model").should(
+          "exist"
         );
-        cy.contains(Cypress.env("portal_username")).should("exist");
       },
     }
   );
