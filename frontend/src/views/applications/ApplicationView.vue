@@ -2,18 +2,18 @@
   <v-container fluid>
     <ApplicationHeader />
     <div v-if="isApplicationConfirmationPage">
-      <router-view class="router-view" />
+      <router-view class="min-screen-height" />
     </div>
     <div v-else>
       <v-row v-if="loading" justify="center">
-        <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="loading-screen"></v-progress-circular>
+        <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-screen-height"></v-progress-circular>
       </v-row>
       <v-row v-else no-gutters>
         <v-col cols="12" md="3" lg="2">
           <ApplicationNavBar class="navBar" />
         </v-col>
         <v-col cols="12" md="9" lg="10">
-          <router-view class="router-view" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process"></router-view>
+          <router-view class="min-screen-height" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process"></router-view>
           <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
           <AppNavButtons
             :loading="processing"
@@ -156,11 +156,7 @@ export default {
   max-width: 400px;
 }
 
-.loading-screen {
-  min-height: 45vh;
-}
-
-.router-view {
+.min-screen-height {
   min-height: 45vh;
 }
 </style>
