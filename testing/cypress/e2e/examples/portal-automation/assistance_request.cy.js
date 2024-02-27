@@ -1,9 +1,9 @@
+const USERNAME = Cypress.env("portal_username");
+const PASSWORD = Cypress.env("portal_password");
+const PORTAL_URL = Cypress.env("portal_url");
+
 describe("Portal Assistance Request", () => {
   beforeEach(() => {
-    const USERNAME = Cypress.env("portal_username");
-    const PASSWORD = Cypress.env("portal_password");
-    const PORTAL_URL = Cypress.env("portal_url");
-
     cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL);
     cy.visit(PORTAL_URL);
     cy.get('button[id="mail_box_button"]').click();
@@ -126,11 +126,11 @@ describe("Portal Assistance Request", () => {
     cy.get("button").contains("New message").click();
     cy.get('div[class="v-field__input"]').first().as("topic");
 
-    for (let i = 0; i < topics.length; i++) {
+    topics.forEach((topic) => {
       cy.get("@topic").click({ force: true });
-      cy.get(".v-list-item__content").contains(topics[i]).click();
-      cy.contains(topics[i], { force: true }).should("exist");
-    }
+      cy.get(".v-list-item__content").contains(topic).click();
+      cy.contains(topic, { force: true }).should("exist");
+    });
   });
 
   it("Checks 100 max character count in the subject", () => {
