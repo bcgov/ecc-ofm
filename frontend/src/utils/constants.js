@@ -28,6 +28,8 @@ export const ApiRoutes = Object.freeze({
   FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
   LICENCES: baseRoot + '/licences',
   REPORTS: baseRoot + '/reports',
+  SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
+  FUNDING_AGREEMENTS: baseRoot + '/funding-agreements',
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
@@ -55,7 +57,8 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   CANCELLED: 2,
   SUBMITTED: 3,
   IN_REVIEW: 4,
-  APPROVED: 5,
+  AWAITING_PROVIDER: 5,
+  APPROVED: 6,
 })
 
 export const FACILITY_TYPES = Object.freeze({

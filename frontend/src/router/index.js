@@ -33,6 +33,8 @@ import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
+import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
+import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmitView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -184,14 +186,29 @@ const router = createRouter({
       ],
       meta: {
         requiresAuth: true,
+        hideFacilityHeader: true,
       },
     },
     {
       path: '/supp-allowances',
       name: 'supp-allowances',
       component: SupplementaryAllowanceView,
+      redirect: { name: 'supp-allowances-form' },
+      children: [
+        {
+          path: ':applicationGuid?',
+          name: 'supp-allowances-form',
+          component: SupplementaryFormView,
+        },
+        {
+          path: ':applicationGuid/declare-submit',
+          name: 'supp-allowances-submit',
+          component: SupplementarySubmitView,
+        },
+      ],
       meta: {
         requiresAuth: true,
+        hideFacilityHeader: true,
       },
     },
     {
