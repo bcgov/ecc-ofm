@@ -2,13 +2,18 @@
   <v-container fluid>
     <h1>Update Facility Information</h1>
     <v-row>
-      <v-col class="ml-6 mt-6 pb-0">
+      <v-col class="pl-9 pt-10 pb-0">
         <h4>Facility Details</h4>
+      </v-col>
+      <v-col v-if="editable" class="pb-1 pt-7">
+        <v-row no-gutters justify="end" class="">
+          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0 pb-0">
-        <FacilityInfo :loading="loading" :facility="facility" class="mt-0" />
+        <FacilityInfo :loading="loading" :facility="facility" />
       </v-col>
     </v-row>
     <v-row>
@@ -16,11 +21,6 @@
         <h4>Licences</h4>
       </v-col>
       <v-col class="d-flex justify-end align-end pb-1 pt-0">
-        <AppButton id="add-licence-button" :primary="false" size="large" width="250px" class="mr-4" @click="addEditLicense()">
-          <v-icon left>mdi-plus</v-icon>
-          Add New Licence
-        </AppButton>
-
         <AppButton v-if="licences?.length > 0 && isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanels()">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
@@ -37,13 +37,8 @@
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
               <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
-                <v-expansion-panel-title class="header-label">
+                <v-expansion-panel-title>
                   <LicenceHeader :licence="licence" />
-                  <v-col cols="auto">
-                    <AppButton variant="text" :disabled="loading">
-                      <v-icon icon="fa:fa-regular fa-pen-to-square" class="transaction-icon" @click.stop="addEditLicense(licence.licenceId)"></v-icon>
-                    </AppButton>
-                  </v-col>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <LicenceDetails :licence="licence" />
@@ -90,14 +85,14 @@
                   <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
                 </v-col>
                 <v-col cols="1">
-                  <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
+                  <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
                     <AppButton variant="text" :disabled="editMode || loading">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditPrimaryContact()"></v-icon>
                     </AppButton>
                   </v-row>
                 </v-col>
               </v-row>
-              <v-row v-if="editModePrimaryContact">
+              <v-row v-if="editable && editModePrimaryContact">
                 <v-col cols="12">
                   <v-row justify="end">
                     <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="toggleEditPrimaryContact()">Cancel</AppButton>
@@ -118,6 +113,7 @@
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       :atLeastOneContactMandatory="true"
       :parentInEditMode="editMode"
+      :editable="editable"
       @save-contact-updates="saveExpenseAuthorityUpdates"
       @edit-mode-changed="contactEditModeChange" />
     <EditFacilityContacts
@@ -127,6 +123,7 @@
       :contacts="additionalContacts"
       :contactsForAdd="additionalContactsAvailableForAdd"
       :parentInEditMode="editMode"
+      :editable="editable"
       @save-contact-updates="saveAdditionalContactUpdates"
       @edit-mode-changed="contactEditModeChange" />
     <v-row>
@@ -144,10 +141,13 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin'
+import rolesMixin from '@/mixins/rolesMixin.js'
 import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
+import { mapActions } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import ApiService from '@/common/apiService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
@@ -161,7 +161,7 @@ import { isEmpty } from 'lodash'
 export default {
   name: 'ManageFacilityView',
   components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails },
-  mixins: [alertMixin],
+  mixins: [alertMixin, rolesMixin],
   data() {
     return {
       facilityId: null,
@@ -180,6 +180,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
+    ...mapState(useAuthStore, ['userInfo']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
@@ -198,6 +199,9 @@ export default {
     allLicenceIDs() {
       return this.licences?.map((licence) => licence.licenceId)
     },
+    editable() {
+      return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT) && this.hasAccessToFacility(this.facilityId)
+    },
     sortedContacts() {
       if (!this.contacts) return []
       const contactsCopy = [...this.contacts]
@@ -213,6 +217,7 @@ export default {
     this.primaryContactLastSaved = this.primaryContact
   },
   methods: {
+    ...mapActions(useAuthStore, ['hasRole']),
     /**
      * Load the data for the page
      */
@@ -343,13 +348,6 @@ export default {
     },
 
     /**
-     * Add a new licence category
-     */
-    addEditLicense(licenceId) {
-      this.setWarningAlert('This feature is not yet implemented')
-    },
-
-    /**
      * Toggle expansion panels
      */
     togglePanels() {
@@ -361,6 +359,20 @@ export default {
      */
     contactEditModeChange(editMode) {
       this.editMode = editMode
+    },
+
+    /**
+     * Check if user has access to facility
+     */
+    hasAccessToFacility(facilityId) {
+      return this.userInfo?.facilities?.some((facility) => facility.facilityId === facilityId)
+    },
+
+    /**
+     * Open the Change Request dialog
+    */
+    openChangeRequestDialog() {
+      this.setWarningAlert('This feature is not yet implemented')
     },
   },
 }

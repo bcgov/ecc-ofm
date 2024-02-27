@@ -1,14 +1,18 @@
 <template>
   <v-container fluid>
-    <h1>Update Organization Information</h1>
     <v-row>
-      <v-col class="ml-6 mt-6 pb-0">
+      <v-col class="ml-6 mt-10 pb-0">
         <h4>Organization Details</h4>
+      </v-col>
+      <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
+        <v-row no-gutters justify="end">
+          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        <OrganizationInfo :loading="loading" :organization="organization" :editable="true" class="mt-1" />
+        <OrganizationInfo :loading="loading" :organization="organization" :editable="isAccountManager" class="mt-1" />
       </v-col>
     </v-row>
     <v-row>
@@ -21,13 +25,30 @@
         <v-card class="pa-6" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-row>
-              <v-col cols="11">
-                <v-card v-for="item in this.facilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+              <v-col v-if="isAccountManager">
+                <v-expansion-panels v-model="panelYourFacilities" multiple class="pb-4">
+                  <v-expansion-panel>
+                    <v-expansion-panel-title class="header-label">
+                      <h4>Your Facilities</h4>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <v-card v-for="item in accountManagerFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card>
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+                <v-expansion-panels v-if="otherFacilities?.length > 0" v-model="panelOtherFacilities" multiple>
+                  <v-expansion-panel>
+                    <v-expansion-panel-title class="header-label">
+                      <h4>Other Facilities (read-only)</h4>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
+                      <v-card v-for="item in otherFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                    </v-expansion-panel-text>
+                  </v-expansion-panel>
+                </v-expansion-panels>
               </v-col>
-              <v-col cols="3" md="1">
-                <v-row justify="end">
-                  <v-icon icon="fa:fa-regular fa-plus" class="mr-4"></v-icon>
-                </v-row>
+              <v-col v-else>
+                <v-card v-for="item in facilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
               </v-col>
             </v-row>
           </v-skeleton-loader>
@@ -43,32 +64,47 @@
 </template>
 
 <script>
+import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
+import rolesMixin from '@/mixins/rolesMixin.js'
 import { mapState } from 'pinia'
-
+import { mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppBackButton, OrganizationInfo },
-  mixins: [alertMixin],
+  components: { AppButton, AppBackButton, OrganizationInfo },
+  mixins: [alertMixin, rolesMixin],
   data() {
     return {
       facilities: [],
+      panelYourFacilities: [0],
+      panelOtherFacilities: [0],
       loading: false,
       organization: undefined,
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    isAccountManager() {
+      return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT)
+    },
+    accountManagerFacilities() {
+      return this.userInfo.facilities
+    },
+    otherFacilities() {
+      return this.facilities.filter((f) => !this.accountManagerFacilities.some(facility => facility.facilityId === f.facilityId))
+    },
+
   },
   async created() {
     await this.loadData()
   },
   methods: {
+    ...mapActions(useAuthStore, ['hasRole']),
     /**
      * Load the data for the page
      */
@@ -105,6 +141,13 @@ export default {
      */
     navigateToFacility(facilityId) {
       this.$router.push({ name: 'manage-facility', params: { facilityId } })
+    },
+
+    /**
+     * Open the Change Request dialog
+     */
+    openChangeRequestDialog() {
+      this.setWarningAlert('This feature is not yet implemented')
     },
   },
 }
