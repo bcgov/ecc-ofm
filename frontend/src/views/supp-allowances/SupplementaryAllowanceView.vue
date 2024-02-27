@@ -7,14 +7,14 @@
     <div v-else>
       <div class="min-height-screen my-4">
         <v-row v-if="!$route.params.applicationGuid" no-gutters class="my-8">
-          <v-col cols="12" md="5" xl="3" class="pr-4">
+          <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
             <AppLabel>To start your application, select a facility:</AppLabel>
             <div>
               <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
               <span>If your facility is not listed, contact your Account Manager.</span>
             </div>
           </v-col>
-          <v-col cols="12" md="7" xl="9">
+          <v-col cols="12" md="6" xl="4">
             <v-select
               id="select-facility"
               v-model="facilityId"
@@ -30,7 +30,7 @@
         <div v-if="application">
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
-          <p class="mt-4">
+          <p class="my-4">
             Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
             <strong class="text-decoration-underline">one or all</strong>
             that applies to your organization.
