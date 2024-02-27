@@ -10,7 +10,7 @@
       <TheEnvBar />
       <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
       <TheHeroImage v-if="$route.meta.showHeroImage" />
-      <TheFacilityHeader v-if="isActingProvider && !isApplicationPage" :showFacility="$route.meta.showFacility" />
+      <TheFacilityHeader v-if="isActingProvider && !$route.meta.hideFacilityHeader" :showFacility="$route.meta.showFacility" />
       <router-view class="align-start pt-5 px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -52,9 +52,6 @@ export default {
     ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isActingProvider']),
     mobile() {
       return this.$vuetify.display.mobile
-    },
-    isApplicationPage() {
-      return this.$route.path?.includes('/applications/')
     },
   },
   async created() {

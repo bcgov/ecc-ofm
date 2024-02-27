@@ -248,6 +248,16 @@ const DocumentMappings = [
   { back: '_ofm_regardingid_value', front: 'regardingId' },
 ]
 
+const FundingAgreementMappings = [
+  { back: 'ofm_fundingid', front: 'fundingId' },
+  { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
@@ -256,6 +266,7 @@ module.exports = {
   ContactMappings,
   DocumentMappings,
   FacilityMappings,
+  FundingAgreementMappings,
   LicenceMappings,
   LicenceDetailsMappings,
   NotificationMappings,
