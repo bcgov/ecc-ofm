@@ -47,14 +47,14 @@
                         <template v-slot:item.role="{ item }">
                           {{ getRoleNameById(item.role) }}
                         </template>
-                        <template v-slot:item.actions="{ item }">
+                        <template v-if="editable" v-slot:item.actions="{ item }">
                           <v-row v-if="editMode" justify="end">
                             <AppButton variant="text" :disabled="loading">
                               <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon" @click="deleteContact(item)"></v-icon>
                             </AppButton>
                           </v-row>
                         </template>
-                        <template v-slot:[`header.actions`]>
+                        <template v-if="editable" v-slot:[`header.actions`]>
                           <v-row v-if="!editMode" justify="end">
                             <AppButton variant="text" :disabled="parentInEditMode || loading">
                               <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
@@ -64,7 +64,7 @@
                       </v-data-table>
                     </v-col>
                   </v-row>
-                  <v-row v-if="editMode">
+                  <v-row v-if="editMode && editable">
                     <v-col cols="12" class="pb-4">
                       <v-row justify="end">
                         <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="cancelEditContacts()">Cancel</AppButton>
@@ -119,6 +119,11 @@ export default {
       default: false,
     },
     parentInEditMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    editable: {
       type: Boolean,
       required: false,
       default: false,

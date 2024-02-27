@@ -220,22 +220,10 @@ const router = createRouter({
       },
     },
     {
-      path: '/manage-users',
-      name: 'manage-users',
-      component: ManageUsersView,
-      meta: {
-        requiresAuth: true,
-        role: ROLES.ACCOUNT_MANAGEMENT,
-        showFacility: false,
-      },
-      children: [],
-    },
-    {
       path: '/account-mgmt',
       component: EmptyRouterView,
       meta: {
         requiresAuth: true,
-        role: ROLES.ACCOUNT_MANAGEMENT,
         showFacility: false,
       },
       children: [
@@ -253,6 +241,14 @@ const router = createRouter({
           path: 'manage-facility/:facilityId',
           name: 'manage-facility',
           component: ManageFacilityView,
+        },
+        {
+          path: 'manage-users',
+          name: 'manage-users',
+          component: ManageUsersView,
+          meta: {
+            role: ROLES.ACCOUNT_MANAGEMENT,
+          },
         },
       ],
     },

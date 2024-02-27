@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="sticky-top">
     <div v-for="item in navBarItems" :key="item.id">
       <v-row no-gutters>
         <v-col cols="2" :class="getNavIconClass(item)">
@@ -182,5 +182,11 @@ export default {
 .current-text {
   color: #003366;
   font-weight: 700;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 100px;
+  z-index: 2;
 }
 </style>
