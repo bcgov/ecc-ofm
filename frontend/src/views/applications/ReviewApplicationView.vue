@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
@@ -124,13 +124,15 @@ export default {
     this.panel = this.allPageIDs
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
+    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
     isEmpty,
     async loadData() {
+      if (this.isApplicationReadonly) return
       try {
         this.$emit('process', true)
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
+        this.checkApplicationComplete()
         await Promise.all([this.getFacility(), this.getContacts()])
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)

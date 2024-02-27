@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="pt-0">
     <h3 class="header-application justify-sm-start justify-md-end">{{ currentApplication?.referenceNumber }}</h3>
   </v-container>
 </template>
