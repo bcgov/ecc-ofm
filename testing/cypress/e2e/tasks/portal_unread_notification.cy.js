@@ -14,7 +14,7 @@ const MESSAGE_DATE = new dayjs().format("YYYY-MMM-DD");
 // log into crm and create notifiction
 before(() => {
   cy.visit(PORTAL_URL);
-  cy.loginToAAD(ADD_USERNAME, ADD_PASSWORD, CRM_URL, CRM_BASE_URL);
+  cy.loginToAADNoSession(ADD_USERNAME, ADD_PASSWORD, CRM_URL, CRM_BASE_URL);
 
   cy.visit(CRM_URL);
   cy.origin(CRM_BASE_URL, { args: { MESSAGE_TIME } }, ({ MESSAGE_TIME }) => {

@@ -4,6 +4,3 @@
 
 #yarn files
 yarn.lock
-
-# cypress credentials
-testing/cypress.env.json
