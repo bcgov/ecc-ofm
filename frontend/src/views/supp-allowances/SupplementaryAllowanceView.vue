@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <h2 class="my-2">Supplementary Allowance</h2>
+    <h1 class="my-2">Supplementary Allowance</h1>
     <div v-if="loading" align="center">
       <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-height-screen"></v-progress-circular>
     </div>
