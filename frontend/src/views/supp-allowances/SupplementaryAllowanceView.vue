@@ -30,6 +30,11 @@
         <div v-if="application">
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
+          <p class="mt-4">
+            Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
+            <strong class="text-decoration-underline">one or all</strong>
+            that applies to your organization.
+          </p>
           <router-view :applicationId="application?.applicationId" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process" />
         </div>
       </div>
