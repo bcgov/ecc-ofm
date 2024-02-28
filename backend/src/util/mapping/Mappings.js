@@ -146,7 +146,7 @@ const ApplicationMappings = [
   { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
-  { back: 'ofm_summary_declaration_a_status', front: 'applicationDeclaration' },
+  { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
 ]
 
 const OrganizationMappings = [
