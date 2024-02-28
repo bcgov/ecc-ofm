@@ -171,6 +171,7 @@ const OrganizationMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_ownership', front: 'ownership' },
+  { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
 ]
 
 const FacilityMappings = [

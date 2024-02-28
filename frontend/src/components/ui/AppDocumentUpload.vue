@@ -124,6 +124,9 @@ export default {
         document.isValidFile = true
       }
     },
+    resetDocuments() {
+      this.documents = []
+    },
   },
 }
 </script>

@@ -6,13 +6,13 @@
       </v-col>
       <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
         <v-row no-gutters justify="end">
-          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="isLoading()" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        <OrganizationInfo :loading="loading" :organization="organization" :editable="isAccountManager" class="mt-1" />
+        <OrganizationInfo :loading="loading" :organization="organization" :editable="isAccountManager" class="mt-1" @update:loading="setLoadingComponent" />
       </v-col>
     </v-row>
     <v-row>
@@ -23,7 +23,7 @@
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6" variant="outlined">
-          <v-skeleton-loader :loading="loading" type="table-tbody">
+          <v-skeleton-loader :loading="isLoading()" type="table-tbody">
             <v-row>
               <v-col v-if="isAccountManager">
                 <v-expansion-panels v-model="panelYourFacilities" multiple class="pb-4">
@@ -57,7 +57,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
+        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }" :loading="isLoading()">Account Management</AppBackButton>
       </v-col>
     </v-row>
   </v-container>
@@ -84,6 +84,7 @@ export default {
       panelYourFacilities: [0],
       panelOtherFacilities: [0],
       loading: false,
+      loadingComponent: false,
       organization: undefined,
     }
   },
@@ -147,7 +148,21 @@ export default {
      * Open the Change Request dialog
      */
     openChangeRequestDialog() {
-      this.setWarningAlert('This feature is not yet implemented')
+      this.setWarningAlert('This feature will be implemented in a future sprint')
+    },
+
+    /**
+     * Set the loading state of the component
+     */
+    setLoadingComponent(value) {
+      this.loadingComponent = value
+    },
+
+    /**
+     * Checks if the page is loading
+     */
+    isLoading() {
+      return this.loading || this.loadingComponent
     },
   },
 }
