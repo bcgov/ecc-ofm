@@ -26,7 +26,7 @@
               id="select-primary-contact"
               v-model="primaryContact"
               :items="contacts"
-              :disabled="readonly || loading || processing"
+              :disabled="readonly"
               item-title="fullName"
               label="Select Primary Contact"
               :rules="rules.required"
@@ -54,7 +54,7 @@
               id="select-secondary-contact"
               v-model="secondaryContact"
               :items="availableSecondaryContacts"
-              :disabled="readonly || loading || processing"
+              :disabled="readonly"
               item-title="fullName"
               label="Select Secondary Contact"
               density="compact"
@@ -82,7 +82,7 @@
               id="select-expense-authority"
               v-model="expenseAuthority"
               :items="availableExpenseAuthorities"
-              :disabled="readonly || loading || processing"
+              :disabled="readonly"
               item-title="fullName"
               label="Select Expense Authority"
               :rules="rules.required"
@@ -102,7 +102,6 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
@@ -115,8 +114,7 @@ export default {
   components: { AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    // "!this.processing" to avoid duplicate saveApplication request when users click on the navBar multiple times
-    if (!this.readonly && !this.loading && !this.processing) {
+    if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
@@ -152,10 +150,10 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
     readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+      return this.isApplicationReadonly || this.loading || this.processing
     },
     // The primary contact cannot be the same as the secondary contact
     availableSecondaryContacts() {

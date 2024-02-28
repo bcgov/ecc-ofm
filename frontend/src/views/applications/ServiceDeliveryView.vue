@@ -35,7 +35,7 @@
         :value="1"
         color="primary"
         :rules="rules.required"
-        :disabled="readonly || processing"
+        :disabled="readonly"
         label="I confirm that the above information is correct."
         class="mt-4"></v-checkbox>
     </div>
@@ -55,7 +55,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_STATUS_CODES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import rules from '@/utils/rules'
@@ -68,8 +68,7 @@ export default {
   components: { AppButton, AppMissingInfoError, LicenceHeader, LicenceDetails },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    // "!this.processing" to avoid duplicate saveApplication request when users click on the navBar multiple times
-    if (!this.readonly && !this.processing) {
+    if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
@@ -99,10 +98,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+      return this.isApplicationReadonly || this.processing
     },
     allLicenceIDs() {
       return this.currentApplication?.licences?.map((licence) => licence.licenceId)

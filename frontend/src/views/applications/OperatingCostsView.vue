@@ -10,7 +10,7 @@
           id="select-facility-types"
           v-model="model.facilityType"
           :items="facilityTypes"
-          :disabled="readonly || processing"
+          :disabled="readonly"
           item-title="description"
           item-value="id"
           label="Select a facility type"
@@ -28,8 +28,8 @@
     </v-row>
     <div v-if="model.facilityType">
       <AppMissingInfoError v-if="validation && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
-      <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly || processing" @update="updateModel" />
-      <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly || processing" :facilityType="model.facilityType" @update="updateModel" />
+      <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
+      <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
       <div v-if="isRentLease" no-gutters class="pb-6">
         <AppLabel>Supporting Documents</AppLabel>
         <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
@@ -50,7 +50,6 @@
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
@@ -68,8 +67,7 @@ export default {
   components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    // "!this.processing" to avoid duplicate saveApplication request when users click on the navBar multiple times
-    if (!this.readonly && !this.processing) {
+    if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
@@ -101,10 +99,10 @@ export default {
   },
   computed: {
     ...mapState(useAppStore, ['facilityTypes']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
     readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+      return this.isApplicationReadonly || this.processing
     },
     sanitizedModel() {
       const sanitizedModel = {}

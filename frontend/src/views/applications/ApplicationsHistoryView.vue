@@ -1,5 +1,6 @@
 <template>
   <v-container fluid>
+    <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'supp-allowances' }" class="mb-12">Add SUP Application</AppButton>
     <h1>Applications</h1>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applications)">You have no applications on file</div>
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty } from 'lodash'
@@ -39,7 +41,7 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 
 export default {
-  components: { AppBackButton, CancelApplicationDialog },
+  components: { AppButton, AppBackButton, CancelApplicationDialog },
   mixins: [alertMixin],
   data() {
     return {
