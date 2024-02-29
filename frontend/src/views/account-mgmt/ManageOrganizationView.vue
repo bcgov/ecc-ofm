@@ -19,8 +19,6 @@
           :editable="isAccountManager"
           :organization="organization"
           :uploadedDocuments="uploadedDocuments"
-          @updateDocumentsToDelete="updateDocumentsToDelete"
-          @updateDocumentsToUpload="updateDocumentsToUpload"
           @saveInclusionPolicyData="saveInclusionPolicyData"
           class="mt-1" />
       </v-col>
@@ -185,14 +183,14 @@ export default {
       }
     },
 
-    async saveInclusionPolicyData(updatedOrganization) {
+    async saveInclusionPolicyData(updatedOrganization, documentsToUpload, documentsToDelete) {
       this.loadingInclusionPolicy = true
+      this.documentsToUpload = documentsToUpload
+      this.documentsToDelete = documentsToDelete
       try {
         await this.saveOrganization(updatedOrganization)
         await this.processDocuments()
         await this.getInclusionPolicyDocuments()
-        // WEIRD: attempting to collect into promise all produces a refresh issue with this.getInclusionPolicyDocuments(), thus am not using it...
-        // await Promise.all([this.saveOrganization(updatedOrganization), this.processDocuments(), this.getInclusionPolicyDocuments()])
         this.$refs.organizationInfo.resetData()
         this.setSuccessAlert('Inclusion Policy updated successfully')
       } finally {
@@ -217,18 +215,6 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed Inclusion Policy Document(s) update on Organization: ' + this.organization.organizationId, error)
         return
-      }
-    },
-
-    updateDocumentsToUpload(documents) {
-      this.documentsToUpload = documents
-    },
-
-    updateDocumentsToDelete(documents, documentId) {
-      if (!isEmpty(documents)) {
-        this.documentsToDelete = documents
-      } else if (documentId) {
-        this.documentsToDelete = [...this.documentsToDelete, documentId]
       }
     },
 

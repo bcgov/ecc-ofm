@@ -236,13 +236,14 @@ export default {
       default: false,
     },
   },
-  emits: ['updateDocumentsToDelete', 'updateDocumentsToUpload', 'saveInclusionPolicyData'],
+  emits: ['saveInclusionPolicyData'],
   data() {
     return {
       organizationEdit: {},
       editMode: false,
       uploadedDocumentsEdit: [],
       documentsToUpload: [],
+      documentsToDelete: [],
       showUploadDocumentsAlert: false,
     }
   },
@@ -265,9 +266,9 @@ export default {
         return
       }
       if (!this.organizationEdit.hasInclusionPolicy && this.organization.hasInclusionPolicy) {
-        this.$emit('updateDocumentsToDelete', this.uploadedDocumentsEdit.map((document) => document.documentId), null)
+        this.documentsToDelete = this.uploadedDocumentsEdit.map((document) => document.documentId)
       }
-      this.$emit('saveInclusionPolicyData', this.organizationEdit)
+      this.$emit('saveInclusionPolicyData', this.organizationEdit, this.documentsToUpload, this.documentsToDelete)
     },
 
     toggleEditMode() {
@@ -280,14 +281,13 @@ export default {
 
     updateDocumentsToUpload({ documents }) {
       this.documentsToUpload = documents?.filter((document) => document.isValidFile && document.file)
-      this.$emit('updateDocumentsToUpload', this.documentsToUpload)
     },
 
     async deleteUploadedDocument(documentId) {
       const index = this.uploadedDocumentsEdit.findIndex((item) => item.documentId === documentId)
       if (index > -1) {
+        this.documentsToDelete.push(documentId)
         this.uploadedDocumentsEdit.splice(index, 1)
-        this.$emit('updateDocumentsToDelete', [], documentId)
       }
     },
 
