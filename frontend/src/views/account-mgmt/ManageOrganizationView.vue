@@ -6,16 +6,14 @@
       </v-col>
       <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
         <v-row no-gutters justify="end">
-          <AppButton size="large" width="300px" :loading="isLoading()" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
         <OrganizationInfo
-          ref="organizationInfo"
           :loadingAll="loading"
-          :loadingInclusionPolicy="loadingInclusionPolicy"
           :editable="isAccountManager"
           :organization="organization"
           :uploadedDocuments="uploadedDocuments"
@@ -65,7 +63,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }" :loading="isLoading()">Account Management</AppBackButton>
+        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
       </v-col>
     </v-row>
   </v-container>
@@ -94,11 +92,8 @@ export default {
       panelYourFacilities: [0],
       panelOtherFacilities: [0],
       loading: false,
-      loadingInclusionPolicy: false,
       organization: undefined,
       uploadedDocuments: [],
-      documentsToDelete: [],
-      documentsToUpload: [],
     }
   },
   computed: {
@@ -183,43 +178,35 @@ export default {
       }
     },
 
-    async saveInclusionPolicyData(updatedOrganization, documentsToUpload, documentsToDelete) {
+    async saveInclusionPolicyData(updatedOrganization, documentsToUpload, documentsToDelete, onSaveCompleteCallBack) {
       this.loadingInclusionPolicy = true
-      this.documentsToUpload = documentsToUpload
-      this.documentsToDelete = documentsToDelete
       try {
         await this.saveOrganization(updatedOrganization)
-        await this.processDocuments()
+        await this.processDocuments(documentsToUpload, documentsToDelete)
         await this.getInclusionPolicyDocuments()
-        this.$refs.organizationInfo.resetData()
+        onSaveCompleteCallBack()
         this.setSuccessAlert('Inclusion Policy updated successfully')
       } finally {
         this.loadingInclusionPolicy = false
       }
     },
 
-    async processDocuments() {
+    async processDocuments(documentsToUpload, documentsToDelete) {
       try {
-        if (!isEmpty(this.documentsToUpload)) {
-          await DocumentService.createDocuments(this.documentsToUpload, this.userInfo.organizationId)
-          this.documentsToUpload = []
+        if (!isEmpty(documentsToUpload)) {
+          await DocumentService.createDocuments(documentsToUpload, this.userInfo.organizationId)
         }
-        if (!isEmpty(this.documentsToDelete)) {
+        if (!isEmpty(documentsToDelete)) {
           await Promise.all(
-            this.documentsToDelete.map(async (documentId) => {
+            documentsToDelete.map(async (documentId) => {
               await DocumentService.deleteDocument(documentId)
             }),
           )
-          this.documentsToDelete = []
         }
       } catch (error) {
         this.setFailureAlert('Failed Inclusion Policy Document(s) update on Organization: ' + this.organization.organizationId, error)
         return
       }
-    },
-
-    isLoading() {
-      return this.loading || this.loadingInclusionPolicy
     },
 
   },
