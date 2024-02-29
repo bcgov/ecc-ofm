@@ -23,7 +23,7 @@
             v-model="model.staffingInfantECEducatorFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingInfantECEducatorFullTime')"></v-text-field>
         </v-col>
@@ -32,7 +32,7 @@
             v-model="model.staffingInfantECEducatorPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingInfantECEducatorPartTime')"></v-text-field>
         </v-col>
@@ -46,7 +46,7 @@
             v-model="model.staffingECEducatorFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorFullTime')"></v-text-field>
         </v-col>
@@ -55,7 +55,7 @@
             v-model="model.staffingECEducatorPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorPartTime')"></v-text-field>
         </v-col>
@@ -69,7 +69,7 @@
             v-model="model.staffingECEducatorAssistantFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorAssistantFullTime')"></v-text-field>
         </v-col>
@@ -78,7 +78,7 @@
             v-model="model.staffingECEducatorAssistantPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingECEducatorAssistantPartTime')"></v-text-field>
         </v-col>
@@ -92,7 +92,7 @@
             v-model="model.staffingResponsibleAdultFullTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingResponsibleAdultFullTime')"></v-text-field>
         </v-col>
@@ -101,7 +101,7 @@
             v-model="model.staffingResponsibleAdultPartTime"
             variant="outlined"
             density="compact"
-            :disabled="readonly || processing"
+            :disabled="readonly"
             maxlength="2"
             @input="sanitizeInput('staffingResponsibleAdultPartTime')"></v-text-field>
         </v-col>
@@ -131,7 +131,6 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 
@@ -140,8 +139,7 @@ export default {
   components: { AppLabel, AppMissingInfoError },
   mixins: [alertMixin],
   async beforeRouteLeave(_to, _from, next) {
-    // "!this.processing" to avoid duplicate saveApplication request when users click on the navBar multiple times
-    if (!this.readonly && !this.processing) {
+    if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
@@ -168,10 +166,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
     readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+      return this.isApplicationReadonly || this.processing
     },
     totalFullTimePosition() {
       return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime

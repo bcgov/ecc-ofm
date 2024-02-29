@@ -110,6 +110,7 @@ const ApplicationMappings = [
   { back: 'ofm_applicationid', front: 'applicationId' },
   { back: 'ofm_application', front: 'referenceNumber' },
   { back: 'ofm_summary_submittedon', front: 'submittedDate' },
+  { back: 'ofm_summary_submittedby', front: 'submittedBy' },
   { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
   { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
   { back: '_ofm_facility_value', front: 'facilityId' },
@@ -145,6 +146,7 @@ const ApplicationMappings = [
   { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
+  { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
 ]
 
 const OrganizationMappings = [
@@ -247,6 +249,16 @@ const DocumentMappings = [
   { back: '_ofm_regardingid_value', front: 'regardingId' },
 ]
 
+const FundingAgreementMappings = [
+  { back: 'ofm_fundingid', front: 'fundingId' },
+  { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
@@ -255,6 +267,7 @@ module.exports = {
   ContactMappings,
   DocumentMappings,
   FacilityMappings,
+  FundingAgreementMappings,
   LicenceMappings,
   LicenceDetailsMappings,
   NotificationMappings,

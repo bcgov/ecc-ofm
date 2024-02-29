@@ -1,28 +1,20 @@
 'use strict'
 const { postDocuments, getOperation, deleteOperationWithObjectId } = require('./utils')
-const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
+const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const { DocumentMappings } = require('../util/mapping/Mappings')
 const FormData = require('form-data')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
-const { isEmpty } = require('lodash')
+const { buildFilterQuery } = require('../util/common')
 const { isHeicFile, convertHeicBufferToJpg, updateHeicFileNameToJpg, getPostDocumentsHeaders } = require('../util/uploadFileUtils')
-
-function buildGetDocumentsFilterQuery(query) {
-  if (isEmpty(query)) return
-  let filterQuery = ''
-  const mappedQuery = new MappableObjectForBack(query, DocumentMappings).toJSON()
-  Object.entries(mappedQuery)?.forEach(([key, value]) => {
-    filterQuery = isEmpty(filterQuery) ? filterQuery.concat(`${key} eq ${value}`) : filterQuery.concat(` and ${key} eq ${value}`)
-  })
-  return filterQuery
-}
 
 async function getDocuments(req, res) {
   try {
     const documents = []
-    const operation = `ofm_documents?$select=ofm_documentid,ofm_name,ofm_file_name,ofm_subject,ofm_description,modifiedon,statuscode,statecode&$filter=(
-      ${buildGetDocumentsFilterQuery(req?.query)} )`
+    const operation = `ofm_documents?$select=ofm_documentid,ofm_name,ofm_file_name,ofm_subject,ofm_description,modifiedon,statuscode,statecode&$filter=(${buildFilterQuery(
+      req?.query,
+      DocumentMappings,
+    )} )`
     const response = await getOperation(operation)
     response?.value?.forEach((document) => documents.push(new MappableObjectForFront(document, DocumentMappings).toJSON()))
     return res.status(HttpStatus.OK).json(documents)

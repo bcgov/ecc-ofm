@@ -1,83 +1,170 @@
 <template>
   <v-form ref="form" v-model="isFormComplete">
-    <h1>Submit</h1>
-    <v-row no-gutters class="mt-4"><strong>Please note that this page is only a placeholder to test the navigation bar and navigation buttons</strong></v-row>
-    <v-row class="mt-4">
-      <v-col>
-        <v-text-field v-model.trim="model.field1" :disabled="readonly" outlined :rules="rules.required" label="Field 1" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field v-model.trim="model.field2" :disabled="readonly" outlined :rules="rules.required" label="Field 2" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field v-model.trim="model.field3" :disabled="readonly" outlined :rules="rules.required" label="Field 3" />
-      </v-col>
-    </v-row>
-    <v-row no-gutters class="my-6">
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-        sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </p>
-    </v-row>
-    <v-row no-gutters class="my-6">
-      <p>Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.</p>
-    </v-row>
+    <h2 class="mb-4">Declaration</h2>
+    <v-skeleton-loader :loading="loading" type="table-tbody">
+      <div>
+        <p class="my-5">I hereby confirm that the information I have provided in this application is complete and accurate. I certify that I have read and understand the following requirements:</p>
+        <ul class="pl-6">
+          <li>Each facility must be licensed under the Community Care and Assisted Living Act;</li>
+          <li>Each facility must be in compliance with the Community Care and Assisted Living Act and Child Care Licensing Regulation;</li>
+          <li>Each facility must be willing to provide services to families who receive the Affordable Child Care Benefit;</li>
+          <li>The organization must be in good standing with BC Corporate Registry (if a nonprofit society or a registered company); and</li>
+          <li>
+            The applicant must be in good standing with the Ministry of Education and Child Care (that is, the Applicant must either have no outstanding balances owing to the Ministry OR the Applicant
+            must have established payment plans for outstanding balances and these must be in good standing).
+          </li>
+        </ul>
+        <p class="my-5">
+          Intentionally supplying information that is false or misleading with respect to a material fact in order to obtain a child care grant may lead to action being taken under Section 9 of the
+          Child Care BC Act. If you are convicted of an offence under section 9, a court may order you imprisoned for up to six months, fine you not more than $2,000.00, or order you to pay the
+          government all or part of any amount received under the child care grant.
+        </p>
+        <p>I consent to the Ministry contacting other branches within the Ministry and other Province ministries to validate the accuracy of any information that I have provided.</p>
+      </div>
+      <v-checkbox
+        id="declaration"
+        v-model="model.applicationDeclaration"
+        :value="1"
+        color="primary"
+        :rules="rules.required"
+        :disabled="readonly"
+        label="I certify that all of the information provided is true and complete to the best of my knowledge."
+        class="my-5"></v-checkbox>
+    </v-skeleton-loader>
   </v-form>
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState } from 'pinia'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { mapState, mapWritableState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
+import ApplicationService from '@/services/applicationService'
+import alertMixin from '@/mixins/alertMixin'
+import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'DeclareSubmitView',
+  mixins: [alertMixin],
+  async beforeRouteLeave(_to, _from, next) {
+    if (!this.readonly) {
+      await this.saveApplication()
+    }
+    next(!this.processing) // only go to the next page after saveApplication is complete
+  },
   props: {
     back: {
       type: Boolean,
       default: false,
     },
+    save: {
+      type: Boolean,
+      default: false,
+    },
     submit: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ['process'],
   data() {
     return {
       rules,
       model: {},
       isFormComplete: false,
+      processing: false,
+      loading: false,
     }
   },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isApplicationReadonly']),
+    ...mapWritableState(useApplicationsStore, ['isDeclareSubmitComplete']),
+
     readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
+      return this.isApplicationReadonly || !this.isApplicationComplete || this.processing || this.loading
     },
   },
   watch: {
     isFormComplete: {
       handler(value) {
-        if (!this.currentApplication) return
-        this.currentApplication.isDeclareSubmitComplete = value
+        this.isDeclareSubmitComplete = value
       },
     },
     back: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: 'review-application', params: { applicationGuid: this.$route.params.applicationGuid } })
+      },
+    },
+    save: {
+      async handler() {
+        await this.saveApplication(true)
       },
     },
     submit: {
-      handler() {
-        this.$router.push({ name: 'home' })
+      async handler() {
+        await this.submitApplication()
       },
+    },
+  },
+  async created() {
+    this.$emit('process', false)
+    await this.loadData()
+    this.model = {
+      applicationDeclaration: this.currentApplication?.applicationDeclaration ? 1 : null,
+    }
+  },
+  methods: {
+    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
+
+    async loadData() {
+      if (this.isApplicationReadonly) return
+      try {
+        this.$emit('process', true)
+        this.loading = true
+        await this.getApplication(this.$route.params.applicationGuid)
+        this.checkApplicationComplete()
+      } catch (error) {
+        this.setFailureAlert('Failed to load the application', error)
+      } finally {
+        this.loading = false
+        this.$emit('process', false)
+      }
+    },
+
+    async submitApplication() {
+      this.model.submittedBy = this.userInfo?.userName
+      this.model.statusCode = APPLICATION_STATUS_CODES.SUBMITTED
+      await this.saveApplication()
+      if (this.currentApplication?.statusCode === APPLICATION_STATUS_CODES.SUBMITTED) {
+        this.$router.push({ name: 'application-confirmation', params: { applicationGuid: this.$route.params.applicationGuid } })
+      }
+    },
+
+    async saveApplication(showAlert = false) {
+      try {
+        this.$emit('process', true)
+        this.processing = true
+        this.model.applicationDeclaration = this.model.applicationDeclaration ? 1 : null
+        if (ApplicationService.isApplicationUpdated(this.model)) {
+          await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
+          await this.getApplication(this.$route.params.applicationGuid)
+        }
+        if (showAlert) {
+          this.setSuccessAlert('Application saved successfully')
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed to save your application', error)
+      } finally {
+        this.$emit('process', false)
+        this.processing = false
+      }
     },
   },
 }
 </script>
+<style scoped>
+:deep(.v-label) {
+  opacity: 1;
+}
+</style>
