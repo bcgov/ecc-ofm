@@ -13,7 +13,7 @@
     <v-row>
       <v-col class="ml-6 pt-0">
         <OrganizationInfo
-          :loadingAll="loading"
+          :loading="loading"
           :editable="isAccountManager"
           :organization="organization"
           :uploadedDocuments="uploadedDocuments"
