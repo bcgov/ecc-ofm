@@ -247,10 +247,10 @@ export default {
     }
   },
   async updated() {
-    this.loadData()
+    this.initializeData()
   },
   methods: {
-    async loadData() { //todo rename to initializeData
+    async initializeData() {
       this.organizationEdit = { ...this.organization, hasInclusionPolicy: this.organization.hasInclusionPolicy || false }
       this.uploadedDocumentsEdit = JSON.parse(JSON.stringify(this.uploadedDocuments))
     },
