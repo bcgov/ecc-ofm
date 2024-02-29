@@ -12,7 +12,17 @@
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        <OrganizationInfo :loading="loading" :organization="organization" :editable="isAccountManager" class="mt-1" @update:loading="setLoadingComponent" />
+        <OrganizationInfo
+          ref="organizationInfo"
+          :loadingAll="loading"
+          :loadingInclusionPolicy="loadingInclusionPolicy"
+          :editable="isAccountManager"
+          :organization="organization"
+          :uploadedDocuments="uploadedDocuments"
+          @updateDocumentsToDelete="updateDocumentsToDelete"
+          @updateDocumentsToUpload="updateDocumentsToUpload"
+          @saveInclusionPolicyData="saveInclusionPolicyData"
+          class="mt-1" />
       </v-col>
     </v-row>
     <v-row>
@@ -23,7 +33,7 @@
     <v-row>
       <v-col cols="12" class="ml-6 pr-9 pt-0">
         <v-card class="pa-6" variant="outlined">
-          <v-skeleton-loader :loading="isLoading()" type="table-tbody">
+          <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-row>
               <v-col v-if="isAccountManager">
                 <v-expansion-panels v-model="panelYourFacilities" multiple class="pb-4">
@@ -68,11 +78,13 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import OrganizationService from '@/services/organizationService'
+import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import { mapState } from 'pinia'
 import { mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'ManageOrganizationView',
@@ -84,8 +96,11 @@ export default {
       panelYourFacilities: [0],
       panelOtherFacilities: [0],
       loading: false,
-      loadingComponent: false,
+      loadingInclusionPolicy: false,
       organization: undefined,
+      uploadedDocuments: [],
+      documentsToDelete: [],
+      documentsToUpload: [],
     }
   },
   computed: {
@@ -112,7 +127,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        await Promise.all([this.loadFacilities(), this.getOrganization()])
+        await Promise.all([this.loadFacilities(), this.getOrganization(), this.getInclusionPolicyDocuments()])
       } finally {
         this.loading = false
       }
@@ -131,9 +146,18 @@ export default {
 
     async getOrganization() {
       try {
-        this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
+        this.organization = await OrganizationService.getOrganization(this.userInfo.organizationId)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
+      }
+    },
+
+    async getInclusionPolicyDocuments() {
+      try {
+        this.uploadedDocuments = await DocumentService.getDocuments(this.userInfo.organizationId)
+      } catch (error) {
+        this.setFailureAlert('Failed to get organization\'s Inclusion Policy Document(s)', error)
+        return
       }
     },
 
@@ -151,19 +175,67 @@ export default {
       this.setWarningAlert('This feature will be implemented in a future sprint')
     },
 
-    /**
-     * Set the loading state of the component
-     */
-    setLoadingComponent(value) {
-      this.loadingComponent = value
+    async saveOrganization(updatedOrganization) {
+      try {
+        await OrganizationService.updateOrganization(this.organization.organizationId, updatedOrganization)
+        this.organization = updatedOrganization
+      } catch (error) {
+        this.setFailureAlert('Failed update Inclusion Policy on Organization: ' + this.organization.organizationId, error)
+        return
+      }
     },
 
-    /**
-     * Checks if the page is loading
-     */
-    isLoading() {
-      return this.loading || this.loadingComponent
+    async saveInclusionPolicyData(updatedOrganization) {
+      this.loadingInclusionPolicy = true
+      try {
+        await this.saveOrganization(updatedOrganization)
+        await this.processDocuments()
+        await this.getInclusionPolicyDocuments()
+        // WEIRD: attempting to collect into promise all produces a refresh issue with this.getInclusionPolicyDocuments(), thus am not using it...
+        // await Promise.all([this.saveOrganization(updatedOrganization), this.processDocuments(), this.getInclusionPolicyDocuments()])
+        this.$refs.organizationInfo.resetData()
+        this.setSuccessAlert('Inclusion Policy updated successfully')
+      } finally {
+        this.loadingInclusionPolicy = false
+      }
     },
+
+    async processDocuments() {
+      try {
+        if (!isEmpty(this.documentsToUpload)) {
+          await DocumentService.createDocuments(this.documentsToUpload, this.userInfo.organizationId)
+          this.documentsToUpload = []
+        }
+        if (!isEmpty(this.documentsToDelete)) {
+          await Promise.all(
+            this.documentsToDelete.map(async (documentId) => {
+              await DocumentService.deleteDocument(documentId)
+            }),
+          )
+          this.documentsToDelete = []
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed Inclusion Policy Document(s) update on Organization: ' + this.organization.organizationId, error)
+        return
+      }
+    },
+
+    updateDocumentsToUpload(documents) {
+      this.documentsToUpload = documents
+    },
+
+    updateDocumentsToDelete(documents, documentId) {
+      if (!isEmpty(documents)) {
+        this.documentsToDelete = documents
+      } else if (documentId) {
+        this.documentsToDelete = [...this.documentsToDelete, documentId]
+      }
+    },
+
+    isLoading() {
+      return this.loading || this.loadingInclusionPolicy
+    },
+
   },
 }
 </script>

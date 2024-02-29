@@ -1,6 +1,6 @@
 <template>
   <v-card class="my-4 pa-4" variant="outlined">
-    <v-skeleton-loader :loading="loading" type="table-tbody">
+    <v-skeleton-loader :loading="loadingAll" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row no-gutters>
           <v-col cols="11" md="6" lg="6">
@@ -138,55 +138,59 @@
         <v-row>
           <v-col class="pt-0">
             <v-card variant="outlined" class="card-outline pa-2 w-100">
-              <v-row no-gutters>
-                <v-col class="">
-                  <AppLabel>Does your organization have an inclusion policy?</AppLabel>
-                </v-col>
-                <v-col class="mt-2">
-                  <v-row v-if="editable && !editMode" justify="end">
-                    <AppButton variant="text" :disabled="loading">
-                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
-                    </AppButton>
+              <v-skeleton-loader :loading="loadingInclusionPolicy" type="table-tbody">
+                <div class="w-100">
+                  <v-row no-gutters>
+                    <v-col class="">
+                      <AppLabel>Does your organization have an inclusion policy?</AppLabel>
+                    </v-col>
+                    <v-col class="mt-2">
+                      <v-row v-if="editable && !editMode" justify="end">
+                        <AppButton variant="text" :disabled="loadingAll">
+                          <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
+                        </AppButton>
+                      </v-row>
+                    </v-col>
                   </v-row>
-                </v-col>
-              </v-row>
-              <v-row no-gutters>
-                <v-col>
-                  <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
-                    <v-row no-gutters>
-                      <v-col cols="12" sm="2" md="1">
-                        <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
+                  <v-row no-gutters>
+                    <v-col>
+                      <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
+                        <v-row no-gutters>
+                          <v-col cols="12" sm="2" md="1">
+                            <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
+                          </v-col>
+                          <v-col cols="12" sm="2" md="1">
+                            <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
+                          </v-col>
+                        </v-row>
+                      </v-radio-group>
+                      <v-col v-if="!organizationEdit.hasInclusionPolicy" class="pt-0">
+                        <v-icon size="30" color="amber">mdi-alert</v-icon>
+                        An Inclusive Policy is a requirement to apply for Support Needs Supplementary Funding
                       </v-col>
-                      <v-col cols="12" sm="2" md="1">
-                        <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
+                      <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
+                        <AppLabel>Inclusion Policy Document:</AppLabel>
+                        <AppDocumentUpload
+                          id="inclusion-policy-upload"
+                          ref="documentUpload"
+                          entityName="accounts"
+                          :loading="loadingInclusionPolicy"
+                          :readonly="!editMode"
+                          :uploadedDocuments="uploadedDocumentsEdit"
+                          @updateDocuments="updateDocumentsToUpload"
+                          @deleteUploadedDocument="deleteUploadedDocument" />
+                        <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
+                          Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
+                        </v-alert>
                       </v-col>
-                    </v-row>
-                  </v-radio-group>
-                  <v-col v-if="!organizationEdit.hasInclusionPolicy" class="pt-0">
-                    <v-icon size="30" color="amber">mdi-alert</v-icon>
-                    An Inclusive Policy is a requirement to apply for Support Needs Supplementary Funding
-                  </v-col>
-                  <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
-                    <AppLabel>Inclusion Policy Document:</AppLabel>
-                    <AppDocumentUpload
-                      id="inclusion-policy-upload"
-                      ref="documentUpload"
-                      entityName="accounts"
-                      :loading="loading"
-                      :readonly="!editMode"
-                      :uploadedDocuments="uploadedDocuments"
-                      @updateDocuments="updateDocumentsToUpload"
-                      @deleteUploadedDocument="deleteUploadedDocument" />
-                    <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
-                      Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
-                    </v-alert>
-                  </v-col>
-                  <v-col v-if="editMode" class="d-flex justify-end pt-0">
-                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" @click="toggleEditMode()" :loading="localLoading" class="mr-6">Cancel</AppButton>
-                    <AppButton id="save" size="large" width="100px" @click="save()" :loading="localLoading">Save</AppButton>
-                  </v-col>
-                </v-col>
-              </v-row>
+                      <v-col v-if="editMode" class="d-flex justify-end pt-0">
+                        <AppButton id="cancel-edit" :primary="false" size="large" width="100px" @click="toggleEditMode()" class="mr-6">Cancel</AppButton>
+                        <AppButton id="save" size="large" width="100px" @click="save()">Save</AppButton>
+                      </v-col>
+                    </v-col>
+                  </v-row>
+                </div>
+              </v-skeleton-loader>
             </v-card>
           </v-col>
         </v-row>
@@ -200,8 +204,6 @@ import alertMixin from '@/mixins/alertMixin'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
-import OrganizationService from '@/services/organizationService'
-import DocumentService from '@/services/documentService'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -219,56 +221,42 @@ export default {
         return {}
       },
     },
-    loading: {
+    uploadedDocuments: {
+      type: Array,
+      default: () => {
+        return []
+      },
+    },
+    loadingAll: {
+      type: Boolean,
+      default: false,
+    },
+    loadingInclusionPolicy: {
       type: Boolean,
       default: false,
     },
   },
-  emits: ['update:loading'],
+  emits: ['updateDocumentsToDelete', 'updateDocumentsToUpload', 'saveInclusionPolicyData'],
   data() {
     return {
       organizationEdit: {},
-      localLoading: false,
       editMode: false,
-      uploadedDocuments: [],
-      uploadedDocumentsInitialValue: [],
+      uploadedDocumentsEdit: [],
       documentsToUpload: [],
-      documentsToDelete: [],
       showUploadDocumentsAlert: false,
     }
-  },
-  watch: {
-    documentsToUpload: {
-      handler(val) {
-        if (val.length === 0 && this.uploadedDocuments.length === 0 && !this.isLoading) {
-          this.showUploadDocumentsAlert = true
-        } else {
-          this.showUploadDocumentsAlert = false
-        }
-      },
-    },
-    'organizationEdit.hasInclusionPolicy': {
-      handler(val, oldVal) {
-        if (oldVal === true && val === false) {
-          this.documentsToDelete = this.uploadedDocuments.map((document) => document.documentId)
-        }
-      },
-    },
   },
   async updated() {
     this.loadData()
   },
   methods: {
-    async loadData() {
-      try {
-        this.localLoading = true
-        this.organizationEdit = { ...this.organization, hasInclusionPolicy: this.organization.hasInclusionPolicy || false }
-        if (this.organizationEdit.hasInclusionPolicy) {
-          this.initializeDocuments(await DocumentService.getDocuments(this.organization.organizationId))
-        }
-      } finally {
-        this.localLoading = false
-      }
+    async loadData() { //todo rename to initializeData
+      this.organizationEdit = { ...this.organization, hasInclusionPolicy: this.organization.hasInclusionPolicy || false }
+      this.uploadedDocumentsEdit = JSON.parse(JSON.stringify(this.uploadedDocuments))
+    },
+
+    documentsExistOrBeingAdded() {
+      return !isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocumentsEdit)
     },
 
     async save() {
@@ -276,83 +264,41 @@ export default {
         this.showUploadDocumentsAlert = true
         return
       }
-      this.setLoadingState(true)
-      try {
-        await OrganizationService.updateOrganization(this.organization.organizationId, this.organizationEdit)
-        await this.processDocuments()
-        this.refreshDocuments()
-        this.editMode = false
-        this.showUploadDocumentsAlert = false
-        this.setSuccessAlert('Inclusion Policy updated successfully')
-      } catch (error) {
-        this.setFailureAlert('Failed update Inclusion Policy on Organization: ' + this.organization.organizationId, error)
-      } finally {
-        this.setLoadingState(false)
+      if (!this.organizationEdit.hasInclusionPolicy && this.organization.hasInclusionPolicy) {
+        this.$emit('updateDocumentsToDelete', this.uploadedDocumentsEdit.map((document) => document.documentId), null)
       }
-    },
-
-    setLoadingState(isLoading) {
-      this.localLoading = isLoading;
-      this.$emit('update:loading', isLoading);
-    },
-
-    async refreshDocuments() {
-      const documents = await DocumentService.getDocuments(this.organization.organizationId);
-      this.initializeDocuments(documents);
+      this.$emit('saveInclusionPolicyData', this.organizationEdit)
     },
 
     toggleEditMode() {
       this.editMode = !this.editMode
       this.showUploadDocumentsAlert = false
-      this.uploadedDocuments = JSON.parse(JSON.stringify(this.uploadedDocumentsInitialValue))
-      if (this.$refs.documentUpload) {
-        this.$refs.documentUpload.resetDocuments()
+      if (!this.editMode) {
+        this.organizationEdit.hasInclusionPolicy = this.organization.hasInclusionPolicy
       }
     },
 
-    isLoading() {
-      return this.loading || this.localLoading
-    },
-
-    updateDocumentsToUpload({ documents, areValidFilesUploaded }) {
+    updateDocumentsToUpload({ documents }) {
       this.documentsToUpload = documents?.filter((document) => document.isValidFile && document.file)
+      this.$emit('updateDocumentsToUpload', this.documentsToUpload)
     },
 
     async deleteUploadedDocument(documentId) {
-      const index = this.uploadedDocuments.findIndex((item) => item.documentId === documentId)
+      const index = this.uploadedDocumentsEdit.findIndex((item) => item.documentId === documentId)
       if (index > -1) {
-        this.documentsToDelete.push(documentId)
-        this.uploadedDocuments.splice(index, 1)
+        this.uploadedDocumentsEdit.splice(index, 1)
+        this.$emit('updateDocumentsToDelete', [], documentId)
       }
     },
 
-    async processDocuments() {
-      if (!isEmpty(this.documentsToUpload)) {
-        await DocumentService.createDocuments(this.documentsToUpload, this.organization.organizationId)
-        this.documentsToUpload = []
-      }
-      if (!isEmpty(this.documentsToDelete)) {
-        await Promise.all(
-          this.documentsToDelete.map(async (documentId) => {
-            await DocumentService.deleteDocument(documentId)
-          }),
-        )
-        this.documentsToDelete = []
-      }
-    },
-
-    initializeDocuments(documents) {
+    resetData() {
       this.documentsToUpload = []
       this.documentsToDelete = []
+      this.showUploadDocumentsAlert = false
       if (this.$refs.documentUpload) {
         this.$refs.documentUpload.resetDocuments()
       }
-      this.uploadedDocumentsInitialValue = JSON.parse(JSON.stringify(documents))
-      this.uploadedDocuments = JSON.parse(JSON.stringify(documents))
-    },
-
-    documentsExistOrBeingAdded() {
-      return !isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocuments)
+      this.editMode = false
     },
 
   },
