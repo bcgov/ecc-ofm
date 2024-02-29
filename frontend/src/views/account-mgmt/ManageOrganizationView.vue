@@ -179,16 +179,11 @@ export default {
     },
 
     async saveInclusionPolicyData(updatedOrganization, documentsToUpload, documentsToDelete, onSaveCompleteCallBack) {
-      this.loadingInclusionPolicy = true
-      try {
-        await this.saveOrganization(updatedOrganization)
-        await this.processDocuments(documentsToUpload, documentsToDelete)
-        await this.getInclusionPolicyDocuments()
-        onSaveCompleteCallBack()
-        this.setSuccessAlert('Inclusion Policy updated successfully')
-      } finally {
-        this.loadingInclusionPolicy = false
-      }
+      await this.saveOrganization(updatedOrganization)
+      await this.processDocuments(documentsToUpload, documentsToDelete)
+      await this.getInclusionPolicyDocuments()
+      onSaveCompleteCallBack()
+      this.setSuccessAlert('Inclusion Policy updated successfully')
     },
 
     async processDocuments(documentsToUpload, documentsToDelete) {
