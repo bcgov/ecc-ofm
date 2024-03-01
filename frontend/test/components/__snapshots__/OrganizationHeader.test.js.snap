@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`OrganizationHeader > init 1`] = `
+"<div data-v-6e24757d=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr py-2\\">
+  <div data-v-6e24757d=\\"\\" class=\\"v-row align-end justify-space-between\\">
+    <div data-v-6e24757d=\\"\\" class=\\"v-col-md-6 v-col-12 header-org\\">UT Org</div>
+    <div data-v-6e24757d=\\"\\" class=\\"v-col-md-6 v-col-12 header-facility justify-md-end justify-sm-start\\"> Facility: UT Facility <button data-v-6e24757d=\\"\\" type=\\"button\\" class=\\"v-btn v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text\\" id=\\"changeFacility\\" targetref=\\"[object Object]\\" aria-haspopup=\\"menu\\" aria-expanded=\\"false\\" aria-owns=\\"facilityMenu\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+        <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\">(change)</span>
+        <!---->
+        <!---->
+      </button>
+      <!---->
+    </div>
+  </div>
+</div>"
+`;

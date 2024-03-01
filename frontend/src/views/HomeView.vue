@@ -1,5 +1,7 @@
 <template>
-  <v-container>
+  <AppHeroImage />
+  <OrganizationHeader />
+  <v-container v-bind="$attrs">
     <v-row>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -66,7 +68,11 @@
 </template>
 
 <script>
+import OrganizationHeader from '../components/organizations/OrganizationHeader.vue'
+import AppHeroImage from '@/components/ui/AppHeroImage.vue'
 export default {
+  name: 'HomeView',
+  components: { AppHeroImage, OrganizationHeader },
 }
 </script>
 

@@ -18,6 +18,7 @@ import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
 import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
 import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
 import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
@@ -142,6 +143,9 @@ const router = createRouter({
       name: 'applications',
       component: ApplicationView,
       redirect: '/applications/select-facility',
+      meta: {
+        requiresAuth: true,
+      },
       children: [
         {
           path: 'select-facility',
@@ -184,16 +188,15 @@ const router = createRouter({
           component: ApplicationConfirmationView,
         },
       ],
-      meta: {
-        requiresAuth: true,
-        hideFacilityHeader: true,
-      },
     },
     {
       path: '/supp-allowances',
       name: 'supp-allowances',
       component: SupplementaryAllowanceView,
       redirect: { name: 'supp-allowances-form' },
+      meta: {
+        requiresAuth: true,
+      },
       children: [
         {
           path: ':applicationGuid?',
@@ -206,10 +209,6 @@ const router = createRouter({
           component: SupplementarySubmitView,
         },
       ],
-      meta: {
-        requiresAuth: true,
-        hideFacilityHeader: true,
-      },
     },
     {
       path: '/resources',
@@ -221,10 +220,9 @@ const router = createRouter({
     },
     {
       path: '/account-mgmt',
-      component: EmptyRouterView,
+      component: AccountMgmtHomeView,
       meta: {
         requiresAuth: true,
-        showFacility: false,
       },
       children: [
         {
