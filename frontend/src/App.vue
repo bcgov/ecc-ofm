@@ -4,12 +4,10 @@
     <div class="app-header">
       <TheHeader />
       <TheSnackBar />
+      <TheEnvBar />
     </div>
 
     <v-main class="align-start">
-      <TheEnvBar />
-      <TheModalIdle v-if="isAuthenticated" class="align-start px-8 mb-0" />
-      <TheHeroImage v-if="$route.meta.showHeroImage" />
       <TheFacilityHeader v-if="isActingProvider && !$route.meta.hideFacilityHeader" :showFacility="$route.meta.showFacility" />
       <router-view class="align-start pt-5 px-8 mb-0" />
     </v-main>
@@ -23,8 +21,6 @@ import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheFacilityHeader from '@/components/TheFacilityHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
-import TheHeroImage from '@/components/TheHeroImage.vue'
-import TheModalIdle from '@/components/TheModalIdle.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
@@ -35,9 +31,7 @@ export default {
   components: {
     TheEnvBar,
     TheHeader,
-    TheHeroImage,
     TheSnackBar,
-    TheModalIdle,
     TheFooter,
     TheFacilityHeader,
   },

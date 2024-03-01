@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid>
+  <AppHeroImage />
+  <v-container fluid v-bind="$attrs">
     <!-- login article -->
     <!-- <article id="login-banner" class="top-banner"> -->
     <!-- <v-row align="center" justify="center">
@@ -74,10 +75,11 @@ import { mapActions, mapState } from 'pinia'
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 import AppButton from '@/components/ui/AppButton.vue'
+import AppHeroImage from '@/components/ui/AppHeroImage.vue'
 
 export default {
   name: 'LoginView',
-  components: { AppButton },
+  components: { AppButton, AppHeroImage },
   data() {
     return {
       authRoutes: AuthRoutes,
