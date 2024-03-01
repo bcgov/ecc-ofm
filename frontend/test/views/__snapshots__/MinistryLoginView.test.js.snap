@@ -1,63 +1,58 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`MinistryLoginView > init 1`] = `
-"<div data-v-18b4d885=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr full-height\\">
-  <!-- login article -->
-  <!-- <article id=\\"login-banner\\" class=\\"top-banner\\"> -->
-  <div data-v-18b4d885=\\"\\" class=\\"v-row align-center justify-center\\">
-    <div data-v-18b4d885=\\"\\" class=\\"v-col v-col-12 pt-0\\" align=\\"center\\">
-      <div data-v-18b4d885=\\"\\" class=\\"v-responsive v-img v-img--booting align-end\\" style=\\"max-width: 1448px;\\">
-        <div class=\\"v-responsive__sizer\\"></div>
-        <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/login-header-img-resized.jpg\\" style=\\"display: none;\\"></transition-stub>
-        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-          <!---->
-        </transition-stub>
+"<div data-v-18b4d885=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr ma-0 pa-0\\">
+  <div class=\\"v-col v-col-12 pa-0\\" align=\\"center\\">
+    <div class=\\"v-responsive v-img v-img--booting align-end\\">
+      <div class=\\"v-responsive__sizer\\"></div>
+      <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/home-header-img.jpg\\" style=\\"display: none;\\"></transition-stub>
+      <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
         <!---->
-        <!---->
-        <!---->
-        <div class=\\"v-responsive__content\\">
-          <div data-v-18b4d885=\\"\\" class=\\"v-col\\" style=\\"background-color: rgb(28, 115, 158, 0.85);\\" align=\\"center\\"><span data-v-18b4d885=\\"\\" class=\\"text-h4 text-white font-weight-bold\\" style=\\"font-family: BCSans;\\">Early Childhood Care - Operating Funding Model</span><br data-v-18b4d885=\\"\\"><span data-v-18b4d885=\\"\\" class=\\"text-h6 text-white\\">Welcome</span></div>
-        </div>
+      </transition-stub>
+      <!---->
+      <!---->
+      <!---->
+      <div class=\\"v-responsive__content\\">
+        <div class=\\"v-col hidden-sm-and-down\\" style=\\"background-color: rgb(28, 115, 158, 0.85);\\" align=\\"center\\"><span class=\\"text-h4 text-white font-weight-bold\\">Early Childhood Care - Operating Funding Model</span></div>
       </div>
     </div>
   </div>
-  <div data-v-18b4d885=\\"\\" class=\\"v-container v-locale--is-ltr containerWidth1450 pa-0\\">
-    <div data-v-18b4d885=\\"\\" class=\\"v-row\\">
-      <div data-v-18b4d885=\\"\\" class=\\"v-col xs-12 lg-6 xl-2\\">
-        <hr data-v-18b4d885=\\"\\" class=\\"v-divider v-theme--light\\" aria-orientation=\\"horizontal\\" role=\\"separator\\">
-        <div data-v-18b4d885=\\"\\" class=\\"v-card v-card--flat v-theme--light v-card--density-default v-card--variant-elevated d-flex flex-column justify-center align-center\\">
-          <!---->
-          <div class=\\"v-card__loader\\">
-            <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
-              <!---->
-              <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
-              <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-                <div class=\\"v-progress-linear__indeterminate\\">
-                  <div class=\\"v-progress-linear__indeterminate long\\"></div>
-                  <div class=\\"v-progress-linear__indeterminate short\\"></div>
-                </div>
-              </transition-stub>
-              <!---->
-            </div>
+</div>
+<div data-v-18b4d885=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <div data-v-18b4d885=\\"\\" class=\\"v-row\\">
+    <div data-v-18b4d885=\\"\\" class=\\"v-col xs-12 lg-6 xl-2\\">
+      <div data-v-18b4d885=\\"\\" class=\\"v-card v-card--flat v-theme--light v-card--density-default v-card--variant-elevated d-flex flex-column justify-center align-center\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
           </div>
-          <!---->
-          <!---->
-          <div data-v-18b4d885=\\"\\" class=\\"v-card-title gov-header\\">
-            <h4 data-v-18b4d885=\\"\\" id=\\"login_text\\">Ministry</h4>
-          </div>
-          <div data-v-18b4d885=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\">Log in with your IDIR account</div>
-          <div data-v-18b4d885=\\"\\" class=\\"v-card-actions\\">
-            <div data-v-18b4d885=\\"\\" class=\\"v-row\\"><a data-v-d22d1084=\\"\\" data-v-18b4d885=\\"\\" class=\\"v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text BC-Gov-PrimaryButton\\" style=\\"width: 250px;\\" href=\\"/api/auth/login-idir\\" id=\\"idir-login\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
-                <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\">IDIR Log In<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
-                <!---->
-                <!---->
-              </a></div>
-          </div>
-          <!---->
-          <!----><span class=\\"v-card__underlay\\"></span>
         </div>
+        <!---->
+        <!---->
+        <div data-v-18b4d885=\\"\\" class=\\"v-card-title gov-header\\">
+          <h4 data-v-18b4d885=\\"\\" id=\\"login_text\\">Ministry</h4>
+        </div>
+        <div data-v-18b4d885=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\">Log in with your IDIR account</div>
+        <div data-v-18b4d885=\\"\\" class=\\"v-card-actions\\">
+          <div data-v-18b4d885=\\"\\" class=\\"v-row\\"><a data-v-d22d1084=\\"\\" data-v-18b4d885=\\"\\" class=\\"v-btn v-btn--icon v-btn--slim v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text px-2 BC-Gov-PrimaryButton text-app-button\\" style=\\"width: 250px;\\" href=\\"/api/auth/login-idir\\" id=\\"idir-login\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\">IDIR Log In</span><i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default button-icon\\" aria-hidden=\\"true\\"></i></span>
+              <!---->
+              <!---->
+            </a></div>
+        </div>
+        <!---->
+        <!----><span class=\\"v-card__underlay\\"></span>
       </div>
     </div>
-  </div><!-- </article> -->
+  </div>
 </div>"
 `;

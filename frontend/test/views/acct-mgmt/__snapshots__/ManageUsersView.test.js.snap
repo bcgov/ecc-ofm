@@ -1,0 +1,116 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Manage Users screen > BceID User 1`] = `
+"<div data-v-fca923b3=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <div data-v-fca923b3=\\"\\" class=\\"v-row\\">
+    <div data-v-fca923b3=\\"\\" class=\\"v-col pt-0\\">
+      <h3 data-v-fca923b3=\\"\\">Manage users</h3>
+    </div>
+  </div>
+  <div data-v-fca923b3=\\"\\" class=\\"v-row\\">
+    <div data-v-fca923b3=\\"\\" class=\\"v-col v-col-auto\\"><button data-v-d22d1084=\\"\\" data-v-fca923b3=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text px-2 text-app-button\\" disabled=\\"\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+        <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"> Filter by facility <i data-v-fca923b3=\\"\\" class=\\"mdi-filter mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" right=\\"\\"></i></span>
+        <!--v-if--></span>
+        <!---->
+        <!---->
+      </button></div>
+    <div data-v-fca923b3=\\"\\" class=\\"v-col v-col-3\\">
+      <!--v-if-->
+    </div>
+    <div data-v-fca923b3=\\"\\" class=\\"v-col d-flex justify-end align-end\\"><button data-v-d22d1084=\\"\\" data-v-fca923b3=\\"\\" type=\\"button\\" class=\\"v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text px-2 text-app-button\\" disabled=\\"\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+        <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"><i data-v-fca923b3=\\"\\" class=\\"mdi-plus mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\" left=\\"\\"></i> Add new user </span>
+        <!--v-if--></span>
+        <!---->
+        <!---->
+      </button></div>
+  </div>
+  <div data-v-fca923b3=\\"\\" class=\\"v-row\\">
+    <div data-v-fca923b3=\\"\\" class=\\"v-col\\">
+      <!-- Users Table -->
+      <div data-v-fca923b3=\\"\\" class=\\"v-skeleton-loader v-theme--light\\" aria-busy=\\"true\\" aria-live=\\"polite\\" aria-label=\\"Loading...\\" role=\\"alert\\">
+        <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-tbody\\">
+          <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row-divider\\">
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row\\">
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+            </div>
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__divider\\"></div>
+          </div>
+          <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row-divider\\">
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row\\">
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+            </div>
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__divider\\"></div>
+          </div>
+          <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row-divider\\">
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row\\">
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+            </div>
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__divider\\"></div>
+          </div>
+          <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row-divider\\">
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row\\">
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+            </div>
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__divider\\"></div>
+          </div>
+          <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row-divider\\">
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row\\">
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+            </div>
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__divider\\"></div>
+          </div>
+          <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row-divider\\">
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__table-row\\">
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+              <div class=\\"v-skeleton-loader__bone v-skeleton-loader__text\\"></div>
+            </div>
+            <div class=\\"v-skeleton-loader__bone v-skeleton-loader__divider\\"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-v-fca923b3=\\"\\" class=\\"v-container v-locale--is-ltr\\">
+    <!---->
+    <!---->
+    <!---->
+    <!---->
+  </div>
+  <!---->
+  <!----><a data-v-d22d1084=\\"\\" data-v-fca923b3=\\"\\" class=\\"v-btn v-btn--elevated v-theme--light v-btn--density-default v-btn--size-large v-btn--variant-elevated px-2 BC-Gov-SecondaryButton text-app-button mt-2 mt-2\\" style=\\"width: 400px;\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+    <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"><i class=\\"mdi-arrow-left mdi v-icon notranslate v-theme--light v-icon--size-default pb-1\\" aria-hidden=\\"true\\"></i> Back to Account Management</span>
+    <!--v-if--></span>
+    <!---->
+    <!---->
+  </a>
+</div>"
+`;

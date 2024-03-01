@@ -1,26 +1,37 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`LoginView > init 1`] = `
-"<div data-v-45f5edd7=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr full-height\\">
-  <!-- login article -->
-  <!-- <article id=\\"login-banner\\" class=\\"top-banner\\"> -->
-  <div data-v-45f5edd7=\\"\\" class=\\"v-row align-center justify-center\\">
-    <div data-v-45f5edd7=\\"\\" class=\\"v-col v-col-12 pt-0\\" align=\\"center\\">
-      <div data-v-45f5edd7=\\"\\" class=\\"v-responsive v-img v-img--booting align-end\\" style=\\"max-width: 1448px;\\">
-        <div class=\\"v-responsive__sizer\\"></div>
-        <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/login-header-img-resized.jpg\\" style=\\"display: none;\\"></transition-stub>
-        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-          <!---->
-        </transition-stub>
+"<div data-v-45f5edd7=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr ma-0 pa-0\\">
+  <div class=\\"v-col v-col-12 pa-0\\" align=\\"center\\">
+    <div class=\\"v-responsive v-img v-img--booting align-end\\">
+      <div class=\\"v-responsive__sizer\\"></div>
+      <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/home-header-img.jpg\\" style=\\"display: none;\\"></transition-stub>
+      <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
         <!---->
-        <!---->
-        <!---->
-        <div class=\\"v-responsive__content\\">
-          <div data-v-45f5edd7=\\"\\" class=\\"v-col\\" style=\\"background-color: rgb(28, 115, 158, 0.85);\\" align=\\"center\\"><span data-v-45f5edd7=\\"\\" class=\\"text-h4 text-white font-weight-bold\\" style=\\"font-family: BCSans;\\">Early Childhood Care - Operating Funding Model</span><br data-v-45f5edd7=\\"\\"><span data-v-45f5edd7=\\"\\" class=\\"text-h6 text-white\\">Welcome</span></div>
-        </div>
+      </transition-stub>
+      <!---->
+      <!---->
+      <!---->
+      <div class=\\"v-responsive__content\\">
+        <div class=\\"v-col hidden-sm-and-down\\" style=\\"background-color: rgb(28, 115, 158, 0.85);\\" align=\\"center\\"><span class=\\"text-h4 text-white font-weight-bold\\">Early Childhood Care - Operating Funding Model</span></div>
       </div>
     </div>
   </div>
+</div>
+<div data-v-45f5edd7=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <!-- login article -->
+  <!-- <article id=\\"login-banner\\" class=\\"top-banner\\"> -->
+  <!-- <v-row align=\\"center\\" justify=\\"center\\">
+      <v-col cols=\\"12\\" align=\\"center\\" class=\\"pt-0\\">
+        <v-img src=\\"@/assets/images/login-header-img-resized.jpg\\" max-width=\\"1448\\" class=\\"align-end\\">
+          <v-col align=\\"center\\" style=\\"background-color: rgb(28, 115, 158, 0.85)\\">
+            <span class=\\"text-h4 text-white font-weight-bold\\" style=\\"font-family: BCSans\\">Early Childhood Care - Operating Funding Model</span>
+            <br />
+            <span class=\\"text-h6 text-white\\">Welcome</span>
+          </v-col>
+        </v-img>
+      </v-col>
+    </v-row> -->
   <div data-v-45f5edd7=\\"\\" class=\\"v-container v-locale--is-ltr containerWidth1450 pa-0\\">
     <p data-v-45f5edd7=\\"\\" class=\\"pt-4\\"><strong data-v-45f5edd7=\\"\\">NOTE:</strong> The information collected through Early Childhood Care - Operating Funding Model is collected under the authority of the <i data-v-45f5edd7=\\"\\">Freedom of Information and Protection of Privacy Act</i> (FOIPPA) and the <i data-v-45f5edd7=\\"\\">Child Care BC Act</i> (SBC 2001, c. 4) and will be used for the purpose of administering the Child Care Operating Funding Program, which includes the Child Care Fee Reduction Initiative and the Early Childhood Educator (ECE) Wage Enhancement for successfully enrolled applicants. Personal information is protected from unauthorized use and disclosure in accordance with FOIPPA. Any questions or concerns about the collection of this information can be directed to the Director, Child Care Operating Funding Program, PO Box 9965 Stn Prov Govt, Victoria BC V8W 9R4, Phone: in Greater Victoria: 250 356-6501, outside of Greater Victoria, Toll Free: 1 888 338-6622 (option 2). </p><br data-v-45f5edd7=\\"\\">
     <div data-v-45f5edd7=\\"\\" class=\\"v-row\\">
@@ -48,8 +59,8 @@ exports[`LoginView > init 1`] = `
           </div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\">Log in with your primary Business BCeID</div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-spacer\\"></div>
-          <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions mt-auto\\"><a data-v-d22d1084=\\"\\" data-v-45f5edd7=\\"\\" class=\\"v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text BC-Gov-PrimaryButton\\" style=\\"width: 250px;\\" href=\\"/api/auth/login\\" id=\\"bceid-login\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
-              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"> BCeID Log In<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+          <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions mt-auto\\"><a data-v-d22d1084=\\"\\" data-v-45f5edd7=\\"\\" class=\\"v-btn v-btn--icon v-btn--slim v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text px-2 BC-Gov-PrimaryButton text-app-button\\" style=\\"width: 250px;\\" href=\\"/api/auth/login\\" id=\\"bceid-login\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\">BCeID Log In</span><i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default button-icon\\" aria-hidden=\\"true\\"></i></span>
               <!---->
               <!---->
             </a></div>
@@ -80,8 +91,8 @@ exports[`LoginView > init 1`] = `
             <h4 data-v-45f5edd7=\\"\\" id=\\"login_text\\">Don't have a BCeID?</h4>
           </div>
           <div data-v-45f5edd7=\\"\\" class=\\"v-card-text\\" id=\\"login_descriptor\\"> BCeID is a user ID and password. You can use it to log into many participating government services. <br data-v-45f5edd7=\\"\\"><br data-v-45f5edd7=\\"\\"> If you have logged into other B.C. government services before, you may already have an account. <br data-v-45f5edd7=\\"\\"><br data-v-45f5edd7=\\"\\"> You must register for a Business BCeID before you can log in - it only takes a few minutes. </div>
-          <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions\\"><a data-v-d22d1084=\\"\\" data-v-45f5edd7=\\"\\" class=\\"v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text BC-Gov-PrimaryButton\\" style=\\"width: 250px;\\" href=\\"//www.bceid.ca/register/business/getting_started/getting_started.aspx\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
-              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\">Register for a BCeID<i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i></span>
+          <div data-v-45f5edd7=\\"\\" class=\\"v-card-actions\\"><a data-v-d22d1084=\\"\\" data-v-45f5edd7=\\"\\" class=\\"v-btn v-btn--icon v-btn--slim v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text px-2 BC-Gov-PrimaryButton text-app-button\\" style=\\"width: 300px;\\" href=\\"//www.bceid.ca/register/business/getting_started/getting_started.aspx\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+              <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\">Register for a BCeID</span><i data-v-d22d1084=\\"\\" class=\\"mdi-login mdi v-icon notranslate v-theme--light v-icon--size-default button-icon\\" aria-hidden=\\"true\\"></i></span>
               <!---->
               <!---->
             </a></div>

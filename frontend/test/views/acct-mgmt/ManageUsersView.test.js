@@ -4,7 +4,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 import { useAuthStore } from '@/stores/auth.js'
-import ManageUsersView from '@/views/ManageUsersView.vue'
+import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import { createTestingPinia } from '@pinia/testing'
 import { mount } from '@vue/test-utils'
 
@@ -18,6 +18,7 @@ describe('Manage Users screen', () => {
     authStore.userInfo = { organziationId: '6fbddbd7-5f8e-ee11-8179-000d3a09d699' }
     const wrapper = mount(ManageUsersView, global)
     console.log(wrapper.html())
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   /*  it('shows "Account Management" in the first row of the Role column', async () => {

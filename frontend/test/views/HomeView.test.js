@@ -16,20 +16,34 @@ describe('HomeView', () => {
   authStore.isAuthenticated = true
   test('BceID User', async () => {
     authStore.userInfo = { userName: 'ofmqa01' }
+    authStore.userInfo = { userName: 'ofmqa01', role: 2 }
     const wrapper = mount(HomeView, global)
-    expect(wrapper.text()).toContain('Provider User')
-    expect(wrapper.text()).toContain('Business BCeID')
-    expect(wrapper.text()).toContain('ofmqa01')
+
+    // BCeID User should see all options
+    expect(wrapper.text()).toContain('Reporting')
+    expect(wrapper.text()).toContain('Funding')
+    expect(wrapper.text()).toContain('Documents')
+    expect(wrapper.text()).toContain('View Applications')
+    expect(wrapper.text()).toContain('New Application')
+    expect(wrapper.text()).toContain('Resources')
+    expect(wrapper.text()).toContain('Account Management')
 
     expect(wrapper.html()).toMatchSnapshot()
   })
   test('IDIR User', async () => {
     authStore.isMinistryUser = true
     authStore.userInfo = { userName: 'idiruser' }
+    authStore.userInfo = { userName: 'idiruser', role: 2 }
     const wrapper = mount(HomeView, global)
-    expect(wrapper.text()).toContain('Ministry User')
-    expect(wrapper.text()).toContain('IDIR')
-    expect(wrapper.text()).toContain('idiruser')
+
+    // IDIR User should see all options
+    expect(wrapper.text()).toContain('Reporting')
+    expect(wrapper.text()).toContain('Funding')
+    expect(wrapper.text()).toContain('Documents')
+    expect(wrapper.text()).toContain('View Applications')
+    expect(wrapper.text()).toContain('New Application')
+    expect(wrapper.text()).toContain('Resources')
+    expect(wrapper.text()).toContain('Account Management')
 
     expect(wrapper.html()).toMatchSnapshot()
   })

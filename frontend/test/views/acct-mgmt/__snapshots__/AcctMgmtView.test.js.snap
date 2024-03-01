@@ -1,0 +1,207 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Manage Users screen > Test Account Manager 1`] = `
+"<div class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <h1>Account Management</h1>
+  <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" style=\\"max-width: 50%; min-width: 350px;\\">
+    <!---->
+    <div class=\\"v-card__loader\\">
+      <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+        <!---->
+        <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+          <div class=\\"v-progress-linear__indeterminate\\">
+            <div class=\\"v-progress-linear__indeterminate long\\"></div>
+            <div class=\\"v-progress-linear__indeterminate short\\"></div>
+          </div>
+        </transition-stub>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!---->
+    <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
+      <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
+        <!----><span class=\\"v-list-item__underlay\\"></span>
+        <div class=\\"v-list-item__prepend\\"><i class=\\"mdi-office-building mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+          <div class=\\"v-list-item__spacer\\"></div>
+        </div>
+        <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+          <!---->
+          <!---->
+          <router-link to=\\"[object Object]\\">Manage Organization/Facilities</router-link>
+        </div>
+        <!---->
+      </div>
+      <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
+        <!----><span class=\\"v-list-item__underlay\\"></span>
+        <div class=\\"v-list-item__prepend\\"><i class=\\"mdi-account-group mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+          <div class=\\"v-list-item__spacer\\"></div>
+        </div>
+        <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+          <!---->
+          <!---->
+          <router-link to=\\"[object Object]\\">Manage Users</router-link>
+        </div>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!----><span class=\\"v-card__underlay\\"></span>
+  </div><a data-v-d22d1084=\\"\\" class=\\"v-btn v-btn--elevated v-theme--light v-btn--density-default v-btn--size-large v-btn--variant-elevated px-2 BC-Gov-SecondaryButton text-app-button mt-2 mt-2\\" style=\\"width: 220px;\\" id=\\"back-home-button\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+    <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"><i class=\\"mdi-arrow-left mdi v-icon notranslate v-theme--light v-icon--size-default pb-1\\" aria-hidden=\\"true\\"></i> Back to Home</span>
+    <!--v-if--></span>
+    <!---->
+    <!---->
+  </a>
+</div>"
+`;
+
+exports[`Manage Users screen > Test Account Manager Links 1`] = `
+"<div class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <h1>Account Management</h1>
+  <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" style=\\"max-width: 50%; min-width: 350px;\\">
+    <!---->
+    <div class=\\"v-card__loader\\">
+      <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+        <!---->
+        <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+          <div class=\\"v-progress-linear__indeterminate\\">
+            <div class=\\"v-progress-linear__indeterminate long\\"></div>
+            <div class=\\"v-progress-linear__indeterminate short\\"></div>
+          </div>
+        </transition-stub>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!---->
+    <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
+      <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
+        <!----><span class=\\"v-list-item__underlay\\"></span>
+        <div class=\\"v-list-item__prepend\\"><i class=\\"mdi-office-building mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+          <div class=\\"v-list-item__spacer\\"></div>
+        </div>
+        <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+          <!---->
+          <!---->
+          <router-link to=\\"[object Object]\\">Manage Organization/Facilities</router-link>
+        </div>
+        <!---->
+      </div>
+      <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
+        <!----><span class=\\"v-list-item__underlay\\"></span>
+        <div class=\\"v-list-item__prepend\\"><i class=\\"mdi-account-group mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+          <div class=\\"v-list-item__spacer\\"></div>
+        </div>
+        <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+          <!---->
+          <!---->
+          <router-link to=\\"[object Object]\\">Manage Users</router-link>
+        </div>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!----><span class=\\"v-card__underlay\\"></span>
+  </div><a data-v-d22d1084=\\"\\" class=\\"v-btn v-btn--elevated v-theme--light v-btn--density-default v-btn--size-large v-btn--variant-elevated px-2 BC-Gov-SecondaryButton text-app-button mt-2 mt-2\\" style=\\"width: 220px;\\" id=\\"back-home-button\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+    <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"><i class=\\"mdi-arrow-left mdi v-icon notranslate v-theme--light v-icon--size-default pb-1\\" aria-hidden=\\"true\\"></i> Back to Home</span>
+    <!--v-if--></span>
+    <!---->
+    <!---->
+  </a>
+</div>"
+`;
+
+exports[`Manage Users screen > Test Admin 1`] = `
+"<div class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <h1>Account Management</h1>
+  <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" style=\\"max-width: 50%; min-width: 350px;\\">
+    <!---->
+    <div class=\\"v-card__loader\\">
+      <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+        <!---->
+        <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+          <div class=\\"v-progress-linear__indeterminate\\">
+            <div class=\\"v-progress-linear__indeterminate long\\"></div>
+            <div class=\\"v-progress-linear__indeterminate short\\"></div>
+          </div>
+        </transition-stub>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!---->
+    <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
+      <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
+        <!----><span class=\\"v-list-item__underlay\\"></span>
+        <div class=\\"v-list-item__prepend\\"><i class=\\"mdi-office-building mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+          <div class=\\"v-list-item__spacer\\"></div>
+        </div>
+        <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+          <!---->
+          <!---->
+          <router-link to=\\"[object Object]\\">Manage Organization/Facilities</router-link>
+        </div>
+        <!---->
+      </div>
+      <!--v-if-->
+    </div>
+    <!---->
+    <!----><span class=\\"v-card__underlay\\"></span>
+  </div><a data-v-d22d1084=\\"\\" class=\\"v-btn v-btn--elevated v-theme--light v-btn--density-default v-btn--size-large v-btn--variant-elevated px-2 BC-Gov-SecondaryButton text-app-button mt-2 mt-2\\" style=\\"width: 220px;\\" id=\\"back-home-button\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+    <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"><i class=\\"mdi-arrow-left mdi v-icon notranslate v-theme--light v-icon--size-default pb-1\\" aria-hidden=\\"true\\"></i> Back to Home</span>
+    <!--v-if--></span>
+    <!---->
+    <!---->
+  </a>
+</div>"
+`;
+
+exports[`Manage Users screen > Test Admin Links 1`] = `
+"<div class=\\"v-container v-container--fluid v-locale--is-ltr\\">
+  <h1>Account Management</h1>
+  <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\" style=\\"max-width: 50%; min-width: 350px;\\">
+    <!---->
+    <div class=\\"v-card__loader\\">
+      <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+        <!---->
+        <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+        <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+          <div class=\\"v-progress-linear__indeterminate\\">
+            <div class=\\"v-progress-linear__indeterminate long\\"></div>
+            <div class=\\"v-progress-linear__indeterminate short\\"></div>
+          </div>
+        </transition-stub>
+        <!---->
+      </div>
+    </div>
+    <!---->
+    <!---->
+    <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
+      <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
+        <!----><span class=\\"v-list-item__underlay\\"></span>
+        <div class=\\"v-list-item__prepend\\"><i class=\\"mdi-office-building mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+          <div class=\\"v-list-item__spacer\\"></div>
+        </div>
+        <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
+          <!---->
+          <!---->
+          <router-link to=\\"[object Object]\\">Manage Organization/Facilities</router-link>
+        </div>
+        <!---->
+      </div>
+      <!--v-if-->
+    </div>
+    <!---->
+    <!----><span class=\\"v-card__underlay\\"></span>
+  </div><a data-v-d22d1084=\\"\\" class=\\"v-btn v-btn--elevated v-theme--light v-btn--density-default v-btn--size-large v-btn--variant-elevated px-2 BC-Gov-SecondaryButton text-app-button mt-2 mt-2\\" style=\\"width: 220px;\\" id=\\"back-home-button\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+    <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\"><span data-v-d22d1084=\\"\\" class=\\"button-text overflow-hidden\\"><i class=\\"mdi-arrow-left mdi v-icon notranslate v-theme--light v-icon--size-default pb-1\\" aria-hidden=\\"true\\"></i> Back to Home</span>
+    <!--v-if--></span>
+    <!---->
+    <!---->
+  </a>
+</div>"
+`;
