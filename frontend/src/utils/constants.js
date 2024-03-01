@@ -20,6 +20,7 @@ export const ApiRoutes = Object.freeze({
   NOTIFICATIONS: baseRoot + '/notifications',
   DOCUMENTS: baseRoot + '/documents',
   APPLICATIONS: baseRoot + '/applications',
+  SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
   ORGANIZATIONS: baseRoot + '/organizations',
   FACILITIES: baseRoot + '/facilities',
   ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',

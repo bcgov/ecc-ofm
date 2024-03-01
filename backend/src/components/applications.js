@@ -1,9 +1,10 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { ApplicationMappings } = require('../util/mapping/Mappings')
+const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
+const log = require('./logger')
 
 function mapApplicationObjectForFront(data) {
   const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
@@ -11,6 +12,30 @@ function mapApplicationObjectForFront(data) {
   const providerLastUpdated = new Date(application?.providerLastUpdated)
   application.latestActivity = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
   return application
+}
+
+function mapSupplementaryApplicationObjectForFront(data) {
+  const applications = []
+  log.info(data)
+  data.forEach((suppApplication) => {
+    let mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
+    // log.info('application in loop')
+    // log.info(mappedApplication)
+
+    //put the values into an array so the UI checkboxes will work properly
+    if (mappedApplication.indigenousFundingModel) {
+      mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
+    }
+
+    log.info('application in loop')
+    log.info(mappedApplication)
+    applications.push(mappedApplication)
+  })
+  // let application = new MappableObjectForFront(data, SupplementaryApplicationMappings).toJSON()
+  // log.info('application')
+  // log.info(application)
+
+  return applications
 }
 
 function buildGetApplicationsFilterQuery(query) {
@@ -41,6 +66,20 @@ async function getApplication(req, res) {
     const operation = `ofm_applications(${req.params.applicationId})`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapApplicationObjectForFront(response))
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getSupplementaryApplications(req, res) {
+  try {
+    //const operation = `ofm_applications(${req.params.applicationId})`
+    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
+    const response = await getOperation(operation)
+    log.info('resp')
+    log.info(response)
+    return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
+    //return res.status(HttpStatus.OK).json({ test: 'test1' })
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -85,4 +124,5 @@ module.exports = {
   getApplication,
   updateApplication,
   createApplication,
+  getSupplementaryApplications,
 }

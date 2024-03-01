@@ -1,10 +1,10 @@
-import { isEmpty } from 'lodash'
-import { defineStore } from 'pinia'
+import { APPLICATION_STATUS_CODES, FACILITY_TYPES } from '@/utils/constants'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
-import { APPLICATION_STATUS_CODES, FACILITY_TYPES } from '@/utils/constants'
+import { defineStore } from 'pinia'
+import { isEmpty } from 'lodash'
 
 function checkFacilityDetailsComplete(application) {
   return application?.primaryContactId && application?.expenseAuthorityId
@@ -47,6 +47,10 @@ export const useApplicationsStore = defineStore('applications', {
     isStaffingComplete: false,
     isDeclareSubmitComplete: false,
     validation: false,
+    indigenousFundingModel: [],
+    indigenousOtherDescription: '',
+
+    //todo, transport and other supp
   }),
   getters: {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
@@ -69,6 +73,22 @@ export const useApplicationsStore = defineStore('applications', {
           this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
         }
         this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
+      } catch (error) {
+        console.log(`Failed to get the application by application id - ${error}`)
+        throw error
+      }
+    },
+
+    async getSupplementaryApplications(applicationId) {
+      try {
+        console.log('calling')
+        console.log(applicationId)
+
+        const suppApplications = await ApplicationService.getSupplementaryApplications(applicationId)
+        if (!suppApplications) return
+
+        console.log(suppApplications)
+        return suppApplications
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error
