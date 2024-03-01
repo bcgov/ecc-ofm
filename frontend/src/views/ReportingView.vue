@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid>
+  <OrganizationHeader />
+  <v-container fluid v-bind="$attrs">
     <v-row>
       <v-col>
         <h1>Reporting</h1>
@@ -11,14 +12,7 @@
         <AppLabel>Facility:</AppLabel>
       </v-col>
       <v-col cols="12" xs="12" sm="6" md="4" lg="4" xl="4" class="pb-0">
-        <v-select
-          v-model="selectedFacility"
-          :items="userInfo.facilities"
-          item-title="facilityName"
-          item-value="facilityId"
-          label="Select facility to report on"
-          density="compact"
-          variant="outlined" />
+        <v-select v-model="selectedFacility" :items="userInfo.facilities" item-title="facilityName" item-value="facilityId" label="Select facility to report on" density="compact" variant="outlined" />
       </v-col>
     </v-row>
     <v-row>
@@ -40,22 +34,14 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row>
-    </v-row>
+    <v-row></v-row>
     <v-row>
       <v-col cols="auto" class="pb-0 pt-0" />
       <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-0 pt-0">
         <AppLabel>Date Range:</AppLabel>
       </v-col>
       <v-col cols="12" xs="12" sm="3" md="2" lg="2" xl="2" class="pb-0 pt-0">
-        <v-menu
-          ref="menuFromDate"
-          v-model="menuFromDate"
-          :close-on-content-click="false"
-          @update:model-value="val => menuFromDate = val"
-          transition="scale-transition"
-          offset-y
-          min-width="auto">
+        <v-menu ref="menuFromDate" v-model="menuFromDate" :close-on-content-click="false" @update:model-value="(val) => (menuFromDate = val)" transition="scale-transition" offset-y min-width="auto">
           <template #activator="{ on, attrs }">
             <v-text-field
               v-model="formattedFromDate"
@@ -68,21 +54,11 @@
               variant="outlined"
               @click:prepend="menuFromDate = !menuFromDate"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="fromDate"
-            @input="menuFromDate = false"
-            :locale="locale"></v-date-picker>
+          <v-date-picker v-model="fromDate" @input="menuFromDate = false" :locale="locale"></v-date-picker>
         </v-menu>
       </v-col>
       <v-col cols="12" xs="12" sm="3" md="2" lg="2" xl="2" class="pb-0 pt-0">
-        <v-menu
-          ref="menuEndDate"
-          v-model="menuEndDate"
-          :close-on-content-click="false"
-          @update:model-value="val => menuEndDate = val"
-          transition="scale-transition"
-          offset-y
-          min-width="auto">
+        <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" @update:model-value="(val) => (menuEndDate = val)" transition="scale-transition" offset-y min-width="auto">
           <template #activator="{ on, attrs }">
             <v-text-field
               v-model="formattedEndDate"
@@ -95,10 +71,7 @@
               variant="outlined"
               @click:prepend="menuEndDate = !menuEndDate"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="endDate"
-            @input="menuEndDate = false"
-            :locale="locale"></v-date-picker>
+          <v-date-picker v-model="endDate" @input="menuEndDate = false" :locale="locale"></v-date-picker>
         </v-menu>
       </v-col>
     </v-row>
@@ -108,15 +81,7 @@
         <AppLabel>Status:</AppLabel>
       </v-col>
       <v-col cols="12" xs="12" sm="4" md="4" lg="4" xl="4" class="pb-0 pt-0">
-        <v-select
-          v-model="selectedStatus"
-          :items="statusTypes"
-          item-title="title"
-          item-value="id"
-          label="Select status to report on"
-          density="compact"
-          variant="outlined"
-          clearable />
+        <v-select v-model="selectedStatus" :items="statusTypes" item-title="title" item-value="id" label="Select status to report on" density="compact" variant="outlined" clearable />
       </v-col>
       <v-col cols="auto" class="pb-0 pt-0" />
       <v-col cols="auto" class="pb-0 pt-0">
@@ -168,6 +133,7 @@
   </v-container>
 </template>
 <script>
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -178,7 +144,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'ReportingView',
-  components: { AppLabel, AppButton, AppBackButton },
+  components: { AppLabel, AppButton, AppBackButton, OrganizationHeader },
   mixins: [alertMixin],
   data() {
     return {
@@ -200,9 +166,13 @@ export default {
       menuFromDate: false,
       menuEndDate: false,
       locale: 'en',
-      statusTypes: [{ id: 1, title: 'Draft' }, { id: 2, title: 'Submitted' }, { id: 3, title: 'Approved' }],
+      statusTypes: [
+        { id: 1, title: 'Draft' },
+        { id: 2, title: 'Submitted' },
+        { id: 3, title: 'Approved' },
+      ],
       headers: [
-        { title: 'Alert', key: 'alertType', width: "2%" },
+        { title: 'Alert', key: 'alertType', width: '2%' },
         { title: 'Title', key: 'title' },
         { title: 'Report Type', key: 'reportType' },
         { title: 'Report ID', key: 'reportId' },
@@ -216,18 +186,18 @@ export default {
     ...mapState(useAuthStore, ['userInfo', 'currentFacility']),
     formattedFromDate: {
       get() {
-        return this.formatDate(this.fromDate);
+        return this.formatDate(this.fromDate)
       },
       set(val) {
-        this.fromDate = this.parseDateString(val);
+        this.fromDate = this.parseDateString(val)
       },
     },
     formattedEndDate: {
       get() {
-        return this.formatDate(this.endDate);
+        return this.formatDate(this.endDate)
       },
       set(val) {
-        this.endDate = this.parseDateString(val);
+        this.endDate = this.parseDateString(val)
       },
     },
   },
@@ -244,17 +214,17 @@ export default {
       }
     },
     formatDate(date) {
-      if (!(date instanceof Date)) return '';
+      if (!(date instanceof Date)) return ''
       let month = '' + (date.getMonth() + 1),
         day = '' + date.getDate(),
-        year = date.getFullYear();
-      if (month.length < 2) month = '0' + month;
-      if (day.length < 2) day = '0' + day;
-      return [day, month, year].join('/');
+        year = date.getFullYear()
+      if (month.length < 2) month = '0' + month
+      if (day.length < 2) day = '0' + day
+      return [day, month, year].join('/')
     },
     parseDateString(dateStr) {
-      const [day, month, year] = dateStr.split('/');
-      return new Date(year, month - 1, day);
+      const [day, month, year] = dateStr.split('/')
+      return new Date(year, month - 1, day)
     },
     async search() {
       try {

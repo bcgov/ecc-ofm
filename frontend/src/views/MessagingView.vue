@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid>
+  <OrganizationHeader />
+  <v-container fluid v-bind="$attrs">
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
         <v-tab value="notifications">
@@ -31,12 +32,13 @@
 import { mapState } from 'pinia'
 import MessagesTab from '@/components/messages/MessagesTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
-import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
-  components: { AppBackButton, MessagesTab, NotificationsTab },
+  components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
   data() {
     return {
       tab: null,

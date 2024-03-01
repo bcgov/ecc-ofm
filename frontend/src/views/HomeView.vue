@@ -1,5 +1,6 @@
 <template>
   <AppHeroImage />
+  <OrganizationHeader />
   <v-container v-bind="$attrs">
     <v-row>
       <p>
@@ -67,10 +68,11 @@
 </template>
 
 <script>
+import OrganizationHeader from '../components/organizations/OrganizationHeader.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
 export default {
   name: 'HomeView',
-  components: { AppHeroImage },
+  components: { AppHeroImage, OrganizationHeader },
 }
 </script>
 

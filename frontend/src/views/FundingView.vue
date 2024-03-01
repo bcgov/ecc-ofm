@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid>
+  <OrganizationHeader />
+  <v-container fluid v-bind="$attrs">
     <h1>Funding</h1>
 
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
@@ -7,11 +8,12 @@
 </template>
 
 <script>
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
   name: 'FundingView',
-  components: { AppBackButton },
+  components: { AppBackButton, OrganizationHeader },
 }
 </script>
 

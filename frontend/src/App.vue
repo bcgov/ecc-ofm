@@ -8,7 +8,6 @@
     </div>
 
     <v-main class="align-start">
-      <TheFacilityHeader v-if="isActingProvider && !$route.meta.hideFacilityHeader" :showFacility="$route.meta.showFacility" />
       <router-view class="align-start pt-5 px-8 mb-0" />
     </v-main>
     <TheFooter />
@@ -18,7 +17,6 @@
 <script>
 import { mapActions, mapState } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
-import TheFacilityHeader from '@/components/TheFacilityHeader.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
@@ -33,23 +31,8 @@ export default {
     TheHeader,
     TheSnackBar,
     TheFooter,
-    TheFacilityHeader,
-  },
-
-  data() {
-    return {
-      showToTopBtn: false,
-      deactivateMultipleDraggableDialog: null,
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, ['jwtToken', 'isAuthenticated', 'userInfo', 'isActingProvider']),
-    mobile() {
-      return this.$vuetify.display.mobile
-    },
   },
   async created() {
-    //this.setLoading(true);
     this.getJwtToken()
       .then(() => Promise.all([this.getLookupInfo()]))
       .catch((e) => {
@@ -62,38 +45,17 @@ export default {
           })
         }
       })
-      .finally(() => {
-        // this.setLoading(false);
-      })
-    // this.setLoading(false);
+      .finally(() => {})
   },
   methods: {
-    ...mapActions(useAppStore, ['getConfig', 'getLookupInfo']),
+    ...mapActions(useAppStore, ['getLookupInfo']),
     ...mapActions(useAuthStore, ['getJwtToken']),
-    onScroll(e) {
-      if (typeof window === 'undefined') return
-      const top = window.pageYOffset || e.target.scrollTop || 0
-      this.showToTopBtn = top > 20
-    },
-    toTop() {
-      this.$vuetify.goTo(0)
-    },
   },
 }
 </script>
 
 <style scoped>
 .app-header {
-  /* background-color: #036;
-  border-bottom: 2px solid #fcba19;
-  padding: 0 65px 0 65px;
-  color: #fff;
-  display: flex;
-  height: 65px;
-  top: 0px;
-  position: fixed;
-  width: 100%; */
-  /* position: fixed; */
   width: 100%;
   z-index: 1002;
 }
