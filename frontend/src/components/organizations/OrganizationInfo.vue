@@ -135,7 +135,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="showInclusionPolicy">
+        <v-row>
           <v-col class="pt-0">
             <v-card variant="outlined" class="card-outline pa-2 w-100">
               <div class="w-100">
@@ -163,25 +163,27 @@
                         </v-col>
                       </v-row>
                     </v-radio-group>
-                    <v-col v-if="!organizationEdit.hasInclusionPolicy" class="pt-0">
-                      <v-icon size="30" color="amber">mdi-alert</v-icon>
-                      An Inclusive Policy is a requirement to apply for Support Needs Supplementary Funding
-                    </v-col>
-                    <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
-                      <AppLabel>Inclusion Policy Document:</AppLabel>
-                      <AppDocumentUpload
-                        id="inclusion-policy-upload"
-                        ref="documentUpload"
-                        entityName="accounts"
-                        :loading="loadingInclusionPolicy"
-                        :readonly="!editMode"
-                        :uploadedDocuments="uploadedDocumentsEdit"
-                        @updateDocuments="updateDocumentsToUpload"
-                        @deleteUploadedDocument="deleteUploadedDocument" />
-                      <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
-                        Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
-                      </v-alert>
-                    </v-col>
+                    <template v-if="showDocuments">
+                      <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
+                        <AppLabel>Inclusion Policy Document:</AppLabel>
+                        <AppDocumentUpload
+                          id="inclusion-policy-upload"
+                          ref="documentUpload"
+                          entityName="accounts"
+                          :loading="loadingInclusionPolicy"
+                          :readonly="!editMode"
+                          :uploadedDocuments="uploadedDocumentsEdit"
+                          @updateDocuments="updateDocumentsToUpload"
+                          @deleteUploadedDocument="deleteUploadedDocument" />
+                        <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
+                          Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
+                        </v-alert>
+                      </v-col>
+                      <v-col v-else class="pt-0">
+                        <v-icon size="30" color="amber">mdi-alert</v-icon>
+                        An Inclusion Policy is a requirement to apply for Support Needs Supplementary Funding
+                      </v-col>
+                    </template>
                     <v-col v-if="editMode" class="d-flex justify-end pt-0">
                       <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" @click="toggleEditMode()" class="mr-6">Cancel</AppButton>
                       <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" @click="save()">Save</AppButton>
@@ -225,7 +227,7 @@ export default {
         return []
       },
     },
-    showInclusionPolicy: {
+    showDocuments: {
       type: Boolean,
       default: false,
     },
