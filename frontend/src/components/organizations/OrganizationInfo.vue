@@ -135,7 +135,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="showInclusionPolicy">
           <v-col class="pt-0">
             <v-card variant="outlined" class="card-outline pa-2 w-100">
               <div class="w-100">
@@ -224,6 +224,10 @@ export default {
       default: () => {
         return []
       },
+    },
+    showInclusionPolicy: {
+      type: Boolean,
+      default: false,
     },
     loading: {
       type: Boolean,

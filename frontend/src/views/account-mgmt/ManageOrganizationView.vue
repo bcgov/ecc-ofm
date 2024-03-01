@@ -15,6 +15,7 @@
         <OrganizationInfo
           :loading="loading"
           :editable="isAccountManager"
+          :showInclusionPolicy="true"
           :organization="organization"
           :uploadedDocuments="uploadedDocuments"
           @saveInclusionPolicyData="saveInclusionPolicyData"
