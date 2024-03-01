@@ -16,6 +16,7 @@
           :loading="loading"
           :editable="isAccountManager"
           :organization="organization"
+          :showDocuments="true"
           :uploadedDocuments="uploadedDocuments"
           @saveInclusionPolicyData="saveInclusionPolicyData"
           class="mt-1" />
