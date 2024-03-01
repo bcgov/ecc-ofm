@@ -23,6 +23,7 @@ function mapSupplementaryApplicationObjectForFront(data) {
     // log.info(mappedApplication)
 
     //put the values into an array so the UI checkboxes will work properly
+    //todo: REname the checkbox models so this code can be used twice
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
     }
@@ -71,20 +72,6 @@ async function getApplication(req, res) {
   }
 }
 
-async function getSupplementaryApplications(req, res) {
-  try {
-    //const operation = `ofm_applications(${req.params.applicationId})`
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
-    const response = await getOperation(operation)
-    log.info('resp')
-    log.info(response)
-    return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
-    //return res.status(HttpStatus.OK).json({ test: 'test1' })
-  } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
@@ -119,10 +106,69 @@ async function createApplication(req, res) {
   }
 }
 
+async function getSupplementaryApplications(req, res) {
+  try {
+    //const operation = `ofm_applications(${req.params.applicationId})`
+    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
+    const response = await getOperation(operation)
+    log.info('resp')
+    log.info(response)
+    return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
+    //return res.status(HttpStatus.OK).json({ test: 'test1' })
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function createSupplementaryApplication(req, res) {
+  log.info('i got here')
+  try {
+    log.info(req?.body)
+    let payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    if (payload.ofm_indigenous_expenses) {
+      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+    }
+
+    payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
+    log.info(payload)
+    //const payload = { ofm_allowance_type: 2, ofm_indigenous_expenses: '1,2,3', 'ofm_application@odata.bind': '/ofm_applications(f0a3bafc-b5d1-ee11-904d-000d3a09d699)' }
+    const response = await postOperation('ofm_allowances', payload)
+    //return res.status(HttpStatus.OK).json()
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function updateSupplementaryApplication(req, res) {
+  try {
+    log.info(req.body)
+    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    if (payload.ofm_indigenous_expenses) {
+      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+    }
+    // ofm_contact, ofm_secondary_contact, and ofm_expense_authority fields are lookup fields in CRM, so we need to replace them with data binding syntax
+    // if ('_ofm_contact_value' in payload || '_ofm_secondary_contact_value' in payload || '_ofm_expense_authority_value' in payload) {
+    //   payload['ofm_contact@odata.bind'] = payload['_ofm_contact_value'] ? `/contacts(${payload['_ofm_contact_value']})` : null
+    //   payload['ofm_secondary_contact@odata.bind'] = payload['_ofm_secondary_contact_value'] ? `/contacts(${payload['_ofm_secondary_contact_value']})` : null
+    //   payload['ofm_expense_authority@odata.bind'] = payload['_ofm_expense_authority_value'] ? `/contacts(${payload['_ofm_expense_authority_value']})` : null
+    //   delete payload['_ofm_contact_value']
+    //   delete payload['_ofm_secondary_contact_value']
+    //   delete payload['_ofm_expense_authority_value']
+    // }
+    const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getApplications,
   getApplication,
   updateApplication,
   createApplication,
   getSupplementaryApplications,
+  createSupplementaryApplication,
+  updateSupplementaryApplication,
 }

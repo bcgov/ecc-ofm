@@ -40,14 +40,24 @@ import TransportationAllowance from '@/components/supp-allowances/Transportation
 import { isEmpty } from 'lodash'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
+import ApplicationService from '@/services/applicationService'
 
 function findAndUpdateModel(suppApplications, modelToUpdate, supplementaryType) {
   let found = suppApplications.find((application) => application.supplementaryType === supplementaryType)
   if (!found) {
+    //no existing application, a blank model is required
     return modelToUpdate
   } else {
+    //use the application from dynamics
     return found
   }
+}
+
+function areModelsEqual(updatedApplication) {
+  const applicationsStore = useApplicationsStore()
+  const currentApplication = applicationsStore?.currentApplication
+  const index = Object.entries(updatedApplication)?.findIndex(([key, value]) => key in currentApplication && currentApplication[key] != value)
+  return index > -1
 }
 
 export default {
@@ -95,6 +105,30 @@ export default {
     save: {
       async handler() {
         // TODO
+        //if no guid AND data, POST
+        //console.log(this.indigenousProgrammingModel.indigenousFundingModel.toString())
+        //this.indigenousProgrammingModel.indigenousFundingModel = this.indigenousProgrammingModel.indigenousFundingModel.toString()
+
+        let test = [this.indigenousProgrammingModel, this.transportModel, this.supportModel]
+        console.log(test)
+
+        test.forEach(async (applicationModel) => {
+          const payload = {
+            ...applicationModel,
+            applicationId: this.applicationId,
+          }
+
+          //if application blank || application has not changed : skip
+          //else if application, but model blank, delet          //PATCH
+          if (applicationModel.supplementaryApplicationId) {
+            await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
+          } else {
+            //post
+            let response = await ApplicationService.createSupplementaryApplication(payload)
+            applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
+            console.log(this.indigenousProgrammingModel)
+          }
+        })
       },
     },
     next: {
@@ -158,7 +192,7 @@ export default {
     updateModel(updatedModel) {
       console.log('incoming')
       console.log(updatedModel)
-      this.indigenousProgrammingModel.indigenousFundingModel = updatedModel //funding model is an array
+      this.indigenousProgrammingModel = updatedModel //funding model is an array
       console.log('updated')
       console.log(this.indigenousProgrammingModel.indigenousFundingModel)
       //Object.entries(updatedModel)?.forEach(([key, value]) => (this.model[key] = Number(value)))

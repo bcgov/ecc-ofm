@@ -52,17 +52,6 @@ export default {
     }
   },
 
-  async getSupplementaryApplications(applicationId) {
-    try {
-      if (!applicationId) return
-      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the supp application by application id - ${error}`)
-      throw error
-    }
-  },
-
   isApplicationUpdated(updatedApplication) {
     const applicationsStore = useApplicationsStore()
     const currentApplication = applicationsStore?.currentApplication
@@ -88,6 +77,41 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to create a new application - ${error}`)
+      throw error
+    }
+  },
+
+  async getSupplementaryApplications(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async createSupplementaryApplication(payload) {
+    try {
+      console.log(payload)
+      console.log(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/')
+      //if (isEmpty(payload)) return
+      const response = await ApiService.apiAxios.post(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/', payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to create a new application - ${error}`)
+      throw error
+    }
+  },
+
+  async updateSupplementaryApplication(applicationId, payload) {
+    try {
+      if (!applicationId || isEmpty(payload)) return
+      const response = await ApiService.apiAxios.patch(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId, payload)
+      return response
+    } catch (error) {
+      console.log(`Failed to update the application - ${error}`)
       throw error
     }
   },

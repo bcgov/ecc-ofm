@@ -43,7 +43,7 @@
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
     <v-checkbox
-      v-model="indigenousFundingModel"
+      v-model="model.indigenousFundingModel"
       density="compact"
       class="pl-8"
       prepend-icon
@@ -51,20 +51,20 @@
       value="1"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="2" density="compact" class="pl-8" prepend-icon label="Culturally based meals and traditional foods."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="2" density="compact" class="pl-8" prepend-icon label="Culturally based meals and traditional foods."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="3" density="compact" class="pl-8" prepend-icon label="Materials for a cultural program (beads, wood, food, etc.)."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="3" density="compact" class="pl-8" prepend-icon label="Materials for a cultural program (beads, wood, food, etc.)."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="4" density="compact" class="pl-8" prepend-icon label="Books, music, videos, and arts and crafts materials."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="4" density="compact" class="pl-8" prepend-icon label="Books, music, videos, and arts and crafts materials."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="5" density="compact" class="pl-8" prepend-icon label="Culturally relevant toys and games."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="5" density="compact" class="pl-8" prepend-icon label="Culturally relevant toys and games."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
     <v-checkbox
-      v-model="indigenousFundingModel"
+      v-model="model.indigenousFundingModel"
       value="6"
       density="compact"
       class="pl-8"
@@ -72,19 +72,24 @@
       label="Facility decore enhancement-picture, including artwork, outdoor play, and natural materials."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="7" density="compact" class="pl-8" prepend-icon label="Field trips and outings."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="7" density="compact" class="pl-8" prepend-icon label="Field trips and outings."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="8" density="compact" class="pl-8" prepend-icon label="Land-based play support."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="8" density="compact" class="pl-8" prepend-icon label="Land-based play support."></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="indigenousFundingModel" value="9" density="compact" class="pl-8" prepend-icon label="Other"></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="9" density="compact" class="pl-8" prepend-icon label="Other"></v-checkbox>
+  </v-row>
+
+  <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
+    <v-textarea v-model.trim="model.indigenousOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
   </v-row>
   <!--Other should pop up with a memo box-->
 </template>
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import rules from '@/utils/rules'
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
 
@@ -103,12 +108,17 @@ export default {
   data() {
     return {
       panel: [],
-      indigenousFundingModel: [],
+      model: {},
+      rules,
     }
   },
-  computed: {},
+  computed: {
+    isOtherBoxDisplayed() {
+      return this.model.indigenousFundingModel.includes('9')
+    },
+  },
   watch: {
-    indigenousFundingModel: {
+    model: {
       handler(value) {
         this.$emit('update', value)
       },
@@ -117,6 +127,9 @@ export default {
   },
   async created() {
     this.indigenousFundingModel = this.indigenousProgrammingModel.indigenousFundingModel
+    this.model = this.indigenousProgrammingModel
+
+    console.log(this.model)
   },
   methods: {},
 }
