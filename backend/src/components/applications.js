@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
@@ -134,7 +134,7 @@ async function createSupplementaryApplication(req, res) {
     //const payload = { ofm_allowance_type: 2, ofm_indigenous_expenses: '1,2,3', 'ofm_application@odata.bind': '/ofm_applications(f0a3bafc-b5d1-ee11-904d-000d3a09d699)' }
     const response = await postOperation('ofm_allowances', payload)
     //return res.status(HttpStatus.OK).json()
-    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -147,16 +147,16 @@ async function updateSupplementaryApplication(req, res) {
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
     }
-    // ofm_contact, ofm_secondary_contact, and ofm_expense_authority fields are lookup fields in CRM, so we need to replace them with data binding syntax
-    // if ('_ofm_contact_value' in payload || '_ofm_secondary_contact_value' in payload || '_ofm_expense_authority_value' in payload) {
-    //   payload['ofm_contact@odata.bind'] = payload['_ofm_contact_value'] ? `/contacts(${payload['_ofm_contact_value']})` : null
-    //   payload['ofm_secondary_contact@odata.bind'] = payload['_ofm_secondary_contact_value'] ? `/contacts(${payload['_ofm_secondary_contact_value']})` : null
-    //   payload['ofm_expense_authority@odata.bind'] = payload['_ofm_expense_authority_value'] ? `/contacts(${payload['_ofm_expense_authority_value']})` : null
-    //   delete payload['_ofm_contact_value']
-    //   delete payload['_ofm_secondary_contact_value']
-    //   delete payload['_ofm_expense_authority_value']
-    // }
     const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function deleteSupplementaryApplication(req, res) {
+  try {
+    const response = await deleteOperationWithObjectId('ofm_allowances', req.params.applicationId)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -171,4 +171,5 @@ module.exports = {
   getSupplementaryApplications,
   createSupplementaryApplication,
   updateSupplementaryApplication,
+  deleteSupplementaryApplication,
 }

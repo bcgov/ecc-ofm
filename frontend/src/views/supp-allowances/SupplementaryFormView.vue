@@ -2,7 +2,6 @@
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
       <v-col cols="12" align="right">
-        <AppButton @click="console.log(applicationId)">Click Me</AppButton>
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
@@ -21,7 +20,7 @@
               <span class="header-label">{{ page.title }}</span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <IndigenousProgrammingAllowance :indigenousProgrammingModel="this.indigenousProgrammingModel" @update="updateModel" v-if="page.id === 'indigenous'" />
+              <IndigenousProgrammingAllowance :indigenousProgrammingModel="this.indigenousProgrammingModel" @update="updateIndigenousModel" v-if="page.id === 'indigenous'" />
               <SupportNeedsProgrammingAllowance v-if="page.id === 'support-needs'" />
               <TransportationAllowance v-if="page.id === 'transportation'" />
             </v-expansion-panel-text>
@@ -39,11 +38,11 @@ import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/Suppo
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
 import { isEmpty } from 'lodash'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapWritableState, mapActions } from 'pinia'
+import { mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 
-function findAndUpdateModel(suppApplications, modelToUpdate, supplementaryType) {
-  let found = suppApplications.find((application) => application.supplementaryType === supplementaryType)
+function findAndUpdateModel(suppApplications, modelToUpdate) {
+  let found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
   if (!found) {
     //no existing application, a blank model is required
     return modelToUpdate
@@ -53,12 +52,19 @@ function findAndUpdateModel(suppApplications, modelToUpdate, supplementaryType) 
   }
 }
 
-function areModelsEqual(updatedApplication) {
-  const applicationsStore = useApplicationsStore()
-  const currentApplication = applicationsStore?.currentApplication
-  const index = Object.entries(updatedApplication)?.findIndex(([key, value]) => key in currentApplication && currentApplication[key] != value)
-  return index > -1
+//should maybe check if string is whitespace?
+function isModelEmpty(model) {
+  let modelData = { ...model }
+
+  delete modelData.supplementaryApplicationId
+  delete modelData.supplementaryType
+
+  return Object.values(modelData).some((value) => {
+    return value?.length === 0
+  })
 }
+
+//TODO: check if existing applications are updated
 
 export default {
   name: 'SupplementaryFormView',
@@ -104,29 +110,32 @@ export default {
     },
     save: {
       async handler() {
-        // TODO
-        //if no guid AND data, POST
-        //console.log(this.indigenousProgrammingModel.indigenousFundingModel.toString())
-        //this.indigenousProgrammingModel.indigenousFundingModel = this.indigenousProgrammingModel.indigenousFundingModel.toString()
+        //let test = [this.indigenousProgrammingModel, this.transportModel, this.supportModel]
+        const models = [this.indigenousProgrammingModel, this.transportModel]
 
-        let test = [this.indigenousProgrammingModel, this.transportModel, this.supportModel]
-        console.log(test)
+        models.forEach(async (applicationModel) => {
+          //console.log(applicationModel)
+          //no data and no existing supplementary Application, skip adding to payload
+          //TODO: check if data has changed, if no change should also skip
+          if (isModelEmpty(applicationModel) && !applicationModel.supplementaryApplicationId) {
+            return
+          } else if (isModelEmpty(applicationModel)) {
+            await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
+            delete applicationModel.supplementaryApplicationId
+            return
+          }
 
-        test.forEach(async (applicationModel) => {
           const payload = {
             ...applicationModel,
             applicationId: this.applicationId,
           }
 
-          //if application blank || application has not changed : skip
-          //else if application, but model blank, delet          //PATCH
           if (applicationModel.supplementaryApplicationId) {
             await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
           } else {
             //post
             let response = await ApplicationService.createSupplementaryApplication(payload)
             applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
-            console.log(this.indigenousProgrammingModel)
           }
         })
       },
@@ -155,8 +164,6 @@ export default {
       },
     ]
     this.panel = this.allPageIDs
-    console.log(this.applicationId)
-
     await this.loadData()
     this.loading = false
   },
@@ -178,24 +185,15 @@ export default {
         supplementaryType: 2,
       }
 
-      let transportModel = { test: 'test' }
+      let transportModel = { test: '' }
       let supportModel = { test: 'test' }
 
-      this.transportModel = findAndUpdateModel(suppApplications, transportModel, 1)
-      this.indigenousProgrammingModel = findAndUpdateModel(suppApplications, indigenousProgrammingModel, 2)
-      this.supportModel = findAndUpdateModel(suppApplications, supportModel, 3)
-
-      // console.log(this.transportModel)
-      // console.log(this.indigenousProgrammingModel)
-      // console.log(this.supportModel)
+      this.transportModel = findAndUpdateModel(suppApplications, transportModel)
+      this.indigenousProgrammingModel = findAndUpdateModel(suppApplications, indigenousProgrammingModel)
+      this.supportModel = findAndUpdateModel(suppApplications, supportModel)
     },
-    updateModel(updatedModel) {
-      console.log('incoming')
-      console.log(updatedModel)
+    updateIndigenousModel(updatedModel) {
       this.indigenousProgrammingModel = updatedModel //funding model is an array
-      console.log('updated')
-      console.log(this.indigenousProgrammingModel.indigenousFundingModel)
-      //Object.entries(updatedModel)?.forEach(([key, value]) => (this.model[key] = Number(value)))
     },
   },
 }

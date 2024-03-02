@@ -115,4 +115,15 @@ export default {
       throw error
     }
   },
+
+  async deleteSupplementaryApplication(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.delete(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by application id - ${error}`)
+      throw error
+    }
+  },
 }

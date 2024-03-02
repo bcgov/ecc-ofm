@@ -11,6 +11,7 @@ const {
   getSupplementaryApplications,
   createSupplementaryApplication,
   updateSupplementaryApplication,
+  deleteSupplementaryApplication,
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
 
@@ -78,7 +79,7 @@ router.post('/supplementary/', passport.authenticate('jwt', { session: false }),
 })
 
 /**
- * Update an existing Application using applicationId
+ * Update an existing Supplemntary Application using applicationId
  */
 router.patch(
   '/supplementary/:applicationId',
@@ -88,5 +89,19 @@ router.patch(
   (req, res) => {
     validationResult(req).throw()
     return updateSupplementaryApplication(req, res)
+  },
+)
+
+/**
+ * delete existing Supplementary Application details using applicationId
+ */
+router.delete(
+  '/supplementary/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return deleteSupplementaryApplication(req, res)
   },
 )
