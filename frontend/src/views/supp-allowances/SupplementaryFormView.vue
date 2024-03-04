@@ -110,34 +110,38 @@ export default {
     },
     save: {
       async handler() {
-        const models = [this.indigenousProgrammingModel]
+        try {
+          const models = [this.indigenousProgrammingModel]
 
-        models.forEach(async (applicationModel) => {
-          //don't hit dynamics is application is unchanged
-          if (!applicationModel.hasUpdated) {
-            return
-          } else if (isModelEmpty(applicationModel)) {
-            //user has removed all their selections for that application, so delete
-            await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
-            delete applicationModel.supplementaryApplicationId
-            return
-          }
+          models.forEach(async (applicationModel) => {
+            //don't hit dynamics is application is unchanged
+            if (!applicationModel.hasUpdated) {
+              return
+            } else if (isModelEmpty(applicationModel)) {
+              //user has removed all their selections for that application, so delete
+              await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
+              delete applicationModel.supplementaryApplicationId
+              return
+            }
 
-          const payload = {
-            ...applicationModel,
-            applicationId: this.applicationId,
-          }
+            const payload = {
+              ...applicationModel,
+              applicationId: this.applicationId,
+            }
 
-          if (applicationModel.supplementaryApplicationId) {
-            await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
-          } else {
-            //post
-            const response = await ApplicationService.createSupplementaryApplication(payload)
-            applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
-          }
-          applicationModel.hasUpdated = false
-        })
-        this.setSuccessAlert(`Application Saved`)
+            if (applicationModel.supplementaryApplicationId) {
+              await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
+            } else {
+              //post
+              const response = await ApplicationService.createSupplementaryApplication(payload)
+              applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
+            }
+            applicationModel.hasUpdated = false
+          })
+          this.setSuccessAlert(`Application Saved`)
+        } catch (error) {
+          this.setFailureAlert('Failed to save supplementary applications')
+        }
       },
     },
     next: {
