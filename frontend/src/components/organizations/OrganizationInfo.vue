@@ -181,7 +181,7 @@
                       </v-col>
                       <v-col v-else class="pt-0">
                         <v-icon size="30" color="amber">mdi-alert</v-icon>
-                        An Inclusion Policy is a requirement to apply for Support Needs Supplementary Funding
+                        This is a requirement to apply for Support Needs Supplementary Funding
                       </v-col>
                     </template>
                     <v-col v-if="editMode" class="d-flex justify-end pt-0">
@@ -310,6 +310,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .card-outline {
   border: 1px solid #dee2e6 !important;
