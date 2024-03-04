@@ -263,7 +263,6 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
   { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
   { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
-  //TODO: add fields for other models
 ]
 
 module.exports = {

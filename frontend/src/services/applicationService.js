@@ -94,7 +94,6 @@ export default {
 
   async createSupplementaryApplication(payload) {
     try {
-      //if (isEmpty(payload)) return
       const response = await ApiService.apiAxios.post(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/', payload)
       return response?.data
     } catch (error) {
