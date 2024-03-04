@@ -81,13 +81,8 @@ export const useApplicationsStore = defineStore('applications', {
 
     async getSupplementaryApplications(applicationId) {
       try {
-        console.log('calling')
-        console.log(applicationId)
-
         const suppApplications = await ApplicationService.getSupplementaryApplications(applicationId)
         if (!suppApplications) return
-
-        console.log(suppApplications)
         return suppApplications
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)

@@ -52,7 +52,7 @@ function findAndUpdateModel(suppApplications, modelToUpdate) {
   }
 }
 
-//should maybe check if string is whitespace?
+//should add more in depth checks as model for transport will have string/number
 function isModelEmpty(model) {
   let modelData = { ...model }
 
@@ -95,6 +95,7 @@ export default {
       indigenousProgrammingModel: {},
       transportModel: {},
       supportModel: {},
+      hasUpdated: false,
     }
   },
   computed: {
@@ -110,11 +111,9 @@ export default {
     },
     save: {
       async handler() {
-        //let test = [this.indigenousProgrammingModel, this.transportModel, this.supportModel]
         const models = [this.indigenousProgrammingModel, this.transportModel]
 
         models.forEach(async (applicationModel) => {
-          //console.log(applicationModel)
           //no data and no existing supplementary Application, skip adding to payload
           //TODO: check if data has changed, if no change should also skip
           if (isModelEmpty(applicationModel) && !applicationModel.supplementaryApplicationId) {
@@ -177,7 +176,6 @@ export default {
       this.setUpDefaultNewRequestModel(await this.getSupplementaryApplications(this.applicationId))
     },
     setUpDefaultNewRequestModel(suppApplications) {
-      console.log('setting up model')
       let indigenousProgrammingModel = {
         indigenousFundingModel: [],
         indigenousOtherDescription: null,
@@ -185,8 +183,8 @@ export default {
         supplementaryType: 2,
       }
 
-      let transportModel = { test: '' }
-      let supportModel = { test: 'test' }
+      let supportModel = { test: 'test', supplementaryType: 1 }
+      let transportModel = { test: '', supplementaryType: 3 }
 
       this.transportModel = findAndUpdateModel(suppApplications, transportModel)
       this.indigenousProgrammingModel = findAndUpdateModel(suppApplications, indigenousProgrammingModel)

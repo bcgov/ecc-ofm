@@ -90,8 +90,6 @@
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
-import { mapState } from 'pinia'
-import { useAppStore } from '@/stores/app'
 
 export default {
   components: { AppLabel },
@@ -126,10 +124,7 @@ export default {
     },
   },
   async created() {
-    this.indigenousFundingModel = this.indigenousProgrammingModel.indigenousFundingModel
     this.model = this.indigenousProgrammingModel
-
-    console.log(this.model)
   },
   methods: {},
 }

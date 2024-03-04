@@ -94,8 +94,6 @@ export default {
 
   async createSupplementaryApplication(payload) {
     try {
-      console.log(payload)
-      console.log(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/')
       //if (isEmpty(payload)) return
       const response = await ApiService.apiAxios.post(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/', payload)
       return response?.data
