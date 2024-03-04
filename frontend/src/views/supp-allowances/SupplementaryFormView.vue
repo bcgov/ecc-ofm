@@ -40,9 +40,10 @@ import { isEmpty } from 'lodash'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
+import alertMixin from '@/mixins/alertMixin'
 
 function findAndUpdateModel(suppApplications, modelToUpdate) {
-  let found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
+  const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
   if (!found) {
     //no existing application, a blank model is required
     return modelToUpdate
@@ -64,11 +65,10 @@ function isModelEmpty(model) {
   })
 }
 
-//TODO: check if existing applications are updated
-
 export default {
   name: 'SupplementaryFormView',
   components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
+  mixins: [alertMixin],
   props: {
     applicationId: {
       type: String,
@@ -95,7 +95,6 @@ export default {
       indigenousProgrammingModel: {},
       transportModel: {},
       supportModel: {},
-      hasUpdated: false,
     }
   },
   computed: {
@@ -111,14 +110,14 @@ export default {
     },
     save: {
       async handler() {
-        const models = [this.indigenousProgrammingModel, this.transportModel]
+        const models = [this.indigenousProgrammingModel]
 
         models.forEach(async (applicationModel) => {
-          //no data and no existing supplementary Application, skip adding to payload
-          //TODO: check if data has changed, if no change should also skip
-          if (isModelEmpty(applicationModel) && !applicationModel.supplementaryApplicationId) {
+          //don't hit dynamics is application is unchanged
+          if (!applicationModel.hasUpdated) {
             return
           } else if (isModelEmpty(applicationModel)) {
+            //user has removed all their selections for that application, so delete
             await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
             delete applicationModel.supplementaryApplicationId
             return
@@ -133,10 +132,12 @@ export default {
             await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
           } else {
             //post
-            let response = await ApplicationService.createSupplementaryApplication(payload)
+            const response = await ApplicationService.createSupplementaryApplication(payload)
             applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
           }
+          applicationModel.hasUpdated = false
         })
+        this.setSuccessAlert(`Application Saved`)
       },
     },
     next: {
@@ -173,25 +174,40 @@ export default {
       this.panel = isEmpty(this.panel) ? this.allPageIDs : []
     },
     async loadData() {
-      this.setUpDefaultNewRequestModel(await this.getSupplementaryApplications(this.applicationId))
+      try {
+        this.setUpDefaultNewRequestModel(await this.getSupplementaryApplications(this.applicationId))
+      } catch (error) {
+        this.setFailureAlert('Failed to load supplementary applications')
+      }
     },
     setUpDefaultNewRequestModel(suppApplications) {
-      let indigenousProgrammingModel = {
+      const indigenousProgrammingModel = {
         indigenousFundingModel: [],
         indigenousOtherDescription: null,
         supplementaryApplicationId: undefined,
         supplementaryType: 2,
+        hasUpdated: false,
       }
 
-      let supportModel = { test: 'test', supplementaryType: 1 }
-      let transportModel = { test: '', supplementaryType: 3 }
+      const supportModel = { test: 'test', supplementaryType: 1 }
+      const transportModel = { test: '', supplementaryType: 3 }
 
       this.transportModel = findAndUpdateModel(suppApplications, transportModel)
       this.indigenousProgrammingModel = findAndUpdateModel(suppApplications, indigenousProgrammingModel)
       this.supportModel = findAndUpdateModel(suppApplications, supportModel)
     },
     updateIndigenousModel(updatedModel) {
-      this.indigenousProgrammingModel = updatedModel //funding model is an array
+      this.updateModel(this.indigenousProgrammingModel, updatedModel)
+    },
+    updateSupportModel(updatedModel) {
+      this.updateModel(this.supportModel, updatedModel)
+    },
+    updateTransportModel(updatedModel) {
+      this.updateModel(this.transportModel, updatedModel)
+    },
+    updateModel(modelToUpdate, updatedModel) {
+      modelToUpdate = updatedModel
+      modelToUpdate.hasUpdated = true
     },
   },
 }

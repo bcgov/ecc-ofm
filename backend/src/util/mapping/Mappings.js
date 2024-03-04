@@ -263,10 +263,6 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
   { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
   { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
-  // { back: 'ofm_start_date', front: 'startDate' },
-  // { back: 'ofm_end_date', front: 'endDate' },
-  // { back: 'statuscode', front: 'statusCode' },
-  // { back: 'statecode', front: 'stateCode' },
   //TODO: add fields for other models
 ]
 

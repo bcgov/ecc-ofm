@@ -48,19 +48,41 @@
       class="pl-8"
       prepend-icon
       label="Honoraria for Elder involment, language revitalization and/ or other resource people including curriculum develpment resource"
-      value="1"></v-checkbox>
+      value="1"
+      @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="2" density="compact" class="pl-8" prepend-icon label="Culturally based meals and traditional foods."></v-checkbox>
+    <v-checkbox
+      v-model="model.indigenousFundingModel"
+      value="2"
+      density="compact"
+      class="pl-8"
+      prepend-icon
+      label="Culturally based meals and traditional foods."
+      @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="3" density="compact" class="pl-8" prepend-icon label="Materials for a cultural program (beads, wood, food, etc.)."></v-checkbox>
+    <v-checkbox
+      v-model="model.indigenousFundingModel"
+      value="3"
+      density="compact"
+      class="pl-8"
+      prepend-icon
+      label="Materials for a cultural program (beads, wood, food, etc.)."
+      @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="4" density="compact" class="pl-8" prepend-icon label="Books, music, videos, and arts and crafts materials."></v-checkbox>
+    <v-checkbox
+      v-model="model.indigenousFundingModel"
+      value="4"
+      density="compact"
+      class="pl-8"
+      prepend-icon
+      label="Books, music, videos, and arts and crafts materials."
+      @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="5" density="compact" class="pl-8" prepend-icon label="Culturally relevant toys and games."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="5" density="compact" class="pl-8" prepend-icon label="Culturally relevant toys and games." @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
     <v-checkbox
@@ -69,20 +91,28 @@
       density="compact"
       class="pl-8"
       prepend-icon
-      label="Facility decore enhancement-picture, including artwork, outdoor play, and natural materials."></v-checkbox>
+      label="Facility decore enhancement-picture, including artwork, outdoor play, and natural materials."
+      @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="7" density="compact" class="pl-8" prepend-icon label="Field trips and outings."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="7" density="compact" class="pl-8" prepend-icon label="Field trips and outings." @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="8" density="compact" class="pl-8" prepend-icon label="Land-based play support."></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="8" density="compact" class="pl-8" prepend-icon label="Land-based play support." @input="updateModel(model)"></v-checkbox>
   </v-row>
   <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="9" density="compact" class="pl-8" prepend-icon label="Other"></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" value="9" density="compact" class="pl-8" prepend-icon label="Other" @input="updateModel(model)"></v-checkbox>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
-    <v-textarea v-model.trim="model.indigenousOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
+    <v-textarea
+      v-model.trim="model.indigenousOtherDescription"
+      placeholder="Detailed description of other expenses"
+      counter
+      maxlength="1000"
+      variant="outlined"
+      :rules="rules.required"
+      @input="updateModel(model)"></v-textarea>
   </v-row>
   <!--Other should pop up with a memo box-->
 </template>
@@ -115,17 +145,14 @@ export default {
       return this.model.indigenousFundingModel.includes('9')
     },
   },
-  watch: {
-    model: {
-      handler(value) {
-        this.$emit('update', value)
-      },
-      deep: true,
-    },
-  },
   async created() {
     this.model = this.indigenousProgrammingModel
   },
-  methods: {},
+
+  methods: {
+    updateModel(value) {
+      this.$emit('update', value)
+    },
+  },
 }
 </script>

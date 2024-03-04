@@ -16,25 +16,14 @@ function mapApplicationObjectForFront(data) {
 
 function mapSupplementaryApplicationObjectForFront(data) {
   const applications = []
-  log.info(data)
   data.forEach((suppApplication) => {
     let mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
-    // log.info('application in loop')
-    // log.info(mappedApplication)
 
-    //put the values into an array so the UI checkboxes will work properly
-    //todo: REname the checkbox models so this code can be used twice
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
     }
-
-    log.info('application in loop')
-    log.info(mappedApplication)
     applications.push(mappedApplication)
   })
-  // let application = new MappableObjectForFront(data, SupplementaryApplicationMappings).toJSON()
-  // log.info('application')
-  // log.info(application)
 
   return applications
 }
@@ -108,32 +97,23 @@ async function createApplication(req, res) {
 
 async function getSupplementaryApplications(req, res) {
   try {
-    //const operation = `ofm_applications(${req.params.applicationId})`
     const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
     const response = await getOperation(operation)
-    log.info('resp')
-    log.info(response)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
-    //return res.status(HttpStatus.OK).json({ test: 'test1' })
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 async function createSupplementaryApplication(req, res) {
-  log.info('i got here')
   try {
-    log.info(req?.body)
     let payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
     }
 
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
-    log.info(payload)
-    //const payload = { ofm_allowance_type: 2, ofm_indigenous_expenses: '1,2,3', 'ofm_application@odata.bind': '/ofm_applications(f0a3bafc-b5d1-ee11-904d-000d3a09d699)' }
     const response = await postOperation('ofm_allowances', payload)
-    //return res.status(HttpStatus.OK).json()
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -142,7 +122,6 @@ async function createSupplementaryApplication(req, res) {
 
 async function updateSupplementaryApplication(req, res) {
   try {
-    log.info(req.body)
     const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
