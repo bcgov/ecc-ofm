@@ -47,10 +47,6 @@ export const useApplicationsStore = defineStore('applications', {
     isStaffingComplete: false,
     isDeclareSubmitComplete: false,
     validation: false,
-    indigenousFundingModel: [],
-    indigenousOtherDescription: '',
-
-    //todo, transport and other supp
   }),
   getters: {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
@@ -73,17 +69,6 @@ export const useApplicationsStore = defineStore('applications', {
           this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
         }
         this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
-      } catch (error) {
-        console.log(`Failed to get the application by application id - ${error}`)
-        throw error
-      }
-    },
-
-    async getSupplementaryApplications(applicationId) {
-      try {
-        const suppApplications = await ApplicationService.getSupplementaryApplications(applicationId)
-        if (!suppApplications) return
-        return suppApplications
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error

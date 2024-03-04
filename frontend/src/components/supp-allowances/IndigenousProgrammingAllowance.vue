@@ -41,67 +41,9 @@
       <strong>(Eligible Expences may include, but are not limited to):</strong>
     </v-col>
   </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox
-      v-model="model.indigenousFundingModel"
-      density="compact"
-      class="pl-8"
-      prepend-icon
-      label="Honoraria for Elder involment, language revitalization and/ or other resource people including curriculum develpment resource"
-      value="1"
-      @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox
-      v-model="model.indigenousFundingModel"
-      value="2"
-      density="compact"
-      class="pl-8"
-      prepend-icon
-      label="Culturally based meals and traditional foods."
-      @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox
-      v-model="model.indigenousFundingModel"
-      value="3"
-      density="compact"
-      class="pl-8"
-      prepend-icon
-      label="Materials for a cultural program (beads, wood, food, etc.)."
-      @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox
-      v-model="model.indigenousFundingModel"
-      value="4"
-      density="compact"
-      class="pl-8"
-      prepend-icon
-      label="Books, music, videos, and arts and crafts materials."
-      @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="5" density="compact" class="pl-8" prepend-icon label="Culturally relevant toys and games." @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox
-      v-model="model.indigenousFundingModel"
-      value="6"
-      density="compact"
-      class="pl-8"
-      prepend-icon
-      label="Facility decore enhancement-picture, including artwork, outdoor play, and natural materials."
-      @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="7" density="compact" class="pl-8" prepend-icon label="Field trips and outings." @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="8" density="compact" class="pl-8" prepend-icon label="Land-based play support." @input="updateModel(model)"></v-checkbox>
-  </v-row>
-  <v-row no-gutters class="mr-2 my-0">
-    <v-checkbox v-model="model.indigenousFundingModel" value="9" density="compact" class="pl-8" prepend-icon label="Other" @input="updateModel(model)"></v-checkbox>
+
+  <v-row v-for="(item, index) in CHECKBOX_LABELS" :key="index">
+    <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value" @input="updateModel(model)"></v-checkbox>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
@@ -137,12 +79,22 @@ export default {
     return {
       panel: [],
       model: {},
+      CHECKBOX_LABELS: [
+        { label: 'Honoraria for Elder involment, language revitalization and/ or other resource people including curriculum develpment resource', value: '1' },
+        { label: 'Culturally based meals and traditional foods.', value: '2' },
+        { label: 'Materials for a cultural program (beads, wood, food, etc.).', value: '3' },
+        { label: 'Books, music, videos, and arts and crafts materials.', value: '4' },
+        { label: 'Facility decore enhancement-picture, including artwork, outdoor play, and natural materials.', value: '5' },
+        { label: 'Field trips and outings.', value: '6' },
+        { label: 'Land-based play support.', value: '7' },
+        { label: 'Other', value: '8' },
+      ],
       rules,
     }
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model.indigenousFundingModel.includes('9')
+      return this.model.indigenousFundingModel.includes('8')
     },
   },
   async created() {

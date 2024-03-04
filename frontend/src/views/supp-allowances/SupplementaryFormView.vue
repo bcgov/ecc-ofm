@@ -37,10 +37,9 @@ import IndigenousProgrammingAllowance from '@/components/supp-allowances/Indigen
 import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/SupportNeedsProgrammingAllowance.vue'
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
 import { isEmpty } from 'lodash'
-import { useApplicationsStore } from '@/stores/applications'
-import { mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 
 function findAndUpdateModel(suppApplications, modelToUpdate) {
   const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
@@ -132,7 +131,6 @@ export default {
             if (applicationModel.supplementaryApplicationId) {
               await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
             } else {
-              //post
               const response = await ApplicationService.createSupplementaryApplication(payload)
               applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
             }
@@ -172,14 +170,13 @@ export default {
     this.loading = false
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getSupplementaryApplications']),
     isEmpty,
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPageIDs : []
     },
     async loadData() {
       try {
-        this.setUpDefaultNewRequestModel(await this.getSupplementaryApplications(this.applicationId))
+        this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplications(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
       }
@@ -189,12 +186,12 @@ export default {
         indigenousFundingModel: [],
         indigenousOtherDescription: null,
         supplementaryApplicationId: undefined,
-        supplementaryType: 2,
+        supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
         hasUpdated: false,
       }
 
-      const supportModel = { test: 'test', supplementaryType: 1 }
-      const transportModel = { test: '', supplementaryType: 3 }
+      const supportModel = { test: 'test', supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT }
+      const transportModel = { test: '', supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT }
 
       this.transportModel = findAndUpdateModel(suppApplications, transportModel)
       this.indigenousProgrammingModel = findAndUpdateModel(suppApplications, indigenousProgrammingModel)

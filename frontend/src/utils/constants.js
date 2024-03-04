@@ -69,6 +69,12 @@ export const FACILITY_TYPES = Object.freeze({
   PROVIDED_FREE_OF_CHARGE: 4,
 })
 
+export const SUPPLEMENTARY_TYPES = Object.freeze({
+  SUPPORT: 1,
+  INDIGENOUS: 2,
+  TRANSPORT: 3,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
