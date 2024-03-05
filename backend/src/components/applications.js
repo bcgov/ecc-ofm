@@ -4,7 +4,6 @@ const { MappableObjectForFront, MappableObjectForBack } = require('../util/mappi
 const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
-const log = require('./logger')
 
 function mapApplicationObjectForFront(data) {
   const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
@@ -17,7 +16,7 @@ function mapApplicationObjectForFront(data) {
 function mapSupplementaryApplicationObjectForFront(data) {
   const applications = []
   data.forEach((suppApplication) => {
-    let mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
+    const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
 
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')

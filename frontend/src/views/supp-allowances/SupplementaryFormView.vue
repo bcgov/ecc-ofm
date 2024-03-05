@@ -15,14 +15,14 @@
     <div>
       <v-skeleton-loader :loading="loading" type="table-tbody">
         <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel v-for="page in PAGES" :key="page.id" :value="page.id">
+          <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
             <v-expansion-panel-title>
-              <span class="header-label">{{ page.title }}</span>
+              <span class="header-label">{{ panel.title }}</span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <IndigenousProgrammingAllowance :indigenousProgrammingModel="getModel(getSupplementaryTypes.INDIGENOUS)" @update="updateModel" v-if="page.id === 'indigenous'" />
-              <SupportNeedsProgrammingAllowance v-if="page.id === 'support-needs'" />
-              <TransportationAllowance v-if="page.id === 'transportation'" />
+              <IndigenousProgrammingAllowance :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" v-if="panel.id === 'indigenous'" />
+              <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" />
+              <TransportationAllowance v-if="panel.id === 'transportation'" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -40,29 +40,6 @@ import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
-
-function findAndUpdateModel(suppApplications, modelToUpdate) {
-  const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
-  if (!found) {
-    //no existing application, a blank model is required
-    return modelToUpdate
-  } else {
-    //use the application from dynamics
-    return found
-  }
-}
-
-//should add more in depth checks as model for transport will have string/number
-function isModelEmpty(model) {
-  let modelData = { ...model }
-
-  delete modelData.supplementaryApplicationId
-  delete modelData.supplementaryType
-
-  return Object.values(modelData).some((value) => {
-    return value?.length === 0
-  })
-}
 
 export default {
   name: 'SupplementaryFormView',
@@ -96,11 +73,8 @@ export default {
     }
   },
   computed: {
-    allPageIDs() {
-      return this.PAGES?.map((page) => page.id)
-    },
-    getSupplementaryTypes() {
-      return SUPPLEMENTARY_TYPES
+    allPanelIDs() {
+      return this.PANELS?.map((panel) => panel.id)
     },
   },
   watch: {
@@ -115,7 +89,7 @@ export default {
           for (let applicationModel of this.models) {
             if (this.isModelSame(applicationModel)) {
               continue
-            } else if (isModelEmpty(applicationModel)) {
+            } else if (this.isModelEmpty(applicationModel)) {
               await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
               delete applicationModel.supplementaryApplicationId
               continue
@@ -151,7 +125,7 @@ export default {
   },
   async created() {
     this.loading = true
-    this.PAGES = [
+    this.PANELS = [
       {
         title: 'Indigenous Programming Allowance',
         id: 'indigenous',
@@ -165,14 +139,15 @@ export default {
         id: 'transportation',
       },
     ]
-    this.panel = this.allPageIDs
+    this.panel = this.allPanelIDs
     await this.loadData()
+    this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.loading = false
   },
   methods: {
     isEmpty,
     togglePanel() {
-      this.panel = isEmpty(this.panel) ? this.allPageIDs : []
+      this.panel = isEmpty(this.panel) ? this.allPanelIDs : []
     },
     async loadData() {
       try {
@@ -189,14 +164,7 @@ export default {
         supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
       }
 
-      const supportModel = { test: 'support', supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT }
-      const transportModel = { test: 'transport', supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT }
-
-      this.models = [
-        { ...findAndUpdateModel(suppApplications, transportModel) },
-        { ...findAndUpdateModel(suppApplications, indigenousProgrammingModel) },
-        { ...findAndUpdateModel(suppApplications, supportModel) },
-      ]
+      this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }]
 
       this.clonedModels = cloneDeep(this.models)
     },
@@ -212,6 +180,20 @@ export default {
     },
     getModel(type) {
       return this.models?.find((el) => el.supplementaryType == type)
+    },
+    findAndUpdateModel(suppApplications, modelToUpdate) {
+      const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
+      return found ? found : modelToUpdate
+    },
+    isModelEmpty(model) {
+      let modelData = { ...model }
+
+      delete modelData.supplementaryApplicationId
+      delete modelData.supplementaryType
+
+      return Object.values(modelData).some((value) => {
+        return value?.length === 0
+      })
     },
   },
 }

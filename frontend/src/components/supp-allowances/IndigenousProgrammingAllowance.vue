@@ -41,7 +41,7 @@
     </v-col>
   </v-row>
 
-  <v-row v-for="(item, index) in CHECKBOX_LABELS" :key="index">
+  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value">
     <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
   </v-row>
 
@@ -71,16 +71,6 @@ export default {
     return {
       panel: [],
       model: {},
-      CHECKBOX_LABELS: [
-        { label: 'Honoraria for Elder involment, language revitalization and/ or other resource people including curriculum develpment resource', value: '1' },
-        { label: 'Culturally based meals and traditional foods.', value: '2' },
-        { label: 'Materials for a cultural program (beads, wood, food, etc.).', value: '3' },
-        { label: 'Books, music, videos, and arts and crafts materials.', value: '4' },
-        { label: 'Facility decore enhancement-picture, including artwork, outdoor play, and natural materials.', value: '5' },
-        { label: 'Field trips and outings.', value: '6' },
-        { label: 'Land-based play support.', value: '7' },
-        { label: 'Other', value: '8' },
-      ],
       rules,
     }
   },
@@ -99,8 +89,17 @@ export default {
   },
   async created() {
     this.model = { ...this.indigenousProgrammingModel }
-  },
 
-  methods: {},
+    this.CHECKBOX_LABELS = [
+      { label: 'Honoraria for Elder involment, language revitalization and/ or other resource people including curriculum development resource', value: '1' },
+      { label: 'Culturally based meals and traditional foods.', value: '2' },
+      { label: 'Materials for a cultural program (beads, wood, food, etc.).', value: '3' },
+      { label: 'Books, music, videos, and arts and crafts materials.', value: '4' },
+      { label: 'Facility decor enhancement-picture, including artwork, outdoor play, and natural materials.', value: '5' },
+      { label: 'Field trips and outings.', value: '6' },
+      { label: 'Land-based play support.', value: '7' },
+      { label: 'Other', value: '8' },
+    ]
+  },
 }
 </script>
