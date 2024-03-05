@@ -203,7 +203,4 @@ export default {
   font-weight: 700;
   font-size: 20px;
 }
-:deep(.v-label) {
-  opacity: 1;
-}
 </style>
