@@ -14,7 +14,7 @@
       <v-col class="pb-0 d-flex align-end">
         <h3>Add New Application</h3>
       </v-col>
-      <v-col v-if="!hasActiveApplication && !loading" class="pb-0">
+      <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
         <v-alert type="info" dense text>
           If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.
         </v-alert>
@@ -43,7 +43,7 @@
             {{ getCardInfoMessage() }}
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
-            <AppButton id="supp-allowances-button" size="large" width="250px" :loading="loading" :disabled="!hasActiveApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
+            <AppButton id="supp-allowances-button" size="large" width="250px" :loading="loading" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -95,8 +95,8 @@ import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import AppFacilityFilter from '@/components/ui/AppFacilityFilter.vue'
-import { APPLICATION_ACTIVE_STATUS_CODES } from '@/utils/constants'
 
 const cardInfoMessage = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
 
@@ -123,8 +123,8 @@ export default {
     }
   },
   computed: {
-    hasActiveApplication() {
-      return this.applications?.some(application => Object.values(APPLICATION_ACTIVE_STATUS_CODES).includes(application?.statusCode))
+    hasAValidApplication() {
+      return this.applications?.some(application => ApplicationService.isValidApplication(application))
     },
     filteredApplications() {
       if (!this.facilityNameFilter) return this.applications
@@ -138,6 +138,11 @@ export default {
     try {
       this.loading = true
       this.applications = await ApplicationService.getApplications()
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
+        }),
+      )
     } catch (error) {
       this.setFailureAlert('Failed to get the list of applications', error)
     } finally {
