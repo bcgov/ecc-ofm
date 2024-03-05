@@ -41,10 +41,9 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-file-document-edit-outline" title="New Application" @click="$router.push({ name: 'select-facility' })">
+        <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
           <v-card-text>
-            Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex,
-            sed consectetur leo odio in magna.
+            Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
           </v-card-text>
         </v-card>
       </v-col>
@@ -53,13 +52,6 @@
           <v-card-text>
             Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex,
             sed consectetur leo odio in magna.
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
-          <v-card-text>
-            Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
           </v-card-text>
         </v-card>
       </v-col>

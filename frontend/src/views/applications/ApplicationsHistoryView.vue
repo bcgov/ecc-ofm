@@ -1,21 +1,77 @@
 <template>
   <v-container fluid>
-    <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'supp-allowances' }" class="mb-12">Add SUP Application</AppButton>
-    <h1>Applications</h1>
+    <v-row>
+      <v-col class="pb-0">
+        <h1>Applications</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti.
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="pb-0 d-flex align-end">
+        <h3>Add New Application</h3>
+      </v-col>
+      <v-col v-if="!hasActiveApplication && !loading" class="pb-0">
+        <v-alert type="info" dense text>
+          If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="pt-1">
+        <v-card class="home-card justify-center">
+          <v-card-title class="text-center">
+            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>OFM Application
+          </v-card-title>
+          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+            {{ getCardInfoMessage() }}
+          </v-card-text>
+          <v-card-actions class="d-flex flex-column align-center">
+            <AppButton id="supp-allowances-button" size="large" width="250px" :loading="loading" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col class="pt-1">
+        <v-card class="home-card justify-center">
+          <v-card-title class="text-center">
+            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>Supplementary Allowance Application
+          </v-card-title>
+          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+            {{ getCardInfoMessage() }}
+          </v-card-text>
+          <v-card-actions class="d-flex flex-column align-center">
+            <AppButton id="supp-allowances-button" size="large" width="250px" :loading="loading" :disabled="!hasActiveApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="mt-2">
+        <h3>Applications Summary</h3>
+      </v-col>
+      <AppFacilityFilter :loading="loading" :defaultShowFilterInput="true" @facility-filter-changed="facilityFilterChanged" />
+    </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applications)">You have no applications on file</div>
-      <v-data-table v-else :headers="headers" :items="applications" item-key="applicationId" density="compact">
+      <v-data-table v-else :headers="headers" :items="filteredApplications" item-key="applicationId" class="soft-outline" density="compact">
+
         <template #item.actions="{ item }">
           <router-link :to="{ name: 'facility-details', params: { applicationGuid: item?.applicationId } }">
             {{ getApplicationAction(item) }}
           </router-link>
         </template>
+
         <template #item.submittedDate="{ item }">
           {{ format.formatDate(item.submittedDate) }}
         </template>
+
         <template #item.latestActivity="{ item }">
           {{ format.formatDate(item.latestActivity) }}
         </template>
+
         <template #item.actionButtons="{ item }">
           <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="false">
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
@@ -39,9 +95,13 @@ import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
+import AppFacilityFilter from '@/components/ui/AppFacilityFilter.vue'
+import { APPLICATION_ACTIVE_STATUS_CODES } from '@/utils/constants'
+
+const cardInfoMessage = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, AppFacilityFilter },
   mixins: [alertMixin],
   data() {
     return {
@@ -59,9 +119,21 @@ export default {
       loading: false,
       showCancelDialog: false,
       cancelledApplicationId: undefined,
+      facilityNameFilter: undefined,
     }
   },
-  computed: {},
+  computed: {
+    hasActiveApplication() {
+      return this.applications?.some(application => Object.values(APPLICATION_ACTIVE_STATUS_CODES).includes(application?.statusCode))
+    },
+    filteredApplications() {
+      if (!this.facilityNameFilter) return this.applications
+      const lowerCaseFilter = this.facilityNameFilter.toLowerCase();
+      return this.applications.filter(application =>
+        application.facilityName.toLowerCase().includes(lowerCaseFilter)
+      );
+    },
+  },
   async created() {
     try {
       this.loading = true
@@ -96,6 +168,13 @@ export default {
         this.applications.splice(index, 1)
       }
     },
+    facilityFilterChanged(newVal) {
+      this.facilityNameFilter = newVal
+    },
+    getCardInfoMessage() {
+      return cardInfoMessage
+    }
+
   },
 }
 </script>
@@ -103,5 +182,9 @@ export default {
 <style scoped>
 :deep(div.v-data-table-footer) {
   padding-top: 20px;
+}
+
+.soft-outline {
+  border: 1px solid #dee2e6 !important;
 }
 </style>

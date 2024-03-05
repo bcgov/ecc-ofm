@@ -6,17 +6,9 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="auto">
-        <AppButton @click="toggleShowFilter()" variant="text" :disabled="isLoading">
-          Filter by facility
-          <v-icon right>mdi-filter</v-icon>
-        </AppButton>
-      </v-col>
-      <v-col cols="3">
-        <v-text-field v-if="showFilterInput" v-model.trim="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
-      </v-col>
+      <AppFacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
       <v-col class="d-flex justify-end align-end">
-        <AppButton variant="text" @click="toggleDialog({})" :disabled="isLoading">
+        <AppButton variant="text" @click="toggleDialog({})" :disabled="loading">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
@@ -25,7 +17,7 @@
     <v-row>
       <v-col>
         <!-- Users Table -->
-        <v-skeleton-loader :loading="isLoading" type="table-tbody">
+        <v-skeleton-loader :loading="loading" type="table-tbody">
           <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
@@ -33,21 +25,26 @@
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
+
             <template v-slot:item.actions="{ item }">
               <AppButton @click.stop="toggleDialog(item)" variant="text">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
+
             <template v-slot:item.role="{ item }">
               <span>{{ getRoleNameById(item.role) }}</span>
             </template>
+
             <template v-slot:item.isExpenseAuthority="{ item }">
               <span>{{ isExpenseAuthority(item) }}</span>
             </template>
+
             <template v-slot:item.stateCode="{ item }">
               <span>{{ getStatusDescription(item) }}</span>
             </template>
 
             <!-- Slot to customize expand row content -->
+
             <template v-slot:expanded-row="{ columns, item }">
               <tr>
                 <td></td>
@@ -62,7 +59,9 @@
                       <!-- Facilities table -->
                       <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" items-per-page="-1" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
+
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
+
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
@@ -97,13 +96,14 @@ import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
 import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
+import AppFacilityFilter from '@/components/ui/AppFacilityFilter.vue'
 
 export default {
-  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog },
+  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, AppFacilityFilter },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {
-      isLoading: false,
+      loading: false,
       showFilterInput: false,
       facilityNameFilter: '',
       usersAndFacilities: null,
@@ -136,14 +136,14 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      this.isLoading = true
+      this.loading = true
       try {
         if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
         return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
       } catch (error) {
         this.setFailureAlert('Failed to filter users by facility name', error)
       } finally {
-        this.isLoading = false
+        this.loading = false
       }
     },
   },
@@ -168,25 +168,13 @@ export default {
      */
     async getUsersAndFacilities() {
       try {
-        this.isLoading = true
+        this.loading = true
         const res = await ApiService.apiAxios.get(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + this.userInfo.organizationId)
         this.usersAndFacilities = res.data
       } catch (error) {
         this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
       } finally {
-        this.isLoading = false
-      }
-    },
-
-    /**
-     * Toggle the facility input filter
-     */
-    toggleShowFilter() {
-      if (this.showFilterInput) {
-        this.showFilterInput = false
-        this.facilityNameFilter = ''
-      } else {
-        this.showFilterInput = true
+        this.loading = false
       }
     },
 
@@ -312,6 +300,13 @@ export default {
         }
       })
       return lastExpenseAuthorityFacilityNames
+    },
+
+    /**
+     * Facility filter component value changed.
+     */
+    facilityFilterChanged(newVal) {
+      this.facilityNameFilter = newVal
     },
   },
 }
