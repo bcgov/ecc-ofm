@@ -20,7 +20,7 @@
               <span class="header-label">{{ page.title }}</span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <IndigenousProgrammingAllowance :indigenousProgrammingModel="this.indigenousProgrammingModel" @update="updateIndigenousModel" v-if="page.id === 'indigenous'" />
+              <IndigenousProgrammingAllowance :indigenousProgrammingModel="getModel(getSupplementaryTypes.INDIGENOUS)" @update="updateModel" v-if="page.id === 'indigenous'" />
               <SupportNeedsProgrammingAllowance v-if="page.id === 'support-needs'" />
               <TransportationAllowance v-if="page.id === 'transportation'" />
             </v-expansion-panel-text>
@@ -36,7 +36,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import IndigenousProgrammingAllowance from '@/components/supp-allowances/IndigenousProgrammingAllowance.vue'
 import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/SupportNeedsProgrammingAllowance.vue'
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
-import { isEmpty } from 'lodash'
+import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
@@ -91,14 +91,16 @@ export default {
     return {
       loading: false,
       panel: [],
-      indigenousProgrammingModel: {},
-      transportModel: {},
-      supportModel: {},
+      models: undefined,
+      clonedModels: [],
     }
   },
   computed: {
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
+    },
+    getSupplementaryTypes() {
+      return SUPPLEMENTARY_TYPES
     },
   },
   watch: {
@@ -110,17 +112,13 @@ export default {
     save: {
       async handler() {
         try {
-          const models = [this.indigenousProgrammingModel]
-
-          models.forEach(async (applicationModel) => {
-            //don't hit dynamics is application is unchanged
-            if (!applicationModel.hasUpdated) {
-              return
+          for (let applicationModel of this.models) {
+            if (this.isModelSame(applicationModel)) {
+              continue
             } else if (isModelEmpty(applicationModel)) {
-              //user has removed all their selections for that application, so delete
               await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
               delete applicationModel.supplementaryApplicationId
-              return
+              continue
             }
 
             const payload = {
@@ -134,8 +132,10 @@ export default {
               const response = await ApplicationService.createSupplementaryApplication(payload)
               applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
             }
-            applicationModel.hasUpdated = false
-          })
+          }
+
+          this.clonedModels = cloneDeep(this.models)
+
           this.setSuccessAlert(`Application Saved`)
         } catch (error) {
           this.setFailureAlert('Failed to save supplementary applications')
@@ -187,28 +187,31 @@ export default {
         indigenousOtherDescription: null,
         supplementaryApplicationId: undefined,
         supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
-        hasUpdated: false,
       }
 
-      const supportModel = { test: 'test', supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT }
-      const transportModel = { test: '', supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT }
+      const supportModel = { test: 'support', supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT }
+      const transportModel = { test: 'transport', supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT }
 
-      this.transportModel = findAndUpdateModel(suppApplications, transportModel)
-      this.indigenousProgrammingModel = findAndUpdateModel(suppApplications, indigenousProgrammingModel)
-      this.supportModel = findAndUpdateModel(suppApplications, supportModel)
+      this.models = [
+        { ...findAndUpdateModel(suppApplications, transportModel) },
+        { ...findAndUpdateModel(suppApplications, indigenousProgrammingModel) },
+        { ...findAndUpdateModel(suppApplications, supportModel) },
+      ]
+
+      this.clonedModels = cloneDeep(this.models)
     },
-    updateIndigenousModel(updatedModel) {
-      this.updateModel(this.indigenousProgrammingModel, updatedModel)
+    updateModel(updatedModel) {
+      const index = this.models.indexOf(this.getModel(updatedModel.supplementaryType))
+      this.models[index] = updatedModel
     },
-    updateSupportModel(updatedModel) {
-      this.updateModel(this.supportModel, updatedModel)
+    isModelSame(applicationModel) {
+      return isEqual(
+        this.clonedModels?.find((el) => el.supplementaryApplicationId == applicationModel.supplementaryApplicationId),
+        applicationModel,
+      )
     },
-    updateTransportModel(updatedModel) {
-      this.updateModel(this.transportModel, updatedModel)
-    },
-    updateModel(modelToUpdate, updatedModel) {
-      modelToUpdate = updatedModel
-      modelToUpdate.hasUpdated = true
+    getModel(type) {
+      return this.models?.find((el) => el.supplementaryType == type)
     },
   },
 }

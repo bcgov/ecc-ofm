@@ -31,7 +31,6 @@
     </v-col>
   </v-row>
   <v-divider class="mt-2"></v-divider>
-
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       Ineligible expences include: Staffing enhencements for the purposes of reducing ratio.
@@ -43,18 +42,11 @@
   </v-row>
 
   <v-row v-for="(item, index) in CHECKBOX_LABELS" :key="index">
-    <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value" @input="updateModel(model)"></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
-    <v-textarea
-      v-model.trim="model.indigenousOtherDescription"
-      placeholder="Detailed description of other expenses"
-      counter
-      maxlength="1000"
-      variant="outlined"
-      :rules="rules.required"
-      @input="updateModel(model)"></v-textarea>
+    <v-textarea v-model.trim="model.indigenousOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
   </v-row>
   <!--Other should pop up with a memo box-->
 </template>
@@ -97,14 +89,18 @@ export default {
       return this.model.indigenousFundingModel.includes('8')
     },
   },
-  async created() {
-    this.model = this.indigenousProgrammingModel
-  },
-
-  methods: {
-    updateModel(value) {
-      this.$emit('update', value)
+  watch: {
+    model: {
+      handler(value) {
+        this.$emit('update', value)
+      },
+      deep: true,
     },
   },
+  async created() {
+    this.model = { ...this.indigenousProgrammingModel }
+  },
+
+  methods: {},
 }
 </script>
