@@ -1,10 +1,10 @@
-import { APPLICATION_STATUS_CODES, FACILITY_TYPES } from '@/utils/constants'
+import { isEmpty } from 'lodash'
+import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
-import { defineStore } from 'pinia'
-import { isEmpty } from 'lodash'
+import { APPLICATION_STATUS_CODES, FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
   return application?.primaryContactId && application?.expenseAuthorityId
