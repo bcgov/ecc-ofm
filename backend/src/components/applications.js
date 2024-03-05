@@ -1,7 +1,7 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { ApplicationMappings } = require('../util/mapping/Mappings')
+const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 
@@ -11,6 +11,20 @@ function mapApplicationObjectForFront(data) {
   const providerLastUpdated = new Date(application?.providerLastUpdated)
   application.latestActivity = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
   return application
+}
+
+function mapSupplementaryApplicationObjectForFront(data) {
+  const applications = []
+  data.forEach((suppApplication) => {
+    const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
+
+    if (mappedApplication.indigenousFundingModel) {
+      mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
+    }
+    applications.push(mappedApplication)
+  })
+
+  return applications
 }
 
 function buildGetApplicationsFilterQuery(query) {
@@ -80,9 +94,60 @@ async function createApplication(req, res) {
   }
 }
 
+async function getSupplementaryApplications(req, res) {
+  try {
+    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function createSupplementaryApplication(req, res) {
+  try {
+    let payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    if (payload.ofm_indigenous_expenses) {
+      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+    }
+
+    payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
+    const response = await postOperation('ofm_allowances', payload)
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function updateSupplementaryApplication(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    if (payload.ofm_indigenous_expenses) {
+      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+    }
+    const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function deleteSupplementaryApplication(req, res) {
+  try {
+    const response = await deleteOperationWithObjectId('ofm_allowances', req.params.applicationId)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getApplications,
   getApplication,
   updateApplication,
   createApplication,
+  getSupplementaryApplications,
+  createSupplementaryApplication,
+  updateSupplementaryApplication,
+  deleteSupplementaryApplication,
 }

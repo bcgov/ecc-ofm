@@ -258,6 +258,13 @@ const FundingAgreementMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
+//the three different supp applications share the same data structure, so irrelevant fields will just be null.
+const SupplementaryApplicationMappings = [
+  { back: 'ofm_allowance_type', front: 'supplementaryType' },
+  { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
+  { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
+  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
+]
 
 module.exports = {
   ApplicationMappings,
@@ -280,4 +287,5 @@ module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   RequestCategoryMappings,
+  SupplementaryApplicationMappings,
 }

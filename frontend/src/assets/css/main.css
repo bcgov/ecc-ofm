@@ -194,6 +194,10 @@ a.v-btn--active > .v-btn__overlay {
   opacity: 0;
 }
 
+.v-checkbox-btn > .v-label {
+  opacity: 1;
+}
+
 html body .v-theme--ofmLightTheme {
   --v-disabled-opacity: 0.8;
 }
