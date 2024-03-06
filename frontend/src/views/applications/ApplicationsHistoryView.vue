@@ -49,10 +49,12 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="mt-2">
+      <v-col cols="12" md="5" lg="5" xl="5" class="mt-2">
         <h3>Applications Summary</h3>
       </v-col>
-      <AppFacilityFilter :loading="loading" :defaultShowFilterInput="true" @facility-filter-changed="facilityFilterChanged" />
+      <v-col cols="12" md="7" lg="7" xl="7" class="d-flex align-end mb-3">
+        <FacilityFilter :loading="loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+      </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applications)">You have no applications on file</div>
@@ -96,12 +98,13 @@ import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import AppFacilityFilter from '@/components/ui/AppFacilityFilter.vue'
+import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 
-const cardInfoMessage = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
+
+const CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, AppFacilityFilter },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
   mixins: [alertMixin],
   data() {
     return {
@@ -177,9 +180,8 @@ export default {
       this.facilityNameFilter = newVal
     },
     getCardInfoMessage() {
-      return cardInfoMessage
+      return CARD_INFO_MESSAGE
     }
-
   },
 }
 </script>

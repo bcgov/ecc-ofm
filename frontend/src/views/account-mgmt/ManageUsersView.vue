@@ -6,8 +6,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <AppFacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
-      <v-col class="d-flex justify-end align-end">
+      <v-col cols="12" sm="9" md="6" lg="6" xl="6" class="pb-1 mt-2 ml-6">
+        <FacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
+      </v-col>
+      <v-col class="d-flex justify-end align-end pb-0">
         <AppButton variant="text" @click="toggleDialog({})" :disabled="loading">
           <v-icon left>mdi-plus</v-icon>
           Add new user
@@ -15,7 +17,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col class="pt-0 pb-0">
         <!-- Users Table -->
         <v-skeleton-loader :loading="loading" type="table-tbody">
           <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
@@ -96,10 +98,10 @@ import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
 import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
-import AppFacilityFilter from '@/components/ui/AppFacilityFilter.vue'
+import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 
 export default {
-  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, AppFacilityFilter },
+  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, FacilityFilter },
   mixins: [rolesMixin, alertMixin],
   data() {
     return {
