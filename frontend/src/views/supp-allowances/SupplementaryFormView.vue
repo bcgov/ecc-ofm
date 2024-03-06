@@ -2,7 +2,7 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
-      <v-col cols="12" align="right">
+      <v-col cols="12" class="d-flex flex-column align-end">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
