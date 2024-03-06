@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
@@ -20,8 +21,8 @@
               <span class="header-label">{{ panel.title }}</span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <IndigenousProgrammingAllowance :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" v-if="panel.id === 'indigenous'" />
-              <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" />
+              <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
+              <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
               <TransportationAllowance v-if="panel.id === 'transportation'" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -164,7 +165,14 @@ export default {
         supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
       }
 
-      this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }]
+      const supportModel = {
+        supportFundingModel: [],
+        supportOtherDescription: null,
+        supplementaryApplicationId: undefined,
+        supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
+      }
+
+      this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }, { ...this.findAndUpdateModel(suppApplications, supportModel) }]
 
       this.clonedModels = cloneDeep(this.models)
     },
@@ -190,9 +198,11 @@ export default {
 
       delete modelData.supplementaryApplicationId
       delete modelData.supplementaryType
+      delete modelData.indigenousOtherDescription
+      delete modelData.supportOtherDescription
 
-      return Object.values(modelData).some((value) => {
-        return value?.length === 0
+      return Object.values(modelData).every((value) => {
+        return isEmpty(value)
       })
     },
   },

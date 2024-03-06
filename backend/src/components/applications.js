@@ -20,6 +20,8 @@ function mapSupplementaryApplicationObjectForFront(data) {
 
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
+    } else if (mappedApplication.supportFundingModel) {
+      mappedApplication.supportFundingModel = mappedApplication.supportFundingModel.split(',')
     }
     applications.push(mappedApplication)
   })
@@ -106,9 +108,11 @@ async function getSupplementaryApplications(req, res) {
 
 async function createSupplementaryApplication(req, res) {
   try {
-    let payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+    } else if (payload.ofm_needs_expenses) {
+      payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
     }
 
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
@@ -124,6 +128,8 @@ async function updateSupplementaryApplication(req, res) {
     const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+    } else if (payload.ofm_needs_expenses) {
+      payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
     }
     const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
