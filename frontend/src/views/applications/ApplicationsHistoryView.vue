@@ -27,10 +27,10 @@
             <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>OFM Application
           </v-card-title>
           <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            {{ getCardInfoMessage() }}
+            {{ cardInfoMessage }}
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
-            <AppButton id="supp-allowances-button" size="large" width="250px" :loading="loading" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
+            <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -40,10 +40,10 @@
             <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>Supplementary Allowance Application
           </v-card-title>
           <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            {{ getCardInfoMessage() }}
+            {{ cardInfoMessage }}
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
-            <AppButton id="supp-allowances-button" size="large" width="250px" :loading="loading" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
+            <AppButton id="supp-allowances-button" size="large" width="250px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -100,9 +100,6 @@ import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 
-
-const CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
-
 export default {
   components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
   mixins: [alertMixin],
@@ -123,6 +120,7 @@ export default {
       showCancelDialog: false,
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
+      cardInfoMessage: 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
     }
   },
   computed: {
@@ -179,9 +177,6 @@ export default {
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
     },
-    getCardInfoMessage() {
-      return CARD_INFO_MESSAGE
-    }
   },
 }
 </script>
