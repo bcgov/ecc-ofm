@@ -120,7 +120,6 @@ export default {
       showCancelDialog: false,
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
-      CARD_INFO_MESSAGE: undefined
     }
   },
   computed: {
