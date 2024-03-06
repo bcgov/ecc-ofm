@@ -27,7 +27,7 @@
             <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>OFM Application
           </v-card-title>
           <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            {{ cardInfoMessage }}
+            {{ CARD_INFO_MESSAGE }}
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
             <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
@@ -40,7 +40,7 @@
             <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>Supplementary Allowance Application
           </v-card-title>
           <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            {{ cardInfoMessage }}
+            {{ CARD_INFO_MESSAGE }}
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
             <AppButton id="supp-allowances-button" size="large" width="250px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
@@ -120,7 +120,7 @@ export default {
       showCancelDialog: false,
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
-      cardInfoMessage: 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
+      CARD_INFO_MESSAGE: undefined
     }
   },
   computed: {
@@ -137,6 +137,7 @@ export default {
   },
   async created() {
     try {
+      this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
       this.loading = true
       this.applications = await ApplicationService.getApplications()
       await Promise.all(
