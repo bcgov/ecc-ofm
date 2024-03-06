@@ -19,7 +19,6 @@
           <AppLabel>Inclusion Policy Requirement:</AppLabel>
           Childcare providers participating in the OFM are required to have an Inclusion Policy for their program.
           <strong>Providers participating in the OFM Test must have, or be working on, an Inclusion Policy to receive this funding.</strong>
-          <a href="#">Learn more about Inclusion Policy</a>
         </li>
       </ul>
     </v-col>
