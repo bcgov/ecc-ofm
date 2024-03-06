@@ -48,7 +48,6 @@
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
     <v-textarea v-model.trim="model.indigenousOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
   </v-row>
-  <!--Other should pop up with a memo box-->
 </template>
 
 <script>
