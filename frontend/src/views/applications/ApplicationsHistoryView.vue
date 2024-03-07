@@ -16,7 +16,7 @@
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
         <v-alert type="info" dense text>
-          If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.
+          If there is no active OFM application, you won't be able to submit a Supplemental Application.
         </v-alert>
       </v-col>
     </v-row>
@@ -27,7 +27,7 @@
             <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>OFM Application
           </v-card-title>
           <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            {{ CARD_INFO_MESSAGE }}
+            Before starting an application, verify your organization and facility details in Account Management.
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
             <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
@@ -40,10 +40,10 @@
             <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>Supplementary Allowance Application
           </v-card-title>
           <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            {{ CARD_INFO_MESSAGE }}
+            To apply for Supplementary Funding, you must have an active OFM application for the facility.
           </v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
-            <AppButton id="supp-allowances-button" size="large" width="250px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add SUP Application</AppButton>
+            <AppButton id="supp-allowances-button" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add Supplementary Application</AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -84,6 +84,11 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
+    <v-row>
+      <v-col class="d-flex flex-column align-center pt-4 pb-0">
+        Columns for merged tables: Application ID, Application Type, Facility, Date of first submission, Latest activity, Status, Actions, FA# with link
+      </v-col>
+    </v-row>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
@@ -136,7 +141,6 @@ export default {
   },
   async created() {
     try {
-      this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
       this.loading = true
       this.applications = await ApplicationService.getApplications()
       await Promise.all(

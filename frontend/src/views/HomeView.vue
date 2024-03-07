@@ -33,7 +33,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="View Applications" @click="$router.push({ name: 'applications-history' })">
+        <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="Applications" @click="$router.push({ name: 'applications-history' })">
           <v-card-text>
             Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. Duis aliquet non ipsum a feugiat. Mauris felis mi, feugiat eu placerat non,
             tempor a velit.
