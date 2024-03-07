@@ -14,6 +14,7 @@
       </v-col>
     </v-row>
     <div>
+      {{ getTransportModels() }}
       <v-skeleton-loader :loading="loading" type="table-tbody">
         <v-expansion-panels v-model="panel" multiple>
           <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
@@ -23,7 +24,7 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
               <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
-              <TransportationAllowance v-if="panel.id === 'transportation'" />
+              <TransportationAllowance v-if="panel.id === 'transportation'" :transportModels="getTransportModels()" @update="updateModel" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -41,6 +42,7 @@ import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
+import { uuid } from 'vue-uuid'
 
 export default {
   name: 'SupplementaryFormView',
@@ -172,8 +174,25 @@ export default {
         supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
       }
 
+      const transportModel = {
+        supportFundingModel: [],
+        supportOtherDescription: null,
+        supplementaryApplicationId: undefined,
+        supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
+        id: uuid.v1(),
+      }
+
       this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }, { ...this.findAndUpdateModel(suppApplications, supportModel) }]
 
+      const transportApplications = suppApplications.filter((el) => el.supplementaryType == SUPPLEMENTARY_TYPES.TRANSPORT)
+
+      if (transportApplications.length > 0) {
+        this.models = [...this.models, ...transportApplications]
+      } else {
+        this.models.push({ ...this.findAndUpdateModel(suppApplications, transportModel) })
+      }
+
+      console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
     },
     updateModel(updatedModel) {
@@ -188,6 +207,9 @@ export default {
     },
     getModel(type) {
       return this.models?.find((el) => el.supplementaryType == type)
+    },
+    getTransportModels() {
+      return this.models?.filter((el) => el.supplementaryType == SUPPLEMENTARY_TYPES.TRANSPORT)
     },
     findAndUpdateModel(suppApplications, modelToUpdate) {
       const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
