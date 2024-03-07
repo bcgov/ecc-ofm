@@ -53,7 +53,7 @@
 
   {{ models }}
 
-  <div v-for="model in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id">
+  <div v-for="model in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
     <v-row no-gutters class="mt-2 pt-2">
       <v-col cols="12" lg="7" class="px-4">
         <v-row no-gutters>
@@ -61,41 +61,42 @@
             <p>VIN:</p>
           </v-col>
           <v-col cols="6" xl="7" align="center" class="px-2">
-            <v-text-field v-model="staffingInfantECEducatorPartTime" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+            <v-text-field v-model="model.VIN" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
           </v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="7" class="px-4">
         <v-row no-gutters>
           <v-col cols="6" xl="5" class="pt-2">
-            <p>Mortgage</p>
+            <p>Vehicle usage in KM/month at time of Application:</p>
           </v-col>
           <v-col cols="6" xl="7" align="center" class="px-2">
-            <AppNumberInput v-model.lazy="mortgageCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            <v-text-field v-model="model.estimatedMileage" type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
           </v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="7" class="px-4">
         <v-row no-gutters>
           <v-col cols="6" xl="5" class="pt-2">
-            <p>Property/Municipal Tax</p>
+            <p>Estimated mileage of the year:</p>
           </v-col>
           <v-col cols="6" xl="7" align="center" class="px-2">
-            <AppNumberInput v-model.lazy="propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            <v-text-field v-model="model.odometer" type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
           </v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="7" class="px-4">
         <v-row no-gutters>
           <v-col cols="6" xl="5" class="pt-2">
-            <p>Strata Fees</p>
+            <p>Vehicle financing/Lease cost per month: (If any)</p>
           </v-col>
           <v-col cols="6" xl="7" align="center" class="px-2">
-            <AppNumberInput v-model.lazy="strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+            <AppNumberInput v-model.lazy="model.monthlyLease" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
+    <v-divider class="mt-2"></v-divider>
   </div>
 </template>
 
@@ -126,15 +127,21 @@ export default {
   },
   computed: {},
   watch: {
-    model: {
-      handler(value) {
-        this.$emit('update', value)
-      },
-      deep: true,
-    },
+    // models: {
+    //   handler(value) {
+    //     this.$emit('update', value)
+    //   },
+    //   deep: true,
+    // },
   },
   async created() {
     this.models = { ...this.transportModels }
+  },
+  methods: {
+    update(model) {
+      this.$emit('update', model)
+      //console.log(model)
+    },
   },
 }
 </script>

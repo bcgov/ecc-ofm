@@ -14,7 +14,6 @@
       </v-col>
     </v-row>
     <div>
-      {{ getTransportModels() }}
       <v-skeleton-loader :loading="loading" type="table-tbody">
         <v-expansion-panels v-model="panel" multiple>
           <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
@@ -165,6 +164,7 @@ export default {
         indigenousOtherDescription: null,
         supplementaryApplicationId: undefined,
         supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
+        id: uuid.v1(),
       }
 
       const supportModel = {
@@ -172,6 +172,7 @@ export default {
         supportOtherDescription: null,
         supplementaryApplicationId: undefined,
         supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
+        id: uuid.v1(),
       }
 
       const transportModel = {
@@ -196,7 +197,12 @@ export default {
       this.clonedModels = cloneDeep(this.models)
     },
     updateModel(updatedModel) {
-      const index = this.models.indexOf(this.getModel(updatedModel.supplementaryType))
+      console.log(updatedModel.supplementaryApplicationId)
+      let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
+
+      if (index === -1) {
+        index = this.models.indexOf(this.models.find((el) => el.id == updatedModel.id))
+      }
       this.models[index] = updatedModel
     },
     isModelSame(applicationModel) {
