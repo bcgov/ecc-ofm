@@ -84,11 +84,6 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <v-row>
-      <v-col class="d-flex flex-column align-center pt-4 pb-0">
-        Columns for merged tables: Application ID, Application Type, Facility, Date of first submission, Latest activity, Status, Actions, FA# with link
-      </v-col>
-    </v-row>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
