@@ -23,7 +23,7 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
               <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
-              <TransportationAllowance v-if="panel.id === 'transportation'" :transportModels="getTransportModels()" @update="updateModel" />
+              <TransportationAllowance v-if="panel.id === 'transportation'" :transportModels="getTransportModels()" @update="updateModel" @addModel="addBlankTransportModel()" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -42,6 +42,7 @@ import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
+import DocumentService from '@/services/documentService'
 
 export default {
   name: 'SupplementaryFormView',
@@ -108,6 +109,7 @@ export default {
               const response = await ApplicationService.createSupplementaryApplication(payload)
               applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
             }
+            console.log(applicationModel.documents)
           }
 
           this.clonedModels = cloneDeep(this.models)
@@ -142,9 +144,9 @@ export default {
       },
     ]
     this.panel = this.allPanelIDs
+
     await this.loadData()
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
-    this.loading = false
   },
   methods: {
     isEmpty,
@@ -158,7 +160,7 @@ export default {
         this.setFailureAlert('Failed to load supplementary applications')
       }
     },
-    setUpDefaultNewRequestModel(suppApplications) {
+    async setUpDefaultNewRequestModel(suppApplications) {
       const indigenousProgrammingModel = {
         indigenousFundingModel: [],
         indigenousOtherDescription: null,
@@ -175,29 +177,25 @@ export default {
         id: uuid.v1(),
       }
 
-      const transportModel = {
-        supportFundingModel: [],
-        supportOtherDescription: null,
-        supplementaryApplicationId: undefined,
-        supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
-        id: uuid.v1(),
-      }
-
       this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }, { ...this.findAndUpdateModel(suppApplications, supportModel) }]
 
       const transportApplications = suppApplications.filter((el) => el.supplementaryType == SUPPLEMENTARY_TYPES.TRANSPORT)
 
       if (transportApplications.length > 0) {
+        for (const application of transportApplications) {
+          application.documents = await DocumentService.getDocuments(application.supplementaryApplicationId)
+        }
         this.models = [...this.models, ...transportApplications]
       } else {
-        this.models.push({ ...this.findAndUpdateModel(suppApplications, transportModel) })
+        this.addBlankTransportModel()
       }
 
       console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
+      this.loading = false
     },
     updateModel(updatedModel) {
-      console.log(updatedModel.supplementaryApplicationId)
+      console.log(updatedModel)
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
 
       if (index === -1) {
@@ -232,6 +230,20 @@ export default {
       return Object.values(modelData).every((value) => {
         return isEmpty(value)
       })
+    },
+    addBlankTransportModel() {
+      console.log('event')
+      const transportModel = {
+        supportFundingModel: [],
+        supportOtherDescription: null,
+        supplementaryApplicationId: undefined,
+        supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
+        documents: [],
+        id: uuid.v1(),
+      }
+
+      this.models.push(transportModel)
+      console.log(this.models)
     },
   },
 }

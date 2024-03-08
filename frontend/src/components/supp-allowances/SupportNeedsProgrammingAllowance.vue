@@ -25,7 +25,7 @@
   </v-row>
   <v-divider class="mt-2"></v-divider>
   <v-row no-gutters class="mr-2 my-2">
-    <v-col cols="12">Please describe how you intend to use this funding</v-col>
+    <v-col cols="12">Please describe how you intend to use this funding:</v-col>
   </v-row>
 
   <v-row v-for="item in CHECKBOX_LABELS" :key="item.value">
