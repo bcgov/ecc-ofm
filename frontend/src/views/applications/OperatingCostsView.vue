@@ -35,11 +35,11 @@
         <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
         <AppDocumentUpload
           id="application-document-upload"
+          v-model="documentsToUpload"
           entityName="ofm_applications"
           :loading="processing"
           :readonly="readonly"
           :uploadedDocuments="uploadedDocuments"
-          @updateDocuments="updateDocumentsToUpload"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
       </div>
     </div>
@@ -197,10 +197,6 @@ export default {
         this.processing = false
         this.$emit('process', false)
       }
-    },
-
-    updateDocumentsToUpload({ documents, areValidFilesUploaded }) {
-      this.documentsToUpload = documents?.filter((document) => document.isValidFile && document.file)
     },
 
     async deleteUploadedDocument(documentId) {

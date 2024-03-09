@@ -61,7 +61,7 @@ export default {
       default: () => [],
     },
   },
-  emits: ['updateDocuments', 'deleteUploadedDocument'],
+  emits: ['update:modelValue', 'deleteUploadedDocument'],
   data() {
     return {
       documents: [],
@@ -80,8 +80,7 @@ export default {
   watch: {
     documents: {
       handler() {
-        const areValidFilesUploaded = this.documents.every((file) => file.isValidFile)
-        this.$emit('updateDocuments', { documents: this.documents, areValidFilesUploaded: areValidFilesUploaded })
+        this.$emit('update:modelValue', this.documents)
       },
       deep: true,
     },
