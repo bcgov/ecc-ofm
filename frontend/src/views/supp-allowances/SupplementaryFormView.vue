@@ -23,7 +23,12 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
               <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
-              <TransportationAllowance v-if="panel.id === 'transportation'" :transportModels="getTransportModels()" @update="updateModel" @addModel="addBlankTransportModel()" />
+              <TransportationAllowance
+                v-if="panel.id === 'transportation'"
+                :transportModels="getTransportModels()"
+                @update="updateModel"
+                @addModel="addBlankTransportModel()"
+                @deleteModel="deleteTransportModel" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -144,9 +149,8 @@ export default {
       },
     ]
     this.panel = this.allPanelIDs
-
-    await this.loadData()
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
+    await this.loadData()
   },
   methods: {
     isEmpty,
@@ -190,12 +194,10 @@ export default {
         this.addBlankTransportModel()
       }
 
-      console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
     },
     updateModel(updatedModel) {
-      console.log(updatedModel)
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
 
       if (index === -1) {
@@ -226,13 +228,13 @@ export default {
       delete modelData.supplementaryType
       delete modelData.indigenousOtherDescription
       delete modelData.supportOtherDescription
+      delete modelData.id
 
       return Object.values(modelData).every((value) => {
         return isEmpty(value)
       })
     },
     addBlankTransportModel() {
-      console.log('event')
       const transportModel = {
         supportFundingModel: [],
         supportOtherDescription: null,
@@ -244,6 +246,18 @@ export default {
 
       this.models.push(transportModel)
       console.log(this.models)
+    },
+    async deleteTransportModel(model) {
+      let index = this.models.indexOf(this.models.find((el) => model.supplementaryApplicationId && el.supplementaryApplicationId == model.supplementaryApplicationId))
+
+      //application exists in Dynamics, so we need to delete it first
+      if (index != -1) {
+        await ApplicationService.deleteSupplementaryApplication(model.supplementaryApplicationId)
+      } else {
+        index = this.models.indexOf(this.models.find((el) => el.id == model.id))
+      }
+      //remove it from display
+      this.models.splice(index, 1)
     },
   },
 }

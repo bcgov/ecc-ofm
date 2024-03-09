@@ -56,7 +56,7 @@
         </div>
       </v-col>
       <v-col>
-        <v-icon small @click="deleteFile(item.id)">mdi-delete</v-icon>
+        <v-icon small @click="deleteModel(model)">mdi-delete</v-icon>
       </v-col>
     </v-row>
     <v-divider class="my-3"></v-divider>
@@ -68,7 +68,7 @@
               <p>VIN:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.VIN" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -78,7 +78,7 @@
               <p>Vehicle usage in KM/month at time of Application:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.estimatedMileage" type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -88,7 +88,7 @@
               <p>Estimated mileage of the year:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.odometer" type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.odometer" required type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -98,7 +98,7 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" required :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -110,15 +110,10 @@
             <li>Picture of your odometer at the time of this application.</li>
             <li>Your lease / finance payment schedule</li>
           </ul>
-          <AppDocumentUpload
-            id="inclusion-policy-upload"
-            ref="documentUpload"
-            entityName="transport-supporting-documents"
-            :uploadedDocuments="model.documents"
-            @updateDocuments="updateDocuments(model)" />
+          <AppDocumentUpload id="inclusion-policy-upload" ref="documentUpload" entityName="transport-supporting-documents" :uploadedDocuments="model.documents" @updateDocuments="updateDocuments" />
           <!-- <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
-            Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
-          </v-alert> -->
+              Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
+            </v-alert> -->
         </div>
       </v-col>
     </v-row>
@@ -149,7 +144,7 @@ export default {
       },
     },
   },
-  emits: ['update', 'addModel'],
+  emits: ['update', 'addModel', 'deleteModel'],
   data() {
     return {
       panel: [],
@@ -177,9 +172,19 @@ export default {
         this.models = { ...this.transportModels }
       })
     },
-    updateDocuments({ documents, areValidFilesUploaded }, model) {
+    deleteModel(model) {
+      console.log('click')
+      this.$emit('deleteModel', model)
+      //wait for the DOM updates to complete
+      this.$nextTick(() => {
+        //update models to re-render with the new blank application
+        this.models = { ...this.transportModels }
+      })
+    },
+    updateDocuments({ documents, areValidFilesUploaded }) {
       console.log(documents)
-      console.log(model)
+      this.models.newDocuments = documents
+      console.log(this.models)
       // this.uploadedDocuments = documents
       // this.areValidFilesUploaded = areValidFilesUploaded
     },
