@@ -172,6 +172,7 @@ export default {
         let reloadApplication = false
         this.$emit('process', true)
         this.processing = true
+        this.documentsToUpload = this.documentsToUpload?.filter((document) => document.isValidFile && document.file)
         if (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.documentsToDelete))) {
           await this.processDocuments()
           reloadApplication = true
