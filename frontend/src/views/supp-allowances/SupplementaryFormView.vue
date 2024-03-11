@@ -114,7 +114,6 @@ export default {
               const response = await ApplicationService.createSupplementaryApplication(payload)
               applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
             }
-            console.log(applicationModel.documents)
           }
 
           this.clonedModels = cloneDeep(this.models)
@@ -207,7 +206,12 @@ export default {
     },
     isModelSame(applicationModel) {
       return isEqual(
-        this.clonedModels?.find((el) => el.supplementaryApplicationId == applicationModel.supplementaryApplicationId),
+        this.clonedModels?.find((el) => {
+          if (applicationModel.supplementaryApplicationId) {
+            return el.supplementaryApplicationId == applicationModel.supplementaryApplicationId
+          }
+          return el.id == applicationModel.id
+        }),
         applicationModel,
       )
     },
@@ -245,7 +249,6 @@ export default {
       }
 
       this.models.push(transportModel)
-      console.log(this.models)
     },
     async deleteTransportModel(model) {
       let index = this.models.indexOf(this.models.find((el) => model.supplementaryApplicationId && el.supplementaryApplicationId == model.supplementaryApplicationId))
