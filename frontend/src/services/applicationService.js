@@ -4,6 +4,7 @@ import ApiService from '@/common/apiService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
 import { ApiRoutes } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
 
 function sortApplications(applications) {
   applications?.sort((app1, app2) => {
@@ -80,5 +81,68 @@ export default {
       console.log(`Failed to create a new application - ${error}`)
       throw error
     }
+  },
+
+  async getSupplementaryApplications(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async createSupplementaryApplication(payload) {
+    try {
+      const response = await ApiService.apiAxios.post(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/', payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to create a new application - ${error}`)
+      throw error
+    }
+  },
+
+  async updateSupplementaryApplication(applicationId, payload) {
+    try {
+      if (!applicationId || isEmpty(payload)) return
+      const response = await ApiService.apiAxios.patch(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId, payload)
+      return response
+    } catch (error) {
+      console.log(`Failed to update the application - ${error}`)
+      throw error
+    }
+  },
+
+  async deleteSupplementaryApplication(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.delete(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by application id - ${error}`)
+      throw error
+    }
+  },
+
+  isValidApplication(application) {
+    return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreements)
+  },
+
+  checkApplicationStatus(application) {
+    const isActive = application?.stateCode === CRM_STATE_CODES.ACTIVE
+    const hasCorrectStatus = [APPLICATION_STATUS_CODES.SUBMITTED, APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.APPROVED, APPLICATION_STATUS_CODES.AWAITING_PROVIDER].includes(
+      application?.statusCode,
+    )
+    return isActive && hasCorrectStatus
+  },
+
+  checkFundingAgreement(fundingAgreements) {
+    return fundingAgreements?.some((funding) => {
+      const isActive = funding?.stateCode === CRM_STATE_CODES.ACTIVE
+      const isUnexpired = new Date() < new Date(funding?.endDate)
+      return isActive && isUnexpired
+    })
   },
 }

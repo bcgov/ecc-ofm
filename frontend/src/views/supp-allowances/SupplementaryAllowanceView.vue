@@ -63,7 +63,6 @@ import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty } from 'lodash'
-import { APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 export default {
@@ -135,7 +134,7 @@ export default {
         // navigate from the Application History page
         else {
           this.applications = await ApplicationService.getApplications()
-          this.applications = this.applications?.filter((application) => this.checkApplicationStatus(application))
+          this.applications = this.applications?.filter((application) => ApplicationService.checkApplicationStatus(application))
           await Promise.all(
             this.applications?.map(async (application) => {
               application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
@@ -151,27 +150,7 @@ export default {
     },
 
     getValidApplication(facilityId) {
-      return this.applications?.find((application) => application.facilityId === facilityId && this.isValidApplication(application))
-    },
-
-    isValidApplication(application) {
-      return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreements)
-    },
-
-    checkApplicationStatus(application) {
-      const isActive = application?.stateCode === CRM_STATE_CODES.ACTIVE
-      const hasCorrectStatus = [APPLICATION_STATUS_CODES.SUBMITTED, APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.APPROVED, APPLICATION_STATUS_CODES.AWAITING_PROVIDER].includes(
-        application?.statusCode,
-      )
-      return isActive && hasCorrectStatus
-    },
-
-    checkFundingAgreement(fundingAgreements) {
-      return fundingAgreements?.some((funding) => {
-        const isActive = funding?.stateCode === CRM_STATE_CODES.ACTIVE
-        const isUnexpired = new Date() < new Date(funding?.endDate)
-        return isActive && isUnexpired
-      })
+      return this.applications?.find((application) => application.facilityId === facilityId && ApplicationService.isValidApplication(application))
     },
 
     process(value) {
@@ -199,10 +178,12 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .min-height-screen {
   min-height: 55vh;
 }
+
 .application-number {
   font-size: 1.3em;
   font-weight: 700;

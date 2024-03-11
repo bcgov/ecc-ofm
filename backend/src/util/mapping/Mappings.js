@@ -188,6 +188,7 @@ const OrganizationMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_ownership', front: 'ownership' },
+  { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
 ]
 
 const FacilityMappings = [
@@ -272,6 +273,15 @@ const FundingAgreementMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
+//the three different supp applications share the same data structure, so irrelevant fields will just be null.
+const SupplementaryApplicationMappings = [
+  { back: 'ofm_allowance_type', front: 'supplementaryType' },
+  { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
+  { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
+  { back: 'ofm_needs_description', front: 'supportOtherDescription' },
+  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
+  { back: 'ofm_needs_expenses', front: 'supportFundingModel' },
+]
 
 const SurveySectionMappings = [
   { back: 'ofm_sectionid', front: 'sectionId' },
@@ -346,6 +356,7 @@ module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   RequestCategoryMappings,
+  SupplementaryApplicationMappings,
   SurveySectionMappings,
   SurveyQuestionMappings,
   SurveyQuestionBusinessRulesMappings,

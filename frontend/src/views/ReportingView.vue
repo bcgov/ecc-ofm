@@ -1,5 +1,6 @@
 <template>
-  <v-container fluid>
+  <OrganizationHeader />
+  <v-container fluid v-bind="$attrs">
     <h1 class="mb-6">Reporting</h1>
 
     <v-card class="px-4 pt-4 pb-2" variant="outlined">
@@ -149,6 +150,7 @@
   </v-container>
 </template>
 <script>
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -160,7 +162,7 @@ import { useAppStore } from '@/stores/app'
 
 export default {
   name: 'ReportingView',
-  components: { AppLabel, AppButton, AppBackButton },
+  components: { AppLabel, AppButton, AppBackButton, OrganizationHeader },
   mixins: [alertMixin],
   data() {
     return {

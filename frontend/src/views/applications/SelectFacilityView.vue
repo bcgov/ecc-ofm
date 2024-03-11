@@ -88,7 +88,7 @@ export default {
     },
     cancel: {
       handler() {
-        this.$router.push({ name: 'home' })
+        this.$router.push({ name: 'applications-history' })
       },
     },
     next: {
@@ -137,6 +137,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 :deep(.v-label) {
   opacity: 1;

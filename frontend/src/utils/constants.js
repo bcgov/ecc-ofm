@@ -20,6 +20,7 @@ export const ApiRoutes = Object.freeze({
   NOTIFICATIONS: baseRoot + '/notifications',
   DOCUMENTS: baseRoot + '/documents',
   APPLICATIONS: baseRoot + '/applications',
+  SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
   ORGANIZATIONS: baseRoot + '/organizations',
   FACILITIES: baseRoot + '/facilities',
   ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
@@ -66,6 +67,12 @@ export const FACILITY_TYPES = Object.freeze({
   OWNED_WITH_MORTGAGE: 2,
   OWNED_WITHOUT_MORTGAGE: 3,
   PROVIDED_FREE_OF_CHARGE: 4,
+})
+
+export const SUPPLEMENTARY_TYPES = Object.freeze({
+  SUPPORT: 1,
+  INDIGENOUS: 2,
+  TRANSPORT: 3,
 })
 
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({

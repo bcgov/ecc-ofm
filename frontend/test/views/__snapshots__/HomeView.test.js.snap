@@ -1,290 +1,544 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`HomeView > BceID User 1`] = `
-"<div>
-  <div class=\\"v-container v-locale--is-ltr\\">
-    <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\">
+"<div class=\\"v-container v-container--fluid v-locale--is-ltr ma-0 pa-0\\">
+  <div class=\\"v-col v-col-12 pa-0\\" align=\\"center\\">
+    <div class=\\"v-responsive v-img v-img--booting align-end\\">
+      <div class=\\"v-responsive__sizer\\"></div>
+      <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/home-header-img.jpg\\" style=\\"display: none;\\"></transition-stub>
+      <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+        <!---->
+      </transition-stub>
       <!---->
-      <div class=\\"v-card__loader\\">
-        <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
-          <!---->
-          <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
-          <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-            <div class=\\"v-progress-linear__indeterminate\\">
-              <div class=\\"v-progress-linear__indeterminate long\\"></div>
-              <div class=\\"v-progress-linear__indeterminate short\\"></div>
-            </div>
-          </transition-stub>
-          <!---->
-        </div>
+      <!---->
+      <!---->
+      <div class=\\"v-responsive__content\\">
+        <div class=\\"v-col hidden-sm-and-down\\" style=\\"background-color: rgb(28, 115, 158, 0.85);\\" align=\\"center\\"><span class=\\"text-h4 text-white font-weight-bold\\">Early Childhood Care - Operating Funding Model</span></div>
       </div>
-      <!---->
-      <!---->
-      <div class=\\"v-card-title\\">Provider User</div>
-      <div class=\\"v-card-text\\">
-        <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Business BCeID:</div>
-              <div class=\\"v-list-item-subtitle\\">ofmqa01</div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">GUID:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-          <!--v-if-->
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Name:</div>
-              <div class=\\"v-list-item-subtitle\\"> </div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Email:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-        </div>
-      </div>
-      <!---->
-      <!----><span class=\\"v-card__underlay\\"></span>
     </div>
   </div>
-  <div class=\\"v-container v-locale--is-ltr\\">
-    <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\">
+</div>
+<div data-v-6e24757d=\\"\\" class=\\"v-container v-container--fluid v-locale--is-ltr py-2\\">
+  <div data-v-6e24757d=\\"\\" class=\\"v-row align-end justify-space-between\\">
+    <div data-v-6e24757d=\\"\\" class=\\"v-col-md-6 v-col-12 header-org\\"></div>
+    <div data-v-6e24757d=\\"\\" class=\\"v-col-md-6 v-col-12 header-facility justify-md-end justify-sm-start\\"> Facility: <button data-v-6e24757d=\\"\\" type=\\"button\\" class=\\"v-btn v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text\\" id=\\"changeFacility\\" targetref=\\"[object Object]\\" aria-haspopup=\\"menu\\" aria-expanded=\\"false\\" aria-owns=\\"facilityMenu\\"><span class=\\"v-btn__overlay\\"></span><span class=\\"v-btn__underlay\\"></span>
+        <!----><span class=\\"v-btn__content\\" data-no-activator=\\"\\">(change)</span>
+        <!---->
+        <!---->
+      </button>
       <!---->
-      <div class=\\"v-card__loader\\">
-        <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
-          <!---->
-          <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
-          <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-            <div class=\\"v-progress-linear__indeterminate\\">
-              <div class=\\"v-progress-linear__indeterminate long\\"></div>
-              <div class=\\"v-progress-linear__indeterminate short\\"></div>
-            </div>
-          </transition-stub>
-          <!---->
-        </div>
-      </div>
-      <!---->
-      <!---->
-      <div class=\\"v-card-title\\">Roles</div>
-      <div class=\\"v-card-text\\">
-        <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-subtitle\\"> (WIP: will convert #s to descriptions)</div>
-            </div>
-            <!---->
-          </div>
-        </div>
-      </div>
-      <!---->
-      <!----><span class=\\"v-card__underlay\\"></span>
     </div>
   </div>
-  <div class=\\"v-container v-locale--is-ltr\\">
-    <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\">
-      <!---->
-      <div class=\\"v-card__loader\\">
-        <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
-          <!---->
-          <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
-          <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-            <div class=\\"v-progress-linear__indeterminate\\">
-              <div class=\\"v-progress-linear__indeterminate long\\"></div>
-              <div class=\\"v-progress-linear__indeterminate short\\"></div>
-            </div>
-          </transition-stub>
-          <!---->
-        </div>
-      </div>
-      <!---->
-      <!---->
-      <div class=\\"v-card-title\\">Organization</div>
-      <div class=\\"v-card-text\\">
-        <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">ID:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Account Number:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Name:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Type:</div>
-              <div class=\\"v-list-item-subtitle\\"> (WIP: will convert # to description)</div>
-            </div>
-            <!---->
-          </div>
-        </div>
-      </div>
-      <!---->
-      <!----><span class=\\"v-card__underlay\\"></span>
-    </div>
+</div>
+<div class=\\"v-container v-locale--is-ltr\\">
+  <div class=\\"v-row\\">
+    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
   </div>
-  <div class=\\"v-container v-locale--is-ltr\\">
-    <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\">
-      <!---->
-      <div class=\\"v-card__loader\\">
-        <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
-          <!---->
-          <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
-          <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-            <div class=\\"v-progress-linear__indeterminate\\">
-              <div class=\\"v-progress-linear__indeterminate long\\"></div>
-              <div class=\\"v-progress-linear__indeterminate short\\"></div>
+  <div class=\\"v-row\\">
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-file-chart-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
             </div>
-          </transition-stub>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Reporting</div>
+            <!---->
+            <!---->
+          </div>
           <!---->
         </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
       </div>
-      <!---->
-      <!---->
-      <div class=\\"v-card-title\\">Current Facility</div>
-      <div class=\\"v-card-text\\"> Facility Name: <br><span style=\\"opacity: 0.6;\\"></span></div>
-      <!---->
-      <!----><span class=\\"v-card__underlay\\"></span>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-currency-usd mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Funding</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-folder-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Documents</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc. Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-file-document-multiple-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">View Applications</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. Duis aliquet non ipsum a feugiat. Mauris felis mi, feugiat eu placerat non, tempor a velit. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-file-document-edit-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">New Application</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex, sed consectetur leo odio in magna. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-help mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Resources</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex, sed consectetur leo odio in magna. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-cog-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Account Management</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
     </div>
   </div>
 </div>"
 `;
 
 exports[`HomeView > IDIR User 1`] = `
-"<div>
-  <div class=\\"v-container v-locale--is-ltr\\">
-    <div class=\\"v-card v-theme--light v-card--density-default v-card--variant-elevated\\">
+"<div class=\\"v-container v-container--fluid v-locale--is-ltr ma-0 pa-0\\">
+  <div class=\\"v-col v-col-12 pa-0\\" align=\\"center\\">
+    <div class=\\"v-responsive v-img v-img--booting align-end\\">
+      <div class=\\"v-responsive__sizer\\"></div>
+      <transition-stub name=\\"fade-transition\\" appear=\\"true\\" persisted=\\"false\\" css=\\"true\\"><img class=\\"v-img__img v-img__img--contain\\" src=\\"/src/assets/images/home-header-img.jpg\\" style=\\"display: none;\\"></transition-stub>
+      <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+        <!---->
+      </transition-stub>
       <!---->
-      <div class=\\"v-card__loader\\">
-        <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
-          <!---->
-          <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
-          <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
-            <div class=\\"v-progress-linear__indeterminate\\">
-              <div class=\\"v-progress-linear__indeterminate long\\"></div>
-              <div class=\\"v-progress-linear__indeterminate short\\"></div>
-            </div>
-          </transition-stub>
-          <!---->
-        </div>
+      <!---->
+      <!---->
+      <div class=\\"v-responsive__content\\">
+        <div class=\\"v-col hidden-sm-and-down\\" style=\\"background-color: rgb(28, 115, 158, 0.85);\\" align=\\"center\\"><span class=\\"text-h4 text-white font-weight-bold\\">Early Childhood Care - Operating Funding Model</span></div>
       </div>
-      <!---->
-      <!---->
-      <div class=\\"v-card-title\\">Ministry User</div>
-      <div class=\\"v-card-text\\">
-        <div class=\\"v-list v-theme--light v-list--density-default v-list--one-line\\" tabindex=\\"0\\" role=\\"listbox\\">
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">IDIR:</div>
-              <div class=\\"v-list-item-subtitle\\">idiruser</div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">GUID:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-          <!--v-if-->
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Name:</div>
-              <div class=\\"v-list-item-subtitle\\"> </div>
-            </div>
-            <!---->
-          </div>
-          <div class=\\"v-list-item v-theme--light v-list-item--density-default v-list-item--one-line v-list-item--variant-text\\">
-            <!----><span class=\\"v-list-item__underlay\\"></span>
-            <!---->
-            <div class=\\"v-list-item__content\\" data-no-activator=\\"\\">
-              <!---->
-              <!---->
-              <div class=\\"v-list-item-title\\">Email:</div>
-              <div class=\\"v-list-item-subtitle\\"></div>
-            </div>
-            <!---->
-          </div>
-        </div>
-      </div>
-      <!---->
-      <!----><span class=\\"v-card__underlay\\"></span>
     </div>
   </div>
-  <!--v-if-->
-  <!--v-if-->
-  <!--v-if-->
+</div>
+<!--v-if-->
+<div class=\\"v-container v-locale--is-ltr\\">
+  <div class=\\"v-row\\">
+    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
+  </div>
+  <div class=\\"v-row\\">
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-file-chart-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Reporting</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-currency-usd mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Funding</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-folder-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Documents</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc. Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-file-document-multiple-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">View Applications</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. Duis aliquet non ipsum a feugiat. Mauris felis mi, feugiat eu placerat non, tempor a velit. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-file-document-edit-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">New Application</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex, sed consectetur leo odio in magna. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-help mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Resources</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex, sed consectetur leo odio in magna. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+    <div class=\\"v-col-md-6 v-col-lg-4 v-col-12\\">
+      <div class=\\"v-card v-card--link v-theme--light v-card--density-default v-card--variant-elevated home-card\\">
+        <!---->
+        <div class=\\"v-card__loader\\">
+          <div class=\\"v-progress-linear v-theme--light v-locale--is-ltr\\" style=\\"top: 0px; height: 0px; --v-progress-linear-height: 2px; left: 50%; transform: translateX(-50%);\\" role=\\"progressbar\\" aria-hidden=\\"true\\" aria-valuemin=\\"0\\" aria-valuemax=\\"100\\">
+            <!---->
+            <div class=\\"v-progress-linear__background\\" style=\\"width: 100%;\\"></div>
+            <transition-stub name=\\"fade-transition\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\">
+              <div class=\\"v-progress-linear__indeterminate\\">
+                <div class=\\"v-progress-linear__indeterminate long\\"></div>
+                <div class=\\"v-progress-linear__indeterminate short\\"></div>
+              </div>
+            </transition-stub>
+            <!---->
+          </div>
+        </div>
+        <div class=\\"v-card-item\\">
+          <div class=\\"v-card-item__prepend\\">
+            <div class=\\"v-avatar v-theme--light v-avatar--density-default v-avatar--size-default v-avatar--variant-flat\\"><i class=\\"mdi-cog-outline mdi v-icon notranslate v-theme--light v-icon--size-default\\" aria-hidden=\\"true\\"></i>
+              <!----><span class=\\"v-avatar__underlay\\"></span>
+            </div>
+          </div>
+          <div class=\\"v-card-item__content\\">
+            <div class=\\"v-card-title\\">Account Management</div>
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <!---->
+        <div class=\\"v-card-text\\"> Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc. </div>
+        <!----><span class=\\"v-card__overlay\\"></span><span class=\\"v-card__underlay\\"></span>
+      </div>
+    </div>
+  </div>
 </div>"
 `;

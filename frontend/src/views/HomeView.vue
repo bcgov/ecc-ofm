@@ -1,5 +1,7 @@
 <template>
-  <v-container>
+  <AppHeroImage />
+  <OrganizationHeader />
+  <v-container v-bind="$attrs">
     <v-row>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -31,7 +33,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="View Applications" @click="$router.push({ name: 'applications-history' })">
+        <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="Applications" @click="$router.push({ name: 'applications-history' })">
           <v-card-text>
             Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. Duis aliquet non ipsum a feugiat. Mauris felis mi, feugiat eu placerat non,
             tempor a velit.
@@ -39,10 +41,9 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-file-document-edit-outline" title="New Application" @click="$router.push({ name: 'select-facility' })">
+        <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
           <v-card-text>
-            Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex,
-            sed consectetur leo odio in magna.
+            Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
           </v-card-text>
         </v-card>
       </v-col>
@@ -54,19 +55,16 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
-          <v-card-text>
-            Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
-          </v-card-text>
-        </v-card>
-      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import OrganizationHeader from '../components/organizations/OrganizationHeader.vue'
+import AppHeroImage from '@/components/ui/AppHeroImage.vue'
 export default {
+  name: 'HomeView',
+  components: { AppHeroImage, OrganizationHeader },
 }
 </script>
 

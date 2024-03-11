@@ -12,7 +12,14 @@
     </v-row>
     <v-row>
       <v-col class="ml-6 pt-0">
-        <OrganizationInfo :loading="loading" :organization="organization" :editable="isAccountManager" class="mt-1" />
+        <OrganizationInfo
+          :loading="loading"
+          :editable="isAccountManager"
+          :organization="organization"
+          :showDocuments="true"
+          :uploadedDocuments="uploadedDocuments"
+          @saveInclusionPolicyData="saveInclusionPolicyData"
+          class="mt-1" />
       </v-col>
     </v-row>
     <v-row>
@@ -57,7 +64,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
+        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
       </v-col>
     </v-row>
   </v-container>
@@ -68,11 +75,13 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import OrganizationService from '@/services/organizationService'
+import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import { mapState } from 'pinia'
 import { mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'ManageOrganizationView',
@@ -85,6 +94,7 @@ export default {
       panelOtherFacilities: [0],
       loading: false,
       organization: undefined,
+      uploadedDocuments: [],
     }
   },
   computed: {
@@ -111,7 +121,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        await Promise.all([this.loadFacilities(), this.getOrganization()])
+        await Promise.all([this.loadFacilities(), this.getOrganization(), this.getInclusionPolicyDocuments()])
       } finally {
         this.loading = false
       }
@@ -130,9 +140,18 @@ export default {
 
     async getOrganization() {
       try {
-        this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
+        this.organization = await OrganizationService.getOrganization(this.userInfo.organizationId)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
+      }
+    },
+
+    async getInclusionPolicyDocuments() {
+      try {
+        this.uploadedDocuments = await DocumentService.getDocuments(this.userInfo.organizationId)
+      } catch (error) {
+        this.setFailureAlert('Failed to get organization\'s Inclusion Policy Document(s)', error)
+        return
       }
     },
 
@@ -147,8 +166,45 @@ export default {
      * Open the Change Request dialog
      */
     openChangeRequestDialog() {
-      this.setWarningAlert('This feature is not yet implemented')
+      this.setWarningAlert('This feature will be implemented in a future sprint')
     },
+
+    async saveOrganization(updatedOrganization) {
+      try {
+        await OrganizationService.updateOrganization(this.organization.organizationId, updatedOrganization)
+        this.organization = updatedOrganization
+      } catch (error) {
+        this.setFailureAlert('Failed update Inclusion Policy on Organization: ' + this.organization.organizationId, error)
+        return
+      }
+    },
+
+    async saveInclusionPolicyData(updatedOrganization, documentsToUpload, documentsToDelete, onSaveCompleteCallBack) {
+      await this.saveOrganization(updatedOrganization)
+      await this.processDocuments(documentsToUpload, documentsToDelete)
+      await this.getInclusionPolicyDocuments()
+      onSaveCompleteCallBack()
+      this.setSuccessAlert('Inclusion Policy updated successfully')
+    },
+
+    async processDocuments(documentsToUpload, documentsToDelete) {
+      try {
+        if (!isEmpty(documentsToUpload)) {
+          await DocumentService.createDocuments(documentsToUpload, this.userInfo.organizationId)
+        }
+        if (!isEmpty(documentsToDelete)) {
+          await Promise.all(
+            documentsToDelete.map(async (documentId) => {
+              await DocumentService.deleteDocument(documentId)
+            }),
+          )
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed Inclusion Policy Document(s) update on Organization: ' + this.organization.organizationId, error)
+        return
+      }
+    },
+
   },
 }
 </script>
