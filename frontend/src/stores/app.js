@@ -23,6 +23,9 @@ export const useAppStore = defineStore('app', {
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
+    reportQuestionTypes: {},
+    fiscalYears: {},
+    months: {},
     config: '',
   }),
   getters: {
@@ -50,6 +53,12 @@ export const useAppStore = defineStore('app', {
         return facilityType?.description
       }
     },
+    getReportQuestionTypeNameById: (state) => {
+      return (id) => {
+        const questionType = state.reportQuestionTypes?.find((questionType) => questionType.id === id)
+        return questionType?.description
+      }
+    },
   },
   actions: {
     async getLookupInfo() {
@@ -61,6 +70,9 @@ export const useAppStore = defineStore('app', {
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes
+        this.reportQuestionTypes = lookupInfo?.data?.reportQuestionTypes
+        this.fiscalYears = lookupInfo?.data?.fiscalYears
+        this.months = lookupInfo?.data?.months
       }
     },
     async setConfig(config) {

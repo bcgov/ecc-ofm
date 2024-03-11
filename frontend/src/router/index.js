@@ -32,6 +32,7 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
+import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
 import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
 import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmitView.vue'
@@ -109,6 +110,14 @@ const router = createRouter({
       path: '/reporting',
       name: 'reporting',
       component: ReportingView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/reporting/:surveyResponseGuid/survey-form',
+      name: 'survey-form',
+      component: SurveyView,
       meta: {
         requiresAuth: true,
       },
