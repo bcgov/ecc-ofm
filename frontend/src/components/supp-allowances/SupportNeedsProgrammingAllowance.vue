@@ -30,15 +30,18 @@
 
   <v-row v-for="item in CHECKBOX_LABELS" :key="item.value" no-gutters>
     <v-col cols="11" lg="6">
-      <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
-    </v-col>
-
-    <v-col cols="1">
-      <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
-        <template #activator="{ props }">
-          <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+      <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+        <template v-slot:label>
+          <p>
+            {{ item.label }}
+            <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
+              <template #activator="{ props }">
+                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+              </template>
+            </v-tooltip>
+          </p>
         </template>
-      </v-tooltip>
+      </v-checkbox>
     </v-col>
   </v-row>
 
