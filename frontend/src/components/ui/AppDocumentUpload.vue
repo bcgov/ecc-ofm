@@ -61,27 +61,17 @@ export default {
       default: () => [],
     },
   },
-  emits: ['updateDocuments', 'deleteUploadedDocument'],
+  emits: ['update:modelValue', 'deleteUploadedDocument'],
   data() {
     return {
       documents: [],
-      maxSize: 4194304, // 4 MB
       isValidForm: false,
-      fileExtensionAccept: ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx'],
-      fileFormats: 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX',
-      fileRules: [],
-      headersUploadedDocuments: [
-        { title: 'File Name', key: 'fileName', width: '34%' },
-        { title: 'Description', key: 'description', width: '60%' },
-        { title: '', key: 'actionButtons', sortable: false, width: '6%' },
-      ],
     }
   },
   watch: {
     documents: {
       handler() {
-        const areValidFilesUploaded = this.documents.every((file) => file.isValidFile)
-        this.$emit('updateDocuments', { documents: this.documents, areValidFilesUploaded: areValidFilesUploaded })
+        this.$emit('update:modelValue', this.documents)
       },
       deep: true,
     },
@@ -93,13 +83,21 @@ export default {
     },
   },
   created() {
+    this.MAX_FILE_SIZE = 4194304 // 4 MB
+    this.fileExtensionAccept = ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx']
+    this.fileFormats = 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX'
     this.fileRules = [
       (value) => {
-        return !value || !value.length || value[0].size < this.maxSize || `The maximum file size is ${humanFileSize(this.maxSize)} for each document.`
+        return !value || !value.length || value[0].size < this.MAX_FILE_SIZE || `The maximum file size is ${humanFileSize(this.MAX_FILE_SIZE)} for each document.`
       },
       (value) => {
         return !value || !value.length || this.fileExtensionAccept.includes(getFileExtensionWithDot(value[0].name)?.toLowerCase()) || `Accepted file types are ${this.fileFormats}.`
       },
+    ]
+    this.headersUploadedDocuments = [
+      { title: 'File Name', key: 'fileName', width: '34%' },
+      { title: 'Description', key: 'description', width: '60%' },
+      { title: '', key: 'actionButtons', sortable: false, width: '6%' },
     ]
   },
   methods: {
@@ -117,7 +115,7 @@ export default {
       const document = this.documents.find((item) => item.id === updatedItemId)
       const file = document?.file[0]
       if (file) {
-        const isLessThanMaxSize = file.size < this.maxSize
+        const isLessThanMaxSize = file.size < this.MAX_FILE_SIZE
         const isFileExtensionAccepted = this.fileExtensionAccept.includes(getFileExtensionWithDot(file.name)?.toLowerCase())
         document.isValidFile = isLessThanMaxSize && isFileExtensionAccepted
       } else {
