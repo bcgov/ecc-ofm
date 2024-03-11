@@ -169,11 +169,11 @@
                         <AppDocumentUpload
                           id="inclusion-policy-upload"
                           ref="documentUpload"
+                          v-model="documentsToUpload"
                           entityName="accounts"
                           :loading="loadingInclusionPolicy"
                           :readonly="!editMode"
                           :uploadedDocuments="uploadedDocumentsEdit"
-                          @updateDocuments="updateDocumentsToUpload"
                           @deleteUploadedDocument="deleteUploadedDocument" />
                         <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
                           Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
@@ -270,6 +270,7 @@ export default {
         this.documentsToDelete = this.uploadedDocumentsEdit.map((document) => document.documentId)
       }
       this.loadingInclusionPolicy = true
+      this.documentsToUpload = this.documentsToUpload?.filter((document) => document.isValidFile && document.file)
       await this.$emit('saveInclusionPolicyData', this.organizationEdit, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
     },
 
@@ -289,10 +290,6 @@ export default {
       }
     },
 
-    updateDocumentsToUpload({ documents }) {
-      this.documentsToUpload = documents?.filter((document) => document.isValidFile && document.file)
-    },
-
     async deleteUploadedDocument(documentId) {
       const index = this.uploadedDocumentsEdit.findIndex((item) => item.documentId === documentId)
       if (index > -1) {
@@ -306,7 +303,6 @@ export default {
       this.documentsToDelete = []
       this.$refs.documentUpload?.resetDocuments()
     },
-
   },
 }
 </script>

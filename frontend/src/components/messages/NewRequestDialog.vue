@@ -85,7 +85,7 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload entityName="ofm_assistance_requests" :loading="isLoading" @updateDocuments="updateDocuments"></AppDocumentUpload>
+            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading"></AppDocumentUpload>
           </v-row>
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 pb-0">
@@ -151,14 +151,13 @@ export default {
   data() {
     return {
       isFormComplete: false,
-      areValidFilesUploaded: true,
       newRequestModel: {},
       rules,
       isDisplayed: false,
       isLoading: false,
       showNewRequestConfirmationDialog: false,
       referenceNumber: '',
-      uploadedDocuments: [],
+      documentsToUpload: [],
     }
   },
   computed: {
@@ -172,6 +171,9 @@ export default {
     },
     someFacilitiesSelected() {
       return this.newRequestModel.facilities.length > 0
+    },
+    areValidFilesUploaded() {
+      return this.documentsToUpload.every((file) => file.isValidFile)
     },
   },
   watch: {
@@ -219,11 +221,6 @@ export default {
       this.$emit('close')
     },
 
-    updateDocuments({ documents, areValidFilesUploaded }) {
-      this.uploadedDocuments = documents
-      this.areValidFilesUploaded = areValidFilesUploaded
-    },
-
     async submit() {
       this.$refs.newRequestForm?.validate()
       if (this.isFormComplete && this.areValidFilesUploaded) {
@@ -232,7 +229,7 @@ export default {
           const response = await this.createAssistanceRequest(this.newRequestModel)
           this.referenceNumber = response?.referenceNumber
           await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
-          await DocumentService.createDocuments(this.uploadedDocuments, response?.assistanceRequestId)
+          await DocumentService.createDocuments(this.documentsToUpload, response?.assistanceRequestId)
           this.toggleNewRequestConfirmationDialog()
         } catch (error) {
           if (error?.response?.data?.status === 422) {
