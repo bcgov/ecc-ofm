@@ -28,13 +28,21 @@
     <v-col cols="12">Please describe how you intend to use this funding:</v-col>
   </v-row>
 
-  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value">
-    <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
-    <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
-      <template #activator="{ props }">
-        <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
-      </template>
-    </v-tooltip>
+  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value" no-gutters>
+    <v-col cols="11" lg="6">
+      <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+        <template v-slot:label>
+          <p>
+            {{ item.label }}
+            <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
+              <template #activator="{ props }">
+                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+              </template>
+            </v-tooltip>
+          </p>
+        </template>
+      </v-checkbox>
+    </v-col>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
