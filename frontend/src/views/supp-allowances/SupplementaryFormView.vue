@@ -28,7 +28,9 @@
                 :transportModels="getTransportModels()"
                 @update="updateModel"
                 @addModel="addBlankTransportModel()"
-                @deleteModel="deleteTransportModel" />
+                @deleteModel="deleteTransportModel"
+                @deleteDocument="deleteDocument"
+                :toggleSave="toggleSave" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -78,6 +80,7 @@ export default {
       panel: [],
       models: undefined,
       clonedModels: [],
+      toggleSave: false,
     }
   },
   computed: {
@@ -94,7 +97,11 @@ export default {
     save: {
       async handler() {
         try {
+          let i = 0
           for (let applicationModel of this.models) {
+            console.log(i)
+            i = i + 1
+            console.log(this.isModelSame(applicationModel))
             if (this.isModelSame(applicationModel)) {
               continue
             } else if (this.isModelEmpty(applicationModel)) {
@@ -108,16 +115,39 @@ export default {
               applicationId: this.applicationId,
             }
 
+            if (payload.monthlyLease) {
+              payload.monthlyLease = Number(payload.monthlyLease)
+            }
+
             if (applicationModel.supplementaryApplicationId) {
               await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
             } else {
               const response = await ApplicationService.createSupplementaryApplication(payload)
               applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
             }
+
+            if (applicationModel.documentsToUpload) {
+              const response = await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
+              console.log('response')
+              console.log(response)
+
+              applicationModel.uploadedDocuments = await DocumentService.getDocuments(applicationModel.supplementaryApplicationId)
+
+              console.log('I waited')
+              console.log(applicationModel.uploadedDocuments)
+              // Splice out the elements of documentsToUpload
+              // Clear the array on next tick
+              // Clear the array using Vue.set for reactivity
+              applicationModel.documentsToUpload.length = 0
+
+              console.log('After clearing:', applicationModel.documentsToUpload)
+            }
+            console.log(applicationModel)
+            this.updateModel(applicationModel)
           }
 
           this.clonedModels = cloneDeep(this.models)
-
+          this.toggleSave = !this.toggleSave
           this.setSuccessAlert(`Application Saved`)
         } catch (error) {
           this.setFailureAlert('Failed to save supplementary applications')
@@ -186,7 +216,7 @@ export default {
 
       if (transportApplications.length > 0) {
         for (const application of transportApplications) {
-          application.documents = await DocumentService.getDocuments(application.supplementaryApplicationId)
+          application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
         }
         this.models = [...this.models, ...transportApplications]
       } else {
@@ -240,11 +270,14 @@ export default {
     },
     addBlankTransportModel() {
       const transportModel = {
-        supportFundingModel: [],
-        supportOtherDescription: null,
+        monthlyLease: 0.0,
+        estimatedMileage: null,
+        odometer: null,
+        VIN: null,
         supplementaryApplicationId: undefined,
         supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
-        documents: [],
+        uploadedDocuments: [],
+        documentsToUpload: [],
         id: uuid.v1(),
       }
 
@@ -261,6 +294,21 @@ export default {
       }
       //remove it from display
       this.models.splice(index, 1)
+    },
+    deleteDocument(documentId) {
+      for (const model of this.models) {
+        //console.log(model)
+        if (!model.uploadedDocuments) {
+          continue
+        }
+        const foundDoc = model.uploadedDocuments.find((el) => el.documentId == documentId)
+        if (!foundDoc) {
+          continue
+        }
+        //don't wait for response, just delete it so the page can re render faster
+        DocumentService.deleteDocument(documentId)
+        model.uploadedDocuments.splice(foundDoc, 1)
+      }
     },
   },
 }

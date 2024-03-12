@@ -1,12 +1,9 @@
 <template>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li>
-          <AppLabel>Eligibility:</AppLabel>
-          Participants are eligible if using a designated vehicle to safely transport children:
-        </li>
-      </ul>
+      <AppLabel>Eligibility:</AppLabel>
+      Participants are eligible if using a designated vehicle to safely transport children:
+
       <v-row no-gutters>
         <v-col cols="12" class="ml-10 my-2">
           <ul>
@@ -23,27 +20,19 @@
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li>
-          <AppLabel>Eligible expenses:</AppLabel>
-          Mileage of the Participant's designated vehicle will be reimbursed at the B.C. government standard mileage rate for private vehicles. This includes
-          <strong>funding for the Participant's routine vehicle costs, including financing costs, fuel, insurance, depreciation, and routine maintenance.</strong>
-          The Participant's actual lease or financing costs for the designed vehicle used to transport children for the purpose stated in the Eligibility section above. The Participant is required to
-          submit supporting information and documentation relating to the actual mileage and lease/purchase costs of the designated vehicle to the Province.
-        </li>
-      </ul>
+      <AppLabel>Eligible expenses:</AppLabel>
+      Mileage of the Participant's designated vehicle will be reimbursed at the B.C. government standard mileage rate for private vehicles. This includes
+      <strong>funding for the Participant's routine vehicle costs, including financing costs, fuel, insurance, depreciation, and routine maintenance.</strong>
+      The Participant's actual lease or financing costs for the designed vehicle used to transport children for the purpose stated in the Eligibility section above. The Participant is required to
+      submit supporting information and documentation relating to the actual mileage and lease/purchase costs of the designated vehicle to the Province.
     </v-col>
   </v-row>
   <br />
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li>
-          <AppLabel>Ineligible expenses include:</AppLabel>
-          Travel related to operations (e.g., grocery store), driver wages, other transportation, tickets or traffic fines, licensing costs.
-        </li>
-      </ul>
+      <AppLabel>Ineligible expenses include:</AppLabel>
+      Travel related to operations (e.g., grocery store), driver wages, other transportation, tickets or traffic fines, licensing costs.
     </v-col>
   </v-row>
   <v-divider class="my-5"></v-divider>
@@ -98,7 +87,7 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <AppNumberInput v-model.lazy="model.monthlyLease" required :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="fieldNumberFormat" required :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -110,7 +99,15 @@
             <li>Picture of your odometer at the time of this application.</li>
             <li>Your lease / finance payment schedule</li>
           </ul>
-          <AppDocumentUpload id="inclusion-policy-upload" ref="documentUpload" entityName="transport-supporting-documents" :uploadedDocuments="model.documents" @updateDocuments="updateDocuments" />
+          <AppDocumentUpload
+            id="application-document-upload"
+            ref="documentUpload"
+            :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
+            v-model="model.documentsToUpload"
+            entityName="ofm_allowances"
+            :readonly="readonly"
+            :uploadedDocuments="model.uploadedDocuments"
+            @deleteUploadedDocument="deleteUploadedDocument" />
           <!-- <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
               Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
             </v-alert> -->
@@ -132,6 +129,7 @@ import rules from '@/utils/rules'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import { cloneDeep } from 'lodash'
 
 export default {
   components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
@@ -143,50 +141,61 @@ export default {
         return []
       },
     },
+    toggleSave: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['update', 'addModel', 'deleteModel'],
+  emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
     return {
       panel: [],
-      models: {},
+      models: [],
       rules,
       readonly: false, //update later when we have submitted forms
+      fieldNumberFormat: {
+        nullValue: '0.00',
+        min: 0,
+        decimal: '.',
+        separator: ',',
+        precision: 2,
+      },
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    transportModels: {
+      handler(value) {
+        // console.log('wathcer')
+        // console.log(value)
+        this.models = cloneDeep(value)
+      },
+      deep: true,
+    },
+    toggleSave: {
+      handler() {
+        this.models.forEach((el) => {
+          el.documentsToUpload = []
+        })
+        this.$refs.documentUpload?.resetDocuments()
+      },
+    },
+  },
   async created() {
-    this.models = { ...this.transportModels }
+    this.models = cloneDeep(this.transportModels)
   },
   methods: {
     update(model) {
-      console.log('da model')
-      console.log(model)
       this.$emit('update', model)
     },
     addModel() {
       this.$emit('addModel')
-      //wait for the DOM updates to complete
-      this.$nextTick(() => {
-        //update models to re-render with the new blank application
-        this.models = { ...this.transportModels }
-      })
     },
     deleteModel(model) {
-      console.log('click')
       this.$emit('deleteModel', model)
-      //wait for the DOM updates to complete
-      this.$nextTick(() => {
-        //update models to re-render with the new blank application
-        this.models = { ...this.transportModels }
-      })
     },
-    updateDocuments({ documents, areValidFilesUploaded }) {
-      console.log(documents)
-      this.models.newDocuments = documents
-      console.log(this.models)
-      // this.uploadedDocuments = documents
-      // this.areValidFilesUploaded = areValidFilesUploaded
+    deleteUploadedDocument(documentId) {
+      this.$emit('deleteDocument', documentId)
     },
   },
 }
