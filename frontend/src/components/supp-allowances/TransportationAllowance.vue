@@ -101,7 +101,6 @@
           </ul>
           <AppDocumentUpload
             id="application-document-upload"
-            ref="documentUpload"
             :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
             v-model="model.documentsToUpload"
             entityName="ofm_allowances"
@@ -141,10 +140,6 @@ export default {
         return []
       },
     },
-    toggleSave: {
-      type: Boolean,
-      default: false,
-    },
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
@@ -171,14 +166,6 @@ export default {
         this.models = cloneDeep(value)
       },
       deep: true,
-    },
-    toggleSave: {
-      handler() {
-        this.models.forEach((el) => {
-          el.documentsToUpload = []
-        })
-        this.$refs.documentUpload?.resetDocuments()
-      },
     },
   },
   async created() {

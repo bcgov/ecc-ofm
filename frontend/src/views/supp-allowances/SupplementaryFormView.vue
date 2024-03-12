@@ -29,8 +29,7 @@
                 @update="updateModel"
                 @addModel="addBlankTransportModel()"
                 @deleteModel="deleteTransportModel"
-                @deleteDocument="deleteDocument"
-                :toggleSave="toggleSave" />
+                @deleteDocument="deleteDocument" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -80,7 +79,6 @@ export default {
       panel: [],
       models: undefined,
       clonedModels: [],
-      toggleSave: false,
     }
   },
   computed: {
@@ -97,6 +95,7 @@ export default {
     save: {
       async handler() {
         try {
+          this.loading = true
           let i = 0
           for (let applicationModel of this.models) {
             console.log(i)
@@ -145,12 +144,13 @@ export default {
             console.log(applicationModel)
             this.updateModel(applicationModel)
           }
-
+          await this.loadData()
           this.clonedModels = cloneDeep(this.models)
-          this.toggleSave = !this.toggleSave
           this.setSuccessAlert(`Application Saved`)
         } catch (error) {
           this.setFailureAlert('Failed to save supplementary applications')
+        } finally {
+          this.loading = false
         }
       },
     },
@@ -162,7 +162,6 @@ export default {
     },
   },
   async created() {
-    this.loading = true
     this.PANELS = [
       {
         title: 'Indigenous Programming Allowance',
@@ -188,9 +187,12 @@ export default {
     },
     async loadData() {
       try {
+        this.loading = true
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplications(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
+      } finally {
+        this.loading = false
       }
     },
     async setUpDefaultNewRequestModel(suppApplications) {
