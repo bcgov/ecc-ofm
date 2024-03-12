@@ -87,7 +87,7 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="fieldNumberFormat" required :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" required :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -148,7 +148,7 @@ export default {
       models: [],
       rules,
       readonly: false, //update later when we have submitted forms
-      fieldNumberFormat: {
+      monthlyLeaseFormat: {
         nullValue: '0.00',
         min: 0,
         decimal: '.',
@@ -161,8 +161,6 @@ export default {
   watch: {
     transportModels: {
       handler(value) {
-        // console.log('wathcer')
-        // console.log(value)
         this.models = cloneDeep(value)
       },
       deep: true,

@@ -96,11 +96,7 @@ export default {
       async handler() {
         try {
           this.loading = true
-          let i = 0
           for (let applicationModel of this.models) {
-            console.log(i)
-            i = i + 1
-            console.log(this.isModelSame(applicationModel))
             if (this.isModelSame(applicationModel)) {
               continue
             } else if (this.isModelEmpty(applicationModel)) {
@@ -126,23 +122,8 @@ export default {
             }
 
             if (applicationModel.documentsToUpload) {
-              const response = await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
-              console.log('response')
-              console.log(response)
-
-              applicationModel.uploadedDocuments = await DocumentService.getDocuments(applicationModel.supplementaryApplicationId)
-
-              console.log('I waited')
-              console.log(applicationModel.uploadedDocuments)
-              // Splice out the elements of documentsToUpload
-              // Clear the array on next tick
-              // Clear the array using Vue.set for reactivity
-              applicationModel.documentsToUpload.length = 0
-
-              console.log('After clearing:', applicationModel.documentsToUpload)
+              await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
             }
-            console.log(applicationModel)
-            this.updateModel(applicationModel)
           }
           await this.loadData()
           this.clonedModels = cloneDeep(this.models)
@@ -299,7 +280,6 @@ export default {
     },
     deleteDocument(documentId) {
       for (const model of this.models) {
-        //console.log(model)
         if (!model.uploadedDocuments) {
           continue
         }
