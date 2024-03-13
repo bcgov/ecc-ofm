@@ -24,7 +24,6 @@
       <v-checkbox
         id="declaration"
         v-model="model.applicationDeclaration"
-        :value="1"
         color="primary"
         :rules="rules.required"
         :disabled="readonly"
@@ -111,7 +110,7 @@ export default {
     this.$emit('process', false)
     await this.loadData()
     this.model = {
-      applicationDeclaration: this.currentApplication?.applicationDeclaration ? 1 : null,
+      applicationDeclaration: this.currentApplication?.applicationDeclaration,
     }
   },
   methods: {
@@ -145,7 +144,6 @@ export default {
       try {
         this.$emit('process', true)
         this.processing = true
-        this.model.applicationDeclaration = this.model.applicationDeclaration ? 1 : null
         if (ApplicationService.isApplicationUpdated(this.model)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
           await this.getApplication(this.$route.params.applicationGuid)
