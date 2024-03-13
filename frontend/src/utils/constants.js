@@ -62,6 +62,15 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   APPROVED: 6,
 })
 
+export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({
+  DRAFT: 1,
+  CANCELLED: 2,
+  SUBMITTED: 3,
+  IN_REVIEW: 4,
+  ACTION_REQUIRED: 5,
+  APPROVED: 6,
+})
+
 export const FACILITY_TYPES = Object.freeze({
   RENT_LEASE: 1,
   OWNED_WITH_MORTGAGE: 2,

@@ -5,19 +5,29 @@ const { ApplicationMappings, SupplementaryApplicationMappings } = require('../ut
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 
+function mapLatestActivityDate(application) {
+  try {
+    const ministryLastUpdated = new Date(application?.ministryLastUpdated)
+    const providerLastUpdated = new Date(application?.providerLastUpdated)
+    application.latestActivityDate = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
+    return application
+  } catch (e) {
+    console.log(e)
+    return application
+  }
+}
+
 function mapApplicationObjectForFront(data) {
-  const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
-  const ministryLastUpdated = new Date(application?.ministryLastUpdated)
-  const providerLastUpdated = new Date(application?.providerLastUpdated)
-  application.latestActivity = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
+  let application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
+  application = mapLatestActivityDate(application)
   return application
 }
 
 function mapSupplementaryApplicationObjectForFront(data) {
   const applications = []
   data.forEach((suppApplication) => {
-    const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
-
+    let mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
+    mappedApplication = mapLatestActivityDate(mappedApplication)
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
     } else if (mappedApplication.supportFundingModel) {
@@ -98,7 +108,7 @@ async function createApplication(req, res) {
 
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
+    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statecode eq 0)`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {

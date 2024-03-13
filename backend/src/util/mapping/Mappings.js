@@ -260,12 +260,21 @@ const FundingAgreementMappings = [
 ]
 //the three different supp applications share the same data structure, so irrelevant fields will just be null.
 const SupplementaryApplicationMappings = [
+  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
+  { back: 'ofm_allowance_number', front: 'supplementaryReferenceNumber' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'supplementaryApplicationStatus' },
+  { back: 'ofm_submittedon', front: 'supplementaryApplicationSubmittedDate' },
   { back: 'ofm_allowance_type', front: 'supplementaryType' },
+  { back: 'ofm_allowance_type@OData.Community.Display.V1.FormattedValue', front: 'supplementaryTypeDescription' },
   { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
   { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
   { back: 'ofm_needs_description', front: 'supportOtherDescription' },
-  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
   { back: 'ofm_needs_expenses', front: 'supportFundingModel' },
+  { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
+  { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
 ]
 
 module.exports = {
