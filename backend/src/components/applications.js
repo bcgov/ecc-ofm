@@ -106,9 +106,19 @@ async function createApplication(req, res) {
   }
 }
 
+function buildGetSupplementaryApplicationsFilterQuery(query) {
+  let filterQuery = 'and statuscode ne 2'
+  if (isEmpty(query)) return filterQuery
+  const mappedQuery = new MappableObjectForBack(query, SupplementaryApplicationMappings).toJSON()
+  Object.entries(mappedQuery)?.forEach(([key, value]) => {
+    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
+  })
+  return filterQuery
+}
+
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statecode eq 0)`
+    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req.query)} )`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
