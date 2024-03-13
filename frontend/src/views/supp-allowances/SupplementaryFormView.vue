@@ -96,7 +96,7 @@ export default {
       async handler() {
         try {
           this.loading = true
-          for (let applicationModel of this.models) {
+          for (const applicationModel of this.models) {
             if (this.isModelSame(applicationModel)) {
               continue
             } else if (this.isModelEmpty(applicationModel)) {

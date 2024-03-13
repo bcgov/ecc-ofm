@@ -5,14 +5,10 @@
       Participants are eligible if using a designated vehicle to safely transport children:
 
       <v-row no-gutters>
-        <v-col cols="12" class="ml-10 my-2">
-          <ul>
-            <li>Between school and their offsite child care location;</li>
-            <li>
-              To and from the child care location and a collective point of access where geographical distance or obstacle (e.g. a body of water) creates an ongoing barrier for families and
-              Participants.
-            </li>
-          </ul>
+        <v-col cols="12" class="mr-2 my-2">
+          Between school and their offsite child care location;
+          <br />
+          To and from the child care location and a collective point of access where geographical distance or obstacle (e.g. a body of water) creates an ongoing barrier for families and Participants.
         </v-col>
       </v-row>
     </v-col>
@@ -21,6 +17,7 @@
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Eligible expenses:</AppLabel>
+      <br />
       Mileage of the Participant's designated vehicle will be reimbursed at the B.C. government standard mileage rate for private vehicles. This includes
       <strong>funding for the Participant's routine vehicle costs, including financing costs, fuel, insurance, depreciation, and routine maintenance.</strong>
       The Participant's actual lease or financing costs for the designed vehicle used to transport children for the purpose stated in the Eligibility section above. The Participant is required to
@@ -107,9 +104,6 @@
             :readonly="readonly"
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
-          <!-- <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
-              Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
-            </v-alert> -->
         </div>
       </v-col>
     </v-row>

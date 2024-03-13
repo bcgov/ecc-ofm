@@ -1,33 +1,79 @@
 <template>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li><AppLabel>Purpose of the Fund:</AppLabel></li>
-      </ul>
-      Children with support needs, including those with disabilities, neurodiversity, or behaviors that challenge staff, may need additional support, accommodations, or program modifications to
-      participate meaningfully alongside other children. The Support Needs Programming Allowance is intended to help childcare providers increase their program's ability to welcome children and
-      families of all abilities by covering costs related to inclusion that may not be sufficiently covered by base funding or other provincial funding sources.
+      <AppLabel>Purpose of the Fund:</AppLabel>
+      To help child care providers welcome children and families of all abilities by covering costs related to inclusion that may not be covered by base funding or other provincial funding. Children
+      with support needs, including those with disabilities, neurodiversity, or behaviors that challenge staff, may need additional support, accommodations, or program modifications to participate
+      meaningfully alongside other children.
       <br />
-      Childcare providers are encouraged to use this funding most effectively with their local Supported Child Development (SCD) and/or Aboriginal Supported Child Development (ASCD) programs.
+      <br />
+      Providers are encouraged to use this funding with their local
+      <a href="https://www2.gov.bc.ca/gov/content/health/managing-your-health/child-behaviour-development/early-childhood-intervention" target="_blank">
+        Supported Child Development or Aboriginal Supported Child Development
+      </a>
+      programs.
     </v-col>
   </v-row>
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li>
-          <AppLabel>Inclusion Policy Requirement:</AppLabel>
-          Childcare providers participating in the OFM are required to have an Inclusion Policy for their program.
-          <strong>Providers participating in the OFM Test must have, or be working on, an Inclusion Policy to receive this funding.</strong>
-        </li>
-      </ul>
+      An Inclusion Policy is a requirement to apply for Support Needs Supplementary Funding Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can
+      upload your policy in
+      <router-link to="/account-mgmt">Account Management.</router-link>
     </v-col>
   </v-row>
+  <br />
+  <v-row no-gutters class="mr-2 my-2">
+    <v-btn v-if="!showMore" color="transparent" flat @click="toggleDiv" class="link-btn">Read More</v-btn>
+  </v-row>
+  <div v-if="showMore" class="my-4">
+    <AppLabel>What is an Inclusion Policy?</AppLabel>
+    <br />
+    <br />
+    An Inclusion Policy is intended to support child care providers in describing how their program provides inclusive child care. It supports early childhood professionals’ reflective practice and
+    should evolve over time as the child care program evolves. An Inclusion Policy outlines the steps child care providers and early childhood professionals will take to prevent or reduce the
+    exclusion or termination of children from the child care program; it is not a requirement for providers to accept all children into their program. Child care providers may access a number of
+    resources to help them to develop and implement an Inclusion Policy for their program.
+    <br />
+    <br />
+    The Inclusive Child Care Toolkit: provides resources to help providers and early childhood professionals develop an understanding of inclusive child care practices, and provides information on how
+    to develop an Inclusion Policy.
+    <br />
+    <br />
+    <ol>
+      <li class="mx-5">
+        The
+        <a href="https://www2.gov.bc.ca/assets/gov/family-and-social-supports/child-care/running-a-daycare-or-preschool/inclusive-child-care/inclusive-childcare-toolkit.pdf" target="_blank">
+          Inclusive Child Care Toolkit:
+        </a>
+        provides resources to help providers and early childhood professionals develop an understanding of inclusive child care practices, and provides information on how to develop an Inclusion
+        Policy.
+      </li>
+      <br />
+      <li class="mx-5">
+        Online training courses:
+        <a href="https://bcearlyyearshub.ca/courses/foundations-inclusive-child-care-training/" target="_blank">Foundations of Inclusive Child Care</a>
+        and Behaviour in the Early Years (launching on the BC Early Years Professional Hub in late November 2023).
+      </li>
+      <br />
+      <li class="mx-5">
+        Local Supported Child Development (SCD) and Aboriginal Supported Child Development (ASCD) programs: these programs may be able to provide consultation services for child care providers.
+      </li>
+      <br />
+      <li class="mx-5">
+        Child Care Resource and Referral Centres (CCRR) and the Early Childhood Pedagogy Network (ECPN): these programs may have locally-available resources to support child care providers in
+        developing an Inclusion Policy.
+      </li>
+    </ol>
+  </div>
+  <v-row no-gutters class="mr-2 my-2 d-flex flex-column align-end">
+    <v-btn v-if="showMore" color="transparent" flat @click="toggleDiv" class="link-btn">Show Less</v-btn>
+  </v-row>
+
   <v-divider class="mt-2"></v-divider>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">Please describe how you intend to use this funding:</v-col>
   </v-row>
-
   <v-row v-for="item in CHECKBOX_LABELS" :key="item.value" no-gutters>
     <v-col cols="11" lg="6">
       <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
@@ -71,6 +117,7 @@ export default {
       panel: [],
       model: {},
       rules,
+      showMore: false,
     }
   },
   computed: {
@@ -96,5 +143,20 @@ export default {
       { label: 'Other', value: '4' },
     ]
   },
+  methods: {
+    toggleDiv() {
+      this.showMore = !this.showMore
+    },
+  },
 }
 </script>
+
+<style scoped>
+.link-btn {
+  padding: 0; /* Remove padding */
+  font-size: inherit; /* Inherit font size */
+  color: #1a5a96 !important; /* Inherit color */
+  text-decoration: underline; /* Remove underline */
+  cursor: pointer; /* Show pointer cursor on hover */
+}
+</style>
