@@ -85,7 +85,7 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading"></AppDocumentUpload>
+            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 pb-0">
@@ -158,6 +158,7 @@ export default {
       showNewRequestConfirmationDialog: false,
       referenceNumber: '',
       documentsToUpload: [],
+      areValidFilesUploaded: true,
     }
   },
   computed: {
@@ -171,9 +172,6 @@ export default {
     },
     someFacilitiesSelected() {
       return this.newRequestModel.facilities.length > 0
-    },
-    areValidFilesUploaded() {
-      return this.documentsToUpload.every((file) => file.isValidFile)
     },
   },
   watch: {
@@ -246,6 +244,10 @@ export default {
 
     toggleNewRequestConfirmationDialog() {
       this.showNewRequestConfirmationDialog = !this.showNewRequestConfirmationDialog
+    },
+
+    validateDocumentsToUpload(value) {
+      this.areValidFilesUploaded = value
     },
   },
 }

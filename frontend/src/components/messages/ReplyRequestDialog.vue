@@ -15,7 +15,7 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading"></AppDocumentUpload>
+            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
         </v-form>
       </template>
@@ -74,13 +74,9 @@ export default {
       isDisplayed: false,
       isLoading: false,
       showReplyRequestConfirmationDialog: false,
+      areValidFilesUploaded: true,
       documentsToUpload: [],
     }
-  },
-  computed: {
-    areValidFilesUploaded() {
-      return this.documentsToUpload.every((file) => file.isValidFile)
-    },
   },
   watch: {
     show: {
@@ -175,6 +171,10 @@ export default {
         console.log(`Failed to update Assistance Request in store - ${error}`)
         throw error
       }
+    },
+
+    validateDocumentsToUpload(value) {
+      this.areValidFilesUploaded = value
     },
   },
 }

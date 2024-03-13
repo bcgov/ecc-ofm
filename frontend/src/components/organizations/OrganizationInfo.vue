@@ -2,7 +2,7 @@
   <v-card class="my-4 pa-4" variant="outlined">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
-        <v-row no-gutters>
+        <v-row no-gutters class="mb-4">
           <v-col cols="11" md="6" lg="6">
             <v-card variant="outlined" class="card-outline mr-3 fill-height">
               <v-row no-gutters>
@@ -135,65 +135,63 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col class="pt-0">
-            <v-card variant="outlined" class="card-outline pa-2 w-100">
-              <div class="w-100">
-                <v-row no-gutters>
-                  <v-col class="">
-                    <AppLabel>Does your organization have an inclusion policy?</AppLabel>
-                  </v-col>
-                  <v-col class="mt-2">
-                    <v-row v-if="editable && !editMode" justify="end">
-                      <AppButton variant="text" :disabled="loading">
-                        <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
-                      </AppButton>
+        <v-skeleton-loader :loading="loadingInclusionPolicy" type="table-tbody">
+          <v-card variant="outlined" class="card-outline pa-2 w-100">
+            <div class="w-100">
+              <v-row no-gutters>
+                <v-col class="">
+                  <AppLabel>Does your organization have an inclusion policy?</AppLabel>
+                </v-col>
+                <v-col class="mt-2">
+                  <v-row v-if="editable && !editMode" justify="end">
+                    <AppButton variant="text" :disabled="loading" @click="toggleEditMode()">
+                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
+                    </AppButton>
+                  </v-row>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col>
+                  <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
+                    <v-row no-gutters>
+                      <v-col cols="12" sm="2" md="1">
+                        <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
+                      </v-col>
+                      <v-col cols="12" sm="2" md="1">
+                        <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
+                      </v-col>
                     </v-row>
-                  </v-col>
-                </v-row>
-                <v-row no-gutters>
-                  <v-col>
-                    <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
-                      <v-row no-gutters>
-                        <v-col cols="12" sm="2" md="1">
-                          <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
-                        </v-col>
-                        <v-col cols="12" sm="2" md="1">
-                          <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
-                        </v-col>
-                      </v-row>
-                    </v-radio-group>
-                    <template v-if="showDocuments">
-                      <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
-                        <AppLabel>Inclusion Policy Document:</AppLabel>
-                        <AppDocumentUpload
-                          id="inclusion-policy-upload"
-                          ref="documentUpload"
-                          v-model="documentsToUpload"
-                          entityName="accounts"
-                          :loading="loadingInclusionPolicy"
-                          :readonly="!editMode"
-                          :uploadedDocuments="uploadedDocumentsEdit"
-                          @deleteUploadedDocument="deleteUploadedDocument" />
-                        <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
-                          Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
-                        </v-alert>
-                      </v-col>
-                      <v-col v-else class="pt-0">
-                        <v-icon size="30" color="amber">mdi-alert</v-icon>
-                        This is a requirement to apply for Support Needs Supplementary Funding
-                      </v-col>
-                    </template>
-                    <v-col v-if="editMode" class="d-flex justify-end pt-0">
-                      <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" @click="toggleEditMode()" class="mr-6">Cancel</AppButton>
-                      <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" @click="save()">Save</AppButton>
+                  </v-radio-group>
+                  <template v-if="showDocuments">
+                    <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
+                      <AppLabel>Inclusion Policy Document:</AppLabel>
+                      <AppDocumentUpload
+                        id="inclusion-policy-upload"
+                        ref="documentUpload"
+                        v-model="documentsToUpload"
+                        entityName="accounts"
+                        :loading="loadingInclusionPolicy"
+                        :readonly="!editMode"
+                        :uploadedDocuments="uploadedDocumentsEdit"
+                        @deleteUploadedDocument="deleteUploadedDocument" />
+                      <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
+                        Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
+                      </v-alert>
                     </v-col>
+                    <v-col v-else class="pt-0">
+                      <v-icon size="30" color="amber">mdi-alert</v-icon>
+                      This is a requirement to apply for Support Needs Supplementary Funding
+                    </v-col>
+                  </template>
+                  <v-col v-if="editMode" class="d-flex justify-end pt-0">
+                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" @click="toggleEditMode()" class="mr-6">Cancel</AppButton>
+                    <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" @click="save()">Save</AppButton>
                   </v-col>
-                </v-row>
-              </div>
-            </v-card>
-          </v-col>
-        </v-row>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card>
+        </v-skeleton-loader>
       </v-container>
     </v-skeleton-loader>
   </v-card>
@@ -267,18 +265,17 @@ export default {
         return
       }
       if (!this.organizationEdit.hasInclusionPolicy && this.organization.hasInclusionPolicy) {
-        this.documentsToDelete = this.uploadedDocumentsEdit.map((document) => document.documentId)
+        this.documentsToDelete = this.uploadedDocuments.map((document) => document.documentId)
       }
       this.loadingInclusionPolicy = true
-      this.documentsToUpload = this.documentsToUpload?.filter((document) => document.isValidFile && document.file)
       await this.$emit('saveInclusionPolicyData', this.organizationEdit, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
     },
 
     onSaveCompleteCallBack() {
-      this.loadingInclusionPolicy = false
       this.resetDocuments()
       this.editMode = false
       this.showUploadDocumentsAlert = false
+      this.loadingInclusionPolicy = false
     },
 
     toggleEditMode() {
