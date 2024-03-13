@@ -156,9 +156,6 @@ export default {
         console.log(this.updatedResponses)
         await Promise.all(
           this.updatedResponses?.map(async (updatedResponse) => {
-            if (['Multiple Choice'].includes(this.getReportQuestionTypeNameById(updatedResponse?.questionType))) {
-              updatedResponse.value = updatedResponse.value?.toString()
-            }
             let originalResponse
             if ('rowId' in updatedResponse) {
               originalResponse = this.originalResponses.find(

@@ -53,7 +53,7 @@
       return-object />
 
     <v-select
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Multiple Choice'"
+      v-if="isMultipleChoiceQuestion(question?.type)"
       v-model.lazy="updatedResponse.value"
       :rules="rules.required"
       :placeholder="RESPONSE_PLACEHOLDER"
@@ -83,6 +83,7 @@ import { isEmpty } from 'lodash'
 
 export default {
   components: { AppNumberInput },
+
   props: {
     question: {
       type: Object,
@@ -97,13 +98,16 @@ export default {
       },
     },
   },
+
   emits: ['update'],
+
   data() {
     return {
       rules,
       updatedResponse: {},
     }
   },
+
   computed: {
     ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
     allItemsSelected() {
@@ -113,27 +117,30 @@ export default {
       return this.updatedResponse?.value?.length > 0
     },
   },
+
   watch: {
     updatedResponse: {
       handler() {
         if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || (!isEmpty(this.response) && this.updatedResponse?.value === this.response?.value)) return
-        // console.log(this.updatedResponse)
-        this.$emit('update', this.updatedResponse)
+        const updatedResponse = Object.assign({}, this.updatedResponse)
+        if (this.isMultipleChoiceQuestion(updatedResponse?.questionType)) {
+          updatedResponse.value = updatedResponse.value?.toString()
+        }
+        this.$emit('update', updatedResponse)
       },
       deep: true,
     },
   },
+
   created() {
     this.updatedResponse = Object.assign({}, this.response)
     this.updatedResponse.questionId = this.question?.questionId
     this.updatedResponse.questionType = this.question?.type
     this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
     if (!isEmpty(this.response)) {
-      if (['Multiple Choice'].includes(this.getReportQuestionTypeNameById(this.question?.type)) && this.updatedResponse?.value?.includes(',')) {
+      if (this.isMultipleChoiceQuestion(this.question?.type)) {
         this.updatedResponse.value = this.updatedResponse.value?.split(',')
       }
-    } else {
-      this.updatedResponse.value = undefined
     }
     this.RESPONSE_PLACEHOLDER = ''
     this.CURRENCY_FORMAT = {
@@ -149,6 +156,7 @@ export default {
       precision: 0,
     }
   },
+
   methods: {
     toggleAllItems() {
       if (this.allItemsSelected) {
@@ -157,11 +165,10 @@ export default {
         this.updatedResponse.value = this.question?.choices?.slice()
       }
     },
+
+    isMultipleChoiceQuestion(questionType) {
+      return ['Multiple Choice'].includes(this.getReportQuestionTypeNameById(questionType))
+    },
   },
 }
 </script>
-<style scoped>
-.totalYearlyCost {
-  font-weight: 700;
-}
-</style>
