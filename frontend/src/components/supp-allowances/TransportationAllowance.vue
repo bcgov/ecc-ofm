@@ -112,7 +112,7 @@
   </div>
 
   <v-row class="d-flex flex-column align-end my-8">
-    <AppButton id="add-vehicle" :primary="false" size="large" width="300px" @click="addModel()">+ Add another vehicle</AppButton>
+    <AppButton v-if="isAddButtonEnabled" id="add-vehicle" :primary="false" size="large" width="300px" @click="addModel()">+ Add another vehicle</AppButton>
   </v-row>
 </template>
 
@@ -151,7 +151,11 @@ export default {
       },
     }
   },
-  computed: {},
+  computed: {
+    isAddButtonEnabled() {
+      return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
+    },
+  },
   watch: {
     transportModels: {
       handler(value) {
@@ -162,6 +166,7 @@ export default {
   },
   async created() {
     this.models = cloneDeep(this.transportModels)
+    this.MAX_TRANSPORT_APPLICATIONS = 10
   },
   methods: {
     update(model) {
