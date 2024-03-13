@@ -61,7 +61,7 @@ export default {
       default: () => [],
     },
   },
-  emits: ['update:modelValue', 'deleteUploadedDocument'],
+  emits: ['update:modelValue', 'deleteUploadedDocument', 'validateDocumentsToUpload'],
   data() {
     return {
       documents: [],
@@ -71,7 +71,9 @@ export default {
   watch: {
     documents: {
       handler() {
-        this.$emit('update:modelValue', this.documents)
+        this.validateDocumentsToUpload()
+        const documentsToUpload = this.documents?.filter((document) => document.isValidFile && document.file)
+        this.$emit('update:modelValue', documentsToUpload)
       },
       deep: true,
     },
@@ -104,12 +106,21 @@ export default {
     addFile() {
       this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true })
     },
+
     deleteFile(deletedItemId) {
       const index = this.documents.findIndex((item) => item.id === deletedItemId)
       if (index > -1) {
         this.documents.splice(index, 1)
       }
     },
+
+    validateDocumentsToUpload() {
+      this.$emit(
+        'validateDocumentsToUpload',
+        this.documents?.every((file) => file.isValidFile),
+      )
+    },
+
     // Need to add this validation because isValidForm is not responsive when file is updated
     validateFile(updatedItemId) {
       const document = this.documents.find((item) => item.id === updatedItemId)
@@ -122,6 +133,7 @@ export default {
         document.isValidFile = true
       }
     },
+
     resetDocuments() {
       this.documents = []
     },
