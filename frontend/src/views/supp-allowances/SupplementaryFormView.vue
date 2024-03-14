@@ -152,7 +152,7 @@ export default {
     },
     async loadData() {
       try {
-        this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplications(this.applicationId, 'statusCode=1'))
+        this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplications(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
       }
