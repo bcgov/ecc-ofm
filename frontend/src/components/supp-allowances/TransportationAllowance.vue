@@ -42,7 +42,7 @@
         </div>
       </v-col>
       <v-col>
-        <v-icon small @click="deleteModel(model)">mdi-delete</v-icon>
+        <v-icon small @click="deleteModel(model, index)">mdi-delete</v-icon>
       </v-col>
     </v-row>
     <v-divider class="my-3"></v-divider>
@@ -123,6 +123,8 @@ import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import { cloneDeep } from 'lodash'
+import { uuid } from 'vue-uuid'
+import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 
 export default {
   components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
@@ -156,14 +158,6 @@ export default {
       return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
     },
   },
-  watch: {
-    transportModels: {
-      handler(value) {
-        this.models = cloneDeep(value)
-      },
-      deep: true,
-    },
-  },
   async created() {
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
@@ -173,12 +167,38 @@ export default {
       this.$emit('update', model)
     },
     addModel() {
-      this.$emit('addModel')
+      const transportModel = {
+        monthlyLease: 0.0,
+        estimatedMileage: null,
+        odometer: null,
+        VIN: null,
+        supplementaryApplicationId: undefined,
+        supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        id: uuid.v1(),
+      }
+
+      this.models.push(transportModel)
+      this.$emit('addModel', transportModel)
     },
-    deleteModel(model) {
+    deleteModel(model, index) {
+      this.models.splice(index, 1)
       this.$emit('deleteModel', model)
     },
     deleteUploadedDocument(documentId) {
+      for (const model of this.models) {
+        if (!model.uploadedDocuments) {
+          continue
+        }
+        const foundDoc = model.uploadedDocuments.find((el) => el.documentId === documentId)
+        if (!foundDoc) {
+          continue
+        }
+        model.uploadedDocuments.splice(model.uploadedDocuments.indexOf(foundDoc), 1)
+        this.$emit('update', model)
+        break
+      }
       this.$emit('deleteDocument', documentId)
     },
   },

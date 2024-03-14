@@ -1,8 +1,8 @@
-import { getFileExtensionWithDot, isHeicFile, updateHeicFileNameToJpg } from '@/utils/file'
-
-import { ApiRoutes } from '@/utils/constants'
-import ApiService from '@/common/apiService'
 import { isEmpty } from 'lodash'
+
+import ApiService from '@/common/apiService'
+import { ApiRoutes } from '@/utils/constants'
+import { getFileExtensionWithDot, isHeicFile, updateHeicFileNameToJpg } from '@/utils/file'
 
 function mapDocumentFileObjectForBack(documents) {
   let formData = new FormData()

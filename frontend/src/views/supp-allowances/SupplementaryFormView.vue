@@ -14,26 +14,25 @@
       </v-col>
     </v-row>
     <div>
-      <v-skeleton-loader :loading="loading" type="table-tbody">
-        <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
-            <v-expansion-panel-title>
-              <span class="header-label">{{ panel.title }}</span>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
-              <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
-              <TransportationAllowance
-                v-if="panel.id === 'transportation'"
-                :transportModels="getTransportModels()"
-                @update="updateModel"
-                @addModel="addBlankTransportModel()"
-                @deleteModel="deleteTransportModel"
-                @deleteDocument="deleteDocument" />
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-skeleton-loader>
+      <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
+      <v-expansion-panels v-else v-model="panel" multiple>
+        <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
+          <v-expansion-panel-title>
+            <span class="header-label">{{ panel.title }}</span>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
+            <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
+            <TransportationAllowance
+              v-if="panel.id === 'transportation'"
+              :transportModels="getTransportModels()"
+              @update="updateModel"
+              @addModel="addBlankTransportModel"
+              @deleteModel="deleteTransportModel"
+              @deleteDocument="deleteDocument" />
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </div>
   </v-form>
 </template>
@@ -75,10 +74,11 @@ export default {
   emits: ['process'],
   data() {
     return {
-      loading: false,
+      loading: true,
       panel: [],
       models: undefined,
       clonedModels: [],
+      documentsToDelete: [],
     }
   },
   computed: {
@@ -99,7 +99,7 @@ export default {
           for (const applicationModel of this.models) {
             if (this.isModelSame(applicationModel)) {
               continue
-            } else if (this.isModelEmpty(applicationModel)) {
+            } else if (this.isModelEmpty(applicationModel) || applicationModel.toDelete) {
               await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
               delete applicationModel.supplementaryApplicationId
               continue
@@ -121,6 +121,12 @@ export default {
               applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
             }
 
+            if (this.documentsToDelete.length > 0) {
+              for (const documentID of this.documentsToDelete) {
+                await DocumentService.deleteDocument(documentID)
+              }
+              this.documentsToDelete = []
+            }
             if (applicationModel.documentsToUpload) {
               await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
             }
@@ -130,8 +136,6 @@ export default {
           this.setSuccessAlert(`Application Saved`)
         } catch (error) {
           this.setFailureAlert('Failed to save supplementary applications')
-        } finally {
-          this.loading = false
         }
       },
     },
@@ -172,8 +176,6 @@ export default {
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplications(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
-      } finally {
-        this.loading = false
       }
     },
     async setUpDefaultNewRequestModel(suppApplications) {
@@ -195,7 +197,7 @@ export default {
 
       this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }, { ...this.findAndUpdateModel(suppApplications, supportModel) }]
 
-      const transportApplications = suppApplications.filter((el) => el.supplementaryType == SUPPLEMENTARY_TYPES.TRANSPORT)
+      const transportApplications = suppApplications.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
 
       if (transportApplications.length > 0) {
         for (const application of transportApplications) {
@@ -203,9 +205,18 @@ export default {
         }
         this.models = [...this.models, ...transportApplications]
       } else {
-        this.addBlankTransportModel()
+        this.addBlankTransportModel({
+          monthlyLease: 0.0,
+          estimatedMileage: null,
+          odometer: null,
+          VIN: null,
+          supplementaryApplicationId: undefined,
+          supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
+          uploadedDocuments: [],
+          documentsToUpload: [],
+          id: uuid.v1(),
+        })
       }
-
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
     },
@@ -213,7 +224,7 @@ export default {
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
 
       if (index === -1) {
-        index = this.models.indexOf(this.models.find((el) => el.id == updatedModel.id))
+        index = this.models.indexOf(this.models.find((el) => el.id === updatedModel.id))
       }
       this.models[index] = updatedModel
     },
@@ -221,18 +232,18 @@ export default {
       return isEqual(
         this.clonedModels?.find((el) => {
           if (applicationModel.supplementaryApplicationId) {
-            return el.supplementaryApplicationId == applicationModel.supplementaryApplicationId
+            return el.supplementaryApplicationId === applicationModel.supplementaryApplicationId
           }
-          return el.id == applicationModel.id
+          return el.id === applicationModel.id
         }),
         applicationModel,
       )
     },
     getModel(type) {
-      return this.models?.find((el) => el.supplementaryType == type)
+      return this.models?.find((el) => el.supplementaryType === type)
     },
     getTransportModels() {
-      return this.models?.filter((el) => el.supplementaryType == SUPPLEMENTARY_TYPES.TRANSPORT)
+      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
     },
     findAndUpdateModel(suppApplications, modelToUpdate) {
       const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
@@ -251,46 +262,20 @@ export default {
         return isEmpty(value)
       })
     },
-    addBlankTransportModel() {
-      const transportModel = {
-        monthlyLease: 0.0,
-        estimatedMileage: null,
-        odometer: null,
-        VIN: null,
-        supplementaryApplicationId: undefined,
-        supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
-        uploadedDocuments: [],
-        documentsToUpload: [],
-        id: uuid.v1(),
-      }
-
-      this.models.push(transportModel)
+    addBlankTransportModel(newModel) {
+      this.models.push(newModel)
     },
-    async deleteTransportModel(model) {
-      let index = this.models.indexOf(this.models.find((el) => model.supplementaryApplicationId && el.supplementaryApplicationId == model.supplementaryApplicationId))
-
-      //application exists in Dynamics, so we need to delete it first
-      if (index != -1) {
-        await ApplicationService.deleteSupplementaryApplication(model.supplementaryApplicationId)
+    deleteTransportModel(model) {
+      //application exists in Dynamics, so flag it to get deleted on save
+      if (model.supplementaryApplicationId) {
+        this.models[this.models.indexOf(this.models.find((el) => el.supplementaryApplicationId == model.supplementaryApplicationId))].toDelete = true
       } else {
-        index = this.models.indexOf(this.models.find((el) => el.id == model.id))
+        //remove it from the list because we have nothing to delete from dynamics
+        this.models.splice(this.models.indexOf(this.models.find((el) => el.id === model.id)), 1)
       }
-      //remove it from display
-      this.models.splice(index, 1)
     },
     deleteDocument(documentId) {
-      for (const model of this.models) {
-        if (!model.uploadedDocuments) {
-          continue
-        }
-        const foundDoc = model.uploadedDocuments.find((el) => el.documentId == documentId)
-        if (!foundDoc) {
-          continue
-        }
-        //don't wait for response, just delete it so the page can re render faster
-        DocumentService.deleteDocument(documentId)
-        model.uploadedDocuments.splice(foundDoc, 1)
-      }
+      this.documentsToDelete.push(documentId)
     },
   },
 }

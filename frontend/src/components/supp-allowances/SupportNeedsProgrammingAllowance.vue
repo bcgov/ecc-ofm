@@ -24,7 +24,7 @@
   </v-row>
   <br />
   <v-row no-gutters class="mr-2 my-2">
-    <v-btn v-if="!showMore" color="transparent" flat @click="toggleDiv" class="link-btn">Read More</v-btn>
+    <AppButton v-if="!showMore" class="link-btn" variant="text" @click="toggleInclusionPolicyDiv">Read More</AppButton>
   </v-row>
   <div v-if="showMore" class="my-4">
     <AppLabel>What is an Inclusion Policy?</AppLabel>
@@ -67,7 +67,7 @@
     </ol>
   </div>
   <v-row no-gutters class="mr-2 my-2 d-flex flex-column align-end">
-    <v-btn v-if="showMore" color="transparent" flat @click="toggleDiv" class="link-btn">Show Less</v-btn>
+    <AppButton v-if="showMore" class="link-btn" variant="text" @click="toggleInclusionPolicyDiv">Show Less</AppButton>
   </v-row>
 
   <v-divider class="mt-2"></v-divider>
@@ -99,9 +99,10 @@
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
+import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
-  components: { AppLabel },
+  components: { AppLabel, AppButton },
   props: {
     supportModel: {
       type: Object,
@@ -144,7 +145,7 @@ export default {
     ]
   },
   methods: {
-    toggleDiv() {
+    toggleInclusionPolicyDiv() {
       this.showMore = !this.showMore
     },
   },
@@ -153,10 +154,6 @@ export default {
 
 <style scoped>
 .link-btn {
-  padding: 0; /* Remove padding */
-  font-size: inherit; /* Inherit font size */
-  color: #1a5a96 !important; /* Inherit color */
-  text-decoration: underline; /* Remove underline */
-  cursor: pointer; /* Show pointer cursor on hover */
+  text-decoration: underline;
 }
 </style>
