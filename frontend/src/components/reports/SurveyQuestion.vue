@@ -121,12 +121,15 @@ export default {
   watch: {
     updatedResponse: {
       handler() {
-        if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || (!isEmpty(this.response) && this.updatedResponse?.value === this.response?.value)) return
-        const updatedResponse = Object.assign({}, this.updatedResponse)
-        if (this.isMultipleChoiceQuestion(updatedResponse?.questionType)) {
-          updatedResponse.value = updatedResponse.value?.toString()
+        // if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
+        // TODO (vietle-cgi) reduce numbers of redundant update events between parent and child
+        if (isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) return
+        const response = Object.assign({}, this.updatedResponse)
+        if (this.isMultipleChoiceQuestion(response?.questionType)) {
+          response.value = response.value?.toString()
         }
-        this.$emit('update', updatedResponse)
+        console.log('UPDATE!')
+        this.$emit('update', response)
       },
       deep: true,
     },

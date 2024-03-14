@@ -75,7 +75,7 @@ export default {
       if (isEmpty(this.response)) return
       let index = 0
       let found = this.response?.filter((item) => item.rowId === index)
-      console.log(found)
+      // console.log(found)
       while (!isEmpty(found)) {
         const rowId = found[0].rowId
         const tableQuestionId = found[0].tableQuestionId
@@ -92,8 +92,8 @@ export default {
         index += 1
         found = this.response?.filter((item) => item.rowId === index)
       }
-      console.log('CREATEDDDDDDDDDDDDDDDDDDDDD')
-      console.log(this.updatedResponses)
+      // console.log('CREATEDDDDDDDDDDDDDDDDDDDDD')
+      // console.log(this.updatedResponses)
     },
 
     addRow() {
@@ -112,9 +112,9 @@ export default {
       // console.log(foundRow)
       // console.log(header)
       // console.log(foundRow?.value[questionId])
-      console.log('getQuestionResponse')
-      console.log(questionId)
-      console.log(response)
+      // console.log('getQuestionResponse')
+      // console.log(questionId)
+      // console.log(response)
       return {
         rowId: row?.rowId,
         tableQuestionId: row?.tableQuestionId,

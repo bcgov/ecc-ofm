@@ -50,13 +50,12 @@ export default {
     },
 
     getTableQuestionResponse(question) {
-      console.log('getTableQuestionResponse')
-      console.log(this.responses?.filter((response) => response.tableQuestionId === question?.questionId))
+      // console.log('getTableQuestionResponse')
+      // console.log(this.responses?.filter((response) => response.tableQuestionId === question?.questionId))
       return this.responses?.filter((response) => response.tableQuestionId === question?.questionId)
     },
 
     updateResponses(response) {
-      // console.log(response)
       this.$emit('update', response)
     },
 

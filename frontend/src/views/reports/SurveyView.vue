@@ -63,19 +63,6 @@ export default {
     showSubmit() {
       return false
     },
-    updatedResponses() {
-      return this.clonedResponses?.filter((updatedResponse) => {
-        let originalResponse
-        if (this.isTableQuestionResponse(updatedResponse)) {
-          originalResponse = this.originalResponses.find(
-            (item) => item.questionId === updatedResponse.questionId && item.tableQuestionId === updatedResponse.tableQuestionId && item.rowId === updatedResponse.rowId,
-          )
-        } else {
-          originalResponse = this.originalResponses.find((item) => item.questionId === updatedResponse.questionId)
-        }
-        return !originalResponse || updatedResponse?.value != originalResponse.value
-      })
-    },
   },
 
   async created() {
@@ -153,25 +140,17 @@ export default {
       try {
         this.processing = true
         console.log('===================== SAVE ======================')
-        console.log(this.updatedResponses)
         await Promise.all(
-          this.updatedResponses?.map(async (updatedResponse) => {
-            let originalResponse
-            if ('rowId' in updatedResponse) {
-              originalResponse = this.originalResponses.find(
-                (originalResponse) =>
-                  originalResponse.questionId === updatedResponse.questionId &&
-                  originalResponse.tableQuestionId === updatedResponse.tableQuestionId &&
-                  originalResponse.rowId === updatedResponse.rowId,
-              )
-            } else {
-              originalResponse = this.originalResponses.find((originalResponse) => originalResponse.questionId === updatedResponse.questionId)
-            }
-
-            if (originalResponse) {
-              await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, updatedResponse)
-            } else {
-              await ReportsService.createQuestionResponse(updatedResponse)
+          this.clonedResponses?.map(async (response) => {
+            const originalResponse = this.getOriginalResponse(response)
+            if (!originalResponse && response?.value) {
+              console.log('CREATE')
+              console.log(response)
+              await ReportsService.createQuestionResponse(response)
+            } else if (originalResponse?.value != response?.value) {
+              await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
+              console.log('UPDATE')
+              console.log(response)
             }
           }),
         )
@@ -186,24 +165,34 @@ export default {
       }
     },
 
+    getOriginalResponse(response) {
+      if (this.isTableQuestionResponse(response)) {
+        return this.originalResponses.find(
+          (originalResponse) => originalResponse.questionId === response?.questionId && originalResponse.tableQuestionId === response?.tableQuestionId && originalResponse.rowId === response?.rowId,
+        )
+      }
+      return this.originalResponses.find((originalResponse) => originalResponse.questionId === response?.questionId)
+    },
+
     updateResponses(updatedResponse) {
       console.log('SURVEY VIEW')
       console.log(updatedResponse)
-      let index
-      if (this.isTableQuestionResponse(updatedResponse)) {
-        // for table questions
-        index = this.clonedResponses.findIndex(
-          (response) => response.questionId === updatedResponse.questionId && response.tableQuestionId === updatedResponse.tableQuestionId && response.rowId === updatedResponse.rowId,
-        )
-      } else {
-        index = this.clonedResponses.findIndex((response) => response.questionId === updatedResponse.questionId)
-      }
+      const index = this.getClonedResponseIndex(updatedResponse)
       if (index > -1) {
         this.clonedResponses[index] = updatedResponse
       } else {
         this.clonedResponses.push(updatedResponse)
       }
-      console.log(this.clonedResponses)
+      // console.log(this.clonedResponses)
+    },
+
+    getClonedResponseIndex(response) {
+      if (this.isTableQuestionResponse(response)) {
+        return this.clonedResponses.findIndex(
+          (clonedResponse) => clonedResponse.questionId === response?.questionId && clonedResponse.tableQuestionId === response?.tableQuestionId && clonedResponse.rowId === response?.rowId,
+        )
+      }
+      return this.clonedResponses.findIndex((clonedResponse) => clonedResponse.questionId === response?.questionId)
     },
 
     isTableQuestionResponse(response) {
