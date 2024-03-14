@@ -128,7 +128,11 @@ export default {
               this.documentsToDelete = []
             }
             if (applicationModel.documentsToUpload) {
-              await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
+              try {
+                await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
+              } catch (error) {
+                this.setFailureAlert('Failed to upload files')
+              }
             }
           }
           await this.loadData()
@@ -136,6 +140,7 @@ export default {
           this.setSuccessAlert(`Application Saved`)
         } catch (error) {
           this.setFailureAlert('Failed to save supplementary applications')
+          this.loading = false
         }
       },
     },
