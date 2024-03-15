@@ -9,7 +9,7 @@
           <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" :loading="isLoading" @click="cancel">Cancel {{ getSourceApplicationType }}</AppButton>
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="cancel">Cancel {{ getSourceApplicationType }}</AppButton>
         </v-col>
       </v-row>
     </template>
