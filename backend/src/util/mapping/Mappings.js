@@ -281,19 +281,6 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
 ]
 
-const SupplementaryApplicationMappingsForUpdate = [
-  { back: 'ofm_allowance_type', front: 'supplementaryType' },
-  { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
-  { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
-  { back: 'ofm_needs_description', front: 'supportOtherDescription' },
-  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
-  { back: 'ofm_needs_expenses', front: 'supportFundingModel' },
-  { back: 'ofm_transport_monthly_lease', front: 'monthlyLease' },
-  { back: 'ofm_transport_estimated_monthly_km', front: 'estimatedMileage' },
-  { back: 'ofm_transport_odometer', front: 'odometer' },
-  { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
-]
-
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
@@ -316,5 +303,4 @@ module.exports = {
   UserProfileOrganizationMappings,
   RequestCategoryMappings,
   SupplementaryApplicationMappings,
-  SupplementaryApplicationMappingsForUpdate,
 }

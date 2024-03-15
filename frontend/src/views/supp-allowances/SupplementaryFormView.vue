@@ -178,7 +178,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplications(this.applicationId))
+        this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
       }
@@ -222,7 +222,6 @@ export default {
           id: uuid.v1(),
         })
       }
-      console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
     },
@@ -263,6 +262,7 @@ export default {
       delete modelData.indigenousOtherDescription
       delete modelData.supportOtherDescription
       delete modelData.id
+      delete modelData.statusCode
 
       return Object.values(modelData).every((value) => {
         return isEmpty(value)
