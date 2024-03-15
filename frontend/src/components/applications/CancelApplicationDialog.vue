@@ -1,7 +1,7 @@
 <template>
   <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to cancel this {{ getSourceApplicationType }}?</div>
+      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to cancel this {{ sourceApplicationType }}?</div>
     </template>
     <template #button>
       <v-row justify="space-around">
@@ -9,7 +9,7 @@
           <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="cancel">Cancel {{ getSourceApplicationType }}</AppButton>
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="cancel">Cancel {{ sourceApplicationType }}</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -49,7 +49,7 @@ export default {
     }
   },
   computed: {
-    getSourceApplicationType() {
+    sourceApplicationType() {
       return this.applicationType === 'OFM' ? 'Application' : 'Supplementary Application'
     },
   },
@@ -77,9 +77,9 @@ export default {
           await ApplicationService.updateSupplementaryApplication(this.applicationId, payload)
         }
         this.$emit('cancel')
-        this.setSuccessAlert(`${this.getSourceApplicationType} cancelled successfully`)
+        this.setSuccessAlert(`${this.sourceApplicationType} cancelled successfully`)
       } catch (error) {
-        this.setFailureAlert(`Failed to cancel your ${this.getSourceApplicationType}`, error)
+        this.setFailureAlert(`Failed to cancel your ${this.sourceApplicationType}`, error)
       } finally {
         this.isLoading = false
         this.closeDialog()

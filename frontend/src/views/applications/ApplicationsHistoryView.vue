@@ -186,11 +186,12 @@ export default {
     },
 
     toggleCancelDialog(item) {
+      this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
+      this.showCancelDialog = !this.showCancelDialog
       if (item) {
-        this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
-        this.showCancelDialog = !this.showCancelDialog
+        this.applicationTypeToCancel = item.applicationType
       }
-      this.applicationTypeToCancel = item?.applicationType
+
     },
 
     cancelApplication() {
