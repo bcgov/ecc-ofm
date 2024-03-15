@@ -222,6 +222,7 @@ export default {
           id: uuid.v1(),
         })
       }
+      console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
     },

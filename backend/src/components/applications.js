@@ -1,9 +1,10 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
+const { ApplicationMappings, SupplementaryApplicationMappings, SupplementaryApplicationMappingsForUpdate } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
+const log = require('./logger')
 
 function mapLatestActivityDate(application) {
   try {
@@ -26,7 +27,7 @@ function mapApplicationObjectForFront(data) {
 function mapSupplementaryApplicationObjectForFront(data) {
   const applications = []
   data.forEach((suppApplication) => {
-    const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
+    const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappingsForUpdate).toJSON()
     mapLatestActivityDate(mappedApplication)
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
@@ -75,6 +76,7 @@ async function getApplication(req, res) {
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
+
     // ofm_contact, ofm_secondary_contact, and ofm_expense_authority fields are lookup fields in CRM, so we need to replace them with data binding syntax
     if ('_ofm_contact_value' in payload || '_ofm_secondary_contact_value' in payload || '_ofm_expense_authority_value' in payload) {
       payload['ofm_contact@odata.bind'] = payload['_ofm_contact_value'] ? `/contacts(${payload['_ofm_contact_value']})` : null
@@ -128,7 +130,7 @@ async function getSupplementaryApplications(req, res) {
 
 async function createSupplementaryApplication(req, res) {
   try {
-    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappingsForUpdate).toJSON()
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
     } else if (payload.ofm_needs_expenses) {
@@ -137,15 +139,16 @@ async function createSupplementaryApplication(req, res) {
 
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
     const response = await postOperation('ofm_allowances', payload)
-    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappingsForUpdate).toJSON())
   } catch (e) {
+    log.info(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 async function updateSupplementaryApplication(req, res) {
   try {
-    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
+    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappingsForUpdate).toJSON()
     if (payload.ofm_indigenous_expenses) {
       payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
     } else if (payload.ofm_needs_expenses) {
