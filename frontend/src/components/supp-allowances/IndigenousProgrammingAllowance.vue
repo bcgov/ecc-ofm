@@ -1,24 +1,25 @@
 <template>
-  <v-row no-gutters class="mr-2 my-2">
+  <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
-      <ul>
-        <li><AppLabel>Purpose of the Fund:</AppLabel></li>
-      </ul>
-      The Indigenous Programming Allowance is intended to provide additional funds to child care providers to support the participant’s delivery of Indigenous curriculum in collaboration with
-      Indigenous Peoples in their community. To reduce barriers to accessing these funds, all expenses are considered eligible, except for staffing enhancements for the purpose of reducing ratio. 
-      Providers may reach out to BC Aboriginal Child Care Society (BCACCS), Métis Nation of BC (MNBC), and/or the Indigenous Perspectives Society (IPS) for resources that support child care providers
-      to enhance the their programs.
+      <AppLabel>Purpose of the fund:</AppLabel>
+
+      To provide additional funds to support the delivery of Indigenous curriculum in collaboration with Indigenous Peoples in their community.
     </v-col>
   </v-row>
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li>
-          <AppLabel>Funding Amount:</AppLabel>
-          Child care facilities may access the Indigenous Programming Allowance annually, as follows:
-        </li>
-      </ul>
+      <AppLabel>Eligible expenses:</AppLabel>
+
+      To reduce barriers to accessing these funds, all expenses are eligible except for staffing enhancements for the purpose of reducing ratio.
+    </v-col>
+  </v-row>
+  <br />
+  <v-row no-gutters class="mr-2 my-2">
+    <v-col cols="12">
+      <AppLabel>Funding Amount:</AppLabel>
+      Child care facilities may access the Indigenous Programming Allowance annually, as follows:
+
       <v-row no-gutters>
         <v-col cols="12" class="ml-10 my-2">
           <ul>
@@ -33,10 +34,7 @@
   <v-divider class="mt-2"></v-divider>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      Ineligible expences include: Staffing enhencements for the purposes of reducing ratio.
-      <br />
-      <br />
-      Please describe how you intend to use this funding
+      Indicate how you plan to use this funding. Select all that apply.
       <strong>(Eligible Expences may include, but are not limited to):</strong>
     </v-col>
   </v-row>
