@@ -16,7 +16,7 @@
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
         <v-alert type="info" dense text>
-          If there is no active OFM application, you won't be able to submit a Supplemental Application.
+          If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.
         </v-alert>
       </v-col>
     </v-row>
@@ -186,8 +186,10 @@ export default {
     },
 
     toggleCancelDialog(item) {
-      this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
-      this.showCancelDialog = !this.showCancelDialog
+      if (item) {
+        this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
+        this.showCancelDialog = !this.showCancelDialog
+      }
       this.applicationTypeToCancel = item?.applicationType
     },
 
