@@ -171,7 +171,7 @@ export default {
     isEmpty,
 
     getApplicationAction(application) {
-      if ([this.DRAFT_STATUS_CODES].includes(application?.statusCode)) {
+      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
         return 'Continue Application'
       }
       return 'View Application'
