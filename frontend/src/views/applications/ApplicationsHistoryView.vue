@@ -157,6 +157,7 @@ export default {
       this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
+      this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       await this.getApplicationsAndFundingAgreements()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
@@ -170,18 +171,18 @@ export default {
     isEmpty,
 
     getApplicationAction(application) {
-      if ([APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT].includes(application?.statusCode)) {
+      if ([this.DRAFT_STATUS_CODES].includes(application?.statusCode)) {
         return 'Continue Application'
       }
       return 'View Application'
     },
 
     isApplicationCancellable(application) {
-      return [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT].includes(application?.statusCode)
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode)
     },
 
     isApplicationDownloadable(application) {
-      return ![APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT].includes(application?.statusCode)
+      return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
     },
 
     toggleCancelDialog(item) {
@@ -290,7 +291,7 @@ export default {
     },
 
     getStatusClass(statusCode) {
-      if ([APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT].includes(statusCode)) {
+      if (this.DRAFT_STATUS_CODES.includes(statusCode)) {
         return 'status-gray'
       } else if ([APPLICATION_STATUS_CODES.IN_REVIEW, SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.SUBMITTED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED].includes(statusCode)) {
         return 'status-green'

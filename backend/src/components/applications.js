@@ -18,16 +18,16 @@ function mapLatestActivityDate(application) {
 }
 
 function mapApplicationObjectForFront(data) {
-  let application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
-  application = mapLatestActivityDate(application)
+  const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
+  mapLatestActivityDate(application)
   return application
 }
 
 function mapSupplementaryApplicationObjectForFront(data) {
   const applications = []
   data.forEach((suppApplication) => {
-    let mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
-    mappedApplication = mapLatestActivityDate(mappedApplication)
+    const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
+    mapLatestActivityDate(mappedApplication)
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
     } else if (mappedApplication.supportFundingModel) {
