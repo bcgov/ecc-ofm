@@ -83,10 +83,14 @@ export default {
     }
   },
 
-  async getSupplementaryApplications(applicationId) {
+  async getSupplementaryApplications(applicationId, filterQuery) {
     try {
       if (!applicationId) return
-      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
+      let url = `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}`
+      if (filterQuery) {
+        url += `?${filterQuery}`
+      }
+      const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application by application id - ${error}`)
