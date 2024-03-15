@@ -39,7 +39,7 @@
     </v-col>
   </v-row>
 
-  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value">
+  <v-row v-for="item in INDIG_CHECKBOX_LABELS" :key="item.value">
     <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
   </v-row>
 
@@ -51,6 +51,7 @@
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
+import { INDIG_CHECKBOX_LABELS } from './suppConstants'
 
 export default {
   components: { AppLabel },
@@ -86,18 +87,7 @@ export default {
   },
   async created() {
     this.model = { ...this.indigenousProgrammingModel }
-
-    this.CHECKBOX_LABELS = [
-      { label: 'Honoraria for Elder involvement, language revitalization and/ or other resource people including curriculum development resource', value: '1' },
-      { label: 'Culturally based meals and traditional foods', value: '2' },
-      { label: 'Materials for a cultural program (beads, wood, food, etc.)', value: '3' },
-      { label: 'Books, music, videos, and arts and crafts materials', value: '4' },
-      { label: 'Culturally relevant toys and games', value: '5' },
-      { label: 'Facility décor enhancement-pictures, including artwork, outdoor play, and natural materials', value: '6' },
-      { label: 'Field trips and outings', value: '7' },
-      { label: 'Land-based play support', value: '8' },
-      { label: 'Other', value: '9' },
-    ]
+    this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
   },
 }
 </script>

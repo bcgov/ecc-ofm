@@ -54,7 +54,7 @@
               <p>VIN:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :disabled="readonly" maxlength="17"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -64,7 +64,7 @@
               <p>Vehicle usage in KM/month at time of Application:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :rules="[rules.max(99999)]" :disabled="readonly" maxlength="5"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -74,7 +74,7 @@
               <p>Estimated mileage of the year:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.odometer" required type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.odometer" required type="number" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly" maxlength="6"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -151,6 +151,7 @@ export default {
         separator: ',',
         precision: 2,
       },
+      maxLengthRuleOdometer: [(value) => (!!value && value.length <= 6) || 'Max 6 characters allowed'],
     }
   },
   computed: {
