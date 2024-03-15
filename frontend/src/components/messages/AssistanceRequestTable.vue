@@ -156,7 +156,7 @@ export default {
 }
 
 .action-required-message {
-  color: red;
+  color: #d8292f;
 }
 
 .highlighted-row {
