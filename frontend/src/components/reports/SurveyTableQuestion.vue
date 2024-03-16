@@ -1,9 +1,9 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <v-data-table :headers="getHeaders" :items="updatedResponses" item-value="name">
+    <v-data-table :headers="getHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
       <template v-slot:item="{ item }">
         <tr>
-          <td v-for="questionId in Object.keys(item.value)" :key="questionId">
+          <td v-for="questionId in Object.keys(item.headers)" :key="questionId">
             <SurveyQuestion :question="getQuestion(questionId)" :response="getQuestionResponse(item, questionId)" @update="updateResponses" />
           </td>
         </tr>
@@ -55,24 +55,10 @@ export default {
         }
       })
     },
-  },
 
-  created() {
-    console.log('CREATED')
-    console.log(this.response)
-    this.cloneOriginalResponses()
-    if (isEmpty(this.updatedResponses)) {
-      this.addRow()
-    }
-  },
-
-  methods: {
-    getQuestion(questionId) {
-      return this.question?.headers?.find((item) => item.questionId === questionId)
-    },
-
-    cloneOriginalResponses() {
+    convertOriginalResponsesToTableFormat() {
       if (isEmpty(this.response)) return
+      const responses = []
       let index = 0
       let found = this.response?.filter((item) => item.rowId === index)
       // console.log(found)
@@ -82,28 +68,42 @@ export default {
         const row = {
           rowId: rowId,
           tableQuestionId: tableQuestionId,
-          value: {},
+          headers: {},
         }
         this.question?.headers?.forEach((header) => {
           const temp = found.find((item) => item.questionId === header.questionId)
-          row.value[header.questionId] = temp?.value
+          row.headers[header.questionId] = temp?.value
         })
-        this.updatedResponses.push(row)
+        responses.push(row)
         index += 1
         found = this.response?.filter((item) => item.rowId === index)
       }
-      // console.log('CREATEDDDDDDDDDDDDDDDDDDDDD')
-      // console.log(this.updatedResponses)
+
+      return responses
+    },
+  },
+
+  created() {
+    if (isEmpty(this.response)) {
+      this.addRow()
+    } else {
+      this.updatedResponses = this.convertOriginalResponsesToTableFormat
+    }
+  },
+
+  methods: {
+    getQuestion(questionId) {
+      return this.question?.headers?.find((item) => item.questionId === questionId)
     },
 
     addRow() {
       const row = {
         rowId: this.updatedResponses?.length,
         tableQuestionId: this.question?.questionId,
-        value: {},
+        headers: {},
       }
-      this.question?.headers?.forEach((header) => (row.value[header.questionId] = undefined))
-      this.updatedResponses.push(row)
+      this.question?.headers?.forEach((header) => (row.headers[header.questionId] = undefined))
+      this.updatedResponses?.push(row)
       console.log(this.updatedResponses)
     },
 
@@ -111,18 +111,18 @@ export default {
       const response = this.updatedResponses?.find((item) => item.rowId === row?.rowId)
       // console.log(foundRow)
       // console.log(header)
-      // console.log(foundRow?.value[questionId])
+      // console.log(foundRow?.headers[questionId])
       // console.log('getQuestionResponse')
       // console.log(questionId)
-      // console.log(response)
       return {
         rowId: row?.rowId,
         tableQuestionId: row?.tableQuestionId,
-        value: response?.value[questionId],
+        value: response?.headers[questionId],
       }
     },
 
     updateResponses(response) {
+      this.updatedResponses[response?.rowId].headers[response?.questionId] = response?.value
       this.$emit('update', response)
     },
   },

@@ -9,12 +9,6 @@
           {{ section.title }}
         </v-col>
       </v-row>
-      <!-- <v-row v-if="item.order < Object.keys(sections).length" no-gutters>
-        <v-col cols="2">
-          <div :class="getVerticalLineClass()"></div>
-        </v-col>
-        <v-col cols="10"></v-col>
-      </v-row> -->
     </div>
   </v-container>
 </template>
@@ -48,10 +42,6 @@ export default {
       return section?.sectionId === this.currentSection?.sectionId ? 'current-text' : 'active'
     },
 
-    getVerticalLineClass() {
-      return 'vertical-line-active'
-    },
-
     getNavIcon() {
       return 'mdi-circle'
     },
@@ -63,18 +53,6 @@ export default {
 }
 </script>
 <style scoped>
-.vertical-line-active {
-  margin: 0px 0px 0px 10px;
-  border-left: 3px solid #003366;
-  height: 15px;
-}
-
-.vertical-line-disabled {
-  margin: 0px 0px 0px 10px;
-  border-left: 3px solid rgba(0, 0, 0, 0.15);
-  height: 15px;
-}
-
 .active {
   color: #003366;
   text-decoration: none;
@@ -83,12 +61,6 @@ export default {
 .active:hover {
   cursor: pointer;
   text-decoration: underline;
-}
-
-.disabled {
-  color: rgba(0, 0, 0, 0.3);
-  text-decoration: none;
-  pointer-events: none;
 }
 
 .current-icon {

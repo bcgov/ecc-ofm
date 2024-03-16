@@ -8,7 +8,7 @@
         <SurveyNavBar :sections="sections" :currentSection="currentSection" @update="updateCurrentSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
-        <SurveySection :section="currentSection" :responses="clonedResponses" @update="updateResponses" @process="process" />
+        <SurveySection :section="currentSection" :responses="clonedResponses" @update="updateClonedResponses" @process="process" />
         <AppNavButtons :loading="loading || processing" :showBack="true" :showSave="true" :showNext="true" @back="back" @save="save(true)" @next="next"></AppNavButtons>
       </v-col>
     </v-row>
@@ -80,7 +80,7 @@ export default {
         this.sections = await ReportsService.getSurveySections(surveyResponse?.surveyId)
         await Promise.all(
           this.sections?.map(async (section) => {
-            section.questions = await this.getSectionQuestions(section?.sectionId)
+            section.questions = await ReportsService.getSectionQuestions(section?.sectionId)
           }),
         )
         console.log(this.sections)
@@ -98,32 +98,6 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to get questions responses', error)
       }
-    },
-
-    async getSectionQuestions(sectionId) {
-      try {
-        const questions = await ReportsService.getSurveyQuestions(sectionId)
-        this.getQuestionsChoices(questions)
-        await Promise.all(
-          questions.map(async (question) => {
-            if (this.getReportQuestionTypeNameById(question?.type) === 'Table') {
-              question.headers = await ReportsService.getSurveyQuestionHeaders(question?.questionId)
-              this.getQuestionsChoices(question.headers)
-            }
-          }),
-        )
-        return questions
-      } catch (error) {
-        this.setFailureAlert('Failed to load data', error)
-      }
-    },
-
-    getQuestionsChoices(questions) {
-      questions?.forEach((question) => {
-        if (['Two Option', 'Choice', 'Multiple Choice'].includes(this.getReportQuestionTypeNameById(question?.type))) {
-          question.choices = question.choices?.replace(/[\\"]/g, '')?.split(',')
-        }
-      })
     },
 
     back() {
@@ -174,7 +148,7 @@ export default {
       return this.originalResponses.find((originalResponse) => originalResponse.questionId === response?.questionId)
     },
 
-    updateResponses(updatedResponse) {
+    updateClonedResponses(updatedResponse) {
       console.log('SURVEY VIEW')
       console.log(updatedResponse)
       const index = this.getClonedResponseIndex(updatedResponse)

@@ -1,7 +1,17 @@
 import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
+import { useAppStore } from '@/stores/app'
 import { ApiRoutes } from '@/utils/constants'
+
+function getQuestionsChoices(questions) {
+  const appStore = useAppStore()
+  questions?.forEach((question) => {
+    if (['Two Option', 'Choice', 'Multiple Choice'].includes(appStore?.getReportQuestionTypeNameById(question?.type))) {
+      question.choices = question.choices?.replace(/[\\"]/g, '')?.split(',')
+    }
+  })
+}
 
 export default {
   async getFacilityReports(facilityId) {
@@ -25,11 +35,22 @@ export default {
     }
   },
 
-  async getSurveyQuestions(sectionId) {
+  async getSectionQuestions(sectionId) {
     try {
       if (!sectionId) return
+      const appStore = useAppStore()
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}`)
-      return response?.data
+      const questions = response?.data
+      getQuestionsChoices(questions)
+      await Promise.all(
+        questions.map(async (question) => {
+          if (appStore.getReportQuestionTypeNameById(question?.type) === 'Table') {
+            question.headers = await this.getSurveyQuestionHeaders(question?.questionId)
+            getQuestionsChoices(question.headers)
+          }
+        }),
+      )
+      return questions
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
       throw error
