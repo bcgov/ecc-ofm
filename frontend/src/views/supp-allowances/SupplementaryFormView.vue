@@ -72,7 +72,7 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance, AppDialog },
+  components: { AppButton, AppDialog, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
   mixins: [alertMixin],
   props: {
     applicationId: {
