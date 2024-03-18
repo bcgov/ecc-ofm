@@ -19,7 +19,7 @@
           <v-row>
             <v-col v-if="showMessagingIcon" style="width: 70px">
               <v-btn @click="$router.push({ name: 'messaging' })" id="mail_box_button" rounded class="mr-5 elevation-0" dark v-if="!isNaN(messageNotificationCount)">
-                <v-badge color="red" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
+                <v-badge color="#d8292f" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
                   <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
                 </v-badge>
               </v-btn>

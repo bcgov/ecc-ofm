@@ -16,7 +16,7 @@
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
         <v-alert type="info" dense text>
-          If there is no active OFM application, you won't be able to submit a Supplemental Application.
+          If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.
         </v-alert>
       </v-col>
     </v-row>
@@ -57,11 +57,15 @@
       </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <div v-if="isEmpty(applications)">You have no applications on file</div>
-      <v-data-table v-else :headers="headers" :items="filteredApplications" item-key="applicationId" class="soft-outline" density="compact">
+      <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
+      <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" class="soft-outline" density="compact">
+
+        <template #item.status="{ item }">
+          <span :class="getStatusClass(item.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
+        </template>
 
         <template #item.actions="{ item }">
-          <router-link :to="{ name: 'facility-details', params: { applicationGuid: item?.applicationId } }">
+          <router-link :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
         </template>
@@ -70,21 +74,26 @@
           {{ format.formatDate(item.submittedDate) }}
         </template>
 
-        <template #item.latestActivity="{ item }">
-          {{ format.formatDate(item.latestActivity) }}
+        <template #item.latestActivityDate="{ item }">
+          {{ format.formatDate(item.latestActivityDate) }}
         </template>
 
         <template #item.actionButtons="{ item }">
           <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="false">
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
-          <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item?.applicationId)">
+          <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
+    <CancelApplicationDialog
+      :show="showCancelDialog"
+      :applicationId="cancelledApplicationId"
+      :applicationType="applicationTypeToCancel"
+      @close="toggleCancelDialog"
+      @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
 </template>
@@ -99,6 +108,8 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import { APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 
 export default {
   components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
@@ -107,42 +118,49 @@ export default {
     return {
       format,
       applications: [],
+      supplementaryApplications: [],
+      applicationItems: [],
       headers: [
-        { title: 'Application ID', key: 'referenceNumber', width: '15%' },
-        { title: 'Facility', key: 'facilityName', width: '24%' },
-        { title: 'Status', key: 'status', width: '11%' },
-        { title: 'Actions', key: 'actions', sortable: false, width: '18%' },
-        { title: 'Date submitted', key: 'submittedDate', width: '15%' },
-        { title: 'Latest activity', key: 'latestActivity', width: '14%' },
+        { title: 'Application ID', key: 'referenceNumber', width: '6%' },
+        { title: 'Application Type', key: 'applicationType', width: '12%' },
+        { title: 'Facility', key: 'facilityName', width: '21%' },
+        { title: 'Status', key: 'status', width: '8%' },
+        { title: 'Actions', key: 'actions', sortable: false, width: '9%' },
+        { title: 'Date submitted', key: 'submittedDate', width: '9%' },
+        { title: 'Latest activity', key: 'latestActivityDate', width: '8%' },
         { title: '', key: 'actionButtons', sortable: false, width: '3%' },
       ],
+      applicationItemModel: {},
       loading: false,
       showCancelDialog: false,
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
+      applicationTypeToCancel: undefined,
     }
   },
   computed: {
     hasAValidApplication() {
       return this.applications?.some(application => ApplicationService.isValidApplication(application))
     },
-    filteredApplications() {
-      if (!this.facilityNameFilter) return this.applications
-      const lowerCaseFilter = this.facilityNameFilter.toLowerCase();
-      return this.applications.filter(application =>
-        application.facilityName.toLowerCase().includes(lowerCaseFilter)
-      );
+    filteredApplicationItems() {
+      return this.sortApplicationItems(
+        this.applicationItems.filter(application =>
+          !this.facilityNameFilter ||
+          application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())
+        )
+      )
     },
   },
   async created() {
     try {
       this.loading = true
-      this.applications = await ApplicationService.getApplications()
-      await Promise.all(
-        this.applications?.map(async (application) => {
-          application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
-        }),
-      )
+      this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
+      this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
+      this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
+      this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
+      await this.getApplicationsAndFundingAgreements()
+      await this.getSupplementaryApplications()
+      this.mergeRegularAndSupplementaryApplications()
     } catch (error) {
       this.setFailureAlert('Failed to get the list of applications', error)
     } finally {
@@ -151,41 +169,186 @@ export default {
   },
   methods: {
     isEmpty,
+
     getApplicationAction(application) {
-      if (application?.status === 'Draft') {
-        return 'Continue application'
+      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
+        return 'Continue Application'
       }
-      return 'View submission'
+      return 'View Application'
     },
+
     isApplicationCancellable(application) {
-      return application?.status === 'Draft'
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode)
     },
+
     isApplicationDownloadable(application) {
-      return ['Approved', 'Submitted'].includes(application?.status)
+      return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
     },
-    toggleCancelDialog(applicationId = undefined) {
+
+    toggleCancelDialog(item) {
+      this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
       this.showCancelDialog = !this.showCancelDialog
-      this.cancelledApplicationId = applicationId
+      if (item) {
+        this.applicationTypeToCancel = item.applicationType
+      }
+
     },
+
     cancelApplication() {
-      const index = this.applications?.findIndex((item) => item.applicationId === this.cancelledApplicationId)
+      let index = undefined
+      const key = this.applicationTypeToCancel === 'OFM' ? 'applicationId' : 'supplementaryApplicationId'
+      index = this.applicationItems?.findIndex((item) => item[key] === this.cancelledApplicationId)
       if (index > -1) {
-        this.applications.splice(index, 1)
+        this.applicationItems.splice(index, 1)
       }
     },
+
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
     },
-  },
+
+    async getApplicationsAndFundingAgreements() {
+      this.applications = await ApplicationService.getApplications()
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
+        }),
+      )
+    },
+
+    async getSupplementaryApplications() {
+      this.supplementaryApplications = (await Promise.all(
+        this.applications.map(application =>
+          ApplicationService.getSupplementaryApplications(application.applicationId)
+        )
+      )).filter(application => application.length > 0).flat()
+    },
+
+    /**
+     * Create an array of keys to be used as the model for an application item (union of regular and supplementary applications)
+     */
+    createApplicationItemModel() {
+      return [
+        ...this.headers.map(header => header.key),
+        'applicationId',
+        'supplementaryApplicationId'
+      ];
+    },
+
+    /**
+     * Transform applications to items with the model defined in applicationItemModel
+     */
+    transformApplicationsToItems(applications) {
+      return applications.map(application => {
+        const item = this.applicationItemModel.reduce((obj, key) => {
+          obj[key] = application[key]
+          return obj
+        }, {})
+        return {
+          ...item,
+          applicationType: 'OFM',
+          statusCode: application.statusCode,
+        }
+      })
+    },
+
+    /**
+     * Create a map of application items by applicationId for easy lookup
+     */
+    createApplicationItemsMap(applicationItems) {
+      return applicationItems.reduce((map, item) => {
+        map[item.applicationId] = item
+        return map
+      }, {})
+    },
+
+    /**
+     * Transform supplementary applications to items with the model defined in applicationItemModel
+     */
+    transformSupplementaryApplicationsToItems(supplementaryApplications, applicationItemsMap) {
+      return supplementaryApplications.map(supplementaryApplication => {
+        const correspondingApplicationItem = applicationItemsMap[supplementaryApplication.applicationId]
+        return {
+          supplementaryApplicationId: supplementaryApplication.supplementaryApplicationId,
+          applicationId: supplementaryApplication.applicationId,
+          referenceNumber: supplementaryApplication.supplementaryReferenceNumber,
+          status: supplementaryApplication.supplementaryApplicationStatus,
+          applicationType: supplementaryApplication.supplementaryTypeDescription,
+          facilityName: correspondingApplicationItem ? correspondingApplicationItem.facilityName : '',
+          submittedDate: supplementaryApplication.supplementaryApplicationSubmittedDate,
+          latestActivityDate: supplementaryApplication.latestActivityDate,
+          statusCode: supplementaryApplication.statusCode,
+        }
+      })
+    },
+
+    /**
+     * Merge regular and supplementary applications into a single array
+     */
+    mergeRegularAndSupplementaryApplications() {
+      this.applicationItemModel = this.createApplicationItemModel()
+      this.applicationItems = this.transformApplicationsToItems(this.applications)
+      const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
+      const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
+      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems]
+    },
+
+    getStatusClass(statusCode) {
+      if (this.DRAFT_STATUS_CODES.includes(statusCode)) {
+        return 'status-gray'
+      } else if ([APPLICATION_STATUS_CODES.IN_REVIEW, SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.SUBMITTED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED].includes(statusCode)) {
+        return 'status-green'
+      } else if ([APPLICATION_STATUS_CODES.APPROVED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED].includes(statusCode)) {
+        return 'status-blue'
+      } else if ([APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(statusCode)) {
+        return 'status-yellow'
+      }
+    },
+
+    getActionsRoute(item) {
+      const routeName = item.applicationType === 'OFM' ? 'facility-details' : 'supp-allowances-form'
+      return { name: routeName, params: { applicationGuid: item?.applicationId } }
+    },
+
+    sortApplicationItems(applicationItems) {
+      if (!applicationItems) return []
+      applicationItems.sort((a, b) => {
+        // Compare statusCode
+        if (a.statusCode < b.statusCode) return -1
+        if (a.statusCode > b.statusCode) return 1
+        // If statusCode is equal, compare by lastActivityDate
+        const dateA = new Date(a.lastActivityDate)
+        const dateB = new Date(b.lastActivityDate)
+        return dateA - dateB  // For ascending order
+      })
+      return applicationItems
+    }
+  }
 }
 </script>
 
 <style scoped>
-:deep(div.v-data-table-footer) {
-  padding-top: 20px;
-}
-
 .soft-outline {
   border: 1px solid #dee2e6 !important;
+}
+
+.status-gray {
+  background-color: #E0E0E0;
+  border-radius: 5px;
+}
+
+.status-green {
+  background-color: #C8E6C9;
+  border-radius: 5px;
+}
+
+.status-blue {
+  background-color: #BBDEFB;
+  border-radius: 5px;
+}
+
+.status-yellow {
+  background-color: #FFE082;
+  border-radius: 5px;
 }
 </style>
