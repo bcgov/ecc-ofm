@@ -71,7 +71,7 @@
         <v-col class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Estimated mileage of the year:</p>
+              <p>Estimated Yearly KM:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
               <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :rules="[rules.max(99999)]" :disabled="readonly" maxlength="6"></v-text-field>
