@@ -11,10 +11,8 @@ function mapLatestActivityDate(application) {
     const ministryLastUpdated = new Date(application?.ministryLastUpdated)
     const providerLastUpdated = new Date(application?.providerLastUpdated)
     application.latestActivityDate = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
-    return application
   } catch (e) {
-    console.log(e)
-    return application
+    log.info(e)
   }
 }
 
