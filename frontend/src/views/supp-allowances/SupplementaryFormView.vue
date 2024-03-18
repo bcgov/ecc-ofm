@@ -68,7 +68,7 @@ import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import DocumentService from '@/services/documentService'
-import AppDialog from '../../components/ui/AppDialog.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
 
 export default {
   name: 'SupplementaryFormView',
