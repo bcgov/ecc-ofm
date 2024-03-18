@@ -64,7 +64,7 @@
               <p>Vehicle mileage at time of application (odometer reading)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.estimatedMileage" required type="number" suffix="km" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly"></v-text-field>
+              <v-text-field v-model="model.odometer" required type="number" suffix="km" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -74,7 +74,7 @@
               <p>Estimated mileage of the year:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.odometer" required type="number" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly" maxlength="6"></v-text-field>
+              <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :rules="[rules.max(99999)]" :disabled="readonly" maxlength="6"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -84,7 +84,7 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" required :disabled="readonly" prefix="$" maxlength="7" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" required :disabled="readonly" prefix="$" maxlength="6"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
