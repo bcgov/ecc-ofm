@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <ApplicationHeader />
+    <ApplicationHeader v-if="!isSelectFacilityPage" />
     <div v-if="isApplicationConfirmationPage">
       <router-view class="min-screen-height" />
     </div>
@@ -109,10 +109,9 @@ export default {
     ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
     async loadApplication() {
       try {
-        if (!this.$route.params.applicationGuid || this.currentApplication?.applicationId === this.$route.params.applicationGuid) return
+        if (!this.$route.params.applicationGuid) return
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
-        this.checkApplicationComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
