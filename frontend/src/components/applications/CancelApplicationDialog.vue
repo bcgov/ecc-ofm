@@ -38,7 +38,7 @@ export default {
     },
     applicationType: {
       type: String,
-      default: '',
+      default: 'OFM', // Default to OFM application type (as opposed to supplementary application types)
     },
   },
   emits: ['close', 'cancel'],
@@ -59,6 +59,9 @@ export default {
         this.isDisplayed = value
       },
     },
+  },
+  created() {
+    this.OFM_APPLICATION_TYPE = 'OFM'
   },
   methods: {
     closeDialog() {
