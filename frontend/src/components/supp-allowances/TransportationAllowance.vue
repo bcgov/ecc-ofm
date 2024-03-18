@@ -34,7 +34,7 @@
   </v-row>
   <v-divider class="my-5"></v-divider>
 
-  <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)" class="">
+  <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
     <v-row class="pa-7">
       <v-col cols="11">
         <div class="">
@@ -54,27 +54,27 @@
               <p>VIN:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :disabled="readonly" maxlength="17"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
         <v-col class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Vehicle usage in KM/month at time of Application:</p>
+              <p>Vehicle mileage at time of application (odometer reading)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.odometer" required type="number" suffix="km" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
         <v-col class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Estimated mileage of the year:</p>
+              <p>Estimated Yearly KM:</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.odometer" required type="number" variant="outlined" density="compact" :disabled="readonly" maxlength="20"></v-text-field>
+              <v-text-field v-model="model.estimatedMileage" required type="number" variant="outlined" density="compact" :rules="[rules.max(99999)]" :disabled="readonly" maxlength="6"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -84,7 +84,7 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" required :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" required :disabled="readonly" prefix="$" maxlength="6"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
