@@ -98,6 +98,30 @@ export default {
     }
   },
 
+  async getSupplementaryApplicationsForForm(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
+      //clean up the fields I don't need
+      response?.data?.forEach((application) => {
+        delete application.supplementaryReferenceNumber
+        delete application.supplementaryApplicationStatus
+        delete application.supplementaryApplicationSubmittedDate
+        delete application.supplementaryTypeDescription
+        delete application.ministryLastUpdated
+        delete application.providerLastUpdated
+        delete application.latestActivityDate
+        delete application.stateCode
+        delete application.applicationId
+      })
+
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by application id - ${error}`)
+      throw error
+    }
+  },
+
   async createSupplementaryApplication(payload) {
     try {
       const response = await ApiService.apiAxios.post(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/', payload)
