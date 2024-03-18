@@ -60,9 +60,6 @@ export default {
       },
     },
   },
-  created() {
-    this.OFM_APPLICATION_TYPE = 'OFM'
-  },
   methods: {
     closeDialog() {
       this.$emit('close')
