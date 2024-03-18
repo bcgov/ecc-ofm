@@ -13,6 +13,26 @@
         </AppButton>
       </v-col>
     </v-row>
+    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :isLoading="loading" persistent max-width="40%" @close="toggleCancelDialog">
+      <template #content>
+        <v-row class="mb-2">
+          <v-col class="text-center">
+            <p class="pt-4 text-h6">Are you sure you want to cancel your changes?</p>
+            <p class="pt-4 text-h6">Your progress will not be saved.</p>
+          </v-col>
+        </v-row>
+      </template>
+      <template #button>
+        <v-row justify="space-around">
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="go-back-button" :primary="false" size="large" width="200px" :to="{ name: 'applications-history' }">Cancel Changes</AppButton>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="cancel-button" size="large" width="200px" @click="toggleCancelDialog()">Stay on page</AppButton>
+          </v-col>
+        </v-row>
+      </template>
+    </AppDialog>
     <div>
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
@@ -48,17 +68,12 @@ import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import DocumentService from '@/services/documentService'
+import AppDialog from '../../components/ui/AppDialog.vue'
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
+  components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance, AppDialog },
   mixins: [alertMixin],
-  async beforeRouteLeave(_to, _from, next) {
-    if (!this.readonly) {
-      await this.saveApplication()
-    }
-    next(!this.processing) // only go to the next page after saveApplication is complete
-  },
   props: {
     applicationId: {
       type: String,
@@ -76,6 +91,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    cancel: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['process'],
   data() {
@@ -86,6 +105,7 @@ export default {
       clonedModels: [],
       documentsToDelete: [],
       readonly: false, //will come later to support locked submitted apps
+      showCancelDialog: false,
     }
   },
   computed: {
@@ -95,7 +115,8 @@ export default {
   },
   watch: {
     back: {
-      handler() {
+      async handler() {
+        await this.saveApplication()
         this.$router.push({ name: 'applications-history' })
       },
     },
@@ -105,9 +126,15 @@ export default {
       },
     },
     next: {
-      handler() {
+      async handler() {
+        await this.saveApplication()
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
+      },
+    },
+    cancel: {
+      handler() {
+        this.toggleCancelDialog()
       },
     },
   },
@@ -194,6 +221,8 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to save supplementary applications')
         this.loading = false
+      } finally {
+        this.$emit('process', false)
       }
     },
     async setUpDefaultNewRequestModel(suppApplications) {
@@ -237,7 +266,6 @@ export default {
       }
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
-      this.$emit('process', false)
     },
     updateModel(updatedModel) {
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
@@ -296,6 +324,9 @@ export default {
     },
     deleteDocument(documentId) {
       this.documentsToDelete.push(documentId)
+    },
+    toggleCancelDialog() {
+      this.showCancelDialog = !this.showCancelDialog
     },
   },
 }
