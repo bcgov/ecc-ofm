@@ -53,6 +53,12 @@ export default {
   name: 'SupplementaryFormView',
   components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
   mixins: [alertMixin],
+  async beforeRouteLeave(_to, _from, next) {
+    if (!this.readonly) {
+      await this.saveApplication()
+    }
+    next(!this.processing) // only go to the next page after saveApplication is complete
+  },
   props: {
     applicationId: {
       type: String,
@@ -79,6 +85,7 @@ export default {
       models: undefined,
       clonedModels: [],
       documentsToDelete: [],
+      readonly: false, //will come later to support locked submitted apps
     }
   },
   computed: {
@@ -94,54 +101,7 @@ export default {
     },
     save: {
       async handler() {
-        try {
-          this.loading = true
-          for (const applicationModel of this.models) {
-            if (this.isModelSame(applicationModel)) {
-              continue
-            } else if (this.isModelEmpty(applicationModel) || applicationModel.toDelete) {
-              await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
-              delete applicationModel.supplementaryApplicationId
-              continue
-            }
-
-            const payload = {
-              ...applicationModel,
-              applicationId: this.applicationId,
-            }
-
-            if (payload.monthlyLease) {
-              payload.monthlyLease = Number(payload.monthlyLease)
-            }
-
-            if (applicationModel.supplementaryApplicationId) {
-              await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
-            } else {
-              const response = await ApplicationService.createSupplementaryApplication(payload)
-              applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
-            }
-
-            if (this.documentsToDelete.length > 0) {
-              for (const documentID of this.documentsToDelete) {
-                await DocumentService.deleteDocument(documentID)
-              }
-              this.documentsToDelete = []
-            }
-            if (applicationModel.documentsToUpload) {
-              try {
-                await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
-              } catch (error) {
-                this.setFailureAlert('Failed to upload files')
-              }
-            }
-          }
-          await this.loadData()
-          this.clonedModels = cloneDeep(this.models)
-          this.setSuccessAlert(`Application Saved`)
-        } catch (error) {
-          this.setFailureAlert('Failed to save supplementary applications')
-          this.loading = false
-        }
+        await this.saveApplication(true)
       },
     },
     next: {
@@ -181,6 +141,59 @@ export default {
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
+      }
+    },
+    async saveApplication(showAlert = false) {
+      try {
+        this.loading = true
+        this.$emit('process', true)
+        for (const applicationModel of this.models) {
+          if (this.isModelSame(applicationModel)) {
+            continue
+          } else if (this.isModelEmpty(applicationModel) || applicationModel.toDelete) {
+            await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
+            delete applicationModel.supplementaryApplicationId
+            continue
+          }
+
+          const payload = {
+            ...applicationModel,
+            applicationId: this.applicationId,
+          }
+
+          if (payload.monthlyLease) {
+            payload.monthlyLease = Number(payload.monthlyLease)
+          }
+
+          if (applicationModel.supplementaryApplicationId) {
+            await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
+          } else {
+            const response = await ApplicationService.createSupplementaryApplication(payload)
+            applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
+          }
+
+          if (this.documentsToDelete.length > 0) {
+            for (const documentID of this.documentsToDelete) {
+              await DocumentService.deleteDocument(documentID)
+            }
+            this.documentsToDelete = []
+          }
+          if (applicationModel.documentsToUpload) {
+            try {
+              await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
+            } catch (error) {
+              this.setFailureAlert('Failed to upload files')
+            }
+          }
+        }
+        await this.loadData()
+        this.clonedModels = cloneDeep(this.models)
+        if (showAlert) {
+          this.setSuccessAlert(`Application Saved`)
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed to save supplementary applications')
+        this.loading = false
       }
     },
     async setUpDefaultNewRequestModel(suppApplications) {
@@ -224,6 +237,7 @@ export default {
       }
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
+      this.$emit('process', false)
     },
     updateModel(updatedModel) {
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
