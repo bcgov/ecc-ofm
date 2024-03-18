@@ -101,9 +101,7 @@ export default {
   async getSupplementaryApplicationsForForm(applicationId) {
     try {
       if (!applicationId) return
-      const url = `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}`
-
-      const response = await ApiService.apiAxios.get(url)
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId)
       //clean up the fields I don't need
       response?.data?.forEach((application) => {
         delete application.supplementaryReferenceNumber
