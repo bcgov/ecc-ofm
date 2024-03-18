@@ -13,6 +13,26 @@
         </AppButton>
       </v-col>
     </v-row>
+    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :isLoading="loading" persistent max-width="40%" @close="toggleCancelDialog">
+      <template #content>
+        <v-row class="mb-2">
+          <v-col align="center">
+            <p class="pt-4 text-h6">Are you sure you want to cancel your changes?</p>
+            <p class="pt-4 text-h6">Your progress will not be saved.</p>
+          </v-col>
+        </v-row>
+      </template>
+      <template #button>
+        <v-row justify="space-around">
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="return-home-button" :primary="false" size="large" width="200px" :to="{ name: 'applications-history' }">Cancel Changes</AppButton>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex justify-center">
+            <AppButton id="view-messages-button" size="large" width="200px" @click="toggleCancelDialog()">Stay on page</AppButton>
+          </v-col>
+        </v-row>
+      </template>
+    </AppDialog>
     <div>
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
@@ -48,10 +68,11 @@ import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import DocumentService from '@/services/documentService'
+import AppDialog from '../../components/ui/AppDialog.vue'
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
+  components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance, AppDialog },
   mixins: [alertMixin],
   props: {
     applicationId: {
@@ -70,6 +91,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    cancel: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['process'],
   data() {
@@ -79,6 +104,7 @@ export default {
       models: undefined,
       clonedModels: [],
       documentsToDelete: [],
+      showCancelDialog: false,
     }
   },
   computed: {
@@ -90,6 +116,11 @@ export default {
     back: {
       handler() {
         this.$router.push({ name: 'applications-history' })
+      },
+    },
+    cancel: {
+      handler() {
+        this.toggleCancelDialog()
       },
     },
     save: {
@@ -282,6 +313,9 @@ export default {
     },
     deleteDocument(documentId) {
       this.documentsToDelete.push(documentId)
+    },
+    toggleCancelDialog() {
+      this.showCancelDialog = !this.showCancelDialog
     },
   },
 }
