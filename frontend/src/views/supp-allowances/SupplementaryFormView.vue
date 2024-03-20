@@ -16,7 +16,7 @@
     <AppDialog v-model="showCancelDialog" title="Cancel Changes" :isLoading="loading" persistent max-width="40%" @close="toggleCancelDialog">
       <template #content>
         <v-row class="mb-2">
-          <v-col align="center">
+          <v-col class="text-center">
             <p class="pt-4 text-h6">Are you sure you want to cancel your changes?</p>
             <p class="pt-4 text-h6">Your progress will not be saved.</p>
           </v-col>
@@ -25,10 +25,10 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="return-home-button" :primary="false" size="large" width="200px" :to="{ name: 'applications-history' }">Cancel Changes</AppButton>
+            <AppButton id="go-back-button" :primary="false" size="large" width="200px" :to="{ name: 'applications-history' }">Cancel Changes</AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="view-messages-button" size="large" width="200px" @click="toggleCancelDialog()">Stay on page</AppButton>
+            <AppButton id="cancel-button" size="large" width="200px" @click="toggleCancelDialog()">Stay on page</AppButton>
           </v-col>
         </v-row>
       </template>
@@ -68,11 +68,11 @@ import alertMixin from '@/mixins/alertMixin'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import DocumentService from '@/services/documentService'
-import AppDialog from '../../components/ui/AppDialog.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppButton, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance, AppDialog },
+  components: { AppButton, AppDialog, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
   mixins: [alertMixin],
   props: {
     applicationId: {
@@ -104,6 +104,7 @@ export default {
       models: undefined,
       clonedModels: [],
       documentsToDelete: [],
+      readonly: false, //will come later to support locked submitted apps
       showCancelDialog: false,
     }
   },
@@ -114,7 +115,8 @@ export default {
   },
   watch: {
     back: {
-      handler() {
+      async handler() {
+        await this.saveApplication()
         this.$router.push({ name: 'applications-history' })
       },
     },
@@ -125,58 +127,12 @@ export default {
     },
     save: {
       async handler() {
-        try {
-          this.loading = true
-          for (const applicationModel of this.models) {
-            if (this.isModelSame(applicationModel)) {
-              continue
-            } else if (this.isModelEmpty(applicationModel) || applicationModel.toDelete) {
-              await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
-              delete applicationModel.supplementaryApplicationId
-              continue
-            }
-
-            const payload = {
-              ...applicationModel,
-              applicationId: this.applicationId,
-            }
-
-            if (payload.monthlyLease) {
-              payload.monthlyLease = Number(payload.monthlyLease)
-            }
-
-            if (applicationModel.supplementaryApplicationId) {
-              await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
-            } else {
-              const response = await ApplicationService.createSupplementaryApplication(payload)
-              applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
-            }
-
-            if (this.documentsToDelete.length > 0) {
-              for (const documentID of this.documentsToDelete) {
-                await DocumentService.deleteDocument(documentID)
-              }
-              this.documentsToDelete = []
-            }
-            if (applicationModel.documentsToUpload) {
-              try {
-                await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
-              } catch (error) {
-                this.setFailureAlert('Failed to upload files')
-              }
-            }
-          }
-          await this.loadData()
-          this.clonedModels = cloneDeep(this.models)
-          this.setSuccessAlert(`Application Saved`)
-        } catch (error) {
-          this.setFailureAlert('Failed to save supplementary applications')
-          this.loading = false
-        }
+        await this.saveApplication(true)
       },
     },
     next: {
-      handler() {
+      async handler() {
+        await this.saveApplication()
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },
@@ -212,6 +168,61 @@ export default {
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
+      }
+    },
+    async saveApplication(showAlert = false) {
+      try {
+        this.loading = true
+        this.$emit('process', true)
+        for (const applicationModel of this.models) {
+          if (this.isModelSame(applicationModel)) {
+            continue
+          } else if (this.isModelEmpty(applicationModel) || applicationModel.toDelete) {
+            await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
+            delete applicationModel.supplementaryApplicationId
+            continue
+          }
+
+          const payload = {
+            ...applicationModel,
+            applicationId: this.applicationId,
+          }
+
+          if (payload.monthlyLease) {
+            payload.monthlyLease = Number(payload.monthlyLease)
+          }
+
+          if (applicationModel.supplementaryApplicationId) {
+            await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
+          } else {
+            const response = await ApplicationService.createSupplementaryApplication(payload)
+            applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
+          }
+
+          if (this.documentsToDelete.length > 0) {
+            for (const documentID of this.documentsToDelete) {
+              await DocumentService.deleteDocument(documentID)
+            }
+            this.documentsToDelete = []
+          }
+          if (applicationModel.documentsToUpload) {
+            try {
+              await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
+            } catch (error) {
+              this.setFailureAlert('Failed to upload files')
+            }
+          }
+        }
+        await this.loadData()
+        this.clonedModels = cloneDeep(this.models)
+        if (showAlert) {
+          this.setSuccessAlert(`Application Saved`)
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed to save supplementary applications')
+        this.loading = false
+      } finally {
+        this.$emit('process', false)
       }
     },
     async setUpDefaultNewRequestModel(suppApplications) {

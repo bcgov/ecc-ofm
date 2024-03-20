@@ -69,6 +69,7 @@ export const useApplicationsStore = defineStore('applications', {
           this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
         }
         this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
+        this.checkApplicationComplete()
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error

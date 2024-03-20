@@ -9,3 +9,10 @@ export const INDIG_CHECKBOX_LABELS = Object.freeze([
   { label: 'Land-based play support', value: '8' },
   { label: 'Other', value: '9' },
 ])
+
+export const SUPPORT_CHECKBOX_LABELS = Object.freeze([
+  { label: 'Resources and materials with the intention of increasing accessibility and inclusion for all children', value: '1', tooltip: 'e.g. Toileting step stool' },
+  { label: 'Resources to proactively support inclusion of children with diverse needs', value: '2', tooltip: 'e.g. Sensory toys' },
+  { label: 'Accessibility enhancements in the facility', value: '3', tooltip: 'e.g. Wheelchair ramps, automatic door installations, bathroom renovations for accessibility' },
+  { label: 'Other', value: '4' },
+])

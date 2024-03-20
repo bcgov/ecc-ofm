@@ -74,7 +74,7 @@
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">Please describe how you intend to use this funding:</v-col>
   </v-row>
-  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value" no-gutters>
+  <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
     <v-col cols="11" lg="6">
       <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
         <template v-slot:label>
@@ -100,6 +100,7 @@
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
+import { SUPPORT_CHECKBOX_LABELS } from './suppConstants'
 
 export default {
   components: { AppLabel, AppButton },
@@ -136,13 +137,7 @@ export default {
   },
   async created() {
     this.model = { ...this.supportModel }
-
-    this.CHECKBOX_LABELS = [
-      { label: 'Resources and materials with the intention of increasing accessibility and inclusion for all children', value: '1', tooltip: 'e.g. Toileting step stool' },
-      { label: 'Resources to proactively support inclusion of children with diverse needs', value: '2', tooltip: 'e.g. Sensory toys' },
-      { label: 'Accessibility enhancements in the facility', value: '3', tooltip: 'e.g. Wheelchair ramps, automatic door installations, bathroom renovations for accessibility' },
-      { label: 'Other', value: '4' },
-    ]
+    this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
   },
   methods: {
     toggleInclusionPolicyDiv() {

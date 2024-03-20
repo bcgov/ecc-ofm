@@ -10,8 +10,8 @@
     </div>
 
     <div v-if="isOtherBoxDisplayed">
-      <p v-if="indigenousProgrammingModel.indigenousOtherDescription" class="ml-12 my-2">
-        {{ indigenousProgrammingModel.indigenousOtherDescription }}
+      <p v-if="supportModel.supportOtherDescription" class="ml-12 my-2">
+        {{ supportModel.supportOtherDescription }}
       </p>
       <p v-else>
         <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
@@ -26,12 +26,12 @@
 <script>
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
-import { INDIG_CHECKBOX_LABELS } from './suppConstants'
+import { SUPPORT_CHECKBOX_LABELS } from './suppConstants'
 
 export default {
   components: { AppMissingInfoError },
   props: {
-    indigenousProgrammingModel: {
+    supportModel: {
       type: Object,
       default: () => {
         return {}
@@ -40,14 +40,14 @@ export default {
   },
   computed: {
     selectedFunding() {
-      return this.INDIG_CHECKBOX_LABELS.filter((item) => this.indigenousProgrammingModel.indigenousFundingModel.includes(item.value))
+      return this.SUPPORT_CHECKBOX_LABELS.filter((item) => this.supportModel.supportFundingModel.includes(item.value))
     },
     isOtherBoxDisplayed() {
-      return this.indigenousProgrammingModel.indigenousFundingModel.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
+      return this.supportModel.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
     },
   },
   created() {
-    this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
+    this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
   },
   methods: {},
