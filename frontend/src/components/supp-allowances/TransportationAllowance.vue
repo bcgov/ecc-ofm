@@ -61,7 +61,7 @@
         <v-col class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Vehicle mileage at time of application (odometer reading)</p>
+              <p>Vehicle mileage at time of application (odometer reading):</p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
               <v-text-field v-model="model.odometer" required type="number" suffix="km" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly"></v-text-field>
