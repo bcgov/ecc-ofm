@@ -35,7 +35,7 @@
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       Indicate how you plan to use this funding. Select all that apply.
-      <strong>(Eligible Expences may include, but are not limited to):</strong>
+      <strong>Eligible Expences may include, but are not limited to:</strong>
     </v-col>
   </v-row>
 

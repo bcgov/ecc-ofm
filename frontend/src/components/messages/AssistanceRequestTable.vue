@@ -134,7 +134,7 @@ export default {
     },
     getItemClass(item) {
       return {
-        'action-required-message': this.isActionRequiredMessage(item),
+        'error-message': this.isActionRequiredMessage(item),
         'unread-message': !item?.isRead,
         'highlighted-row': this.selectedRequestId === item?.assistanceRequestId,
       }
@@ -153,10 +153,6 @@ export default {
 
 .unread-message {
   font-weight: bold;
-}
-
-.action-required-message {
-  color: #d8292f;
 }
 
 .highlighted-row {

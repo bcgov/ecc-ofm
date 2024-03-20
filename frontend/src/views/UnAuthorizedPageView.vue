@@ -10,7 +10,7 @@
                 <v-col xs="10" sm="10" md="10" lg="10" xl="10">
                   <v-card class="error-card" elevation="5">
                     <v-card-title class="gov-header">
-                      <h4 id="error_text" style="color: #d8292f">Unauthorized Page Access</h4>
+                      <h4 id="error_text" class="error-message">Unauthorized Page Access</h4>
                     </v-card-title>
                     <v-card-text id="error_message">
                       <span style="color: black; font-weight: bold">You do not have the required roles to view this page.</span>
