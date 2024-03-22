@@ -75,6 +75,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
+        console.log('====================== SURVEY VIEW - LOAD DATA ======================')
         const surveyResponse = await ReportsService.getSurveyResponse(this.$route.params.surveyResponseGuid)
         await this.getQuestionsResponses()
         this.sections = await ReportsService.getSurveySections(surveyResponse?.surveyId)
@@ -83,20 +84,13 @@ export default {
             section.questions = await ReportsService.getSectionQuestions(section?.sectionId)
           }),
         )
+        this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
+
         console.log(this.sections)
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
       } finally {
         this.loading = false
-      }
-    },
-
-    async getQuestionsResponses() {
-      try {
-        this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid)
-        this.clonedResponses = cloneDeep(this.originalResponses)
-      } catch (error) {
-        this.setFailureAlert('Failed to get questions responses', error)
       }
     },
 
@@ -113,18 +107,15 @@ export default {
     async save(showAlert) {
       try {
         this.processing = true
-        console.log('===================== SAVE ======================')
         await Promise.all(
           this.clonedResponses?.map(async (response) => {
             const originalResponse = this.getOriginalResponse(response)
-            if (!originalResponse && response?.value) {
-              console.log('CREATE')
-              console.log(response)
+            if (response?.hide) {
+              await ReportsService.deleteQuestionResponse(originalResponse?.questionResponseId)
+            } else if (!originalResponse && !isEmpty(response?.value)) {
               await ReportsService.createQuestionResponse(response)
-            } else if (originalResponse?.value != response?.value) {
+            } else if (originalResponse?.value !== response?.value) {
               await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
-              console.log('UPDATE')
-              console.log(response)
             }
           }),
         )
@@ -139,25 +130,70 @@ export default {
       }
     },
 
-    getOriginalResponse(response) {
-      if (this.isTableQuestionResponse(response)) {
-        return this.originalResponses.find(
-          (originalResponse) => originalResponse.questionId === response?.questionId && originalResponse.tableQuestionId === response?.tableQuestionId && originalResponse.rowId === response?.rowId,
-        )
+    async getQuestionsResponses() {
+      try {
+        this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid)
+        this.clonedResponses = cloneDeep(this.originalResponses)
+      } catch (error) {
+        this.setFailureAlert('Failed to get questions responses', error)
       }
-      return this.originalResponses.find((originalResponse) => originalResponse.questionId === response?.questionId)
     },
 
     updateClonedResponses(updatedResponse) {
-      console.log('SURVEY VIEW')
-      console.log(updatedResponse)
       const index = this.getClonedResponseIndex(updatedResponse)
       if (index > -1) {
         this.clonedResponses[index] = updatedResponse
       } else {
         this.clonedResponses.push(updatedResponse)
       }
-      // console.log(this.clonedResponses)
+      if (updatedResponse?.hasChildren) {
+        this.processQuestionsBusinessRules(this.currentSection)
+      }
+    },
+
+    // loop through each questions and display/hide child question based on parent response's value. if a question is hidden, remove response value of that question.
+    processQuestionsBusinessRules(section) {
+      section?.questions?.forEach((question) => {
+        if (!isEmpty(question?.businessRules)) {
+          question?.businessRules?.forEach((rule) => {
+            question.hasChildren = rule?.trueChildId || rule?.falseChildId
+            if (question?.hasChildren) {
+              const response = this.clonedResponses?.find((item) => item.questionId === question.questionId)
+              this.toggleChildQuestions(section, question, response)
+            }
+          })
+        }
+      })
+      this.resetResponsesForHiddenQuestions()
+    },
+
+    toggleChildQuestions(section, parentsQuestion, parentsResponse) {
+      parentsQuestion?.businessRules?.forEach((rule) => {
+        const falseChildIndex = section?.questions?.findIndex((item) => item.questionId === rule.falseChildId)
+        const trueChildIndex = section?.questions?.findIndex((item) => item.questionId === rule.trueChildId)
+        const isConditionMet =
+          rule.conditionValue === parentsResponse?.value ||
+          (this.getReportQuestionTypeNameById(parentsResponse?.questionType)?.includes('Multiple Choice') && parentsResponse?.value?.includes(rule.conditionValue))
+        const hideChildQuestions = !parentsResponse || isEmpty(parentsResponse?.value) || parentsQuestion?.hide
+        if (falseChildIndex > -1) {
+          section.questions[falseChildIndex].hide = hideChildQuestions ? hideChildQuestions : isConditionMet
+        }
+        if (trueChildIndex > -1) {
+          section.questions[trueChildIndex].hide = hideChildQuestions ? hideChildQuestions : !isConditionMet
+        }
+      })
+    },
+
+    resetResponsesForHiddenQuestions() {
+      this.clonedResponses?.forEach((response, index) => {
+        const question = this.currentSection?.questions?.find(
+          (item) => item.questionId === response.questionId || (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId),
+        )
+        if (question?.hide) {
+          this.clonedResponses[index].hide = true
+          this.clonedResponses[index].value = null
+        }
+      })
     },
 
     getClonedResponseIndex(response) {
@@ -169,8 +205,17 @@ export default {
       return this.clonedResponses.findIndex((clonedResponse) => clonedResponse.questionId === response?.questionId)
     },
 
+    getOriginalResponse(response) {
+      if (this.isTableQuestionResponse(response)) {
+        return this.originalResponses.find(
+          (originalResponse) => originalResponse.questionId === response?.questionId && originalResponse.tableQuestionId === response?.tableQuestionId && originalResponse.rowId === response?.rowId,
+        )
+      }
+      return this.originalResponses.find((originalResponse) => originalResponse.questionId === response?.questionId)
+    },
+
     isTableQuestionResponse(response) {
-      return 'tableQuestionId' in response
+      return !isEmpty(response?.tableQuestionId)
     },
 
     updateCurrentSection(section) {

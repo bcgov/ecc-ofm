@@ -4,7 +4,7 @@
       <h2 class="pb-6">{{ section?.title }}</h2>
       <v-form ref="form">
         <div v-for="question in section?.questions" :key="question.questionId" class="mt-4 mb-8">
-          <div v-if="isDisplayed(question)">
+          <div v-if="!question.hide">
             <AppLabel>{{ question?.text }}</AppLabel>
             <SurveyTableQuestion v-if="isTableQuestion(question)" :question="question" :response="getTableQuestionResponse(question)" @update="updateResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" @update="updateResponses" />
@@ -56,32 +56,12 @@ export default {
     },
 
     updateResponses(response) {
+      console.log('SECTION --------------> VIEW')
       this.$emit('update', response)
     },
 
     isTableQuestion(question) {
       return this.getReportQuestionTypeNameById(question?.type) === 'Table'
-    },
-
-    isDisplayed(question) {
-      if (question?.questionId === '5f39784c-3fcc-ee11-9079-000d3af4865d') {
-        const res = this.responses.find((res) => res.questionId === 'd2045d80-3dcc-ee11-9078-000d3a0a18e7')
-        return res?.value?.includes('Yes')
-      }
-      if (question?.questionId === 'a19f7745-40cc-ee11-9079-000d3a09d4d4') {
-        const res1 = this.responses.find((res) => res.questionId === 'd2045d80-3dcc-ee11-9078-000d3a0a18e7')
-        const res2 = this.responses.find((res) => res.questionId === '5f39784c-3fcc-ee11-9079-000d3af4865d')
-        return res1?.value?.includes('Yes') && res2?.value?.includes('Other please specify')
-      }
-      if (question?.questionId === 'f27c0ade-0ec6-ee11-9078-000d3af40780') {
-        const res = this.responses.find((res) => res.questionId === '3c00c997-0ec6-ee11-9079-000d3af4865d')
-        return res?.value?.includes('Yes')
-      }
-      if (question?.questionId === 'ff5740a4-42cc-ee11-9078-000d3a0a18e7') {
-        const res = this.responses.find((res) => res.questionId === '57c337e4-41cc-ee11-9078-000d3a0a18e7')
-        return res?.value?.includes('Yes')
-      }
-      return true
     },
   },
 }

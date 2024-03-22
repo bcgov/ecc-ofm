@@ -299,6 +299,7 @@ const SurveyQuestionMappings = [
   { back: 'ofm_sequence', front: 'sequence' },
   { back: 'ofm_question_choice', front: 'choices' },
   { back: 'ofm_fixed_response', front: 'fixedResponse' },
+  { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -308,6 +309,8 @@ const SurveyQuestionBusinessRulesMappings = [
   { back: '_ofm_true_child_question_value', front: 'trueChildId' },
   { back: '_ofm_false_child_question_value', front: 'falseChildId' },
   { back: 'ofm_condition', front: 'conditionValue' },
+  { back: 'ofm_parent_has_response', front: 'parentHasResponse' },
+  { back: '_ofm_child_question_value', front: 'childQuestion' },
 ]
 
 const SurveyResponseMappings = [

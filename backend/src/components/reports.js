@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, postOperation, patchOperationWithObjectId } = require('./utils')
+const { getOperation, postOperation, patchOperationWithObjectId, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, QuestionResponseMappings, SurveyQuestionBusinessRulesMappings } = require('../util/mapping/Mappings')
 
@@ -69,9 +69,9 @@ async function getSurveyQuestions(req, res) {
     const questions = []
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}' and _ofm_header_value eq null&$orderby=ofm_sequence`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}' and _ofm_header_value eq null&$orderby=ofm_sequence`
     } else if (req?.query?.questionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response&$filter=ofm_is_published eq true and _ofm_header_value eq '${req?.query?.questionId}'&$orderby=ofm_sequence`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_header_value eq '${req?.query?.questionId}'&$orderby=ofm_sequence`
     }
     const response = await getOperation(operation)
     response?.value?.forEach((question) => questions.push(mapQuestionObjectForFront(question)))
@@ -157,6 +157,15 @@ async function updateQuestionResponse(req, res) {
   }
 }
 
+async function deleteQuestionResponse(req, res) {
+  try {
+    const response = await deleteOperationWithObjectId('ofm_question_responses', req.params.questionResponseId)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getFacilityReports,
   getSurveySections,
@@ -166,4 +175,5 @@ module.exports = {
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,
+  deleteQuestionResponse,
 }

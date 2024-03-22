@@ -13,6 +13,7 @@
       v-model.lazy="updatedResponse.value"
       :format="CURRENCY_FORMAT"
       maxlength="12"
+      prefix="$"
       :rules="rules.required"
       hide-details />
 
@@ -126,7 +127,7 @@ export default {
         if (this.isMultipleChoiceQuestion(response?.questionType)) {
           response.value = response.value?.toString()
         }
-        console.log('UPDATE!')
+        console.log('QUESTION --------------> SECTION')
         this.$emit('update', response)
       },
       deep: true,
@@ -137,6 +138,7 @@ export default {
     this.updatedResponse = Object.assign({}, this.response)
     this.updatedResponse.questionId = this.question?.questionId
     this.updatedResponse.questionType = this.question?.type
+    this.updatedResponse.hasChildren = this.question?.hasChildren
     this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
     if (!isEmpty(this.response)) {
       if (this.isMultipleChoiceQuestion(this.question?.type)) {

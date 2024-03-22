@@ -13,6 +13,7 @@ const {
   createSurveyResponse,
   createQuestionResponse,
   updateQuestionResponse,
+  deleteQuestionResponse,
 } = require('../components/reports')
 
 module.exports = router
@@ -128,5 +129,19 @@ router.put(
   (req, res) => {
     validationResult(req).throw()
     return updateQuestionResponse(req, res)
+  },
+)
+
+/**
+ * Delete a question response
+ */
+router.delete(
+  '/question-responses/:questionResponseId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('questionResponseId', 'URL param: [questionResponseId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return deleteQuestionResponse(req, res)
   },
 )

@@ -124,4 +124,15 @@ export default {
       throw error
     }
   },
+
+  async deleteQuestionResponse(questionResponseId) {
+    try {
+      if (!questionResponseId) return
+      const response = await ApiService.apiAxios.delete(`${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to delete question response - ${error}`)
+      throw error
+    }
+  },
 }
