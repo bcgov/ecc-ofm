@@ -279,6 +279,7 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_transport_estimated_yearly_km', front: 'estimatedMileage' },
   { back: 'ofm_transport_odometer', front: 'odometer' },
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
+  { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
 ]
 
 module.exports = {

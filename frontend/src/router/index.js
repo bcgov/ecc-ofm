@@ -34,6 +34,7 @@ import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
+import SupplementaryConfirmationView from '@/views/supp-allowances/SupplementaryConfirmation.vue'
 import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
 import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmitView.vue'
 
@@ -207,6 +208,11 @@ const router = createRouter({
           path: ':applicationGuid/declare-submit',
           name: 'supp-allowances-submit',
           component: SupplementarySubmitView,
+        },
+        {
+          path: ':applicationGuid/supplementary-confirmation',
+          name: 'supplementary-confirmation',
+          component: SupplementaryConfirmationView,
         },
       ],
     },

@@ -67,25 +67,33 @@
   </v-row>
 
   <v-divider class="mt-2"></v-divider>
-  <v-row no-gutters class="mr-2 my-2">
-    <v-col cols="12">Please describe how you intend to use this funding:</v-col>
-  </v-row>
-  <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
-    <v-col cols="11" lg="6">
-      <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
-        <template v-slot:label>
-          <p>
-            {{ item.label }}
-            <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
-              <template #activator="{ props }">
-                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
-              </template>
-            </v-tooltip>
-          </p>
-        </template>
-      </v-checkbox>
-    </v-col>
-  </v-row>
+  <div v-if="hasInclusionPolicy">
+    <v-row no-gutters class="mr-2 my-2">
+      <v-col cols="12">Please describe how you intend to use this funding:</v-col>
+    </v-row>
+    <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
+      <v-col cols="11" lg="6">
+        <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+          <template v-slot:label>
+            <p>
+              {{ item.label }}
+              <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
+                <template #activator="{ props }">
+                  <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                </template>
+              </v-tooltip>
+            </p>
+          </template>
+        </v-checkbox>
+      </v-col>
+    </v-row>
+  </div>
+  <div v-else>
+    <v-row class="ml-2 my-5">
+      <v-icon size="x-large" color="warning">mdi mdi-alert</v-icon>
+      <h4 class="ml-3">You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in Account Management.</h4>
+    </v-row>
+  </div>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
     <v-textarea v-model.trim="model.supportOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
@@ -106,6 +114,13 @@ export default {
       required: true,
       default: () => {
         return {}
+      },
+    },
+    hasInclusionPolicy: {
+      type: Boolean,
+      required: true,
+      default: () => {
+        return false
       },
     },
   },

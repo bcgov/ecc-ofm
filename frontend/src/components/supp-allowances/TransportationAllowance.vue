@@ -53,8 +53,8 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>VIN:</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :disabled="readonly" maxlength="17"></v-text-field>
+            <v-col cols="6" xl="7" class="pt-2 text-center">
+              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :rules="rules.required" :disabled="readonly" maxlength="17"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -63,8 +63,16 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>Vehicle mileage at time of application (odometer reading):</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.odometer" required type="number" suffix="km" variant="outlined" density="compact" :rules="[rules.max(999999)]" :disabled="readonly"></v-text-field>
+            <v-col cols="6" xl="7" class="pt-2 text-center">
+              <v-text-field
+                v-model="model.odometer"
+                required
+                type="number"
+                suffix="km"
+                variant="outlined"
+                density="compact"
+                :rules="[rules.max(999999), ...rules.required]"
+                :disabled="readonly"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -73,8 +81,16 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>Estimated Yearly KM:</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
-              <v-text-field v-model="model.estimatedMileage" required type="number" suffix="km" variant="outlined" density="compact" :rules="[rules.max(99999)]" :disabled="readonly"></v-text-field>
+            <v-col cols="6" xl="7" class="pt-2 text-center">
+              <v-text-field
+                v-model="model.estimatedMileage"
+                required
+                type="number"
+                suffix="km"
+                variant="outlined"
+                density="compact"
+                :rules="[rules.max(999999), ...rules.required]"
+                :disabled="readonly"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -83,8 +99,8 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" required :disabled="readonly" prefix="$" maxlength="6"></AppNumberInput>
+            <v-col cols="6" xl="7" class="pt-2 text-center">
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="readonly" prefix="$" maxlength="6"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -104,6 +120,13 @@
             :readonly="readonly"
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
+
+          <div v-if="model.documentsToUpload?.length == 0 && model.uploadedDocuments?.length == 0">
+            <v-row class="my-5">
+              <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
+              <p class="text-error ml-2">You must upload at least one Supporting Document</p>
+            </v-row>
+          </div>
         </div>
       </v-col>
     </v-row>

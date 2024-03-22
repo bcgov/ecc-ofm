@@ -93,6 +93,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  TRANSPORT: 'Transportation information required',
   OTHER: 'Description of other costs required',
 })
 

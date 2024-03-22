@@ -1,5 +1,10 @@
 <!-- eslint-disable vue/attribute-hyphenation -->
 <template>
+  <p class="my-11">
+    Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
+    <strong class="text-decoration-underline">one or all</strong>
+    that applies to your organization.
+  </p>
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
       <v-col cols="12" class="d-flex flex-column align-end">
@@ -42,7 +47,11 @@
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
-            <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
+            <SupportNeedsProgrammingAllowance
+              v-if="panel.id === 'support-needs'"
+              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"
+              :hasInclusionPolicy="hasInclusionPolicy"
+              @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
               :transportModels="getTransportModels()"
@@ -69,6 +78,9 @@ import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import DocumentService from '@/services/documentService'
 import AppDialog from '@/components/ui/AppDialog.vue'
+import OrganizationService from '@/services/organizationService'
+import { mapState } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'SupplementaryFormView',
@@ -95,8 +107,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    submit: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['process'],
+  emits: ['process', 'setSubmit'],
   data() {
     return {
       loading: true,
@@ -112,6 +128,7 @@ export default {
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
     },
+    ...mapState(useAuthStore, ['userInfo']),
   },
   watch: {
     back: {
@@ -165,6 +182,8 @@ export default {
     async loadData() {
       try {
         this.loading = true
+        this.hasInclusionPolicy = (await OrganizationService.getOrganization(this.userInfo?.organizationId)).hasInclusionPolicy
+        console.log(this.hasInclusionPolicy)
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
@@ -249,6 +268,7 @@ export default {
       if (transportApplications.length > 0) {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
+          application.documentsToUpload = []
         }
         this.models = [...this.models, ...transportApplications]
       } else {
