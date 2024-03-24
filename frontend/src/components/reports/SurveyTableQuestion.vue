@@ -1,10 +1,10 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <v-data-table :headers="getHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
+    <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
       <template v-slot:item="{ item }">
         <tr>
-          <td v-for="questionId in Object.keys(item.headers)" :key="questionId">
-            <SurveyQuestion :question="getQuestion(questionId)" :response="getQuestionResponse(item, questionId)" @update="updateResponses" />
+          <td v-for="question in questions" :key="question?.questionId">
+            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" @update="updateResponses" />
           </td>
         </tr>
       </template>
@@ -23,13 +23,11 @@ export default {
   components: { AppButton, SurveyQuestion },
 
   props: {
-    question: {
-      type: Object,
-      default: () => {
-        return {}
-      },
+    questions: {
+      type: Array,
+      default: () => [],
     },
-    response: {
+    responses: {
       type: Array,
       default: () => [],
     },
@@ -44,10 +42,12 @@ export default {
   },
 
   computed: {
-    getHeaders() {
-      console.log('HEADER')
-      console.log(this.question?.headers)
-      return this.question?.headers?.map((header) => {
+    tableQuestionId() {
+      return this.questions[0]?.tableQuestionId
+    },
+
+    tableHeaders() {
+      return this.questions?.map((header) => {
         return {
           title: header.text,
           key: header.questionId,
@@ -56,67 +56,66 @@ export default {
       })
     },
 
-    convertOriginalResponsesToTableFormat() {
-      if (isEmpty(this.response)) return
+    responsesInTableFormat() {
+      if (isEmpty(this.responses)) return
       const responses = []
       let index = 0
-      let found = this.response?.filter((item) => item.rowId === index)
-      // console.log(found)
-      while (!isEmpty(found)) {
-        const rowId = found[0].rowId
-        const tableQuestionId = found[0].tableQuestionId
+      let rowResponse = this.responses?.filter((item) => item.rowId === index)
+      while (!isEmpty(rowResponse)) {
         const row = {
-          rowId: rowId,
-          tableQuestionId: tableQuestionId,
+          rowId: rowResponse[0].rowId,
+          tableQuestionId: this.tableQuestionId,
           headers: {},
         }
-        this.question?.headers?.forEach((header) => {
-          const temp = found.find((item) => item.questionId === header.questionId)
-          row.headers[header.questionId] = temp?.value
+        this.questions?.forEach((question) => {
+          const cell = rowResponse.find((item) => item.questionId === question.questionId)
+          row.headers[question.questionId] = cell?.value
         })
         responses.push(row)
         index += 1
-        found = this.response?.filter((item) => item.rowId === index)
+        rowResponse = this.responses?.filter((item) => item.rowId === index)
       }
+      console.log('responsesInTableFormat')
+      console.log(responses)
 
       return responses
     },
   },
 
+  watch: {
+    responsesInTableFormat: {
+      handler() {
+        this.updatedResponses = this.responsesInTableFormat
+      },
+      deep: true,
+    },
+  },
+
   created() {
-    if (isEmpty(this.response)) {
+    if (isEmpty(this.responses)) {
       this.addRow()
     } else {
-      this.updatedResponses = this.convertOriginalResponsesToTableFormat
+      this.updatedResponses = this.responsesInTableFormat
     }
   },
 
   methods: {
-    getQuestion(questionId) {
-      return this.question?.headers?.find((item) => item.questionId === questionId)
-    },
-
     addRow() {
       const row = {
         rowId: this.updatedResponses?.length,
-        tableQuestionId: this.question?.questionId,
+        tableQuestionId: this.tableQuestionId,
         headers: {},
       }
-      this.question?.headers?.forEach((header) => (row.headers[header.questionId] = undefined))
+      this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
       this.updatedResponses?.push(row)
       console.log(this.updatedResponses)
     },
 
     getQuestionResponse(row, questionId) {
       const response = this.updatedResponses?.find((item) => item.rowId === row?.rowId)
-      // console.log(foundRow)
-      // console.log(header)
-      // console.log(foundRow?.headers[questionId])
-      // console.log('getQuestionResponse')
-      // console.log(questionId)
       return {
         rowId: row?.rowId,
-        tableQuestionId: row?.tableQuestionId,
+        tableQuestionId: this.tableQuestionId,
         value: response?.headers[questionId],
       }
     },

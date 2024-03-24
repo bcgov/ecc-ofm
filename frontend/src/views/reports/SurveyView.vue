@@ -146,7 +146,7 @@ export default {
       } else {
         this.clonedResponses.push(updatedResponse)
       }
-      if (updatedResponse?.hasChildren) {
+      if (updatedResponse?.hasConditionalChildren || updatedResponse?.hasValueInheritedChildren) {
         this.processQuestionsBusinessRules(this.currentSection)
       }
     },
@@ -156,21 +156,26 @@ export default {
       section?.questions?.forEach((question) => {
         if (!isEmpty(question?.businessRules)) {
           question?.businessRules?.forEach((rule) => {
-            question.hasChildren = rule?.trueChildId || rule?.falseChildId
-            if (question?.hasChildren) {
-              const response = this.clonedResponses?.find((item) => item.questionId === question.questionId)
-              this.toggleChildQuestions(section, question, response)
+            question.hasConditionalChildren = rule?.trueChildQuestionId || rule?.falseChildQuestionId
+            question.hasValueInheritedChildren = rule?.parentHasResponse && rule?.valueInheritedChildQuestionId
+            if (question?.hasConditionalChildren) {
+              this.toggleConditionalChildrenQuestions(section, question)
+            }
+            if (question?.hasValueInheritedChildren) {
+              this.addInheritedValueToChildrenQuestions(section, question)
             }
           })
         }
       })
       this.resetResponsesForHiddenQuestions()
+      this.updateResponsesForValueInheritedQuestions(section)
     },
 
-    toggleChildQuestions(section, parentsQuestion, parentsResponse) {
+    toggleConditionalChildrenQuestions(section, parentsQuestion) {
+      const parentsResponse = this.clonedResponses?.find((item) => item.questionId === parentsQuestion.questionId)
       parentsQuestion?.businessRules?.forEach((rule) => {
-        const falseChildIndex = section?.questions?.findIndex((item) => item.questionId === rule.falseChildId)
-        const trueChildIndex = section?.questions?.findIndex((item) => item.questionId === rule.trueChildId)
+        const falseChildIndex = section?.questions?.findIndex((item) => item.questionId === rule.falseChildQuestionId)
+        const trueChildIndex = section?.questions?.findIndex((item) => item.questionId === rule.trueChildQuestionId)
         const isConditionMet =
           rule.conditionValue === parentsResponse?.value ||
           (this.getReportQuestionTypeNameById(parentsResponse?.questionType)?.includes('Multiple Choice') && parentsResponse?.value?.includes(rule.conditionValue))
@@ -184,6 +189,20 @@ export default {
       })
     },
 
+    addInheritedValueToChildrenQuestions(section, parentsQuestion) {
+      let parentsResponses = this.clonedResponses?.filter((item) => item.questionId === parentsQuestion.questionId && item.tableQuestionId === parentsQuestion.tableQuestionId)
+      parentsResponses = parentsResponses.sort((response1, response2) => {
+        return response1.rowId - response2.rowId
+      })
+      parentsQuestion?.businessRules?.forEach((rule) => {
+        const childQuestionIndex = section?.questions?.findIndex((item) => item.questionId === rule.valueInheritedChildQuestionId)
+        if (childQuestionIndex > -1) {
+          section.questions[childQuestionIndex].inheritedValue = parentsResponses?.map((response) => response.value)
+        }
+      })
+      console.log(section)
+    },
+
     resetResponsesForHiddenQuestions() {
       this.clonedResponses?.forEach((response, index) => {
         const question = this.currentSection?.questions?.find(
@@ -194,6 +213,35 @@ export default {
           this.clonedResponses[index].value = null
         }
       })
+    },
+
+    updateResponsesForValueInheritedQuestions(section) {
+      section?.questions?.forEach((question) => {
+        // const tableQuestion = section?.questions?.find((item) => item.questionId === question.tableQuestionId)
+        // if (!tableQuestion.hide) {
+        question.inheritedValue?.forEach((inheritedValue, index) => {
+          const foundIndex = this.clonedResponses?.findIndex(
+            (response) => response.questionId === question.questionId && response.tableQuestionId === question.tableQuestionId && response.rowId === index,
+          )
+          if (foundIndex > -1) {
+            this.clonedResponses[foundIndex].value = inheritedValue
+          } else {
+            this.clonedResponses.push({
+              questionId: question.questionId,
+              tableQuestionId: question.tableQuestionId,
+              surveyResponseId: this.$route.params.surveyResponseGuid,
+              rowId: index,
+              value: inheritedValue,
+            })
+          }
+        })
+        // }
+      })
+      console.log(this.clonedResponses)
+      //
+      // TODO: check if value/rowId/questionId exist in clonedResponse:
+      //        - if yes, update value
+      //        - if no, add value
     },
 
     getClonedResponseIndex(response) {
@@ -212,6 +260,10 @@ export default {
         )
       }
       return this.originalResponses.find((originalResponse) => originalResponse.questionId === response?.questionId)
+    },
+
+    isTableQuestion(question) {
+      return this.getReportQuestionTypeNameById(question?.type) === 'Table'
     },
 
     isTableQuestionResponse(response) {

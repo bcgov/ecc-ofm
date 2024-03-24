@@ -306,11 +306,11 @@ const SurveyQuestionMappings = [
 
 const SurveyQuestionBusinessRulesMappings = [
   { back: 'ofm_question_business_ruleid', front: 'businessRuleId' },
-  { back: '_ofm_true_child_question_value', front: 'trueChildId' },
-  { back: '_ofm_false_child_question_value', front: 'falseChildId' },
+  { back: '_ofm_true_child_question_value', front: 'trueChildQuestionId' },
+  { back: '_ofm_false_child_question_value', front: 'falseChildQuestionId' },
   { back: 'ofm_condition', front: 'conditionValue' },
   { back: 'ofm_parent_has_response', front: 'parentHasResponse' },
-  { back: '_ofm_child_question_value', front: 'childQuestion' },
+  { back: '_ofm_child_question_value', front: 'valueInheritedChildQuestionId' },
 ]
 
 const SurveyResponseMappings = [

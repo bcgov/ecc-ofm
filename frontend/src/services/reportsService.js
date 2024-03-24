@@ -38,32 +38,12 @@ export default {
   async getSectionQuestions(sectionId) {
     try {
       if (!sectionId) return
-      const appStore = useAppStore()
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}`)
       const questions = response?.data
       getQuestionsChoices(questions)
-      await Promise.all(
-        questions.map(async (question) => {
-          if (appStore.getReportQuestionTypeNameById(question?.type) === 'Table') {
-            question.headers = await this.getSurveyQuestionHeaders(question?.questionId)
-            getQuestionsChoices(question.headers)
-          }
-        }),
-      )
       return questions
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
-      throw error
-    }
-  },
-
-  async getSurveyQuestionHeaders(questionId) {
-    try {
-      if (!questionId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?questionId=${questionId}`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get question' headers - ${error}`)
       throw error
     }
   },

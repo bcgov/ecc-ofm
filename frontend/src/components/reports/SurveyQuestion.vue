@@ -19,7 +19,7 @@
 
     <v-text-field
       v-if="getReportQuestionTypeNameById(question?.type) === 'Text'"
-      v-model.lazy="updatedResponse.value"
+      v-model.trim="updatedResponse.value"
       :placeholder="RESPONSE_PLACEHOLDER"
       variant="outlined"
       density="compact"
@@ -120,6 +120,12 @@ export default {
   },
 
   watch: {
+    response: {
+      handler() {
+        this.updatedResponse.value = this.response.value
+      },
+      deep: true,
+    },
     updatedResponse: {
       handler() {
         if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
@@ -138,7 +144,8 @@ export default {
     this.updatedResponse = Object.assign({}, this.response)
     this.updatedResponse.questionId = this.question?.questionId
     this.updatedResponse.questionType = this.question?.type
-    this.updatedResponse.hasChildren = this.question?.hasChildren
+    this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
+    this.updatedResponse.hasValueInheritedChildren = this.question?.hasValueInheritedChildren
     this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
     if (!isEmpty(this.response)) {
       if (this.isMultipleChoiceQuestion(this.question?.type)) {

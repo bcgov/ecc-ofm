@@ -3,10 +3,10 @@
     <div class="min-height-screen">
       <h2 class="pb-6">{{ section?.title }}</h2>
       <v-form ref="form">
-        <div v-for="question in section?.questions" :key="question.questionId" class="mt-4 mb-8">
+        <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
           <div v-if="!question.hide">
             <AppLabel>{{ question?.text }}</AppLabel>
-            <SurveyTableQuestion v-if="isTableQuestion(question)" :question="question" :response="getTableQuestionResponse(question)" @update="updateResponses" />
+            <SurveyTableQuestion v-if="isTableQuestion(question)" :questions="getTableQuestionHeaders(question)" :responses="getTableQuestionResponses(question)" @update="updateResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" @update="updateResponses" />
           </div>
         </div>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
+
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
@@ -42,6 +44,9 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
+    questions() {
+      return this.section?.questions?.filter((question) => !this.isTableQuestionHeader(question))
+    },
   },
 
   methods: {
@@ -49,10 +54,12 @@ export default {
       return this.responses?.find((response) => response.questionId === question?.questionId)
     },
 
-    getTableQuestionResponse(question) {
-      // console.log('getTableQuestionResponse')
-      // console.log(this.responses?.filter((response) => response.tableQuestionId === question?.questionId))
-      return this.responses?.filter((response) => response.tableQuestionId === question?.questionId)
+    getTableQuestionHeaders(tableQuestion) {
+      return this.section?.questions?.filter((question) => question.tableQuestionId === tableQuestion?.questionId)
+    },
+
+    getTableQuestionResponses(tableQuestion) {
+      return this.responses?.filter((response) => response.tableQuestionId === tableQuestion?.questionId)
     },
 
     updateResponses(response) {
@@ -62,6 +69,10 @@ export default {
 
     isTableQuestion(question) {
       return this.getReportQuestionTypeNameById(question?.type) === 'Table'
+    },
+
+    isTableQuestionHeader(question) {
+      return !isEmpty(question?.tableQuestionId)
     },
   },
 }
