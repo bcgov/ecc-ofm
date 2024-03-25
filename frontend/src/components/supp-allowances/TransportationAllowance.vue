@@ -174,7 +174,6 @@ export default {
         separator: ',',
         precision: 2,
       },
-      maxLengthRuleOdometer: [(value) => (!!value && value.length <= 6) || 'Max 6 characters allowed'],
     }
   },
   computed: {

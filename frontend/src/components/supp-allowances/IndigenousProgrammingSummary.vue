@@ -19,7 +19,6 @@
         </AppMissingInfoError>
       </p>
     </div>
-    <!-- <AppMissingInfoError v-else :to="{ name: 'supp-allowances-form', hash: '#', params: { applicationGuid: $route.params.applicationGuid } }">ERROR!!</AppMissingInfoError> -->
   </v-container>
 </template>
 
