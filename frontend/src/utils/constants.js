@@ -84,6 +84,12 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
   TRANSPORT: 3,
 })
 
+export const GOOD_STANDING_STATUS_CODES = Object.freeze({
+  GOOD: 1,
+  NO_GOOD: 2,
+  INTEGRATION_ERROR: 3,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',

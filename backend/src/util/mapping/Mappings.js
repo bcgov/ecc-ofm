@@ -174,6 +174,8 @@ const OrganizationMappings = [
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_ownership', front: 'ownership' },
   { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
+  { back: 'ofm_good_standing_status', front: 'goodStandingStatusCode' },
+  { back: 'ofm_good_standing_status@OData.Community.Display.V1.FormattedValue', front: 'goodStandingStatus' },
 ]
 
 const FacilityMappings = [

@@ -15,20 +15,18 @@
         <h3>Add New Application</h3>
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
-        <v-alert type="info" dense text>
-          If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.
-        </v-alert>
+        <v-alert v-if="!hasGoodStanding" type="info" dense text>To apply, you must be in good standing with BC Registries.</v-alert>
+        <v-alert v-else type="info" dense text>If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</v-alert>
       </v-col>
     </v-row>
     <v-row>
       <v-col class="pt-1">
         <v-card class="home-card justify-center">
           <v-card-title class="text-center">
-            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>OFM Application
+            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+            OFM Application
           </v-card-title>
-          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            Before starting an application, verify your organization and facility details in Account Management.
-          </v-card-text>
+          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">Before starting an application, verify your organization and facility details in Account Management.</v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
             <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
           </v-card-actions>
@@ -37,11 +35,10 @@
       <v-col class="pt-1">
         <v-card class="home-card justify-center">
           <v-card-title class="text-center">
-            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>Supplementary Allowance Application
+            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+            Supplementary Allowance Application
           </v-card-title>
-          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-            To apply for Supplementary Funding, you must have an active OFM application for the facility.
-          </v-card-text>
+          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
           <v-card-actions class="d-flex flex-column align-center">
             <AppButton id="supp-allowances-button" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add Supplementary Application</AppButton>
           </v-card-actions>
@@ -59,7 +56,6 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
       <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" class="soft-outline" density="compact">
-
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
         </template>
@@ -88,12 +84,7 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <CancelApplicationDialog
-      :show="showCancelDialog"
-      :applicationId="cancelledApplicationId"
-      :applicationType="applicationTypeToCancel"
-      @close="toggleCancelDialog"
-      @cancel="cancelApplication" />
+    <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
 </template>
@@ -108,8 +99,12 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES } from '@/utils/constants'
 import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+
+import { mapState, mapActions } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
 
 export default {
   components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
@@ -136,18 +131,21 @@ export default {
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
       applicationTypeToCancel: undefined,
+      orgInfo: undefined,
     }
   },
   computed: {
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useOrgStore, ['currentOrg']),
     hasAValidApplication() {
-      return this.applications?.some(application => ApplicationService.isValidApplication(application))
+      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
+    },
+    hasGoodStanding() {
+      return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
     },
     filteredApplicationItems() {
       return this.sortApplicationItems(
-        this.applicationItems.filter(application =>
-          !this.facilityNameFilter ||
-          application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())
-        )
+        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
     },
   },
@@ -156,11 +154,15 @@ export default {
       this.loading = true
       this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
+      this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       await this.getApplicationsAndFundingAgreements()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
+      if (!this.currentOrg) {
+        await this.getOrganizationInfo(this.userInfo?.organizationId)
+      }
     } catch (error) {
       this.setFailureAlert('Failed to get the list of applications', error)
     } finally {
@@ -168,8 +170,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
-
     getApplicationAction(application) {
       if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
         return 'Continue Application'
@@ -191,7 +193,6 @@ export default {
       if (item) {
         this.applicationTypeToCancel = item.applicationType
       }
-
     },
 
     cancelApplication() {
@@ -217,29 +218,23 @@ export default {
     },
 
     async getSupplementaryApplications() {
-      this.supplementaryApplications = (await Promise.all(
-        this.applications.map(application =>
-          ApplicationService.getSupplementaryApplications(application.applicationId)
-        )
-      )).filter(application => application.length > 0).flat()
+      this.supplementaryApplications = (await Promise.all(this.applications.map((application) => ApplicationService.getSupplementaryApplications(application.applicationId))))
+        .filter((application) => application.length > 0)
+        .flat()
     },
 
     /**
      * Create an array of keys to be used as the model for an application item (union of regular and supplementary applications)
      */
     createApplicationItemModel() {
-      return [
-        ...this.headers.map(header => header.key),
-        'applicationId',
-        'supplementaryApplicationId'
-      ];
+      return [...this.headers.map((header) => header.key), 'applicationId', 'supplementaryApplicationId']
     },
 
     /**
      * Transform applications to items with the model defined in applicationItemModel
      */
     transformApplicationsToItems(applications) {
-      return applications.map(application => {
+      return applications.map((application) => {
         const item = this.applicationItemModel.reduce((obj, key) => {
           obj[key] = application[key]
           return obj
@@ -266,7 +261,7 @@ export default {
      * Transform supplementary applications to items with the model defined in applicationItemModel
      */
     transformSupplementaryApplicationsToItems(supplementaryApplications, applicationItemsMap) {
-      return supplementaryApplications.map(supplementaryApplication => {
+      return supplementaryApplications.map((supplementaryApplication) => {
         const correspondingApplicationItem = applicationItemsMap[supplementaryApplication.applicationId]
         return {
           supplementaryApplicationId: supplementaryApplication.supplementaryApplicationId,
@@ -296,7 +291,11 @@ export default {
     getStatusClass(statusCode) {
       if (this.DRAFT_STATUS_CODES.includes(statusCode)) {
         return 'status-gray'
-      } else if ([APPLICATION_STATUS_CODES.IN_REVIEW, SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.SUBMITTED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED].includes(statusCode)) {
+      } else if (
+        [APPLICATION_STATUS_CODES.IN_REVIEW, SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.SUBMITTED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED].includes(
+          statusCode,
+        )
+      ) {
         return 'status-green'
       } else if ([APPLICATION_STATUS_CODES.APPROVED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED].includes(statusCode)) {
         return 'status-blue'
@@ -319,11 +318,11 @@ export default {
         // If statusCode is equal, compare by lastActivityDate
         const dateA = new Date(a.lastActivityDate)
         const dateB = new Date(b.lastActivityDate)
-        return dateA - dateB  // For ascending order
+        return dateA - dateB // For ascending order
       })
       return applicationItems
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -333,22 +332,22 @@ export default {
 }
 
 .status-gray {
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
   border-radius: 5px;
 }
 
 .status-green {
-  background-color: #C8E6C9;
+  background-color: #c8e6c9;
   border-radius: 5px;
 }
 
 .status-blue {
-  background-color: #BBDEFB;
+  background-color: #bbdefb;
   border-radius: 5px;
 }
 
 .status-yellow {
-  background-color: #FFE082;
+  background-color: #ffe082;
   border-radius: 5px;
 }
 </style>

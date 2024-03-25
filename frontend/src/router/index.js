@@ -209,12 +209,15 @@ const router = createRouter({
           name: 'supp-allowances-submit',
           component: SupplementarySubmitView,
         },
-        {
-          path: ':applicationGuid/supplementary-confirmation',
-          name: 'supplementary-confirmation',
-          component: SupplementaryConfirmationView,
-        },
       ],
+    },
+    {
+      path: '/supplementary-confirmation',
+      name: 'supplementary-confirmation',
+      component: SupplementaryConfirmationView,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/resources',

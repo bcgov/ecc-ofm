@@ -3,7 +3,7 @@
     <div class="mt-4">
       <h4 class="text-decoration-underline">Funding Selected</h4>
       <ul>
-        <li v-for="item in selectedFunding" :key="item.value" class="ml-10 my-2">
+        <li v-for="item in selectedFunding" :key="item.value" class="ml-8 my-2">
           {{ item.label }}
         </li>
       </ul>

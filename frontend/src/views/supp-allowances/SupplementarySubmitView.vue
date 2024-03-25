@@ -217,6 +217,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
+        this.$emit('process', true)
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
@@ -228,15 +229,15 @@ export default {
           if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
             el.uploadedDocuments = await DocumentService.getDocuments(el.supplementaryApplicationId)
           }
-          //every model should have the same decleration status
-          this.supplementaryDeclaration = el.supplementaryDeclaration
         }
-
+        //every model should have the same decleration status
+        this.supplementaryDeclaration = this.models.every((el) => el.supplementaryDeclaration)
         this.setSubmit()
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
       } finally {
         this.loading = false
+        this.$emit('process', false)
       }
     },
     getTransportModels() {

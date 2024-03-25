@@ -135,7 +135,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.supportFundingModel.includes('4')
+      return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
     },
   },
   watch: {

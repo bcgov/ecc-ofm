@@ -50,7 +50,7 @@
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === 'support-needs'"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"
-              :hasInclusionPolicy="hasInclusionPolicy"
+              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
               @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
@@ -68,19 +68,19 @@
 
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
+import ApplicationService from '@/services/applicationService'
+import DocumentService from '@/services/documentService'
 import IndigenousProgrammingAllowance from '@/components/supp-allowances/IndigenousProgrammingAllowance.vue'
 import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/SupportNeedsProgrammingAllowance.vue'
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
-import { isEmpty, isEqual, cloneDeep } from 'lodash'
-import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
-import DocumentService from '@/services/documentService'
-import AppDialog from '@/components/ui/AppDialog.vue'
-import OrganizationService from '@/services/organizationService'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
 
 export default {
   name: 'SupplementaryFormView',
@@ -129,6 +129,7 @@ export default {
       return this.PANELS?.map((panel) => panel.id)
     },
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useOrgStore, ['currentOrg']),
   },
   watch: {
     back: {
@@ -175,6 +176,7 @@ export default {
     await this.loadData()
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPanelIDs : []
@@ -182,8 +184,10 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.hasInclusionPolicy = (await OrganizationService.getOrganization(this.userInfo?.organizationId)).hasInclusionPolicy
-        console.log(this.hasInclusionPolicy)
+        this.$emit('process', true)
+        if (!this.currentOrg) {
+          await this.getOrganizationInfo(this.userInfo?.organizationId)
+        }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
@@ -240,7 +244,6 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to save supplementary applications')
         this.loading = false
-      } finally {
         this.$emit('process', false)
       }
     },
@@ -286,6 +289,7 @@ export default {
       }
       this.clonedModels = cloneDeep(this.models)
       this.loading = false
+      this.$emit('process', false)
     },
     updateModel(updatedModel) {
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))

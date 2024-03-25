@@ -70,7 +70,7 @@
       </v-row>
       <v-row v-else>
         <v-col cols="12" class="px-4">
-          <AppMissingInfoError :to="{ name: 'supp-allowances-form', hash: '#', params: { applicationGuid: $route.params.applicationGuid } }">
+          <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
             <slot v-if="!model.VIN || !model.odometer || !model.estimatedMileage">
               {{ APPLICATION_ERROR_MESSAGES.TRANSPORT }}
               <br />
