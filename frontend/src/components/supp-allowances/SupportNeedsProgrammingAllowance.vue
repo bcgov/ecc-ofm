@@ -30,14 +30,10 @@
     <AppLabel>What is an Inclusion Policy?</AppLabel>
     <br />
     <br />
-    An Inclusion Policy is intended to support child care providers in describing how their program provides inclusive child care. It supports early childhood professionals’ reflective practice and
+    An Inclusion Policy is intended to support child care providers in describing how their program provides inclusive child care. It supports early childhood professionals' reflective practice and
     should evolve over time as the child care program evolves. An Inclusion Policy outlines the steps child care providers and early childhood professionals will take to prevent or reduce the
     exclusion or termination of children from the child care program; it is not a requirement for providers to accept all children into their program. Child care providers may access a number of
     resources to help them to develop and implement an Inclusion Policy for their program.
-    <br />
-    <br />
-    The Inclusive Child Care Toolkit: provides resources to help providers and early childhood professionals develop an understanding of inclusive child care practices, and provides information on how
-    to develop an Inclusion Policy.
     <br />
     <br />
     <ol>

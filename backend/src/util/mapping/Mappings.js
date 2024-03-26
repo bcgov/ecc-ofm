@@ -281,7 +281,7 @@ const SupplementaryApplicationMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_transport_monthly_lease', front: 'monthlyLease' },
-  { back: 'ofm_transport_estimated_monthly_km', front: 'estimatedMileage' },
+  { back: 'ofm_transport_estimated_yearly_km', front: 'estimatedMileage' },
   { back: 'ofm_transport_odometer', front: 'odometer' },
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
 ]
