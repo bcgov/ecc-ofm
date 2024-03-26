@@ -31,7 +31,7 @@
       <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
     </v-col>
   </v-row>
-  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
+  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" :isInvokedFromMessages="true" @close="toggleNewRequestDialog" />
 </template>
 
 <script>

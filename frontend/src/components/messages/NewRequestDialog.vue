@@ -271,7 +271,7 @@
         </v-row>
       </template>
     </AppDialog>
-    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog" @close="toggleNewRequestConfirmationDialog" />
+    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog" :isInvokedFromMessages="isInvokedFromMessages" @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -301,6 +301,11 @@ export default {
     show: {
       type: Boolean,
       default: false,
+      required: true,
+    },
+    isInvokedFromMessages: {
+      type: Boolean,
+      default: false, // If true, the dialog is invoked from the Messages page
     },
   },
   emits: ['close'],
@@ -494,6 +499,10 @@ export default {
 
     toggleNewRequestConfirmationDialog() {
       this.showNewRequestConfirmationDialog = !this.showNewRequestConfirmationDialog
+      if (!this.isInvokedFromMessages) {
+        // Component not invoked from the Messages page, redirect accordingly
+        this.$router.push({ name: 'messaging' })
+      }
     },
 
     validateDocumentsToUpload(value) {

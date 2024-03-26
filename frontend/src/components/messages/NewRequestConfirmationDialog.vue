@@ -33,10 +33,16 @@ export default {
     show: {
       type: Boolean,
       default: false,
+      required: true,
     },
     referenceNumber: {
       type: String,
       default: '',
+      required: true,
+    },
+    invokedFromMessages: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['close'],
