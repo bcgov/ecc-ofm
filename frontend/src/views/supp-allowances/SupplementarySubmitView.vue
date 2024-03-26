@@ -288,7 +288,7 @@ export default {
     },
     async submitApplication() {
       await this.saveApplication(true, true)
-      this.$router.push({ name: 'supplementary-confirmation', params: { applicationGuid: this.$route.params.applicationGuid } })
+      this.$router.push({ name: 'supplementary-confirmation' })
     },
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
