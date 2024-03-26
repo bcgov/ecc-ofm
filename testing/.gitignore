@@ -8,4 +8,5 @@ lerna-debug.log*
 
 node_modules
 cypress.env.json
+cypress/reports
 

@@ -120,3 +120,10 @@ Cypress.Commands.add("loginToPortal", (username, password, portalUrl) => {
     }
   );
 });
+
+Cypress.Commands.add(
+  "loginToPortalNoSession",
+  (username, password, portalUrl) => {
+    loginToPortal(username, password, portalUrl);
+  }
+);
