@@ -74,7 +74,6 @@
                 placeholder="[select facility]"
                 variant="outlined"
                 density="compact"
-                :rules="rules.listIsNotEmpty"
                 :items="facilities"
                 item-title="facilityName"
                 :disabled="isLoading"

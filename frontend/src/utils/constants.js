@@ -95,6 +95,7 @@ export const REQUEST_SUB_CATEGORY_TYPES = Object.freeze({
   FACILITY_PHONE_EMAIL: '1767cfc9-8fdd-ee11-904d-000d3a0a18e7',
   ADD_CHANGE_LICENCE: '4f612456-bcdc-ee11-904d-000d3a0a18e7',
   OTHER: '49caab5c-bcdc-ee11-904d-000d3a0a18e7',
+})
 
 export const GOOD_STANDING_STATUS_CODES = Object.freeze({
   GOOD: 1,
