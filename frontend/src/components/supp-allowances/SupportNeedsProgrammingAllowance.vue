@@ -91,7 +91,10 @@
   <div v-else>
     <v-row class="ml-2 my-5">
       <v-icon size="x-large" color="warning">mdi mdi-alert</v-icon>
-      <h4 class="ml-3">You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in Account Management.</h4>
+      <h4 class="ml-3">
+        You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+        <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
+      </h4>
     </v-row>
   </div>
 

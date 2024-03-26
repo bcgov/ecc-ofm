@@ -168,7 +168,7 @@ export default {
     back: {
       async handler() {
         await this.saveApplication()
-        this.$router.push({ name: 'supp-allowances-form' })
+        this.$router.push({ name: 'supp-allowances-form', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     cancel: {
