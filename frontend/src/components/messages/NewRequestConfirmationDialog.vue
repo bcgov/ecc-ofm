@@ -15,7 +15,7 @@
           <AppButton id="return-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">Return to home</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="view-messages-button" size="large" width="200px" @click="closeDialog()">View messages</AppButton>
+          <AppButton id="view-messages-button" size="large" width="200px" @click="viewMessages()">View messages</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -62,11 +62,17 @@ export default {
   methods: {
     closeDialog() {
       this.$emit('close')
+
+    },
+
+    viewMessages() {
+      this.closeDialog()
       if (!this.isInvokedFromMessages) {
         // Component not invoked from the Messages page, redirect accordingly
         this.$router.push({ name: 'messaging' })
       }
     },
+
   },
 }
 </script>

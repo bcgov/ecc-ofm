@@ -43,23 +43,11 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-for="(item, index) in sortedRequestSubCategories.slice(0, 3)" :key="index">
+              <v-col v-for="(item, index) in sortedRequestSubCategories" :key="index" cols="4">
                 <v-checkbox
                   :label="item.categoryName"
-                  :input-value="newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === item.subCategoryId)"
-                  @change="val => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"
-                  density="compact"
-                  :class="changeTypeClass"
-                  hide-details>
-                </v-checkbox>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col v-for="(item, index) in sortedRequestSubCategories.slice(3, 6)" :key="index">
-                <v-checkbox
-                  :label="item.categoryName"
-                  :input-value="newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === item.subCategoryId)"
-                  @change="val => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"
+                  :input-value="newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === item.subCategoryId)"
+                  @change="(val) => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"
                   density="compact"
                   :class="changeTypeClass"
                   hide-details>
@@ -136,6 +124,7 @@
                 <v-text-field
                   v-model.trim="organizationModel.phoneLandline"
                   :placeholder="PHONE_FORMAT"
+                  :rules="[rules.phone]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -150,6 +139,7 @@
                 <v-text-field
                   v-model.trim="organizationModel.phoneCell"
                   :placeholder="PHONE_FORMAT"
+                  :rules="[rules.phone]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -164,6 +154,7 @@
                 <v-text-field
                   v-model.trim="organizationModel.email"
                   :placeholder="EMAIL_FORMAT"
+                  :rules="rules.email"
                   maxlength="100"
                   variant="outlined"
                   density="compact"
@@ -180,6 +171,7 @@
                 <v-text-field
                   v-model.trim="facilityModel.phoneLandline"
                   :placeholder="PHONE_FORMAT"
+                  :rules="[rules.phone]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -194,6 +186,7 @@
                 <v-text-field
                   v-model.trim="facilityModel.phoneCell"
                   :placeholder="PHONE_FORMAT"
+                  :rules="[rules.phone]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -208,7 +201,7 @@
                 <v-text-field
                   v-model.trim="facilityModel.email"
                   :placeholder="EMAIL_FORMAT"
-                  counter
+                  :rules="rules.email"
                   maxlength="100"
                   variant="outlined"
                   density="compact"
@@ -343,39 +336,27 @@ export default {
     isAnySubCategoryChecked() {
       return this.newRequestModel.subCategories.length > 0
     },
-    isOrganizationDetailsChecked() {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_DETAILS)
-    },
-    isFacilityDetailsChecked() {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === REQUEST_SUB_CATEGORY_TYPES.FACILITY_DETAILS)
-    },
     isOrgPhoneEmailChecked() {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL)
+      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL)
     },
     isFacilityPhoneEmailChecked() {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)
-    },
-    isAddChangeLicenceChecked() {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === REQUEST_SUB_CATEGORY_TYPES.ADD_CHANGE_LICENCE)
-    },
-    isOtherChecked() {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === REQUEST_SUB_CATEGORY_TYPES.OTHER)
+      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)
     },
     isAnyDetailOrChangeChecked() {
-      return this.isOrganizationDetailsChecked || this.isFacilityDetailsChecked || this.isAddChangeLicenceChecked || this.isOtherChecked;
+      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ADD_CHANGE_LICENCE) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.OTHER)
     },
     isOnlyPhoneEmailChecked() {
-      return (((this.isOrgPhoneEmailChecked || this.isFacilityPhoneEmailChecked) && this.newRequestModel.subCategories.length === 1) ||
-        ((this.isOrgPhoneEmailChecked && this.isFacilityPhoneEmailChecked) && this.newRequestModel.subCategories.length === 2))
+      return (((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 1) ||
+        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL) && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 2))
     },
     showFacility() {
-      return this.isAnAccountMaintenanceRequest && (this.isFacilityDetailsChecked || this.isFacilityPhoneEmailChecked) || !this.isAnAccountMaintenanceRequest;
+      return this.isAnAccountMaintenanceRequest && (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) || !this.isAnAccountMaintenanceRequest
     },
     showRequestDescription() {
-      return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest;
+      return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
     },
     showSupportingDocuments() {
-      return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest;
+      return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
     },
   },
   watch: {
@@ -447,7 +428,7 @@ export default {
 
     setAssistanceRequestDescription() {
       if (this.isOnlyPhoneEmailChecked) {
-        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isOrgPhoneEmailChecked ? 'Organization' : '') + (this.isFacilityPhoneEmailChecked ? 'Facility' : '') + 'phone/email'
+        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL) ? 'Facility' : '') + 'phone/email'
       }
     },
 
@@ -475,10 +456,10 @@ export default {
           this.isLoading = true
           this.setAssistanceRequestDescription()
           const assistanceRequest = await this.createRequestAndDocuments()
-          if (this.isOrgPhoneEmailChecked) {
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL)) {
             await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
           }
-          if (this.isFacilityPhoneEmailChecked) {
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) {
             this.updateFacility()
           }
           if (this.isOnlyPhoneEmailChecked) {
@@ -570,6 +551,11 @@ export default {
         throw error
       }
     },
+
+    isSubCategoryChecked(category) {
+      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === category)
+    },
+
   }
 }
 </script>
