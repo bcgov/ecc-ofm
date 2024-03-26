@@ -62,6 +62,10 @@ export default {
   methods: {
     closeDialog() {
       this.$emit('close')
+      if (!this.isInvokedFromMessages) {
+        // Component not invoked from the Messages page, redirect accordingly
+        this.$router.push({ name: 'messaging' })
+      }
     },
   },
 }

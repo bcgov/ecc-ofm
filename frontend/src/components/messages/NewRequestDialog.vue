@@ -499,10 +499,6 @@ export default {
 
     toggleNewRequestConfirmationDialog() {
       this.showNewRequestConfirmationDialog = !this.showNewRequestConfirmationDialog
-      if (!this.isInvokedFromMessages) {
-        // Component not invoked from the Messages page, redirect accordingly
-        this.$router.push({ name: 'messaging' })
-      }
     },
 
     validateDocumentsToUpload(value) {
@@ -519,10 +515,11 @@ export default {
     },
 
     validateChangeTypeSelection() {
-      if (!this.isAnySubCategoryChecked) {
+      const shouldValidate = this.isAnAccountMaintenanceRequest && !this.isAnySubCategoryChecked
+      if (shouldValidate) {
         this.changeTypeClass = 'change-type-required'
       }
-      return this.isAnySubCategoryChecked
+      return !shouldValidate
     },
 
     sortRequestSubCategories(subCategories, sortOrder) {
