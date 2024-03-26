@@ -38,25 +38,27 @@
       <div v-else>
         <v-expansion-panels v-model="panel" multiple>
           <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
-            <v-expansion-panel-title v-if="panel.supplementaryApplicationId">
-              <!-- page complete -->
-              <div v-if="isPanelComplete(panel)">
-                <span class="header-label">{{ panel.title }}</span>
-                <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
-              </div>
-              <div v-else>
-                <span class="header-label">{{ panel.title }}</span>
-                <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
-                <span class="error-message">Your form is missing required information.</span>
-              </div>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <IndigenousProgrammingSummary
-                v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
-                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
-              <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"></SupportNeedsSummary>
-              <TransportationSummary v-if="panel.id === 'transportation' && panel.supplementaryApplicationId" :transportModels="getTransportModels()"></TransportationSummary>
-            </v-expansion-panel-text>
+            <div v-if="panel.supplementaryApplicationId">
+              <v-expansion-panel-title>
+                <!-- page complete -->
+                <div v-if="isPanelComplete(panel)">
+                  <span class="header-label">{{ panel.title }}</span>
+                  <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
+                </div>
+                <div v-else>
+                  <span class="header-label">{{ panel.title }}</span>
+                  <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
+                  <span class="error-message">Your form is missing required information.</span>
+                </div>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <IndigenousProgrammingSummary
+                  v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
+                  :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
+                <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"></SupportNeedsSummary>
+                <TransportationSummary v-if="panel.id === 'transportation' && panel.supplementaryApplicationId" :transportModels="getTransportModels()"></TransportationSummary>
+              </v-expansion-panel-text>
+            </div>
           </v-expansion-panel>
         </v-expansion-panels>
 

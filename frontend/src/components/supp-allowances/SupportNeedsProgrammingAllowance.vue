@@ -19,7 +19,7 @@
     <v-col cols="12">
       An Inclusion Policy is a requirement to apply for Support Needs Supplementary Funding Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can
       upload your policy in
-      <router-link to="/account-mgmt">Account Management.</router-link>
+      <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
     </v-col>
   </v-row>
   <br />

@@ -72,7 +72,7 @@
         <v-col cols="12" class="px-4">
           <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
             <slot v-if="!model.VIN || !model.odometer || !model.estimatedMileage">
-              {{ APPLICATION_ERROR_MESSAGES.TRANSPORT }}
+              {{ APPLICATION_ERROR_MESSAGES.SUPP_TRANSPORT }}
               <br />
               <br />
             </slot>
@@ -101,6 +101,7 @@ export default {
       default: () => {
         return []
       },
+      required: true,
     },
   },
   computed: {},

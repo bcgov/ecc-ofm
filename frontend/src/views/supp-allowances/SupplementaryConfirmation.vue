@@ -5,8 +5,8 @@
       <h4 class="mb-8 text-center">Check your dashboard for updates on the progress of your application. We may reach out if we need more information</h4>
 
       <v-row justify="space-around" no-gutters class="mt-10">
-        <AppBackButton id="back-home-button" :primary="false" width="250px" :to="{ name: 'home' }" align="center">Home</AppBackButton>
-        <AppButton id="view-applications-button" size="large" width="250px" :to="{ name: 'applications-history' }" align="center" class="mt-2">View Applications</AppButton>
+        <AppBackButton id="back-home-button" :primary="false" width="250px" :to="{ name: 'home' }" class="text-cemter">Home</AppBackButton>
+        <AppButton id="view-applications-button" size="large" width="250px" :to="{ name: 'applications-history' }" class="mt-2 text-center">View Applications</AppButton>
       </v-row>
     </div>
   </v-container>
@@ -19,8 +19,6 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 export default {
   name: 'ApplicationConfirmationView',
   components: { AppButton, AppBackButton },
-  computed: {},
-  created() {},
 }
 </script>
 <style scoped>

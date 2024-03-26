@@ -15,7 +15,7 @@
       </p>
       <p v-else>
         <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
-          {{ APPLICATION_ERROR_MESSAGES.OTHER }}
+          {{ APPLICATION_ERROR_MESSAGES.SUPP_OTHER }}
         </AppMissingInfoError>
       </p>
     </div>
@@ -35,6 +35,7 @@ export default {
       default: () => {
         return {}
       },
+      required: true,
     },
   },
   computed: {

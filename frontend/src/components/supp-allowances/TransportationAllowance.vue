@@ -36,13 +36,11 @@
 
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
     <v-row class="pa-7">
-      <v-col cols="11">
-        <div class="">
-          <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
-        </div>
+      <v-col cols="1">
+        <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
       </v-col>
       <v-col>
-        <v-icon small @click="deleteModel(model, index)">mdi-delete</v-icon>
+        <v-icon large @click="deleteModel(model, index)" class="mt-n2">mdi-delete-forever</v-icon>
       </v-col>
     </v-row>
     <v-divider class="my-3"></v-divider>

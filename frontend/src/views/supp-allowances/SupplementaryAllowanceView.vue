@@ -31,7 +31,16 @@
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
 
-          <router-view :applicationId="application?.applicationId" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process" @setSubmit="setSubmit" />
+          <router-view
+            :applicationId="application?.applicationId"
+            :cancel="cancel"
+            :back="back"
+            :next="next"
+            :save="save"
+            :submit="submit"
+            @process="process"
+            @setSubmit="setSubmit"
+            @setNext="setNext" />
         </div>
       </div>
       <AppNavButtons
@@ -42,6 +51,7 @@
         :showNext="showNext"
         :showSubmit="showSubmit"
         :disableSubmit="disableSubmit"
+        :disableNext="disableNext"
         @back="toggleBack"
         @cancel="toggleCancel"
         @save="toggleSave"
@@ -71,6 +81,7 @@ export default {
     return {
       rules,
       disableSubmit: true,
+      disableNext: false,
       loading: false,
       processing: false,
       back: false,
@@ -175,6 +186,9 @@ export default {
     },
     setSubmit(value) {
       this.disableSubmit = !value
+    },
+    setNext(value) {
+      this.disableNext = value
     },
   },
 }

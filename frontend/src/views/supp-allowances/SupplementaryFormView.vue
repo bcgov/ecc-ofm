@@ -112,7 +112,7 @@ export default {
       default: false,
     },
   },
-  emits: ['process', 'setSubmit'],
+  emits: ['process', 'setSubmit', 'setNext'],
   data() {
     return {
       loading: true,
@@ -288,6 +288,7 @@ export default {
         })
       }
       this.clonedModels = cloneDeep(this.models)
+      this.setNext()
       this.loading = false
       this.$emit('process', false)
     },
@@ -298,6 +299,8 @@ export default {
         index = this.models.indexOf(this.models.find((el) => el.id === updatedModel.id))
       }
       this.models[index] = updatedModel
+
+      this.setNext()
     },
     isModelSame(applicationModel) {
       return isEqual(
@@ -351,6 +354,12 @@ export default {
     },
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
+    },
+    setNext() {
+      this.$emit(
+        'setNext',
+        this.models.every((el) => this.isModelEmpty(el)),
+      )
     },
   },
 }
