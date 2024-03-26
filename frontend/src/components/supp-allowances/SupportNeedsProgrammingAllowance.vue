@@ -19,7 +19,7 @@
     <v-col cols="12">
       An Inclusion Policy is a requirement to apply for Support Needs Supplementary Funding Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can
       upload your policy in
-      <router-link to="/account-mgmt">Account Management.</router-link>
+      <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
     </v-col>
   </v-row>
   <br />
@@ -67,25 +67,36 @@
   </v-row>
 
   <v-divider class="mt-2"></v-divider>
-  <v-row no-gutters class="mr-2 my-2">
-    <v-col cols="12">Please describe how you intend to use this funding:</v-col>
-  </v-row>
-  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value" no-gutters>
-    <v-col cols="11" lg="6">
-      <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
-        <template v-slot:label>
-          <p>
-            {{ item.label }}
-            <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
-              <template #activator="{ props }">
-                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
-              </template>
-            </v-tooltip>
-          </p>
-        </template>
-      </v-checkbox>
-    </v-col>
-  </v-row>
+  <div v-if="hasInclusionPolicy">
+    <v-row no-gutters class="mr-2 my-2">
+      <v-col cols="12">Please describe how you intend to use this funding:</v-col>
+    </v-row>
+    <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
+      <v-col cols="11" lg="6">
+        <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+          <template v-slot:label>
+            <p>
+              {{ item.label }}
+              <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
+                <template #activator="{ props }">
+                  <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                </template>
+              </v-tooltip>
+            </p>
+          </template>
+        </v-checkbox>
+      </v-col>
+    </v-row>
+  </div>
+  <div v-else>
+    <v-row class="ml-2 my-5">
+      <v-icon size="x-large" color="warning">mdi mdi-alert</v-icon>
+      <h4 class="ml-3">
+        You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+        <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
+      </h4>
+    </v-row>
+  </div>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
     <v-textarea v-model.trim="model.supportOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
@@ -96,6 +107,7 @@
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
+import { SUPPORT_CHECKBOX_LABELS } from './suppConstants'
 
 export default {
   components: { AppLabel, AppButton },
@@ -105,6 +117,13 @@ export default {
       required: true,
       default: () => {
         return {}
+      },
+    },
+    hasInclusionPolicy: {
+      type: Boolean,
+      required: true,
+      default: () => {
+        return false
       },
     },
   },
@@ -119,7 +138,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.supportFundingModel.includes('4')
+      return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
     },
   },
   watch: {
@@ -132,13 +151,7 @@ export default {
   },
   async created() {
     this.model = { ...this.supportModel }
-
-    this.CHECKBOX_LABELS = [
-      { label: 'Resources and materials with the intention of increasing accessibility and inclusion for all children', value: '1', tooltip: 'e.g. Toileting step stool' },
-      { label: 'Resources to proactively support inclusion of children with diverse needs', value: '2', tooltip: 'e.g. Sensory toys' },
-      { label: 'Accessibility enhancements in the facility', value: '3', tooltip: 'e.g. Wheelchair ramps, automatic door installations, bathroom renovations for accessibility' },
-      { label: 'Other', value: '4' },
-    ]
+    this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
   },
   methods: {
     toggleInclusionPolicyDiv() {
