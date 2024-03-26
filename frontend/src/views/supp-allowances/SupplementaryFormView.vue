@@ -1,5 +1,10 @@
 <!-- eslint-disable vue/attribute-hyphenation -->
 <template>
+  <p class="my-11">
+    Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
+    <strong class="text-decoration-underline">one or all</strong>
+    that applies to your organization.
+  </p>
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
       <v-col cols="12" class="d-flex flex-column align-end">
@@ -42,7 +47,11 @@
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
-            <SupportNeedsProgrammingAllowance v-if="panel.id === 'support-needs'" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)" @update="updateModel" />
+            <SupportNeedsProgrammingAllowance
+              v-if="panel.id === 'support-needs'"
+              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"
+              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+              @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
               :transportModels="getTransportModels()"
@@ -59,16 +68,19 @@
 
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
+import ApplicationService from '@/services/applicationService'
+import DocumentService from '@/services/documentService'
 import IndigenousProgrammingAllowance from '@/components/supp-allowances/IndigenousProgrammingAllowance.vue'
 import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/SupportNeedsProgrammingAllowance.vue'
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
-import { isEmpty, isEqual, cloneDeep } from 'lodash'
-import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
-import DocumentService from '@/services/documentService'
-import AppDialog from '@/components/ui/AppDialog.vue'
+import { mapState, mapActions } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
 
 export default {
   name: 'SupplementaryFormView',
@@ -95,8 +107,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    submit: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['process'],
+  emits: ['process', 'setSubmit', 'setNext'],
   data() {
     return {
       loading: true,
@@ -112,12 +128,19 @@ export default {
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
     },
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useOrgStore, ['currentOrg']),
   },
   watch: {
     back: {
       async handler() {
         await this.saveApplication()
         this.$router.push({ name: 'applications-history' })
+      },
+    },
+    cancel: {
+      handler() {
+        this.toggleCancelDialog()
       },
     },
     save: {
@@ -130,11 +153,6 @@ export default {
         await this.saveApplication()
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
-      },
-    },
-    cancel: {
-      handler() {
-        this.toggleCancelDialog()
       },
     },
   },
@@ -158,6 +176,7 @@ export default {
     await this.loadData()
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPanelIDs : []
@@ -165,6 +184,10 @@ export default {
     async loadData() {
       try {
         this.loading = true
+        this.$emit('process', true)
+        if (!this.currentOrg) {
+          await this.getOrganizationInfo(this.userInfo?.organizationId)
+        }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
@@ -221,7 +244,6 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to save supplementary applications')
         this.loading = false
-      } finally {
         this.$emit('process', false)
       }
     },
@@ -249,6 +271,7 @@ export default {
       if (transportApplications.length > 0) {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
+          application.documentsToUpload = []
         }
         this.models = [...this.models, ...transportApplications]
       } else {
@@ -265,7 +288,9 @@ export default {
         })
       }
       this.clonedModels = cloneDeep(this.models)
+      this.setNext()
       this.loading = false
+      this.$emit('process', false)
     },
     updateModel(updatedModel) {
       let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
@@ -274,6 +299,8 @@ export default {
         index = this.models.indexOf(this.models.find((el) => el.id === updatedModel.id))
       }
       this.models[index] = updatedModel
+
+      this.setNext()
     },
     isModelSame(applicationModel) {
       return isEqual(
@@ -327,6 +354,12 @@ export default {
     },
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
+    },
+    setNext() {
+      this.$emit(
+        'setNext',
+        this.models.every((el) => this.isModelEmpty(el)),
+      )
     },
   },
 }

@@ -84,6 +84,12 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
   TRANSPORT: 3,
 })
 
+export const GOOD_STANDING_STATUS_CODES = Object.freeze({
+  GOOD: 1,
+  NO_GOOD: 2,
+  INTEGRATION_ERROR: 3,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
@@ -93,6 +99,8 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  SUPP_TRANSPORT: 'Transportation information required',
+  SUPP_OTHER: 'Description of other costs required',
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
