@@ -111,7 +111,7 @@
           <v-row v-if="isAnAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-3 mt-0" />
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11 mt-0">
-              <span class="facility-tip">&nbsp;Submit a separate request for each facility</span>
+              <span class="facility-tip pl-1">Submit a separate request for each facility</span>
             </v-col>
           </v-row>
           <template v-if="isOrgPhoneEmailChecked">
@@ -283,7 +283,7 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import OrganizationService from '@/services/organizationService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
-import { REQUEST_CATEGORY_TYPES, REQUEST_SUB_CATEGORY_TYPES, PHONE_FORMAT, EMAIL_FORMAT } from '@/utils/constants'
+import { REQUEST_CATEGORY_TYPES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
@@ -298,6 +298,10 @@ export default {
     isInvokedFromMessages: {
       type: Boolean,
       default: false, // If true, the dialog is invoked from the Messages page
+    },
+    defaultRequestCategoryId: {
+      type: String,
+      default: '',
     },
   },
   emits: ['close'],
@@ -336,20 +340,20 @@ export default {
       return this.newRequestModel.subCategories.length > 0
     },
     isOrgPhoneEmailChecked() {
-      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL)
+      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)
     },
     isFacilityPhoneEmailChecked() {
-      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)
+      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)
     },
     isAnyDetailOrChangeChecked() {
-      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ADD_CHANGE_LICENCE) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.OTHER)
+      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.OTHER)
     },
     isOnlyPhoneEmailChecked() {
-      return (((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 1) ||
-        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL) && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 2))
+      return (((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 1) ||
+        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 2))
     },
     showFacility() {
-      return this.isAnAccountMaintenanceRequest && (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) || !this.isAnAccountMaintenanceRequest
+      return this.isAnAccountMaintenanceRequest && (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) || !this.isAnAccountMaintenanceRequest
     },
     showRequestDescription() {
       return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
@@ -398,7 +402,7 @@ export default {
 
     setUpDefaultNewRequestModel() {
       this.newRequestModel = {
-        requestCategoryId: REQUEST_CATEGORY_TYPES.ACCOUNT_MAINTENANCE,
+        requestCategoryId: this.defaultRequestCategoryId,
         subCategories: [],
         contactId: this.userInfo?.contactId,
         facilities: [this.facilities?.find((facility) => facility.facilityId === this.currentFacility.facilityId)],
@@ -427,7 +431,7 @@ export default {
 
     setAssistanceRequestDescription() {
       if (this.isOnlyPhoneEmailChecked) {
-        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL) ? 'Facility' : '') + 'phone/email'
+        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ? 'Facility' : '') + 'phone/email'
       }
     },
 
@@ -455,10 +459,10 @@ export default {
           this.isLoading = true
           this.setAssistanceRequestDescription()
           const assistanceRequest = await this.createRequestAndDocuments()
-          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.ORGANIZATION_PHONE_EMAIL)) {
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
             await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
           }
-          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_TYPES.FACILITY_PHONE_EMAIL)) {
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
             this.updateFacility()
           }
           if (this.isOnlyPhoneEmailChecked) {
@@ -551,10 +555,13 @@ export default {
       }
     },
 
-    isSubCategoryChecked(category) {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === category)
+    isSubCategoryChecked(categoryName) {
+      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === this.getRequestSubCategoryId(categoryName))
     },
 
+    getRequestSubCategoryId(categoryName) {
+      return this.requestSubCategories.find(subCategory => subCategory.categoryName === categoryName)?.subCategoryId
+    },
   }
 }
 </script>

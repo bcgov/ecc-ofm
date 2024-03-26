@@ -136,8 +136,7 @@
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
-      :showMultiSelectFacility="false"
-      :showMethodOfContact="false"
+      :defaultRequestCategoryId="REQUEST_CATEGORY_TYPES.ACCOUNT_MAINTENANCE"
       @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
@@ -163,6 +162,7 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import { REQUEST_CATEGORY_TYPES } from '@/utils/constants'
 
 import { isEmpty } from 'lodash'
 
@@ -220,6 +220,7 @@ export default {
     },
   },
   async created() {
+    this.REQUEST_CATEGORY_TYPES = REQUEST_CATEGORY_TYPES
     this.facilityId = this.$route.params.facilityId
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)

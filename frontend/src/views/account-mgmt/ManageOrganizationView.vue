@@ -70,8 +70,7 @@
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
-      :showMultiSelectFacility="false"
-      :showMethodOfContact="false"
+      :defaultRequestCategoryId="REQUEST_CATEGORY_TYPES.ACCOUNT_MAINTENANCE"
       @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
@@ -89,6 +88,7 @@ import { mapState } from 'pinia'
 import { mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { isEmpty } from 'lodash'
+import { REQUEST_CATEGORY_TYPES } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
@@ -119,6 +119,7 @@ export default {
 
   },
   async created() {
+    this.REQUEST_CATEGORY_TYPES = REQUEST_CATEGORY_TYPES
     await this.loadData()
   },
   methods: {

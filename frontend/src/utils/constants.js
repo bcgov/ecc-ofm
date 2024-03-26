@@ -88,13 +88,13 @@ export const REQUEST_CATEGORY_TYPES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'a640abcf-7377-ee11-8179-000d3a09d132',
 })
 
-export const REQUEST_SUB_CATEGORY_TYPES = Object.freeze({
-  ORGANIZATION_DETAILS: 'af5d9441-bcdc-ee11-904d-000d3a0a18e7',
-  FACILITY_DETAILS: 'bf585d4e-bcdc-ee11-904d-000d3a0a18e7',
-  ORGANIZATION_PHONE_EMAIL: '3f8eaec3-8fdd-ee11-904d-000d3a0a18e7',
-  FACILITY_PHONE_EMAIL: '1767cfc9-8fdd-ee11-904d-000d3a0a18e7',
-  ADD_CHANGE_LICENCE: '4f612456-bcdc-ee11-904d-000d3a0a18e7',
-  OTHER: '49caab5c-bcdc-ee11-904d-000d3a0a18e7',
+export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
+  ORGANIZATION_DETAILS: 'Organization Details',
+  FACILITY_DETAILS: 'Facility Details',
+  ORGANIZATION_PHONE_EMAIL: 'Organization phone/email',
+  FACILITY_PHONE_EMAIL: 'Facility phone/email',
+  ADD_CHANGE_LICENCE: 'Add/change a licence',
+  OTHER: 'Other',
 })
 
 export const GOOD_STANDING_STATUS_CODES = Object.freeze({
