@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getFacility, getFacilityContacts, getFacilityLicences, updateFacilityPrimaryContact } = require('../components/facilities')
+const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility, updateFacilityPrimaryContact } = require('../components/facilities')
 const { param, validationResult } = require('express-validator')
 
 module.exports = router
@@ -25,6 +25,14 @@ router.get('/:facilityId/contacts', passport.authenticate('jwt', { session: fals
 })
 
 /**
+ * Update a Facility
+ */
+router.put('/:facilityId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
+  validationResult(req).throw()
+  return updateFacility(req, res)
+})
+
+/**
  * Get facility's licences by facilityId.
  */
 router.get('/:facilityId/licences', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
@@ -35,7 +43,7 @@ router.get('/:facilityId/licences', passport.authenticate('jwt', { session: fals
 /**
  * Update an Facilities Primary Contact
  */
-router.put('/:facilityId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
+router.put('/:facilityId/contacts', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()
   return updateFacilityPrimaryContact(req, res)
 })

@@ -32,6 +32,11 @@ const RequestCategoryMappings = [
   { back: 'ofm_request_categoryid', front: 'categoryId' },
 ]
 
+const RequestSubCategoryMappings = [
+  { back: 'ofm_name', front: 'categoryName' },
+  { back: 'ofm_subcategoryid', front: 'subCategoryId' },
+]
+
 const AssistanceRequestMappings = [
   { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
   { back: 'ofm_subject', front: 'subject' },
@@ -302,5 +307,6 @@ module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   RequestCategoryMappings,
+  RequestSubCategoryMappings,
   SupplementaryApplicationMappings,
 }

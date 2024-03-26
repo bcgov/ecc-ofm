@@ -55,6 +55,14 @@ function mapAssistanceRequestObjectForBack(data) {
       'ofm_facility@odata.bind': `/accounts(${facility.facilityId})`,
     })
   })
+  if (data?.subCategories) {
+    const payloadTemplate = '{"id":"subCategoryId","entityType":"ofm_subcategory","name":"subCategoryName"},'
+    let payload = ''
+    data?.subCategories?.forEach((subCategory) => {
+      payload = payload + payloadTemplate.replace('subCategoryId', subCategory.subCategoryId).replace('subCategoryName', subCategory.subCategoryName)
+    })
+    assistanceRequest['ofm_subcategory'] = '[' + payload.substring(0, payload.length - 1) + ']'
+  }
   return assistanceRequest
 }
 

@@ -19,6 +19,7 @@ export const useAppStore = defineStore('app', {
 
     // Lookup data from Dynamics365
     requestCategories: {},
+    requestSubCategories: {},
     userRoles: {},
     healthAuthorities: {},
     facilityTypes: {},
@@ -57,6 +58,7 @@ export const useAppStore = defineStore('app', {
         // DONT Call api if there is no token.
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
+        this.requestSubCategories = lookupInfo?.data?.requestSubCategories
         this.userRoles = lookupInfo?.data?.userRoles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes

@@ -1,6 +1,6 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId } = require('./utils')
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
@@ -55,9 +55,20 @@ async function updateFacilityPrimaryContact(req, res) {
   }
 }
 
+async function updateFacility(req, res) {
+  const payload = new MappableObjectForBack(req.body, FacilityMappings).toJSON()
+  try {
+    const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FacilityMappings))
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getFacility,
   getFacilityContacts,
   getFacilityLicences,
   updateFacilityPrimaryContact,
+  updateFacility,
 }
