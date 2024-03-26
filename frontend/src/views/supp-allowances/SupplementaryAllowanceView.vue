@@ -30,12 +30,17 @@
         <div v-if="application">
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
-          <p class="my-4">
-            Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
-            <strong class="text-decoration-underline">one or all</strong>
-            that applies to your organization.
-          </p>
-          <router-view :applicationId="application?.applicationId" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process" />
+
+          <router-view
+            :applicationId="application?.applicationId"
+            :cancel="cancel"
+            :back="back"
+            :next="next"
+            :save="save"
+            :submit="submit"
+            @process="process"
+            @setSubmit="setSubmit"
+            @setNext="setNext" />
         </div>
       </div>
       <AppNavButtons
@@ -45,6 +50,8 @@
         :showSave="showSave"
         :showNext="showNext"
         :showSubmit="showSubmit"
+        :disableSubmit="disableSubmit"
+        :disableNext="disableNext"
         @back="toggleBack"
         @cancel="toggleCancel"
         @save="toggleSave"
@@ -73,6 +80,8 @@ export default {
   data() {
     return {
       rules,
+      disableSubmit: true,
+      disableNext: false,
       loading: false,
       processing: false,
       back: false,
@@ -174,6 +183,12 @@ export default {
     },
     toggleSubmit() {
       this.submit = !this.submit
+    },
+    setSubmit(value) {
+      this.disableSubmit = !value
+    },
+    setNext(value) {
+      this.disableNext = value
     },
   },
 }

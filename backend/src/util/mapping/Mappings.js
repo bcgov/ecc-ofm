@@ -179,6 +179,8 @@ const OrganizationMappings = [
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_ownership', front: 'ownership' },
   { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
+  { back: 'ofm_good_standing_status', front: 'goodStandingStatusCode' },
+  { back: 'ofm_good_standing_status@OData.Community.Display.V1.FormattedValue', front: 'goodStandingStatus' },
 ]
 
 const FacilityMappings = [
@@ -284,6 +286,7 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_transport_estimated_yearly_km', front: 'estimatedMileage' },
   { back: 'ofm_transport_odometer', front: 'odometer' },
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
+  { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
 ]
 
 module.exports = {
