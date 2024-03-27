@@ -3,7 +3,7 @@ const { getOperation, getLabelFromValue } = require('./utils')
 const HttpStatus = require('http-status-codes')
 const _ = require('lodash')
 const cache = require('memory-cache')
-const { RequestCategoryMappings } = require('../util/mapping/Mappings')
+const { RequestCategoryMappings, RequestSubCategoryMappings } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('../components/logger')
 
@@ -19,6 +19,17 @@ async function getRequestCategories() {
     lookupCache.put('requestCategories', requestCategories, ONE_HOUR_MS)
   }
   return requestCategories
+}
+
+async function getRequestSubCategories() {
+  let requestSubCategories = lookupCache.get('requestSubCategories')
+  if (!requestSubCategories) {
+    requestSubCategories = []
+    let response = await getOperation('ofm_subcategories')
+    response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
+    lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
+  }
+  return requestSubCategories
 }
 
 async function fetchAndCacheData(cacheKey, operationName) {
@@ -60,8 +71,9 @@ async function getLicenceTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
+    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
       getRequestCategories(),
+      getRequestSubCategories(),
       getUserRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
@@ -69,6 +81,7 @@ async function getLookupInfo(_req, res) {
     ])
     const resData = {
       requestCategories: requestCategories,
+      requestSubCategories: requestSubCategories,
       userRoles: userRoles,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,

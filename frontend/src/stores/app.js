@@ -19,6 +19,7 @@ export const useAppStore = defineStore('app', {
 
     // Lookup data from Dynamics365
     requestCategories: {},
+    requestSubCategories: {},
     userRoles: {},
     healthAuthorities: {},
     facilityTypes: {},
@@ -50,6 +51,18 @@ export const useAppStore = defineStore('app', {
         return facilityType?.description
       }
     },
+    getRequestCategoryIdByName: (state) => {
+      return (categoryName) => {
+        const requestCategory = state.requestCategories?.find((requestCategory) => requestCategory.categoryName === categoryName)
+        return requestCategory?.categoryId
+      }
+    },
+    getRequestSubCategoryIdByName: (state) => {
+      return (categoryName) => {
+        const requestSubCategory = state.requestSubCategories?.find((requestSubCategory) => requestSubCategory.categoryName === categoryName)
+        return requestSubCategory?.subCategoryId
+      }
+    },
   },
   actions: {
     async getLookupInfo() {
@@ -57,6 +70,7 @@ export const useAppStore = defineStore('app', {
         // DONT Call api if there is no token.
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
+        this.requestSubCategories = lookupInfo?.data?.requestSubCategories
         this.userRoles = lookupInfo?.data?.userRoles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes

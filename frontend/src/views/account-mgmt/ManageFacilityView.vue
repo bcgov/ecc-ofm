@@ -7,7 +7,7 @@
       </v-col>
       <v-col v-if="editable" class="pb-1 pt-7">
         <v-row no-gutters justify="end" class="">
-          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="toggleChangeRequestDialog()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
@@ -133,6 +133,11 @@
         </v-row>
       </v-col>
     </v-row>
+    <NewRequestDialog
+      class="pa-0"
+      :show="showChangeRequestDialog"
+      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+      @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 
@@ -156,11 +161,14 @@ import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import { REQUEST_CATEGORY_NAMES } from '@/utils/constants'
+
 import { isEmpty } from 'lodash'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails },
+  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, NewRequestDialog },
   mixins: [alertMixin, rolesMixin],
   data() {
     return {
@@ -176,10 +184,11 @@ export default {
       editMode: false,
       editModePrimaryContact: false,
       isEmpty,
+      showChangeRequestDialog: false,
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
+    ...mapState(useAppStore, ['getRoleNameById', 'getRequestCategoryIdByName']),
     ...mapState(useAuthStore, ['userInfo']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
@@ -211,6 +220,7 @@ export default {
     },
   },
   async created() {
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
     this.facilityId = this.$route.params.facilityId
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)
@@ -369,10 +379,10 @@ export default {
     },
 
     /**
-     * Open the Change Request dialog
+     * Open/close the Change Request dialog
     */
-    openChangeRequestDialog() {
-      this.setWarningAlert('This feature is not yet implemented')
+    toggleChangeRequestDialog() {
+      this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
   },
 }
