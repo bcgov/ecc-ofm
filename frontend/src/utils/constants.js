@@ -84,8 +84,8 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
   TRANSPORT: 3,
 })
 
-export const REQUEST_CATEGORY_TYPES = Object.freeze({
-  ACCOUNT_MAINTENANCE: 'a640abcf-7377-ee11-8179-000d3a09d132',
+export const REQUEST_CATEGORY_NAMES = Object.freeze({
+  ACCOUNT_MAINTENANCE: 'Account Maintenance',
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({

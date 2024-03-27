@@ -70,7 +70,7 @@
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="REQUEST_CATEGORY_TYPES.ACCOUNT_MAINTENANCE"
+      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
@@ -86,9 +86,10 @@ import alertMixin from '@/mixins/alertMixin'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import { mapState } from 'pinia'
 import { mapActions } from 'pinia'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { isEmpty } from 'lodash'
-import { REQUEST_CATEGORY_TYPES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
@@ -107,6 +108,8 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+
     isAccountManager() {
       return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT)
     },
@@ -119,7 +122,7 @@ export default {
 
   },
   async created() {
-    this.REQUEST_CATEGORY_TYPES = REQUEST_CATEGORY_TYPES
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
     await this.loadData()
   },
   methods: {

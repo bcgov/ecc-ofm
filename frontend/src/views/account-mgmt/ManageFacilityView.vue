@@ -136,7 +136,7 @@
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="REQUEST_CATEGORY_TYPES.ACCOUNT_MAINTENANCE"
+      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
@@ -162,7 +162,7 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
-import { REQUEST_CATEGORY_TYPES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES } from '@/utils/constants'
 
 import { isEmpty } from 'lodash'
 
@@ -188,7 +188,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
+    ...mapState(useAppStore, ['getRoleNameById', 'getRequestCategoryIdByName']),
     ...mapState(useAuthStore, ['userInfo']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
@@ -220,7 +220,7 @@ export default {
     },
   },
   async created() {
-    this.REQUEST_CATEGORY_TYPES = REQUEST_CATEGORY_TYPES
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
     this.facilityId = this.$route.params.facilityId
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)

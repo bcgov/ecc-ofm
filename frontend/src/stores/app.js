@@ -51,6 +51,18 @@ export const useAppStore = defineStore('app', {
         return facilityType?.description
       }
     },
+    getRequestCategoryIdByName: (state) => {
+      return (categoryName) => {
+        const requestCategory = state.requestCategories?.find((requestCategory) => requestCategory.categoryName === categoryName)
+        return requestCategory?.categoryId
+      }
+    },
+    getRequestSubCategoryIdByName: (state) => {
+      return (categoryName) => {
+        const requestSubCategory = state.requestSubCategories?.find((requestSubCategory) => requestSubCategory.categoryName === categoryName)
+        return requestSubCategory?.subCategoryId
+      }
+    },
   },
   actions: {
     async getLookupInfo() {

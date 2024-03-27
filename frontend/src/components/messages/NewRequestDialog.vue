@@ -119,11 +119,12 @@
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Organization phone (land):</AppLabel>
               </v-col>
-              <v-col class="v-col-12 v-col-md-9 v-col-xl-9 mb-0">
+              <v-col class="v-col-12 v-col-md-9 v-col-xl-9 mb-1">
                 <v-text-field
+                  id="organization-phone"
                   v-model.trim="organizationModel.phoneLandline"
                   :placeholder="PHONE_FORMAT"
-                  :rules="[rules.phone]"
+                  :rules="[rules.phone, ...orgPhoneEmailRule]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -134,11 +135,12 @@
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Organization phone (cell):</AppLabel>
               </v-col>
-              <v-col class="v-col-12 v-col-md-9 v-col-xl-9 mb-0">
+              <v-col class="v-col-12 v-col-md-9 v-col-xl-9 mb-1">
                 <v-text-field
+                  id="organization-cell"
                   v-model.trim="organizationModel.phoneCell"
                   :placeholder="PHONE_FORMAT"
-                  :rules="[rules.phone]"
+                  :rules="[rules.phone, ...orgPhoneEmailRule]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -149,11 +151,12 @@
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Organization email:</AppLabel>
               </v-col>
-              <v-col class="v-col-12 v-col-md-9 v-col-xl-9 mb-0">
+              <v-col class="v-col-12 v-col-md-9 v-col-xl-9 mb-1">
                 <v-text-field
+                  id="organization-email"
                   v-model.trim="organizationModel.email"
                   :placeholder="EMAIL_FORMAT"
-                  :rules="rules.email"
+                  :rules="[rules.email, ...orgPhoneEmailRule]"
                   maxlength="100"
                   variant="outlined"
                   density="compact"
@@ -170,7 +173,7 @@
                 <v-text-field
                   v-model.trim="facilityModel.phoneLandline"
                   :placeholder="PHONE_FORMAT"
-                  :rules="[rules.phone]"
+                  :rules="[rules.phone, ...facilityPhoneEmailRule]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -185,7 +188,7 @@
                 <v-text-field
                   v-model.trim="facilityModel.phoneCell"
                   :placeholder="PHONE_FORMAT"
-                  :rules="[rules.phone]"
+                  :rules="[rules.phone, ...facilityPhoneEmailRule]"
                   maxlength="12"
                   variant="outlined"
                   density="compact"
@@ -200,7 +203,7 @@
                 <v-text-field
                   v-model.trim="facilityModel.email"
                   :placeholder="EMAIL_FORMAT"
-                  :rules="rules.email"
+                  :rules="[rules.email, ...facilityPhoneEmailRule]"
                   maxlength="100"
                   variant="outlined"
                   density="compact"
@@ -283,7 +286,7 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import OrganizationService from '@/services/organizationService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
-import { REQUEST_CATEGORY_TYPES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
@@ -301,7 +304,7 @@ export default {
     },
     defaultRequestCategoryId: {
       type: String,
-      default: '',
+      default: null,
     },
   },
   emits: ['close'],
@@ -322,7 +325,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['requestCategories', 'requestSubCategories']),
+    ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     facilities() {
       return this.userInfo?.facilities
@@ -334,7 +337,7 @@ export default {
       return this.newRequestModel.facilities.length > 0
     },
     isAnAccountMaintenanceRequest() {
-      return this.newRequestModel.requestCategoryId === REQUEST_CATEGORY_TYPES.ACCOUNT_MAINTENANCE
+      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
     },
     isAnySubCategoryChecked() {
       return this.newRequestModel.subCategories.length > 0
@@ -360,6 +363,12 @@ export default {
     },
     showSupportingDocuments() {
       return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
+    },
+    orgPhoneEmailRule() {
+      return [(v) => !!v || (!this.isOrgPhoneEmailChecked || (!!this.organizationModel.phoneLandline || !!this.organizationModel.phoneCell || !!this.organizationModel.email) || 'A phone/cell or email is required when Organization phone/email checked')]
+    },
+    facilityPhoneEmailRule() {
+      return [(v) => !!v || (!this.isFacilityPhoneEmailChecked || (!!this.facilityModel.phoneLandline || !!this.facilityModel.phoneCell || !!this.facilityModel.email) || 'A phone/cell or email is required when Facility phone/email checked')]
     },
   },
   watch: {
@@ -410,6 +419,7 @@ export default {
         phone: this.userInfo?.phone,
       }
     },
+
     toggleFacilities() {
       if (this.allFacilitiesSelected) {
         this.newRequestModel.facilities = []
@@ -431,7 +441,7 @@ export default {
 
     setAssistanceRequestDescription() {
       if (this.isOnlyPhoneEmailChecked) {
-        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ? 'Facility' : '') + 'phone/email'
+        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ? ' Facility' : '') + ' phone/cell/email'
       }
     },
 
@@ -459,12 +469,8 @@ export default {
           this.isLoading = true
           this.setAssistanceRequestDescription()
           const assistanceRequest = await this.createRequestAndDocuments()
-          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
-            await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
-          }
-          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
-            this.updateFacility()
-          }
+          this.updateOrgPhoneEmail()
+          this.updateFacilityPhoneEmail()
           if (this.isOnlyPhoneEmailChecked) {
             // If only phone/email change is checked, close the request and create an auto reply
             await this.closeAssistanceRequest(assistanceRequest.assistanceRequestId)
@@ -523,7 +529,6 @@ export default {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        await this.getAssistanceRequests(this.userInfo?.contactId)
         await this.updateAssistanceRequest(assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(assistanceRequestId)
       } catch (error) {
@@ -545,10 +550,29 @@ export default {
       }
     },
 
-    async updateFacility() {
+    async updateOrgPhoneEmail() {
       try {
-        this.facilityModel.facilityId = this.newRequestModel.facilities[0].facilityId
-        await FacilityService.updateFacility(this.newRequestModel.facilities[0].facilityId, this.facilityModel)
+        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
+          if (!this.organizationModel.phoneLandline) delete this.organizationModel.phoneLandline
+          if (!this.organizationModel.phoneCell) delete this.organizationModel.phoneCell
+          if (!this.organizationModel.email) delete this.organizationModel.email
+        } await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
+      }
+      catch (error) {
+        this.setFailureAlert('Failed to update organization', error)
+        throw error
+      }
+    },
+
+    async updateFacilityPhoneEmail() {
+      try {
+        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+          this.facilityModel.facilityId = this.newRequestModel.facilities[0].facilityId
+          if (!this.facilityModel.phoneLandline) delete this.facilityModel.phoneLandline
+          if (!this.facilityModel.phoneCell) delete this.facilityModel.phoneCell
+          if (!this.facilityModel.email) delete this.facilityModel.email
+          await FacilityService.updateFacility(this.newRequestModel.facilities[0].facilityId, this.facilityModel)
+        }
       } catch (error) {
         this.setFailureAlert('Failed to update facility', error)
         throw error
@@ -556,12 +580,9 @@ export default {
     },
 
     isSubCategoryChecked(categoryName) {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === this.getRequestSubCategoryId(categoryName))
+      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
 
-    getRequestSubCategoryId(categoryName) {
-      return this.requestSubCategories.find(subCategory => subCategory.categoryName === categoryName)?.subCategoryId
-    },
   }
 }
 </script>

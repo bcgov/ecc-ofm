@@ -46,7 +46,7 @@
               <AppLabel for="email">Email:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="email" v-model.trim="user.email" placeholder="user@domain.com" :rules="[...rules.email, ...rules.required]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+              <v-text-field id="email" v-model.trim="user.email" placeholder="user@domain.com" :rules="[rules.email, ...rules.required]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
