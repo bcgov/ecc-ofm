@@ -43,7 +43,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-for="(item, index) in sortedRequestSubCategories" :key="index" cols="4">
+              <v-col v-for="(item, index) in sortedRequestSubCategories" :key="index" class="v-col-12 v-col-sm-4 v-col-xl-4">
                 <v-checkbox
                   :label="item.categoryName"
                   :input-value="newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === item.subCategoryId)"
@@ -346,6 +346,7 @@ export default {
       return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)
     },
     isFacilityPhoneEmailChecked() {
+      console.log(this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL))
       return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)
     },
     isAnyDetailOrChangeChecked() {
@@ -395,15 +396,7 @@ export default {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
     this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
-    this.requestSubCategorySortOrder = [
-      "Organization Details",
-      "Facility Details",
-      "Organization phone/email",
-      "Facility phone/email",
-      "Add/change a licence",
-      "Other"
-    ]
-    this.sortedRequestSubCategories = this.sortRequestSubCategories(this.requestSubCategories, this.requestSubCategorySortOrder)
+    this.sortedRequestSubCategories = this.requestSubCategories.sort((a, b) => a.displayOrder - b.displayOrder)
     this.setUpDefaultNewRequestModel()
   },
   methods: {
@@ -510,17 +503,6 @@ export default {
         this.changeTypeClass = 'change-type-required'
       }
       return !shouldValidate
-    },
-
-    sortRequestSubCategories(subCategories, sortOrder) {
-      subCategories.sort((a, b) => {
-        let indexA = sortOrder.indexOf(a.categoryName)
-        let indexB = sortOrder.indexOf(b.categoryName)
-        if (indexA === -1) indexA = sortOrder.length
-        if (indexB === -1) indexB = sortOrder.length
-        return indexA - indexB;
-      })
-      return subCategories
     },
 
     async closeAssistanceRequest(assistanceRequestId) {
