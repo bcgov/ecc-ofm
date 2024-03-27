@@ -191,6 +191,7 @@ export default {
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
+    this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
     this.PANELS = [
       {
         title: 'Indigenous Programming Allowance',
@@ -222,7 +223,7 @@ export default {
         this.$emit('process', true)
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
-        this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
+        this.models = (await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)).filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT)
 
         for (const el of this.models) {
           const found = this.PANELS.find((panel) => panel.supplementaryType == el.supplementaryType)
