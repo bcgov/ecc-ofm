@@ -14,7 +14,7 @@ async function getRequestCategories() {
   let requestCategories = lookupCache.get('requestCategories')
   if (!requestCategories) {
     requestCategories = []
-    let response = await getOperation('ofm_request_categories')
+    const response = await getOperation('ofm_request_categories')
     response?.value?.forEach((item) => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)))
     lookupCache.put('requestCategories', requestCategories, ONE_HOUR_MS)
   }
@@ -25,7 +25,7 @@ async function getRequestSubCategories() {
   let requestSubCategories = lookupCache.get('requestSubCategories')
   if (!requestSubCategories) {
     requestSubCategories = []
-    let response = await getOperation('ofm_subcategories')
+    const response = await getOperation('ofm_subcategories?$orderby=ofm_display_order')
     response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
     lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
   }
