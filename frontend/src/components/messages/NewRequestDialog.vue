@@ -438,7 +438,9 @@ export default {
 
     async createRequestAndDocuments() {
       try {
-        if (this.isAnAccountMaintenanceRequest) this.newRequestModel.facilities = [this.newRequestModel.facilities]
+        if (this.isAnAccountMaintenanceRequest && !Array.isArray(this.newRequestModel.facilities)) {
+          this.newRequestModel.facilities = [this.newRequestModel.facilities]
+        }
         const response = await this.createAssistanceRequest(this.newRequestModel)
         this.referenceNumber = response?.referenceNumber
         await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
@@ -455,8 +457,8 @@ export default {
     },
 
     async submit() {
-      this.$refs.newRequestForm?.validate()
-      if (this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded) {
+      const isFormValid = await this.$refs.newRequestForm?.validate()
+      if (isFormValid && this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
           this.setAssistanceRequestDescription()
