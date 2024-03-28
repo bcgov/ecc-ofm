@@ -43,7 +43,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-for="(item, index) in sortedRequestSubCategories" :key="index" class="v-col-12 v-col-sm-4 v-col-xl-4">
+              <v-col v-for="(item, index) in requestSubCategories" :key="index" class="v-col-12 v-col-sm-4 v-col-xl-4">
                 <v-checkbox
                   :label="item.categoryName"
                   :input-value="newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === item.subCategoryId)"
@@ -396,7 +396,6 @@ export default {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
     this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
-    this.sortedRequestSubCategories = this.requestSubCategories.sort((a, b) => a.displayOrder - b.displayOrder)
     this.setUpDefaultNewRequestModel()
   },
   methods: {

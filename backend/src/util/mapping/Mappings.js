@@ -35,7 +35,6 @@ const RequestCategoryMappings = [
 const RequestSubCategoryMappings = [
   { back: 'ofm_name', front: 'categoryName' },
   { back: 'ofm_subcategoryid', front: 'subCategoryId' },
-  { back: 'ofm_display_order', front: 'displayOrder' },
 ]
 
 const AssistanceRequestMappings = [
