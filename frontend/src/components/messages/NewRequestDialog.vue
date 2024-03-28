@@ -438,6 +438,7 @@ export default {
 
     async createRequestAndDocuments() {
       try {
+        if (this.isAnAccountMaintenanceRequest) this.newRequestModel.facilities = [this.newRequestModel.facilities]
         const response = await this.createAssistanceRequest(this.newRequestModel)
         this.referenceNumber = response?.referenceNumber
         await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
