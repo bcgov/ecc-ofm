@@ -11,7 +11,7 @@
 
       <v-card elevation="2" class="supp-applications-card">
         <v-card-text class="px-8" py-6>
-          <v-row no-gutters class="text-center">
+          <v-row no-gutters class="align-center">
             <v-col cols="12" md="8">
               <p>You may be eligible for supplementary funding. Would you like to apply?</p>
               <p class="mt-4">Available allowances:</p>
