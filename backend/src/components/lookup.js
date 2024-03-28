@@ -25,7 +25,7 @@ async function getRequestSubCategories() {
   let requestSubCategories = lookupCache.get('requestSubCategories')
   if (!requestSubCategories) {
     requestSubCategories = []
-    let response = await getOperation('ofm_subcategories?$select=ofm_subcategoryid,ofm_name&$orderby=ofm_display_order asc')
+    let response = await getOperation('ofm_subcategories?$orderby=ofm_display_order')
     response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
     lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
   }
