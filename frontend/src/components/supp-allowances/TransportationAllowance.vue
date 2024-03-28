@@ -119,10 +119,10 @@
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
 
-          <div v-if="model.documentsToUpload?.length == 0 && model.uploadedDocuments?.length == 0">
+          <div v-if="areDocumentsMissing(model)">
             <v-row class="my-5">
               <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
-              <p class="text-error ml-2">You must upload at least one Supporting Document</p>
+              <p class="text-error ml-2">You must upload all Supporting Documents</p>
             </v-row>
           </div>
         </div>
@@ -221,6 +221,12 @@ export default {
         break
       }
       this.$emit('deleteDocument', documentId)
+    },
+    areDocumentsMissing(model) {
+      if (model.monthlyLease == 0) {
+        return model.documentsToUpload?.length === 0 && model.uploadedDocuments?.length === 0
+      }
+      return model.documentsToUpload?.length + model.uploadedDocuments?.length < 2
     },
   },
 }
