@@ -183,6 +183,7 @@ export default {
 
     async saveOrganization(updatedOrganization) {
       try {
+        delete updatedOrganization.goodStandingStatus
         await OrganizationService.updateOrganization(this.organization.organizationId, updatedOrganization)
         this.organization = updatedOrganization
       } catch (error) {
