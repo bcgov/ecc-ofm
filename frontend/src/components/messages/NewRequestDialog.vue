@@ -346,7 +346,6 @@ export default {
       return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)
     },
     isFacilityPhoneEmailChecked() {
-      console.log(this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL))
       return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)
     },
     isAnyDetailOrChangeChecked() {
