@@ -104,7 +104,6 @@ export default {
       required: true,
     },
   },
-  computed: {},
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
   },
