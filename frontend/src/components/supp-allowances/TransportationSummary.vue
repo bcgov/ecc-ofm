@@ -13,7 +13,7 @@
         </v-col>
       </v-row>
       <v-divider class="my-3"></v-divider>
-      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && model.uploadedDocuments?.length > 0" no-gutters class="mt-2 pt-2">
+      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model)" no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="7" class="px-4">
           <v-col class="px-4">
             <v-row no-gutters>
@@ -76,7 +76,7 @@
               <br />
               <br />
             </slot>
-            <slot v-if="model.uploadedDocuments?.length === 0">
+            <slot v-if="areDocumentsMissing(model)">
               {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
             </slot>
           </AppMissingInfoError>
@@ -108,7 +108,14 @@ export default {
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
   },
-  methods: {},
+  methods: {
+    areDocumentsMissing(model) {
+      if (model.monthlyLease == 0) {
+        return model.uploadedDocuments?.length < 1
+      }
+      return model.uploadedDocuments?.length < 2
+    },
+  },
 }
 </script>
 
