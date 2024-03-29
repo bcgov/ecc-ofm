@@ -6,6 +6,7 @@
       :format="NUMBER_FORMAT"
       maxlength="12"
       :rules="rules.required"
+      :disabled="readonly"
       hide-details />
 
     <AppNumberInput
@@ -15,6 +16,7 @@
       maxlength="12"
       prefix="$"
       :rules="rules.required"
+      :disabled="readonly"
       hide-details />
 
     <v-text-field
@@ -24,6 +26,7 @@
       variant="outlined"
       density="compact"
       :rules="rules.required"
+      :disabled="readonly"
       hide-details />
 
     <v-textarea
@@ -33,11 +36,19 @@
       counter
       variant="outlined"
       :rules="rules.required"
+      :disabled="readonly"
       hide-details />
 
-    <v-date-picker v-if="getReportQuestionTypeNameById(question?.type) === 'Date'" v-model="updatedResponse.value" locale="en"></v-date-picker>
+    <v-date-picker v-if="getReportQuestionTypeNameById(question?.type) === 'Date'" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
 
-    <v-radio-group v-if="getReportQuestionTypeNameById(question?.type) === 'Two Option'" v-model="updatedResponse.value" :rules="rules.required" inline hide-details color="primary">
+    <v-radio-group
+      v-if="getReportQuestionTypeNameById(question?.type) === 'Two Option'"
+      v-model="updatedResponse.value"
+      :rules="rules.required"
+      :disabled="readonly"
+      inline
+      hide-details
+      color="primary">
       <v-radio :label="question?.choices[0]" :value="question?.choices[0]"></v-radio>
       <v-radio :label="question?.choices[1]" :value="question?.choices[1]"></v-radio>
     </v-radio-group>
@@ -46,6 +57,7 @@
       v-if="getReportQuestionTypeNameById(question?.type) === 'Choice'"
       v-model="updatedResponse.value"
       :rules="rules.required"
+      :disabled="readonly"
       :placeholder="RESPONSE_PLACEHOLDER"
       :items="question?.choices"
       density="compact"
@@ -57,6 +69,7 @@
       v-if="isMultipleChoiceQuestion(question?.type)"
       v-model.lazy="updatedResponse.value"
       :rules="rules.required"
+      :disabled="readonly"
       :placeholder="RESPONSE_PLACEHOLDER"
       variant="outlined"
       chips
@@ -111,6 +124,9 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
+    readonly() {
+      return !isEmpty(this.question?.inheritedValues)
+    },
     allItemsSelected() {
       return this.updatedResponse?.value?.length === this.question?.choices?.length
     },

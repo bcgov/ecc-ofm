@@ -6,7 +6,12 @@
         <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
           <div v-if="!question.hide">
             <AppLabel>{{ question?.text }}</AppLabel>
-            <SurveyTableQuestion v-if="isTableQuestion(question)" :questions="getTableQuestionHeaders(question)" :responses="getTableQuestionResponses(question)" @update="updateResponses" />
+            <SurveyTableQuestion
+              v-if="isTableQuestion(question)"
+              :questions="getTableQuestionHeaders(question)"
+              :responses="getTableQuestionResponses(question)"
+              @update="updateResponses"
+              @delete="deleteResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" @update="updateResponses" />
           </div>
         </div>
@@ -40,7 +45,7 @@ export default {
     },
   },
 
-  emits: ['update'],
+  emits: ['update', 'delete'],
 
   computed: {
     ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
@@ -59,12 +64,17 @@ export default {
     },
 
     getTableQuestionResponses(tableQuestion) {
-      return this.responses?.filter((response) => response.tableQuestionId === tableQuestion?.questionId)
+      return this.responses?.filter((response) => !response.hide && response.tableQuestionId === tableQuestion?.questionId)
     },
 
     updateResponses(response) {
       console.log('SECTION --------------> VIEW')
       this.$emit('update', response)
+    },
+
+    deleteResponses(response) {
+      console.log('SECTION --------------> VIEW')
+      this.$emit('delete', response)
     },
 
     isTableQuestion(question) {

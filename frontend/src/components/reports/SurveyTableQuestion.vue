@@ -6,11 +6,16 @@
           <td v-for="question in questions" :key="question?.questionId">
             <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" @update="updateResponses" />
           </td>
+          <td v-if="!hasInheritedValueQuestion && updatedResponses?.length > 1">
+            <v-btn variant="text" @click="deleteResponse(item, question?.questionId)">
+              <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
+            </v-btn>
+          </td>
         </tr>
       </template>
       <template v-slot:bottom><!-- no paging --></template>
     </v-data-table>
-    <AppButton id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
+    <AppButton v-if="!hasInheritedValueQuestion" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
   </v-container>
 </template>
 
@@ -33,7 +38,7 @@ export default {
     },
   },
 
-  emits: ['update'],
+  emits: ['update', 'delete'],
 
   data() {
     return {
@@ -47,20 +52,26 @@ export default {
     },
 
     tableHeaders() {
-      return this.questions?.map((header) => {
+      const headers = this.questions?.map((header) => {
         return {
           title: header.text,
           key: header.questionId,
           sortable: false,
         }
       })
+      if (!this.hasInheritedValueQuestion) {
+        headers.push({ title: '', key: 'actionButtons', sortable: false, width: '3%' })
+      }
+      return headers
     },
 
     responsesInTableFormat() {
+      console.log('responsesInTableFormat')
+      console.log(this.responses)
       if (isEmpty(this.responses)) return
       const responses = []
       let index = 0
-      let rowResponse = this.responses?.filter((item) => item.rowId === index)
+      let rowResponse = this.responses?.filter((item) => !item.hide && item.rowId === index)
       while (!isEmpty(rowResponse)) {
         const row = {
           rowId: rowResponse[0].rowId,
@@ -71,14 +82,17 @@ export default {
           const cell = rowResponse.find((item) => item.questionId === question.questionId)
           row.headers[question.questionId] = cell?.value
         })
-        responses.push(row)
+        if (!isEmpty(row)) {
+          responses.push(row)
+        }
         index += 1
-        rowResponse = this.responses?.filter((item) => item.rowId === index)
+        rowResponse = this.responses?.filter((item) => !item.hide && item.rowId === index)
       }
-      console.log('responsesInTableFormat')
-      console.log(responses)
-
       return responses
+    },
+
+    hasInheritedValueQuestion() {
+      return this.questions?.some((question) => !isEmpty(question.inheritedValues))
     },
   },
 
@@ -108,7 +122,6 @@ export default {
       }
       this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
       this.updatedResponses?.push(row)
-      console.log(this.updatedResponses)
     },
 
     getQuestionResponse(row, questionId) {
@@ -121,8 +134,19 @@ export default {
     },
 
     updateResponses(response) {
-      this.updatedResponses[response?.rowId].headers[response?.questionId] = response?.value
       this.$emit('update', response)
+    },
+
+    deleteResponse(row) {
+      console.log('delete')
+      console.log(row)
+      console.log(this.updatedResponses)
+      const index = this.updatedResponses?.findIndex((item) => item.rowId === row?.rowId)
+      if (index > -1) {
+        this.updatedResponses.splice(index, 1)
+      }
+
+      this.$emit('delete', row)
     },
   },
 }
