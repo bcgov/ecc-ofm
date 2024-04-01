@@ -15,7 +15,7 @@
       </template>
       <template v-slot:bottom><!-- no paging --></template>
     </v-data-table>
-    <AppButton v-if="!hasInheritedValueQuestion" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
+    <AppButton v-if="!isMaxRowsReached && !hasInheritedValueQuestion" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
   </v-container>
 </template>
 
@@ -28,6 +28,10 @@ export default {
   components: { AppButton, SurveyQuestion },
 
   props: {
+    maxRows: {
+      type: Number,
+      default: 0,
+    },
     questions: {
       type: Array,
       default: () => [],
@@ -93,6 +97,10 @@ export default {
 
     hasInheritedValueQuestion() {
       return this.questions?.some((question) => !isEmpty(question.inheritedValues))
+    },
+
+    isMaxRowsReached() {
+      return this.updatedResponses?.length >= this.maxRows
     },
   },
 

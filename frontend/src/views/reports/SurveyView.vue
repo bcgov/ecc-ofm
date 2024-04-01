@@ -8,7 +8,7 @@
         <SurveyNavBar :sections="sections" :currentSection="currentSection" @update="updateCurrentSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
-        <SurveySection :section="currentSection" :responses="responsesToBeDisplayed" @update="updateClonedResponses" @delete="deleteClonedResponses" @process="process" />
+        <SurveySection :section="currentSection" :responses="responsesToBeDisplayed" @update="updateClonedResponses" @deleteTableResponses="deleteTableResponses" @process="process" />
         <AppNavButtons :loading="loading || processing" :showBack="true" :showSave="true" :showNext="true" @back="back" @save="save(true)" @next="next" />
       </v-col>
     </v-row>
@@ -40,7 +40,7 @@ export default {
       currentSection: undefined,
       originalResponses: [],
       clonedResponses: [],
-      responsesToBeDeleted: [],
+      deletedTableResponses: [],
     }
   },
 
@@ -115,7 +115,9 @@ export default {
         console.log(this.clonedResponses)
         await Promise.all(
           this.clonedResponses?.map(async (response) => {
-            const originalResponse = this.getOriginalResponse(response)
+            const originalResponse = this.isTableQuestionResponse(response)
+              ? this.originalResponses.find((item) => item.questionId === response?.questionId && item.tableQuestionId === response?.tableQuestionId && item.rowId === response?.rowId)
+              : this.originalResponses.find((item) => item.questionId === response?.questionId)
             if (response?.hide) {
               await ReportsService.deleteQuestionResponse(originalResponse?.questionResponseId)
             } else if (!originalResponse && !isEmpty(response?.value)) {
@@ -146,64 +148,70 @@ export default {
     },
 
     updateClonedResponses(updatedResponse) {
-      const index = this.getClonedResponseIndex(updatedResponse)
+      const index = this.isTableQuestionResponse(updatedResponse)
+        ? this.clonedResponses.findIndex(
+            (item) => item.questionId === updatedResponse?.questionId && item.tableQuestionId === updatedResponse?.tableQuestionId && item.rowId === updatedResponse?.rowId,
+          )
+        : this.clonedResponses.findIndex((item) => item.questionId === updatedResponse?.questionId)
       if (index > -1) {
         this.clonedResponses[index] = updatedResponse
       } else {
         this.clonedResponses.push(updatedResponse)
       }
-      if (updatedResponse?.hasConditionalChildren || updatedResponse?.hasValueInheritedChildren) {
+      if (updatedResponse?.hasConditionalChildren) {
         this.processQuestionsBusinessRules(this.currentSection)
+      } else if (updatedResponse?.hasValueInheritedChildren) {
+        this.processValueInheritanceBusinessRule(this.currentSection)
       }
     },
 
-    deleteClonedResponses(response) {
-      this.responsesToBeDeleted = this.clonedResponses?.filter((item) => item.rowId === response.rowId && item.tableQuestionId === response.tableQuestionId)
-      let foundIndex = this.clonedResponses?.findIndex((item) => item.rowId === response.rowId && item.tableQuestionId === response.tableQuestionId)
-      while (foundIndex > -1) {
-        this.clonedResponses.splice(foundIndex, 1)
-        foundIndex = this.clonedResponses?.findIndex((item) => item.rowId === response.rowId && item.tableQuestionId === response.tableQuestionId)
-      }
-      this.updateRowId(response)
-      // responsesToBeDeleted?.forEach((item) => {
-      //   item.hide = true
-      //   item.value = null
-      // })
-      // this.processQuestionsBusinessRules(this.currentSection)
-      // reset rowId for all row.....
-      this.processQuestionsBusinessRules(this.currentSection)
-      console.log('this.responsesToBeDisplayed')
-      console.log(this.responsesToBeDisplayed)
-    },
-
-    updateRowId(response) {
-      const responseToUpdate = this.clonedResponses?.filter((item) => item.rowId > response.rowId && item.tableQuestionId === response.tableQuestionId)
-      responseToUpdate?.forEach((item) => (item.rowId -= 1))
-    },
-
-    // loop through each questions and display/hide child question based on parent response's value. if a question is hidden, remove response value of that question.
-    processQuestionsBusinessRules(section) {
-      section?.questions?.forEach((question) => {
-        if (!isEmpty(question?.businessRules)) {
-          question?.businessRules?.forEach((rule) => {
-            question.hasConditionalChildren = rule?.trueChildQuestionId || rule?.falseChildQuestionId
-            question.hasValueInheritedChildren = rule?.parentHasResponse && rule?.valueInheritedChildQuestionId
-            if (question?.hasConditionalChildren) {
-              this.toggleConditionalChildrenQuestions(section, question)
-            }
-            if (question?.hasValueInheritedChildren) {
-              this.addInheritedValuesToChildrenQuestions(section, question)
-            }
-          })
+    deleteTableResponses(deletedRow) {
+      this.clonedResponses?.forEach((response) => {
+        if (response.tableQuestionId === deletedRow.tableQuestionId) {
+          // Hide deleted rows
+          if (response.rowId === deletedRow.rowId) {
+            response.hide = true
+            response.value = null
+          }
+          // If this row is subsequent to the deleted row, reduce its rowId by 1
+          else if (response.rowId > deletedRow.rowId) {
+            response.rowId -= 1
+          }
         }
+      })
+      this.processValueInheritanceBusinessRule(this.currentSection)
+    },
+
+    /* -----------------------------------------------------------------------------------------
+      BUSINESS RULES:
+      
+      There are 2 business rules for questions:
+      
+      1. Conditional branching: Some questions will be hidden/displayed based on values of its parents' questions.
+
+      2. Value inheritance: Some questions will inherit values from their parents (e.g.: Initials columns in Human Resources Section).
+      If a question is an inherited-value question, that question will be read-only so that their values will be consistent with their parents’ values.
+    ----------------------------------------------------------------------------------------- */
+    processQuestionsBusinessRules(section) {
+      this.processConditionalBusinessRule(section)
+      this.processValueInheritanceBusinessRule(section)
+    },
+
+    // Conditional Business Rule
+    processConditionalBusinessRule(section) {
+      section?.questions?.forEach((question) => {
+        question?.businessRules?.forEach((rule) => {
+          question.hasConditionalChildren = rule?.trueChildQuestionId || rule?.falseChildQuestionId
+          if (question?.hasConditionalChildren) {
+            this.toggleConditionalChildrenQuestions(section, question)
+          }
+        })
       })
       console.log('BEFORE RESET')
       console.log(section)
+      console.log(this.clonedResponses)
       this.resetResponsesForHiddenQuestions()
       console.log('AFTER RESET')
-      console.log(this.clonedResponses)
-      this.updateResponsesForValueInheritedQuestions(section)
-      console.log('AFTER UPDATE')
       console.log(this.clonedResponses)
     },
 
@@ -225,8 +233,36 @@ export default {
       })
     },
 
+    resetResponsesForHiddenQuestions() {
+      this.clonedResponses?.forEach((response) => {
+        const question = this.currentSection?.questions?.find(
+          (item) => item.questionId === response.questionId || (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId),
+        )
+        response.hide = question?.hide
+        response.value = question?.hide ? null : response.value
+      })
+    },
+
+    // Value Inheritance Business Rule
+    processValueInheritanceBusinessRule(section) {
+      section?.questions?.forEach((question) => {
+        question?.businessRules?.forEach((rule) => {
+          question.hasValueInheritedChildren = rule?.parentHasResponse && rule?.valueInheritedChildQuestionId
+          if (question?.hasValueInheritedChildren) {
+            this.addInheritedValuesToChildrenQuestions(section, question)
+          }
+        })
+      })
+      console.log('BEFORE UPDATE')
+      console.log(section)
+      console.log(this.clonedResponses)
+      this.updateResponsesForValueInheritedQuestions(section)
+      console.log('AFTER UPDATE')
+      console.log(this.clonedResponses)
+    },
+
     addInheritedValuesToChildrenQuestions(section, parentsQuestion) {
-      let parentsResponses = this.clonedResponses?.filter((item) => item.questionId === parentsQuestion.questionId && item.tableQuestionId === parentsQuestion.tableQuestionId)
+      let parentsResponses = this.clonedResponses?.filter((item) => !item.hide && item.questionId === parentsQuestion.questionId && item.tableQuestionId === parentsQuestion.tableQuestionId)
       parentsResponses = parentsResponses.sort((response1, response2) => {
         return response1.rowId - response2.rowId
       })
@@ -238,26 +274,19 @@ export default {
       })
     },
 
-    resetResponsesForHiddenQuestions() {
-      this.clonedResponses?.forEach((response) => {
-        const question = this.currentSection?.questions?.find(
-          (item) => item.questionId === response.questionId || (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId),
-        )
-        response.hide = question?.hide
-        response.value = question?.hide ? null : response.value
-      })
-    },
-
     updateResponsesForValueInheritedQuestions(section) {
       section?.questions?.forEach((question) => {
         question.inheritedValues?.forEach((inheritedValue, index) => {
           const tableQuestion = section?.questions?.find((item) => item.questionId === question.tableQuestionId)
-          if (!tableQuestion?.hide && !isEmpty(question.inheritedValues)) {
-            const response = this.clonedResponses?.find((item) => item.questionId === question.questionId && item.tableQuestionId === question.tableQuestionId && item.rowId === index)
+          if (!tableQuestion?.hide) {
+            const response = this.clonedResponses?.find((response) => response.questionId === question.questionId && response.tableQuestionId === question.tableQuestionId && response.rowId === index)
+            // Update existing row
             if (response) {
               response.rowId = index
               response.value = inheritedValue
-            } else {
+            }
+            // Add new row
+            else {
               this.clonedResponses.push({
                 questionId: question.questionId,
                 tableQuestionId: question.tableQuestionId,
@@ -267,26 +296,15 @@ export default {
               })
             }
           }
-          const maxIndex = question.inheritedValues?.length
-          let foundIndex = this.clonedResponses?.findIndex((item) => item.rowId >= maxIndex && item.tableQuestionId === question.tableQuestionId)
-          while (foundIndex > -1) {
-            this.clonedResponses.splice(foundIndex, 1)
-            foundIndex = this.clonedResponses?.findIndex((item) => item.rowId > maxIndex && item.tableQuestionId === question.tableQuestionId)
-          }
+          // Hide/Delete redundant rows
+          this.clonedResponses?.forEach((response) => {
+            if (response.rowId >= question.inheritedValues?.length && response.tableQuestionId === question.tableQuestionId) {
+              response.hide = true
+              response.value = null
+            }
+          })
         })
       })
-    },
-
-    getClonedResponseIndex(response) {
-      return this.isTableQuestionResponse(response)
-        ? this.clonedResponses.findIndex((item) => item.questionId === response?.questionId && item.tableQuestionId === response?.tableQuestionId && item.rowId === response?.rowId)
-        : this.clonedResponses.findIndex((item) => item.questionId === response?.questionId)
-    },
-
-    getOriginalResponse(response) {
-      return this.isTableQuestionResponse(response)
-        ? this.originalResponses.find((item) => item.questionId === response?.questionId && item.tableQuestionId === response?.tableQuestionId && item.rowId === response?.rowId)
-        : this.originalResponses.find((item) => item.questionId === response?.questionId)
     },
 
     isTableQuestion(question) {

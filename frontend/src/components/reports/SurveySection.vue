@@ -8,10 +8,11 @@
             <AppLabel>{{ question?.text }}</AppLabel>
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
+              :maxRows="question?.tableMaxRows"
               :questions="getTableQuestionHeaders(question)"
               :responses="getTableQuestionResponses(question)"
               @update="updateResponses"
-              @delete="deleteResponses" />
+              @delete="deleteTableResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" @update="updateResponses" />
           </div>
         </div>
@@ -45,7 +46,7 @@ export default {
     },
   },
 
-  emits: ['update', 'delete'],
+  emits: ['update', 'deleteTableResponses'],
 
   computed: {
     ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
@@ -60,7 +61,9 @@ export default {
     },
 
     getTableQuestionHeaders(tableQuestion) {
-      return this.section?.questions?.filter((question) => question.tableQuestionId === tableQuestion?.questionId)
+      const headers = this.section?.questions?.filter((question) => question.tableQuestionId === tableQuestion?.questionId)
+      headers.forEach((header) => (header.hide = tableQuestion?.hide))
+      return headers
     },
 
     getTableQuestionResponses(tableQuestion) {
@@ -72,9 +75,9 @@ export default {
       this.$emit('update', response)
     },
 
-    deleteResponses(response) {
+    deleteTableResponses(response) {
       console.log('SECTION --------------> VIEW')
-      this.$emit('delete', response)
+      this.$emit('deleteTableResponses', response)
     },
 
     isTableQuestion(question) {

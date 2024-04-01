@@ -300,6 +300,7 @@ const SurveyQuestionMappings = [
   { back: 'ofm_question_choice', front: 'choices' },
   { back: 'ofm_fixed_response', front: 'fixedResponse' },
   { back: '_ofm_header_value', front: 'tableQuestionId' },
+  { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
