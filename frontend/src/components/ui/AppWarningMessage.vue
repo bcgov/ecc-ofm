@@ -1,5 +1,5 @@
 <template>
-  <v-row class="ma-9">
+  <v-row class="my-9 ml-1">
     <v-icon size="x-large" color="warning">mdi mdi-alert</v-icon>
     <h4 class="ml-3">
       <slot name="content"></slot>

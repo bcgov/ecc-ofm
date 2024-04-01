@@ -81,6 +81,7 @@ import { uuid } from 'vue-uuid'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
+import { isApplicationLocked } from '@/utils/common'
 
 export default {
   name: 'SupplementaryFormView',
@@ -360,7 +361,7 @@ export default {
       this.$emit(
         'setNext',
         this.models.every((el) => {
-          if (el.statusCode && el.statusCode != SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT) {
+          if (el.statusCode && isApplicationLocked(el.statusCode, SUPPLEMENTARY_APPLICATION_STATUS_CODES)) {
             return true
           }
           return this.isModelEmpty(el)

@@ -1,5 +1,12 @@
 <template>
-  <div v-if="model.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT">
+  <div>
+    <div v-if="isReadOnly && hasInclusionPolicy">
+      <AppWarningMessage>
+        <template #content>
+          <div>You have already received the Support Needs Allowance for the current term.</div>
+        </template>
+      </AppWarningMessage>
+    </div>
     <v-row no-gutters class="mr-2 my-2">
       <v-col cols="12">
         <AppLabel>Purpose of the Fund:</AppLabel>
@@ -74,7 +81,7 @@
       </v-row>
       <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
         <v-col cols="11" lg="6">
-          <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+          <v-checkbox v-model="model.supportFundingModel" :disabled="isReadOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
             <template v-slot:label>
               <p>
                 {{ item.label }}
@@ -88,6 +95,16 @@
           </v-checkbox>
         </v-col>
       </v-row>
+      <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
+        <v-textarea
+          v-model.trim="model.supportOtherDescription"
+          :disabled="isReadOnly"
+          placeholder="Detailed description of other expenses"
+          counter
+          maxlength="1000"
+          variant="outlined"
+          :rules="rules.required"></v-textarea>
+      </v-row>
     </div>
     <div v-else>
       <AppWarningMessage>
@@ -99,18 +116,6 @@
         </template>
       </AppWarningMessage>
     </div>
-
-    <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
-      <v-textarea v-model.trim="model.supportOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
-    </v-row>
-  </div>
-
-  <div v-else>
-    <AppWarningMessage>
-      <template #content>
-        <div>This allowance is already granted for this facility for the current year.</div>
-      </template>
-    </AppWarningMessage>
   </div>
 </template>
 
@@ -121,6 +126,7 @@ import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
 import { SUPPORT_CHECKBOX_LABELS } from './suppConstants'
 import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { isApplicationLocked } from '@/utils/common'
 
 export default {
   components: { AppButton, AppLabel, AppWarningMessage },
@@ -152,6 +158,9 @@ export default {
   computed: {
     isOtherBoxDisplayed() {
       return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
+    },
+    isReadOnly() {
+      return isApplicationLocked(this.supportModel?.statusCode, SUPPLEMENTARY_APPLICATION_STATUS_CODES)
     },
   },
   watch: {

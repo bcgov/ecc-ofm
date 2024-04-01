@@ -1,5 +1,12 @@
 <template>
-  <div v-if="model.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT">
+  <div>
+    <div v-if="isReadOnly">
+      <AppWarningMessage>
+        <template #content>
+          <div>You have already received the Indigenous Programming Allowance for the current term.</div>
+        </template>
+      </AppWarningMessage>
+    </div>
     <v-row no-gutters class="mr-2 my-4">
       <v-col cols="12">
         <AppLabel>Purpose of the fund:</AppLabel>
@@ -40,20 +47,20 @@
       </v-col>
     </v-row>
 
-    <v-row v-for="item in INDIG_CHECKBOX_LABELS" :key="item.value">
-      <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
+    <v-row v-for="item in INDIG_CHECKBOX_LABELS" :key="item.value" no-gutters>
+      <v-checkbox v-model="model.indigenousFundingModel" density="compact" :disabled="isReadOnly" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
     </v-row>
 
     <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
-      <v-textarea v-model.trim="model.indigenousOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
+      <v-textarea
+        v-model.trim="model.indigenousOtherDescription"
+        :disabled="isReadOnly"
+        placeholder="Detailed description of other expenses"
+        counter
+        maxlength="1000"
+        variant="outlined"
+        :rules="rules.required"></v-textarea>
     </v-row>
-  </div>
-  <div v-else>
-    <AppWarningMessage>
-      <template #content>
-        <div>This allowance is already granted for this facility for the current year.</div>
-      </template>
-    </AppWarningMessage>
   </div>
 </template>
 
@@ -63,6 +70,7 @@ import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import { INDIG_CHECKBOX_LABELS } from './suppConstants'
 import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { isApplicationLocked } from '@/utils/common'
 
 export default {
   components: { AppLabel, AppWarningMessage },
@@ -81,11 +89,15 @@ export default {
       panel: [],
       model: {},
       rules,
+      readonly: false,
     }
   },
   computed: {
     isOtherBoxDisplayed() {
       return this.model.indigenousFundingModel.includes('9')
+    },
+    isReadOnly() {
+      return isApplicationLocked(this.indigenousProgrammingModel?.statusCode, SUPPLEMENTARY_APPLICATION_STATUS_CODES)
     },
   },
   watch: {

@@ -9,3 +9,7 @@ export function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
   const formattedNumber = isNaN(Number(decimalNumber)) ? 0 : Number(decimalNumber)
   return formattedNumber.toLocaleString('en-CA', { minimumFractionDigits: numberOfFractionDigits, maximumFractionDigits: numberOfFractionDigits })
 }
+
+export function isApplicationLocked(applicationStatusCode, STATUS_CODES) {
+  return !(applicationStatusCode === STATUS_CODES.DRAFT || applicationStatusCode === STATUS_CODES.ACTION_REQUIRED)
+}
