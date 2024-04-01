@@ -87,7 +87,7 @@ import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummar
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/components/supp-allowances/suppConstants.js'
+import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 
 import rules from '@/utils/rules'
 

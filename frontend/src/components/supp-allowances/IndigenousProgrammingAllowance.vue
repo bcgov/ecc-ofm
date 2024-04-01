@@ -1,9 +1,9 @@
 <template>
   <div v-if="isReadOnly">
     <AppWarningMessage>
-      <template #content>
+      <slot>
         <div>You have already received the Indigenous Programming Allowance for the current term.</div>
-      </template>
+      </slot>
     </AppWarningMessage>
   </div>
   <v-row no-gutters class="mr-2 my-4">
@@ -66,7 +66,7 @@
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
-import { INDIG_CHECKBOX_LABELS } from './suppConstants'
+import { INDIG_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isApplicationLocked } from '@/utils/common'
 
@@ -87,7 +87,6 @@ export default {
       panel: [],
       model: {},
       rules,
-      readonly: false,
     }
   },
   computed: {
@@ -109,7 +108,6 @@ export default {
   async created() {
     this.model = { ...this.indigenousProgrammingModel }
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
-    this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
   },
 }
 </script>

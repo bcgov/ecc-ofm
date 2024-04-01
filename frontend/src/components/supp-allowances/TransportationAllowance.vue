@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
@@ -36,9 +35,9 @@
 
   <div v-if="isAnyApplicationReadOnly">
     <AppWarningMessage>
-      <template #content>
+      <slot>
         <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
-      </template>
+      </slot>
     </AppWarningMessage>
   </div>
   <v-divider class="my-5"></v-divider>
@@ -124,7 +123,6 @@
             :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
             v-model="model.documentsToUpload"
             entityName="ofm_allowances"
-            :readonly="readonly"
             :loading="isReadOnly(model)"
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
@@ -176,7 +174,6 @@ export default {
       panel: [],
       models: [],
       rules,
-      readonly: false, //update later when we have submitted forms
       monthlyLeaseFormat: {
         nullValue: '0.00',
         min: 0,

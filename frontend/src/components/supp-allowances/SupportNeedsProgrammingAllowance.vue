@@ -1,9 +1,9 @@
 <template>
   <div v-if="isReadOnly && hasInclusionPolicy">
     <AppWarningMessage>
-      <template #content>
+      <slot>
         <div>You have already received the Support Needs Allowance for the current term.</div>
-      </template>
+      </slot>
     </AppWarningMessage>
   </div>
   <v-row no-gutters class="mr-2 my-2">
@@ -107,12 +107,12 @@
   </div>
   <div v-else>
     <AppWarningMessage>
-      <template #content>
+      <slot>
         <div>
           You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
-          <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
+          <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
         </div>
-      </template>
+      </slot>
     </AppWarningMessage>
   </div>
 </template>
@@ -122,7 +122,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
-import { SUPPORT_CHECKBOX_LABELS } from './suppConstants'
+import { SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isApplicationLocked } from '@/utils/common'
 
@@ -172,7 +172,6 @@ export default {
   async created() {
     this.model = { ...this.supportModel }
     this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
-    this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
   },
   methods: {
     toggleInclusionPolicyDiv() {
