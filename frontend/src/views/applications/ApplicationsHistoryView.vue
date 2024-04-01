@@ -99,9 +99,7 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES } from '@/utils/constants'
-import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
-
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
@@ -155,7 +153,6 @@ export default {
       this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
-      this.SUPPLEMENTARY_APPLICATION_STATUS_CODES = SUPPLEMENTARY_APPLICATION_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       await this.getApplicationsAndFundingAgreements()
       await this.getSupplementaryApplications()

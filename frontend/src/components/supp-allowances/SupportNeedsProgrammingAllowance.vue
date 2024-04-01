@@ -1,9 +1,7 @@
 <template>
   <div v-if="isReadOnly && hasInclusionPolicy">
     <AppWarningMessage>
-      <slot>
-        <div>You have already received the Support Needs Allowance for the current term.</div>
-      </slot>
+      <div>You have already received the Support Needs Allowance for the current term.</div>
     </AppWarningMessage>
   </div>
   <v-row no-gutters class="mr-2 my-2">
@@ -107,12 +105,10 @@
   </div>
   <div v-else>
     <AppWarningMessage>
-      <slot>
-        <div>
-          You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
-          <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
-        </div>
-      </slot>
+      <div>
+        You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+        <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
+      </div>
     </AppWarningMessage>
   </div>
 </template>
@@ -123,7 +119,6 @@ import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
 import { SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
-import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isApplicationLocked } from '@/utils/common'
 
 export default {
@@ -158,7 +153,7 @@ export default {
       return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
     },
     isReadOnly() {
-      return isApplicationLocked(this.supportModel?.statusCode, SUPPLEMENTARY_APPLICATION_STATUS_CODES)
+      return isApplicationLocked(this.supportModel?.statusCode)
     },
   },
   watch: {

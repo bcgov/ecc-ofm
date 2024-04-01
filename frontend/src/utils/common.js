@@ -1,5 +1,7 @@
 'use strict'
 
+import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+
 /**
  * This function will return a decimal number in this format ###,###,###.## (e.g.: 123,456,999.12).
  * You can specify the number of fraction digits using "numberOfFractionDigits". Default is 2 fractional digits
@@ -10,6 +12,6 @@ export function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
   return formattedNumber.toLocaleString('en-CA', { minimumFractionDigits: numberOfFractionDigits, maximumFractionDigits: numberOfFractionDigits })
 }
 
-export function isApplicationLocked(applicationStatusCode, STATUS_CODES) {
-  return !(applicationStatusCode === STATUS_CODES.DRAFT || applicationStatusCode === STATUS_CODES.ACTION_REQUIRED)
+export function isApplicationLocked(applicationStatusCode) {
+  return !(applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 }

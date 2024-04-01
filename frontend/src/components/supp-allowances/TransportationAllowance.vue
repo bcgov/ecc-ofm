@@ -35,9 +35,7 @@
 
   <div v-if="isAnyApplicationReadOnly">
     <AppWarningMessage>
-      <slot>
-        <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
-      </slot>
+      <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
     </AppWarningMessage>
   </div>
   <v-divider class="my-5"></v-divider>
@@ -154,7 +152,7 @@ import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
-import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { isApplicationLocked } from '@/utils/common'
 
 export default {
@@ -238,7 +236,7 @@ export default {
       if (!model.statusCode) {
         return false
       }
-      return isApplicationLocked(model?.statusCode, SUPPLEMENTARY_APPLICATION_STATUS_CODES)
+      return isApplicationLocked(model?.statusCode)
     },
     areDocumentsMissing(model) {
       if (model.monthlyLease == 0) {
