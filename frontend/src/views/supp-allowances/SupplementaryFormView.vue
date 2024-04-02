@@ -76,7 +76,7 @@ import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/Suppo
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
-import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
+import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -233,7 +233,11 @@ export default {
             try {
               await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
             } catch (error) {
-              this.setFailureAlert('Failed to upload files')
+              if (error?.response?.data?.status === 422) {
+                this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
+              } else {
+                this.setFailureAlert('Failed to upload files', error)
+              }
             }
           }
         }
