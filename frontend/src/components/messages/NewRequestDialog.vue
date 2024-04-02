@@ -114,7 +114,7 @@
               <span class="facility-tip pl-1">Submit a separate request for each facility</span>
             </v-col>
           </v-row>
-          <template v-if="isOrgPhoneEmailChecked">
+          <template v-if="isAnAccountMaintenanceRequest && isOrgPhoneEmailChecked">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Organization phone (land):</AppLabel>
@@ -164,7 +164,7 @@
               </v-col>
             </v-row>
           </template>
-          <template v-if="isFacilityPhoneEmailChecked">
+          <template v-if="isAnAccountMaintenanceRequest && isFacilityPhoneEmailChecked">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Facility phone (land):</AppLabel>
@@ -431,7 +431,7 @@ export default {
     },
 
     setAssistanceRequestDescription() {
-      if (this.isOnlyPhoneEmailChecked) {
+      if (this.isAnAccountMaintenanceRequest && this.isOnlyPhoneEmailChecked) {
         this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ? ' Facility' : '') + ' phone/cell/email'
       }
     },
@@ -535,7 +535,7 @@ export default {
 
     async updateOrgPhoneEmail() {
       try {
-        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
+        if (this.isAnAccountMaintenanceRequest && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
           if (!this.organizationModel.phoneLandline) delete this.organizationModel.phoneLandline
           if (!this.organizationModel.phoneCell) delete this.organizationModel.phoneCell
           if (!this.organizationModel.email) delete this.organizationModel.email
@@ -549,7 +549,7 @@ export default {
 
     async updateFacilityPhoneEmail() {
       try {
-        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+        if (this.isAnAccountMaintenanceRequest && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
           this.facilityModel.facilityId = this.newRequestModel.facilities[0].facilityId
           if (!this.facilityModel.phoneLandline) delete this.facilityModel.phoneLandline
           if (!this.facilityModel.phoneCell) delete this.facilityModel.phoneCell
