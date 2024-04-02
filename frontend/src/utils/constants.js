@@ -121,3 +121,5 @@ export const OFM_PROGRAM = 'OFM Program'
 
 export const PHONE_FORMAT = '###-###-####'
 export const EMAIL_FORMAT = 'email@domain.com'
+
+export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan failed.'
