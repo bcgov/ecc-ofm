@@ -42,7 +42,7 @@ import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
-import { ASSISTANCE_REQUEST_STATUS_CODES } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import DocumentService from '@/services/documentService'
 
 export default {
@@ -118,11 +118,10 @@ export default {
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
           if (error?.response?.data?.status === 422) {
-            this.setFailureAlert('Supporting documents failed virus scan, submit reply failed', error)
+            this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
           } else {
             this.setFailureAlert('Submit reply failed', error)
           }
-          throw error
         } finally {
           this.closeReplyRequestDialog()
           this.isLoading = false
