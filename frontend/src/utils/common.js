@@ -13,5 +13,8 @@ export function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
 }
 
 export function isApplicationLocked(applicationStatusCode) {
+  if (!applicationStatusCode) {
+    return false
+  }
   return !(applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 }
