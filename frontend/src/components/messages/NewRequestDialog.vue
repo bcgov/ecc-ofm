@@ -389,7 +389,15 @@ export default {
         }
       },
       deep: true
-    }
+    },
+    'newRequestModel.requestCategoryId': {
+      handler(value) {
+        if (value !== this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)) {
+          this.resetMaintenanceRequestData()
+        }
+      },
+    },
+
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
@@ -535,7 +543,7 @@ export default {
 
     async updateOrgPhoneEmail() {
       try {
-        if (this.isAnAccountMaintenanceRequest && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
+        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
           if (!this.organizationModel.phoneLandline) delete this.organizationModel.phoneLandline
           if (!this.organizationModel.phoneCell) delete this.organizationModel.phoneCell
           if (!this.organizationModel.email) delete this.organizationModel.email
@@ -549,7 +557,7 @@ export default {
 
     async updateFacilityPhoneEmail() {
       try {
-        if (this.isAnAccountMaintenanceRequest && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
           this.facilityModel.facilityId = this.newRequestModel.facilities[0].facilityId
           if (!this.facilityModel.phoneLandline) delete this.facilityModel.phoneLandline
           if (!this.facilityModel.phoneCell) delete this.facilityModel.phoneCell
@@ -566,6 +574,12 @@ export default {
       return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
 
+    resetMaintenanceRequestData() {
+      this.newRequestModel.subCategories = []
+      this.organizationModel = {}
+      this.facilityModel = {}
+      this.newRequestModel.facilities = [this.newRequestModel.facilities] // Reset for multiple facilities
+    },
   }
 }
 </script>
