@@ -418,8 +418,16 @@ export default {
           this.changeTypeClass = ''
         }
       },
-      deep: true,
+      deep: true
     },
+    'newRequestModel.requestCategoryId': {
+      handler(value) {
+        if (value !== this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)) {
+          this.resetMaintenanceRequestData()
+        }
+      },
+    },
+
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
@@ -607,7 +615,14 @@ export default {
     isSubCategoryChecked(categoryName) {
       return this.newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
-  },
+
+    resetMaintenanceRequestData() {
+      this.newRequestModel.subCategories = []
+      this.organizationModel = {}
+      this.facilityModel = {}
+      this.newRequestModel.facilities = [this.newRequestModel.facilities] // Reset for multiple facilities
+    },
+  }
 }
 </script>
 
