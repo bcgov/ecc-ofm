@@ -58,8 +58,22 @@
               <p>VIN:</p>
             </v-col>
             <v-col cols="6" xl="7" class="pt-2 text-center">
-              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :rules="rules.required" :disabled="isReadOnly(model)" maxlength="17"></v-text-field>
+              <v-text-field
+                v-model="model.VIN"
+                required
+                variant="outlined"
+                density="compact"
+                :rules="rules.required"
+                :disabled="isReadOnly(model)"
+                maxlength="17"
+                @input="model.VIN = model.VIN.toUpperCase()"></v-text-field>
             </v-col>
+            <div v-if="hasDuplicateVIN(model, models)">
+              <v-row class="my-5">
+                <v-icon size="large" class="alert-icon pb-1 ml-3">mdi-alert-circle</v-icon>
+                <p class="text-error ml-2">There is a transportation application for a vehicle with the same VIN. The VIN must be unique.</p>
+              </v-row>
+            </div>
           </v-row>
         </v-col>
         <v-col class="px-4">
@@ -153,7 +167,7 @@ import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
-import { isApplicationLocked } from '@/utils/common'
+import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
 
 export default {
   components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload, AppWarningMessage },
@@ -190,6 +204,7 @@ export default {
     },
   },
   async created() {
+    this.hasDuplicateVIN = hasDuplicateVIN
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
   },

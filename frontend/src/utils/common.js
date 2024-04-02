@@ -18,3 +18,18 @@ export function isApplicationLocked(applicationStatusCode) {
   }
   return !(applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 }
+
+export function hasDuplicateVIN(model, transportModels) {
+  let duplicateVINs = 0
+
+  for (const el of transportModels) {
+    if (el.VIN === model.VIN) {
+      duplicateVINs = duplicateVINs + 1
+    }
+
+    if (duplicateVINs > 1) {
+      return true
+    }
+  }
+  return false
+}

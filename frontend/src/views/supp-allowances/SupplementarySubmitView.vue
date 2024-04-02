@@ -88,6 +88,7 @@ import TransportationSummary from '@/components/supp-allowances/TransportationSu
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
+import { hasDuplicateVIN } from '@/utils/common'
 
 import rules from '@/utils/rules'
 
@@ -155,10 +156,11 @@ export default {
     },
     isTransportComplete() {
       const models = this.getTransportModels()
-      return models.every((el) => el.VIN && el.estimatedMileage && el.odometer && el.uploadedDocuments?.length > 0)
+
+      return models.every((el) => el.VIN && !hasDuplicateVIN(el, models) && el.estimatedMileage && el.odometer && el.uploadedDocuments?.length > 0)
     },
     isApplicationComplete() {
-      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete //&&checkbox clicked
+      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete
     },
     readonly() {
       return !this.isApplicationComplete || this.processing || this.loading

@@ -13,7 +13,12 @@
         </v-col>
       </v-row>
       <v-divider class="my-3"></v-divider>
-      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model)" no-gutters class="mt-2 pt-2">
+      <AppMissingInfoError v-if="hasDuplicateVIN(model, transportModels)" :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.SUPP_DUPLICATE_VIN }}
+        <br />
+        <br />
+      </AppMissingInfoError>
+      <v-row v-else-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model)" no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="7" class="px-4">
           <v-col class="px-4">
             <v-row no-gutters>
@@ -92,6 +97,7 @@
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { hasDuplicateVIN } from '@/utils/common'
 
 export default {
   components: { AppMissingInfoError, AppLabel },
@@ -106,6 +112,7 @@ export default {
   },
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+    this.hasDuplicateVIN = hasDuplicateVIN
   },
   methods: {
     areDocumentsMissing(model) {
