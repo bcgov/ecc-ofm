@@ -155,7 +155,14 @@ export default {
     },
     isTransportComplete() {
       const models = this.getTransportModels()
-      return models.every((el) => el.VIN && el.estimatedMileage && el.odometer && el.uploadedDocuments?.length > 0)
+      return models.every((model) => {
+        if (!model.VIN || !model.estimatedMileage || !model.odometer) {
+          return false
+        } else if (model.monthlyLease == 0) {
+          return model.uploadedDocuments?.length != 0
+        }
+        return model.uploadedDocuments?.length > 1
+      })
     },
     isApplicationComplete() {
       return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete //&&checkbox clicked
@@ -261,7 +268,7 @@ export default {
       }
     },
     setSubmit() {
-      this.$emit('setSubmit', this.supplementaryDeclaration)
+      this.$emit('setSubmit', this.supplementaryDeclaration && this.isApplicationComplete)
     },
     async saveApplication(showAlert = false, isSubmit = false) {
       try {
