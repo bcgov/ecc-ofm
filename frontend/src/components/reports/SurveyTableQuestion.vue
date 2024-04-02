@@ -4,9 +4,9 @@
       <template v-slot:item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId">
-            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" @update="updateResponses" />
+            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :readonly="readonly" @update="updateResponses" />
           </td>
-          <td v-if="!hasInheritedValueQuestion && updatedResponses?.length > 1">
+          <td v-if="!readonly && !hasInheritedValueQuestion && updatedResponses?.length > 1">
             <v-btn variant="text" @click="deleteResponse(item, question?.questionId)">
               <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
             </v-btn>
@@ -15,7 +15,7 @@
       </template>
       <template v-slot:bottom><!-- no paging --></template>
     </v-data-table>
-    <AppButton v-if="!isMaxRowsReached && !hasInheritedValueQuestion" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
+    <AppButton v-if="!readonly && !isMaxRowsReached && !hasInheritedValueQuestion" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
   </v-container>
 </template>
 
@@ -28,10 +28,6 @@ export default {
   components: { AppButton, SurveyQuestion },
 
   props: {
-    maxRows: {
-      type: Number,
-      default: 0,
-    },
     questions: {
       type: Array,
       default: () => [],
@@ -39,6 +35,14 @@ export default {
     responses: {
       type: Array,
       default: () => [],
+    },
+    maxRows: {
+      type: Number,
+      default: 0,
+    },
+    readonly: {
+      type: Boolean,
+      required: true,
     },
   },
 

@@ -322,6 +322,7 @@ const SurveyResponseMappings = [
   { back: '_ofm_facility_value', front: 'facilityId' },
   { back: '_ofm_fiscal_year_value', front: 'fiscalYearId' },
   { back: '_ofm_reporting_month_value', front: 'reportingMonthId' },
+  { back: '_ofm_submitted_month_value', front: 'submittedMonthId' },
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'statuscode', front: 'statusCode' },

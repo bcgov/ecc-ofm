@@ -8,12 +8,13 @@
             <AppLabel>{{ question?.text }}</AppLabel>
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
-              :maxRows="question?.tableMaxRows"
               :questions="getTableQuestionHeaders(question)"
               :responses="getTableQuestionResponses(question)"
+              :readonly="readonly"
+              :maxRows="question?.tableMaxRows"
               @update="updateResponses"
               @delete="deleteTableResponses" />
-            <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" @update="updateResponses" />
+            <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :readonly="readonly" @update="updateResponses" />
           </div>
         </div>
       </v-form>
@@ -43,6 +44,10 @@ export default {
     responses: {
       type: Array,
       default: () => [],
+    },
+    readonly: {
+      type: Boolean,
+      required: true,
     },
   },
 

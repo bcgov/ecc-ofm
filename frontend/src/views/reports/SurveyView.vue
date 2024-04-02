@@ -8,8 +8,24 @@
         <SurveyNavBar :sections="sections" :currentSection="currentSection" @update="updateCurrentSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
-        <SurveySection :section="currentSection" :responses="responsesToBeDisplayed" @update="updateClonedResponses" @deleteTableResponses="deleteTableResponses" @process="process" />
-        <AppNavButtons :loading="loading || processing" :showBack="true" :showSave="true" :showNext="true" @back="back" @save="save(true)" @next="next" />
+        <SurveySection
+          :section="currentSection"
+          :readonly="readonly"
+          :responses="responsesToBeDisplayed"
+          @update="updateClonedResponses"
+          @deleteTableResponses="deleteTableResponses"
+          @process="process" />
+        <AppNavButtons
+          :loading="loading || processing"
+          :showBack="true"
+          :showCancel="showCancel"
+          :showSave="showSave"
+          :showNext="showNext"
+          :showSubmit="showSubmit"
+          @back="back"
+          @save="save(true)"
+          @next="next"
+          @submit="submit" />
       </v-col>
     </v-row>
   </v-container>
@@ -24,6 +40,7 @@ import { isEmpty, cloneDeep } from 'lodash'
 import ReportsService from '@/services/reportsService'
 import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
 import SurveySection from '@/components/reports/SurveySection.vue'
+import { CRM_STATE_CODES } from '@/utils/constants'
 
 import rules from '@/utils/rules'
 
@@ -36,6 +53,7 @@ export default {
       rules,
       loading: false,
       processing: false,
+      surveyResponse: undefined,
       sections: [],
       currentSection: undefined,
       originalResponses: [],
@@ -45,7 +63,10 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
+    ...mapState(useAppStore, ['getReportQuestionTypeNameById', 'months']),
+    readonly() {
+      return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE
+    },
     currentSectionIndex() {
       return this.sections?.findIndex((section) => section?.sectionId === this.currentSection?.sectionId)
     },
@@ -53,19 +74,34 @@ export default {
       return true
     },
     showCancel() {
-      return true
+      return !this.isLastSection(this.currentSection) && !this.readonly
     },
     showSave() {
-      return true
+      return !this.isLastSection(this.currentSection) && !this.readonly
     },
     showNext() {
-      return true
+      return !this.isLastSection(this.currentSection)
     },
     showSubmit() {
-      return false
+      return this.isLastSection(this.currentSection) && !this.readonly
     },
     responsesToBeDisplayed() {
       return this.clonedResponses?.filter((item) => !item.hide)
+    },
+  },
+
+  watch: {
+    showSubmit: {
+      async handler() {
+        try {
+          this.processing = true
+          await this.getQuestionsResponses()
+        } catch (error) {
+          this.setFailureAlert('Failed to load questions responses', error)
+        } finally {
+          this.processing = false
+        }
+      },
     },
   },
 
@@ -80,9 +116,9 @@ export default {
       try {
         this.loading = true
         console.log('====================== SURVEY VIEW - LOAD DATA ======================')
-        const surveyResponse = await ReportsService.getSurveyResponse(this.$route.params.surveyResponseGuid)
+        this.surveyResponse = await ReportsService.getSurveyResponse(this.$route.params.surveyResponseGuid)
         await this.getQuestionsResponses()
-        this.sections = await ReportsService.getSurveySections(surveyResponse?.surveyId)
+        this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyId)
         await Promise.all(
           this.sections?.map(async (section) => {
             section.questions = await ReportsService.getSectionQuestions(section?.sectionId)
@@ -138,6 +174,18 @@ export default {
       }
     },
 
+    async submit() {
+      const currentMonth = this.months?.find((month) => month.name === new Date().toLocaleString('en-ca', { month: 'long' }))
+      const payload = {
+        statusCode: 506580000,
+        stateCode: CRM_STATE_CODES.INACTIVE,
+        submittedMonthId: currentMonth?.monthId,
+      }
+      await this.save()
+      await ReportsService.updateSurveyResponse(this.$route.params.surveyResponseGuid, payload)
+      this.$router.push({ name: 'reporting' })
+    },
+
     async getQuestionsResponses() {
       try {
         this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid)
@@ -184,9 +232,9 @@ export default {
 
     /* -----------------------------------------------------------------------------------------
       BUSINESS RULES:
-      
+
       There are 2 business rules for questions:
-      
+
       1. Conditional branching: Some questions will be hidden/displayed based on values of its parents' questions.
 
       2. Value inheritance: Some questions will inherit values from their parents (e.g.: Initials columns in Human Resources Section).
@@ -313,6 +361,11 @@ export default {
 
     isTableQuestionResponse(response) {
       return !isEmpty(response?.tableQuestionId)
+    },
+
+    isLastSection(section) {
+      const index = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
+      return index === this.sections?.length - 1
     },
 
     updateCurrentSection(section) {

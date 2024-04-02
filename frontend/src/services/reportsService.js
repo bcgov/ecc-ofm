@@ -62,10 +62,21 @@ export default {
   async createSurveyResponse(payload) {
     try {
       if (isEmpty(payload)) return
-      const response = await ApiService.apiAxios.post(ApiRoutes.REPORTS + '/survey-responses', payload)
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/survey-responses`, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to create survey response - ${error}`)
+      throw error
+    }
+  },
+
+  async updateSurveyResponse(surveyResponseId, payload) {
+    try {
+      if (!surveyResponseId || isEmpty(payload)) return
+      const response = await ApiService.apiAxios.patch(`${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`, payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to update survey response - ${error}`)
       throw error
     }
   },
@@ -86,7 +97,7 @@ export default {
   async createQuestionResponse(payload) {
     try {
       if (isEmpty(payload)) return
-      const response = await ApiService.apiAxios.post(ApiRoutes.REPORTS + '/question-responses', payload)
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/question-responses`, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to create question response - ${error}`)

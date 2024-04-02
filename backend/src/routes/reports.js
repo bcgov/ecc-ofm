@@ -9,8 +9,9 @@ const {
   getSurveySections,
   getSurveyQuestions,
   getSurveyResponse,
-  getQuestionResponses,
   createSurveyResponse,
+  updateSurveyResponse,
+  getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,
   deleteQuestionResponse,
@@ -111,6 +112,20 @@ router.post('/survey-responses', passport.authenticate('jwt', { session: false }
 })
 
 /**
+ * Update a survey response
+ */
+router.patch(
+  '/survey-responses/:surveyResponseId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateSurveyResponse(req, res)
+  },
+)
+
+/**
  * Create a question response
  */
 router.post('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(postQuestionResponseSchema)], (req, res) => {
@@ -121,7 +136,7 @@ router.post('/question-responses', passport.authenticate('jwt', { session: false
 /**
  * Update a question response
  */
-router.put(
+router.patch(
   '/question-responses/:questionResponseId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,

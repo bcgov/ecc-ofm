@@ -75,7 +75,22 @@ async function getSurveyQuestions(req, res) {
     response?.value?.forEach((question) => questions.push(mapQuestionObjectForFront(question)))
     return res.status(HttpStatus.OK).json(questions)
   } catch (e) {
-    console.log(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function createSurveyResponse(req, res) {
+  try {
+    const payload = {
+      'ofm_contact@odata.bind': `/contacts(${req.body?.contactId})`,
+      'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
+      'ofm_survey@odata.bind': `/ofm_surveies(${req.body?.surveyId})`,
+      'ofm_fiscal_year@odata.bind': `/ofm_fiscal_years(${req.body?.fiscalYearId})`,
+      'ofm_reporting_month@odata.bind': `/ofm_months(${req.body?.reportingMonthId})`,
+    }
+    const response = await postOperation('ofm_survey_responses', payload)
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
+  } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -85,6 +100,21 @@ async function getSurveyResponse(req, res) {
     const operation = `ofm_survey_responses(${req?.params?.surveyResponseId})`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SurveyResponseMappings))
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function updateSurveyResponse(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, SurveyResponseMappings).toJSON()
+    // ofm_submitted_month field is a lookup field in CRM, so we need to replace them with data binding syntax
+    if ('_ofm_submitted_month_value' in payload) {
+      payload['ofm_submitted_month@odata.bind'] = `/ofm_months(${payload['_ofm_submitted_month_value']})`
+      delete payload['_ofm_submitted_month_value']
+    }
+    const response = await patchOperationWithObjectId('ofm_survey_responses', req.params.surveyResponseId, payload)
+    return res.status(HttpStatus.OK).json(response)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -105,22 +135,6 @@ async function getQuestionResponses(req, res) {
   }
 }
 
-async function createSurveyResponse(req, res) {
-  try {
-    const payload = {
-      'ofm_contact@odata.bind': `/contacts(${req.body?.contactId})`,
-      'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
-      'ofm_survey@odata.bind': `/ofm_surveies(${req.body?.surveyId})`,
-      'ofm_fiscal_year@odata.bind': `/ofm_fiscal_years(${req.body?.fiscalYearId})`,
-      'ofm_reporting_month@odata.bind': `/ofm_months(${req.body?.reportingMonthId})`, //Feb month
-    }
-    const response = await postOperation('ofm_survey_responses', payload)
-    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
-  } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
 async function createQuestionResponse(req, res) {
   try {
     const payload = {
@@ -132,12 +146,8 @@ async function createQuestionResponse(req, res) {
       payload['ofm_row_id'] = req.body?.rowId
       payload['ofm_header@odata.bind'] = `/ofm_questions(${req.body?.tableQuestionId})`
     }
-    console.log('========================== PAYLOAD ============================')
-    console.log(payload)
     const response = await postOperation('ofm_question_responses', payload)
-    console.log('========================== RESPONSE ============================')
-    console.log(response)
-    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, QuestionResponseMappings).toJSON())
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, QuestionResponseMappings).toJSON())
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -170,6 +180,7 @@ module.exports = {
   getSurveyQuestions,
   getSurveyResponse,
   createSurveyResponse,
+  updateSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,
