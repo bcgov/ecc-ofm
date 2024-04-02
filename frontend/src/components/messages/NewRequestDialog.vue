@@ -356,7 +356,7 @@ export default {
         ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 2))
     },
     showFacility() {
-      return this.isAnAccountMaintenanceRequest && (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) || !this.isAnAccountMaintenanceRequest
+      return this.isAnAccountMaintenanceRequest && (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE)) || !this.isAnAccountMaintenanceRequest
     },
     showRequestDescription() {
       return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
