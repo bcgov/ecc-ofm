@@ -110,7 +110,7 @@
               <span class="facility-tip pl-1">Submit a separate request for each facility</span>
             </v-col>
           </v-row>
-          <template v-if="isAnAccountMaintenanceRequest && isOrgPhoneEmailChecked">
+          <template v-if="isOrgPhoneEmailChecked">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Organization phone (land):</AppLabel>
@@ -160,7 +160,7 @@
               </v-col>
             </v-row>
           </template>
-          <template v-if="isAnAccountMaintenanceRequest && isFacilityPhoneEmailChecked">
+          <template v-if="isFacilityPhoneEmailChecked">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
                 <AppLabel variant="modal">Facility phone (land):</AppLabel>
