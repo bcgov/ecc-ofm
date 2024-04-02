@@ -25,7 +25,7 @@
 <script>
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
-import { INDIG_CHECKBOX_LABELS } from './suppConstants'
+import { INDIG_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 
 export default {
   components: { AppMissingInfoError },

@@ -87,7 +87,7 @@ import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummar
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/components/supp-allowances/suppConstants.js'
+import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 
 import rules from '@/utils/rules'
 
@@ -222,7 +222,9 @@ export default {
         this.$emit('process', true)
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
-        this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
+        this.models = (await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)).filter(
+          (el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED,
+        )
 
         for (const el of this.models) {
           const found = this.PANELS.find((panel) => panel.supplementaryType == el.supplementaryType)

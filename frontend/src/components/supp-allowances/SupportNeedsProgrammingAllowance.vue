@@ -1,4 +1,9 @@
 <template>
+  <div v-if="isReadOnly && hasInclusionPolicy">
+    <AppWarningMessage>
+      <div>You have already received the Support Needs Allowance for the current term.</div>
+    </AppWarningMessage>
+  </div>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Purpose of the Fund:</AppLabel>
@@ -73,7 +78,7 @@
     </v-row>
     <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
       <v-col cols="11" lg="6">
-        <v-checkbox v-model="model.supportFundingModel" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+        <v-checkbox v-model="model.supportFundingModel" :disabled="isReadOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
           <template v-slot:label>
             <p>
               {{ item.label }}
@@ -87,30 +92,37 @@
         </v-checkbox>
       </v-col>
     </v-row>
-  </div>
-  <div v-else>
-    <v-row class="ml-2 my-5">
-      <v-icon size="x-large" color="warning">mdi mdi-alert</v-icon>
-      <h4 class="ml-3">
-        You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
-        <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
-      </h4>
+    <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
+      <v-textarea
+        v-model.trim="model.supportOtherDescription"
+        :disabled="isReadOnly"
+        placeholder="Detailed description of other expenses"
+        counter
+        maxlength="1000"
+        variant="outlined"
+        :rules="rules.required"></v-textarea>
     </v-row>
   </div>
-
-  <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
-    <v-textarea v-model.trim="model.supportOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
-  </v-row>
+  <div v-else>
+    <AppWarningMessage>
+      <div>
+        You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+        <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
+      </div>
+    </AppWarningMessage>
+  </div>
 </template>
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
-import { SUPPORT_CHECKBOX_LABELS } from './suppConstants'
+import { SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
+import { isApplicationLocked } from '@/utils/common'
 
 export default {
-  components: { AppLabel, AppButton },
+  components: { AppButton, AppLabel, AppWarningMessage },
   props: {
     supportModel: {
       type: Object,
@@ -139,6 +151,9 @@ export default {
   computed: {
     isOtherBoxDisplayed() {
       return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
+    },
+    isReadOnly() {
+      return isApplicationLocked(this.supportModel?.statusCode)
     },
   },
   watch: {
