@@ -89,7 +89,7 @@ import { mapActions } from 'pinia'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { isEmpty } from 'lodash'
-import { REQUEST_CATEGORY_NAMES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
@@ -117,9 +117,8 @@ export default {
       return this.userInfo.facilities
     },
     otherFacilities() {
-      return this.facilities.filter((f) => !this.accountManagerFacilities.some(facility => facility.facilityId === f.facilityId))
+      return this.facilities.filter((f) => !this.accountManagerFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
-
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
@@ -162,7 +161,7 @@ export default {
       try {
         this.uploadedDocuments = await DocumentService.getDocuments(this.userInfo.organizationId)
       } catch (error) {
-        this.setFailureAlert('Failed to get organization\'s Inclusion Policy Document(s)', error)
+        this.setFailureAlert("Failed to get organization's Inclusion Policy Document(s)", error)
         return
       }
     },
@@ -213,11 +212,13 @@ export default {
           )
         }
       } catch (error) {
-        this.setFailureAlert('Failed Inclusion Policy Document(s) update on Organization: ' + this.organization.organizationId, error)
-        return
+        if (error?.response?.data?.status === 422) {
+          this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
+        } else {
+          this.setFailureAlert(`Failed Inclusion Policy Document(s) update on Organization: ${this.organization.organizationId}`, error)
+        }
       }
     },
-
   },
 }
 </script>
