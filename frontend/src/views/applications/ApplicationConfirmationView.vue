@@ -3,7 +3,7 @@
     <h2 class="mb-8 text-center">OFM Application Submitted</h2>
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
     <div v-else>
-      <v-row class="flex justify-end">
+      <v-row class="flex justify-end mb-1">
         <v-col cols="12">
           <v-alert v-if="!hasGoodStanding" type="info" dense text>To apply, you must be in good standing with BC Registries.</v-alert>
         </v-col>
