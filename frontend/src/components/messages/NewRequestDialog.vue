@@ -2,7 +2,7 @@
   <v-container>
     <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="60%" @close="closeNewRequestDialog">
       <template #content>
-        <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-12 mx-lg-8">
+        <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-5 mx-lg-1">
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
               <AppLabel variant="modal">Topic:</AppLabel>
