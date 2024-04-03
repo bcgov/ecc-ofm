@@ -20,16 +20,5 @@ export function isApplicationLocked(applicationStatusCode) {
 }
 
 export function hasDuplicateVIN(model, transportModels) {
-  let duplicateVINs = 0
-
-  for (const el of transportModels) {
-    if (el.VIN === model.VIN) {
-      duplicateVINs = duplicateVINs + 1
-    }
-
-    if (duplicateVINs > 1) {
-      return true
-    }
-  }
-  return false
+  return transportModels.filter((m) => m.VIN === model.VIN).length > 1
 }
