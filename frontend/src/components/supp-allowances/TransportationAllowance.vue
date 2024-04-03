@@ -71,7 +71,7 @@
             <div v-if="hasDuplicateVIN(model, models)">
               <v-row class="my-5">
                 <v-icon size="large" class="alert-icon pb-1 ml-3">mdi-alert-circle</v-icon>
-                <p class="text-error ml-2">There is a transportation application for a vehicle with the same VIN. The VIN must be unique.</p>
+                <p class="text-error ml-2">Duplicate VIN. Please ensure each VIN is unique.</p>
               </v-row>
             </div>
           </v-row>

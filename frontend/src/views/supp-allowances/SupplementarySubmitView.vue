@@ -56,7 +56,10 @@
                   v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
                   :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
                 <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"></SupportNeedsSummary>
-                <TransportationSummary v-if="panel.id === 'transportation' && panel.supplementaryApplicationId" :transportModels="getTransportModels()"></TransportationSummary>
+                <TransportationSummary
+                  v-if="panel.id === 'transportation' && panel.supplementaryApplicationId"
+                  :draftTransportModels="getTransportModels()"
+                  :allTransportModels="allTransportModels"></TransportationSummary>
               </v-expansion-panel-text>
             </div>
           </v-expansion-panel>
@@ -126,6 +129,7 @@ export default {
       panel: undefined,
       showCancelDialog: false,
       models: [],
+      allTransportModels: undefined,
       rules,
       monthlyLeaseFormat: {
         nullValue: '0.00',
@@ -157,7 +161,7 @@ export default {
     isTransportComplete() {
       const models = this.getTransportModels()
       return models.every((model) => {
-        if (!model.VIN || !model.estimatedMileage || !model.odometer || hasDuplicateVIN(model, models)) {
+        if (!model.VIN || !model.estimatedMileage || !model.odometer || hasDuplicateVIN(model, this.allTransportModels)) {
           return false
         } else if (model.monthlyLease == 0) {
           return model.uploadedDocuments?.length != 0
@@ -230,9 +234,11 @@ export default {
         this.$emit('process', true)
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
-        this.models = (await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)).filter(
-          (el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED,
-        )
+        this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
+
+        //we need submitted transport applications to verify that all VINs are unique, even in past applications
+        this.allTransportModels = [...this.getTransportModels()]
+        this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 
         for (const el of this.models) {
           const found = this.PANELS.find((panel) => panel.supplementaryType == el.supplementaryType)

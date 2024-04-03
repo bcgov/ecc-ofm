@@ -4,7 +4,7 @@
       <h4 class="text-decoration-underline">Transport</h4>
     </div>
 
-    <div v-for="(model, index) in transportModels" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
+    <div v-for="(model, index) in draftTransportModels" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
       <v-row class="pa-7">
         <v-col cols="11">
           <div class="">
@@ -13,12 +13,8 @@
         </v-col>
       </v-row>
       <v-divider class="my-3"></v-divider>
-      <AppMissingInfoError v-if="hasDuplicateVIN(model, transportModels)" :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.SUPP_DUPLICATE_VIN }}
-        <br />
-        <br />
-      </AppMissingInfoError>
-      <v-row v-else-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model)" no-gutters class="mt-2 pt-2">
+
+      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model) && !hasDuplicateVIN(model, allTransportModels)" no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="7" class="px-4">
           <v-col class="px-4">
             <v-row no-gutters>
@@ -73,6 +69,7 @@
           </div>
         </v-col>
       </v-row>
+
       <v-row v-else>
         <v-col cols="12" class="px-4">
           <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid } }">
@@ -83,11 +80,17 @@
             </slot>
             <slot v-if="areDocumentsMissing(model)">
               {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
+              <br />
+              <br />
+            </slot>
+            <slot v-if="hasDuplicateVIN(model, allTransportModels)">
+              {{ APPLICATION_ERROR_MESSAGES.SUPP_DUPLICATE_VIN }}
+              <br />
+              <br />
             </slot>
           </AppMissingInfoError>
         </v-col>
       </v-row>
-
       <v-divider class="my-4"></v-divider>
     </div>
   </v-container>
@@ -102,7 +105,14 @@ import { hasDuplicateVIN } from '@/utils/common'
 export default {
   components: { AppMissingInfoError, AppLabel },
   props: {
-    transportModels: {
+    draftTransportModels: {
+      type: Array,
+      default: () => {
+        return []
+      },
+      required: true,
+    },
+    allTransportModels: {
       type: Array,
       default: () => {
         return []
@@ -110,6 +120,7 @@ export default {
       required: true,
     },
   },
+
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.hasDuplicateVIN = hasDuplicateVIN

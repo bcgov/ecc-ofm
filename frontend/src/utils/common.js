@@ -19,6 +19,8 @@ export function isApplicationLocked(applicationStatusCode) {
   return !(applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 }
 
+// Check the list of models for multiples of the same VIN.
+// We need length > 1 to enforce that there are VINS that exactly match which breaks our validation rule
 export function hasDuplicateVIN(model, transportModels) {
   return transportModels.filter((m) => m.VIN === model.VIN).length > 1
 }
