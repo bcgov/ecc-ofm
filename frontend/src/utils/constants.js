@@ -114,6 +114,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   STAFFING: 'Staffing information required',
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',
+  SUPP_DUPLICATE_VIN: 'Unique VIN required',
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
