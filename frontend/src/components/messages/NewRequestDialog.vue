@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="60%" @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-12 mx-lg-8">
           <v-row no-gutters class="mt-2">
@@ -368,7 +368,9 @@ export default {
     showFacility() {
       return (
         (this.isAnAccountMaintenanceRequest &&
-          (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL))) ||
+          (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
+            this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
+            this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE))) ||
         !this.isAnAccountMaintenanceRequest
       )
     },
@@ -422,9 +424,8 @@ export default {
     },
     'newRequestModel.requestCategoryId': {
       handler(value) {
-        if (value !== this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)) {
-          this.resetMaintenanceRequestData()
-        }
+        const isAccountMaintenance = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+        this.resetModelData(isAccountMaintenance)
       },
     },
 
@@ -616,12 +617,14 @@ export default {
       return this.newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
 
-    resetMaintenanceRequestData() {
-      this.newRequestModel.subCategories = []
-      this.organizationModel = {}
-      this.facilityModel = {}
-      this.newRequestModel.facilities = [this.newRequestModel.facilities] // Reset for multiple facilities
-    },
+    resetModelData(isAnAccountMaintenanceRequest) {
+      this.newRequestModel.facilities = isAnAccountMaintenanceRequest ? this.currentFacility : [this.currentFacility]
+      if (!isAnAccountMaintenanceRequest) {
+        this.newRequestModel.subCategories = []
+        this.organizationModel = {}
+        this.facilityModel = {}
+      }
+    }
   }
 }
 </script>
