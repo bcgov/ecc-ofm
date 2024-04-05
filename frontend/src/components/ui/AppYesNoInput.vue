@@ -1,15 +1,12 @@
-<!-- YesNoInput.vue -->
 <template>
   <v-btn-toggle v-model="internalSelection" mandatory class="btn-toggle" @change="emitValue">
     <v-btn
       :value="true"
-      :class="{ 'selected': internalSelection === true }"
       class="yes-no-button">
       Y
     </v-btn>
     <v-btn
       :value="false"
-      :class="{ 'selected': internalSelection === false }"
       class="yes-no-button">
       N
     </v-btn>
@@ -22,23 +19,19 @@ export default {
   props: ['value'], // Expect a boolean value from the parent
   data() {
     return {
-      // Internal representation of the selection, derived from the prop.
       internalSelection: this.value,
     };
   },
   watch: {
-    // Watch for external changes to the prop and update the internal state accordingly.
     value(newValue) {
       this.internalSelection = newValue;
     },
-    // Watch the internal selection state to emit changes to the parent.
     internalSelection(newValue) {
-      this.$emit('input', newValue);
+      this.$emit('input', newValue)
     }
   },
   methods: {
     emitValue() {
-      // Emit the current value to the parent component whenever it changes.
       this.$emit('input', this.internalSelection);
     },
   },
@@ -46,7 +39,7 @@ export default {
 </script>
 
 <style scoped>
-.selected {
+.yes-no-button.v-btn--active {
   background-color: #003366 !important;
   color: white !important;
 }

@@ -129,7 +129,7 @@
                   <v-row no-gutters class="mr-2 my-2">
                     <v-col cols="12" sm="6" xl="auto">
                       <AppLabel>Requires split classrooms
-                        <v-tooltip content-class="tooltip" :text="SPLIT_CLASSROOM_INFO_TXT">
+                        <v-tooltip content-class="tooltip" :text="SPLIT_CLASSROOM_INFO_TXT" top>
                           <template v-slot:activator="{ props }">
                             <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                           </template>
@@ -138,25 +138,26 @@
                       </AppLabel>
                     </v-col>
                     <v-col cols="12" sm="2" xl="2" class="pl-4">
-                      <AppYesNoInput v-model="requiresSplitClassroom"></AppYesNoInput>
+                      <AppYesNoInput v-model="licenceDetail.applyRoomSplitCondition" :disabled="readOnly"></AppYesNoInput>
                     </v-col>
                   </v-row>
                 </v-col>
                 <v-col cols="12" md="6" lg="3" xl="4"></v-col>
-                <v-col v-if="requiresSplitClassroom" cols="12" md="6" lg="4" xl="12" class="pt-0">
+                <v-col v-if="licenceDetail.applyRoomSplitCondition" cols="12" md="6" lg="4" xl="12" class="pt-0">
                   <v-row no-gutters class="">
                     <v-col cols="12" sm="6" xl="9" class="pt-0">
                       <v-textarea
-                        v-model.trim="description"
+                        v-model.trim="licenceDetail.roomSplitDetails"
                         placeholder="Detailed description of request"
                         counter
                         maxlength="1000"
                         variant="outlined"
-                        :disabled="isLoading"></v-textarea>
+                        rows="4"
+                        :readonly="readOnly"></v-textarea>
                     </v-col>
-                    <v-col class="align-self-end ml-4 pb-5">
-                      <AppButton id="submit-new-request" size="large" width="175px" :loading="isLoading">Save</AppButton>
-                    </v-col>
+                    <!--v-col class="align-self-end ml-4 pb-5">
+                      <AppButton id="save-split-class" size="large" width="175px">Save</AppButton>
+                    </v-col-->
                   </v-row>
                 </v-col>
               </v-row>
@@ -173,10 +174,9 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
-import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
-  components: { AppLabel, AppYesNoInput, AppButton },
+  components: { AppLabel, AppYesNoInput },
   props: {
     licence: {
       type: Object,
@@ -185,12 +185,14 @@ export default {
         return {}
       },
     },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       panel: [],
-      requiresSplitClassroom: false,
-      description: '',
     }
   },
   computed: {
