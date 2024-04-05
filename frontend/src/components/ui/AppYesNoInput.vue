@@ -8,7 +8,12 @@
 <script>
 export default {
   name: 'AppYesNoInput',
-  props: ['value'], // Expect a boolean value from the parent
+  props: {
+    value: {
+      type: Boolean,
+      required: false
+    }
+  },
   data() {
     return {
       internalSelection: this.value,
