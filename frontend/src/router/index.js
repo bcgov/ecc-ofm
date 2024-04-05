@@ -4,9 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 import { ROLES } from '@/utils/constants'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
-import EmptyRouterView from '@/views/EmptyRouterView.vue'
 import ErrorView from '@/views/ErrorView.vue'
-import FundingView from '@/views/FundingView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -33,6 +31,8 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
+import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
+import FundingView from '@/views/funding/FundingView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
 import SupplementaryConfirmationView from '@/views/supp-allowances/SupplementaryConfirmation.vue'
 import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
@@ -116,13 +116,22 @@ const router = createRouter({
       },
     },
     {
-      path: '/funding',
+      path: '/funding/overview',
+      name: 'funding-overview',
+      component: FundingOverviewView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/funding/:fundingGuid',
       name: 'funding',
       component: FundingView,
       meta: {
         requiresAuth: true,
       },
     },
+
     {
       path: '/documents',
       name: 'documents',
