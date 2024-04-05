@@ -72,16 +72,14 @@ export default {
     },
 
     getTableQuestionResponses(tableQuestion) {
-      return this.responses?.filter((response) => !response.hide && response.tableQuestionId === tableQuestion?.questionId)
+      return this.responses?.filter((response) => !response.hide && !response.delete && response.tableQuestionId === tableQuestion?.questionId)
     },
 
     updateResponses(response) {
-      console.log('SECTION --------------> VIEW')
       this.$emit('update', response)
     },
 
     deleteTableResponses(response) {
-      console.log('SECTION --------------> VIEW')
       this.$emit('deleteTableResponses', response)
     },
 

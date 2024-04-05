@@ -2,13 +2,14 @@ import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
 import { useAppStore } from '@/stores/app'
+import { convertStringToArray } from '@/utils/common'
 import { ApiRoutes } from '@/utils/constants'
 
 function getQuestionsChoices(questions) {
   const appStore = useAppStore()
   questions?.forEach((question) => {
     if (['Two Option', 'Choice', 'Multiple Choice'].includes(appStore?.getReportQuestionTypeNameById(question?.type))) {
-      question.choices = question.choices?.replace(/[\\"]/g, '')?.split(',')
+      question.choices = convertStringToArray(question.choices?.replace(/[\\"]/g, ''))
     }
   })
 }
@@ -108,7 +109,7 @@ export default {
   async updateQuestionResponse(questionResponseId, payload) {
     try {
       if (!questionResponseId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.put(`${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`, payload)
+      const response = await ApiService.apiAxios.patch(`${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to update question response - ${error}`)

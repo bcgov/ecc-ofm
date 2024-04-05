@@ -94,6 +94,7 @@ import { mapState } from 'pinia'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
 import { isEmpty } from 'lodash'
+import { convertStringToArray } from '@/utils/common'
 
 export default {
   components: { AppNumberInput },
@@ -142,7 +143,7 @@ export default {
   watch: {
     response: {
       handler() {
-        this.updatedResponse.value = this.response.value
+        this.updatedResponse.value = this.isMultipleChoiceQuestion(this.question?.type) ? convertStringToArray(this.response.value) : this.response.value
       },
       deep: true,
     },
@@ -150,10 +151,6 @@ export default {
       handler() {
         if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
         const response = Object.assign({}, this.updatedResponse)
-        if (this.isMultipleChoiceQuestion(response?.questionType)) {
-          response.value = response.value?.toString()
-        }
-        console.log('QUESTION --------------> SECTION')
         this.$emit('update', response)
       },
       deep: true,
@@ -165,13 +162,9 @@ export default {
     this.updatedResponse.questionId = this.question?.questionId
     this.updatedResponse.questionType = this.question?.type
     this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
-    this.updatedResponse.hasValueInheritedChildren = this.question?.hasValueInheritedChildren
+    this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
     this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
-    if (!isEmpty(this.response)) {
-      if (this.isMultipleChoiceQuestion(this.question?.type)) {
-        this.updatedResponse.value = this.updatedResponse.value?.split(',')
-      }
-    }
+    this.updatedResponse.value = this.isMultipleChoiceQuestion(this.question?.type) ? convertStringToArray(this.updatedResponse.value) : this.updatedResponse.value
     this.RESPONSE_PLACEHOLDER = ''
     this.CURRENCY_FORMAT = {
       nullValue: '0.00',

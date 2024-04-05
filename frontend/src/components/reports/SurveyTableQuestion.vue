@@ -6,7 +6,7 @@
           <td v-for="question in questions" :key="question?.questionId">
             <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :readonly="readonly" @update="updateResponses" />
           </td>
-          <td v-if="!readonly && !hasInheritedValueQuestion && updatedResponses?.length > 1">
+          <td v-if="!readonly && !hasValueInheritanceChildQuestions && updatedResponses?.length > 1">
             <v-btn variant="text" @click="deleteResponse(item, question?.questionId)">
               <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
             </v-btn>
@@ -15,7 +15,9 @@
       </template>
       <template v-slot:bottom><!-- no paging --></template>
     </v-data-table>
-    <AppButton v-if="!readonly && !isMaxRowsReached && !hasInheritedValueQuestion" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
+    <AppButton v-if="!readonly && !isMaxRowsReached && !hasValueInheritanceChildQuestions" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">
+      Add Row
+    </AppButton>
   </v-container>
 </template>
 
@@ -67,40 +69,40 @@ export default {
           sortable: false,
         }
       })
-      if (!this.hasInheritedValueQuestion) {
+      if (!this.hasValueInheritanceChildQuestions) {
         headers.push({ title: '', key: 'actionButtons', sortable: false, width: '3%' })
       }
       return headers
     },
 
     responsesInTableFormat() {
-      console.log('responsesInTableFormat')
-      console.log(this.responses)
       if (isEmpty(this.responses)) return
       const responses = []
       let index = 0
-      let rowResponse = this.responses?.filter((item) => !item.hide && item.rowId === index)
-      while (!isEmpty(rowResponse)) {
+      let rowResponses = this.responses?.filter((item) => !item.hide && !item.delete && item.rowId === index)
+      while (!isEmpty(rowResponses)) {
         const row = {
-          rowId: rowResponse[0].rowId,
+          rowId: rowResponses[0].rowId,
           tableQuestionId: this.tableQuestionId,
           headers: {},
         }
         this.questions?.forEach((question) => {
-          const cell = rowResponse.find((item) => item.questionId === question.questionId)
+          const cell = rowResponses.find((item) => item.questionId === question.questionId)
           row.headers[question.questionId] = cell?.value
         })
-        if (!isEmpty(row)) {
-          responses.push(row)
-        }
+        responses.push(row)
         index += 1
-        rowResponse = this.responses?.filter((item) => !item.hide && item.rowId === index)
+        rowResponses = this.responses?.filter((item) => !item.hide && !item.delete && item.rowId === index)
       }
       return responses
     },
 
-    hasInheritedValueQuestion() {
-      return this.questions?.some((question) => !isEmpty(question.inheritedValues))
+    hasValueInheritanceChildQuestions() {
+      return this.questions?.some((question) => 'inheritedValues' in question)
+    },
+
+    valueInheritanceParentsQuestion() {
+      return this.questions?.find((question) => !isEmpty(question?.businessRules))
     },
 
     isMaxRowsReached() {
@@ -127,12 +129,21 @@ export default {
 
   methods: {
     addRow() {
+      if (!this.updatedResponses) {
+        this.updatedResponses = []
+      }
       const row = {
-        rowId: this.updatedResponses?.length,
+        rowId: this.updatedResponses?.length ?? 0,
         tableQuestionId: this.tableQuestionId,
         headers: {},
       }
       this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
+      // If this table is the parents table of value inheritance children, the users can only add new row if they have enter value for the parent column in previous row
+      if (!isEmpty(this.updatedResponses) && !isEmpty(this.valueInheritanceParentsQuestion)) {
+        const lastIndex = this.updatedResponses?.length - 1
+        const lastResponse = this.updatedResponses[lastIndex].headers[this.valueInheritanceParentsQuestion.questionId]
+        if (isEmpty(lastResponse)) return
+      }
       this.updatedResponses?.push(row)
     },
 
@@ -150,14 +161,6 @@ export default {
     },
 
     deleteResponse(row) {
-      console.log('delete')
-      console.log(row)
-      console.log(this.updatedResponses)
-      const index = this.updatedResponses?.findIndex((item) => item.rowId === row?.rowId)
-      if (index > -1) {
-        this.updatedResponses.splice(index, 1)
-      }
-
       this.$emit('delete', row)
     },
   },

@@ -311,7 +311,7 @@ const SurveyQuestionBusinessRulesMappings = [
   { back: '_ofm_false_child_question_value', front: 'falseChildQuestionId' },
   { back: 'ofm_condition', front: 'conditionValue' },
   { back: 'ofm_parent_has_response', front: 'parentHasResponse' },
-  { back: '_ofm_child_question_value', front: 'valueInheritedChildQuestionId' },
+  { back: '_ofm_child_question_value', front: 'valueInheritanceChildQuestionId' },
 ]
 
 const SurveyResponseMappings = [
