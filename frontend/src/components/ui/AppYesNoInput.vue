@@ -45,11 +45,13 @@ export default {
 }
 
 .yes-no-button {
+  border: 1px solid #003366 !important;
   min-width: 50% !important;
   height: 100% !important;
 }
 
 .v-btn-group--density-default.v-btn-group {
   height: 30px;
+  width: 95px;
 }
 </style>

@@ -124,10 +124,10 @@
                     <v-col cols="12" sm="6" xl="8">{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</v-col>
                   </v-row>
                 </v-col>
-                <v-col cols="12" md="6" lg="3" xl="3"></v-col>
-                <v-col cols="12" md="6" lg="4" xl="6">
+                <v-col />
+                <v-col cols="12" md="6" lg="6" xl="6">
                   <v-row no-gutters class="mr-2 my-2">
-                    <v-col cols="12" sm="6" xl="auto">
+                    <v-col cols="12" sm="auto" lg="auto" xl="auto">
                       <AppLabel>Requires split classrooms
                         <v-tooltip content-class="tooltip" :text="SPLIT_CLASSROOM_INFO_TXT" top>
                           <template v-slot:activator="{ props }">
@@ -137,15 +137,15 @@
                         :
                       </AppLabel>
                     </v-col>
-                    <v-col cols="12" sm="2" xl="2" class="pl-4">
+                    <v-col cols="12" sm="4" lg="3" xl="3" class="pl-4">
                       <AppYesNoInput v-model="licenceDetail.applyRoomSplitCondition" :disabled="readOnly"></AppYesNoInput>
                     </v-col>
                   </v-row>
                 </v-col>
                 <v-col cols="12" md="6" lg="3" xl="4"></v-col>
-                <v-col v-if="licenceDetail.applyRoomSplitCondition" cols="12" md="6" lg="4" xl="12" class="pt-0">
-                  <v-row no-gutters class="">
-                    <v-col cols="12" sm="6" xl="9" class="pt-0">
+                <v-col v-if="licenceDetail.applyRoomSplitCondition" cols="12" class="pt-0">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="9" lg="9" xl="9" class="pt-0">
                       <v-textarea
                         v-model.trim="licenceDetail.roomSplitDetails"
                         placeholder="Detailed description of request"
@@ -155,7 +155,7 @@
                         rows="4"
                         :readonly="readOnly"></v-textarea>
                     </v-col>
-                    <!--v-col class="align-self-end ml-4 pb-5">
+                    <!-- OFMCC-1400 v-col class="align-self-end ml-4 pb-5">
                       <AppButton id="save-split-class" size="large" width="175px">Save</AppButton>
                     </v-col-->
                   </v-row>
