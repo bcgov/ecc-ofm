@@ -22,7 +22,7 @@
           <v-col cols="12" sm="6" class="pr-2 mt-1">
             <AppLabel>Health Authority:</AppLabel>
           </v-col>
-          <v-col cols="12" sm="6" class="mt-1">{{ healthAuthority }}</v-col>
+          <v-col cols="12" sm="6" class="mt-1">{{ healthAuthority ? healthAuthority : BLANK_FIELD }}</v-col>
         </v-row>
       </v-col>
       <v-col cols="12" lg="6">
@@ -41,7 +41,7 @@
             <AppLabel>TDAD Funding Agreement Number:</AppLabel>
           </v-col>
           <v-col cols="12" sm="6" class="mt-1">
-            {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : '- - - -' }}
+            {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : BLANK_FIELD }}
           </v-col>
         </v-row>
       </v-col>
@@ -124,6 +124,42 @@
                     <v-col cols="12" sm="6" xl="8">{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</v-col>
                   </v-row>
                 </v-col>
+                <v-col />
+                <v-col cols="12" md="6" lg="6" xl="6">
+                  <v-row no-gutters class="mr-2 my-2">
+                    <v-col cols="12" sm="auto" lg="auto" xl="auto">
+                      <AppLabel>Requires split classrooms
+                        <v-tooltip content-class="tooltip" text="This is a placeholder message" top>
+                          <template v-slot:activator="{ props }">
+                            <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                          </template>
+                        </v-tooltip>
+                        :
+                      </AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="4" lg="3" xl="3" class="pl-4">
+                      <AppYesNoInput v-model="licenceDetail.applyRoomSplitCondition" :disabled="readOnly" />
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="6" lg="3" xl="4"></v-col>
+                <v-col v-if="licenceDetail.applyRoomSplitCondition" cols="12" class="pt-0">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="9" lg="9" xl="9" class="pt-0">
+                      <v-textarea
+                        v-model.trim="licenceDetail.roomSplitDetails"
+                        placeholder="Detailed description of request"
+                        counter
+                        maxlength="1000"
+                        variant="outlined"
+                        rows="4"
+                        :readonly="readOnly"></v-textarea>
+                    </v-col>
+                    <!-- OFMCC-1400 v-col class="align-self-end ml-4 pb-5">
+                      <AppButton id="save-split-class" size="large" width="175px">Save</AppButton>
+                    </v-col-->
+                  </v-row>
+                </v-col>
               </v-row>
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -135,11 +171,12 @@
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
 
 export default {
-  components: { AppLabel },
+  components: { AppLabel, AppYesNoInput },
   props: {
     licence: {
       type: Object,
@@ -147,6 +184,10 @@ export default {
       default: () => {
         return {}
       },
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -162,13 +203,19 @@ export default {
     },
 
     healthAuthority() {
-      const healthAuthority = this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
-      return healthAuthority ? healthAuthority : this.BLANK_FIELD
+      return this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
+    },
+  },
+  watch: {
+    requiresSplitClassroom: {
+      handler(newVal) {
+        console.log('requiresSplitClassroom', newVal)
+      },
     },
   },
   async created() {
-    this.panel = this.allLicenceDetailsID
     this.BLANK_FIELD = '- - - -'
+    this.panel = this.allLicenceDetailsID
   },
   methods: {
     convertDaysToString(days) {
