@@ -6,6 +6,22 @@
     <v-card class="px-4 pt-4 pb-2" variant="outlined">
       <v-row no-gutters class="mb-6">
         <v-col cols="12" md="3" lg="2">
+          <AppLabel>Select a facility:</AppLabel>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <v-select
+            v-model="selectedFacility"
+            :items="userInfo.facilities"
+            item-title="facilityName"
+            item-value="facilityId"
+            label="Select facility to report on"
+            density="compact"
+            hide-details
+            variant="outlined" />
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mb-6">
+        <v-col cols="12" md="3" lg="2">
           <AppLabel>Select a fiscal year:</AppLabel>
         </v-col>
         <v-col cols="12" md="4" lg="3">
