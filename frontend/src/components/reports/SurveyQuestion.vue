@@ -5,9 +5,9 @@
       v-model.lazy="updatedResponse.value"
       :format="NUMBER_FORMAT"
       maxlength="12"
-      :rules="rules.required"
-      :disabled="disabled"
-      hide-details />
+      :rules="validationRules"
+      :hide-details="isEmpty(validationRules)"
+      :disabled="disabled" />
 
     <AppNumberInput
       v-if="getReportQuestionTypeNameById(question?.type) === 'Currency'"
@@ -15,9 +15,9 @@
       :format="CURRENCY_FORMAT"
       maxlength="12"
       prefix="$"
-      :rules="rules.required"
-      :disabled="disabled"
-      hide-details />
+      :rules="validationRules"
+      :hide-details="isEmpty(validationRules)"
+      :disabled="disabled" />
 
     <v-text-field
       v-if="getReportQuestionTypeNameById(question?.type) === 'Text'"
@@ -25,9 +25,9 @@
       :placeholder="RESPONSE_PLACEHOLDER"
       variant="outlined"
       density="compact"
-      :rules="rules.required"
-      :disabled="disabled"
-      hide-details />
+      :rules="validationRules"
+      :hide-details="isEmpty(validationRules)"
+      :disabled="disabled" />
 
     <v-textarea
       v-if="getReportQuestionTypeNameById(question?.type) === 'Text Area'"
@@ -35,9 +35,9 @@
       :placeholder="RESPONSE_PLACEHOLDER"
       counter
       variant="outlined"
-      :rules="rules.required"
-      :disabled="disabled"
-      hide-details />
+      :rules="validationRules"
+      :hide-details="isEmpty(validationRules)"
+      :disabled="disabled" />
 
     <v-date-picker v-if="getReportQuestionTypeNameById(question?.type) === 'Date'" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
 
@@ -45,9 +45,9 @@
       v-if="getReportQuestionTypeNameById(question?.type) === 'Two Option'"
       v-model="updatedResponse.value"
       :rules="rules.required"
+      :hide-details="isEmpty(validationRules)"
       :disabled="disabled"
       inline
-      hide-details
       color="primary">
       <v-radio :label="question?.choices[0]" :value="question?.choices[0]"></v-radio>
       <v-radio :label="question?.choices[1]" :value="question?.choices[1]"></v-radio>
@@ -56,26 +56,26 @@
     <v-select
       v-if="getReportQuestionTypeNameById(question?.type) === 'Choice'"
       v-model="updatedResponse.value"
-      :rules="rules.required"
+      :rules="validationRules"
+      :hide-details="isEmpty(validationRules)"
       :disabled="disabled"
       :placeholder="RESPONSE_PLACEHOLDER"
       :items="question?.choices"
       density="compact"
       variant="outlined"
-      hide-details
       return-object />
 
     <v-select
       v-if="isMultipleChoiceQuestion(question?.type)"
       v-model.lazy="updatedResponse.value"
-      :rules="rules.required"
+      :rules="validationRules"
+      :hide-details="isEmpty(validationRules)"
       :disabled="disabled"
       :placeholder="RESPONSE_PLACEHOLDER"
       variant="outlined"
       chips
       multiple
-      :items="question?.choices"
-      hide-details>
+      :items="question?.choices">
       <template v-slot:prepend-item>
         <v-list-item title="Select All" @click="toggleAllItems">
           <template v-slot:prepend>
@@ -132,6 +132,9 @@ export default {
     disabled() {
       return this.readonly || !isEmpty(this.question?.inheritedValues)
     },
+    validationRules() {
+      return this.question?.responseRequired ? [...rules.required] : []
+    },
     allItemsSelected() {
       return this.updatedResponse?.value?.length === this.question?.choices?.length
     },
@@ -150,21 +153,14 @@ export default {
     updatedResponse: {
       handler() {
         if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
-        const response = Object.assign({}, this.updatedResponse)
-        this.$emit('update', response)
+        this.$emit('update', Object.assign({}, this.updatedResponse))
       },
       deep: true,
     },
   },
 
   created() {
-    this.updatedResponse = Object.assign({}, this.response)
-    this.updatedResponse.questionId = this.question?.questionId
-    this.updatedResponse.questionType = this.question?.type
-    this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
-    this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
-    this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
-    this.updatedResponse.value = this.isMultipleChoiceQuestion(this.question?.type) ? convertStringToArray(this.updatedResponse.value) : this.updatedResponse.value
+    this.initializeResponse()
     this.RESPONSE_PLACEHOLDER = ''
     this.CURRENCY_FORMAT = {
       nullValue: '0.00',
@@ -181,6 +177,18 @@ export default {
   },
 
   methods: {
+    isEmpty,
+
+    initializeResponse() {
+      this.updatedResponse = Object.assign({}, this.response)
+      this.updatedResponse.questionId = this.question?.questionId
+      this.updatedResponse.questionType = this.question?.type
+      this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
+      this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
+      this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
+      this.updatedResponse.value = this.isMultipleChoiceQuestion(this.question?.type) ? convertStringToArray(this.updatedResponse.value) : this.updatedResponse.value
+    },
+
     toggleAllItems() {
       if (this.allItemsSelected) {
         this.updatedResponse.value = []

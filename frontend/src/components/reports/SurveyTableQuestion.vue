@@ -111,9 +111,12 @@ export default {
   },
 
   watch: {
-    responsesInTableFormat: {
+    responses: {
       handler() {
         this.updatedResponses = this.responsesInTableFormat
+        if (isEmpty(this.updatedResponses)) {
+          this.addRow()
+        }
       },
       deep: true,
     },
@@ -161,7 +164,21 @@ export default {
     },
 
     deleteResponse(row) {
+      if (isEmpty(row?.questionResponseId) && this.isRowBlank(row?.headers)) {
+        const index = this.updatedResponses?.findIndex((item) => item.rowId === row.rowId)
+        if (index > -1) {
+          this.updatedResponses.splice(index, 1)
+        }
+      }
       this.$emit('delete', row)
+    },
+
+    isRowBlank(row) {
+      let isBlank = true
+      for (const header in row) {
+        isBlank = isBlank && isEmpty(row[header])
+      }
+      return isBlank
     },
   },
 }

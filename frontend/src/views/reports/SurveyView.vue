@@ -181,7 +181,7 @@ export default {
             if (this.isMultipleChoiceQuestion(updatedResponse?.questionType)) {
               updatedResponse.value = updatedResponse.value?.toString()
             }
-            if (!originalResponse && !isEmpty(updatedResponse?.value)) {
+            if (isEmpty(originalResponse) && !isEmpty(updatedResponse?.value)) {
               await ReportsService.createQuestionResponse(updatedResponse)
               callGetQuestionsResponses = true
             } else if (originalResponse?.value !== updatedResponse?.value) {
@@ -249,7 +249,7 @@ export default {
 
     deleteTableResponses(deletedRow) {
       this.clonedResponses?.forEach((response) => {
-        if (response.tableQuestionId === deletedRow?.tableQuestionId) {
+        if (!response.delete && response.tableQuestionId === deletedRow?.tableQuestionId) {
           if (response.rowId === deletedRow?.rowId) {
             const question = this.currentSection?.questions?.find((item) => item.questionId === response.questionId)
             if (!isEmpty(question?.businessRules)) {
@@ -394,6 +394,9 @@ export default {
         })
       })
     },
+
+    // TODO (vietle-cgi)
+    verifySectionComplete() {},
 
     isTableQuestion(question) {
       return this.getReportQuestionTypeNameById(question?.type) === 'Table'
