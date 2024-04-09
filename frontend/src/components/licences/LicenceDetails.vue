@@ -23,7 +23,7 @@
             <v-col cols="12" sm="6" class="pr-2 mt-1">
               <AppLabel>Health Authority:</AppLabel>
             </v-col>
-            <v-col cols="12" sm="6" class="mt-1">{{ healthAuthority }}</v-col>
+            <v-col cols="12" sm="6" class="mt-1">{{ healthAuthority ? healthAuthority : BLANK_FIELD }}</v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -42,7 +42,7 @@
               <AppLabel>TDAD Funding Agreement Number:</AppLabel>
             </v-col>
             <v-col cols="12" sm="6" class="mt-1">
-              {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : '- - - -' }}
+              {{ licence?.tdadFundingAgreementNumber ? licence?.tdadFundingAgreementNumber : BLANK_FIELD }}
             </v-col>
           </v-row>
         </v-col>
@@ -131,7 +131,7 @@
                       <v-col cols="12" sm="auto" lg="auto" xl="auto">
                         <AppLabel>
                           Requires split classrooms
-                          <v-tooltip content-class="tooltip" :text="SPLIT_CLASSROOM_INFO_TXT" top>
+                          <v-tooltip content-class="tooltip" text="This is a placeholder message" top>
                             <template v-slot:activator="{ props }">
                               <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                             </template>
@@ -209,8 +209,7 @@ export default {
     },
 
     healthAuthority() {
-      const healthAuthority = this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
-      return healthAuthority ? healthAuthority : this.BLANK_FIELD
+      return this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
     },
   },
   watch: {
@@ -221,9 +220,8 @@ export default {
     },
   },
   async created() {
-    this.panel = this.allLicenceDetailsID
     this.BLANK_FIELD = '- - - -'
-    this.SPLIT_CLASSROOM_INFO_TXT = 'This is a placeholder message'
+    this.panel = this.allLicenceDetailsID
   },
   async mounted() {
     this.$emit('isDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
