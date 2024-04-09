@@ -12,7 +12,7 @@
           <LicenceHeader :licence="licence" />
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-          <LicenceDetails :licence="licence" />
+          <LicenceDetails :licence="licence" :readOnly="true" />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
