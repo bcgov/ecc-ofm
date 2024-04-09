@@ -112,6 +112,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  SPLIT_CLASSROOM_INFO: 'Description of split classrooms required',
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',
   SUPP_DUPLICATE_VIN: 'Unique VIN required',

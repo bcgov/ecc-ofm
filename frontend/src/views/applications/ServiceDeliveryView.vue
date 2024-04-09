@@ -96,7 +96,6 @@ export default {
       panel: [],
       licenceDeclaration: undefined,
       changedLicences: [],
-      isFormComplete: undefined,
     }
   },
   computed: {
@@ -188,17 +187,11 @@ export default {
     },
     setDetailsComplete(licenceId, value) {
       const currentLicence = this.currentApplication?.licences.find((el) => el.licenceId === licenceId)
-
-      console.log('value.valid ', value.valid)
       currentLicence.isLicenceComplete = value.valid
-
-      console.log('curr lic complete ', currentLicence.isLicenceComplete)
-
       this.setFormComplete()
     },
     setFormComplete() {
       this.isServiceDeliveryComplete = this.currentApplication.licences.every((el) => el.isLicenceComplete) && this.licenceDeclaration
-      //console.log('is done? ', this.isServiceDeliveryComplete)
     },
   },
 }

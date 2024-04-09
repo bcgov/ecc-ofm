@@ -229,7 +229,6 @@ export default {
     this.SPLIT_CLASSROOM_INFO_TXT = 'This is a placeholder message'
   },
   async mounted() {
-    console.log('mounted called')
     this.$emit('isDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
   },
   methods: {

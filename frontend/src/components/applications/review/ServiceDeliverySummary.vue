@@ -6,6 +6,9 @@
     <AppMissingInfoError v-else-if="!currentApplication?.licenceDeclaration" :to="{ name: 'service-delivery', hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
     </AppMissingInfoError>
+    <AppMissingInfoError v-else-if="!isServiceDeliveryComplete" :to="{ name: 'service-delivery', hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
+      {{ APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
+    </AppMissingInfoError>
     <v-expansion-panels v-else v-model="panel" multiple>
       <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
         <v-expansion-panel-title>
@@ -43,6 +46,7 @@ export default {
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['isServiceDeliveryComplete']),
     allLicenceIDs() {
       return this.licences?.map((licence) => licence.licenceId)
     },
