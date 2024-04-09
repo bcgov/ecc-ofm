@@ -22,7 +22,6 @@
     <v-text-field
       v-if="getReportQuestionTypeNameById(question?.type) === 'Text'"
       v-model.trim="updatedResponse.value"
-      :placeholder="RESPONSE_PLACEHOLDER"
       variant="outlined"
       density="compact"
       :rules="validationRules"
@@ -32,8 +31,6 @@
     <v-textarea
       v-if="getReportQuestionTypeNameById(question?.type) === 'Text Area'"
       v-model.trim="updatedResponse.value"
-      :placeholder="RESPONSE_PLACEHOLDER"
-      counter
       variant="outlined"
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
@@ -59,7 +56,6 @@
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
       :disabled="disabled"
-      :placeholder="RESPONSE_PLACEHOLDER"
       :items="question?.choices"
       density="compact"
       variant="outlined"
@@ -71,7 +67,6 @@
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
       :disabled="disabled"
-      :placeholder="RESPONSE_PLACEHOLDER"
       variant="outlined"
       chips
       multiple
@@ -89,16 +84,15 @@
 </template>
 
 <script>
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
+import reportMixin from '@/mixins/reportMixin'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
-import { isEmpty } from 'lodash'
+import { isEmpty, cloneDeep } from 'lodash'
 import { convertStringToArray } from '@/utils/common'
 
 export default {
   components: { AppNumberInput },
-
+  mixins: [reportMixin],
   props: {
     question: {
       type: Object,
@@ -128,7 +122,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
     disabled() {
       return this.readonly || !isEmpty(this.question?.inheritedValues)
     },
@@ -153,7 +146,7 @@ export default {
     updatedResponse: {
       handler() {
         if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
-        this.$emit('update', Object.assign({}, this.updatedResponse))
+        this.$emit('update', cloneDeep(this.updatedResponse))
       },
       deep: true,
     },
@@ -161,7 +154,6 @@ export default {
 
   created() {
     this.initializeResponse()
-    this.RESPONSE_PLACEHOLDER = ''
     this.CURRENCY_FORMAT = {
       nullValue: '0.00',
       min: 0,
@@ -177,10 +169,8 @@ export default {
   },
 
   methods: {
-    isEmpty,
-
     initializeResponse() {
-      this.updatedResponse = Object.assign({}, this.response)
+      this.updatedResponse = cloneDeep(this.response)
       this.updatedResponse.questionId = this.question?.questionId
       this.updatedResponse.questionType = this.question?.type
       this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
@@ -195,10 +185,6 @@ export default {
       } else {
         this.updatedResponse.value = this.question?.choices?.slice()
       }
-    },
-
-    isMultipleChoiceQuestion(questionType) {
-      return ['Multiple Choice'].includes(this.getReportQuestionTypeNameById(questionType))
     },
   },
 }

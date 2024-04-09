@@ -23,17 +23,14 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
-
 import AppLabel from '@/components/ui/AppLabel.vue'
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
+import reportMixin from '@/mixins/reportMixin'
 import SurveyQuestion from '@/components/reports/SurveyQuestion.vue'
 import SurveyTableQuestion from '@/components/reports/SurveyTableQuestion.vue'
 
 export default {
   components: { AppLabel, SurveyQuestion, SurveyTableQuestion },
-
+  mixins: [reportMixin],
   props: {
     section: {
       type: Object,
@@ -54,7 +51,6 @@ export default {
   emits: ['update', 'deleteTableResponses'],
 
   computed: {
-    ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
     questions() {
       return this.section?.questions?.filter((question) => !this.isTableQuestionHeader(question))
     },
@@ -72,7 +68,7 @@ export default {
     },
 
     getTableQuestionResponses(tableQuestion) {
-      return this.responses?.filter((response) => !response.hide && !response.delete && response.tableQuestionId === tableQuestion?.questionId)
+      return this.responses?.filter((response) => !this.isHiddenOrDeleted(response) && response.tableQuestionId === tableQuestion?.questionId)
     },
 
     updateResponses(response) {
@@ -81,14 +77,6 @@ export default {
 
     deleteTableResponses(response) {
       this.$emit('deleteTableResponses', response)
-    },
-
-    isTableQuestion(question) {
-      return this.getReportQuestionTypeNameById(question?.type) === 'Table'
-    },
-
-    isTableQuestionHeader(question) {
-      return !isEmpty(question?.tableQuestionId)
     },
   },
 }

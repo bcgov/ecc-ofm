@@ -157,6 +157,7 @@ async function updateQuestionResponse(req, res) {
   try {
     const payload = {
       ofm_response_text: req.body?.value,
+      ofm_row_id: req.body?.rowId,
     }
     const response = await patchOperationWithObjectId('ofm_question_responses', req.params.questionResponseId, payload)
     return res.status(HttpStatus.OK).json(response)

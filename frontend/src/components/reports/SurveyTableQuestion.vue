@@ -22,13 +22,14 @@
 </template>
 
 <script>
+import reportMixin from '@/mixins/reportMixin'
 import AppButton from '@/components/ui/AppButton.vue'
 import SurveyQuestion from '@/components/reports/SurveyQuestion.vue'
 import { isEmpty } from 'lodash'
 
 export default {
   components: { AppButton, SurveyQuestion },
-
+  mixins: [reportMixin],
   props: {
     questions: {
       type: Array,
@@ -79,7 +80,7 @@ export default {
       if (isEmpty(this.responses)) return
       const responses = []
       let index = 0
-      let rowResponses = this.responses?.filter((item) => !item.hide && !item.delete && item.rowId === index)
+      let rowResponses = this.responses?.filter((item) => !this.isHiddenOrDeleted(item) && item.rowId === index)
       while (!isEmpty(rowResponses)) {
         const row = {
           rowId: rowResponses[0].rowId,
@@ -92,7 +93,7 @@ export default {
         })
         responses.push(row)
         index += 1
-        rowResponses = this.responses?.filter((item) => !item.hide && !item.delete && item.rowId === index)
+        rowResponses = this.responses?.filter((item) => !this.isHiddenOrDeleted(item) && item.rowId === index)
       }
       return responses
     },

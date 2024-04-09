@@ -40,6 +40,7 @@ import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
 import alertMixin from '@/mixins/alertMixin'
+import reportMixin from '@/mixins/reportMixin'
 import { isEmpty, cloneDeep } from 'lodash'
 import ReportsService from '@/services/reportsService'
 import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
@@ -49,9 +50,9 @@ import { CRM_STATE_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 export default {
-  name: 'SupplementaryAllowanceView',
+  name: 'SurveyView',
   components: { AppNavButtons, AppCancelDialog, SurveyNavBar, SurveySection },
-  mixins: [alertMixin],
+  mixins: [alertMixin, reportMixin],
   data() {
     return {
       rules,
@@ -68,7 +69,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getReportQuestionTypeNameById', 'months']),
+    ...mapState(useAppStore, ['months']),
     readonly() {
       return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE
     },
@@ -177,15 +178,12 @@ export default {
           this.clonedResponses?.map(async (response) => {
             if (this.isHiddenOrDeleted(response)) return
             const originalResponse = this.getOriginalQuestionResponse(response)
-            const updatedResponse = Object.assign({}, response)
-            if (this.isMultipleChoiceQuestion(updatedResponse?.questionType)) {
-              updatedResponse.value = updatedResponse.value?.toString()
-            }
-            if (isEmpty(originalResponse) && !isEmpty(updatedResponse?.value)) {
-              await ReportsService.createQuestionResponse(updatedResponse)
+            response.value = Array.isArray(response.value) ? response.value?.toString() : response.value
+            if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
+              await ReportsService.createQuestionResponse(response)
               callGetQuestionsResponses = true
-            } else if (originalResponse?.value !== updatedResponse?.value) {
-              await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, updatedResponse)
+            } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
+              await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
               callGetQuestionsResponses = true
             }
           }),
@@ -238,7 +236,7 @@ export default {
           )
         : this.clonedResponses.findIndex((item) => item.questionId === updatedResponse?.questionId)
       if (index > -1) {
-        this.clonedResponses[index] = updatedResponse
+        this.clonedResponses[index].value = updatedResponse?.value
       } else {
         this.clonedResponses.push(updatedResponse)
       }
@@ -398,26 +396,8 @@ export default {
     // TODO (vietle-cgi)
     verifySectionComplete() {},
 
-    isTableQuestion(question) {
-      return this.getReportQuestionTypeNameById(question?.type) === 'Table'
-    },
-
-    isTableQuestionResponse(response) {
-      return !isEmpty(response?.tableQuestionId)
-    },
-
-    isHiddenOrDeleted(item) {
-      return item?.hide || item?.delete
-    },
-
     getOriginalQuestionResponse(response) {
-      return this.isTableQuestionResponse(response)
-        ? this.originalResponses.find((item) => item.questionId === response?.questionId && item.tableQuestionId === response?.tableQuestionId && item.rowId === response?.rowId)
-        : this.originalResponses.find((item) => item.questionId === response?.questionId)
-    },
-
-    isMultipleChoiceQuestion(questionType) {
-      return ['Multiple Choice'].includes(this.getReportQuestionTypeNameById(questionType))
+      return this.originalResponses.find((item) => item.questionResponseId === response?.questionResponseId)
     },
 
     process(value) {
