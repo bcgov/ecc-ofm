@@ -32,8 +32,7 @@ export default {
 
   async updateLicenceDetails(licenceDetailId, payload) {
     try {
-      const response = await ApiService.apiAxios.patch(`${ApiRoutes.LICENCES}/${licenceDetailId}`, payload)
-      return response
+      return await ApiService.apiAxios.patch(`${ApiRoutes.LICENCES}/${licenceDetailId}`, payload)
     } catch (error) {
       console.log(`Failed to update licence detail - ${error}`)
       throw error
