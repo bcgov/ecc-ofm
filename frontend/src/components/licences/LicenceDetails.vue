@@ -159,9 +159,6 @@
                           :readonly="readOnly"
                           @input="update(licenceDetail)"></v-textarea>
                       </v-col>
-                      <!-- OFMCC-1400 v-col class="align-self-end ml-4 pb-5">
-                      <AppButton id="save-split-class" size="large" width="175px">Save</AppButton>
-                    </v-col-->
                     </v-row>
                   </v-col>
                 </v-row>
