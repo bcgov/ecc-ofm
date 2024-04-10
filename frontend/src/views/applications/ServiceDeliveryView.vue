@@ -156,9 +156,11 @@ export default {
           await this.getApplication(this.$route.params.applicationGuid)
         }
 
-        this.changedLicences.forEach(async (licence) => {
-          await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
-        })
+        await Promise.all(
+          this.changedLicences.map(async (licence) => {
+            await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
+          }),
+        )
 
         this.changedLicences = []
 
