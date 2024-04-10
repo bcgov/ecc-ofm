@@ -30,35 +30,40 @@
           @submit="submit" />
       </v-col>
     </v-row>
+    <SurveySubmitConfirmationDialog :show="showSubmitConfirmationDialog" />
     <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
   </v-container>
 </template>
 
 <script>
-import AppNavButtons from '@/components/ui/AppNavButtons.vue'
-import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
+import { isEmpty, cloneDeep } from 'lodash'
+import { CRM_STATE_CODES } from '@/utils/constants'
+import rules from '@/utils/rules'
+
+import { mapState } from 'pinia'
 
 import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
 import alertMixin from '@/mixins/alertMixin'
 import reportMixin from '@/mixins/reportMixin'
-import { isEmpty, cloneDeep } from 'lodash'
+
 import ReportsService from '@/services/reportsService'
+
+import AppNavButtons from '@/components/ui/AppNavButtons.vue'
+import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
 import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
 import SurveySection from '@/components/reports/SurveySection.vue'
-import { CRM_STATE_CODES } from '@/utils/constants'
-
-import rules from '@/utils/rules'
+import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitConfirmationDialog.vue'
 
 export default {
   name: 'SurveyView',
-  components: { AppNavButtons, AppCancelDialog, SurveyNavBar, SurveySection },
+  components: { AppNavButtons, AppCancelDialog, SurveyNavBar, SurveySection, SurveySubmitConfirmationDialog },
   mixins: [alertMixin, reportMixin],
   data() {
     return {
       rules,
       loading: false,
       processing: false,
+      showSubmitConfirmationDialog: false,
       showCancelDialog: false,
       surveyResponse: undefined,
       sections: [],
@@ -198,6 +203,7 @@ export default {
         if (callGetQuestionsResponses) {
           await this.getQuestionsResponses()
         }
+        this.verifySectionComplete(this.currentSection)
         if (showAlert) {
           this.setSuccessAlert('Survey response saved successfully')
         }
@@ -215,15 +221,22 @@ export default {
     },
 
     async submit() {
-      const currentMonth = this.months?.find((month) => month.name === new Date().toLocaleString('en-ca', { month: 'long' }))
-      const payload = {
-        statusCode: 506580000,
-        stateCode: CRM_STATE_CODES.INACTIVE,
-        submittedMonthId: currentMonth?.monthId,
+      try {
+        const currentMonth = this.months?.find((month) => month.name === new Date().toLocaleString('en-ca', { month: 'long' }))
+        const payload = {
+          statusCode: 506580000,
+          stateCode: CRM_STATE_CODES.INACTIVE,
+          submittedMonthId: currentMonth?.monthId,
+        }
+        await this.save()
+        this.processing = true
+        await ReportsService.updateSurveyResponse(this.$route.params.surveyResponseGuid, payload)
+        this.toggleSubmitConfirmationDialog()
+      } catch (error) {
+        this.setFailureAlert('Failed to submit your survey responses', error)
+      } finally {
+        this.processing = false
       }
-      await this.save()
-      await ReportsService.updateSurveyResponse(this.$route.params.surveyResponseGuid, payload)
-      this.$router.push({ name: 'reporting' })
     },
 
     async getQuestionsResponses() {
@@ -428,6 +441,10 @@ export default {
 
     process(value) {
       this.processing = value
+    },
+
+    toggleSubmitConfirmationDialog() {
+      this.showSubmitConfirmationDialog = true
     },
   },
 }

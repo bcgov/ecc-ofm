@@ -86,8 +86,6 @@ export default {
     try {
       if (!surveyResponseId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`)
-      console.log('=============== getQuestionResponses ====================')
-      console.log(response?.data)
       return response?.data
     } catch (error) {
       console.log(`Failed to get survey's questions' responses - ${error}`)
