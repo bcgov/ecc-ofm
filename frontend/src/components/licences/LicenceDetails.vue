@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form">
-    <v-container fluid class="pt-0">
+    <v-container fluid class="pt-0" id="top">
       <v-row no-gutters>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="mr-2 my-2">
@@ -193,7 +193,7 @@ export default {
       default: false,
     },
   },
-  emits: ['update', 'isDetailsComplete'],
+  emits: ['update', 'setDetailsComplete'],
   data() {
     return {
       panel: [],
@@ -224,7 +224,7 @@ export default {
     this.panel = this.allLicenceDetailsID
   },
   async mounted() {
-    this.$emit('isDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
+    this.$emit('setDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
   },
   methods: {
     convertDaysToString(days) {
@@ -235,10 +235,10 @@ export default {
     async update(licenceDetail) {
       this.$emit('update', licenceDetail)
 
-      //If I take out the below line, the validation doesn't work correctly. I don't know why. Would love an explination
+      //XXX this code needs to be validated twice in order to work properly. It's a mystery as to why that is required but it works for now
       const done = await this.$refs.form?.validate()
 
-      this.$emit('isDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
+      this.$emit('setDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
     },
   },
 }

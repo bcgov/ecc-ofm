@@ -23,7 +23,7 @@ async function updateLicenceDetails(req, res) {
     const response = await patchOperationWithObjectId('ofm_licence_details', req.params.licenceDetailId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
-    log.info(e)
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

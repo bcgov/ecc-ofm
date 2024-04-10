@@ -155,12 +155,13 @@ export default {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
           await this.getApplication(this.$route.params.applicationGuid)
         }
-        if (this.changedLicences.length > 0) {
-          for (const licence of this.changedLicences) {
-            await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
-          }
-          this.changedLicences = []
-        }
+
+        this.changedLicences.forEach(async (licence) => {
+          await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
+        })
+
+        this.changedLicences = []
+
         if (showAlert) {
           this.setSuccessAlert('Application saved successfully')
         }
@@ -176,7 +177,7 @@ export default {
       this.panel = isEmpty(this.panel) ? this.allLicenceIDs : []
     },
     updateModel(updatedModel) {
-      let found = this.changedLicences.find((el) => el.licenceDetailId == updatedModel.licenceDetailId)
+      const found = this.changedLicences.find((el) => el.licenceDetailId == updatedModel.licenceDetailId)
 
       if (!found) {
         this.changedLicences.push(updatedModel)
