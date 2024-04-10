@@ -25,7 +25,7 @@
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <LicenceDetails :licence="licence" @update="updateModel" @isDetailsComplete="setDetailsComplete" />
+            <LicenceDetails :licence="licence" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
