@@ -149,7 +149,7 @@
                     <v-row no-gutters>
                       <v-col cols="12" sm="9" lg="9" xl="9" class="pt-0">
                         <v-textarea
-                          v-model="licenceDetail.roomSplitDetails"
+                          v-model.trim="licenceDetail.roomSplitDetails"
                           placeholder="Detailed description of request"
                           counter
                           maxlength="1000"
@@ -157,7 +157,7 @@
                           rows="4"
                           :rules="rules.required"
                           :readonly="readOnly"
-                          @input="update(licenceDetail)"></v-textarea>
+                          @blur="update(licenceDetail)"></v-textarea>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -233,7 +233,7 @@ export default {
       return operationalDays?.map((day) => daysOfWeek[day])?.join(', ')
     },
     async update(licenceDetail) {
-      this.$emit('update', licenceDetail.trim())
+      this.$emit('update', licenceDetail)
 
       //XXX this code needs to be validated twice in order to work properly. It's a mystery as to why that is required but it works for now
       const done = await this.$refs.form?.validate()
