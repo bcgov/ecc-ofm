@@ -233,7 +233,7 @@ export default {
       return operationalDays?.map((day) => daysOfWeek[day])?.join(', ')
     },
     async update(licenceDetail) {
-      this.$emit('update', licenceDetail)
+      this.$emit('update', licenceDetail.trim())
 
       //XXX this code needs to be validated twice in order to work properly. It's a mystery as to why that is required but it works for now
       const done = await this.$refs.form?.validate()
