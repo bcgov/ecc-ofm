@@ -149,7 +149,7 @@
                     <v-row no-gutters>
                       <v-col cols="12" sm="9" lg="9" xl="9" class="pt-0">
                         <v-textarea
-                          v-model.trim="licenceDetail.roomSplitDetails"
+                          v-model="licenceDetail.roomSplitDetails"
                           placeholder="Detailed description of request"
                           counter
                           maxlength="1000"
