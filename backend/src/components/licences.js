@@ -1,8 +1,9 @@
 'use strict'
-const { getOperation } = require('./utils')
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { getOperation, patchOperationWithObjectId } = require('./utils')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { LicenceDetailsMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
+const log = require('./logger')
 
 async function getLicenceDetails(req, res) {
   try {
@@ -16,6 +17,18 @@ async function getLicenceDetails(req, res) {
   }
 }
 
+async function updateLicenceDetails(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, LicenceDetailsMappings).toJSON()
+    const response = await patchOperationWithObjectId('ofm_licence_details', req.params.licenceDetailId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getLicenceDetails,
+  updateLicenceDetails,
 }
