@@ -327,7 +327,6 @@ export default {
         if (response?.surveyResponseId) {
           this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: response?.surveyResponseId } })
         }
-        console.log(response)
       } catch (error) {
         this.setFailureAlert('Failed to create new survey response', error)
       } finally {
