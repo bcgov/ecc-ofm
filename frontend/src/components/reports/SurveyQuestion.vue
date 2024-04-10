@@ -123,7 +123,7 @@ export default {
 
   computed: {
     disabled() {
-      return this.readonly || !isEmpty(this.question?.inheritedValues)
+      return this.readonly || !isEmpty(this.question?.inheritanceValues)
     },
     validationRules() {
       return this.question?.responseRequired ? [...rules.required] : []

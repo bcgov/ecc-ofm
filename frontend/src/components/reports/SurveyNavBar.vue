@@ -3,7 +3,7 @@
     <div v-for="section in sections" :key="section.id">
       <v-row no-gutters class="mb-6" @click="updateCurrentSection(section)">
         <v-col cols="2" :class="getNavIconClass(section)">
-          <v-icon>{{ getNavIcon() }}</v-icon>
+          <v-icon>{{ getNavIcon(section) }}</v-icon>
         </v-col>
         <v-col cols="10" :class="getNavTextClass(section)">
           {{ section.title }}
@@ -42,8 +42,8 @@ export default {
       return section?.sectionId === this.currentSection?.sectionId ? 'current-text' : 'active'
     },
 
-    getNavIcon() {
-      return 'mdi-circle'
+    getNavIcon(section) {
+      return section?.isComplete ? 'mdi-check-circle' : 'mdi-circle'
     },
 
     updateCurrentSection(section) {

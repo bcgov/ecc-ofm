@@ -22,6 +22,7 @@
           :showSave="showSave"
           :showNext="showNext"
           :showSubmit="showSubmit"
+          :disableSubmit="!isSurveyComplete"
           @back="back"
           @cancel="toggleCancelDialog"
           @save="save(true)"
@@ -97,6 +98,9 @@ export default {
     responsesToBeDisplayed() {
       return this.clonedResponses?.filter((item) => !this.isHiddenOrDeleted(item))
     },
+    isSurveyComplete() {
+      return this.sections?.every((section) => section.isComplete)
+    },
   },
 
   watch: {
@@ -106,6 +110,7 @@ export default {
           if (this.readonly) return
           this.processing = true
           await this.getQuestionsResponses()
+          this.verifySurveyComplete()
         } catch (error) {
           this.setFailureAlert('Failed to load questions responses', error)
         } finally {
@@ -133,6 +138,7 @@ export default {
           }),
         )
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
+        this.verifySurveyComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
       } finally {
@@ -154,6 +160,7 @@ export default {
       this.clonedResponses = cloneDeep(this.originalResponses)
       this.processQuestionsBusinessRules(this.currentSection)
       this.toggleCancelDialog()
+      this.verifySectionComplete(this.currentSection)
     },
 
     async next() {
@@ -243,6 +250,7 @@ export default {
       if (updatedResponse?.hasConditionalChildren || updatedResponse?.hasValueInheritanceChildren) {
         this.processQuestionsBusinessRules(this.currentSection)
       }
+      this.verifySectionComplete(this.currentSection)
     },
 
     deleteTableResponses(deletedRow) {
@@ -345,13 +353,13 @@ export default {
         question?.businessRules?.forEach((rule) => {
           question.hasValueInheritanceChildren = rule?.parentHasResponse && rule?.valueInheritanceChildQuestionId
           if (!question?.hasValueInheritanceChildren) return
-          this.addInheritedValuesToChildrenQuestions(section, question)
+          this.addInheritanceValuesToChildrenQuestions(section, question)
         })
       })
       this.updateResponsesForValueInheritanceQuestions(section)
     },
 
-    addInheritedValuesToChildrenQuestions(section, parentsQuestion) {
+    addInheritanceValuesToChildrenQuestions(section, parentsQuestion) {
       let parentsResponses = this.clonedResponses?.filter(
         (item) => !this.isHiddenOrDeleted(item) && item.questionId === parentsQuestion.questionId && item.tableQuestionId === parentsQuestion.tableQuestionId,
       )
@@ -361,14 +369,14 @@ export default {
       parentsQuestion?.businessRules?.forEach((rule) => {
         const childQuestion = section?.questions?.find((item) => item.questionId === rule.valueInheritanceChildQuestionId)
         if (childQuestion) {
-          childQuestion.inheritedValues = parentsResponses?.map((response) => response.value)
+          childQuestion.inheritanceValues = parentsResponses?.map((response) => response.value)
         }
       })
     },
 
     updateResponsesForValueInheritanceQuestions(section) {
       section?.questions?.forEach((question) => {
-        question.inheritedValues?.forEach((inheritedValue, index) => {
+        question.inheritanceValues?.forEach((inheritedValue, index) => {
           const tableQuestion = section?.questions?.find((item) => item.questionId === question.tableQuestionId)
           if (tableQuestion?.hide) return
           const response = this.clonedResponses?.find(
@@ -393,8 +401,26 @@ export default {
       })
     },
 
-    // TODO (vietle-cgi)
-    verifySectionComplete() {},
+    verifySurveyComplete() {
+      this.sections?.forEach((section) => this.verifySectionComplete(section))
+    },
+
+    verifySectionComplete(section) {
+      const responseRequiredQuestions = section?.questions?.filter((question) => question.responseRequired)
+      const sectionIndex = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
+      const isLastSection = sectionIndex === this.sections?.length - 1
+      const isComplete = responseRequiredQuestions?.every((question) => {
+        const index = this.clonedResponses.findIndex(
+          (response) =>
+            !this.isHiddenOrDeleted(response) &&
+            ((isLastSection && response.value === 'Yes') || (!isLastSection && !isEmpty(response.value))) &&
+            (response.questionId === question.questionId || (this.isTableQuestion(question) && response.tableQuestionId === question.questionId)),
+        )
+        return question.hide || index > -1
+      })
+      section.isComplete = isComplete
+      return isComplete
+    },
 
     getOriginalQuestionResponse(response) {
       return this.originalResponses.find((item) => item.questionResponseId === response?.questionResponseId)

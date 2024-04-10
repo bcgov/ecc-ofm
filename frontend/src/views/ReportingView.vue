@@ -318,7 +318,7 @@ export default {
         this.processing = true
         const payload = {
           contactId: this.userInfo?.contactId,
-          facilityId: this.currentFacility?.facilityId,
+          facilityId: this.selectedFacility,
           surveyId: '16fb81de-6dc1-ee11-9079-000d3af4865d',
           fiscalYearId: this.selectedFiscalYear?.fiscalYearId,
           reportingMonthId: this.selectedReportingMonth?.monthId,

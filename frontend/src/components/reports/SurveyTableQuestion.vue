@@ -99,7 +99,7 @@ export default {
     },
 
     hasValueInheritanceChildQuestions() {
-      return this.questions?.some((question) => 'inheritedValues' in question)
+      return this.questions?.some((question) => 'inheritanceValues' in question)
     },
 
     valueInheritanceParentsQuestion() {
