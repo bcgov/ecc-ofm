@@ -157,7 +157,7 @@
                           rows="4"
                           :rules="rules.required"
                           :readonly="readOnly"
-                          @input="update(licenceDetail)"></v-textarea>
+                          @blur="update(licenceDetail)"></v-textarea>
                       </v-col>
                     </v-row>
                   </v-col>
