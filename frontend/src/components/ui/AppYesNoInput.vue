@@ -11,12 +11,12 @@ export default {
   props: {
     value: {
       type: Boolean,
-      required: false
-    }
+      required: false,
+    },
   },
   data() {
     return {
-      internalSelection: this.value,
+      internalSelection: undefined,
     }
   },
   watch: {
