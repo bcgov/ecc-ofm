@@ -12,25 +12,25 @@ export const AuthRoutes = Object.freeze({
 })
 
 export const ApiRoutes = Object.freeze({
+  APPLICATIONS: baseRoot + '/applications',
+  DOCUMENTS: baseRoot + '/documents',
+  FACILITIES: baseRoot + '/facilities',
+  FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
+  FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
+  FUNDING_AGREEMENTS: baseRoot + '/funding-agreements',
+  LICENCES: baseRoot + '/licences',
+  LOOKUP: baseRoot + '/config/lookup',
+  MESSAGES: baseRoot + '/messages',
+  NOTIFICATIONS: baseRoot + '/notifications',
+  ORGANIZATIONS: baseRoot + '/organizations',
+  ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
+  ORGANIZATIONS_USERS: '/:organizationId/users',
+  REPORTS: baseRoot + '/reports',
+  SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
+  SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
   USER: baseRoot + '/user',
   USER_FACILITIES: '/:contactId/facilities',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
-  MESSAGES: baseRoot + '/messages',
-  LOOKUP: baseRoot + '/config/lookup',
-  NOTIFICATIONS: baseRoot + '/notifications',
-  DOCUMENTS: baseRoot + '/documents',
-  APPLICATIONS: baseRoot + '/applications',
-  SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
-  ORGANIZATIONS: baseRoot + '/organizations',
-  FACILITIES: baseRoot + '/facilities',
-  ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
-  ORGANIZATIONS_USERS: '/:organizationId/users',
-  FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
-  FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
-  LICENCES: baseRoot + '/licences',
-  REPORTS: baseRoot + '/reports',
-  SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
-  FUNDING_AGREEMENTS: baseRoot + '/funding-agreements',
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
@@ -62,6 +62,15 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   APPROVED: 6,
 })
 
+export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({
+  DRAFT: 1,
+  CANCELLED: 2,
+  SUBMITTED: 3,
+  IN_REVIEW: 4,
+  ACTION_REQUIRED: 5,
+  APPROVED: 6,
+})
+
 export const FACILITY_TYPES = Object.freeze({
   RENT_LEASE: 1,
   OWNED_WITH_MORTGAGE: 2,
@@ -75,6 +84,25 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
   TRANSPORT: 3,
 })
 
+export const REQUEST_CATEGORY_NAMES = Object.freeze({
+  ACCOUNT_MAINTENANCE: 'Account Maintenance',
+})
+
+export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
+  ORGANIZATION_DETAILS: 'Organization Details',
+  FACILITY_DETAILS: 'Facility Details',
+  ORGANIZATION_PHONE_EMAIL: 'Organization phone/email',
+  FACILITY_PHONE_EMAIL: 'Facility phone/email',
+  ADD_CHANGE_LICENCE: 'Add/change a licence',
+  OTHER: 'Other',
+})
+
+export const GOOD_STANDING_STATUS_CODES = Object.freeze({
+  GOOD: 1,
+  NO_GOOD: 2,
+  INTEGRATION_ERROR: 3,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
@@ -84,8 +112,15 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  SUPP_TRANSPORT: 'Transportation information required',
+  SUPP_OTHER: 'Description of other costs required',
+  SUPP_DUPLICATE_VIN: 'Unique VIN required',
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
-
 export const OFM_PROGRAM = 'OFM Program'
+
+export const PHONE_FORMAT = '###-###-####'
+export const EMAIL_FORMAT = 'email@domain.com'
+
+export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan failed.'

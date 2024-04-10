@@ -6,7 +6,7 @@
       </v-col>
       <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
         <v-row no-gutters justify="end">
-          <AppButton size="large" width="300px" :loading="loading" @click="openChangeRequestDialog()">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="toggleChangeRequestDialog()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
@@ -67,6 +67,11 @@
         <AppBackButton width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
       </v-col>
     </v-row>
+    <NewRequestDialog
+      class="pa-0"
+      :show="showChangeRequestDialog"
+      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+      @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 
@@ -75,17 +80,20 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import OrganizationService from '@/services/organizationService'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
 import rolesMixin from '@/mixins/rolesMixin.js'
 import { mapState } from 'pinia'
 import { mapActions } from 'pinia'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { isEmpty } from 'lodash'
+import { REQUEST_CATEGORY_NAMES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppButton, AppBackButton, OrganizationInfo },
+  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog },
   mixins: [alertMixin, rolesMixin],
   data() {
     return {
@@ -95,10 +103,13 @@ export default {
       loading: false,
       organization: undefined,
       uploadedDocuments: [],
+      showChangeRequestDialog: false,
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+
     isAccountManager() {
       return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT)
     },
@@ -106,11 +117,11 @@ export default {
       return this.userInfo.facilities
     },
     otherFacilities() {
-      return this.facilities.filter((f) => !this.accountManagerFacilities.some(facility => facility.facilityId === f.facilityId))
+      return this.facilities.filter((f) => !this.accountManagerFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
-
   },
   async created() {
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
     await this.loadData()
   },
   methods: {
@@ -150,7 +161,7 @@ export default {
       try {
         this.uploadedDocuments = await DocumentService.getDocuments(this.userInfo.organizationId)
       } catch (error) {
-        this.setFailureAlert('Failed to get organization\'s Inclusion Policy Document(s)', error)
+        this.setFailureAlert("Failed to get organization's Inclusion Policy Document(s)", error)
         return
       }
     },
@@ -165,12 +176,13 @@ export default {
     /**
      * Open the Change Request dialog
      */
-    openChangeRequestDialog() {
-      this.setWarningAlert('This feature will be implemented in a future sprint')
+    toggleChangeRequestDialog() {
+      this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
 
     async saveOrganization(updatedOrganization) {
       try {
+        delete updatedOrganization.goodStandingStatus
         await OrganizationService.updateOrganization(this.organization.organizationId, updatedOrganization)
         this.organization = updatedOrganization
       } catch (error) {
@@ -200,11 +212,13 @@ export default {
           )
         }
       } catch (error) {
-        this.setFailureAlert('Failed Inclusion Policy Document(s) update on Organization: ' + this.organization.organizationId, error)
-        return
+        if (error?.response?.data?.status === 422) {
+          this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
+        } else {
+          this.setFailureAlert(`Failed Inclusion Policy Document(s) update on Organization: ${this.organization.organizationId}`, error)
+        }
       }
     },
-
   },
 }
 </script>

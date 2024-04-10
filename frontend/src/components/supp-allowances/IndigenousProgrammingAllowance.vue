@@ -1,24 +1,30 @@
 <template>
-  <v-row no-gutters class="mr-2 my-2">
+  <div v-if="isReadOnly">
+    <AppWarningMessage>
+      <div>You have already received the Indigenous Programming Allowance for the current term.</div>
+    </AppWarningMessage>
+  </div>
+  <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
-      <ul>
-        <li><AppLabel>Purpose of the Fund:</AppLabel></li>
-      </ul>
-      The Indigenous Programming Allowance is intended to provide additional funds to child care providers to support the participant’s delivery of Indigenous curriculum in collaboration with
-      Indigenous Peoples in their community. To reduce barriers to accessing these funds, all expenses are considered eligible, except for staffing enhancements for the purpose of reducing ratio. 
-      Providers may reach out to BC Aboriginal Child Care Society (BCACCS), Métis Nation of BC (MNBC), and/or the Indigenous Perspectives Society (IPS) for resources that support child care providers
-      to enhance the their programs.
+      <AppLabel>Purpose of the fund:</AppLabel>
+
+      To provide additional funds to support the delivery of Indigenous curriculum in collaboration with Indigenous Peoples in their community.
     </v-col>
   </v-row>
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <ul>
-        <li>
-          <AppLabel>Funding Amount:</AppLabel>
-          Child care facilities may access the Indigenous Programming Allowance annually, as follows:
-        </li>
-      </ul>
+      <AppLabel>Eligible expenses:</AppLabel>
+
+      To reduce barriers to accessing these funds, all expenses are eligible except for staffing enhancements for the purpose of reducing ratio.
+    </v-col>
+  </v-row>
+  <br />
+  <v-row no-gutters class="mr-2 my-2">
+    <v-col cols="12">
+      <AppLabel>Funding Amount:</AppLabel>
+      Child care facilities may access the Indigenous Programming Allowance annually, as follows:
+
       <v-row no-gutters>
         <v-col cols="12" class="ml-10 my-2">
           <ul>
@@ -33,29 +39,36 @@
   <v-divider class="mt-2"></v-divider>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      Ineligible expences include: Staffing enhencements for the purposes of reducing ratio.
-      <br />
-      <br />
-      Please describe how you intend to use this funding
-      <strong>(Eligible Expences may include, but are not limited to):</strong>
+      Indicate how you plan to use this funding. Select all that apply.
+      <strong>Eligible Expences may include, but are not limited to:</strong>
     </v-col>
   </v-row>
 
-  <v-row v-for="item in CHECKBOX_LABELS" :key="item.value">
-    <v-checkbox v-model="model.indigenousFundingModel" density="compact" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
+  <v-row v-for="item in INDIG_CHECKBOX_LABELS" :key="item.value" no-gutters>
+    <v-checkbox v-model="model.indigenousFundingModel" density="compact" :disabled="isReadOnly" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
-    <v-textarea v-model.trim="model.indigenousOtherDescription" placeholder="Detailed description of other expenses" counter maxlength="1000" variant="outlined" :rules="rules.required"></v-textarea>
+    <v-textarea
+      v-model.trim="model.indigenousOtherDescription"
+      :disabled="isReadOnly"
+      placeholder="Detailed description of other expenses"
+      counter
+      maxlength="1000"
+      variant="outlined"
+      :rules="rules.required"></v-textarea>
   </v-row>
 </template>
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
+import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
+import { INDIG_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
+import { isApplicationLocked } from '@/utils/common'
 
 export default {
-  components: { AppLabel },
+  components: { AppLabel, AppWarningMessage },
   props: {
     indigenousProgrammingModel: {
       type: Object,
@@ -77,6 +90,9 @@ export default {
     isOtherBoxDisplayed() {
       return this.model.indigenousFundingModel.includes('9')
     },
+    isReadOnly() {
+      return isApplicationLocked(this.indigenousProgrammingModel?.statusCode)
+    },
   },
   watch: {
     model: {
@@ -88,18 +104,7 @@ export default {
   },
   async created() {
     this.model = { ...this.indigenousProgrammingModel }
-
-    this.CHECKBOX_LABELS = [
-      { label: 'Honoraria for Elder involvement, language revitalization and/ or other resource people including curriculum development resource', value: '1' },
-      { label: 'Culturally based meals and traditional foods', value: '2' },
-      { label: 'Materials for a cultural program (beads, wood, food, etc.)', value: '3' },
-      { label: 'Books, music, videos, and arts and crafts materials', value: '4' },
-      { label: 'Culturally relevant toys and games', value: '5' },
-      { label: 'Facility décor enhancement-pictures, including artwork, outdoor play, and natural materials', value: '6' },
-      { label: 'Field trips and outings', value: '7' },
-      { label: 'Land-based play support', value: '8' },
-      { label: 'Other', value: '9' },
-    ]
+    this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
   },
 }
 </script>

@@ -32,6 +32,11 @@ const RequestCategoryMappings = [
   { back: 'ofm_request_categoryid', front: 'categoryId' },
 ]
 
+const RequestSubCategoryMappings = [
+  { back: 'ofm_name', front: 'categoryName' },
+  { back: 'ofm_subcategoryid', front: 'subCategoryId' },
+]
+
 const FiscalYearMappings = [
   { back: 'ofm_fiscal_yearid', front: 'fiscalYearId' },
   { back: 'ofm_caption', front: 'name' },
@@ -189,6 +194,8 @@ const OrganizationMappings = [
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_ownership', front: 'ownership' },
   { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
+  { back: 'ofm_good_standing_status', front: 'goodStandingStatusCode' },
+  { back: 'ofm_good_standing_status@OData.Community.Display.V1.FormattedValue', front: 'goodStandingStatus' },
 ]
 
 const FacilityMappings = [
@@ -248,6 +255,8 @@ const LicenceDetailsMappings = [
   { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
   { back: 'ofm_care_type', front: 'careType' },
   { back: 'ofm_overnight_care', front: 'overnightCare' },
+  { back: 'ofm_apply_room_split_condition', front: 'applyRoomSplitCondition' },
+  { back: 'ofm_room_split_details', front: 'roomSplitDetails' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -275,12 +284,26 @@ const FundingAgreementMappings = [
 ]
 //the three different supp applications share the same data structure, so irrelevant fields will just be null.
 const SupplementaryApplicationMappings = [
+  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
+  { back: 'ofm_allowance_number', front: 'supplementaryReferenceNumber' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'supplementaryApplicationStatus' },
+  { back: 'ofm_submittedon', front: 'supplementaryApplicationSubmittedDate' },
   { back: 'ofm_allowance_type', front: 'supplementaryType' },
+  { back: 'ofm_allowance_type@OData.Community.Display.V1.FormattedValue', front: 'supplementaryTypeDescription' },
   { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
   { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
   { back: 'ofm_needs_description', front: 'supportOtherDescription' },
-  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
   { back: 'ofm_needs_expenses', front: 'supportFundingModel' },
+  { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
+  { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'ofm_transport_monthly_lease', front: 'monthlyLease' },
+  { back: 'ofm_transport_estimated_yearly_km', front: 'estimatedMileage' },
+  { back: 'ofm_transport_odometer', front: 'odometer' },
+  { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
+  { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
 ]
 
 const SurveySectionMappings = [
@@ -362,6 +385,7 @@ module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   RequestCategoryMappings,
+  RequestSubCategoryMappings,
   SupplementaryApplicationMappings,
   SurveySectionMappings,
   SurveyQuestionMappings,

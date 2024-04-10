@@ -9,7 +9,7 @@ async function getNotifications(req, res) {
     const operation =
       'emails?$select=description,lastopenedtime,subject,createdon,ofm_is_read&$expand=email_activity_parties($filter=(_partyid_value eq ' +
       req.params.contactId +
-      '))&$filter=(statecode eq 1) and (email_activity_parties/any(o1:(o1/_partyid_value eq ' +
+      '))&$filter=(statecode eq 1 and ofm_show_notification_on_portal eq true) and (email_activity_parties/any(o1:(o1/_partyid_value eq ' +
       req.params.contactId +
       ')))&pageSize=500'
     const response = await getOperation(operation)

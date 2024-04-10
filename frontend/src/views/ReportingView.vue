@@ -146,8 +146,8 @@
           <v-data-table :headers="headers" :items="displayedFacilities" item-key="reportId" :items-per-page="15" density="compact">
             <template #[`item.alertType`]="{ item }">
               <v-icon v-if="item.alertType === 'Due'" color="#c48600" size="34" title="Due now">mdi-alert</v-icon>
-              <v-icon v-else-if="item.alertType === 'Overdue'" color="red" size="34" title="Overdue">mdi-alert-octagon</v-icon>
-              <v-icon v-else-if="item.alertType === 'Completed'" color="green" size="34" title="Completed">mdi-check-circle</v-icon>
+              <v-icon v-else-if="item.alertType === 'Overdue'" color="error" size="34" title="Overdue">mdi-alert-octagon</v-icon>
+              <v-icon v-else-if="item.alertType === 'Completed'" color="success" size="34" title="Completed">mdi-check-circle</v-icon>
             </template>
             <template #[`item.actions`]="{ item }">
               <router-link to="">

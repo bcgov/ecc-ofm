@@ -32,7 +32,6 @@
       <v-checkbox
         id="confirmation"
         v-model="licenceDeclaration"
-        :value="1"
         color="primary"
         :rules="rules.required"
         :disabled="readonly"
@@ -131,7 +130,7 @@ export default {
   },
   created() {
     this.$emit('process', false)
-    this.licenceDeclaration = this.currentApplication?.licenceDeclaration ? 1 : undefined
+    this.licenceDeclaration = this.currentApplication?.licenceDeclaration
     this.panel = this.allLicenceIDs
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
   },
@@ -148,7 +147,7 @@ export default {
         this.$emit('process', true)
         this.processing = true
         const payload = {
-          licenceDeclaration: this.licenceDeclaration ? 1 : 0,
+          licenceDeclaration: this.licenceDeclaration,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)

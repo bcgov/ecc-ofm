@@ -3,7 +3,7 @@ const { getOperation, getLabelFromValue } = require('./utils')
 const HttpStatus = require('http-status-codes')
 const _ = require('lodash')
 const cache = require('memory-cache')
-const { RequestCategoryMappings, FiscalYearMappings, MonthMappings } = require('../util/mapping/Mappings')
+const { RequestCategoryMappings, FiscalYearMappings, MonthMappings, RequestSubCategoryMappings } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('../components/logger')
 
@@ -14,7 +14,7 @@ async function getRequestCategories() {
   let requestCategories = lookupCache.get('requestCategories')
   if (!requestCategories) {
     requestCategories = []
-    let response = await getOperation('ofm_request_categories')
+    const response = await getOperation('ofm_request_categories')
     response?.value?.forEach((item) => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)))
     lookupCache.put('requestCategories', requestCategories, ONE_HOUR_MS)
   }
@@ -41,6 +41,17 @@ async function getMonths() {
     lookupCache.put('months', months, ONE_HOUR_MS)
   }
   return months
+}
+
+async function getRequestSubCategories() {
+  let requestSubCategories = lookupCache.get('requestSubCategories')
+  if (!requestSubCategories) {
+    requestSubCategories = []
+    const response = await getOperation('ofm_subcategories?$orderby=ofm_display_order')
+    response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
+    lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
+  }
+  return requestSubCategories
 }
 
 async function fetchAndCacheData(cacheKey, operationName) {
@@ -86,8 +97,9 @@ async function getReportQuestionTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
+    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
       getRequestCategories(),
+      getRequestSubCategories(),
       getUserRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
@@ -98,6 +110,7 @@ async function getLookupInfo(_req, res) {
     ])
     const resData = {
       requestCategories: requestCategories,
+      requestSubCategories: requestSubCategories,
       userRoles: userRoles,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,

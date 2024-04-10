@@ -4,12 +4,21 @@ const { MappableObjectForFront, MappableObjectForBack } = require('../util/mappi
 const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
+const log = require('./logger')
+
+function mapLatestActivityDate(application) {
+  try {
+    const ministryLastUpdated = new Date(application?.ministryLastUpdated)
+    const providerLastUpdated = new Date(application?.providerLastUpdated)
+    application.latestActivityDate = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
+  } catch (e) {
+    log.info(e)
+  }
+}
 
 function mapApplicationObjectForFront(data) {
   const application = new MappableObjectForFront(data, ApplicationMappings).toJSON()
-  const ministryLastUpdated = new Date(application?.ministryLastUpdated)
-  const providerLastUpdated = new Date(application?.providerLastUpdated)
-  application.latestActivity = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
+  mapLatestActivityDate(application)
   return application
 }
 
@@ -17,7 +26,7 @@ function mapSupplementaryApplicationObjectForFront(data) {
   const applications = []
   data.forEach((suppApplication) => {
     const mappedApplication = new MappableObjectForFront(suppApplication, SupplementaryApplicationMappings).toJSON()
-
+    mapLatestActivityDate(mappedApplication)
     if (mappedApplication.indigenousFundingModel) {
       mappedApplication.indigenousFundingModel = mappedApplication.indigenousFundingModel.split(',')
     } else if (mappedApplication.supportFundingModel) {
@@ -65,6 +74,7 @@ async function getApplication(req, res) {
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
+
     // ofm_contact, ofm_secondary_contact, and ofm_expense_authority fields are lookup fields in CRM, so we need to replace them with data binding syntax
     if ('_ofm_contact_value' in payload || '_ofm_secondary_contact_value' in payload || '_ofm_expense_authority_value' in payload) {
       payload['ofm_contact@odata.bind'] = payload['_ofm_contact_value'] ? `/contacts(${payload['_ofm_contact_value']})` : null
@@ -96,9 +106,19 @@ async function createApplication(req, res) {
   }
 }
 
+function buildGetSupplementaryApplicationsFilterQuery(query) {
+  let filterQuery = 'and statuscode ne 2'
+  if (isEmpty(query)) return filterQuery
+  const mappedQuery = new MappableObjectForBack(query, SupplementaryApplicationMappings).toJSON()
+  Object.entries(mappedQuery)?.forEach(([key, value]) => {
+    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
+  })
+  return filterQuery
+}
+
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode eq 1)`
+    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req.query)} )`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
@@ -115,10 +135,13 @@ async function createSupplementaryApplication(req, res) {
       payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
     }
 
+    delete payload['_ofm_application_value']
+
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
     const response = await postOperation('ofm_allowances', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
   } catch (e) {
+    log.info(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -131,6 +154,9 @@ async function updateSupplementaryApplication(req, res) {
     } else if (payload.ofm_needs_expenses) {
       payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
     }
+
+    delete payload['_ofm_application_value']
+
     const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {

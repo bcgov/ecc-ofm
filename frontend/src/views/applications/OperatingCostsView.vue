@@ -60,7 +60,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
@@ -172,7 +172,6 @@ export default {
         let reloadApplication = false
         this.$emit('process', true)
         this.processing = true
-        this.documentsToUpload = this.documentsToUpload?.filter((document) => document.isValidFile && document.file)
         if (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.documentsToDelete))) {
           await this.processDocuments()
           reloadApplication = true
@@ -190,7 +189,7 @@ export default {
         }
       } catch (error) {
         if (error?.response?.data?.status === 422) {
-          this.setFailureAlert('Supporting documents failed virus scan, application not saved', error)
+          this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
         } else {
           this.setFailureAlert('Failed to save your application', error)
         }
