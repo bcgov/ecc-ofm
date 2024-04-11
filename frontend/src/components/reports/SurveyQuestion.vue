@@ -147,7 +147,7 @@ export default {
       },
       deep: true,
     },
-    updatedResponse: {
+    'updatedResponse.value': {
       handler() {
         if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
         this.$emit('update', cloneDeep(this.updatedResponse))
@@ -184,7 +184,12 @@ export default {
       this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
       this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
       this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
-      this.updatedResponse.value = this.isMultipleChoiceQuestion(this.question?.type) ? convertStringToArray(this.updatedResponse.value) : this.updatedResponse.value
+
+      if (this.isMultipleChoiceQuestion(this.question?.type)) {
+        this.updatedResponse.value = convertStringToArray(this.updatedResponse.value)
+      } else if (['Number', 'Currency'].includes(this.getReportQuestionTypeNameById(this.question?.type)) && !this.updatedResponse.questionResponseId) {
+        this.updatedResponse.value = '0'
+      }
     },
 
     toggleAllItems() {
