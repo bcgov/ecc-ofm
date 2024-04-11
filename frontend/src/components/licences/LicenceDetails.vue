@@ -212,13 +212,6 @@ export default {
       return this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
     },
   },
-  watch: {
-    requiresSplitClassroom: {
-      handler(newVal) {
-        console.log('requiresSplitClassroom', newVal)
-      },
-    },
-  },
   async created() {
     this.BLANK_FIELD = '- - - -'
     this.panel = this.allLicenceDetailsID

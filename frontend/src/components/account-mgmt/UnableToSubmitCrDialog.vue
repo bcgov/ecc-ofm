@@ -66,8 +66,6 @@ export default {
   data() {
     return {
       isDisplayed: false,
-      CCOF_URL: StaticConfig.CCOF_URL,
-      TDAD_CONTACT_EMAIL: StaticConfig.TDAD_CONTACT_EMAIL,
     }
   },
   watch: {
@@ -82,8 +80,8 @@ export default {
     this.TITLE_CCOF_TDAD = 'This facility is not enrolled in OFM'
     this.MSG_TEXT_CCOF = 'Participants of the CCOF program may change information using the following MyCCS Change Form button.'
     this.MSG_TEXT_TDAD = 'Participants of the TDAD program should contact the ministry at '
-    /*     this.TDAD_CONTACT_EMAIL = '10aDayCentres@gov.bc.ca'
-        this.CCOF_HREF = 'https://mychildcareservices.gov.bc.ca/change/information' */
+    this.CCOF_URL = StaticConfig.CCOF_URL
+    this.TDAD_CONTACT_EMAIL = StaticConfig.TDAD_CONTACT_EMAIL
   },
   methods: {
     closeDialog() {
