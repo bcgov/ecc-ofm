@@ -36,7 +36,7 @@
           <v-select v-model="selectedReportingMonth" :items="months" item-title="name" density="compact" variant="outlined" hide-details return-object />
         </v-col>
       </v-row>
-      <AppButton id="create-survey" :loading="processing" class="my-4" size="large" width="400px" @click="createSurveyResponse">Create New Survey Response</AppButton>
+      <AppButton id="create-survey" :loading="processing" class="my-4" size="large" width="400px" @click="createSurveyResponse">Submit Monthly Report</AppButton>
     </v-card>
     <hr class="my-8" />
     <v-row>
