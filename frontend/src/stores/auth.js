@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 
+import { useAppStore } from './app'
+
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
   state: () => ({
@@ -17,8 +19,14 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
     hasFacilities: (state) => state.userInfo?.facilities?.length > 0,
-    hasRole: (state) => {
-      return (role) => state.userInfo?.role === role
+    // hasRole: (state) => {
+    //   return (role) => state.userInfo?.role === role
+    // },
+    hasPermission: (state) => {
+      return (permission) => {
+        const app = useAppStore()
+        return app.roles.find(state.userInfo?.role)?.permissions.some((rp) => rp === permission)
+      }
     },
   },
   actions: {

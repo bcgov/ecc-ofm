@@ -66,18 +66,24 @@ async function getLicenceTypes() {
   return fetchAndCacheData('licenceTypes', 'ecc_licence_type')
 }
 
+function getRoles() {
+  // TODO (weskubo-cgi) Replace with D365 API call
+  return [{ role: 'Administrator', permissions: [] }]
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
+    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes, roles] = await Promise.all([
       getRequestCategories(),
       getRequestSubCategories(),
       getUserRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
       getLicenceTypes(),
+      getRoles(),
     ])
     const resData = {
       requestCategories: requestCategories,
@@ -86,6 +92,7 @@ async function getLookupInfo(_req, res) {
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
+      roles: roles,
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {

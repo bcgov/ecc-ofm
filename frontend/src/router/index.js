@@ -343,8 +343,8 @@ router.beforeEach((to, _from, next) => {
               if (!authStore.hasFacilities) {
                 return next('unauthorized')
               }
-              // Validate specific role
-              if (to.meta.role && !authStore.hasRole(to.meta.role)) {
+              // Validate specific permission
+              if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
                 return next('unauthorized')
               }
             }
