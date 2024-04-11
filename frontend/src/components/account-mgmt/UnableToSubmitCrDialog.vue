@@ -1,5 +1,5 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Unable to submit your request" class="text-wrap" :loading="loading" persistent max-width="40%" @close="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Unable to submit your request" class="text-wrap" persistent max-width="40%" @close="closeDialog">
     <template #content>
       <div align="center" class="confirm-dialog-text">
         <template v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM">
@@ -19,19 +19,17 @@
     <template #button>
       <v-row justify="space-around" class="pt-3">
         <v-col cols="12" sm="1" md="5" class="d-flex justify-center">
-          <AppButton id="dialog-cancel" :primary="false" class="mr-10" size="large" width="175px" :loading="loading" @click="closeDialog">Cancel</AppButton>
+          <AppButton id="dialog-cancel" :primary="false" class="mr-10" size="large" width="175px" @click="closeDialog">Cancel</AppButton>
           <AppButton v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM"
             id="dialog-continue"
             size="large"
             width="250px"
-            :loading="loading"
-            :href="CCOF_HREF"
+            :href="CCOF_URL"
             @click="closeDialog">MyCCS Change Form</AppButton>
           <AppButton v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM"
             id="dialog-continue"
             size="large"
             width="175px"
-            :loading="loading"
             :href="`mailto:${TDAD_CONTACT_EMAIL}`"
             @click="closeDialog">Send Email</AppButton>
         </v-col>
@@ -43,13 +41,12 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
-import alertMixin from '@/mixins/alertMixin'
+import StaticConfig from '@/common/staticConfig'
 import { PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 
 export default {
-  name: 'DuplicateUserDialog',
+  name: 'UnableToSubmitCrDialog',
   components: { AppButton, AppDialog },
-  mixins: [alertMixin],
   props: {
     show: {
       type: Boolean,
@@ -68,8 +65,9 @@ export default {
   emits: ['close'],
   data() {
     return {
-      loading: false,
       isDisplayed: false,
+      CCOF_URL: StaticConfig.CCOF_URL,
+      TDAD_CONTACT_EMAIL: StaticConfig.TDAD_CONTACT_EMAIL,
     }
   },
   watch: {
@@ -84,17 +82,12 @@ export default {
     this.TITLE_CCOF_TDAD = 'This facility is not enrolled in OFM'
     this.MSG_TEXT_CCOF = 'Participants of the CCOF program may change information using the following MyCCS Change Form button.'
     this.MSG_TEXT_TDAD = 'Participants of the TDAD program should contact the ministry at '
-    this.TDAD_CONTACT_EMAIL = '10aDayCentres@gov.bc.ca'
-    this.CCOF_HREF = 'https://mychildcareservices.gov.bc.ca/change/information'
+    /*     this.TDAD_CONTACT_EMAIL = '10aDayCentres@gov.bc.ca'
+        this.CCOF_HREF = 'https://mychildcareservices.gov.bc.ca/change/information' */
   },
   methods: {
     closeDialog() {
       this.$emit('close')
-    },
-
-    sendEmailAndCloseDialog() {
-      window.location.href = `mailto:${this.TDAD_CONTACT_EMAIL}`;
-      this.closeDialog();
     },
   },
 }

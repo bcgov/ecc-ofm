@@ -33,7 +33,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
-                :disabled="isLoading || isDisabled"></v-text-field>
+                :disabled="isLoadingOrDisabled"></v-text-field>
             </v-col>
           </v-row>
           <template v-if="isAnAccountMaintenanceRequest">
@@ -132,7 +132,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading || isDisabled"></v-text-field>
+                  :disabled="isLoadingOrDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -148,7 +148,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading || isDisabled"></v-text-field>
+                  :disabled="isLoadingOrDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -164,7 +164,7 @@
                   maxlength="100"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading || isDisabled"></v-text-field>
+                  :disabled="isLoadingOrDisabled"></v-text-field>
               </v-col>
             </v-row>
           </template>
@@ -181,7 +181,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading || isDisabled"></v-text-field>
+                  :disabled="isLoadingOrDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -196,7 +196,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading || isDisabled"></v-text-field>
+                  :disabled="isLoadingOrDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -211,7 +211,7 @@
                   maxlength="100"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading || isDisabled"></v-text-field>
+                  :disabled="isLoadingOrDisabled"></v-text-field>
               </v-col>
             </v-row>
           </template>
@@ -227,7 +227,7 @@
                 maxlength="1000"
                 variant="outlined"
                 :rules="rules.required"
-                :disabled="isLoading || isDisabled"></v-textarea>
+                :disabled="isLoadingOrDisabled"></v-textarea>
             </v-col>
           </v-row>
           <v-row v-if="showSupportingDocuments" no-gutters align="center">
@@ -353,7 +353,7 @@ export default {
     facilities() {
       return this.userInfo?.facilities
     },
-    getFacilityAsArray() {
+    requestFacilities() {
       return [].concat(this.newRequestModel?.facilities || [])
     },
     allFacilitiesSelected() {
@@ -493,9 +493,9 @@ export default {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
-      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.getFacilityAsArray)
-      if ((this.getFacilityAsArray[0]?.programCode in programCodeMapping) && !hasValidApplicationOrFunding) {
-        this.preventChangeRequestType = programCodeMapping[this.getFacilityAsArray[0].programCode]
+      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
+      if ((this.requestFacilities[0]?.programCode in programCodeMapping) && !hasValidApplicationOrFunding) {
+        this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
         this.showFacilityNotInOFMMessage = true
         return false
       }
@@ -699,7 +699,13 @@ export default {
         this.organizationModel = {}
         this.facilityModel = {}
       }
-    }
+      this.disabled = false
+      this.isInitialLoad = false
+    },
+
+    isLoadingOrDisabled() {
+      return this.isLoading || this.isDisabled
+    },
   }
 }
 </script>
