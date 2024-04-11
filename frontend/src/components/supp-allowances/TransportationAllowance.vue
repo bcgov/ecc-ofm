@@ -32,6 +32,12 @@
       Travel related to operations (e.g., grocery store), driver wages, other transportation, tickets or traffic fines, licensing costs.
     </v-col>
   </v-row>
+
+  <div v-if="isAnyApplicationReadOnly">
+    <AppWarningMessage>
+      <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
+    </AppWarningMessage>
+  </div>
   <v-divider class="my-5"></v-divider>
 
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
@@ -39,8 +45,8 @@
       <v-col cols="1">
         <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
       </v-col>
-      <v-col>
-        <v-icon large @click="deleteModel(model, index)" class="mt-n2">mdi-delete-forever</v-icon>
+      <v-col v-if="!isReadOnly(model)">
+        <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
       </v-col>
     </v-row>
     <v-divider class="my-3"></v-divider>
@@ -52,8 +58,22 @@
               <p>VIN:</p>
             </v-col>
             <v-col cols="6" xl="7" class="pt-2 text-center">
-              <v-text-field v-model="model.VIN" required variant="outlined" density="compact" :rules="rules.required" :disabled="readonly" maxlength="17"></v-text-field>
+              <v-text-field
+                v-model="model.VIN"
+                required
+                variant="outlined"
+                density="compact"
+                :rules="rules.required"
+                :disabled="isReadOnly(model)"
+                maxlength="17"
+                @input="model.VIN = model.VIN.toUpperCase()"></v-text-field>
             </v-col>
+            <div v-if="hasDuplicateVIN(model, models)">
+              <v-row class="my-5">
+                <v-icon size="large" class="alert-icon pb-1 ml-3">mdi-alert-circle</v-icon>
+                <p class="text-error ml-2">Duplicate VIN. Please ensure each VIN is unique.</p>
+              </v-row>
+            </div>
           </v-row>
         </v-col>
         <v-col class="px-4">
@@ -70,7 +90,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="[rules.max(999999), ...rules.required]"
-                :disabled="readonly"></v-text-field>
+                :disabled="isReadOnly(model)"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -88,7 +108,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="[rules.max(999999), ...rules.required]"
-                :disabled="readonly"></v-text-field>
+                :disabled="isReadOnly(model)"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -98,13 +118,13 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" class="pt-2 text-center">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="readonly" prefix="$" maxlength="6"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="isReadOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
       </v-col>
       <v-col cols="12" lg="6" class="pt-0 w-75">
-        <div class="pa-6 greyBorder">
+        <v-card class="pa-6 greyBorder">
           <AppLabel>Upload supporting documents:</AppLabel>
           <ul class="ml-7">
             <li>Picture of your odometer at the time of this application.</li>
@@ -115,7 +135,7 @@
             :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
             v-model="model.documentsToUpload"
             entityName="ofm_allowances"
-            :readonly="readonly"
+            :loading="isReadOnly(model)"
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
 
@@ -125,7 +145,7 @@
               <p class="text-error ml-2">You must upload all Supporting Documents</p>
             </v-row>
           </div>
-        </div>
+        </v-card>
       </v-col>
     </v-row>
 
@@ -143,12 +163,14 @@ import rules from '@/utils/rules'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
+import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
 
 export default {
-  components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
+  components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload, AppWarningMessage },
   props: {
     transportModels: {
       type: Array,
@@ -164,7 +186,6 @@ export default {
       panel: [],
       models: [],
       rules,
-      readonly: false, //update later when we have submitted forms
       monthlyLeaseFormat: {
         nullValue: '0.00',
         min: 0,
@@ -178,8 +199,12 @@ export default {
     isAddButtonEnabled() {
       return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
     },
+    isAnyApplicationReadOnly() {
+      return this.models?.some((el) => this.isReadOnly(el))
+    },
   },
   async created() {
+    this.hasDuplicateVIN = hasDuplicateVIN
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
   },
@@ -221,6 +246,12 @@ export default {
         break
       }
       this.$emit('deleteDocument', documentId)
+    },
+    isReadOnly(model) {
+      if (!model.statusCode) {
+        return false
+      }
+      return isApplicationLocked(model?.statusCode)
     },
     areDocumentsMissing(model) {
       if (model.monthlyLease == 0) {

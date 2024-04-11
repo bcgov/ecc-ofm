@@ -118,8 +118,10 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  SPLIT_CLASSROOM_INFO: 'Description of split classrooms required',
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',
+  SUPP_DUPLICATE_VIN: 'Unique VIN required',
 })
 
 export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
@@ -133,3 +135,5 @@ export const OFM_PROGRAM = 'OFM Program'
 
 export const PHONE_FORMAT = '###-###-####'
 export const EMAIL_FORMAT = 'email@domain.com'
+
+export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan failed.'

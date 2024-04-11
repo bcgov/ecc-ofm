@@ -56,7 +56,10 @@
                   v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
                   :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
                 <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"></SupportNeedsSummary>
-                <TransportationSummary v-if="panel.id === 'transportation' && panel.supplementaryApplicationId" :transportModels="getTransportModels()"></TransportationSummary>
+                <TransportationSummary
+                  v-if="panel.id === 'transportation' && panel.supplementaryApplicationId"
+                  :draftTransportModels="getTransportModels()"
+                  :allTransportModels="allTransportModels"></TransportationSummary>
               </v-expansion-panel-text>
             </div>
           </v-expansion-panel>
@@ -87,7 +90,8 @@ import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummar
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/components/supp-allowances/suppConstants.js'
+import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
+import { hasDuplicateVIN } from '@/utils/common'
 
 import rules from '@/utils/rules'
 
@@ -125,6 +129,7 @@ export default {
       panel: undefined,
       showCancelDialog: false,
       models: [],
+      allTransportModels: undefined,
       rules,
       monthlyLeaseFormat: {
         nullValue: '0.00',
@@ -155,10 +160,17 @@ export default {
     },
     isTransportComplete() {
       const models = this.getTransportModels()
-      return models.every((el) => el.VIN && el.estimatedMileage && el.odometer && el.uploadedDocuments?.length > 0)
+      return models.every((model) => {
+        if (!model.VIN || !model.estimatedMileage || !model.odometer || hasDuplicateVIN(model, this.allTransportModels)) {
+          return false
+        } else if (model.monthlyLease == 0) {
+          return model.uploadedDocuments?.length != 0
+        }
+        return model.uploadedDocuments?.length > 1
+      })
     },
     isApplicationComplete() {
-      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete //&&checkbox clicked
+      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete
     },
     readonly() {
       return !this.isApplicationComplete || this.processing || this.loading
@@ -224,6 +236,10 @@ export default {
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
 
+        //we need submitted transport applications to verify that all VINs are unique, even in past applications
+        this.allTransportModels = [...this.getTransportModels()]
+        this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
+
         for (const el of this.models) {
           const found = this.PANELS.find((panel) => panel.supplementaryType == el.supplementaryType)
           found.supplementaryApplicationId = el.supplementaryApplicationId
@@ -259,7 +275,7 @@ export default {
       }
     },
     setSubmit() {
-      this.$emit('setSubmit', this.supplementaryDeclaration)
+      this.$emit('setSubmit', this.supplementaryDeclaration && this.isApplicationComplete)
     },
     async saveApplication(showAlert = false, isSubmit = false) {
       try {

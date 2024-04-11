@@ -243,6 +243,8 @@ const LicenceDetailsMappings = [
   { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
   { back: 'ofm_care_type', front: 'careType' },
   { back: 'ofm_overnight_care', front: 'overnightCare' },
+  { back: 'ofm_apply_room_split_condition', front: 'applyRoomSplitCondition' },
+  { back: 'ofm_room_split_details', front: 'roomSplitDetails' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]

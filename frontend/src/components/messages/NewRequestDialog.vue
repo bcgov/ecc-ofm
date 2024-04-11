@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="70%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="60%" @close="closeNewRequestDialog">
       <template #content>
-        <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-12 mx-lg-8">
+        <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-5 mx-lg-1">
           <v-row no-gutters class="mt-2">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
               <AppLabel variant="modal">Topic:</AppLabel>
@@ -50,21 +50,18 @@
                   @change="(val) => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"
                   density="compact"
                   :class="changeTypeClass"
-                  hide-details>
-                </v-checkbox>
+                  hide-details></v-checkbox>
               </v-col>
             </v-row>
             <v-row no-gutters class="pb-4">
               <v-col class="d-flex flex-column align-center">
-                <span class="v-messages error-text-red" v-if="changeTypeClass !== ''">
-                  At least one Change type is required
-                </span>
+                <span class="v-messages error-text-red" v-if="changeTypeClass !== ''">At least one Change type is required</span>
               </v-col>
             </v-row>
           </template>
           <v-row v-if="showFacility" no-gutters>
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
-              <AppLabel variant="modal">Facility{{ (!isAnAccountMaintenanceRequest) ? '(s):' : ':' }}</AppLabel>
+              <AppLabel variant="modal">Facility{{ !isAnAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
               <v-select
@@ -78,8 +75,7 @@
                 item-title="facilityName"
                 :disabled="isLoading"
                 return-object
-                hide-details>
-              </v-select>
+                hide-details></v-select>
               <v-select
                 v-else
                 id="selectFacility"
@@ -274,11 +270,15 @@
         </v-row>
       </template>
     </AppDialog>
-    <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog" :isInvokedFromMessages="isInvokedFromMessages" @close="toggleNewRequestConfirmationDialog" />
     <UnableToSubmitCrDialog
       :show="showUnableToSubmitCrDialog"
       :displayType="preventChangeRequestType"
       @close="toggleUnableToSubmitCrDialog" />
+    <NewRequestConfirmationDialog
+      :referenceNumber="referenceNumber"
+      :show="showNewRequestConfirmationDialog"
+      :isInvokedFromMessages="isInvokedFromMessages"
+      @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -300,7 +300,7 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import OrganizationService from '@/services/organizationService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
@@ -375,26 +375,58 @@ export default {
       return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)
     },
     isAnyDetailOrChangeChecked() {
-      return this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.OTHER)
+      return (
+        this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_DETAILS) ||
+        this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
+        this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE) ||
+        this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.OTHER)
+      )
     },
     isOnlyPhoneEmailChecked() {
-      return (((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 1) ||
-        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) && this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) && this.newRequestModel.subCategories.length === 2))
+      return (
+        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) &&
+          this.newRequestModel.subCategories.length === 1) ||
+        (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) &&
+          this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) &&
+          this.newRequestModel.subCategories.length === 2)
+      )
     },
     showFacility() {
-      return this.isAnAccountMaintenanceRequest && (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) || !this.isAnAccountMaintenanceRequest
+      return (
+        (this.isAnAccountMaintenanceRequest &&
+          (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
+            this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
+            this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE))) ||
+        !this.isAnAccountMaintenanceRequest
+      )
     },
     showRequestDescription() {
-      return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
+      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
     },
     showSupportingDocuments() {
-      return this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked || !this.isAnAccountMaintenanceRequest
+      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
     },
     orgPhoneEmailRule() {
-      return [(v) => !!v || (!this.isOrgPhoneEmailChecked || (!!this.organizationModel.phoneLandline || !!this.organizationModel.phoneCell || !!this.organizationModel.email) || 'A phone/cell or email is required when Organization phone/email checked')]
+      return [
+        (v) =>
+          !!v ||
+          !this.isOrgPhoneEmailChecked ||
+          !!this.organizationModel.phoneLandline ||
+          !!this.organizationModel.phoneCell ||
+          !!this.organizationModel.email ||
+          'A phone/cell or email is required when Organization phone/email checked',
+      ]
     },
     facilityPhoneEmailRule() {
-      return [(v) => !!v || (!this.isFacilityPhoneEmailChecked || (!!this.facilityModel.phoneLandline || !!this.facilityModel.phoneCell || !!this.facilityModel.email) || 'A phone/cell or email is required when Facility phone/email checked')]
+      return [
+        (v) =>
+          !!v ||
+          !this.isFacilityPhoneEmailChecked ||
+          !!this.facilityModel.phoneLandline ||
+          !!this.facilityModel.phoneCell ||
+          !!this.facilityModel.email ||
+          'A phone/cell or email is required when Facility phone/email checked',
+      ]
     },
   },
   watch: {
@@ -431,6 +463,13 @@ export default {
       },
       deep: true
     },
+    'newRequestModel.requestCategoryId': {
+      handler(value) {
+        const isAccountMaintenance = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+        this.resetModelData(isAccountMaintenance)
+      },
+    },
+
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
@@ -439,7 +478,15 @@ export default {
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore', 'updateAssistanceRequest', 'updateAssistanceRequestInStore', 'replyToAssistanceRequest', 'getAssistanceRequest', 'getAssistanceRequests']),
+    ...mapActions(useMessagesStore, [
+      'createAssistanceRequest',
+      'addNewAssistanceRequestToStore',
+      'updateAssistanceRequest',
+      'updateAssistanceRequestInStore',
+      'replyToAssistanceRequest',
+      'getAssistanceRequest',
+      'getAssistanceRequests',
+    ]),
 
     async validateOfmProgram() {
       const programCodeMapping = {
@@ -507,7 +554,11 @@ export default {
 
     setAssistanceRequestDescription() {
       if (this.isOnlyPhoneEmailChecked) {
-        this.newRequestModel.description = 'Account maintenance CR: ' + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') + (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ? ' Facility' : '') + ' phone/cell/email'
+        this.newRequestModel.description =
+          'Account maintenance CR: ' +
+          (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ? 'Organization' : '') +
+          (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ? ' Facility' : '') +
+          ' phone/cell/email'
       }
     },
 
@@ -523,7 +574,7 @@ export default {
         return response
       } catch (error) {
         if (error?.response?.data?.status === 422) {
-          this.setWarningAlert('Supporting documents not saved, virus scan failed')
+          this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
         } else {
           this.setFailureAlert('Failed to create a new assistance request', error)
           throw error
@@ -565,7 +616,7 @@ export default {
     },
 
     handleCheckboxChange(val, subCategory) {
-      const index = this.newRequestModel.subCategories.findIndex(item => item.subCategoryId === subCategory.subCategoryId)
+      const index = this.newRequestModel.subCategories.findIndex((item) => item.subCategoryId === subCategory.subCategoryId)
       if (index > -1) {
         this.newRequestModel.subCategories.splice(index, 1)
       } else if (val) {
@@ -614,9 +665,9 @@ export default {
           if (!this.organizationModel.phoneLandline) delete this.organizationModel.phoneLandline
           if (!this.organizationModel.phoneCell) delete this.organizationModel.phoneCell
           if (!this.organizationModel.email) delete this.organizationModel.email
-        } await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
-      }
-      catch (error) {
+        }
+        await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
+      } catch (error) {
         this.setFailureAlert('Failed to update organization', error)
         throw error
       }
@@ -638,9 +689,17 @@ export default {
     },
 
     isSubCategoryChecked(categoryName) {
-      return this.newRequestModel.subCategories.some(subCategory => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
+      return this.newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
 
+    resetModelData(isAnAccountMaintenanceRequest) {
+      this.newRequestModel.facilities = isAnAccountMaintenanceRequest ? this.currentFacility : [this.currentFacility]
+      if (!isAnAccountMaintenanceRequest) {
+        this.newRequestModel.subCategories = []
+        this.organizationModel = {}
+        this.facilityModel = {}
+      }
+    }
   }
 }
 </script>
@@ -654,7 +713,7 @@ export default {
 }
 
 .change-type-required:deep(.mdi-checkbox-blank-outline)::before {
-  content: "\F0131";
+  content: '\F0131';
   border-color: #b00020;
   border-block-color: #b00020;
   border-style: groove;
