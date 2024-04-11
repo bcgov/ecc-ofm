@@ -7,7 +7,7 @@
       </v-col>
       <v-col v-if="editable" class="pb-1 pt-7">
         <v-row no-gutters justify="end" class="">
-          <AppButton size="large" width="300px" :loading="loading" @click="toggleChangeRequestDialog()">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
@@ -137,7 +137,12 @@
       class="pa-0"
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+      :defaultFacility="facility"
       @close="toggleChangeRequestDialog" />
+    <UnableToSubmitCrDialog
+      :show="showUnableToSubmitCrDialog"
+      :displayType="preventChangeRequestType"
+      @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -154,6 +159,7 @@ import { mapState } from 'pinia'
 import { mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import ApiService from '@/common/apiService'
+import ApplicationService from '@/services/applicationService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
@@ -162,13 +168,14 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
-import { REQUEST_CATEGORY_NAMES } from '@/utils/constants'
+import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 
 import { isEmpty } from 'lodash'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, NewRequestDialog },
+  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, NewRequestDialog, UnableToSubmitCrDialog },
   mixins: [alertMixin, rolesMixin],
   data() {
     return {
@@ -185,6 +192,8 @@ export default {
       editModePrimaryContact: false,
       isEmpty,
       showChangeRequestDialog: false,
+      showUnableToSubmitCrDialog: false,
+      preventChangeRequestType: undefined,
     }
   },
   computed: {
@@ -221,6 +230,8 @@ export default {
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
+    this.OFM_PROGRAM_CODES = OFM_PROGRAM_CODES
+    this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
     this.facilityId = this.$route.params.facilityId
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)
@@ -384,6 +395,25 @@ export default {
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
+
+    async validateOfmProgram() {
+      const programCodeMapping = {
+        [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
+        [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
+      }
+      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([{ facilityId: this.facility.facilityId }])
+      if ((this.facility?.programCode in programCodeMapping) && !hasValidApplicationOrFunding) {
+        this.preventChangeRequestType = programCodeMapping[this.facility.programCode]
+        this.showUnableToSubmitCrDialog = true
+      } else {
+        this.toggleChangeRequestDialog()
+      }
+    },
+
+    toggleUnableToSubmitCrDialog() {
+      this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
+    },
+
   },
 }
 </script>

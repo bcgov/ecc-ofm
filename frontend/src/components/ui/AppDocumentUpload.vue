@@ -2,7 +2,7 @@
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
       <div>The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.</div>
-      <AppButton v-if="!loading && !readonly" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+      <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
       <div v-if="documents.length > 0" class="mt-6">
         <v-row v-for="item in documents" :key="item.id" no-gutters>
           <v-col cols="12" md="4" class="pr-4">
@@ -53,6 +53,10 @@ export default {
       default: false,
     },
     readonly: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

@@ -173,4 +173,16 @@ export default {
       return isActive && isUnexpired
     })
   },
+
+  async hasActiveApplicationOrFundingAgreement(facilities = []) {
+    const results = await Promise.all(
+      facilities.map(async (facility) => {
+        const applications = await this.getApplicationsByFacilityId(facility.facilityId)
+        return applications?.some((application) => {
+          return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreements)
+        })
+      }),
+    )
+    return results.some((result) => result)
+  },
 }

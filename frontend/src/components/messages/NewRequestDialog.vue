@@ -33,7 +33,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
-                :disabled="isLoading"></v-text-field>
+                :disabled="isLoading || isDisabled"></v-text-field>
             </v-col>
           </v-row>
           <template v-if="isAnAccountMaintenanceRequest">
@@ -111,6 +111,14 @@
           <v-row v-if="isAnAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-3 mt-0" />
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11 mt-0">
+              <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center pt-1">
+                <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
+                <p class="text-error ml-2">
+                  The selected facility is not part of the OFM program and therefore cannot be updated using this method. Click
+                  <a href="#" @click.prevent="toggleUnableToSubmitCrDialog">here</a>
+                  for further instructions.
+                </p>
+              </div>
               <span class="facility-tip pl-1">Submit a separate request for each facility</span>
             </v-col>
           </v-row>
@@ -128,7 +136,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading"></v-text-field>
+                  :disabled="isLoading || isDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -144,7 +152,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading"></v-text-field>
+                  :disabled="isLoading || isDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -160,7 +168,7 @@
                   maxlength="100"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading"></v-text-field>
+                  :disabled="isLoading || isDisabled"></v-text-field>
               </v-col>
             </v-row>
           </template>
@@ -177,7 +185,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading"></v-text-field>
+                  :disabled="isLoading || isDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -192,7 +200,7 @@
                   maxlength="12"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading"></v-text-field>
+                  :disabled="isLoading || isDisabled"></v-text-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
@@ -207,7 +215,7 @@
                   maxlength="100"
                   variant="outlined"
                   density="compact"
-                  :disabled="isLoading"></v-text-field>
+                  :disabled="isLoading || isDisabled"></v-text-field>
               </v-col>
             </v-row>
           </template>
@@ -223,14 +231,14 @@
                 maxlength="1000"
                 variant="outlined"
                 :rules="rules.required"
-                :disabled="isLoading"></v-textarea>
+                :disabled="isLoading || isDisabled"></v-textarea>
             </v-col>
           </v-row>
           <v-row v-if="showSupportingDocuments" no-gutters align="center">
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
+            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :disabled="isDisabled" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
           <template v-if="!isAnAccountMaintenanceRequest">
             <v-row no-gutters class="mt-4">
@@ -261,12 +269,16 @@
             <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center pt-2">
-            <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :loading="isLoading">Submit</AppButton>
+            <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :disabled="isDisabled" :loading="isLoading">Submit</AppButton>
           </v-col>
         </v-row>
       </template>
     </AppDialog>
     <NewRequestConfirmationDialog :referenceNumber="referenceNumber" :show="showNewRequestConfirmationDialog" :isInvokedFromMessages="isInvokedFromMessages" @close="toggleNewRequestConfirmationDialog" />
+    <UnableToSubmitCrDialog
+      :show="showUnableToSubmitCrDialog"
+      :displayType="preventChangeRequestType"
+      @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -281,16 +293,18 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
+import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
+import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import OrganizationService from '@/services/organizationService'
-import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
-  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog },
+  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog },
   mixins: [alertMixin],
   props: {
     show: {
@@ -306,6 +320,10 @@ export default {
       type: String,
       default: null,
     },
+    defaultFacility: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ['close'],
   data() {
@@ -317,11 +335,16 @@ export default {
       rules,
       isDisplayed: false,
       isLoading: false,
+      isDisabled: false,
       showNewRequestConfirmationDialog: false,
+      showUnableToSubmitCrDialog: false,
       referenceNumber: '',
       documentsToUpload: [],
       areValidFilesUploaded: true,
       changeTypeClass: '',
+      showFacilityNotInOFMMessage: false,
+      preventChangeRequestType: undefined,
+      isInitialLoad: false,
     }
   },
   computed: {
@@ -329,6 +352,9 @@ export default {
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     facilities() {
       return this.userInfo?.facilities
+    },
+    getFacilityAsArray() {
+      return [].concat(this.newRequestModel?.facilities || [])
     },
     allFacilitiesSelected() {
       return this.newRequestModel.facilities.length == this.facilities.length
@@ -377,19 +403,34 @@ export default {
         this.isDisplayed = value
       },
     },
-    currentFacility: {
-      handler() {
-        this.setUpDefaultNewRequestModel()
-      },
-    },
     'newRequestModel.subCategories': {
-      handler() {
+      async handler(value) {
         if (this.changeTypeClass === 'change-type-required' && this.isAnySubCategoryChecked) {
           this.changeTypeClass = ''
         }
+        await this.validateSubCategories(value)
       },
       deep: true
-    }
+    },
+    defaultFacility: {
+      handler(value) {
+        this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value.facilityId)]
+      }
+    },
+    'newRequestModel.facilities': {
+      async handler() {
+        const isValid = await this.validateOfmProgram()
+        if (isValid) {
+          this.showFacilityNotInOFMMessage = false
+          this.isDisabled = false
+        } else if (this.isInitialLoad && this.isAnAccountMaintenanceRequest) {
+          // Only disable if this is not the initial call on watch. This is to prevent disabling the submit button when the dialog is opened for the first time.
+          this.isDisabled = true
+        }
+        this.isInitialLoad = true
+      },
+      deep: true
+    },
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
@@ -400,12 +441,45 @@ export default {
   methods: {
     ...mapActions(useMessagesStore, ['createAssistanceRequest', 'addNewAssistanceRequestToStore', 'updateAssistanceRequest', 'updateAssistanceRequestInStore', 'replyToAssistanceRequest', 'getAssistanceRequest', 'getAssistanceRequests']),
 
+    async validateOfmProgram() {
+      const programCodeMapping = {
+        [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
+        [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
+      }
+      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.getFacilityAsArray)
+      if ((this.getFacilityAsArray[0]?.programCode in programCodeMapping) && !hasValidApplicationOrFunding) {
+        this.preventChangeRequestType = programCodeMapping[this.getFacilityAsArray[0].programCode]
+        this.showFacilityNotInOFMMessage = true
+        return false
+      }
+      return true
+    },
+
+    async validateSubCategories(subCategories) {
+      const isAccountMaintenance = this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      if (isAccountMaintenance && this.facilityChangeTypesChecked(subCategories)) {
+        const isValid = await this.validateOfmProgram()
+        this.isDisabled = !isValid
+      } else {
+        this.isDisabled = false
+      }
+    },
+
+    facilityChangeTypesChecked(subCategories) {
+      return subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL))
+    },
+
+    toggleUnableToSubmitCrDialog() {
+      this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
+    },
+
     setUpDefaultNewRequestModel() {
+      const facilityId = this.defaultFacility?.facilityId || this.currentFacility?.facilityId
       this.newRequestModel = {
         requestCategoryId: this.defaultRequestCategoryId,
         subCategories: [],
         contactId: this.userInfo?.contactId,
-        facilities: [this.facilities?.find((facility) => facility.facilityId === this.currentFacility.facilityId)],
+        facilities: [this.facilities?.find((facility) => facility.facilityId === facilityId)],
         contactMethod: '1',
         phone: this.userInfo?.phone,
       }
@@ -423,6 +497,7 @@ export default {
       this.$refs.newRequestForm?.reset()
       this.setUpDefaultNewRequestModel()
       this.changeTypeClass = ''
+      this.isDisabled = false
     },
 
     closeNewRequestDialog() {
