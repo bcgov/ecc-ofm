@@ -4,7 +4,7 @@
       <template v-slot:item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId">
-            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :readonly="readonly" @update="updateResponses" />
+            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
           </td>
           <td v-if="!readonly && !hasValueInheritanceChildQuestions && updatedResponses?.length > 1">
             <v-btn variant="text" @click="deleteResponse(item, question?.questionId)">

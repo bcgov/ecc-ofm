@@ -14,7 +14,7 @@
               :maxRows="question?.tableMaxRows"
               @update="updateResponses"
               @delete="deleteTableResponses" />
-            <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :readonly="readonly" @update="updateResponses" />
+            <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :validation="validation" :readonly="readonly" @update="updateResponses" />
           </div>
         </div>
       </v-form>
@@ -45,6 +45,10 @@ export default {
     readonly: {
       type: Boolean,
       required: true,
+    },
+    validation: {
+      type: Boolean,
+      default: false,
     },
   },
 

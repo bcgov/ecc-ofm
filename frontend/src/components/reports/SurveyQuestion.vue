@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0 ma-0">
+  <v-form ref="form">
     <AppNumberInput
       v-if="getReportQuestionTypeNameById(question?.type) === 'Number'"
       v-model.lazy="updatedResponse.value"
@@ -80,7 +80,7 @@
         <v-divider class="mt-2"></v-divider>
       </template>
     </v-select>
-  </v-container>
+  </v-form>
 </template>
 
 <script>
@@ -109,6 +109,10 @@ export default {
     readonly: {
       type: Boolean,
       required: true,
+    },
+    validation: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -168,6 +172,10 @@ export default {
     }
   },
 
+  async mounted() {
+    await this.validateQuestionResponse()
+  },
+
   methods: {
     initializeResponse() {
       this.updatedResponse = cloneDeep(this.response)
@@ -185,6 +193,11 @@ export default {
       } else {
         this.updatedResponse.value = this.question?.choices?.slice()
       }
+    },
+
+    async validateQuestionResponse() {
+      if (!this.validation || this.readonly) return
+      await this.$refs.form?.validate()
     },
   },
 }

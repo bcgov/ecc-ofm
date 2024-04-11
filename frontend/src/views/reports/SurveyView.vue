@@ -11,10 +11,14 @@
         <SurveySection
           :section="currentSection"
           :readonly="readonly"
+          :validation="validation"
           :responses="responsesToBeDisplayed"
           @update="updateClonedResponses"
           @deleteTableResponses="deleteTableResponses"
           @process="process" />
+        <v-alert v-if="showIncompleteSurveyErrorAlert" type="error" title="You cannot submit the report until it is complete.">
+          <AppButton class="mt-2" :primary="false" size="large" @click="goToIncompleteSection">Update Incomplete Section</AppButton>
+        </v-alert>
         <AppNavButtons
           :loading="loading || processing"
           :showBack="true"
@@ -48,6 +52,7 @@ import reportMixin from '@/mixins/reportMixin'
 
 import ReportsService from '@/services/reportsService'
 
+import AppButton from '@/components/ui/AppButton.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
 import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
@@ -56,12 +61,13 @@ import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitCon
 
 export default {
   name: 'SurveyView',
-  components: { AppNavButtons, AppCancelDialog, SurveyNavBar, SurveySection, SurveySubmitConfirmationDialog },
+  components: { AppButton, AppNavButtons, AppCancelDialog, SurveyNavBar, SurveySection, SurveySubmitConfirmationDialog },
   mixins: [alertMixin, reportMixin],
   data() {
     return {
       rules,
       loading: false,
+      validation: undefined,
       processing: false,
       showSubmitConfirmationDialog: false,
       showCancelDialog: false,
@@ -86,16 +92,13 @@ export default {
       return !this.readonly
     },
     showSave() {
-      return !this.isLastSection && !this.readonly
+      return !this.isLastSection(this.currentSection) && !this.readonly
     },
     showNext() {
-      return !this.isLastSection
+      return !this.isLastSection(this.currentSection)
     },
     showSubmit() {
-      return this.isLastSection && !this.readonly
-    },
-    isLastSection() {
-      return this.currentSectionIndex === this.sections?.length - 1
+      return this.isLastSection(this.currentSection) && !this.readonly
     },
     currentSectionIndex() {
       return this.sections?.findIndex((section) => section?.sectionId === this.currentSection?.sectionId)
@@ -106,13 +109,18 @@ export default {
     isSurveyComplete() {
       return this.sections?.every((section) => section.isComplete)
     },
+    showIncompleteSurveyErrorAlert() {
+      const index = this.sections?.findIndex((section) => !this.isLastSection(section) && !section.isComplete)
+      return !this.readonly && this.isLastSection(this.currentSection) && index > -1
+    },
   },
 
   watch: {
     showSubmit: {
       async handler() {
         try {
-          if (this.readonly) return
+          if (this.readonly || !this.showSubmit) return
+          this.validation = this.validation ?? this.showSubmit
           this.processing = true
           await this.getQuestionsResponses()
           this.verifySurveyComplete()
@@ -152,7 +160,7 @@ export default {
     },
 
     async back() {
-      if (this.currentSectionIndex === 0) return
+      if (this.isFirstSection(this.currentSection)) return
       await this.save()
       this.currentSection = this.sections[this.currentSectionIndex - 1]
     },
@@ -169,8 +177,8 @@ export default {
     },
 
     async next() {
+      if (this.isLastSection(this.currentSection)) return
       await this.save()
-      if (this.currentSectionIndex === this.sections?.length - 1) return
       this.currentSection = this.sections[this.currentSectionIndex + 1]
     },
 
@@ -420,13 +428,11 @@ export default {
 
     verifySectionComplete(section) {
       const responseRequiredQuestions = section?.questions?.filter((question) => question.responseRequired)
-      const sectionIndex = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
-      const isLastSection = sectionIndex === this.sections?.length - 1
       const isComplete = responseRequiredQuestions?.every((question) => {
         const index = this.clonedResponses.findIndex(
           (response) =>
             !this.isHiddenOrDeleted(response) &&
-            ((isLastSection && response.value === 'Yes') || (!isLastSection && !isEmpty(response.value))) &&
+            ((this.isLastSection(section) && response.value === 'Yes') || (!this.isLastSection(section) && !isEmpty(response.value))) &&
             (response.questionId === question.questionId || (this.isTableQuestion(question) && response.tableQuestionId === question.questionId)),
         )
         return question.hide || index > -1
@@ -445,6 +451,22 @@ export default {
 
     toggleSubmitConfirmationDialog() {
       this.showSubmitConfirmationDialog = true
+    },
+
+    goToIncompleteSection() {
+      const incompleteSection = this.sections?.find((section) => !section.isComplete)
+      if (!incompleteSection) return
+      this.currentSection = incompleteSection
+    },
+
+    isLastSection(section) {
+      const index = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
+      return index === this.sections?.length - 1
+    },
+
+    isFirstSection(section) {
+      const index = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
+      return index === 0
     },
   },
 }
