@@ -103,6 +103,12 @@ export const GOOD_STANDING_STATUS_CODES = Object.freeze({
   INTEGRATION_ERROR: 3,
 })
 
+export const OFM_PROGRAM_CODES = Object.freeze({
+  OFM: 1,
+  CCOF: 2,
+  TDAD: 3,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
@@ -116,6 +122,12 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',
   SUPP_DUPLICATE_VIN: 'Unique VIN required',
+})
+
+export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
+  IN_CCOF_PROGRAM: 'Facility in CCOF Program',
+  IN_TDAD_PROGRAM: 'Facility in TDAD Program',
+  NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'

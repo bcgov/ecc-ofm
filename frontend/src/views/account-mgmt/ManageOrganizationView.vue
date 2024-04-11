@@ -6,7 +6,7 @@
       </v-col>
       <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
         <v-row no-gutters justify="end">
-          <AppButton size="large" width="300px" :loading="loading" @click="toggleChangeRequestDialog()">Submit a Change Request</AppButton>
+          <AppButton size="large" width="300px" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
@@ -72,6 +72,10 @@
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       @close="toggleChangeRequestDialog" />
+    <UnableToSubmitCrDialog
+      :show="showUnableToSubmitCrDialog"
+      :displayType="preventChangeRequestType"
+      @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -81,6 +85,8 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import OrganizationService from '@/services/organizationService'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
 import rolesMixin from '@/mixins/rolesMixin.js'
@@ -89,11 +95,11 @@ import { mapActions } from 'pinia'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { isEmpty } from 'lodash'
-import { REQUEST_CATEGORY_NAMES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog },
+  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog },
   mixins: [alertMixin, rolesMixin],
   data() {
     return {
@@ -104,6 +110,8 @@ export default {
       organization: undefined,
       uploadedDocuments: [],
       showChangeRequestDialog: false,
+      showUnableToSubmitCrDialog: false,
+      preventChangeRequestType: undefined,
     }
   },
   computed: {
@@ -119,9 +127,15 @@ export default {
     otherFacilities() {
       return this.facilities.filter((f) => !this.accountManagerFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
+    hasAnOFMFacility() {
+      return this.facilities.some(facility => facility.programCode === OFM_PROGRAM_CODES.OFM)
+    },
+
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
+    this.OFM_PROGRAM_CODES = OFM_PROGRAM_CODES
+    this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
     await this.loadData()
   },
   methods: {
@@ -180,6 +194,21 @@ export default {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
 
+    async validateOfmProgram() {
+      try {
+        this.loading = true
+        const hasActiveAppOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.userInfo.facilities)
+        if (!this.hasAnOFMFacility && !hasActiveAppOrFunding) {
+          this.preventChangeRequestType = PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM
+          this.showUnableToSubmitCrDialog = true
+          return
+        }
+        this.toggleChangeRequestDialog()
+      } finally {
+        this.loading = false
+      }
+    },
+
     async saveOrganization(updatedOrganization) {
       try {
         delete updatedOrganization.goodStandingStatus
@@ -219,6 +248,11 @@ export default {
         }
       }
     },
+
+    toggleUnableToSubmitCrDialog() {
+      this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
+    },
+
   },
 }
 </script>
