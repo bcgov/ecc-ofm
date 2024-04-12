@@ -406,6 +406,9 @@ export default {
     showSupportingDocuments() {
       return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
     },
+    isLoadingOrDisabled() {
+      return this.isLoading || this.isDisabled
+    },
     orgPhoneEmailRule() {
       return [
         (v) =>
@@ -693,18 +696,12 @@ export default {
     },
 
     resetModelData(isAnAccountMaintenanceRequest) {
-      this.newRequestModel.facilities = isAnAccountMaintenanceRequest ? this.currentFacility : [this.currentFacility]
       if (!isAnAccountMaintenanceRequest) {
         this.newRequestModel.subCategories = []
         this.organizationModel = {}
         this.facilityModel = {}
       }
       this.disabled = false
-      this.isInitialLoad = false
-    },
-
-    isLoadingOrDisabled() {
-      return this.isLoading || this.isDisabled
     },
   }
 }
