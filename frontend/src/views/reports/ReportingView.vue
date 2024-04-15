@@ -165,7 +165,9 @@
     </v-row>
   </v-container>
 </template>
+
 <script>
+import { SURVEY_RESPONSE_TYPES } from '@/utils/constants'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -219,6 +221,7 @@ export default {
       ],
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'currentFacility']),
     ...mapState(useAppStore, ['fiscalYears', 'months']),
@@ -230,6 +233,7 @@ export default {
         this.fromDate = this.parseDateString(val)
       },
     },
+
     formattedEndDate: {
       get() {
         return this.formatDate(this.endDate)
@@ -238,20 +242,34 @@ export default {
         this.endDate = this.parseDateString(val)
       },
     },
+
     defaultFiscalYear() {
       return this.fiscalYears?.find((fiscalYear) => fiscalYear.statusCode === 1)
     },
+
     defaultReportingMonth() {
       const currentMonthName = new Date().toLocaleString('en-ca', { month: 'long' })
       return this.months?.find((month) => month.name === currentMonthName)
     },
+
+    surveyResponseType() {
+      let responseType = SURVEY_RESPONSE_TYPES.MONTHLY
+      if (['November'].includes(this.selectedReportingMonth?.name)) {
+        responseType = SURVEY_RESPONSE_TYPES.QUARTERLY
+      } else if (['December'].includes(this.selectedReportingMonth?.name)) {
+        responseType = SURVEY_RESPONSE_TYPES.BI_ANNUAL
+      }
+      return responseType
+    },
   },
+
   created() {
     this.selectedFacility = this.currentFacility.facilityId
     this.selectedFiscalYear = this.defaultFiscalYear
     this.selectedReportingMonth = this.defaultReportingMonth
     this.search()
   },
+
   methods: {
     async getFacilityReportsSummary(selectedFacility) {
       try {
@@ -260,6 +278,7 @@ export default {
         this.setFailureAlert('Failed to get latest reporting activity for facility = ' + selectedFacility, error)
       }
     },
+
     formatDate(date) {
       if (!(date instanceof Date)) return ''
       let month = '' + (date.getMonth() + 1),
@@ -269,10 +288,12 @@ export default {
       if (day.length < 2) day = '0' + day
       return [day, month, year].join('/')
     },
+
     parseDateString(dateStr) {
       const [day, month, year] = dateStr.split('/')
       return new Date(year, month - 1, day)
     },
+
     async search() {
       try {
         await this.getFacilityReportsSummary(this.selectedFacility)
@@ -284,6 +305,7 @@ export default {
         this.loading = false
       }
     },
+
     filter() {
       const reportTypes = []
       if (this.isCheckedAnnual) reportTypes.push('Annual')
@@ -296,6 +318,7 @@ export default {
         this.displayedFacilities = this.selectedStatus === 3 ? [] : this.facilities.filter(({ status }) => status === statusTitle)
       }
     },
+
     resetFilters() {
       this.facilities = []
       this.displayedFacilities = []
@@ -322,6 +345,7 @@ export default {
           surveyId: '16fb81de-6dc1-ee11-9079-000d3af4865d',
           fiscalYearId: this.selectedFiscalYear?.fiscalYearId,
           reportingMonthId: this.selectedReportingMonth?.monthId,
+          surveyResponseType: this.surveyResponseType,
         }
         const response = await ReportsService.createSurveyResponse(payload)
         if (response?.surveyResponseId) {

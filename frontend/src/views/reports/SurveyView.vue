@@ -41,7 +41,7 @@
 
 <script>
 import { isEmpty, cloneDeep } from 'lodash'
-import { CRM_STATE_CODES } from '@/utils/constants'
+import { CRM_STATE_CODES, SURVEY_RESPONSE_TYPES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 import { mapState } from 'pinia'
@@ -150,6 +150,7 @@ export default {
             section.questions = await ReportsService.getSectionQuestions(section?.sectionId)
           }),
         )
+        this.filterSectionQuestionsUsingSurveyResponseType()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()
       } catch (error) {
@@ -245,6 +246,24 @@ export default {
       } finally {
         this.processing = false
       }
+    },
+
+    filterSectionQuestionsUsingSurveyResponseType() {
+      let surveyResponseTypeToBeIncluded = [SURVEY_RESPONSE_TYPES.MONTHLY]
+      switch (this.surveyResponse?.surveyResponseType) {
+        case SURVEY_RESPONSE_TYPES.QUARTERLY:
+          surveyResponseTypeToBeIncluded.push(SURVEY_RESPONSE_TYPES.QUARTERLY)
+          break
+        case SURVEY_RESPONSE_TYPES.BI_ANNUAL:
+          surveyResponseTypeToBeIncluded.push(SURVEY_RESPONSE_TYPES.BI_ANNUAL)
+          break
+        case SURVEY_RESPONSE_TYPES.ANNUAL:
+          surveyResponseTypeToBeIncluded.push(SURVEY_RESPONSE_TYPES.ANNUAL)
+      }
+      this.sections?.forEach((section) => {
+        section.questions = section.questions?.filter((question) => surveyResponseTypeToBeIncluded.includes(question.surveyResponseType))
+      })
+      this.sections = this.sections?.filter((section) => !isEmpty(section.questions))
     },
 
     async getQuestionsResponses() {

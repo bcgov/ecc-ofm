@@ -325,6 +325,7 @@ const SurveyQuestionMappings = [
   { back: 'ofm_fixed_response', front: 'fixedResponse' },
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
+  { back: 'ofm_occurence@OData.Community.Display.V1.FormattedValue', front: 'surveyResponseType' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -347,6 +348,7 @@ const SurveyResponseMappings = [
   { back: '_ofm_fiscal_year_value', front: 'fiscalYearId' },
   { back: '_ofm_reporting_month_value', front: 'reportingMonthId' },
   { back: '_ofm_submitted_month_value', front: 'submittedMonthId' },
+  { back: 'ofm_response_type', front: 'surveyResponseType' },
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'statuscode', front: 'statusCode' },

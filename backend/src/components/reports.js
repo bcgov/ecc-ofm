@@ -69,7 +69,7 @@ async function getSurveyQuestions(req, res) {
     const questions = []
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_response_required&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'&$orderby=ofm_sequence`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_response_required,ofm_occurence&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'&$orderby=ofm_sequence`
     }
     const response = await getOperation(operation)
     response?.value?.forEach((question) => questions.push(mapQuestionObjectForFront(question)))
@@ -87,6 +87,7 @@ async function createSurveyResponse(req, res) {
       'ofm_survey@odata.bind': `/ofm_surveies(${req.body?.surveyId})`,
       'ofm_fiscal_year@odata.bind': `/ofm_fiscal_years(${req.body?.fiscalYearId})`,
       'ofm_reporting_month@odata.bind': `/ofm_months(${req.body?.reportingMonthId})`,
+      ofm_response_type: req.body?.surveyResponseType,
     }
     const response = await postOperation('ofm_survey_responses', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
