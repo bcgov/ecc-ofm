@@ -15,6 +15,7 @@ function mapQuestionObjectForFront(data) {
   return question
 }
 
+// TODO Remove this method when Reporting screen complete
 async function getFacilityReports(req, res) {
   try {
     const data = [
