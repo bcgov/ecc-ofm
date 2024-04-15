@@ -23,6 +23,7 @@ const UserProfileFacilityMappings = [
   { back: 'accountnumber', front: 'facilityAccountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'ccof_accounttype', front: 'facilityType' },
+  { back: 'ofm_program', front: 'programCode' },
   { back: 'statecode', front: 'facilityStateCode' },
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
@@ -112,6 +113,7 @@ const UserFacilityDetailMappings = [
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'address1_composite', front: 'address' },
+  { back: 'ofm_program', front: 'programCode' },
 ]
 
 const UsersPermissionsFacilityMappings = [
@@ -219,6 +221,7 @@ const FacilityMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
+  { back: 'ofm_program', front: 'programCode' },
 ]
 
 const ContactMappings = [

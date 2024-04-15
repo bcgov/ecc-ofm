@@ -103,6 +103,12 @@ export const GOOD_STANDING_STATUS_CODES = Object.freeze({
   INTEGRATION_ERROR: 3,
 })
 
+export const OFM_PROGRAM_CODES = Object.freeze({
+  OFM: 1,
+  CCOF: 2,
+  TDAD: 3,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
@@ -112,9 +118,16 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  SPLIT_CLASSROOM_INFO: 'Description of split classrooms required',
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',
   SUPP_DUPLICATE_VIN: 'Unique VIN required',
+})
+
+export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
+  IN_CCOF_PROGRAM: 'Facility in CCOF Program',
+  IN_TDAD_PROGRAM: 'Facility in TDAD Program',
+  NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
 })
 
 export const SURVEY_RESPONSE_TYPES = Object.freeze({
