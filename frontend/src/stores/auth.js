@@ -15,18 +15,16 @@ export const useAuthStore = defineStore('auth', {
     userInfo: null,
     impersonateId: null,
     currentFacility: {},
+    permissions: [],
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
     hasFacilities: (state) => state.userInfo?.facilities?.length > 0,
-    // hasRole: (state) => {
-    //   return (role) => state.userInfo?.role === role
-    // },
+    hasRole: (state) => {
+      return (role) => state.userInfo?.role === role
+    },
     hasPermission: (state) => {
-      return (permission) => {
-        const app = useAppStore()
-        return app.roles.find(state.userInfo?.role)?.permissions.some((rp) => rp === permission)
-      }
+      return (permission) => state.permissions?.includes(permission)
     },
   },
   actions: {
@@ -62,6 +60,7 @@ export const useAuthStore = defineStore('auth', {
         await this.getJwtToken()
       }
       if (localStorage.getItem('jwtToken')) {
+        const appStore = useAppStore()
         if (!this.isUserInfoLoaded) {
           let userInfoRes = undefined
           if (this.impersonateId && this.isMinistryUser) {
@@ -77,6 +76,8 @@ export const useAuthStore = defineStore('auth', {
           if (this.isActingProvider && this.hasFacilities) {
             this.currentFacility = this.userInfo.facilities[0]
           }
+          // Lookup the permissions
+          this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role)
 
           this.isUserInfoLoaded = true
         }

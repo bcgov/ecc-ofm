@@ -1,168 +1,164 @@
-'use strict';
+'use strict'
 
-const config = require('../config/index');
-const passport = require('passport');
-const express = require('express');
-const auth = require('../components/auth');
-const log = require('../components/logger');
-const {v4: uuidv4} = require('uuid');
-const {getUserGuid} = require('../components/utils');
+const config = require('../config/index')
+const passport = require('passport')
+const express = require('express')
+const auth = require('../components/auth')
+const log = require('../components/logger')
+const { v4: uuidv4 } = require('uuid')
+const { getUserGuid } = require('../components/utils')
 
-const {
-  body,
-  validationResult
-} = require('express-validator');
-const router = express.Router();
-
+const { body, validationResult } = require('express-validator')
+const router = express.Router()
 
 router.get('/', (_req, res) => {
   res.status(200).json({
-    endpoints: [
-      '/callback',
-      '/callback_idir',
-      '/login',
-      '/logout',
-      '/refresh',
-      '/token'
-    ]
-  });
-});
+    endpoints: ['/callback', '/callback_idir', '/login', '/logout', '/refresh', '/token'],
+  })
+})
 
-router.get('/callback',
+router.get(
+  '/callback',
   passport.authenticate('oidcBceid', {
-    failureRedirect: 'error'
+    failureRedirect: 'error',
   }),
   (_req, res) => {
-    res.redirect(config.get('server:frontend'));
-  }
-);
+    res.redirect(config.get('server:frontend'))
+  },
+)
 
-router.get('/callback_idir',
+router.get(
+  '/callback_idir',
   passport.authenticate('oidcIdir', {
-    failureRedirect: 'error'
+    failureRedirect: 'error',
   }),
   (_req, res) => {
-    res.redirect(config.get('server:frontend'));
-  }
-);
-
+    res.redirect(config.get('server:frontend'))
+  },
+)
 
 //a prettier way to handle errors
 router.get('/error', (_req, res) => {
-  res.redirect(config.get('server:frontend') + '/login-error');
-});
+  res.redirect(config.get('server:frontend') + '/login-error')
+})
 
 //redirects to the SSO login screen
-router.get('/login', passport.authenticate('oidcBceid', {
-  failureRedirect: 'error'
-}));
-router.get('/login-idir', passport.authenticate('oidcIdir', {
-  failureRedirect: 'error'
-}));
+router.get(
+  '/login',
+  passport.authenticate('oidcBceid', {
+    failureRedirect: 'error',
+  }),
+)
+router.get(
+  '/login-idir',
+  passport.authenticate('oidcIdir', {
+    failureRedirect: 'error',
+  }),
+)
 
 //removes tokens and destroys session
 router.get('/logout', async (req, res, next) => {
-  req.logout(function(err) {
+  req.logout(function (err) {
     if (err) {
-      return next(err);
+      return next(err)
     }
-    req.session.destroy();
-    let retUrl;
+    req.session.destroy()
+    let retUrl
     if (req.query && req.query.sessionExpired) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/session-expired');
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/session-expired')
     } else if (req.query && req.query.loginError) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/login-error');
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/login-error')
     } else if (req.query && req.query.loginBceid) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid');
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid')
     } else if (req.query && req.query.loginBceidActivateUser) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_user');
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_user')
     } else if (req.query && req.query.loginBceidActivateDistrictUser) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_district_user');
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_district_user')
     } else {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/logout');
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/logout')
     }
-    log.info('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl);
-    res.redirect(config.get('siteMinder_logout_endpoint') + retUrl );
-  });
-});
+    log.info('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl)
+    res.redirect(config.get('siteMinder_logout_endpoint') + retUrl)
+  })
+})
 
 const UnauthorizedRsp = {
   error: 'Unauthorized',
-  error_description: 'Not logged in'
-};
+  error_description: 'Not logged in',
+}
 
 //refreshes jwt on refresh if refreshToken is valid
-router.post('/refresh', [
-  body('refreshToken').exists()
-], async (req, res) => {
-  const errors = validationResult(req);
+router.post('/refresh', [body('refreshToken').exists()], async (req, res) => {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     return res.status(400).json({
-      errors: errors.array()
-    });
+      errors: errors.array(),
+    })
   }
   if (!req['user'] || !req['user'].refreshToken || !req?.user?.jwt) {
-    res.status(401).json(UnauthorizedRsp);
+    res.status(401).json(UnauthorizedRsp)
   } else {
     if (auth.isTokenExpired(req.user.jwt)) {
       if (req?.user?.refreshToken && auth.isRenewable(req.user.refreshToken)) {
-        return generateTokens(req, res);
+        return generateTokens(req, res)
       } else {
-        res.status(401).json(UnauthorizedRsp);
+        res.status(401).json(UnauthorizedRsp)
       }
     } else {
       const responseJson = {
-        jwtFrontend: req.user.jwtFrontend
-      };
-      return res.status(200).json(responseJson);
+        jwtFrontend: req.user.jwtFrontend,
+      }
+      return res.status(200).json(responseJson)
     }
   }
-});
+})
 
 //provides a jwt to authenticated users
 router.get('/token', auth.refreshJWT, (req, res) => {
   if (req?.user && req.user?.jwtFrontend && req.user?.refreshToken) {
     if (req.session?.passport?.user?._json) {
-      const correlationID = uuidv4();
-      req.session.correlationID = correlationID;
+      const correlationID = uuidv4()
+      req.session.correlationID = correlationID
       const correlation = {
         user_guid: getUserGuid(req),
-        correlation_id: correlationID
-      };
-      log.info('created correlation id and stored in session', correlation);
+        correlation_id: correlationID,
+      }
+      log.info('created correlation id and stored in session', correlation)
     }
     const responseJson = {
-      jwtFrontend: req.user.jwtFrontend
-    };
-    res.status(200).json(responseJson);
+      jwtFrontend: req.user.jwtFrontend,
+    }
+    res.status(200).json(responseJson)
   } else {
-    res.status(401).json(UnauthorizedRsp);
+    res.status(401).json(UnauthorizedRsp)
   }
-});
+})
 async function generateTokens(req, res) {
-  let isIdir = (req.session?.passport?.user?._json?.idir_user_guid) ? true : false;
-  const result = await auth.renew(req.user.refreshToken, isIdir);
+  let isIdir = req.session?.passport?.user?._json?.idir_user_guid ? true : false
+  const result = await auth.renew(req.user.refreshToken, isIdir)
   if (result && result.jwt && result.refreshToken) {
-    req.user.jwt = result.jwt;
-    req.user.refreshToken = result.refreshToken;
-    req.user.jwtFrontend = auth.generateUiToken();
+    req.user.jwt = result.jwt
+    req.user.refreshToken = result.refreshToken
+    log.info('generateTokens')
+    log.info(req.user)
+    req.user.jwtFrontend = auth.generateUiToken(req.user.username)
     const responseJson = {
-      jwtFrontend: req.user.jwtFrontend
-    };
-    res.status(200).json(responseJson);
+      jwtFrontend: req.user.jwtFrontend,
+    }
+    res.status(200).json(responseJson)
   } else {
-    res.status(401).json(UnauthorizedRsp);
+    res.status(401).json(UnauthorizedRsp)
   }
 }
-router.get('/user-session-remaining-time', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.get('/user-session-remaining-time', passport.authenticate('jwt', { session: false }), (req, res) => {
   if (req?.session?.cookie && req?.session?.passport?.user) {
-    const remainingTime = req.session.cookie.maxAge;
-    log.info(`session remaining time is :: ${remainingTime} for user`, req.session?.passport?.user?.displayName);
-    return res.status(200).json(req.session.cookie.maxAge);
+    const remainingTime = req.session.cookie.maxAge
+    log.info(`session remaining time is :: ${remainingTime} for user`, req.session?.passport?.user?.displayName)
+    return res.status(200).json(req.session.cookie.maxAge)
   } else {
-    return res.sendStatus(401);
+    return res.sendStatus(401)
   }
-});
+})
 
-module.exports = router;
+module.exports = router

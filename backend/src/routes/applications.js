@@ -14,6 +14,7 @@ const {
   deleteSupplementaryApplication,
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
+const validatePermission = require('../middlewares/validatePermission.js')
 
 module.exports = router
 
@@ -27,7 +28,7 @@ const createApplicationSchema = {
 /**
  * Get the list of applications
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission('View Application'), (req, res) => {
   validationResult(req).throw()
   return getApplications(req, res)
 })

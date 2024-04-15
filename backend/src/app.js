@@ -126,7 +126,10 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         }
 
         //set access and refresh tokens
-        profile.jwtFrontend = auth.generateUiToken()
+        log.info('addLoginPassportUse')
+        log.info(profile)
+        // Get role
+        profile.jwtFrontend = auth.generateUiToken(profile.username)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken

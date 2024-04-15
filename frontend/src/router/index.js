@@ -113,6 +113,7 @@ const router = createRouter({
       component: ReportingView,
       meta: {
         requiresAuth: true,
+        permission: 'Cat Lover',
       },
     },
     {

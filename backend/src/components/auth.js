@@ -101,13 +101,14 @@ const auth = {
     next()
   },
 
-  generateUiToken() {
+  generateUiToken(subject) {
+    log.error('generateUiToken')
+    // TODO Get UserProfile for BCeID users
     const i = config.get('tokenGenerate:issuer')
-    const s = 'user@penrequest.ca'
     const a = config.get('server:frontend')
     const signOptions = {
       issuer: i,
-      subject: s,
+      subject,
       audience: a,
       expiresIn: '30m',
       algorithm: 'RS256',
