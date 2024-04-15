@@ -137,6 +137,22 @@ export const SURVEY_RESPONSE_TYPES = Object.freeze({
   ANNUAL: 'Annual',
 })
 
+export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
+  SUBMITTED: 506580000,
+})
+
+export const SURVEY_QUESTION_TYPES = Object.freeze({
+  NUMBER: 'Number',
+  CURRENCY: 'Currency',
+  TEXT: 'Text',
+  TEXT_AREA: 'Text Area',
+  DATE: 'Date',
+  TWO_OPTION: 'Two Option',
+  CHOICE: 'Choice',
+  MULTIPLE_CHOICE: 'Multiple Choice',
+  TABLE: 'Table',
+})
+
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
 export const OFM_PROGRAM = 'OFM Program'
 

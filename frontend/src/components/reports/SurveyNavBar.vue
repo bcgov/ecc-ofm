@@ -17,10 +17,6 @@
 export default {
   name: 'SurveyNavBar',
   props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
     sections: {
       type: Array,
       default: () => [],

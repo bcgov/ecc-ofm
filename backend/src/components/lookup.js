@@ -36,7 +36,9 @@ async function getFiscalYears() {
   let fiscalYears = lookupCache.get('fiscalYears')
   if (!fiscalYears) {
     fiscalYears = []
-    let response = await getOperation('ofm_fiscal_years?$select=ofm_fiscal_yearid,ofm_caption,ofm_fiscal_year_number,ofm_start_date,ofm_end_date,statuscode,statecode&$orderby=ofm_fiscal_year_number')
+    const response = await getOperation(
+      'ofm_fiscal_years?$select=ofm_fiscal_yearid,ofm_caption,ofm_fiscal_year_number,ofm_start_date,ofm_end_date,statuscode,statecode&$orderby=ofm_fiscal_year_number',
+    )
     response?.value?.forEach((item) => fiscalYears.push(new MappableObjectForFront(item, FiscalYearMappings)))
     lookupCache.put('fiscalYears', fiscalYears, ONE_HOUR_MS)
   }
@@ -47,7 +49,7 @@ async function getMonths() {
   let months = lookupCache.get('months')
   if (!months) {
     months = []
-    let response = await getOperation('ofm_months?$select=ofm_monthid,ofm_name')
+    const response = await getOperation('ofm_months?$select=ofm_monthid,ofm_name')
     response?.value?.forEach((item) => months.push(new MappableObjectForFront(item, MonthMappings)))
     lookupCache.put('months', months, ONE_HOUR_MS)
   }

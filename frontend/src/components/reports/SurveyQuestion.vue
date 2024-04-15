@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form">
     <AppNumberInput
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Number'"
+      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.NUMBER"
       v-model.lazy="updatedResponse.value"
       :format="NUMBER_FORMAT"
       maxlength="12"
@@ -10,7 +10,7 @@
       :disabled="disabled" />
 
     <AppNumberInput
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Currency'"
+      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CURRENCY"
       v-model.lazy="updatedResponse.value"
       :format="CURRENCY_FORMAT"
       maxlength="12"
@@ -20,7 +20,7 @@
       :disabled="disabled" />
 
     <v-text-field
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Text'"
+      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT"
       v-model.trim="updatedResponse.value"
       variant="outlined"
       density="compact"
@@ -29,17 +29,17 @@
       :disabled="disabled" />
 
     <v-textarea
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Text Area'"
+      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT_AREA"
       v-model.trim="updatedResponse.value"
       variant="outlined"
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
       :disabled="disabled" />
 
-    <v-date-picker v-if="getReportQuestionTypeNameById(question?.type) === 'Date'" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
+    <v-date-picker v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.DATE" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
 
     <v-radio-group
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Two Option'"
+      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TWO_OPTION"
       v-model="updatedResponse.value"
       :rules="rules.required"
       :hide-details="isEmpty(validationRules)"
@@ -51,7 +51,7 @@
     </v-radio-group>
 
     <v-select
-      v-if="getReportQuestionTypeNameById(question?.type) === 'Choice'"
+      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CHOICE"
       v-model="updatedResponse.value"
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { SURVEY_QUESTION_TYPES } from '@/utils/constants'
 import reportMixin from '@/mixins/reportMixin'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
@@ -170,6 +171,7 @@ export default {
       separator: ',',
       precision: 0,
     }
+    this.SURVEY_QUESTION_TYPES = SURVEY_QUESTION_TYPES
   },
 
   async mounted() {

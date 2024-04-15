@@ -41,7 +41,7 @@
 
 <script>
 import { isEmpty, cloneDeep } from 'lodash'
-import { CRM_STATE_CODES, SURVEY_RESPONSE_TYPES } from '@/utils/constants'
+import { CRM_STATE_CODES, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 import { mapState } from 'pinia'
@@ -84,9 +84,6 @@ export default {
     ...mapState(useAppStore, ['months']),
     readonly() {
       return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE
-    },
-    showBack() {
-      return true
     },
     showCancel() {
       return !this.readonly
@@ -233,7 +230,7 @@ export default {
       try {
         const currentMonth = this.months?.find((month) => month.name === new Date().toLocaleString('en-ca', { month: 'long' }))
         const payload = {
-          statusCode: 506580000,
+          statusCode: SURVEY_RESPONSE_STATUS_CODES.SUBMITTED,
           stateCode: CRM_STATE_CODES.INACTIVE,
           submittedMonthId: currentMonth?.monthId,
         }

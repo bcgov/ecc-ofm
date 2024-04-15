@@ -109,7 +109,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/reporting',
+      path: '/reporting/overview',
       name: 'reporting',
       component: ReportingView,
       meta: {
@@ -117,7 +117,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/reporting/:surveyResponseGuid/survey-form',
+      path: '/reporting/:surveyResponseGuid',
       name: 'survey-form',
       component: SurveyView,
       meta: {

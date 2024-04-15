@@ -2,6 +2,7 @@ import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
 import { useAppStore } from '@/stores/app'
+import { SURVEY_QUESTION_TYPES } from '@/utils/constants'
 
 export default {
   computed: {
@@ -16,7 +17,7 @@ export default {
     },
 
     isTableQuestion(question) {
-      return this.getReportQuestionTypeNameById(question?.type) === 'Table'
+      return this.getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TABLE
     },
 
     isTableQuestionHeader(question) {
@@ -28,7 +29,7 @@ export default {
     },
 
     isMultipleChoiceQuestion(questionType) {
-      return ['Multiple Choice'].includes(this.getReportQuestionTypeNameById(questionType))
+      return this.getReportQuestionTypeNameById(questionType) === SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE
     },
   },
 }
