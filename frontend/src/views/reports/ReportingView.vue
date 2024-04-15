@@ -259,6 +259,7 @@ export default {
       } else if (['December'].includes(this.selectedReportingMonth?.name)) {
         responseType = SURVEY_RESPONSE_TYPES.BI_ANNUAL
       }
+      // TODO (vietle-cgi) Add ANNUAL type when we know which month to use
       return responseType
     },
   },
