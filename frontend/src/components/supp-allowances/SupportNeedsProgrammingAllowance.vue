@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isReadOnly && hasInclusionPolicy">
+  <div v-if="isWarningDisplayed && hasInclusionPolicy">
     <AppWarningMessage>
       <div>You have already received the Support Needs Allowance for the current term.</div>
     </AppWarningMessage>
@@ -138,6 +138,10 @@ export default {
         return false
       },
     },
+    isCurrentModelDisabled: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update'],
   data() {
@@ -153,6 +157,9 @@ export default {
       return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
     },
     isReadOnly() {
+      return isApplicationLocked(this.supportModel?.statusCode) || this.isCurrentModelDisabled
+    },
+    isWarningDisplayed() {
       return isApplicationLocked(this.supportModel?.statusCode)
     },
   },

@@ -154,7 +154,7 @@ export default {
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
-      await this.getApplicationsAndFundingAgreements()
+      await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
       if (!this.currentOrg) {
@@ -205,11 +205,11 @@ export default {
       this.facilityNameFilter = newVal
     },
 
-    async getApplicationsAndFundingAgreements() {
+    async getApplicationsAndFundingAgreement() {
       this.applications = await ApplicationService.getApplications()
       await Promise.all(
         this.applications?.map(async (application) => {
-          application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
         }),
       )
     },

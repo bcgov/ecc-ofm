@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isReadOnly">
+  <div v-if="isWarningDisplayed">
     <AppWarningMessage>
       <div>You have already received the Indigenous Programming Allowance for the current term.</div>
     </AppWarningMessage>
@@ -77,6 +77,10 @@ export default {
         return {}
       },
     },
+    isCurrentModelDisabled: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update'],
   data() {
@@ -91,6 +95,9 @@ export default {
       return this.model.indigenousFundingModel.includes('9')
     },
     isReadOnly() {
+      return isApplicationLocked(this.indigenousProgrammingModel?.statusCode) || this.isCurrentModelDisabled
+    },
+    isWarningDisplayed() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode)
     },
   },

@@ -289,6 +289,9 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_transport_odometer', front: 'odometer' },
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
   { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_renewal_term', front: 'renewalTerm' },
 ]
 
 module.exports = {

@@ -5,7 +5,29 @@
     <strong class="text-decoration-underline">one or all</strong>
     that applies to your organization.
   </p>
+
+  <!-- {{ fundingAgreement }} -->
+
+  <div v-if="currentTermDisabled">
+    <AppWarningMessage>
+      <div>Your current term funding is ending and you are no longer able to make changes. Please apply for Next Term</div>
+    </AppWarningMessage>
+  </div>
+
   <v-form ref="form">
+    <v-row no-gutters class="mb-2">
+      <v-col cols="12" lg="1" class="">
+        <AppLabel>Application Term:</AppLabel>
+      </v-col>
+
+      <!-- These buttons should always be enabled/disabled with FA dates? Will likely have to write custom code to figure out what term we are in -->
+      <v-col cols="6" lg="1" class="">
+        <AppButton id="current-term-button" :active="true" :primary="false" size="large" width="200px">Current Term</AppButton>
+      </v-col>
+      <v-col cols="6" lg="1" class="">
+        <AppButton id="next-term-button" :primary="false" :disabled="isNextTermEnabled" size="large" width="200px">Next Term</AppButton>
+      </v-col>
+    </v-row>
     <v-row no-gutters class="mb-2">
       <v-col cols="12" class="d-flex flex-column align-end">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
@@ -46,15 +68,21 @@
             <span class="header-label">{{ panel.title }}</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <IndigenousProgrammingAllowance v-if="panel.id === 'indigenous'" :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)" @update="updateModel" />
+            <IndigenousProgrammingAllowance
+              v-if="panel.id === 'indigenous'"
+              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"
+              @update="updateModel"
+              :isCurrentModelDisabled="currentTermDisabled" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === 'support-needs'"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+              :isCurrentModelDisabled="currentTermDisabled"
               @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
               :transportModels="getTransportModels()"
+              :isCurrentModelDisabled="currentTermDisabled"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -69,6 +97,8 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
+import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import IndigenousProgrammingAllowance from '@/components/supp-allowances/IndigenousProgrammingAllowance.vue'
@@ -82,15 +112,23 @@ import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
+import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppButton, AppDialog, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
+  components: { AppButton, AppDialog, AppLabel, AppWarningMessage, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
   mixins: [alertMixin],
   props: {
     applicationId: {
       type: String,
       default: undefined,
+    },
+    fundingAgreement: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+      required: true,
     },
     back: {
       type: Boolean,
@@ -123,14 +161,17 @@ export default {
       documentsToDelete: [],
       readonly: false, //will come later to support locked submitted apps
       showCancelDialog: false,
+      supplementaryTerm: undefined,
+      isNextTermEnabled: false,
+      currentTermDisabled: false,
     }
   },
   computed: {
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
     },
-    ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useOrgStore, ['currentOrg']),
   },
   watch: {
     back: {
@@ -174,7 +215,11 @@ export default {
     ]
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
+    this.DAYS_BEFORE_TERM_EXPIRES = 45
+    console.log('created, the Funding Agreement end date is ', this.fundingAgreement.endDate)
     await this.loadData()
+    this.setSuppTermDates()
+    console.log(this.supplementaryTerm)
   },
   methods: {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
@@ -190,6 +235,7 @@ export default {
           await this.getOrganizationInfo(this.userInfo?.organizationId)
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
+        console.log(this.applicationId)
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
       }
@@ -210,6 +256,7 @@ export default {
           const payload = {
             ...applicationModel,
             applicationId: this.applicationId,
+            renewalTerm: this.supplementaryTerm,
           }
 
           if (payload.monthlyLease) {
@@ -337,6 +384,8 @@ export default {
       delete modelData.supportOtherDescription
       delete modelData.id
       delete modelData.statusCode
+      delete modelData.startDate
+      delete modelData.endDate
 
       return Object.values(modelData).every((value) => {
         return isEmpty(value)
@@ -361,6 +410,10 @@ export default {
       this.showCancelDialog = !this.showCancelDialog
     },
     setNext() {
+      if (this.currentTermDisabled) {
+        this.$emit('setNext', false)
+        return
+      }
       this.$emit(
         'setNext',
         this.models.every((el) => {
@@ -370,6 +423,57 @@ export default {
           return this.isModelEmpty(el)
         }),
       )
+    },
+    setSuppTermDates() {
+      const today = new Date()
+
+      console.log('now: ', today)
+
+      const endDateInMS = Date.parse(this.fundingAgreement.endDate)
+      //console.log(this.fundingAgreement.endDate)
+      //console.log(endDateInMS)
+
+      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
+
+      //console.log(termTwoEndDate)
+      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
+
+      console.log('term one end date ', termOneEndDate)
+
+      switch (true) {
+        case today < termOneEndDate:
+          console.log('we are in Term one ')
+          this.supplementaryTerm = SUPP_TERM_CODES.TERM_ONE
+          this.setIsCurrentTermDisabled(termOneEndDate, today)
+          break
+
+        case today < termTwoEndDate:
+          console.log('we are in Term 2')
+          this.supplementaryTerm = SUPP_TERM_CODES.TERM_TWO
+          this.setIsCurrentTermDisabled(termTwoEndDate, today)
+          break
+
+        case today < this.fundingAgreement.endDate:
+          console.log('we are in Term 3')
+          this.supplementaryTerm = SUPP_TERM_CODES.TERM_THREE
+          this.isNextTermEnabled = false
+
+          break
+
+        default:
+          console.log('broken - we are outside of FA term')
+      }
+
+      return 1
+    },
+
+    setIsCurrentTermDisabled(termEndDate, today) {
+      console.log(termEndDate)
+      const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_TERM_EXPIRES))
+      console.log('prior date', priorDate)
+      console.log(today > priorDate)
+
+      this.currentTermDisabled = today > priorDate
     },
   },
 }

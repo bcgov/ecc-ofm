@@ -1,8 +1,9 @@
 import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 
+//There is only ever one active funding agreement - so this function returns it
 export default {
-  async getActiveFundingAgreementsByApplicationId(applicationId) {
+  async getActiveFundingAgreementByApplicationId(applicationId) {
     try {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=0`)
@@ -12,4 +13,6 @@ export default {
       throw error
     }
   },
+
+  //TODO: other screens may require a table of all previous funding agreements. Add an endpoint and function here to support that functionality.
 }

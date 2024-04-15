@@ -33,7 +33,7 @@
     </v-col>
   </v-row>
 
-  <div v-if="isAnyApplicationReadOnly">
+  <div v-if="isWarningDisplayed">
     <AppWarningMessage>
       <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
     </AppWarningMessage>
@@ -45,7 +45,7 @@
       <v-col cols="1">
         <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
       </v-col>
-      <v-col v-if="!isReadOnly(model)">
+      <v-col v-if="!isReadOnly(model) && !isCurrentModelDisabled">
         <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
       </v-col>
     </v-row>
@@ -64,7 +64,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
-                :disabled="isReadOnly(model)"
+                :disabled="isReadOnly(model) || isCurrentModelDisabled"
                 maxlength="17"
                 @input="model.VIN = model.VIN.toUpperCase()"></v-text-field>
             </v-col>
@@ -90,7 +90,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="[rules.max(999999), ...rules.required]"
-                :disabled="isReadOnly(model)"></v-text-field>
+                :disabled="isReadOnly(model) || isCurrentModelDisabled"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -108,7 +108,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="[rules.max(999999), ...rules.required]"
-                :disabled="isReadOnly(model)"></v-text-field>
+                :disabled="isReadOnly(model) || isCurrentModelDisabled"></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -118,7 +118,7 @@
               <p>Vehicle financing/Lease cost per month: (If any)</p>
             </v-col>
             <v-col cols="6" xl="7" class="pt-2 text-center">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="isReadOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
+              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="isReadOnly(model) || isCurrentModelDisabled" prefix="$" maxlength="6"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -135,11 +135,11 @@
             :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
             v-model="model.documentsToUpload"
             entityName="ofm_allowances"
-            :loading="isReadOnly(model)"
+            :loading="isReadOnly(model) || isCurrentModelDisabled"
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
 
-          <div v-if="areDocumentsMissing(model)">
+          <div v-if="areDocumentsMissing(model) && !isCurrentModelDisabled">
             <v-row class="my-5">
               <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
               <p class="text-error ml-2">You must upload all Supporting Documents</p>
@@ -152,7 +152,7 @@
     <v-divider class="my-4"></v-divider>
   </div>
 
-  <v-row class="d-flex flex-column align-end my-8">
+  <v-row v-if="!isCurrentModelDisabled" class="d-flex flex-column align-end my-8">
     <AppButton v-if="isAddButtonEnabled" id="add-vehicle" :primary="false" size="large" width="300px" @click="addModel()">+ Add another vehicle</AppButton>
   </v-row>
 </template>
@@ -179,6 +179,10 @@ export default {
         return []
       },
     },
+    isCurrentModelDisabled: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
@@ -199,7 +203,7 @@ export default {
     isAddButtonEnabled() {
       return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
     },
-    isAnyApplicationReadOnly() {
+    isWarningDisplayed() {
       return this.models?.some((el) => this.isReadOnly(el))
     },
   },
