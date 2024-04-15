@@ -22,10 +22,10 @@
 
       <!-- These buttons should always be enabled/disabled with FA dates? Will likely have to write custom code to figure out what term we are in -->
       <v-col cols="6" lg="1" class="">
-        <AppButton id="current-term-button" :active="true" :primary="false" size="large" width="200px">Current Term</AppButton>
+        <AppButton id="current-term-button" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Term</AppButton>
       </v-col>
       <v-col cols="6" lg="1" class="">
-        <AppButton id="next-term-button" :primary="false" :disabled="isNextTermEnabled" size="large" width="200px">Next Term</AppButton>
+        <AppButton id="next-term-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Term</AppButton>
       </v-col>
     </v-row>
     <v-row no-gutters class="mb-2">
@@ -157,13 +157,14 @@ export default {
       loading: true,
       panel: [],
       models: undefined,
+      allTermModels: undefined,
       clonedModels: [],
       documentsToDelete: [],
-      readonly: false, //will come later to support locked submitted apps
       showCancelDialog: false,
-      supplementaryTerm: undefined,
-      isNextTermEnabled: false,
+      renewalTerm: undefined,
+      isNextTermEnabled: true, //todo add calc
       currentTermDisabled: false,
+      nextTermActive: false,
     }
   },
   computed: {
@@ -197,6 +198,20 @@ export default {
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },
     },
+    nextTermActive: {
+      handler() {
+        console.log('I changed')
+        console.log(this.nextTermActive)
+
+        if (this.nextTermActive) {
+          this.renewalTerm = this.renewalTerm + 1
+        } else {
+          this.renewalTerm = this.renewalTerm - 1
+        }
+
+        this.setActiveModels()
+      },
+    },
   },
   async created() {
     this.PANELS = [
@@ -216,10 +231,8 @@ export default {
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.DAYS_BEFORE_TERM_EXPIRES = 45
-    console.log('created, the Funding Agreement end date is ', this.fundingAgreement.endDate)
-    await this.loadData()
     this.setSuppTermDates()
-    console.log(this.supplementaryTerm)
+    await this.loadData()
   },
   methods: {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
@@ -235,7 +248,6 @@ export default {
           await this.getOrganizationInfo(this.userInfo?.organizationId)
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
-        console.log(this.applicationId)
       } catch (error) {
         this.setFailureAlert('Failed to load supplementary applications')
       }
@@ -256,7 +268,7 @@ export default {
           const payload = {
             ...applicationModel,
             applicationId: this.applicationId,
-            renewalTerm: this.supplementaryTerm,
+            renewalTerm: this.renewalTerm,
           }
 
           if (payload.monthlyLease) {
@@ -316,8 +328,23 @@ export default {
         id: uuid.v1(),
       }
 
-      this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel) }, { ...this.findAndUpdateModel(suppApplications, supportModel) }]
+      console.log(this.renewalTerm)
 
+      this.allTermModels = [
+        { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) },
+        { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) },
+      ]
+
+      if (this.isNextTermEnabled) {
+        this.allTermModels = [
+          ...this.allTermModels,
+          { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm + 1) },
+          { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm + 1) },
+        ]
+      }
+
+      console.log(this.allTermModels)
+      this.models = this.allTermModels //TODO take out
       const transportApplications = suppApplications.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
 
       if (transportApplications.length > 0) {
@@ -339,7 +366,10 @@ export default {
           id: uuid.v1(),
         })
       }
+
       this.clonedModels = cloneDeep(this.models)
+
+      console.log(this.models)
       this.setNext()
       this.loading = false
       this.$emit('process', false)
@@ -371,8 +401,8 @@ export default {
     getTransportModels() {
       return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
     },
-    findAndUpdateModel(suppApplications, modelToUpdate) {
-      const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType)
+    findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
+      const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
       return found ? found : modelToUpdate
     },
     isModelEmpty(model) {
@@ -443,19 +473,19 @@ export default {
       switch (true) {
         case today < termOneEndDate:
           console.log('we are in Term one ')
-          this.supplementaryTerm = SUPP_TERM_CODES.TERM_ONE
+          this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.setIsCurrentTermDisabled(termOneEndDate, today)
           break
 
         case today < termTwoEndDate:
           console.log('we are in Term 2')
-          this.supplementaryTerm = SUPP_TERM_CODES.TERM_TWO
+          this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.setIsCurrentTermDisabled(termTwoEndDate, today)
           break
 
         case today < this.fundingAgreement.endDate:
           console.log('we are in Term 3')
-          this.supplementaryTerm = SUPP_TERM_CODES.TERM_THREE
+          this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.isNextTermEnabled = false
 
           break
@@ -466,14 +496,24 @@ export default {
 
       return 1
     },
-
+    //TODO- date calculation for isNextTermEnabled
     setIsCurrentTermDisabled(termEndDate, today) {
-      console.log(termEndDate)
+      //console.log(termEndDate)
       const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_TERM_EXPIRES))
-      console.log('prior date', priorDate)
-      console.log(today > priorDate)
+      // console.log('prior date', priorDate)
+      // console.log('current term disabled? ', today > priorDate)
 
       this.currentTermDisabled = today > priorDate
+    },
+    setActiveTerm(value) {
+      console.log(value)
+      this.nextTermActive = value
+    },
+    setActiveModels() {
+      this.loading = true
+      this.models = this.allTermModels.filter((el) => el.renewalTerm == this.renewalTerm)
+      console.log(this.models)
+      this.loading = false
     },
   },
 }
