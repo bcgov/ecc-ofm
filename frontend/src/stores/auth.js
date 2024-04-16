@@ -24,7 +24,6 @@ export const useAuthStore = defineStore('auth', {
       return (role) => state.userInfo?.role === role
     },
     hasPermission: (state) => {
-      console.log('my permissions', state.permissions)
       return (permission) => state.permissions.includes(permission)
     },
   },

@@ -158,12 +158,16 @@ const router = createRouter({
       redirect: '/applications/select-facility',
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
       },
       children: [
         {
           path: 'select-facility',
           name: 'select-facility',
           component: SelectFacilityView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
         },
         {
           path: ':applicationGuid/facility-details',
@@ -194,11 +198,17 @@ const router = createRouter({
           path: ':applicationGuid/declare-submit',
           name: 'declare-submit',
           component: DeclareSubmitView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
         },
         {
           path: ':applicationGuid/confirmation',
           name: 'application-confirmation',
           component: ApplicationConfirmationView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
         },
       ],
     },
@@ -209,6 +219,7 @@ const router = createRouter({
       redirect: { name: 'supp-allowances-form' },
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
       },
       children: [
         {
@@ -347,6 +358,9 @@ router.beforeEach((to, _from, next) => {
                 return next('unauthorized')
               }
               // Validate specific permission
+              if (to.meta.permission) {
+                console.log(`Has ${to.meta.permission}: ${authStore.hasPermission(to.meta.permission)}`)
+              }
               if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
                 return next('unauthorized')
               }

@@ -70,7 +70,6 @@ export const useAppStore = defineStore('app', {
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes
-        console.log('this.roles', this.roles)
       }
     },
     async setAlertNotificationText(alertNotificationText) {

@@ -133,11 +133,12 @@ import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 
 export default {
   name: 'StaffingView',
   components: { AppLabel, AppMissingInfoError },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
@@ -169,7 +170,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
     readonly() {
-      return this.isApplicationReadonly || this.processing
+      return this.isApplicationReadonly || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     totalFullTimePosition() {
       return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime

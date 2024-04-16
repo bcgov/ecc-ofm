@@ -108,11 +108,12 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 
 export default {
   name: 'FacilityDetailsView',
   components: { AppLabel, FacilityInfo, ContactInfo },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
@@ -153,7 +154,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
     readonly() {
-      return this.isApplicationReadonly || this.loading || this.processing
+      return this.isApplicationReadonly || this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     // The primary contact cannot be the same as the secondary contact
     availableSecondaryContacts() {
