@@ -127,6 +127,7 @@ const auth = {
         org: user?.organization?.accountid,
       }
     }
+    // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
 
     const privateKey = config.get('tokenGenerate:privateKey')
     const uiToken = jsonwebtoken.sign(payload, privateKey, signOptions)
