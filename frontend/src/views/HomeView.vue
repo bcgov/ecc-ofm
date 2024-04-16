@@ -32,7 +32,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" lg="4">
+      <v-col cols="12" md="6" lg="4" v-if="hasPermission(PERMISSIONS.VIEW_APPLICATIONS)">
         <v-card class="home-card" prepend-icon="mdi-file-document-multiple-outline" title="Applications" @click="$router.push({ name: 'applications-history' })">
           <v-card-text>
             Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti. Duis aliquet non ipsum a feugiat. Mauris felis mi, feugiat eu placerat non,
@@ -62,9 +62,12 @@
 <script>
 import OrganizationHeader from '../components/organizations/OrganizationHeader.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
+
+import permissionsMixin from '@/mixins/permissionsMixin.js'
 export default {
   name: 'HomeView',
   components: { AppHeroImage, OrganizationHeader },
+  mixins: [permissionsMixin],
 }
 </script>
 

@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
     hasPermission: (state) => {
       return (permission) => {
         const appStore = useAppStore()
-        const matchingRole = appStore.roles.find((role) => role.roleId === state.userInfo.role.ofm_portal_roleid)
+        const matchingRole = appStore.roles.find((role) => role.roleId === state.userInfo.role?.ofm_portal_roleid)
         return matchingRole?.permissions.some((p) => p.permissionName === permission)
       }
     },
