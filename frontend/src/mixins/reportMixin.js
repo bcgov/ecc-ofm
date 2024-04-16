@@ -9,6 +9,10 @@ export default {
     ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
   },
 
+  created() {
+    this.SURVEY_QUESTION_TYPES = SURVEY_QUESTION_TYPES
+  },
+
   methods: {
     isEmpty,
 

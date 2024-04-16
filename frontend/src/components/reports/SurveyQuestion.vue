@@ -84,7 +84,6 @@
 </template>
 
 <script>
-import { SURVEY_QUESTION_TYPES } from '@/utils/constants'
 import reportMixin from '@/mixins/reportMixin'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
@@ -171,7 +170,6 @@ export default {
       separator: ',',
       precision: 0,
     }
-    this.SURVEY_QUESTION_TYPES = SURVEY_QUESTION_TYPES
   },
 
   async mounted() {
