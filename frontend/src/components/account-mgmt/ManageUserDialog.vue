@@ -72,7 +72,7 @@
             <v-col cols="12" md="9">
               <v-select
                 id="role"
-                :items="roles"
+                :items="userRoles"
                 v-model="user.role"
                 item-title="description"
                 item-value="id"
@@ -188,7 +188,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['roles']),
+    ...mapState(useAppStore, ['userRoles']),
     ...mapState(useAuthStore, ['userInfo']),
     isAddingUser() {
       return this.userOperationType === 'add'

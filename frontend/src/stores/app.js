@@ -16,6 +16,8 @@ export const useAppStore = defineStore('app', {
     // Lookup data from Dynamics365
     requestCategories: {},
     requestSubCategories: {},
+    // TODO (weskubo-cgi) Remove this
+    userRoles: {},
     roles: {},
     healthAuthorities: {},
     facilityTypes: {},
@@ -24,7 +26,7 @@ export const useAppStore = defineStore('app', {
   getters: {
     getRoleNameById: (state) => {
       return (id) => {
-        const role = state.roles?.find((role) => role.id === id)
+        const role = state.userRoles?.find((role) => role.id === id)
         return role?.description
       }
     },
@@ -66,6 +68,7 @@ export const useAppStore = defineStore('app', {
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.requestSubCategories = lookupInfo?.data?.requestSubCategories
+        this.userRoles = lookupInfo?.data?.userRoles
         this.roles = lookupInfo?.data?.roles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes

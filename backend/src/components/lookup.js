@@ -49,6 +49,10 @@ async function fetchAndCacheData(cacheKey, operationName) {
   }
   return data
 }
+// TODO (weskubo-cgi) Remove this
+async function getUserRoles() {
+  return fetchAndCacheData('userRoles', 'ofm_portal_role')
+}
 
 async function getRoles() {
   let roles = lookupCache.get('roles')
@@ -84,9 +88,10 @@ async function getLicenceTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
+    const [requestCategories, requestSubCategories, userRoles, roles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
       getRequestCategories(),
       getRequestSubCategories(),
+      getUserRoles(),
       getRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
@@ -95,6 +100,8 @@ async function getLookupInfo(_req, res) {
     const resData = {
       requestCategories: requestCategories,
       requestSubCategories: requestSubCategories,
+      // TODO (weskubo-cgi) Remove this
+      userRoles: userRoles,
       roles: roles,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,

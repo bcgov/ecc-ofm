@@ -60,10 +60,10 @@
 </template>
 
 <script>
-import OrganizationHeader from '../components/organizations/OrganizationHeader.vue'
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
-
 import permissionsMixin from '@/mixins/permissionsMixin.js'
+
 export default {
   name: 'HomeView',
   components: { AppHeroImage, OrganizationHeader },
