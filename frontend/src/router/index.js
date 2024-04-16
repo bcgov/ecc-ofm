@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
 import { ROLES } from '@/utils/constants'
+import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
 import ErrorView from '@/views/ErrorView.vue'
@@ -147,6 +148,7 @@ const router = createRouter({
       component: ApplicationsHistoryView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
       },
     },
     {

@@ -1,4 +1,6 @@
-import { useAuthStore } from '../stores/auth'
+import { mapActions } from 'pinia'
+
+import { useAuthStore } from '@/stores/auth'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
 
 export default {
@@ -7,4 +9,5 @@ export default {
   },
   methods: {
     ...mapActions(useAuthStore, ['hasPermission']),
+  },
 }

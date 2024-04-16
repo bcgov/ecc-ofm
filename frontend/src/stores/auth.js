@@ -24,7 +24,8 @@ export const useAuthStore = defineStore('auth', {
       return (role) => state.userInfo?.role === role
     },
     hasPermission: (state) => {
-      return (permission) => state.permissions?.includes(permission)
+      console.log('my permissions', state.permissions)
+      return (permission) => state.permissions.includes(permission)
     },
   },
   actions: {
@@ -77,7 +78,7 @@ export const useAuthStore = defineStore('auth', {
             this.currentFacility = this.userInfo.facilities[0]
           }
           // Lookup the permissions
-          this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role)
+          this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role.ofm_portal_roleid)?.permissions.map((p) => p.permissionName)
 
           this.isUserInfoLoaded = true
         }

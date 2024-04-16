@@ -16,16 +16,15 @@ export const useAppStore = defineStore('app', {
     // Lookup data from Dynamics365
     requestCategories: {},
     requestSubCategories: {},
-    userRoles: {},
+    roles: {},
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
-    roles: {},
   }),
   getters: {
     getRoleNameById: (state) => {
       return (id) => {
-        const role = state.userRoles?.find((role) => role.id === id)
+        const role = state.roles?.find((role) => role.id === id)
         return role?.description
       }
     },
@@ -67,11 +66,11 @@ export const useAppStore = defineStore('app', {
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.requestSubCategories = lookupInfo?.data?.requestSubCategories
-        this.userRoles = lookupInfo?.data?.userRoles
+        this.roles = lookupInfo?.data?.roles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes
-        this.roles = lookupInfo?.data?.roles
+        console.log('this.roles', this.roles)
       }
     },
     async setAlertNotificationText(alertNotificationText) {

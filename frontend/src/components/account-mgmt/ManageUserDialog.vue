@@ -11,7 +11,16 @@
               <AppLabel for="bceid">BCeID:</AppLabel>
             </v-col>
             <v-col v-if="isAddingUser && !wasNewUserAdded" cols="12" md="9">
-              <v-text-field id="bceid" v-model.trim="user.userName" @blur="checkBCeIDExists(user.userName)" placeholder="BCeID" variant="outlined" density="compact" :rules="rules.required" :error-messages="errorMessages" :disabled="isLoading"></v-text-field>
+              <v-text-field
+                id="bceid"
+                v-model.trim="user.userName"
+                @blur="checkBCeIDExists(user.userName)"
+                placeholder="BCeID"
+                variant="outlined"
+                density="compact"
+                :rules="rules.required"
+                :error-messages="errorMessages"
+                :disabled="isLoading"></v-text-field>
             </v-col>
             <v-col v-else cols="12" md="9" class="mb-5">
               <span>{{ user.userName }}</span>
@@ -46,7 +55,14 @@
               <AppLabel for="email">Email:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="email" v-model.trim="user.email" placeholder="user@domain.com" :rules="[rules.email, ...rules.required]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+              <v-text-field
+                id="email"
+                v-model.trim="user.email"
+                placeholder="user@domain.com"
+                :rules="[rules.email, ...rules.required]"
+                variant="outlined"
+                density="compact"
+                :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -56,7 +72,7 @@
             <v-col cols="12" md="9">
               <v-select
                 id="role"
-                :items="userRoles"
+                :items="roles"
                 v-model="user.role"
                 item-title="description"
                 item-value="id"
@@ -172,7 +188,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['userRoles']),
+    ...mapState(useAppStore, ['roles']),
     ...mapState(useAuthStore, ['userInfo']),
     isAddingUser() {
       return this.userOperationType === 'add'
@@ -410,7 +426,7 @@ export default {
       try {
         if (this.user.userName) {
           const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`)
-          this.errorMessages = (res.data.length >= 1) ? ['A user with this BCeID already exists.'] : []
+          this.errorMessages = res.data.length >= 1 ? ['A user with this BCeID already exists.'] : []
         }
       } catch (error) {
         this.setFailureAlert('Failed to check if BCeID already exists in provider organization: ' + userName, error)
@@ -422,11 +438,13 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
-        const res = await ApiService.apiAxios.get(`${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`);
+        const res = await ApiService.apiAxios.get(
+          `${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`,
+        )
         if (Array.isArray(res.data) && res.data.length >= 1) {
           return true
         }
-        this.errorMessages = [];
+        this.errorMessages = []
         return false
       } catch (error) {
         this.setFailureAlert('Failed to check if user already exists in provider organization', error)
@@ -439,7 +457,6 @@ export default {
     toggleDuplicateUserDialog() {
       this.showDuplicateUserDialog = !this.showDuplicateUserDialog
     },
-
   },
 }
 </script>

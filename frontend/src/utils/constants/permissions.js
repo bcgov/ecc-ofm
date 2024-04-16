@@ -1,24 +1,24 @@
 export const PERMISSIONS = Object.freeze({
   // Reporting
-  SEARCH_VIEW_REPORTS:   'Search/View Reports',
+  SEARCH_VIEW_REPORTS: 'Search/View Reports',
   SUBMIT_DRAFT_REPORTS: 'Submit Draft Reports',
   DELETE_DRAFT_REPORTS: 'Delete Draft Reports',
 
   // Funding
-  VIEW_FUNDING_AMOUNTS = 'View Funding Amounts',
-  REQUEST_FUNDING_CHANGE = 'Request Funding Change',
-  VIEW_FUNDING_AGREEMENT = 'View Funding Agreement',
-  SIGN_FUNDING_AGREEMENT = 'Sign Funding Agreement',
+  VIEW_FUNDING_AMOUNTS: 'View Funding Amounts',
+  REQUEST_FUNDING_CHANGE: 'Request Funding Change',
+  VIEW_FUNDING_AGREEMENT: 'View Funding Agreement',
+  SIGN_FUNDING_AGREEMENT: 'Sign Funding Agreement',
 
   // Documents
   DOCUMENT_MANAGEMENT: 'Document Management',
 
   // Application
-  VIEW_APPLICATIONS: 'View ApplicationS',
-  APPLY_FOR_FUNDING: ' Apply for Funding',
+  VIEW_APPLICATIONS: 'View Applications',
+  APPLY_FOR_FUNDING: 'Apply for Funding',
 
   // Resources
-  VIEW_RESOURCES:'View Resources',
+  VIEW_RESOURCES: 'View Resources',
 
   // Account Management
   VIEW_ORG_FACILITY: 'View Org/Facility Information',
