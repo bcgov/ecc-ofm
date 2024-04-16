@@ -15,6 +15,7 @@
       </template>
       <template v-slot:bottom><!-- no paging --></template>
     </v-data-table>
+    <div v-if="validation && required && isTableEmpty" class="error-message mt-2">This field is required</div>
     <AppButton v-if="!readonly && !isMaxRowsReached && !hasValueInheritanceChildQuestions" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">
       Add Row
     </AppButton>
@@ -46,6 +47,14 @@ export default {
     readonly: {
       type: Boolean,
       required: true,
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    validation: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -108,6 +117,10 @@ export default {
 
     isMaxRowsReached() {
       return this.updatedResponses?.length >= this.maxRows
+    },
+
+    isTableEmpty() {
+      return this.updatedResponses?.every((row) => this.isRowBlank(row?.headers))
     },
   },
 
@@ -184,3 +197,8 @@ export default {
   },
 }
 </script>
+<style scoped>
+.error-message {
+  font-size: 12px;
+}
+</style>

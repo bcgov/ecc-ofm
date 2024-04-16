@@ -11,6 +11,8 @@
               :questions="getTableQuestionHeaders(question)"
               :responses="getTableQuestionResponses(question)"
               :readonly="readonly"
+              :required="question.responseRequired"
+              :validation="validation"
               :maxRows="question?.tableMaxRows"
               @update="updateResponses"
               @delete="deleteTableResponses" />
