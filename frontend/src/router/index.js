@@ -114,7 +114,6 @@ const router = createRouter({
       component: ReportingView,
       meta: {
         requiresAuth: true,
-        permission: 'Cat Lover',
       },
     },
     {
@@ -358,9 +357,6 @@ router.beforeEach((to, _from, next) => {
                 return next('unauthorized')
               }
               // Validate specific permission
-              if (to.meta.permission) {
-                console.log(`Has ${to.meta.permission}: ${authStore.hasPermission(to.meta.permission)}`)
-              }
               if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
                 return next('unauthorized')
               }

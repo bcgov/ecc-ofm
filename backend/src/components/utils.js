@@ -145,7 +145,7 @@ async function deleteOperation(operation) {
 async function getOperation(operation) {
   try {
     const url = config.get('dynamicsApi:apiEndpoint') + '/api/Operations?statement=' + operation
-    log.info('get Data Url', url)
+    log.verbose('get Data Url', url)
     const response = await axios.get(url, getHttpHeader())
     //logResponse('getOperation', response);
     return response.data

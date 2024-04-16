@@ -89,21 +89,28 @@ export default {
       return this.isAuthenticated && this.userInfo && !this.isMinistryUser
     },
   },
-  async created() {
-    try {
-      await this.getUserInfo()
-      if (this.showMessagingIcon) {
-        await this.getNotifications(this.userInfo?.contactId)
-        await this.getAssistanceRequests(this.userInfo?.contactId)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  watch: {
+    userInfo: {
+      handler(_value) {
+        this.loadUserInfo()
+      },
+      deep: true,
+    },
   },
   methods: {
     ...mapActions(useAuthStore, ['getUserInfo']),
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     ...mapActions(useNotificationsStore, ['getNotifications']),
+    async loadUserInfo() {
+      try {
+        if (this.showMessagingIcon) {
+          await this.getNotifications(this.userInfo?.contactId)
+          await this.getAssistanceRequests(this.userInfo?.contactId)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
   },
 }
 </script>

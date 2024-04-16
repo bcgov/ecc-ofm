@@ -15,6 +15,7 @@ const {
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -28,7 +29,7 @@ const createApplicationSchema = {
 /**
  * Get the list of applications
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission('View Application'), (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_APPLICATIONS), (req, res) => {
   validationResult(req).throw()
   return getApplications(req, res)
 })
@@ -44,10 +45,17 @@ router.post('/', passport.authenticate('jwt', { session: false }), isValidBacken
 /**
  * Get an existing Application details using applicationId
  */
-router.get('/:applicationId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getApplication(req, res)
-})
+router.get(
+  '/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getApplication(req, res)
+  },
+)
 
 /**
  * Update an existing Application using applicationId
@@ -64,6 +72,7 @@ router.get(
   '/supplementary/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
   [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()

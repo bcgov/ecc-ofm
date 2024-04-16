@@ -108,4 +108,5 @@ async function getLookupInfo(_req, res) {
 
 module.exports = {
   getLookupInfo,
+  getRoles,
 }

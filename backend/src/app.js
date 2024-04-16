@@ -61,7 +61,7 @@ app.use(
 
 const logStream = {
   write: (message) => {
-    log.info(message)
+    log.http(message)
   },
 }
 
@@ -120,7 +120,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         scope: 'openid',
         kc_idp_hint: kc_idp_hint,
       },
-      (_issuer, profile, _context, _idToken, accessToken, refreshToken, done) => {
+      async (_issuer, profile, _context, _idToken, accessToken, refreshToken, done) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
           return done('No access token', null)
         }
@@ -129,7 +129,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         log.info('addLoginPassportUse')
         log.info(profile)
         // Get role
-        profile.jwtFrontend = auth.generateUiToken(profile.username)
+        profile.jwtFrontend = await auth.generateUiToken(profile.username)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken

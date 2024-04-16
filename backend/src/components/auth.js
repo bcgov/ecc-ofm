@@ -11,6 +11,8 @@ const safeStringify = require('fast-safe-stringify')
 const { ApiError } = require('./error')
 const { pick } = require('lodash')
 
+const { getUserProfile } = require('./user')
+
 const auth = {
   // Check if JWT Access Token has expired
   isTokenExpired(token) {
@@ -101,21 +103,33 @@ const auth = {
     next()
   },
 
-  generateUiToken(subject) {
-    log.error('generateUiToken')
-    // TODO Get UserProfile for BCeID users
-    const i = config.get('tokenGenerate:issuer')
-    const a = config.get('server:frontend')
+  async generateUiToken(subject) {
+    log.info(`generateUiToken subject: ${subject}`)
+
     const signOptions = {
-      issuer: i,
+      issuer: config.get('tokenGenerate:issuer'),
       subject,
-      audience: a,
+      audience: config.get('server:frontend'),
       expiresIn: '30m',
       algorithm: 'RS256',
     }
 
+    // Username is username@idp, e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
+    const subjectArray = subject.split('@')
+    let payload = {}
+
+    // Get UserProfile for BCeID users
+    if (subjectArray[1] === 'bceidbusiness') {
+      const user = await getUserProfile(subjectArray[0])
+
+      payload = {
+        role: user?.role,
+        org: user?.organization?.accountid,
+      }
+    }
+
     const privateKey = config.get('tokenGenerate:privateKey')
-    const uiToken = jsonwebtoken.sign({}, privateKey, signOptions)
+    const uiToken = jsonwebtoken.sign(payload, privateKey, signOptions)
     log.verbose('Generated JWT', uiToken)
     return uiToken
   },

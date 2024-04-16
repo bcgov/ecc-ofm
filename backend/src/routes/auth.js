@@ -77,7 +77,7 @@ router.get('/logout', async (req, res, next) => {
     } else {
       retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/logout')
     }
-    log.info('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl)
+    log.verbose('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl)
     res.redirect(config.get('siteMinder_logout_endpoint') + retUrl)
   })
 })
