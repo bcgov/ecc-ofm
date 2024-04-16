@@ -63,7 +63,9 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 })
 
 /**
- * Get survey's sections using query = surveyId
+ * Get survey's sections using query:
+ * Accepted queries:
+ * - surveyId: to find all sections in a survey
  */
 router.get('/survey-sections', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
@@ -71,7 +73,9 @@ router.get('/survey-sections', passport.authenticate('jwt', { session: false }),
 })
 
 /**
- * Get survey's questions using query (sectionId for section's questions, questionId for question's column headers)
+ * Get survey's questions using query:
+ * Accepted queries:
+ * - sectionId: to find all questions in a survey section
  */
 router.get('/survey-questions', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
@@ -95,8 +99,7 @@ router.get(
 /**
  * Get questions' responses using query
  * Accepted queries:
- * - surveyResponseId: to find responses for all questions in a survey (exclude table questions' responses)
- * - questionResponseId to find responses for all columns/rows in a table question)
+ * - surveyResponseId: to find all question responses in a survey response
  */
 router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
