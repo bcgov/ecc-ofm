@@ -55,6 +55,9 @@ async function getFacilityReports(req, res) {
 
 async function getSurveySections(req, res) {
   try {
+    if (isEmpty(req?.query)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+    }
     const sections = []
     const operation = `ofm_sections?$filter=ofm_is_published eq true and _ofm_survey_value eq '${req?.query?.surveyId}'&$orderby=ofm_section_order`
     const response = await getOperation(operation)
@@ -67,6 +70,9 @@ async function getSurveySections(req, res) {
 
 async function getSurveyQuestions(req, res) {
   try {
+    if (isEmpty(req?.query)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+    }
     const questions = []
     let operation
     if (req?.query?.sectionId) {
@@ -124,6 +130,9 @@ async function updateSurveyResponse(req, res) {
 
 async function getQuestionResponses(req, res) {
   try {
+    if (isEmpty(req?.query)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+    }
     const questionResponses = []
     let operation
     if (req?.query?.surveyResponseId) {
