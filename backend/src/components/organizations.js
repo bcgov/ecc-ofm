@@ -16,7 +16,7 @@ async function getOrganization(req, res) {
 
 async function getOrganizationFacilities(req, res) {
   try {
-    const operation = `accounts?$select=accountid,accountnumber,name,ccof_accounttype&$filter=(_parentaccountid_value eq ${req.params.organizationId})`
+    const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${req.params.organizationId}) and (statecode eq 0)`
     const response = await getOperation(operation)
     let orgFacilities = []
     response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))

@@ -12,7 +12,6 @@ import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import ReportingView from '@/views/ReportingView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
@@ -34,6 +33,8 @@ import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
 import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
 import FundingView from '@/views/funding/FundingView.vue'
+import ReportingView from '@/views/reports/ReportingView.vue'
+import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
 import SupplementaryConfirmationView from '@/views/supp-allowances/SupplementaryConfirmation.vue'
 import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
@@ -109,9 +110,17 @@ const router = createRouter({
       },
     },
     {
-      path: '/reporting',
+      path: '/reporting/overview',
       name: 'reporting',
       component: ReportingView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/reporting/:surveyResponseGuid',
+      name: 'survey-form',
+      component: SurveyView,
       meta: {
         requiresAuth: true,
       },
