@@ -206,9 +206,6 @@ const router = createRouter({
           path: ':applicationGuid/declare-submit',
           name: 'declare-submit',
           component: DeclareSubmitView,
-          meta: {
-            permission: PERMISSIONS.APPLY_FOR_FUNDING,
-          },
         },
         {
           path: ':applicationGuid/confirmation',
@@ -239,6 +236,7 @@ const router = createRouter({
           path: ':applicationGuid/declare-submit',
           name: 'supp-allowances-submit',
           component: SupplementarySubmitView,
+          permission: PERMISSIONS.APPLY_FOR_FUNDING,
         },
       ],
     },
@@ -248,6 +246,7 @@ const router = createRouter({
       component: SupplementaryConfirmationView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.APPLY_FOR_FUNDING,
       },
     },
     {

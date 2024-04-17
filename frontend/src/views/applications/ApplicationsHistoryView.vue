@@ -178,13 +178,13 @@ export default {
     isEmpty,
     getApplicationAction(application) {
       if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
-        return 'Continue Application'
+        return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ? 'Continue Application' : 'View Application'
       }
       return 'View Application'
     },
 
     isApplicationCancellable(application) {
-      return this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
 
     isApplicationDownloadable(application) {

@@ -25,7 +25,7 @@
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <LicenceDetails :licence="licence" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
+            <LicenceDetails :licence="licence" :readOnly="readonly" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -61,12 +61,13 @@ import LicenceService from '@/services/licenceService'
 import rules from '@/utils/rules'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 
 export default {
   name: 'ServiceDeliveryView',
   components: { AppButton, AppMissingInfoError, LicenceHeader, LicenceDetails },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
@@ -102,7 +103,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     readonly() {
-      return this.isApplicationReadonly || this.processing
+      return this.isApplicationReadonly || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     allLicenceIDs() {
       return this.currentApplication?.licences?.map((licence) => licence.licenceId)

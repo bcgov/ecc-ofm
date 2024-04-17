@@ -116,11 +116,7 @@ async function getReportQuestionTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-<<<<<<< HEAD
-    const [requestCategories, requestSubCategories, userRoles, roles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
-=======
-    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
->>>>>>> main
+    const [requestCategories, requestSubCategories, userRoles, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
       getRequestCategories(),
       getRequestSubCategories(),
       getUserRoles(),

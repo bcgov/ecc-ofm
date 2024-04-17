@@ -53,6 +53,7 @@ import { mapState, mapWritableState, mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import rules from '@/utils/rules'
 import { isEmpty } from 'lodash'
 import AppLabel from '@/components/ui/AppLabel.vue'
@@ -65,7 +66,7 @@ import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE } 
 export default {
   name: 'OperatingCostsView',
   components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
@@ -102,7 +103,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
     readonly() {
-      return this.isApplicationReadonly || this.processing
+      return this.isApplicationReadonly || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     sanitizedModel() {
       const sanitizedModel = {}
