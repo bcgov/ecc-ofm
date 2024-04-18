@@ -188,7 +188,8 @@ export default {
         this.updatedResponse.value = convertStringToArray(this.updatedResponse.value)
       } else if (
         [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.getReportQuestionTypeNameById(this.question?.type)) &&
-        isEmpty(this.updatedResponse.questionResponseId)
+        isEmpty(this.updatedResponse.questionResponseId) &&
+        this.updatedResponse.value == null
       ) {
         this.updatedResponse.value = '0'
       }
