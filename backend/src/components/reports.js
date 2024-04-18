@@ -15,6 +15,21 @@ function mapQuestionObjectForFront(data) {
   return question
 }
 
+/* Example of a fixed response query: "ofm_licence_details?$select=ofm_operational_spaces&$filter=ofm_licence_type eq 1 and (ofm_licence/_ofm_facility_value eq {accountid})"
+   Note:
+   - There should be only 1 field in the select statement
+   - The fixed response query should return only 1 record in the response.
+*/
+function mapFixedResponsesObjectForFront(fixedResponseQuery, data) {
+  const startString = '$select='
+  const endString = '&$filter'
+  const startIndex = fixedResponseQuery?.indexOf(startString) + startString.length
+  const endIndex = fixedResponseQuery?.indexOf(endString)
+  const selectedField = fixedResponseQuery?.substring(startIndex, endIndex)
+  if (isEmpty(data) || isEmpty(selectedField)) return
+  return data[0][selectedField]
+}
+
 // TODO Remove this method when Reporting screen complete
 async function getFacilityReports(req, res) {
   try {
@@ -81,6 +96,15 @@ async function getSurveyQuestions(req, res) {
     const response = await getOperation(operation)
     response?.value?.forEach((question) => questions.push(mapQuestionObjectForFront(question)))
     return res.status(HttpStatus.OK).json(questions)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getQuestionFixedResponses(req, res) {
+  try {
+    const response = await getOperation(req.body?.fixedResponseQuery)
+    return res.status(HttpStatus.OK).json(mapFixedResponsesObjectForFront(req.body?.fixedResponseQuery, response.value))
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
@@ -193,6 +217,7 @@ module.exports = {
   getSurveyResponse,
   createSurveyResponse,
   updateSurveyResponse,
+  getQuestionFixedResponses,
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,

@@ -49,6 +49,20 @@ export default {
     }
   },
 
+  async getQuestionFixedResponses(query) {
+    try {
+      if (isEmpty(query)) return
+      const payload = {
+        fixedResponseQuery: query,
+      }
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/question-fixed-responses`, payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get question fixed responses - ${error}`)
+      throw error
+    }
+  },
+
   async getSurveyResponse(surveyResponseId) {
     try {
       if (!surveyResponseId) return

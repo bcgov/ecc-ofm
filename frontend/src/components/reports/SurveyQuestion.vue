@@ -1,32 +1,27 @@
 <template>
   <v-form ref="form">
-    <AppNumberInput
-      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.NUMBER"
-      v-model.lazy="updatedResponse.value"
-      :format="NUMBER_FORMAT"
-      maxlength="12"
-      :rules="validationRules"
-      :hide-details="isEmpty(validationRules)"
-      :disabled="disabled" />
+    <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.NUMBER">
+      <strong v-if="isFixedResponseQuestion">{{ !question?.fixedResponses ? '0' : question?.fixedResponses }}</strong>
+      <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
+    </div>
 
-    <AppNumberInput
-      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CURRENCY"
-      v-model.lazy="updatedResponse.value"
-      :format="CURRENCY_FORMAT"
-      maxlength="12"
-      prefix="$"
-      :rules="validationRules"
-      :hide-details="isEmpty(validationRules)"
-      :disabled="disabled" />
+    <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CURRENCY">
+      <strong v-if="isFixedResponseQuestion">{{ !question?.fixedResponses ? '0.00' : question?.fixedResponses }}</strong>
+      <AppNumberInput
+        v-else
+        v-model.lazy="updatedResponse.value"
+        :format="CURRENCY_FORMAT"
+        maxlength="12"
+        prefix="$"
+        :rules="validationRules"
+        :hide-details="isEmpty(validationRules)"
+        :disabled="disabled" />
+    </div>
 
-    <v-text-field
-      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT"
-      v-model.trim="updatedResponse.value"
-      variant="outlined"
-      density="compact"
-      :rules="validationRules"
-      :hide-details="isEmpty(validationRules)"
-      :disabled="disabled" />
+    <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT">
+      <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponses }}</strong>
+      <v-text-field v-else v-model.trim="updatedResponse.value" variant="outlined" density="compact" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
+    </div>
 
     <v-textarea
       v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT_AREA"
@@ -127,7 +122,10 @@ export default {
 
   computed: {
     disabled() {
-      return this.readonly || !isEmpty(this.question?.inheritanceValues)
+      return this.readonly || !isEmpty(this.question?.inheritanceValues) || this.isFixedResponseQuestion
+    },
+    isFixedResponseQuestion() {
+      return !isEmpty(this.question?.fixedResponseQuery)
     },
     validationRules() {
       return this.question?.responseRequired ? [...rules.required] : []
@@ -178,16 +176,19 @@ export default {
 
   methods: {
     initializeResponse() {
+      if (this.isFixedResponseQuestion) return
       this.updatedResponse = cloneDeep(this.response)
       this.updatedResponse.questionId = this.question?.questionId
       this.updatedResponse.questionType = this.question?.type
       this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
       this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
       this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
-
       if (this.isMultipleChoiceQuestion(this.question?.type)) {
         this.updatedResponse.value = convertStringToArray(this.updatedResponse.value)
-      } else if (['Number', 'Currency'].includes(this.getReportQuestionTypeNameById(this.question?.type)) && !this.updatedResponse.questionResponseId) {
+      } else if (
+        [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.getReportQuestionTypeNameById(this.question?.type)) &&
+        isEmpty(this.updatedResponse.questionResponseId)
+      ) {
         this.updatedResponse.value = '0'
       }
     },

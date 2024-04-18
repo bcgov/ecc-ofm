@@ -8,6 +8,7 @@ const {
   getFacilityReports,
   getSurveySections,
   getSurveyQuestions,
+  getQuestionFixedResponses,
   getSurveyResponse,
   createSurveyResponse,
   updateSurveyResponse,
@@ -95,6 +96,15 @@ router.get(
     return getSurveyResponse(req, res)
   },
 )
+
+/**
+ * Get survey's question's fixed responses
+ * Note: I used POST API request for a get request because I want to pass the fixed response query in the payload.
+ */
+router.post('/question-fixed-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  validationResult(req).throw()
+  return getQuestionFixedResponses(req, res)
+})
 
 /**
  * Get questions' responses using query
