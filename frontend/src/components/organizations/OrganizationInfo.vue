@@ -18,7 +18,7 @@
                   <AppLabel>Doing business as:</AppLabel>
                 </v-col>
                 <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
-                  {{ organization?.businessType }}
+                  {{ organization?.doingBusinessAsName }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
