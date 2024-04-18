@@ -6,7 +6,7 @@
     </div>
 
     <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CURRENCY">
-      <strong v-if="isFixedResponseQuestion">{{ !question?.fixedResponses ? '0.00' : question?.fixedResponses }}</strong>
+      <strong v-if="isFixedResponseQuestion">$ {{ !question?.fixedResponses ? '0.00' : question?.fixedResponses }}</strong>
       <AppNumberInput
         v-else
         v-model.lazy="updatedResponse.value"
