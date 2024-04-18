@@ -16,9 +16,7 @@ function mapQuestionObjectForFront(data) {
 }
 
 /* Example of a fixed response query: "ofm_licence_details?$select=ofm_operational_spaces&$filter=ofm_licence_type eq 1 and (ofm_licence/_ofm_facility_value eq {accountid})"
-   Note:
-   - There should be only 1 field in the select statement
-   - The fixed response query should return only 1 record in the response.
+   Note: There should be only 1 field in the select statement
 */
 function mapFixedResponsesObjectForFront(fixedResponseQuery, data) {
   const startString = '$select='
@@ -27,7 +25,15 @@ function mapFixedResponsesObjectForFront(fixedResponseQuery, data) {
   const endIndex = fixedResponseQuery?.indexOf(endString)
   const selectedField = fixedResponseQuery?.substring(startIndex, endIndex)
   if (isEmpty(data) || isEmpty(selectedField)) return
-  return data[0][selectedField]
+  let result
+  data?.forEach((item) => {
+    if (!result) {
+      result = item[selectedField]
+    } else {
+      result += item[selectedField]
+    }
+  })
+  return result
 }
 
 // TODO Remove this method when Reporting screen complete
