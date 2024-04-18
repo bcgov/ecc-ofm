@@ -4,7 +4,7 @@ const { MappableObjectForFront, MappableObjectForBack } = require('../util/mappi
 const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, QuestionResponseMappings, SurveyQuestionBusinessRulesMappings } = require('../util/mapping/Mappings')
 
 const HttpStatus = require('http-status-codes')
-const { isEmpty } = require('lodash')
+const { isEmpty, orderBy } = require('lodash')
 
 function mapQuestionObjectForFront(data) {
   const question = new MappableObjectForFront(data, SurveyQuestionMappings).toJSON()
@@ -15,17 +15,26 @@ function mapQuestionObjectForFront(data) {
   return question
 }
 
+function convertFixedResponseQuery(query, entityId) {
+  if (isEmpty(query) || isEmpty(entityId)) return
+  let updatedQuery = ''
+  if (query?.includes('_ofm_facility_value eq {accountid}')) {
+    updatedQuery = query?.replace('accountid', entityId)
+  }
+  return updatedQuery
+}
+
 /* Example of a fixed response query: "ofm_licence_details?$select=ofm_operational_spaces&$filter=ofm_licence_type eq 1 and (ofm_licence/_ofm_facility_value eq {accountid})"
    Note: There should be only 1 field in the select statement
 */
-function mapFixedResponsesObjectForFront(fixedResponseQuery, data) {
+function mapFixedResponseObjectForFront(fixedResponseQuery, data) {
   const startString = '$select='
   const endString = '&$filter'
   const startIndex = fixedResponseQuery?.indexOf(startString) + startString.length
   const endIndex = fixedResponseQuery?.indexOf(endString)
   const selectedField = fixedResponseQuery?.substring(startIndex, endIndex)
-  if (isEmpty(data) || isEmpty(selectedField)) return
-  let result
+  if (isEmpty(selectedField)) return
+  let result = null
   data?.forEach((item) => {
     if (!result) {
       result = item[selectedField]
@@ -94,25 +103,38 @@ async function getSurveyQuestions(req, res) {
     if (isEmpty(req?.query)) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
-    const questions = []
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_response_required,ofm_occurence&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'&$orderby=ofm_sequence`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_response_required,ofm_occurence&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
     }
     const response = await getOperation(operation)
-    response?.value?.forEach((question) => questions.push(mapQuestionObjectForFront(question)))
+    let questions = []
+    await Promise.all(
+      response?.value?.map(async (item) => {
+        const question = mapQuestionObjectForFront(item)
+        if (!isEmpty(item['ofm_fixed_response'])) {
+          question.fixedResponse = await getQuestionFixedResponse(item['ofm_fixed_response'], req?.query?.facilityId)
+        }
+        questions.push(question)
+      }),
+    )
+    questions = orderBy(questions, 'sequence')
     return res.status(HttpStatus.OK).json(questions)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
-async function getQuestionFixedResponses(req, res) {
+/*
+  Note: For now, we only allow facilityId in the query's filter. If we need to add more filters, we will need to update getSurveyQuestions and add new filters to convertFixedResponseQuery() function
+*/
+async function getQuestionFixedResponse(fixedResponseQuery, entityId) {
   try {
-    const response = await getOperation(req.body?.fixedResponseQuery)
-    return res.status(HttpStatus.OK).json(mapFixedResponsesObjectForFront(req.body?.fixedResponseQuery, response.value))
+    const response = await getOperation(convertFixedResponseQuery(fixedResponseQuery, entityId))
+    return mapFixedResponseObjectForFront(fixedResponseQuery, response.value)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    log.error(`Failed to get question fixed responses - ${e}`)
+    throw e
   }
 }
 
@@ -223,7 +245,6 @@ module.exports = {
   getSurveyResponse,
   createSurveyResponse,
   updateSurveyResponse,
-  getQuestionFixedResponses,
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,

@@ -1,12 +1,12 @@
 <template>
   <v-form ref="form">
     <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.NUMBER">
-      <strong v-if="isFixedResponseQuestion">{{ !question?.fixedResponses ? '0' : question?.fixedResponses }}</strong>
+      <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponse ? question?.fixedResponse : '0' }}</strong>
       <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
     </div>
 
     <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CURRENCY">
-      <strong v-if="isFixedResponseQuestion">$ {{ !question?.fixedResponses ? '0.00' : question?.fixedResponses }}</strong>
+      <strong v-if="isFixedResponseQuestion">$ {{ question?.fixedResponse ? question?.fixedResponse : '0.00' }}</strong>
       <AppNumberInput
         v-else
         v-model.lazy="updatedResponse.value"
@@ -19,7 +19,7 @@
     </div>
 
     <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT">
-      <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponses }}</strong>
+      <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponse }}</strong>
       <v-text-field v-else v-model.trim="updatedResponse.value" variant="outlined" density="compact" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
     </div>
 
@@ -124,8 +124,9 @@ export default {
     disabled() {
       return this.readonly || !isEmpty(this.question?.inheritanceValues) || this.isFixedResponseQuestion
     },
+    // Note: For now, we can have a fixed response question for these question types: Number, Currency, Text
     isFixedResponseQuestion() {
-      return !isEmpty(this.question?.fixedResponseQuery)
+      return 'fixedResponse' in this.question
     },
     validationRules() {
       return this.question?.responseRequired ? [...rules.required] : []

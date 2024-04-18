@@ -36,29 +36,15 @@ export default {
     }
   },
 
-  async getSectionQuestions(sectionId) {
+  async getSectionQuestions(sectionId, facilityId) {
     try {
-      if (!sectionId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}`)
+      if (!sectionId || !facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`)
       const questions = response?.data
       convertQuestionsChoices(questions)
       return questions
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
-      throw error
-    }
-  },
-
-  async getQuestionFixedResponses(query) {
-    try {
-      if (isEmpty(query)) return
-      const payload = {
-        fixedResponseQuery: query,
-      }
-      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/question-fixed-responses`, payload)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get question fixed responses - ${error}`)
       throw error
     }
   },

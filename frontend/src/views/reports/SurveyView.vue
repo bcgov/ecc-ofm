@@ -144,11 +144,11 @@ export default {
         this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyId)
         await Promise.all(
           this.sections?.map(async (section) => {
-            section.questions = await ReportsService.getSectionQuestions(section?.sectionId)
+            section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
           }),
         )
+
         this.filterSectionQuestionsUsingSurveyResponseType()
-        await this.getQuestionFixedResponses()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()
       } catch (error) {
@@ -262,36 +262,6 @@ export default {
         section.questions = section.questions?.filter((question) => surveyResponseTypeToBeIncluded.includes(question.surveyResponseType))
       })
       this.sections = this.sections?.filter((section) => !isEmpty(section.questions))
-    },
-
-    /*
-     Note:
-     - For now, we can have a fixed response question for these question types: Number, Currency, Text
-     - For now, we only allow facilityId in the query's filter. If we need to add more filters, we will need to add them to convertFixedResponseQuery() function
-    */
-    async getQuestionFixedResponses() {
-      try {
-        let questionsWithFixedResponses = []
-        this.sections?.forEach((section) => {
-          questionsWithFixedResponses = questionsWithFixedResponses.concat(section.questions?.filter((question) => !isEmpty(question.fixedResponseQuery)))
-        })
-        await Promise.all(
-          questionsWithFixedResponses?.map(async (question) => {
-            const query = this.convertFixedResponseQuery(question.fixedResponseQuery)
-            question.fixedResponses = await ReportsService.getQuestionFixedResponses(query)
-          }),
-        )
-      } catch (error) {
-        this.setFailureAlert('Failed to get question fixed responses', error)
-      }
-    },
-
-    convertFixedResponseQuery(query) {
-      let updatedQuery = ''
-      if (query?.includes('_ofm_facility_value eq {accountid}')) {
-        updatedQuery = query?.replace('accountid', this.surveyResponse?.facilityId)
-      }
-      return updatedQuery
     },
 
     async getQuestionsResponses() {
