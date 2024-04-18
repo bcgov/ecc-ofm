@@ -37,7 +37,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Create a new Application
  */
-router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(createApplicationSchema)], (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.APPLY_FOR_FUNDING), [checkSchema(createApplicationSchema)], (req, res) => {
   validationResult(req).throw()
   return createApplication(req, res)
 })
@@ -60,10 +60,17 @@ router.get(
 /**
  * Update an existing Application using applicationId
  */
-router.put('/:applicationId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return updateApplication(req, res)
-})
+router.put(
+  '/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateApplication(req, res)
+  },
+)
 
 /**
  * Get an existing Supplementary Application details using applicationId
@@ -83,7 +90,7 @@ router.get(
 /**
  * Create a new Supplementary Application
  */
-router.post('/supplementary/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.post('/supplementary/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.APPLY_FOR_FUNDING), (req, res) => {
   validationResult(req).throw()
   return createSupplementaryApplication(req, res)
 })
@@ -95,6 +102,7 @@ router.patch(
   '/supplementary/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
   [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -109,6 +117,7 @@ router.delete(
   '/supplementary/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
   [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
