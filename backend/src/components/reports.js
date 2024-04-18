@@ -2,7 +2,7 @@
 const { getOperation, postOperation, patchOperationWithObjectId, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, QuestionResponseMappings, SurveyQuestionBusinessRulesMappings } = require('../util/mapping/Mappings')
-
+const log = require('../components/logger')
 const HttpStatus = require('http-status-codes')
 const { isEmpty, orderBy } = require('lodash')
 
