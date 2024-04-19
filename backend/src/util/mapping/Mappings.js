@@ -325,7 +325,6 @@ const SurveyQuestionMappings = [
   { back: 'ofm_sequence', front: 'sequence' },
   { back: 'ofm_question_choice', front: 'choices' },
   { back: 'ofm_response_required', front: 'responseRequired' },
-  { back: 'ofm_fixed_response', front: 'fixedResponse' },
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
   { back: 'ofm_occurence@OData.Community.Display.V1.FormattedValue', front: 'surveyResponseType' },
