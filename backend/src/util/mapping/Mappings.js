@@ -178,6 +178,7 @@ const OrganizationMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_business_type', front: 'businessTypeCode' },
   { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'ofm_doing_business_as', front: 'doingBusinessAsName' },
   { back: 'telephone1', front: 'phoneLandline' },
   { back: 'telephone2', front: 'phoneCell' },
   { back: 'address1_line1', front: 'streetAddress1' },
