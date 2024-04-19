@@ -15,6 +15,7 @@ export const useAuthStore = defineStore('auth', {
     userInfo: null,
     impersonateId: null,
     currentFacility: {},
+    permissions: [],
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
@@ -24,9 +25,7 @@ export const useAuthStore = defineStore('auth', {
     },
     hasPermission: (state) => {
       return (permission) => {
-        const appStore = useAppStore()
-        const matchingRole = appStore.roles.find((role) => role.roleId === state.userInfo.role?.ofm_portal_roleid)
-        return matchingRole?.permissions.some((p) => p.permissionName === permission)
+        return state.permissions.some((p) => p.permissionName === permission)
       }
     },
   },
@@ -54,6 +53,7 @@ export const useAuthStore = defineStore('auth', {
       }
       if (localStorage.getItem('jwtToken')) {
         if (!this.isUserInfoLoaded) {
+          const appStore = useAppStore()
           let userInfoRes = undefined
           if (this.impersonateId && this.isMinistryUser) {
             userInfoRes = await ApiService.getUserImpersonateInfo(this.impersonateId)
@@ -69,9 +69,7 @@ export const useAuthStore = defineStore('auth', {
             this.currentFacility = this.userInfo.facilities[0]
           }
           // Lookup the permissions
-          // XXX When this code is called the roles may not be loaded from the appStore
-          // So don't bother keeping permissions in the store
-          //this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role.ofm_portal_roleid)?.permissions.map((p) => p.permissionName)
+          this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role.ofm_portal_roleid)?.permissions.map((p) => p.permissionName)
 
           this.isUserInfoLoaded = true
         }

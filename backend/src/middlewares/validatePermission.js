@@ -2,6 +2,11 @@ const jsonwebtoken = require('jsonwebtoken')
 const log = require('../components/logger')
 const { getRoles } = require('../components/lookup')
 
+/**
+ * Validates that the user has the specified permission.
+ * @param {*} permission
+ * @returns
+ */
 module.exports = function (permission) {
   return async function (req, res, next) {
     log.info(`validating permission ${permission}`)
