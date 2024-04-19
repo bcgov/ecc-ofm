@@ -27,7 +27,7 @@ export default {
 
   async getSurveySections(surveyId) {
     try {
-      if (!surveyId) return
+      if (!surveyId) return []
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-sections?surveyId=${surveyId}`)
       return response?.data
     } catch (error) {
@@ -38,7 +38,7 @@ export default {
 
   async getSectionQuestions(sectionId, facilityId) {
     try {
-      if (!sectionId || !facilityId) return
+      if (!sectionId || !facilityId) return []
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`)
       const questions = response?.data
       convertQuestionsChoices(questions)
@@ -84,7 +84,7 @@ export default {
 
   async getQuestionResponses(surveyResponseId) {
     try {
-      if (!surveyResponseId) return
+      if (!surveyResponseId) return []
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`)
       return response?.data
     } catch (error) {
