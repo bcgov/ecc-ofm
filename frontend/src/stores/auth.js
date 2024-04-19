@@ -24,7 +24,7 @@ export const useAuthStore = defineStore('auth', {
     },
     hasPermission: (state) => {
       return (permission) => {
-        return state.permissions.some((p) => p.permissionName === permission)
+        return state.permissions.some((p) => p === permission)
       }
     },
   },

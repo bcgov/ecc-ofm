@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isReadOnly">
+  <div v-if="isApplicationReadOnly">
     <AppWarningMessage>
       <div>You have already received the Indigenous Programming Allowance for the current term.</div>
     </AppWarningMessage>
@@ -66,9 +66,11 @@ import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import { INDIG_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { isApplicationLocked } from '@/utils/common'
+import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 export default {
   components: { AppLabel, AppWarningMessage },
+  mixins: [permissionsMixin],
   props: {
     indigenousProgrammingModel: {
       type: Object,
@@ -90,8 +92,11 @@ export default {
     isOtherBoxDisplayed() {
       return this.model.indigenousFundingModel.includes('9')
     },
-    isReadOnly() {
+    isApplicationReadOnly() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode)
+    },
+    isReadOnly() {
+      return this.isApplicationReadOnly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
   },
   watch: {

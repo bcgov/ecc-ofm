@@ -139,7 +139,7 @@
             :uploadedDocuments="model.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument" />
 
-          <div v-if="areDocumentsMissing(model)">
+          <div v-if="showDocumentsError(model)">
             <v-row class="my-5">
               <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
               <p class="text-error ml-2">You must upload all Supporting Documents</p>
@@ -168,9 +168,11 @@ import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
+import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 export default {
   components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload, AppWarningMessage },
+  mixins: [permissionsMixin],
   props: {
     transportModels: {
       type: Array,
@@ -197,10 +199,10 @@ export default {
   },
   computed: {
     isAddButtonEnabled() {
-      return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
+      return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     isAnyApplicationReadOnly() {
-      return this.models?.some((el) => this.isReadOnly(el))
+      return this.models?.some((el) => this.isApplicationReadOnly(el))
     },
   },
   async created() {
@@ -248,12 +250,18 @@ export default {
       this.$emit('deleteDocument', documentId)
     },
     isReadOnly(model) {
+      return isApplicationReadOnly(model) || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+    },
+    isApplicationReadOnly(model) {
       if (!model.statusCode) {
         return false
       }
       return isApplicationLocked(model?.statusCode)
     },
-    areDocumentsMissing(model) {
+    showDocumentsError() {
+      if (!this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+        return false
+      }
       if (model.monthlyLease == 0) {
         return model.documentsToUpload?.length === 0 && model.uploadedDocuments?.length === 0
       }

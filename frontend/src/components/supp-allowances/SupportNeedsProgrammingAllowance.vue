@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isReadOnly && hasInclusionPolicy">
+  <div v-if="isApplicationReadOnly && hasInclusionPolicy">
     <AppWarningMessage>
       <div>You have already received the Support Needs Allowance for the current term.</div>
     </AppWarningMessage>
@@ -120,9 +120,11 @@ import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
 import { SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { isApplicationLocked } from '@/utils/common'
+import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 export default {
   components: { AppButton, AppLabel, AppWarningMessage },
+  mixins: [permissionsMixin],
   props: {
     supportModel: {
       type: Object,
@@ -152,8 +154,11 @@ export default {
     isOtherBoxDisplayed() {
       return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
     },
-    isReadOnly() {
+    isApplicationReadOnly() {
       return isApplicationLocked(this.supportModel?.statusCode)
+    },
+    isReadOnly() {
+      return this.isApplicationReadOnly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
   },
   watch: {
