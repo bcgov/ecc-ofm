@@ -2,8 +2,7 @@ import { defineStore } from 'pinia'
 
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
-
-import { useAppStore } from './app'
+import { useAppStore } from '@/stores/app'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
