@@ -37,10 +37,7 @@ objects:
             - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-frontend:${TAG}
               imagePullPolicy: Always
               volumeMounts:
-                #   - name: tls-certs
-                #     mountPath: '/etc/tls-certs'
-                #     readOnly: true
-                - name: config-env
+                - name: js-runtime-config
                   mountPath: '/srv/js/config'
               livenessProbe:
                 failureThreshold: 3
@@ -72,10 +69,7 @@ objects:
                   cpu: '${MAX_CPU}'
                   memory: '${MAX_MEM}'
           volumes:
-            #   - name: tls-certs
-            #     secret:
-            #       secretName: ofm-frontend-cert
-            - name: config-env
+            - name: js-runtime-config
               configMap:
                 name: ofm-frontend-${ENVIRONMENT}-config-map
       test: false
@@ -138,6 +132,19 @@ objects:
             target:
               type: Utilization
               averageUtilization: 90
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ofm-frontend-${ENVIRONMENT}-config-map
+      namespace: '${NAMESPACE}'
+    data:
+      config.js: |
+        const config = {
+          BANNER_ENVIRONMENT: '${BANNER_ENV}',
+          BANNER_COLOR: '${BANNER_COLOR}',
+          TDAD_CONTACT_EMAIL: '${TDAD_CONTACT_EMAIL}',
+          CCOF_URL: '${CCOF_URL}'
+        };
 parameters:
   - name: REPO_NAME
     description: Application repository name
@@ -186,4 +193,16 @@ parameters:
     required: false
   - name: PRIVATE_KEY
     description: The private key
+    required: false
+  - name: BANNER_ENVIRONMENT
+    description: The title for the application banner. It which indicates what environment is running
+    required: false
+  - name: BANNER_COLOR
+    description: The CSS color for the BANNER_ENVIRONMENT background
+    required: false
+  - name: TDAD_CONTACT_EMAIL
+    description: The contact email for 10 dollar a day daycare centers
+    required: false
+  - name: CCOF_URL
+    description: The URL for the CCOF portal that belongs to the same application environment.
     required: false
