@@ -29,7 +29,11 @@ function checkOperatingCostsComplete(application) {
 }
 
 function checkServiceDeliveryComplete(application) {
-  return application?.licenceDeclaration && !isEmpty(application?.licences)
+  const allDetailsComplete = application.licences.every((licence) => {
+    return licence.licenceDetails.every((detail) => (detail.applyRoomSplitCondition ? !isEmpty(detail.roomSplitDetails) : true))
+  })
+
+  return application?.licenceDeclaration && !isEmpty(application?.licences) && allDetailsComplete
 }
 
 function checkDeclareSubmitComplete(application) {

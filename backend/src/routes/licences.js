@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getLicenceDetails } = require('../components/licences')
+const { getLicenceDetails, updateLicenceDetails } = require('../components/licences')
 const { param, validationResult } = require('express-validator')
 
 module.exports = router
@@ -19,5 +19,20 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getLicenceDetails(req, res)
+  },
+)
+
+/**
+ * Update licence's licence details by licenceId.
+ */
+router.patch(
+  '/:licenceDetailId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('licenceDetailId', 'URL param: [licenceDetailId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+
+    return updateLicenceDetails(req, res)
   },
 )

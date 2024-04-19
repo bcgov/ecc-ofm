@@ -25,7 +25,7 @@
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <LicenceDetails :licence="licence" />
+            <LicenceDetails :licence="licence" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -57,6 +57,7 @@ import { mapState, mapWritableState, mapActions } from 'pinia'
 import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import LicenceService from '@/services/licenceService'
 import rules from '@/utils/rules'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
@@ -94,6 +95,7 @@ export default {
       licences: [],
       panel: [],
       licenceDeclaration: undefined,
+      changedLicences: [],
     }
   },
   computed: {
@@ -108,8 +110,8 @@ export default {
   },
   watch: {
     licenceDeclaration: {
-      handler(value) {
-        this.isServiceDeliveryComplete = value
+      handler() {
+        this.setFormComplete()
       },
     },
     back: {
@@ -153,6 +155,15 @@ export default {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
           await this.getApplication(this.$route.params.applicationGuid)
         }
+
+        await Promise.all(
+          this.changedLicences.map(async (licence) => {
+            await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
+          }),
+        )
+
+        this.changedLicences = []
+
         if (showAlert) {
           this.setSuccessAlert('Application saved successfully')
         }
@@ -166,6 +177,24 @@ export default {
 
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allLicenceIDs : []
+    },
+    updateModel(updatedModel) {
+      const found = this.changedLicences.find((el) => el.licenceDetailId == updatedModel.licenceDetailId)
+
+      if (!found) {
+        this.changedLicences.push(updatedModel)
+      } else {
+        found.roomSplitDetails = updatedModel.roomSplitDetails
+        found.applyRoomSplitCondition = updatedModel.applyRoomSplitCondition
+      }
+    },
+    setDetailsComplete(licenceId, value) {
+      const currentLicence = this.currentApplication?.licences.find((el) => el.licenceId === licenceId)
+      currentLicence.isLicenceComplete = value.valid
+      this.setFormComplete()
+    },
+    setFormComplete() {
+      this.isServiceDeliveryComplete = this.currentApplication.licences.every((el) => el.isLicenceComplete) && this.licenceDeclaration
     },
   },
 }

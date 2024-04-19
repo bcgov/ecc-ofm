@@ -23,6 +23,7 @@ const UserProfileFacilityMappings = [
   { back: 'accountnumber', front: 'facilityAccountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'ccof_accounttype', front: 'facilityType' },
+  { back: 'ofm_program', front: 'programCode' },
   { back: 'statecode', front: 'facilityStateCode' },
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
@@ -35,6 +36,21 @@ const RequestCategoryMappings = [
 const RequestSubCategoryMappings = [
   { back: 'ofm_name', front: 'categoryName' },
   { back: 'ofm_subcategoryid', front: 'subCategoryId' },
+]
+
+const FiscalYearMappings = [
+  { back: 'ofm_fiscal_yearid', front: 'fiscalYearId' },
+  { back: 'ofm_caption', front: 'name' },
+  { back: 'ofm_fiscal_year_number', front: 'order' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'statuscode', front: 'statusCode' },
+]
+
+const MonthMappings = [
+  { back: 'ofm_monthid', front: 'monthId' },
+  { back: 'ofm_name', front: 'name' },
 ]
 
 const AssistanceRequestMappings = [
@@ -97,6 +113,7 @@ const UserFacilityDetailMappings = [
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'address1_composite', front: 'address' },
+  { back: 'ofm_program', front: 'programCode' },
 ]
 
 const UsersPermissionsFacilityMappings = [
@@ -161,6 +178,7 @@ const OrganizationMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_business_type', front: 'businessTypeCode' },
   { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'ofm_doing_business_as', front: 'doingBusinessAsName' },
   { back: 'telephone1', front: 'phoneLandline' },
   { back: 'telephone2', front: 'phoneCell' },
   { back: 'address1_line1', front: 'streetAddress1' },
@@ -204,6 +222,7 @@ const FacilityMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
+  { back: 'ofm_program', front: 'programCode' },
 ]
 
 const ContactMappings = [
@@ -240,6 +259,8 @@ const LicenceDetailsMappings = [
   { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
   { back: 'ofm_care_type', front: 'careType' },
   { back: 'ofm_overnight_care', front: 'overnightCare' },
+  { back: 'ofm_apply_room_split_condition', front: 'applyRoomSplitCondition' },
+  { back: 'ofm_room_split_details', front: 'roomSplitDetails' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -289,6 +310,63 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
 ]
 
+const SurveySectionMappings = [
+  { back: 'ofm_sectionid', front: 'sectionId' },
+  { back: 'ofm_section_title', front: 'title' },
+  { back: 'ofm_section_order', front: 'order' },
+  { back: '_ofm_survey_value', front: 'surveyId' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const SurveyQuestionMappings = [
+  { back: 'ofm_questionid', front: 'questionId' },
+  { back: 'ofm_question_text', front: 'text' },
+  { back: 'ofm_question_type', front: 'type' },
+  { back: 'ofm_sequence', front: 'sequence' },
+  { back: 'ofm_question_choice', front: 'choices' },
+  { back: 'ofm_response_required', front: 'responseRequired' },
+  { back: '_ofm_header_value', front: 'tableQuestionId' },
+  { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
+  { back: 'ofm_occurence@OData.Community.Display.V1.FormattedValue', front: 'surveyResponseType' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const SurveyQuestionBusinessRulesMappings = [
+  { back: 'ofm_question_business_ruleid', front: 'businessRuleId' },
+  { back: '_ofm_true_child_question_value', front: 'trueChildQuestionId' },
+  { back: '_ofm_false_child_question_value', front: 'falseChildQuestionId' },
+  { back: 'ofm_condition', front: 'conditionValue' },
+  { back: 'ofm_parent_has_response', front: 'parentHasResponse' },
+  { back: '_ofm_child_question_value', front: 'valueInheritanceChildQuestionId' },
+]
+
+const SurveyResponseMappings = [
+  { back: 'ofm_survey_responseid', front: 'surveyResponseId' },
+  { back: 'ofm_response_id', front: 'surveyResponseReferenceNumber' },
+  { back: '_ofm_survey_value', front: 'surveyId' },
+  { back: '_ofm_contact_value', front: 'contactId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_fiscal_year_value', front: 'fiscalYearId' },
+  { back: '_ofm_reporting_month_value', front: 'reportingMonthId' },
+  { back: '_ofm_submitted_month_value', front: 'submittedMonthId' },
+  { back: 'ofm_response_type', front: 'surveyResponseType' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const QuestionResponseMappings = [
+  { back: 'ofm_question_responseid', front: 'questionResponseId' },
+  { back: '_ofm_survey_response_value', front: 'surveyResponseId' },
+  { back: '_ofm_question_value', front: 'questionId' },
+  { back: '_ofm_header_value', front: 'tableQuestionId' },
+  { back: 'ofm_row_id', front: 'rowId' },
+  { back: 'ofm_response_text', front: 'value' },
+]
+
 module.exports = {
   ApplicationMappings,
   AssistanceRequestMappings,
@@ -297,9 +375,11 @@ module.exports = {
   ContactMappings,
   DocumentMappings,
   FacilityMappings,
+  FiscalYearMappings,
   FundingAgreementMappings,
   LicenceMappings,
   LicenceDetailsMappings,
+  MonthMappings,
   NotificationMappings,
   OrganizationMappings,
   UserFacilityDetailMappings,
@@ -312,4 +392,9 @@ module.exports = {
   RequestCategoryMappings,
   RequestSubCategoryMappings,
   SupplementaryApplicationMappings,
+  SurveySectionMappings,
+  SurveyQuestionMappings,
+  SurveyQuestionBusinessRulesMappings,
+  SurveyResponseMappings,
+  QuestionResponseMappings,
 }

@@ -3,7 +3,7 @@ const { getOperation, getLabelFromValue } = require('./utils')
 const HttpStatus = require('http-status-codes')
 const _ = require('lodash')
 const cache = require('memory-cache')
-const { RequestCategoryMappings, RequestSubCategoryMappings } = require('../util/mapping/Mappings')
+const { RequestCategoryMappings, RequestSubCategoryMappings, FiscalYearMappings, MonthMappings } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('../components/logger')
 
@@ -30,6 +30,30 @@ async function getRequestSubCategories() {
     lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
   }
   return requestSubCategories
+}
+
+async function getFiscalYears() {
+  let fiscalYears = lookupCache.get('fiscalYears')
+  if (!fiscalYears) {
+    fiscalYears = []
+    const response = await getOperation(
+      'ofm_fiscal_years?$select=ofm_fiscal_yearid,ofm_caption,ofm_fiscal_year_number,ofm_start_date,ofm_end_date,statuscode,statecode&$orderby=ofm_fiscal_year_number',
+    )
+    response?.value?.forEach((item) => fiscalYears.push(new MappableObjectForFront(item, FiscalYearMappings)))
+    lookupCache.put('fiscalYears', fiscalYears, ONE_HOUR_MS)
+  }
+  return fiscalYears
+}
+
+async function getMonths() {
+  let months = lookupCache.get('months')
+  if (!months) {
+    months = []
+    const response = await getOperation('ofm_months?$select=ofm_monthid,ofm_name')
+    response?.value?.forEach((item) => months.push(new MappableObjectForFront(item, MonthMappings)))
+    lookupCache.put('months', months, ONE_HOUR_MS)
+  }
+  return months
 }
 
 async function fetchAndCacheData(cacheKey, operationName) {
@@ -66,18 +90,25 @@ async function getLicenceTypes() {
   return fetchAndCacheData('licenceTypes', 'ecc_licence_type')
 }
 
+async function getReportQuestionTypes() {
+  return fetchAndCacheData('reportQuestionTypes', 'ofm_reportingquestiontype')
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes] = await Promise.all([
+    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
       getRequestCategories(),
       getRequestSubCategories(),
       getUserRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
       getLicenceTypes(),
+      getReportQuestionTypes(),
+      getFiscalYears(),
+      getMonths(),
     ])
     const resData = {
       requestCategories: requestCategories,
@@ -86,6 +117,9 @@ async function getLookupInfo(_req, res) {
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
+      reportQuestionTypes: reportQuestionTypes,
+      fiscalYears: fiscalYears,
+      months: months,
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {
