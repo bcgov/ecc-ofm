@@ -141,6 +141,7 @@ export default {
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
+          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid)
         }
         // navigate from the Application History page
         else {
@@ -149,6 +150,7 @@ export default {
           await Promise.all(
             this.applications?.map(async (application) => {
               application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+
             }),
           )
           this.facilities = this.userInfo?.facilities?.filter((facility) => this.getValidApplication(facility.facilityId))

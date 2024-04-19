@@ -154,7 +154,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
+      return this.model?.supportFundingModel?.includes('4') && this.hasInclusionPolicy
     },
     isReadOnly() {
       return isApplicationLocked(this.supportModel?.statusCode) || this.isCurrentModelDisabled
@@ -173,6 +173,7 @@ export default {
   },
   async created() {
     this.model = { ...this.supportModel }
+    console.log(this.model)
     this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
   },
   methods: {

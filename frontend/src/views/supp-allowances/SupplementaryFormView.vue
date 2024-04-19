@@ -60,7 +60,9 @@
         </v-row>
       </template>
     </AppDialog>
-    <div>
+    {{ nextTermActive }}
+    <!-- I use v-show here because if I use a v-if, this component has issues re-rendering if a user switches between two apps quickly -->
+    <div v-show="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
         <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
@@ -70,19 +72,52 @@
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance
               v-if="panel.id === 'indigenous'"
-              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"
+              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
               @update="updateModel"
               :isCurrentModelDisabled="currentTermDisabled" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === 'support-needs'"
-              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"
+              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
               :isCurrentModelDisabled="currentTermDisabled"
               @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
-              :transportModels="getTransportModels()"
+              :transportModels="getTransportModels(renewalTerm)"
               :isCurrentModelDisabled="currentTermDisabled"
+              :renewalTerm="renewalTerm"
+              @update="updateModel"
+              @addModel="addBlankTransportModel"
+              @deleteModel="deleteTransportModel"
+              @deleteDocument="deleteDocument" />
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </div>
+    <div v-if="nextTermActive">
+      <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
+      <v-expansion-panels v-else v-model="panel" multiple>
+        <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
+          <v-expansion-panel-title>
+            <span class="header-label">{{ panel.title }}</span>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <IndigenousProgrammingAllowance
+              v-if="panel.id === 'indigenous'"
+              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
+              @update="updateModel"
+              :isCurrentModelDisabled="!nextTermActive" />
+            <SupportNeedsProgrammingAllowance
+              v-if="panel.id === 'support-needs'"
+              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
+              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+              :isCurrentModelDisabled="!nextTermActive"
+              @update="updateModel" />
+            <TransportationAllowance
+              v-if="panel.id === 'transportation'"
+              :transportModels="getTransportModels(nextRenewalTerm)"
+              :isCurrentModelDisabled="!nextTermActive"
+              :renewalTerm="nextRenewalTerm"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -157,11 +192,11 @@ export default {
       loading: true,
       panel: [],
       models: undefined,
-      allTermModels: undefined,
       clonedModels: [],
       documentsToDelete: [],
       showCancelDialog: false,
       renewalTerm: undefined,
+      nextRenewalTerm: undefined,
       isNextTermEnabled: true, //todo add calc
       currentTermDisabled: false,
       nextTermActive: false,
@@ -198,20 +233,6 @@ export default {
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },
     },
-    nextTermActive: {
-      handler() {
-        console.log('I changed')
-        console.log(this.nextTermActive)
-
-        if (this.nextTermActive) {
-          this.renewalTerm = this.renewalTerm + 1
-        } else {
-          this.renewalTerm = this.renewalTerm - 1
-        }
-
-        this.setActiveModels()
-      },
-    },
   },
   async created() {
     this.PANELS = [
@@ -231,6 +252,7 @@ export default {
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.DAYS_BEFORE_TERM_EXPIRES = 45
+    this.DAYS_BEFORE_NEXT_TERM_ENABLED = 120
     this.setSuppTermDates()
     await this.loadData()
   },
@@ -268,7 +290,6 @@ export default {
           const payload = {
             ...applicationModel,
             applicationId: this.applicationId,
-            renewalTerm: this.renewalTerm,
           }
 
           if (payload.monthlyLease) {
@@ -328,24 +349,19 @@ export default {
         id: uuid.v1(),
       }
 
-      console.log(this.renewalTerm)
+      this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) }, { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) }]
 
-      this.allTermModels = [
-        { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) },
-        { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) },
-      ]
+      const transportApplications = suppApplications.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+
+      this.updateTransportModel(transportApplications, this.renewalTerm)
 
       if (this.isNextTermEnabled) {
-        this.allTermModels = [
-          ...this.allTermModels,
-          { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm + 1) },
-          { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm + 1) },
-        ]
+        this.models.push(
+          { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.nextRenewalTerm) },
+          { ...this.findAndUpdateModel(suppApplications, supportModel, this.nextRenewalTerm) },
+        )
+        this.updateTransportModel(transportApplications, this.nextRenewalTerm)
       }
-
-      console.log(this.allTermModels)
-      this.models = this.allTermModels //TODO take out
-      const transportApplications = suppApplications.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
 
       if (transportApplications.length > 0) {
         for (const application of transportApplications) {
@@ -353,20 +369,9 @@ export default {
           application.documentsToUpload = []
         }
         this.models = [...this.models, ...transportApplications]
-      } else {
-        this.addBlankTransportModel({
-          monthlyLease: 0.0,
-          estimatedMileage: null,
-          odometer: null,
-          VIN: null,
-          supplementaryApplicationId: undefined,
-          supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
-          uploadedDocuments: [],
-          documentsToUpload: [],
-          id: uuid.v1(),
-        })
       }
 
+      console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
 
       console.log(this.models)
@@ -395,15 +400,33 @@ export default {
         applicationModel,
       )
     },
-    getModel(type) {
-      return this.models?.find((el) => el.supplementaryType === type)
+    getModel(type, currentTerm) {
+      return this.models?.find((el) => el.supplementaryType === type && el.renewalTerm == currentTerm)
     },
-    getTransportModels() {
-      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+    getTransportModels(term) {
+      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm == term)
     },
     findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
       const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
+      modelToUpdate.renewalTerm = renewalTerm
       return found ? found : modelToUpdate
+    },
+    updateTransportModel(transportApplications, term) {
+      const found = transportApplications.find((application) => application.renewalTerm == term)
+      if (!found) {
+        this.addBlankTransportModel({
+          monthlyLease: 0.0,
+          estimatedMileage: null,
+          odometer: null,
+          VIN: null,
+          supplementaryApplicationId: undefined,
+          supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
+          uploadedDocuments: [],
+          documentsToUpload: [],
+          id: uuid.v1(),
+          renewalTerm: term,
+        })
+      }
     },
     isModelEmpty(model) {
       let modelData = { ...model }
@@ -416,13 +439,14 @@ export default {
       delete modelData.statusCode
       delete modelData.startDate
       delete modelData.endDate
+      delete modelData.renewalTerm
 
       return Object.values(modelData).every((value) => {
         return isEmpty(value)
       })
     },
-    addBlankTransportModel(newModel) {
-      this.models.push(newModel)
+    addBlankTransportModel(transportModel) {
+      this.models.push(transportModel)
     },
     deleteTransportModel(model) {
       //application exists in Dynamics, so flag it to get deleted on save
@@ -459,13 +483,8 @@ export default {
 
       console.log('now: ', today)
 
-      const endDateInMS = Date.parse(this.fundingAgreement.endDate)
-      //console.log(this.fundingAgreement.endDate)
-      //console.log(endDateInMS)
-
       const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
 
-      //console.log(termTwoEndDate)
       const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
 
       console.log('term one end date ', termOneEndDate)
@@ -474,13 +493,17 @@ export default {
         case today < termOneEndDate:
           console.log('we are in Term one ')
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
+          this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.setIsCurrentTermDisabled(termOneEndDate, today)
+          this.setIsNextTermEnabled(termOneEndDate, today)
           break
 
         case today < termTwoEndDate:
           console.log('we are in Term 2')
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
+          this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(termTwoEndDate, today)
+          this.setIsNextTermEnabled(termTwoEndDate, today)
           break
 
         case today < this.fundingAgreement.endDate:
@@ -491,29 +514,21 @@ export default {
           break
 
         default:
-          console.log('broken - we are outside of FA term')
+          console.error('broken - we are outside of FA term')
       }
-
-      return 1
     },
-    //TODO- date calculation for isNextTermEnabled
     setIsCurrentTermDisabled(termEndDate, today) {
-      //console.log(termEndDate)
       const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_TERM_EXPIRES))
-      // console.log('prior date', priorDate)
-      // console.log('current term disabled? ', today > priorDate)
-
-      this.currentTermDisabled = today > priorDate
+      //this.currentTermDisabled = today > priorDate
+      this.currentTermDisabled = true
+    },
+    setIsNextTermEnabled(termEndDate, today) {
+      const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_NEXT_TERM_ENABLED))
+      console.log(priorDate)
+      //this.isNextTermEnabled = today > priorDate
     },
     setActiveTerm(value) {
-      console.log(value)
       this.nextTermActive = value
-    },
-    setActiveModels() {
-      this.loading = true
-      this.models = this.allTermModels.filter((el) => el.renewalTerm == this.renewalTerm)
-      console.log(this.models)
-      this.loading = false
     },
   },
 }

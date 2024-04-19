@@ -183,6 +183,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    renewalTerm: {
+      type: Number,
+      required: true,
+    },
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
@@ -211,6 +215,8 @@ export default {
     this.hasDuplicateVIN = hasDuplicateVIN
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
+
+    console.log(this.models)
   },
   methods: {
     update(model) {
@@ -227,6 +233,7 @@ export default {
         uploadedDocuments: [],
         documentsToUpload: [],
         id: uuid.v1(),
+        renewalTerm: this.renewalTerm,
       }
 
       this.models.push(transportModel)
