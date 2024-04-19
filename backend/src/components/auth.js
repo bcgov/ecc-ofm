@@ -11,8 +11,6 @@ const safeStringify = require('fast-safe-stringify')
 const { ApiError } = require('./error')
 const { pick } = require('lodash')
 
-const { getUserProfile } = require('./user')
-
 const auth = {
   // Check if JWT Access Token has expired
   isTokenExpired(token) {
@@ -103,34 +101,20 @@ const auth = {
     next()
   },
 
-  async generateUiToken(subject) {
-    log.info(`generateUiToken subject: ${subject}`)
-
+  generateUiToken() {
+    const i = config.get('tokenGenerate:issuer')
+    const s = 'user@penrequest.ca'
+    const a = config.get('server:frontend')
     const signOptions = {
-      issuer: config.get('tokenGenerate:issuer'),
-      subject,
-      audience: config.get('server:frontend'),
+      issuer: i,
+      subject: s,
+      audience: a,
       expiresIn: '30m',
       algorithm: 'RS256',
     }
 
-    // Username is username@idp, e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
-    const subjectArray = subject.split('@')
-    let payload = {}
-
-    // Get UserProfile for BCeID users
-    if (subjectArray[1] === 'bceidbusiness') {
-      const user = await getUserProfile(subjectArray[0])
-
-      payload = {
-        role: user?.role,
-        org: user?.organization?.accountid,
-      }
-    }
-    // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
-
     const privateKey = config.get('tokenGenerate:privateKey')
-    const uiToken = jsonwebtoken.sign(payload, privateKey, signOptions)
+    const uiToken = jsonwebtoken.sign({}, privateKey, signOptions)
     log.verbose('Generated JWT', uiToken)
     return uiToken
   },

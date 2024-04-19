@@ -140,7 +140,6 @@ async function generateTokens(req, res) {
   if (result && result.jwt && result.refreshToken) {
     req.user.jwt = result.jwt
     req.user.refreshToken = result.refreshToken
-    log.info('generateTokens')
     req.user.jwtFrontend = await auth.generateUiToken(req.user.username)
     const responseJson = {
       jwtFrontend: req.user.jwtFrontend,

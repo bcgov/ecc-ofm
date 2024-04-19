@@ -3,7 +3,7 @@
     <!-- Navbar content -->
     <v-container :class="{ sizingForIconXLScreen: xl }" :fluid="true">
       <v-row class="justify-space-between">
-        <router-link tabindex="-1" to="{name: 'home'}">
+        <router-link tabindex="-1" :to="{ name: 'home' }">
           <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
         </router-link>
         <v-row class="vertical-line my-auto">
