@@ -1,11 +1,44 @@
 <template>
   <OrganizationHeader />
   <v-container fluid v-bind="$attrs">
-    <v-row>
-      <v-col>
-        <h1>Reporting</h1>
-      </v-col>
-    </v-row>
+    <h1 class="mb-6">Reporting</h1>
+
+    <v-card class="px-4 pt-4 pb-2" variant="outlined">
+      <v-row no-gutters class="mb-6">
+        <v-col cols="12" md="3" lg="2">
+          <AppLabel>Select a facility:</AppLabel>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <v-select
+            v-model="selectedFacility"
+            :items="userInfo.facilities"
+            item-title="facilityName"
+            item-value="facilityId"
+            label="Select facility to report on"
+            density="compact"
+            hide-details
+            variant="outlined" />
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mb-6">
+        <v-col cols="12" md="3" lg="2">
+          <AppLabel>Select a fiscal year:</AppLabel>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <v-select v-model="selectedFiscalYear" :items="fiscalYears" item-title="name" density="compact" variant="outlined" hide-details return-object />
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mb-6">
+        <v-col cols="12" md="3" lg="2">
+          <AppLabel>Select reporting month:</AppLabel>
+        </v-col>
+        <v-col cols="12" md="4" lg="3">
+          <v-select v-model="selectedReportingMonth" :items="months" item-title="name" density="compact" variant="outlined" hide-details return-object />
+        </v-col>
+      </v-row>
+      <AppButton id="create-survey" :loading="processing" class="my-4" size="large" width="400px" @click="createSurveyResponse">Submit Monthly Report</AppButton>
+    </v-card>
+    <hr class="my-8" />
     <v-row>
       <v-col cols="auto" class="pb-0" />
       <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-0">
@@ -132,7 +165,9 @@
     </v-row>
   </v-container>
 </template>
+
 <script>
+import { SURVEY_RESPONSE_TYPES } from '@/utils/constants'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -141,6 +176,7 @@ import ReportsService from '@/services/reportsService'
 import alertMixin from '@/mixins/alertMixin'
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { useAppStore } from '@/stores/app'
 
 export default {
   name: 'ReportingView',
@@ -149,6 +185,7 @@ export default {
   data() {
     return {
       loading: false,
+      processing: false,
       facilities: [],
       displayedFacilities: [],
       annualFacilities: [],
@@ -166,6 +203,8 @@ export default {
       menuFromDate: false,
       menuEndDate: false,
       locale: 'en',
+      selectedFiscalYear: undefined,
+      selectedReportingMonth: undefined,
       statusTypes: [
         { id: 1, title: 'Draft' },
         { id: 2, title: 'Submitted' },
@@ -182,8 +221,10 @@ export default {
       ],
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'currentFacility']),
+    ...mapState(useAppStore, ['fiscalYears', 'months']),
     formattedFromDate: {
       get() {
         return this.formatDate(this.fromDate)
@@ -192,6 +233,7 @@ export default {
         this.fromDate = this.parseDateString(val)
       },
     },
+
     formattedEndDate: {
       get() {
         return this.formatDate(this.endDate)
@@ -200,11 +242,35 @@ export default {
         this.endDate = this.parseDateString(val)
       },
     },
+
+    defaultFiscalYear() {
+      return this.fiscalYears?.find((fiscalYear) => fiscalYear.statusCode === 1)
+    },
+
+    defaultReportingMonth() {
+      const currentMonthName = new Date().toLocaleString('en-ca', { month: 'long' })
+      return this.months?.find((month) => month.name === currentMonthName)
+    },
+
+    surveyResponseType() {
+      let responseType = SURVEY_RESPONSE_TYPES.MONTHLY
+      if (['November'].includes(this.selectedReportingMonth?.name)) {
+        responseType = SURVEY_RESPONSE_TYPES.QUARTERLY
+      } else if (['December'].includes(this.selectedReportingMonth?.name)) {
+        responseType = SURVEY_RESPONSE_TYPES.BI_ANNUAL
+      }
+      // TODO (vietle-cgi) Add ANNUAL type when we know which month to use
+      return responseType
+    },
   },
+
   created() {
     this.selectedFacility = this.currentFacility.facilityId
+    this.selectedFiscalYear = this.defaultFiscalYear
+    this.selectedReportingMonth = this.defaultReportingMonth
     this.search()
   },
+
   methods: {
     async getFacilityReportsSummary(selectedFacility) {
       try {
@@ -213,6 +279,7 @@ export default {
         this.setFailureAlert('Failed to get latest reporting activity for facility = ' + selectedFacility, error)
       }
     },
+
     formatDate(date) {
       if (!(date instanceof Date)) return ''
       let month = '' + (date.getMonth() + 1),
@@ -222,10 +289,12 @@ export default {
       if (day.length < 2) day = '0' + day
       return [day, month, year].join('/')
     },
+
     parseDateString(dateStr) {
       const [day, month, year] = dateStr.split('/')
       return new Date(year, month - 1, day)
     },
+
     async search() {
       try {
         await this.getFacilityReportsSummary(this.selectedFacility)
@@ -237,6 +306,7 @@ export default {
         this.loading = false
       }
     },
+
     filter() {
       const reportTypes = []
       if (this.isCheckedAnnual) reportTypes.push('Annual')
@@ -249,6 +319,7 @@ export default {
         this.displayedFacilities = this.selectedStatus === 3 ? [] : this.facilities.filter(({ status }) => status === statusTitle)
       }
     },
+
     resetFilters() {
       this.facilities = []
       this.displayedFacilities = []
@@ -264,6 +335,28 @@ export default {
       this.menuFromDate = false
       this.menuEndDate = false
       this.selectedFacility = this.currentFacility.facilityId
+    },
+
+    async createSurveyResponse() {
+      try {
+        this.processing = true
+        const payload = {
+          contactId: this.userInfo?.contactId,
+          facilityId: this.selectedFacility,
+          surveyId: '16fb81de-6dc1-ee11-9079-000d3af4865d',
+          fiscalYearId: this.selectedFiscalYear?.fiscalYearId,
+          reportingMonthId: this.selectedReportingMonth?.monthId,
+          surveyResponseType: this.surveyResponseType,
+        }
+        const response = await ReportsService.createSurveyResponse(payload)
+        if (response?.surveyResponseId) {
+          this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: response?.surveyResponseId } })
+        }
+      } catch (error) {
+        this.setFailureAlert('Failed to create new report response', error)
+      } finally {
+        this.processing = false
+      }
     },
   },
 }

@@ -213,7 +213,7 @@ function mapUserFacilityObjectForFront(data) {
 async function getUserFacilities(req, res, onlyWithPortalAccess) {
   try {
     let userFacilities = []
-    let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
+    let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name,ofm_program)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
     if (onlyWithPortalAccess) {
       operation = operation + ` and (ofm_portal_access eq true)`
     }
