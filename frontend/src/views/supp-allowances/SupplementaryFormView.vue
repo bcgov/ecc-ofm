@@ -464,10 +464,10 @@ export default {
       this.showCancelDialog = !this.showCancelDialog
     },
     setNext() {
-      if (this.currentTermDisabled) {
-        this.$emit('setNext', false)
-        return
-      }
+      // if (this.currentTermDisabled) {
+      //   this.$emit('setNext', false)
+      //   return
+      // }
       this.$emit(
         'setNext',
         this.models.every((el) => {
