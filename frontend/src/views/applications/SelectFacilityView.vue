@@ -102,6 +102,7 @@ export default {
             organizationId: this.organization?.organizationId,
             providerType: this.organization?.providerType,
             ownership: this.organization?.ownership,
+            createdBy: this.userInfo?.contactId,
           }
           const response = await ApplicationService.createApplication(payload)
           await this.getApplication(response?.applicationId)

@@ -22,6 +22,22 @@ const createApplicationSchema = {
     in: ['body'],
     exists: { errorMessage: '[facilityId] is required' },
   },
+  organizationId: {
+    in: ['body'],
+    exists: { errorMessage: '[organizationId] is required' },
+  },
+  providerType: {
+    in: ['body'],
+    exists: { providerType: '[providerType] is required' },
+  },
+  ownership: {
+    in: ['body'],
+    exists: { ownership: '[ownership] is required' },
+  },
+  createdBy: {
+    in: ['body'],
+    exists: { createdBy: '[createdBy] is required' },
+  },
 }
 
 /**
