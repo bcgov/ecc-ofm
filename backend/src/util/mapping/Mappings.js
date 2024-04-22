@@ -270,6 +270,7 @@ const DocumentMappings = [
   { back: 'ofm_file_name', front: 'fileName' },
   { back: 'ofm_subject', front: 'subject' },
   { back: 'ofm_description', front: 'description' },
+  { back: 'ofm_category', front: 'documentType' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },

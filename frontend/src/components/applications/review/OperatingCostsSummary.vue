@@ -14,29 +14,61 @@
       </div>
       <div v-if="isRentLease" class="mt-4">
         <h4>Uploaded Document(s)</h4>
-        <v-card v-if="isUploadedDocumentsComplete" class="my-1 pa-2" variant="outlined">
-          <div v-for="document in documents" :key="document.documentId" class="px-2 py-1">{{ document.fileName }}</div>
+        <v-card class="mt-2 pa-3" variant="outlined">
+          <v-card class="mt-2 mb-3 pa-3">
+            <AppDocumentUpload
+              entityName="ofm_applications"
+              :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
+              :header="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
+              :readonly="true"
+              :showTableHeader="false"
+              :showInfoMessage="false"
+              :showRequiredMessage="true"
+              :uploadedDocuments="documentsFinancialStatements" />
+          </v-card>
+          <AppMissingInfoError :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
+          <v-card class="pl-3">
+            <AppDocumentUpload class="pt-4"
+              entityName="ofm_applications"
+              :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
+              :header="DOCUMENT_TYPES.BALANCE_SHEET"
+              :readonly="true"
+              :showTableHeader="false"
+              :showInfoMessage="false"
+              :showRequiredMessage="true"
+              :uploadedDocuments="documentsBalanceSheets" />
+          </v-card>
+          <AppMissingInfoError :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
+          <v-card class="pl-3 mt-3 pt-0">
+            <AppDocumentUpload v-if="isUploadedDocumentsComplete" class="pt-4"
+              entityName="ofm_applications"
+              :documentType="DOCUMENT_TYPES.SUPPORTING"
+              :header="DOCUMENT_TYPES.SUPPORTING"
+              :readonly="true"
+              :showTableHeader="false"
+              :showInfoMessage="false"
+              :uploadedDocuments="documentsSupporting" />
+            <br>
+          </v-card>
         </v-card>
-        <AppMissingInfoError v-else :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
-          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
-        </AppMissingInfoError>
       </div>
     </div>
   </v-container>
 </template>
 
 <script>
+import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import YearlyOperatingCostSummary from '@/components/applications/review/YearlyOperatingCostSummary.vue'
 import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFacilityCostSummary.vue'
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
-  components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary },
+  components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
   props: {
     documents: {
       type: Array,
@@ -55,9 +87,20 @@ export default {
     totalOperationalCost() {
       return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
     },
+    documentsFinancialStatements() {
+      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
+    },
+    documentsBalanceSheets() {
+      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
+    },
+    documentsSupporting() {
+      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
+    }
   },
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
+    console.log('documentsFin = ', this.documentsFinancialStatements)
   },
 }
 </script>

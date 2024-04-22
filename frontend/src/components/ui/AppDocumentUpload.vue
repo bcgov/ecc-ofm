@@ -1,8 +1,19 @@
 <template>
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
-      <div>The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.</div>
-      <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+      <v-row v-if="header">
+        <v-col cols="3" class="pb-0">
+          <AppLabel v-if="documentType">{{ documentType }}</AppLabel>
+        </v-col>
+        <v-col cols="8" class="d-flex flex-column align-end ml-8">
+          <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+        </v-col>
+      </v-row>
+      <template v-else>
+        <div v-if="showInfoMessage">The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.</div>
+        <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+      </template>
+
       <div v-if="documents.length > 0" class="mt-6">
         <v-row v-for="item in documents" :key="item.id" no-gutters>
           <v-col cols="12" md="4" class="pr-4">
@@ -24,13 +35,24 @@
         </v-row>
       </div>
       <div v-if="uploadedDocuments.length > 0" class="mt-6 mx-4 mx-md-8 mx-lg-12">
-        <AppLabel>Uploaded Documents</AppLabel>
+        <AppLabel v-if="showTableHeader">Uploaded Documents</AppLabel>
         <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" items-per-page="-1" density="compact">
           <template #item.actionButtons="{ item }">
-            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
+            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId, documentType)">mdi-delete</v-icon>
           </template>
           <template v-slot:bottom><!-- no paging --></template>
         </v-data-table>
+      </div>
+      <div v-else-if="showRequiredMessage">
+        <v-row>
+          <v-col class="error-message">
+            <ul class="ml-8 my-4">
+              <li>
+                {{ documentType }} document upload required
+              </li>
+            </ul>
+          </v-col>
+        </v-row>
       </div>
     </v-form>
   </v-container>
@@ -48,6 +70,11 @@ export default {
       type: String,
       required: true,
     },
+    documentType: {
+      type: String,
+      required: false,
+      default: undefined
+    },
     loading: {
       type: Boolean,
       default: false,
@@ -63,6 +90,23 @@ export default {
     uploadedDocuments: {
       type: Array,
       default: () => [],
+    },
+    header: {
+      type: String,
+      required: false,
+      default: undefined
+    },
+    showInfoMessage: {
+      type: Boolean,
+      default: true,
+    },
+    showTableHeader: {
+      type: Boolean,
+      default: true,
+    },
+    showRequiredMessage: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue', 'deleteUploadedDocument', 'validateDocumentsToUpload'],
@@ -108,7 +152,11 @@ export default {
   },
   methods: {
     addFile() {
-      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true })
+      if (this.documentType) {
+        this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
+      } else {
+        this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true })
+      }
     },
 
     deleteFile(deletedItemId) {
