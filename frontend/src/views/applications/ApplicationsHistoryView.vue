@@ -15,10 +15,10 @@
         <h3>Add New Application</h3>
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
-        <v-alert v-if="!hasGoodStanding" type="warning" dense text>
+        <AppAlertBanner v-if="!hasGoodStanding" type="warning">
           A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
-        </v-alert>
-        <v-alert v-else type="info" dense text>If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</v-alert>
+        </AppAlertBanner>
+        <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
       </v-col>
     </v-row>
     <v-row>
@@ -94,6 +94,7 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty } from 'lodash'
 import format from '@/utils/format'
@@ -107,7 +108,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
   mixins: [alertMixin],
   data() {
     return {

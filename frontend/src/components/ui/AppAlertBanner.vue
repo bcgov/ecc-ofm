@@ -1,7 +1,7 @@
 <template>
   <!--  -->
   <div :class="alertClass" role="alert" :aria-labelledby="type" :aria-describedby="`${type}-desc`">
-    <p :id="`${type} - desc`"><slot></slot></p>
+    <p :id="`${type}-desc`"><slot></slot></p>
   </div>
 </template>
 <script>

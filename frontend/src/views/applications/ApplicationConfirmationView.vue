@@ -5,9 +5,9 @@
     <div v-else>
       <v-row class="flex justify-end mb-1">
         <v-col cols="12">
-          <v-alert v-if="!hasGoodStanding" type="warning" dense text>
+          <AppAlertBanner v-if="!hasGoodStanding" type="warning">
             A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
-          </v-alert>
+          </AppAlertBanner>
         </v-col>
       </v-row>
 
@@ -53,6 +53,7 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES } from '@/utils/constants'
 import { useOrgStore } from '@/stores/org'
@@ -62,7 +63,7 @@ import { mapState, mapActions } from 'pinia'
 
 export default {
   name: 'ApplicationConfirmationView',
-  components: { AppButton, AppBackButton },
+  components: { AppButton, AppBackButton, AppAlertBanner },
   mixins: [alertMixin],
   data() {
     return {
