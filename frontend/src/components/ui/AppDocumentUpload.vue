@@ -130,11 +130,7 @@ export default {
   },
   methods: {
     addFile() {
-      if (this.documentType) {
-        this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
-      } else {
-        this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true })
-      }
+      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
     },
 
     deleteFile(deletedItemId) {
