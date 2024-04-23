@@ -140,7 +140,7 @@ objects:
     data:
       config.js: |
         const config = {
-          BANNER_ENVIRONMENT: '${BANNER_ENV}',
+          BANNER_ENVIRONMENT: '${BANNER_ENVIRONMENT}',
           BANNER_COLOR: '${BANNER_COLOR}',
           TDAD_CONTACT_EMAIL: '${TDAD_CONTACT_EMAIL}',
           CCOF_URL: '${CCOF_URL}'
