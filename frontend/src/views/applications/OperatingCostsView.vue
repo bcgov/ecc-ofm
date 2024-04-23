@@ -30,24 +30,11 @@
       <AppMissingInfoError v-if="validation && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
       <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
       <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
-      <!--       <div v-if="isRentLease" no-gutters class="pb-6">
-        <AppLabel>Supporting Documents</AppLabel>
-        <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
-        <AppDocumentUpload
-          id="application-document-upload"
-          v-model="documentsToUpload"
-          entityName="ofm_applications"
-          :loading="processing"
-          :readonly="readonly"
-          :uploadedDocuments="uploadedDocuments"
-          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-      </div> -->
     </div>
     <v-row>
       <v-col>
         <h4>Upload Documents</h4>
         The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.
-        <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
       </v-col>
     </v-row>
     <v-card class="mt-2 pa-4" variant="outlined">
@@ -62,6 +49,7 @@
           :readonly="readonly"
           :showTableHeader="false"
           :showInfoMessage="false"
+          :showRequiredMessage="validation && !areRequiredDocsUploaded"
           :uploadedDocuments="financialStatement.uploadedDocuments"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
       </v-card>
@@ -76,6 +64,7 @@
           :readonly="readonly"
           :showTableHeader="false"
           :showInfoMessage="false"
+          :showRequiredMessage="validation && !areRequiredDocsUploaded"
           :uploadedDocuments="balanceSheet.uploadedDocuments"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
       </v-card>
@@ -177,7 +166,7 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
-      return this.model.facilityType && this.totalOperationalCost > 0 && this.isDocumentUploaded
+      return this.model.facilityType && this.totalOperationalCost > 0 && this.areRequiredDocsUploaded
     },
     totalOperationalCost() {
       const costsModel = Object.assign({}, this.model)
@@ -187,7 +176,7 @@ export default {
     isRentLease() {
       return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
     },
-    isDocumentUploaded() {
+    areRequiredDocsUploaded() {
       return !this.isRentLease || (this.isRentLease && (!isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments) || (!isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments))))
     },
   },
@@ -323,12 +312,8 @@ export default {
 
     getUploadedDocuments(uploadedDocuments) {
       this.financialStatement.uploadedDocuments = uploadedDocuments.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
-      console.log('financialStatement = ', this.financialStatement.uploadedDocuments)
-      console.log('# = ', this.financialStatement.uploadedDocuments.length)
       this.balanceSheet.uploadedDocuments = uploadedDocuments.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
-      console.log('balanceSheet = ', this.balanceSheet.uploadedDocuments)
       this.supporting.uploadedDocuments = uploadedDocuments.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
-      console.log('supporting = ', this.supporting.uploadedDocuments)
     }
 
   },

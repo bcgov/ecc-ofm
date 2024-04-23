@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
-import { APPLICATION_STATUS_CODES, FACILITY_TYPES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES } from '@/utils/constants'
 
 function checkFacilityDetailsComplete(application) {
   return application?.primaryContactId && application?.expenseAuthorityId
@@ -23,9 +23,22 @@ function checkStaffingComplete(application) {
   return totalStaff > 0
 }
 
+function checkRequiredDocsExist(application, requiredDocumentTypes) {
+  return requiredDocumentTypes.every((type) => application.uploadedDocuments.some((doc) => doc.documentType === type))
+}
+
+function checkFacilityType(application, requiredDocumentTypes) {
+  if (application?.facilityType === FACILITY_TYPES.RENT_LEASE) {
+    return checkRequiredDocsExist(application, requiredDocumentTypes)
+  }
+  return application?.facilityType !== FACILITY_TYPES.RENT_LEASE
+}
+
 function checkOperatingCostsComplete(application) {
-  const isDocumentUploaded = application?.facilityType != FACILITY_TYPES.RENT_LEASE || (application?.facilityType === FACILITY_TYPES.RENT_LEASE && !isEmpty(application?.uploadedDocuments))
-  return application?.facilityType && isDocumentUploaded && application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
+  const requiredDocumentTypes = [DOCUMENT_TYPES.FINANCIAL_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET]
+  const areRequiredDocsUploaded = checkFacilityType(application, requiredDocumentTypes)
+  const areCostsPositive = application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
+  return application?.facilityType && areRequiredDocsUploaded && areCostsPositive
 }
 
 function checkServiceDeliveryComplete(application) {

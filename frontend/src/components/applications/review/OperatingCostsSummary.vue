@@ -14,37 +14,34 @@
       </div>
       <div v-if="isRentLease" class="mt-4">
         <h4>Uploaded Document(s)</h4>
-        <v-card class="mt-2 pa-3" variant="outlined">
+        <v-card class="pa-3" variant="outlined">
           <v-card class="mt-2 mb-3 pa-3">
             <AppDocumentUpload
-              entityName="ofm_applications"
+              :readonly="true"
               :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
               :header="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-              :readonly="true"
               :showTableHeader="false"
               :showInfoMessage="false"
               :showRequiredMessage="true"
               :uploadedDocuments="documentsFinancialStatements" />
           </v-card>
-          <AppMissingInfoError :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
+          <AppMissingInfoError v-if="!documentsFinancialStatements.length > 0" :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
           <v-card class="pl-3">
             <AppDocumentUpload class="pt-4"
-              entityName="ofm_applications"
+              :readonly="true"
               :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
               :header="DOCUMENT_TYPES.BALANCE_SHEET"
-              :readonly="true"
               :showTableHeader="false"
               :showInfoMessage="false"
               :showRequiredMessage="true"
               :uploadedDocuments="documentsBalanceSheets" />
           </v-card>
-          <AppMissingInfoError :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
+          <AppMissingInfoError v-if="!documentsBalanceSheets.length > 0" :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
           <v-card class="pl-3 mt-3 pt-0">
-            <AppDocumentUpload v-if="isUploadedDocumentsComplete" class="pt-4"
-              entityName="ofm_applications"
+            <AppDocumentUpload class="pt-4"
+              :readonly="true"
               :documentType="DOCUMENT_TYPES.SUPPORTING"
               :header="DOCUMENT_TYPES.SUPPORTING"
-              :readonly="true"
               :showTableHeader="false"
               :showInfoMessage="false"
               :uploadedDocuments="documentsSupporting" />
@@ -100,7 +97,6 @@ export default {
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
-    console.log('documentsFin = ', this.documentsFinancialStatements)
   },
 }
 </script>

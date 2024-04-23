@@ -68,7 +68,8 @@ export default {
   props: {
     entityName: {
       type: String,
-      required: true,
+      required: false,
+      default: undefined
     },
     documentType: {
       type: String,
