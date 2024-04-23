@@ -156,7 +156,7 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
 export const DOCUMENT_TYPES = Object.freeze({
   FINANCIAL_STATEMENT: 'Financial Statement',
   BALANCE_SHEET: 'Balance Sheet',
-  SUPPORTING_DOC: 'Supporting Documents',
+  SUPPORTING_DOCS: 'Supporting Documents',
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'

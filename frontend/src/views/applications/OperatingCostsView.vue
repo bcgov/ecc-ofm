@@ -66,7 +66,7 @@
           id="supporting-document-upload"
           v-model="supporting.documentsToUpload"
           entityName="ofm_applications"
-          :documentType="DOCUMENT_TYPES.SUPPORTING_DOC"
+          :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
           :loading="processing"
           :readonly="readonly"
           :uploadedDocuments="supporting.uploadedDocuments"
@@ -256,7 +256,7 @@ export default {
       const docTypeMapping = {
         [this.DOCUMENT_TYPES.FINANCIAL_STATEMENT]: this.financialStatement,
         [this.DOCUMENT_TYPES.BALANCE_SHEET]: this.balanceSheet,
-        [this.DOCUMENT_TYPES.SUPPORTING_DOC]: this.supporting,
+        [this.DOCUMENT_TYPES.SUPPORTING_DOCS]: this.supporting,
       }
       const docTypeObj = docTypeMapping[documentType]
       if (docTypeObj) {
@@ -304,7 +304,7 @@ export default {
     getUploadedDocuments(uploadedDocuments) {
       this.financialStatement.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
       this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
-      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOC)
+      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
     }
 
   },

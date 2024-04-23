@@ -39,7 +39,7 @@
           <v-card class="pl-3 mt-3 pt-0">
             <AppDocumentUpload class="pt-4"
               :readonly="true"
-              :documentType="DOCUMENT_TYPES.SUPPORTING_DOC"
+              :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
               :uploadedDocuments="documentsSupporting" />
             <br>
           </v-card>
@@ -87,7 +87,7 @@ export default {
       return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
     },
     documentsSupporting() {
-      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOC)
+      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
     }
   },
   created() {
