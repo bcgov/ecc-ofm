@@ -1,8 +1,8 @@
 <template>
   <div v-if="isWarningDisplayed">
-    <AppWarningMessage>
+    <AppAlertBanner :type="'info'">
       <div>You have already received the Indigenous Programming Allowance for the current term.</div>
-    </AppWarningMessage>
+    </AppAlertBanner>
   </div>
   <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
@@ -61,14 +61,14 @@
 </template>
 
 <script>
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import { INDIG_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { isApplicationLocked } from '@/utils/common'
 
 export default {
-  components: { AppLabel, AppWarningMessage },
+  components: { AppAlertBanner, AppLabel },
   props: {
     indigenousProgrammingModel: {
       type: Object,

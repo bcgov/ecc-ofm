@@ -34,9 +34,9 @@
   </v-row>
 
   <div v-if="isWarningDisplayed">
-    <AppWarningMessage>
+    <AppAlertBanner :type="'info'">
       <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
-    </AppWarningMessage>
+    </AppAlertBanner>
   </div>
   <v-divider class="my-5"></v-divider>
 
@@ -159,19 +159,19 @@
 </template>
 
 <script>
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
-import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
 
 export default {
-  components: { AppLabel, AppNumberInput, AppButton, AppDocumentUpload, AppWarningMessage },
+  components: { AppAlertBanner, AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
   props: {
     transportModels: {
       type: Array,

@@ -7,9 +7,9 @@
   </p>
 
   <div v-if="currentTermDisabled">
-    <AppWarningMessage>
+    <AppAlertBanner :type="'warning'">
       <div>Your current term funding is ending and you are no longer able to make changes. Please apply for Next Term</div>
-    </AppWarningMessage>
+    </AppAlertBanner>
   </div>
 
   <v-form ref="form">
@@ -59,9 +59,9 @@
       </template>
     </AppDialog>
 
-    <v-alert v-if="!hasGoodStanding && !loading" type="warning" dense text>
+    <AppAlertBanner v-if="!hasGoodStanding && !loading" :type="'warning'">
       A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
-    </v-alert>
+    </AppAlertBanner>
     <!-- I use v-show here because if I use a v-if, this component has issues re-rendering if a user switches between two apps quickly -->
     <div v-show="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
@@ -133,10 +133,10 @@
 </template>
 
 <script>
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import IndigenousProgrammingAllowance from '@/components/supp-allowances/IndigenousProgrammingAllowance.vue'
@@ -154,7 +154,7 @@ import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppButton, AppDialog, AppLabel, AppWarningMessage, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
+  components: { AppAlertBanner, AppButton, AppDialog, AppLabel, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
   mixins: [alertMixin],
   props: {
     applicationId: {

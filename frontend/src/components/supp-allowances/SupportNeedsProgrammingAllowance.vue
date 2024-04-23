@@ -1,8 +1,8 @@
 <template>
   <div v-if="isWarningDisplayed && hasInclusionPolicy">
-    <AppWarningMessage>
+    <AppAlertBanner :type="'info'">
       <div>You have already received the Support Needs Allowance for the current term.</div>
-    </AppWarningMessage>
+    </AppAlertBanner>
   </div>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
@@ -104,25 +104,25 @@
     </v-row>
   </div>
   <div v-else>
-    <AppWarningMessage>
+    <AppAlertBanner :type="'warning'">
       <div>
         You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
         <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
       </div>
-    </AppWarningMessage>
+    </AppAlertBanner>
   </div>
 </template>
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
 import { SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { isApplicationLocked } from '@/utils/common'
 
 export default {
-  components: { AppButton, AppLabel, AppWarningMessage },
+  components: { AppAlertBanner, AppButton, AppLabel },
   props: {
     supportModel: {
       type: Object,
