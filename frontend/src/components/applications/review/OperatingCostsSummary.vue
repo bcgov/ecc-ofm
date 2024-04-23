@@ -19,31 +19,27 @@
             <AppDocumentUpload
               :readonly="true"
               :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-              :header="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-              :showTableHeader="false"
-              :showInfoMessage="false"
-              :showRequiredMessage="true"
-              :uploadedDocuments="documentsFinancialStatements" />
+              :uploadedDocuments="documentsFinancialStatements">
+              <AppMissingInfoError v-if="!documentsFinancialStatements.length" :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.FINANCIAL_STATEMENT }} document upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
+
           </v-card>
-          <AppMissingInfoError v-if="!documentsFinancialStatements.length > 0" :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
           <v-card class="pl-3">
-            <AppDocumentUpload class="pt-4"
+            <AppDocumentUpload class="pt-4 pr-3"
               :readonly="true"
               :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
-              :header="DOCUMENT_TYPES.BALANCE_SHEET"
-              :showTableHeader="false"
-              :showInfoMessage="false"
-              :showRequiredMessage="true"
-              :uploadedDocuments="documentsBalanceSheets" />
+              :uploadedDocuments="documentsBalanceSheets">
+              <AppMissingInfoError v-if="!documentsBalanceSheets.length" :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
           </v-card>
-          <AppMissingInfoError v-if="!documentsBalanceSheets.length > 0" :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
           <v-card class="pl-3 mt-3 pt-0">
             <AppDocumentUpload class="pt-4"
               :readonly="true"
-              :documentType="DOCUMENT_TYPES.SUPPORTING"
-              :header="DOCUMENT_TYPES.SUPPORTING"
-              :showTableHeader="false"
-              :showInfoMessage="false"
+              :documentType="DOCUMENT_TYPES.SUPPORTING_DOC"
               :uploadedDocuments="documentsSupporting" />
             <br>
           </v-card>
@@ -91,7 +87,7 @@ export default {
       return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
     },
     documentsSupporting() {
-      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
+      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOC)
     }
   },
   created() {

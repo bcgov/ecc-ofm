@@ -34,7 +34,8 @@
     <v-row>
       <v-col>
         <h4>Upload Documents</h4>
-        The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.
+        <AppMissingInfoError v-if="validation && !areRequiredDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
+        {{ SUPPORTED_DOCUMENTS_MESSAGE }}
       </v-col>
     </v-row>
     <v-card class="mt-2 pa-4" variant="outlined">
@@ -44,12 +45,8 @@
           v-model="financialStatement.documentsToUpload"
           entityName="ofm_applications"
           :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-          :header="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
           :loading="processing"
           :readonly="readonly"
-          :showTableHeader="false"
-          :showInfoMessage="false"
-          :showRequiredMessage="validation && !areRequiredDocsUploaded"
           :uploadedDocuments="financialStatement.uploadedDocuments"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
       </v-card>
@@ -59,12 +56,8 @@
           v-model="balanceSheet.documentsToUpload"
           entityName="ofm_applications"
           :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
-          :header="DOCUMENT_TYPES.BALANCE_SHEET"
           :loading="processing"
           :readonly="readonly"
-          :showTableHeader="false"
-          :showInfoMessage="false"
-          :showRequiredMessage="validation && !areRequiredDocsUploaded"
           :uploadedDocuments="balanceSheet.uploadedDocuments"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
       </v-card>
@@ -73,12 +66,9 @@
           id="supporting-document-upload"
           v-model="supporting.documentsToUpload"
           entityName="ofm_applications"
-          :documentType="DOCUMENT_TYPES.SUPPORTING"
-          :header="DOCUMENT_TYPES.SUPPORTING"
+          :documentType="DOCUMENT_TYPES.SUPPORTING_DOC"
           :loading="processing"
           :readonly="readonly"
-          :showTableHeader="false"
-          :showInfoMessage="false"
           :uploadedDocuments="supporting.uploadedDocuments"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
       </v-card>
@@ -100,7 +90,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
@@ -209,6 +199,7 @@ export default {
     this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
+    this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
     this.getUploadedDocuments(this.currentApplication?.uploadedDocuments)
   },
   async mounted() {
@@ -265,7 +256,7 @@ export default {
       const docTypeMapping = {
         [this.DOCUMENT_TYPES.FINANCIAL_STATEMENT]: this.financialStatement,
         [this.DOCUMENT_TYPES.BALANCE_SHEET]: this.balanceSheet,
-        [this.DOCUMENT_TYPES.SUPPORTING]: this.supporting,
+        [this.DOCUMENT_TYPES.SUPPORTING_DOC]: this.supporting,
       }
       const docTypeObj = docTypeMapping[documentType]
       if (docTypeObj) {
@@ -313,15 +304,9 @@ export default {
     getUploadedDocuments(uploadedDocuments) {
       this.financialStatement.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
       this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
-      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
+      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOC)
     }
 
   },
 }
 </script>
-
-<style scoped>
-.soft-outline {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-}
-</style>
