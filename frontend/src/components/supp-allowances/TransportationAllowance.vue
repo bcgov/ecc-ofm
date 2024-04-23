@@ -133,6 +133,7 @@
           <AppDocumentUpload
             id="application-document-upload"
             :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
+            :documentType="DOCUMENT_TYPES.SUPPORTING"
             v-model="model.documentsToUpload"
             entityName="ofm_allowances"
             :loading="isReadOnly(model) || isCurrentModelDisabled"
@@ -166,7 +167,7 @@ import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
-import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
+import { SUPPLEMENTARY_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
 
 export default {
@@ -213,10 +214,9 @@ export default {
   },
   async created() {
     this.hasDuplicateVIN = hasDuplicateVIN
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
-
-    console.log(this.models)
   },
   methods: {
     update(model) {

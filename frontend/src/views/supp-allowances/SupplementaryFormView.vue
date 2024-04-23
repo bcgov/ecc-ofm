@@ -6,8 +6,6 @@
     that applies to your organization.
   </p>
 
-  <!-- {{ fundingAgreement }} -->
-
   <div v-if="currentTermDisabled">
     <AppWarningMessage>
       <div>Your current term funding is ending and you are no longer able to make changes. Please apply for Next Term</div>
@@ -20,11 +18,11 @@
         <AppLabel>Application Term:</AppLabel>
       </v-col>
 
-      <!-- These buttons should always be enabled/disabled with FA dates? Will likely have to write custom code to figure out what term we are in -->
-      <v-col cols="6" lg="1" class="">
+      <!-- These buttons should always be enabled/disabled with FA dates as we might not have a supp app date to go off of-->
+      <v-col cols="6" lg="2" class="d-flex flex-column align-end">
         <AppButton id="current-term-button" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Term</AppButton>
       </v-col>
-      <v-col cols="6" lg="1" class="">
+      <v-col cols="6" lg="2" class="">
         <AppButton id="next-term-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Term</AppButton>
       </v-col>
     </v-row>
@@ -60,7 +58,10 @@
         </v-row>
       </template>
     </AppDialog>
-    {{ nextTermActive }}
+
+    <v-alert v-if="!hasGoodStanding && !loading" type="warning" dense text>
+      A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
+    </v-alert>
     <!-- I use v-show here because if I use a v-if, this component has issues re-rendering if a user switches between two apps quickly -->
     <div v-show="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
@@ -68,23 +69,24 @@
         <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
           <v-expansion-panel-title>
             <span class="header-label">{{ panel.title }}</span>
+            <span v-if="isFundingActive(panel.id, renewalTerm)" class="active-label ml-9">Active</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance
               v-if="panel.id === 'indigenous'"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
               @update="updateModel"
-              :isCurrentModelDisabled="currentTermDisabled" />
+              :isCurrentModelDisabled="currentTermDisabled || isFormDisabled" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === 'support-needs'"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :isCurrentModelDisabled="currentTermDisabled"
+              :isCurrentModelDisabled="currentTermDisabled || isFormDisabled"
               @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
               :transportModels="getTransportModels(renewalTerm)"
-              :isCurrentModelDisabled="currentTermDisabled"
+              :isCurrentModelDisabled="currentTermDisabled || isFormDisabled"
               :renewalTerm="renewalTerm"
               @update="updateModel"
               @addModel="addBlankTransportModel"
@@ -100,23 +102,24 @@
         <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
           <v-expansion-panel-title>
             <span class="header-label">{{ panel.title }}</span>
+            <span v-if="isFundingActive(panel.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance
               v-if="panel.id === 'indigenous'"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
               @update="updateModel"
-              :isCurrentModelDisabled="!nextTermActive" />
+              :isCurrentModelDisabled="isFormDisabled" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === 'support-needs'"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :isCurrentModelDisabled="!nextTermActive"
+              :isCurrentModelDisabled="isFormDisabled"
               @update="updateModel" />
             <TransportationAllowance
               v-if="panel.id === 'transportation'"
               :transportModels="getTransportModels(nextRenewalTerm)"
-              :isCurrentModelDisabled="!nextTermActive"
+              :isCurrentModelDisabled="isFormDisabled"
               :renewalTerm="nextRenewalTerm"
               @update="updateModel"
               @addModel="addBlankTransportModel"
@@ -141,7 +144,7 @@ import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/Suppo
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
-import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -197,7 +200,7 @@ export default {
       showCancelDialog: false,
       renewalTerm: undefined,
       nextRenewalTerm: undefined,
-      isNextTermEnabled: true, //todo add calc
+      isNextTermEnabled: false,
       currentTermDisabled: false,
       nextTermActive: false,
     }
@@ -207,6 +210,13 @@ export default {
     ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
+    },
+    hasGoodStanding() {
+      return this.currentOrg?.goodStandingStatusCode === GOOD_STANDING_STATUS_CODES.GOOD
+    },
+    isFormDisabled() {
+      //placeholder function that will incorporate permissions, good/bad standing status
+      return !this.hasGoodStanding
     },
   },
   watch: {
@@ -371,10 +381,8 @@ export default {
         this.models = [...this.models, ...transportApplications]
       }
 
-      console.log(this.models)
       this.clonedModels = cloneDeep(this.models)
 
-      console.log(this.models)
       this.setNext()
       this.loading = false
       this.$emit('process', false)
@@ -464,10 +472,6 @@ export default {
       this.showCancelDialog = !this.showCancelDialog
     },
     setNext() {
-      // if (this.currentTermDisabled) {
-      //   this.$emit('setNext', false)
-      //   return
-      // }
       this.$emit(
         'setNext',
         this.models.every((el) => {
@@ -481,17 +485,12 @@ export default {
     setSuppTermDates() {
       const today = new Date()
 
-      console.log('now: ', today)
-
-      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
-
+      const formattedEndDate = new Date(this.fundingAgreement.endDate)
+      const termTwoEndDate = new Date(new Date(formattedEndDate).setFullYear(new Date(formattedEndDate).getFullYear() - 1))
       const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
-
-      console.log('term one end date ', termOneEndDate)
 
       switch (true) {
         case today < termOneEndDate:
-          console.log('we are in Term one ')
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.setIsCurrentTermDisabled(termOneEndDate, today)
@@ -499,36 +498,43 @@ export default {
           break
 
         case today < termTwoEndDate:
-          console.log('we are in Term 2')
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(termTwoEndDate, today)
           this.setIsNextTermEnabled(termTwoEndDate, today)
           break
 
-        case today < this.fundingAgreement.endDate:
-          console.log('we are in Term 3')
+        case today < formattedEndDate:
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
-          this.isNextTermEnabled = false
-
+          this.setIsCurrentTermDisabled(formattedEndDate, today)
           break
 
         default:
-          console.error('broken - we are outside of FA term')
+          //outside of funding term, so most recent term should be read only? we don't have requirements on this
+          this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
+          this.currentTermDisabled = true
       }
     },
     setIsCurrentTermDisabled(termEndDate, today) {
       const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_TERM_EXPIRES))
-      //this.currentTermDisabled = today > priorDate
-      this.currentTermDisabled = true
+      this.currentTermDisabled = today > priorDate
     },
     setIsNextTermEnabled(termEndDate, today) {
       const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_NEXT_TERM_ENABLED))
-      console.log(priorDate)
-      //this.isNextTermEnabled = today > priorDate
+      this.isNextTermEnabled = today > priorDate
     },
     setActiveTerm(value) {
       this.nextTermActive = value
+    },
+    isFundingActive(panel, term) {
+      if (panel === 'transportation') {
+        const models = this.getTransportModels(term)
+        return models.some((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED)
+      } else if (panel === 'support-needs') {
+        return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      } else if (panel === 'indigenous') {
+        return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      }
     },
   },
 }
@@ -537,5 +543,10 @@ export default {
 .header-label {
   font-weight: 700;
   font-size: 20px;
+}
+.active-label {
+  font-weight: 700;
+  font-size: 17px;
+  color: green;
 }
 </style>

@@ -8,9 +8,7 @@ const log = require('./logger')
 
 async function getFundingAgreements(req, res) {
   try {
-    const fundingAgreements = []
-    log.info('reqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
-    log.info(req.query)
+
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_start_date,ofm_end_date,_ofm_application_value,statuscode,statecode&$filter=(${buildFilterQuery(
       req?.query,
       FundingAgreementMappings,

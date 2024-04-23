@@ -173,7 +173,6 @@ export default {
   },
   async created() {
     this.model = { ...this.supportModel }
-    console.log(this.model)
     this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
   },
   methods: {
