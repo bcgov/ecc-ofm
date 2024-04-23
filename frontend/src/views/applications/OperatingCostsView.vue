@@ -311,9 +311,9 @@ export default {
     },
 
     getUploadedDocuments(uploadedDocuments) {
-      this.financialStatement.uploadedDocuments = uploadedDocuments.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
-      this.balanceSheet.uploadedDocuments = uploadedDocuments.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
-      this.supporting.uploadedDocuments = uploadedDocuments.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
+      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
+      this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
+      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
     }
 
   },
