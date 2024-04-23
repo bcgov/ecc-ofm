@@ -8,7 +8,6 @@ const log = require('./logger')
 
 async function getFundingAgreements(req, res) {
   try {
-
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_start_date,ofm_end_date,_ofm_application_value,statuscode,statecode&$filter=(${buildFilterQuery(
       req?.query,
       FundingAgreementMappings,
@@ -16,11 +15,6 @@ async function getFundingAgreements(req, res) {
 
     //refactor this using StateCode so we only bring back one (the active) Funding Agreement
     const response = await getOperation(operation)
-    log.info('the resp')
-    log.info(response)
-
-    log.info('empty:')
-
     if (response?.value[0]) {
       return res.status(HttpStatus.OK).json(new MappableObjectForFront(response?.value[0], FundingAgreementMappings).toJSON())
     }
