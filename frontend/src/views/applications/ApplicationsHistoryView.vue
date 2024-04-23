@@ -15,7 +15,9 @@
         <h3>Add New Application</h3>
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
-        <v-alert v-if="!hasGoodStanding" type="info" dense text>To apply, you must be in good standing with BC Registries.</v-alert>
+        <v-alert v-if="!hasGoodStanding" type="warning" dense text>
+          A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
+        </v-alert>
         <v-alert v-else type="info" dense text>If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</v-alert>
       </v-col>
     </v-row>

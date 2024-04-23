@@ -5,7 +5,9 @@
     <div v-else>
       <v-row class="flex justify-end mb-1">
         <v-col cols="12">
-          <v-alert v-if="!hasGoodStanding" type="info" dense text>To apply, you must be in good standing with BC Registries.</v-alert>
+          <v-alert v-if="!hasGoodStanding" type="warning" dense text>
+            A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
+          </v-alert>
         </v-col>
       </v-row>
 
