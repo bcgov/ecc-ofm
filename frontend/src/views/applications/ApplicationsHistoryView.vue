@@ -16,7 +16,7 @@
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
         <AppAlertBanner v-if="!hasGoodStanding" type="warning">
-          A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
+          {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
         </AppAlertBanner>
         <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
       </v-col>
@@ -102,7 +102,7 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
@@ -157,6 +157,7 @@ export default {
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
+      this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
       await this.getApplicationsAndFundingAgreements()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()

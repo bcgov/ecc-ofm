@@ -6,7 +6,7 @@
       <v-row class="flex justify-end mb-1">
         <v-col cols="12">
           <AppAlertBanner v-if="!hasGoodStanding" type="warning">
-            A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
+            {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
           </AppAlertBanner>
         </v-col>
       </v-row>
@@ -55,7 +55,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { useOrgStore } from '@/stores/org'
 import { useAuthStore } from '@/stores/auth'
 import { useApplicationsStore } from '@/stores/applications'
@@ -82,6 +82,7 @@ export default {
     try {
       this.loading = true
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
+      this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
 
       //always re load org info to check the BC registry status after submission
       await this.getOrganizationInfo(this.userInfo?.organizationId)
