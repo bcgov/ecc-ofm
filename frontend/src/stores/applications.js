@@ -27,7 +27,7 @@ function checkRequiredDocsExist(application, requiredDocumentTypes) {
   return requiredDocumentTypes.every((type) => application.uploadedDocuments.some((doc) => doc.documentType === type))
 }
 
-function checkFacilityType(application, requiredDocumentTypes) {
+function checkFacilityTypeRequiredDocs(application, requiredDocumentTypes) {
   if (application?.facilityType === FACILITY_TYPES.RENT_LEASE) {
     return checkRequiredDocsExist(application, requiredDocumentTypes)
   }
@@ -35,10 +35,11 @@ function checkFacilityType(application, requiredDocumentTypes) {
 }
 
 function checkOperatingCostsComplete(application) {
-  const requiredDocumentTypes = [DOCUMENT_TYPES.FINANCIAL_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET]
-  const areRequiredDocsUploaded = checkFacilityType(application, requiredDocumentTypes)
+  const requiredFinancialDocTypes = [DOCUMENT_TYPES.FINANCIAL_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET]
+  const isRequiredFinancialDocsUploaded = checkRequiredDocsExist(application, requiredFinancialDocTypes)
+  const isFacilityTypeRequiredDocsUploaded = checkFacilityTypeRequiredDocs(application, [DOCUMENT_TYPES.SUPPORTING_DOCS])
   const areCostsPositive = application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
-  return application?.facilityType && areRequiredDocsUploaded && areCostsPositive
+  return application?.facilityType && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
 }
 
 function checkServiceDeliveryComplete(application) {
@@ -82,9 +83,7 @@ export const useApplicationsStore = defineStore('applications', {
       try {
         this.currentApplication = await ApplicationService.getApplication(applicationId)
         if (!this.currentApplication) return
-        if (this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE) {
-          this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
-        }
+        this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
         this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
         this.checkApplicationComplete()
       } catch (error) {

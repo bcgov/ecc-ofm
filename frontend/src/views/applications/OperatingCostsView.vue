@@ -34,8 +34,9 @@
     <v-row>
       <v-col>
         <h4>Upload Documents</h4>
-        <AppMissingInfoError v-if="validation && !areRequiredDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
         {{ SUPPORTED_DOCUMENTS_MESSAGE }}
+        <AppMissingInfoError v-if="validation && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="validation && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
       </v-col>
     </v-row>
     <v-card class="mt-2 pa-4" variant="outlined">
@@ -156,7 +157,7 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
-      return this.model.facilityType && this.totalOperationalCost > 0 && this.areRequiredDocsUploaded
+      return this.model.facilityType && this.totalOperationalCost > 0 && this.isFinancialDocsUploaded
     },
     totalOperationalCost() {
       const costsModel = Object.assign({}, this.model)
@@ -166,8 +167,19 @@ export default {
     isRentLease() {
       return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
     },
-    areRequiredDocsUploaded() {
-      return !this.isRentLease || (this.isRentLease && (!isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments) || (!isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments))))
+    isFinancialDocsUploaded() {
+      const isFinancialStatementUploaded = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments)
+      const isBalanceSheetUploaded = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments)
+      return isFinancialStatementUploaded && isBalanceSheetUploaded
+    },
+    isSupportingDocsUploaded() {
+      return !isEmpty(this.supporting?.documentsToUpload) || !isEmpty(this.supporting?.uploadedDocuments)
+    },
+    isDocumentsToProcess() {
+      const isFinancialDocsToProcess = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.documentsToDelete)
+      const isBalanceSheetToProcess = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.documentsToDelete)
+      const isSupportingDocsToProcess = !isEmpty(this.supporting?.documentsToUpload) || !isEmpty(this.supporting?.documentsToDelete)
+      return isFinancialDocsToProcess || isBalanceSheetToProcess || isSupportingDocsToProcess
     },
   },
   watch: {
@@ -216,7 +228,7 @@ export default {
         let reloadApplication = false
         this.$emit('process', true)
         this.processing = true
-        if (this.isRentLease) {
+        if (this.isDocumentsToProcess) {
           const reload = await this.processDocuments()
           if (reload)
             reloadApplication = true
