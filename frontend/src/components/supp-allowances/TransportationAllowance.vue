@@ -269,7 +269,7 @@ export default {
 }
 
 .greyTop {
-  border-top: 1px solid #0000001a;
+  border-top: 5px solid #00000049;
 }
 
 .blueBorder {
