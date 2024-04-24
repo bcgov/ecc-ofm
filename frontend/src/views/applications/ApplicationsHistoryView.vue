@@ -15,8 +15,10 @@
         <h3>Add New Application</h3>
       </v-col>
       <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
-        <v-alert v-if="!hasGoodStanding" type="info" dense text>To apply, you must be in good standing with BC Registries.</v-alert>
-        <v-alert v-else type="info" dense text>If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</v-alert>
+        <AppAlertBanner v-if="!hasGoodStanding" type="warning">
+          {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
+        </AppAlertBanner>
+        <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
       </v-col>
     </v-row>
     <v-row>
@@ -92,6 +94,7 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty } from 'lodash'
 import format from '@/utils/format'
@@ -99,13 +102,13 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
   mixins: [alertMixin],
   data() {
     return {
@@ -154,7 +157,8 @@ export default {
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
-      await this.getApplicationsAndFundingAgreement()
+      this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
+      await this.getApplicationsAndFundingAgreements()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
       if (!this.currentOrg) {
