@@ -20,7 +20,7 @@
 
       <!-- These buttons should always be enabled/disabled with FA dates as we might not have a supp app date to go off of-->
       <v-col cols="6" lg="2" class="d-flex flex-column align-end">
-        <AppButton id="current-term-button" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Term</AppButton>
+        <AppButton id="current-term-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Term</AppButton>
       </v-col>
       <v-col cols="6" lg="2" class="">
         <AppButton id="next-term-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Term</AppButton>
@@ -200,7 +200,7 @@ export default {
       showCancelDialog: false,
       renewalTerm: undefined,
       nextRenewalTerm: undefined,
-      isNextTermEnabled: false,
+      isNextTermEnabled: true,
       currentTermDisabled: false,
       nextTermActive: false,
     }
@@ -548,5 +548,9 @@ export default {
   font-weight: 700;
   font-size: 17px;
   color: green;
+}
+
+.no-border {
+  border-radius: 0 !important;
 }
 </style>
