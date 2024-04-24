@@ -24,15 +24,17 @@
               </div>
               <div v-else>
                 <span class="header-label">{{ page.title }}</span>
-                <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
-                <span class="error-message">Your form is missing required information.</span>
+                <div v-if="!readonly">
+                  <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
+                  <span class="error-message">Your form is missing required information.</span>
+                </div>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <FacilityDetailsSummary v-if="page.id === 'facility-details'" :facility="facility" :contacts="contacts" />
-              <ServiceDeliverySummary v-if="page.id === 'service-delivery'" :licences="currentApplication?.licences" />
-              <OperatingCostsSummary v-if="page.id === 'operating-costs'" :documents="currentApplication?.uploadedDocuments" />
-              <StaffingSummary v-if="page.id === 'staffing'" />
+              <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :facility="facility" :contacts="contacts" />
+              <ServiceDeliverySummary v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY" :readonly="readonly" :licences="currentApplication?.licences" />
+              <OperatingCostsSummary v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
+              <StaffingSummary v-if="page.id === APPLICATION_ROUTES.STAFFING" :readonly="readonly" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -44,25 +46,29 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import FacilityDetailsSummary from '@/components/applications/review/FacilityDetailsSummary.vue'
 import ServiceDeliverySummary from '@/components/applications/review/ServiceDeliverySummary.vue'
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
-import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import { APPLICATION_ROUTES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
   name: 'ReviewApplicationView',
   components: { AppButton, FacilityDetailsSummary, ServiceDeliverySummary, OperatingCostsSummary, StaffingSummary },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   async beforeRouteLeave(_to, _from, next) {
     this.validation = true
     next()
   },
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -71,19 +77,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    facility: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+    contacts: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ['process'],
   data() {
     return {
       panel: [],
       loading: false,
-      facility: undefined,
-      contacts: [],
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
@@ -92,73 +105,52 @@ export default {
   watch: {
     back: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     next: {
       handler() {
-        this.$router.push({ name: 'declare-submit', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
   async created() {
+    this.APPLICATION_ROUTES = APPLICATION_ROUTES
     this.PAGES = [
       {
         title: 'Facility',
-        id: 'facility-details',
+        id: APPLICATION_ROUTES.FACILITY_DETAILS,
       },
       {
         title: 'Service Delivery Details',
-        id: 'service-delivery',
+        id: APPLICATION_ROUTES.SERVICE_DELIVERY,
       },
       {
         title: 'Operating Costs',
-        id: 'operating-costs',
+        id: APPLICATION_ROUTES.OPERATING_COSTS,
       },
       {
         title: 'Staffing',
-        id: 'staffing',
+        id: APPLICATION_ROUTES.STAFFING,
       },
     ]
     await this.loadData()
     this.panel = this.allPageIDs
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
+    ...mapActions(useApplicationsStore, ['getApplication']),
     isEmpty,
     async loadData() {
-      if (this.isApplicationReadonly) return
+      if (this.readonly) return
       try {
         this.$emit('process', true)
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
-        this.checkApplicationComplete()
-        await Promise.all([this.getFacility(), this.getContacts()])
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
         this.loading = false
         this.$emit('process', false)
-      }
-    },
-
-    async getContacts() {
-      try {
-        this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
-        this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
-        })
-      } catch (error) {
-        this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
-
-    async getFacility() {
-      try {
-        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
       }
     },
 
@@ -168,13 +160,13 @@ export default {
 
     isPageComplete(page) {
       switch (page.id) {
-        case 'facility-details':
+        case APPLICATION_ROUTES.FACILITY_DETAILS:
           return this.isFacilityDetailsComplete
-        case 'service-delivery':
+        case APPLICATION_ROUTES.SERVICE_DELIVERY:
           return this.isServiceDeliveryComplete
-        case 'operating-costs':
+        case APPLICATION_ROUTES.OPERATING_COSTS:
           return this.isOperatingCostsComplete
-        case 'staffing':
+        case APPLICATION_ROUTES.STAFFING:
           return this.isStaffingComplete
       }
     },

@@ -43,6 +43,7 @@ import { useAuthStore } from '@/stores/auth'
 
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
+import { APPLICATION_ROUTES } from '@/utils/constants'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
@@ -106,7 +107,7 @@ export default {
           const response = await ApplicationService.createApplication(payload)
           await this.getApplication(response?.applicationId)
           this.setSuccessAlert('Started a new application successfully')
-          this.$router.push({ name: 'facility-details', params: { applicationGuid: response?.applicationId } })
+          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
         } catch (error) {
           this.setFailureAlert('Failed to start a new application', error)
         } finally {

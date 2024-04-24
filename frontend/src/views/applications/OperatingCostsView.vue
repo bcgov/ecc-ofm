@@ -32,7 +32,7 @@
       <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
       <div v-if="isRentLease" no-gutters class="pb-6">
         <AppLabel>Supporting Documents</AppLabel>
-        <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="validation && !isDocumentUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
         <AppDocumentUpload
           id="application-document-upload"
           v-model="documentsToUpload"
@@ -53,7 +53,6 @@ import { mapState, mapWritableState, mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
-import permissionsMixin from '@/mixins/permissionsMixin'
 import rules from '@/utils/rules'
 import { isEmpty } from 'lodash'
 import AppLabel from '@/components/ui/AppLabel.vue'
@@ -61,19 +60,29 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
   components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
-  mixins: [alertMixin, permissionsMixin],
+  mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    validation: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -87,7 +96,9 @@ export default {
       default: false,
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
@@ -98,13 +109,11 @@ export default {
       processing: false,
     }
   },
+
   computed: {
     ...mapState(useAppStore, ['facilityTypes']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
-    readonly() {
-      return this.isApplicationReadonly || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
-    },
     sanitizedModel() {
       const sanitizedModel = {}
       Object.keys(this.model)?.forEach((key) => {
@@ -129,6 +138,7 @@ export default {
       return !this.isRentLease || (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocuments)))
     },
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
@@ -138,7 +148,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'service-delivery', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -148,10 +158,11 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
+
   created() {
     this.$emit('process', false)
     this.model.facilityType = this.currentApplication?.facilityType
@@ -159,11 +170,13 @@ export default {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.uploadedDocuments = this.currentApplication?.uploadedDocuments
   },
+
   async mounted() {
     if (this.validation) {
       await this.$refs.form?.validate()
     }
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
 

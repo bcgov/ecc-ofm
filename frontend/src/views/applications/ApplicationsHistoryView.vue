@@ -31,7 +31,7 @@
               Before starting an application, verify your organization and facility details in Account Management.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
+              <AppButton id="core-application-button" size="large" width="250px" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="mt-8 mb-0">Add OFM Application</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -106,7 +106,7 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
@@ -309,7 +309,7 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === 'OFM' ? 'facility-details' : 'supp-allowances-form'
+      const routeName = item.applicationType === 'OFM' ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 

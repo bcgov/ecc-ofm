@@ -1,11 +1,15 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
-    <AppMissingInfoError v-if="!currentApplication?.facilityType" :to="{ name: 'operating-costs', hash: '#select-facility-types', params: { applicationGuid: $route.params.applicationGuid } }">
+    <AppMissingInfoError
+      v-if="!readonly && !currentApplication?.facilityType"
+      :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#select-facility-types', params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.FACILITY_TYPE }}
     </AppMissingInfoError>
     <div v-else>
       <h4 class="mb-4 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
-      <AppMissingInfoError v-if="totalOperationalCost === 0" :to="{ name: 'operating-costs', hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError
+        v-if="!readonly && totalOperationalCost === 0"
+        :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
       </AppMissingInfoError>
       <div v-else>
@@ -17,7 +21,7 @@
         <v-card v-if="isUploadedDocumentsComplete" class="my-1 pa-2" variant="outlined">
           <div v-for="document in documents" :key="document.documentId" class="px-2 py-1">{{ document.fileName }}</div>
         </v-card>
-        <AppMissingInfoError v-else :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+        <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
         </AppMissingInfoError>
       </div>
@@ -32,17 +36,23 @@ import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFa
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
   components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     documents: {
       type: Array,
       default: () => [],
     },
   },
+
   computed: {
     ...mapState(useAppStore, ['getFacilityTypeNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
@@ -56,8 +66,10 @@ export default {
       return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
     },
   },
+
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+    this.APPLICATION_ROUTES = APPLICATION_ROUTES
   },
 }
 </script>

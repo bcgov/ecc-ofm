@@ -13,7 +13,18 @@
           <ApplicationNavBar class="navBar" />
         </v-col>
         <v-col cols="12" md="9" lg="10">
-          <router-view class="min-screen-height" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" @process="process"></router-view>
+          <router-view
+            class="min-screen-height"
+            :readonly="readonly"
+            :validation="showValidation"
+            :facility="facility"
+            :contacts="contacts"
+            :cancel="cancel"
+            :back="back"
+            :next="next"
+            :save="save"
+            :submit="submit"
+            @process="process"></router-view>
           <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
           <AppNavButtons
             :loading="processing"
@@ -37,17 +48,22 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
+import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
+import FacilityService from '@/services/facilityService'
 import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import { APPLICATION_ROUTES } from '@/utils/constants'
 
 export default {
   name: 'ApplicationView',
   components: { ApplicationNavBar, ApplicationHeader, AppNavButtons, CancelApplicationDialog },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
+
   data() {
     return {
       loading: false,
@@ -58,27 +74,59 @@ export default {
       save: false,
       submit: false,
       showCancelDialog: false,
+      facility: undefined,
+      contacts: [],
     }
   },
+
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
+    ...mapState(useAppStore, ['getRoleNameById']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly', 'validation']),
+    readonly() {
+      return this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+    },
+    showValidation() {
+      return !this.readonly && this.validation
+    },
     showBack() {
-      return ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name)
+      return [
+        APPLICATION_ROUTES.FACILITY_DETAILS,
+        APPLICATION_ROUTES.SERVICE_DELIVERY,
+        APPLICATION_ROUTES.OPERATING_COSTS,
+        APPLICATION_ROUTES.STAFFING,
+        APPLICATION_ROUTES.REVIEW,
+        APPLICATION_ROUTES.SUBMIT,
+      ].includes(this.$route.name)
     },
     showCancel() {
       return (
         this.isSelectFacilityPage ||
-        (!this.isApplicationReadonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application', 'declare-submit'].includes(this.$route.name))
+        (!this.readonly &&
+          [
+            APPLICATION_ROUTES.FACILITY_DETAILS,
+            APPLICATION_ROUTES.SERVICE_DELIVERY,
+            APPLICATION_ROUTES.OPERATING_COSTS,
+            APPLICATION_ROUTES.STAFFING,
+            APPLICATION_ROUTES.REVIEW,
+            APPLICATION_ROUTES.SUBMIT,
+          ].includes(this.$route.name))
       )
     },
     showNext() {
-      return ['select-facility', 'facility-details', 'service-delivery', 'operating-costs', 'staffing', 'review-application'].includes(this.$route.name)
+      return [APPLICATION_ROUTES.FACILITY_DETAILS, APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.REVIEW].includes(
+        this.$route.name,
+      )
     },
     showSave() {
-      return !this.isApplicationReadonly && ['facility-details', 'service-delivery', 'operating-costs', 'staffing', 'declare-submit'].includes(this.$route.name)
+      return (
+        !this.readonly &&
+        [APPLICATION_ROUTES.FACILITY_DETAILS, APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.SUBMIT].includes(
+          this.$route.name,
+        )
+      )
     },
     showSubmit() {
-      return ['declare-submit'].includes(this.$route.name) && !this.isApplicationReadonly
+      return !this.readonly && APPLICATION_ROUTES.SUBMIT === this.$route.name
     },
     disableNext() {
       if (this.isSelectFacilityPage) {
@@ -90,34 +138,58 @@ export default {
       return false
     },
     disableSubmit() {
-      return !this.isApplicationComplete || !this.isDeclareSubmitComplete || this.isApplicationReadonly
+      return this.readonly || !this.isApplicationComplete || !this.isDeclareSubmitComplete
     },
     isSelectFacilityPage() {
-      return this.$route.name === 'select-facility'
+      return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
     },
     isReviewApplicationPage() {
-      return this.$route.name === 'review-application'
+      return this.$route.name === APPLICATION_ROUTES.REVIEW
     },
     isApplicationConfirmationPage() {
-      return this.$route.name === 'application-confirmation'
+      return this.$route.name === APPLICATION_ROUTES.CONFIRMATION
     },
   },
+
   async created() {
     await this.loadApplication()
   },
+
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
+    ...mapActions(useApplicationsStore, ['getApplication']),
     async loadApplication() {
       try {
         if (!this.$route.params.applicationGuid) return
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
+        await Promise.all([this.getContacts(), this.getFacility()])
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
         this.loading = false
       }
     },
+
+    async getContacts() {
+      try {
+        this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
+        this.contacts?.forEach((contact) => {
+          contact.fullName = `${contact.firstName} ${contact.lastName}`
+          contact.roleName = this.getRoleNameById(Number(contact.role))
+        })
+      } catch (error) {
+        this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
+      }
+    },
+
+    async getFacility() {
+      try {
+        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
+      } catch (error) {
+        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
+      }
+    },
+
     toggleCancel() {
       this.cancel = !this.cancel
       if (!this.isSelectFacilityPage) {
@@ -148,6 +220,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .navBar {
   margin-left: 0px;
