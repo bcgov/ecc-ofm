@@ -158,7 +158,7 @@ export default {
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
-      await this.getApplicationsAndFundingAgreements()
+      await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
       if (!this.currentOrg) {
