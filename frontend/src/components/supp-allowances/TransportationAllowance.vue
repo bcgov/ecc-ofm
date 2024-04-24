@@ -281,8 +281,4 @@ export default {
 .greyTop {
   border-top: 5px solid #00000049;
 }
-
-.blueBorder {
-  border: 1px solid #0000001a;
-}
 </style>

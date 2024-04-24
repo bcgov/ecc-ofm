@@ -111,8 +111,6 @@ export default {
   },
   async created() {
     this.model = { ...this.indigenousProgrammingModel }
-    // console.log('refreshing')
-    // console.log(this.model)
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
   },
 }
