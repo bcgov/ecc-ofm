@@ -200,7 +200,7 @@ export default {
       showCancelDialog: false,
       renewalTerm: undefined,
       nextRenewalTerm: undefined,
-      isNextTermEnabled: true,
+      isNextTermEnabled: false,
       currentTermDisabled: false,
       nextTermActive: false,
     }
@@ -548,9 +548,5 @@ export default {
   font-weight: 700;
   font-size: 17px;
   color: green;
-}
-
-.no-border {
-  border-radius: 0 !important;
 }
 </style>
