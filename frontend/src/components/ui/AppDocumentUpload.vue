@@ -1,8 +1,15 @@
 <template>
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
-      <div>The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.</div>
-      <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+      <v-row>
+        <v-col v-if="documentType" cols="3" class="pb-0">
+          <AppLabel>{{ documentType }}</AppLabel>
+        </v-col>
+        <v-col :cols="documentType ? '8' : '12'" :class="documentType ? 'd-flex flex-column align-end ml-8' : ''">
+          <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
+          <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+        </v-col>
+      </v-row>
       <div v-if="documents.length > 0" class="mt-6">
         <v-row v-for="item in documents" :key="item.id" no-gutters>
           <v-col cols="12" md="4" class="pr-4">
@@ -24,13 +31,20 @@
         </v-row>
       </div>
       <div v-if="uploadedDocuments.length > 0" class="mt-6 mx-4 mx-md-8 mx-lg-12">
-        <AppLabel>Uploaded Documents</AppLabel>
+        <AppLabel v-if="!documentType">Uploaded Documents</AppLabel>
         <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" items-per-page="-1" density="compact">
           <template #item.actionButtons="{ item }">
-            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
+            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId, documentType)">mdi-delete</v-icon>
           </template>
           <template v-slot:bottom><!-- no paging --></template>
         </v-data-table>
+      </div>
+      <div>
+        <v-row>
+          <v-col>
+            <slot></slot>
+          </v-col>
+        </v-row>
       </div>
     </v-form>
   </v-container>
@@ -40,13 +54,20 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { humanFileSize, getFileExtensionWithDot } from '@/utils/file'
 import { uuid } from 'vue-uuid'
+import { SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
 
 export default {
   components: { AppButton, AppLabel },
   props: {
     entityName: {
       type: String,
-      required: true,
+      required: false,
+      default: undefined
+    },
+    documentType: {
+      type: String,
+      required: false,
+      default: undefined
     },
     loading: {
       type: Boolean,
@@ -89,6 +110,7 @@ export default {
     },
   },
   created() {
+    this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
     this.MAX_FILE_SIZE = 4194304 // 4 MB
     this.fileExtensionAccept = ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx']
     this.fileFormats = 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX'
@@ -108,7 +130,7 @@ export default {
   },
   methods: {
     addFile() {
-      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true })
+      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
     },
 
     deleteFile(deletedItemId) {
