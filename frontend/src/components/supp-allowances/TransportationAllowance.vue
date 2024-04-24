@@ -41,115 +41,115 @@
   <v-divider class="my-5"></v-divider>
 
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
-    <v-row class="pa-7">
-      <v-col cols="1">
-        <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
-      </v-col>
-      <v-col v-if="!isReadOnly(model)">
-        <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
-      </v-col>
-    </v-row>
-    <v-divider class="my-3"></v-divider>
-    <v-row no-gutters class="mt-2 pt-2">
-      <v-col cols="12" lg="6" class="px-4">
-        <v-col class="px-4">
-          <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
-              <p>VIN:</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="pt-2 text-center">
-              <v-text-field
-                v-model="model.VIN"
-                required
-                variant="outlined"
-                density="compact"
-                :rules="rules.required"
-                :disabled="isReadOnly(model)"
-                maxlength="17"
-                @input="model.VIN = model.VIN.toUpperCase()"></v-text-field>
-            </v-col>
-            <div v-if="hasDuplicateVIN(model, models)">
+    <v-card class="my-10" :class="{ greyTop: isReadOnly(model), 'home-card': !isReadOnly(model) }" :disabled="isReadOnly(model)">
+      <v-row class="pa-7 pt-10">
+        <v-col cols="1">
+          <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
+        </v-col>
+        <v-col v-if="!isReadOnly(model)">
+          <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
+        </v-col>
+      </v-row>
+      <v-divider class="my-3"></v-divider>
+      <v-row no-gutters class="mt-2 pt-2">
+        <v-col cols="12" lg="6" class="px-4">
+          <v-col class="px-4">
+            <v-row no-gutters>
+              <v-col cols="6" xl="5" class="pt-2">
+                <p>VIN:</p>
+              </v-col>
+              <v-col cols="6" xl="7" class="pt-2 text-center">
+                <v-text-field
+                  v-model="model.VIN"
+                  required
+                  variant="outlined"
+                  density="compact"
+                  :rules="rules.required"
+                  :disabled="isReadOnly(model)"
+                  maxlength="17"
+                  @input="model.VIN = model.VIN.toUpperCase()"></v-text-field>
+              </v-col>
+              <div v-if="hasDuplicateVIN(model, models)">
+                <v-row class="my-5">
+                  <v-icon size="large" class="alert-icon pb-1 ml-3">mdi-alert-circle</v-icon>
+                  <p class="text-error ml-2">Duplicate VIN. Please ensure each VIN is unique.</p>
+                </v-row>
+              </div>
+            </v-row>
+          </v-col>
+          <v-col class="px-4">
+            <v-row no-gutters>
+              <v-col cols="6" xl="5" class="pt-2">
+                <p>Vehicle mileage at time of application (odometer reading):</p>
+              </v-col>
+              <v-col cols="6" xl="7" class="pt-2 text-center">
+                <v-text-field
+                  v-model="model.odometer"
+                  required
+                  type="number"
+                  suffix="km"
+                  variant="outlined"
+                  density="compact"
+                  :rules="[rules.max(999999), ...rules.required]"
+                  :disabled="isReadOnly(model)"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col class="px-4">
+            <v-row no-gutters>
+              <v-col cols="6" xl="5" class="pt-2">
+                <p>Estimated Yearly KM:</p>
+              </v-col>
+              <v-col cols="6" xl="7" class="pt-2 text-center">
+                <v-text-field
+                  v-model="model.estimatedMileage"
+                  required
+                  type="number"
+                  suffix="km"
+                  variant="outlined"
+                  density="compact"
+                  :rules="[rules.max(999999), ...rules.required]"
+                  :disabled="isReadOnly(model)"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col class="px-4">
+            <v-row no-gutters>
+              <v-col cols="6" xl="5" class="pt-2">
+                <p>Vehicle financing/Lease cost per month: (If any)</p>
+              </v-col>
+              <v-col cols="6" xl="7" class="pt-2 text-center">
+                <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="isReadOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-col>
+        <v-col cols="12" lg="6" class="pt-0 w-75">
+          <v-card class="pa-6 greyBorder">
+            <AppLabel>Upload supporting documents:</AppLabel>
+            <ul class="ml-7">
+              <li>Picture of your odometer at the time of this application.</li>
+              <li>Your lease / finance payment schedule</li>
+            </ul>
+            <AppDocumentUpload
+              id="application-document-upload"
+              :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
+              v-model="model.documentsToUpload"
+              entityName="ofm_allowances"
+              :loading="isReadOnly(model)"
+              :uploadedDocuments="model.uploadedDocuments"
+              @deleteUploadedDocument="deleteUploadedDocument" />
+
+            <div v-if="areDocumentsMissing(model)">
               <v-row class="my-5">
-                <v-icon size="large" class="alert-icon pb-1 ml-3">mdi-alert-circle</v-icon>
-                <p class="text-error ml-2">Duplicate VIN. Please ensure each VIN is unique.</p>
+                <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
+                <p class="text-error ml-2">You must upload all Supporting Documents</p>
               </v-row>
             </div>
-          </v-row>
+          </v-card>
         </v-col>
-        <v-col class="px-4">
-          <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
-              <p>Vehicle mileage at time of application (odometer reading):</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="pt-2 text-center">
-              <v-text-field
-                v-model="model.odometer"
-                required
-                type="number"
-                suffix="km"
-                variant="outlined"
-                density="compact"
-                :rules="[rules.max(999999), ...rules.required]"
-                :disabled="isReadOnly(model)"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col class="px-4">
-          <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
-              <p>Estimated Yearly KM:</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="pt-2 text-center">
-              <v-text-field
-                v-model="model.estimatedMileage"
-                required
-                type="number"
-                suffix="km"
-                variant="outlined"
-                density="compact"
-                :rules="[rules.max(999999), ...rules.required]"
-                :disabled="isReadOnly(model)"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col class="px-4">
-          <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
-              <p>Vehicle financing/Lease cost per month: (If any)</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="pt-2 text-center">
-              <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="isReadOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-col>
-      <v-col cols="12" lg="6" class="pt-0 w-75">
-        <v-card class="pa-6 greyBorder">
-          <AppLabel>Upload supporting documents:</AppLabel>
-          <ul class="ml-7">
-            <li>Picture of your odometer at the time of this application.</li>
-            <li>Your lease / finance payment schedule</li>
-          </ul>
-          <AppDocumentUpload
-            id="application-document-upload"
-            :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
-            v-model="model.documentsToUpload"
-            entityName="ofm_allowances"
-            :loading="isReadOnly(model)"
-            :uploadedDocuments="model.uploadedDocuments"
-            @deleteUploadedDocument="deleteUploadedDocument" />
-
-          <div v-if="areDocumentsMissing(model)">
-            <v-row class="my-5">
-              <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
-              <p class="text-error ml-2">You must upload all Supporting Documents</p>
-            </v-row>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-divider class="my-4"></v-divider>
+      </v-row>
+    </v-card>
   </div>
 
   <v-row class="d-flex flex-column align-end my-8">
@@ -265,6 +265,14 @@ export default {
 
 <style scoped>
 .greyBorder {
+  border: 1px solid #0000001a;
+}
+
+.greyTop {
+  border-top: 1px solid #0000001a;
+}
+
+.blueBorder {
   border: 1px solid #0000001a;
 }
 </style>
