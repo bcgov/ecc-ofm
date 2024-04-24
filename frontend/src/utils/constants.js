@@ -115,6 +115,8 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   LICENCE_INFO: 'Licence information required',
   LICENCE_CONFIRMATION: 'Confirmation of licence information required',
   DOCUMENT_UPLOAD: 'Document upload required',
+  DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Financial Statement and Balance Sheet required',
+  DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
@@ -153,7 +155,14 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   TABLE: 'Table',
 })
 
+export const DOCUMENT_TYPES = Object.freeze({
+  FINANCIAL_STATEMENT: 'Financial Statement',
+  BALANCE_SHEET: 'Balance Sheet',
+  SUPPORTING_DOCS: 'Supporting Documents',
+})
+
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
+export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
 export const OFM_PROGRAM = 'OFM Program'
 
 export const PHONE_FORMAT = '###-###-####'
