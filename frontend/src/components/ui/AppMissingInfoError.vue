@@ -1,6 +1,6 @@
 <template>
   <div class="error-message">
-    <ul v-if="showSlot" class="ml-8 my-4">
+    <ul class="ml-8 my-4">
       <li>
         <slot></slot>
       </li>
@@ -21,10 +21,6 @@ export default {
       default: () => {
         return {}
       },
-    },
-    showSlot: {
-      type: Boolean,
-      default: true,
     },
   },
   methods: {

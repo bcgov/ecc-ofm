@@ -12,43 +12,38 @@
         <YearlyOperatingCostSummary />
         <YearlyFacilityCostSummary class="mt-4" />
       </div>
-      <div v-if="isRentLease" class="mt-4">
+      <div class="mt-4">
         <h4>Uploaded Document(s)</h4>
-        <v-card class="mt-2 pa-3" variant="outlined">
+        <v-card class="pa-3" variant="outlined">
           <v-card class="mt-2 mb-3 pa-3">
             <AppDocumentUpload
-              entityName="ofm_applications"
+              :readonly="true"
               :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-              :header="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-              :readonly="true"
-              :showTableHeader="false"
-              :showInfoMessage="false"
-              :showRequiredMessage="true"
-              :uploadedDocuments="documentsFinancialStatements" />
+              :uploadedDocuments="documentsFinancialStatements">
+              <AppMissingInfoError v-if="!documentsFinancialStatements.length" :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.FINANCIAL_STATEMENT }} document upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
           </v-card>
-          <AppMissingInfoError :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
           <v-card class="pl-3">
-            <AppDocumentUpload class="pt-4"
-              entityName="ofm_applications"
+            <AppDocumentUpload class="pt-4 pa-3"
+              :readonly="true"
               :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
-              :header="DOCUMENT_TYPES.BALANCE_SHEET"
-              :readonly="true"
-              :showTableHeader="false"
-              :showInfoMessage="false"
-              :showRequiredMessage="true"
-              :uploadedDocuments="documentsBalanceSheets" />
+              :uploadedDocuments="documentsBalanceSheets">
+              <AppMissingInfoError v-if="!documentsBalanceSheets.length" :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
           </v-card>
-          <AppMissingInfoError :to="{ name: 'operating-costs', hash: '#application-document-upload', params: { applicationGuid: $route.params.applicationGuid } }" :showSlot="false" />
           <v-card class="pl-3 mt-3 pt-0">
-            <AppDocumentUpload v-if="isUploadedDocumentsComplete" class="pt-4"
-              entityName="ofm_applications"
-              :documentType="DOCUMENT_TYPES.SUPPORTING"
-              :header="DOCUMENT_TYPES.SUPPORTING"
+            <AppDocumentUpload class="pt-4 pa-3"
               :readonly="true"
-              :showTableHeader="false"
-              :showInfoMessage="false"
-              :uploadedDocuments="documentsSupporting" />
-            <br>
+              :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
+              :uploadedDocuments="documentsSupporting">
+              <AppMissingInfoError v-if="isRentLease && !documentsSupporting.length" :to="{ name: 'operating-costs', hash: '#supporting-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.SUPPORTING_DOCS }} upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
           </v-card>
         </v-card>
       </div>
@@ -78,9 +73,7 @@ export default {
   computed: {
     ...mapState(useAppStore, ['getFacilityTypeNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
-    isUploadedDocumentsComplete() {
-      return !this.isRentLease || (this.isRentLease && !isEmpty(this.documents))
-    },
+
     isRentLease() {
       return this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE
     },
@@ -94,13 +87,12 @@ export default {
       return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
     },
     documentsSupporting() {
-      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING)
+      return this.documents.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
     }
   },
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
-    console.log('documentsFin = ', this.documentsFinancialStatements)
   },
 }
 </script>
