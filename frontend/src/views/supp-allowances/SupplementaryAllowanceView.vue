@@ -30,9 +30,9 @@
         <div v-if="application">
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
-
           <router-view
             :applicationId="application?.applicationId"
+            :fundingAgreement="application?.fundingAgreement"
             :cancel="cancel"
             :back="back"
             :next="next"
@@ -140,6 +140,7 @@ export default {
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
+          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid)
         }
         // navigate from the Application History page
         else {
@@ -147,7 +148,7 @@ export default {
           this.applications = this.applications?.filter((application) => ApplicationService.checkApplicationStatus(application))
           await Promise.all(
             this.applications?.map(async (application) => {
-              application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
+              application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
             }),
           )
           this.facilities = this.userInfo?.facilities?.filter((facility) => this.getValidApplication(facility.facilityId))

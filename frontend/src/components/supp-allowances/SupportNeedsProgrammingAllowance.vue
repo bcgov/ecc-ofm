@@ -1,9 +1,8 @@
 <template>
-  <div v-if="isApplicationReadOnly && hasInclusionPolicy">
-    <AppWarningMessage>
-      <div>You have already received the Support Needs Allowance for the current term.</div>
-    </AppWarningMessage>
-  </div>
+  <AppAlertBanner v-if="isWarningDisplayed && hasInclusionPolicy" type="info">
+    <div>You have already received the Support Needs Allowance for the current term.</div>
+  </AppAlertBanner>
+
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Purpose of the Fund:</AppLabel>
@@ -78,7 +77,7 @@
     </v-row>
     <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
       <v-col cols="11" lg="6">
-        <v-checkbox v-model="model.supportFundingModel" :disabled="isReadOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+        <v-checkbox v-model="model.supportFundingModel" :disabled="readOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
           <template v-slot:label>
             <p>
               {{ item.label }}
@@ -95,7 +94,7 @@
     <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
       <v-textarea
         v-model.trim="model.supportOtherDescription"
-        :disabled="isReadOnly"
+        :disabled="readOnly"
         placeholder="Detailed description of other expenses"
         counter
         maxlength="1000"
@@ -103,28 +102,22 @@
         :rules="rules.required"></v-textarea>
     </v-row>
   </div>
-  <div v-else>
-    <AppWarningMessage>
-      <div>
-        You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
-        <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
-      </div>
-    </AppWarningMessage>
-  </div>
+  <AppAlertBanner v-else type="warning">
+    You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+    <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
+  </AppAlertBanner>
 </template>
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import rules from '@/utils/rules'
 import AppButton from '@/components/ui/AppButton.vue'
 import { SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { isApplicationLocked } from '@/utils/common'
-import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 export default {
-  components: { AppButton, AppLabel, AppWarningMessage },
-  mixins: [permissionsMixin],
+  components: { AppAlertBanner, AppButton, AppLabel },
   props: {
     supportModel: {
       type: Object,
@@ -140,11 +133,14 @@ export default {
         return false
       },
     },
+    formDisabled: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update'],
   data() {
     return {
-      panel: [],
       model: {},
       rules,
       showMore: false,
@@ -152,13 +148,13 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.supportFundingModel.includes('4') && this.hasInclusionPolicy
+      return this.model?.supportFundingModel?.includes('4') && this.hasInclusionPolicy
     },
-    isApplicationReadOnly() {
+    readOnly() {
+      return isApplicationLocked(this.supportModel?.statusCode) || this.formDisabled
+    },
+    isWarningDisplayed() {
       return isApplicationLocked(this.supportModel?.statusCode)
-    },
-    isReadOnly() {
-      return this.isApplicationReadOnly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
   },
   watch: {
