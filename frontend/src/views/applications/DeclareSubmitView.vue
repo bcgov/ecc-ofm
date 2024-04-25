@@ -26,7 +26,8 @@
         v-model="model.applicationDeclaration"
         color="primary"
         :rules="rules.required"
-        :disabled="readonly"
+        :disabled="readonly || !isApplicationComplete"
+        :hide-details="readonly"
         label="I certify that all of the information provided is true and complete to the best of my knowledge."
         class="my-5"></v-checkbox>
     </v-skeleton-loader>
@@ -40,18 +41,24 @@ import { mapState, mapWritableState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, APPLICATION_ROUTES } from '@/utils/constants'
 
 export default {
   name: 'DeclareSubmitView',
   mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -65,7 +72,9 @@ export default {
       default: false,
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
@@ -75,15 +84,13 @@ export default {
       loading: false,
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete']),
     ...mapWritableState(useApplicationsStore, ['isDeclareSubmitComplete']),
-
-    readonly() {
-      return this.isApplicationReadonly || !this.isApplicationComplete || this.processing || this.loading
-    },
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
@@ -92,7 +99,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'review-application', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -106,6 +113,7 @@ export default {
       },
     },
   },
+
   async created() {
     this.$emit('process', false)
     await this.loadData()
@@ -113,16 +121,16 @@ export default {
       applicationDeclaration: this.currentApplication?.applicationDeclaration,
     }
   },
+
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'checkApplicationComplete']),
+    ...mapActions(useApplicationsStore, ['getApplication']),
 
     async loadData() {
-      if (this.isApplicationReadonly) return
+      if (this.readonly) return
       try {
         this.$emit('process', true)
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
-        this.checkApplicationComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
@@ -136,7 +144,7 @@ export default {
       this.model.statusCode = APPLICATION_STATUS_CODES.SUBMITTED
       await this.saveApplication()
       if (this.currentApplication?.statusCode === APPLICATION_STATUS_CODES.SUBMITTED) {
-        this.$router.push({ name: 'application-confirmation', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.CONFIRMATION, params: { applicationGuid: this.$route.params.applicationGuid } })
       }
     },
 
