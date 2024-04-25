@@ -27,6 +27,7 @@
         color="primary"
         :rules="rules.required"
         :disabled="readonly"
+        :hide-details="readonly"
         label="I certify that all of the information provided is true and complete to the best of my knowledge."
         class="my-5"></v-checkbox>
     </v-skeleton-loader>
@@ -47,7 +48,7 @@ export default {
   mixins: [alertMixin],
 
   async beforeRouteLeave(_to, _from, next) {
-    if (!this.isReadonly) {
+    if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete

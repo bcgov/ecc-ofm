@@ -110,10 +110,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    validation: {
-      type: Boolean,
-      default: false,
-    },
     back: {
       type: Boolean,
       default: false,
@@ -155,7 +151,7 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['facilityTypes']),
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
     sanitizedModel() {
       const sanitizedModel = {}

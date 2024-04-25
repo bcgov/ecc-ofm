@@ -52,18 +52,19 @@ import ServiceDeliverySummary from '@/components/applications/review/ServiceDeli
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
 import alertMixin from '@/mixins/alertMixin'
-import permissionsMixin from '@/mixins/permissionsMixin'
 import { APPLICATION_ROUTES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
   name: 'ReviewApplicationView',
   components: { AppButton, FacilityDetailsSummary, ServiceDeliverySummary, OperatingCostsSummary, StaffingSummary },
-  mixins: [alertMixin, permissionsMixin],
+  mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
-    this.validation = true
-    next()
+    this.validation = !this.readonly
+    next(!this.loading)
   },
+
   props: {
     readonly: {
       type: Boolean,
@@ -88,13 +89,16 @@ export default {
       default: () => [],
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       panel: [],
       loading: false,
     }
   },
+
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
@@ -102,6 +106,7 @@ export default {
       return this.PAGES?.map((page) => page.id)
     },
   },
+
   watch: {
     back: {
       handler() {
@@ -114,6 +119,7 @@ export default {
       },
     },
   },
+
   async created() {
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
     this.PAGES = [
@@ -137,6 +143,7 @@ export default {
     await this.loadData()
     this.panel = this.allPageIDs
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
     isEmpty,
@@ -173,6 +180,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .header-label {
   font-weight: 700;

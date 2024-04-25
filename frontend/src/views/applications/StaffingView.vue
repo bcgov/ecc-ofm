@@ -151,10 +151,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    validation: {
-      type: Boolean,
-      default: false,
-    },
     back: {
       type: Boolean,
       default: false,
@@ -179,7 +175,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
     totalFullTimePosition() {
       return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime

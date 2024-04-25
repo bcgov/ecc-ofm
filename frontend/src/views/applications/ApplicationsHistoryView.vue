@@ -219,6 +219,7 @@ export default {
 
     async getApplicationsAndFundingAgreement() {
       this.applications = await ApplicationService.getApplications()
+      // Applications' funding agreements are used in applications validation to enable the Add Supplementary Application button
       await Promise.all(
         this.applications?.map(async (application) => {
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)

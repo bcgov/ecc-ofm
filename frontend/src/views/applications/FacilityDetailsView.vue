@@ -125,10 +125,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    validation: {
-      type: Boolean,
-      default: false,
-    },
     back: {
       type: Boolean,
       default: false,
@@ -167,7 +163,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
     // The primary contact cannot be the same as the secondary contact
     availableSecondaryContacts() {
@@ -207,7 +203,7 @@ export default {
     },
   },
 
-  async created() {
+  async mounted() {
     this.$emit('process', false)
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)

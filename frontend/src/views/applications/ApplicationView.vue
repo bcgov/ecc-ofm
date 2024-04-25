@@ -16,7 +16,6 @@
           <router-view
             class="min-screen-height"
             :readonly="readonly"
-            :validation="showValidation"
             :facility="facility"
             :contacts="contacts"
             :cancel="cancel"
@@ -82,15 +81,12 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly', 'validation']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
-        return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+        return !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
       return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
-    },
-    showValidation() {
-      return !this.readonly && this.validation
     },
     showBack() {
       return [

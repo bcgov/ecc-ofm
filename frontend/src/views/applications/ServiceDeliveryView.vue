@@ -35,13 +35,14 @@
         color="primary"
         :rules="rules.required"
         :disabled="readonly"
+        :hide-details="readonly"
         label="I confirm that the above information is correct."
         class="mt-4"></v-checkbox>
     </div>
 
-    <AppMissingInfoError v-else-if="validation">{{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}</AppMissingInfoError>
+    <AppMissingInfoError v-else-if="validation && !processing">{{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}</AppMissingInfoError>
 
-    <p id="account-management">
+    <p id="account-management" class="pb-3">
       Your organization account manager can update licence details in
       <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
     </p>
@@ -80,10 +81,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    validation: {
-      type: Boolean,
-      default: false,
-    },
     back: {
       type: Boolean,
       default: false,
@@ -112,7 +109,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     allLicenceIDs() {
       return this.currentApplication?.licences?.map((licence) => licence.licenceId)
