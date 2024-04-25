@@ -1,6 +1,16 @@
 <template>
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-6">Reporting</h1>
+
+    <h2 class="mb-6">{{ userInfo?.organizationName }}</h2>
+
+    <p class="mb-6">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+      sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+
+    <h2 class="mt-8 mb-4">Report Details</h2>
     <!-- 
     <v-card class="px-4 pt-4 pb-2" variant="outlined">
       <v-row no-gutters class="mb-6">
@@ -37,7 +47,7 @@
       </v-row>
       <AppButton id="create-survey" :loading="processing" class="my-4" size="large" width="400px" @click="createSurveyResponse">Submit Monthly Report</AppButton>
     </v-card>
-    <hr class="my-8" /> -->
+    <hr class="my-8" />
     <v-row>
       <v-col cols="12" sm="2" lg="1">
         <AppLabel>Facility:</AppLabel>
@@ -45,22 +55,22 @@
       <v-col cols="12" sm="8" lg="5" xl="4">
         <v-select v-model="selectedFacility" :items="userInfo.facilities" item-title="facilityName" item-value="facilityId" label="Select facility to report on" density="compact" variant="outlined" />
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
         <v-tab value="history">
           <v-icon size="large">mdi-history</v-icon>
-          Reporting History
+          Pending Reports
         </v-tab>
         <v-tab value="analytics">
           <v-icon size="large">mdi-finance</v-icon>
-          Reporting Analytics
+          Reporting History
         </v-tab>
       </v-tabs>
       <v-card-text>
         <v-window v-model="tab">
           <v-window-item value="history">
-            <v-card variant="outlined" class="pa-4 mb-4">
+            <!-- <v-card variant="outlined" class="pa-4 mb-4">
               <v-row>
                 <v-col cols="12" lg="6">
                   <v-row no-gutters>
@@ -81,7 +91,7 @@
                       </v-row>
                     </v-col>
                   </v-row>
-                  <!-- <v-row>
+                  <v-row>
                 <v-col cols="auto" class="pb-0 pt-0" />
                 <v-col cols="12" xs="12" sm="3" md="2" lg="1" xl="1" class="pb-0 pt-0">
                   <AppLabel>Date Range:</AppLabel>
@@ -127,7 +137,7 @@
                     <v-date-picker v-model="endDate" @input="menuEndDate = false" :locale="locale"></v-date-picker>
                   </v-menu>
                 </v-col>
-              </v-row> -->
+              </v-row>
                   <v-row no-gutters class="mt-4">
                     <v-col cols="12" md="3" lg="2" class="my-2">
                       <AppLabel>Status:</AppLabel>
@@ -135,8 +145,8 @@
                     <v-col cols="12" md="9" lg="8">
                       <v-select v-model="selectedStatus" :items="statusTypes" item-title="title" item-value="id" label="Select status to report on" density="compact" variant="outlined" clearable />
                     </v-col>
-                  </v-row>
-                  <!-- <v-row>
+                  </v-row>  -->
+            <!-- <v-row>
                 <v-col cols="4">
                   <AppLabel>Include Submitted:</AppLabel>
                 </v-col>
@@ -144,21 +154,21 @@
                   <v-checkbox v-model="includeSubmitted" density="compact"></v-checkbox>
                 </v-col>
               </v-row>
-               -->
+              
                 </v-col>
                 <v-col cols="12" lg="6">
                   <AppDateFilter />
                 </v-col>
               </v-row>
-            </v-card>
-            <!-- <div no-gutters class="d-flex justify-end">
+            </v-card> 
+             <div no-gutters class="d-flex justify-end">
               <AppButton id="reset" :primary="false" size="large" width="100px" class="mr-8" @click="resetFilters()">Reset</AppButton>
               <AppButton id="run-report" size="large" :disabled="!selectedFacility" width="150px" @click="search()">Search</AppButton>
-            </div> -->
+            </div> 
             <div align="right">
               <AppButton id="run-report" size="large" :disabled="!selectedFacility" width="150px" @click="search()">Search</AppButton>
-            </div>
-            <h2 class="mt-8 mb-4">Report Details</h2>
+            </div>-->
+
             <v-skeleton-loader :loading="loading" type="table-tbody">
               <v-data-table :headers="headers" :items="displayedFacilities" item-key="reportId" :items-per-page="15" density="compact">
                 <template #[`item.alertType`]="{ item }">
@@ -174,7 +184,7 @@
               </v-data-table>
             </v-skeleton-loader>
           </v-window-item>
-          <v-window-item value="analytics">Report Analytics</v-window-item>
+          <v-window-item value="analytics">Reporting History</v-window-item>
         </v-window>
       </v-card-text>
     </v-card>

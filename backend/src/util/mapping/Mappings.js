@@ -348,6 +348,7 @@ const SurveyResponseMappings = [
   { back: '_ofm_survey_value', front: 'surveyId' },
   { back: '_ofm_contact_value', front: 'contactId' },
   { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
   { back: '_ofm_fiscal_year_value', front: 'fiscalYearId' },
   { back: '_ofm_reporting_month_value', front: 'reportingMonthId' },
   { back: '_ofm_submitted_month_value', front: 'submittedMonthId' },
