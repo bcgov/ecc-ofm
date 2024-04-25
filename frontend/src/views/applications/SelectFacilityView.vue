@@ -53,6 +53,7 @@ export default {
   name: 'SelectFacilityView',
   components: { OrganizationInfo },
   mixins: [alertMixin],
+
   props: {
     cancel: {
       type: Boolean,
@@ -67,7 +68,9 @@ export default {
       default: false,
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
@@ -77,10 +80,12 @@ export default {
       organization: undefined,
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
@@ -92,6 +97,7 @@ export default {
         this.$router.push({ name: 'applications-history' })
       },
     },
+
     next: {
       async handler() {
         this.$refs.form?.validate()
@@ -117,6 +123,7 @@ export default {
       },
     },
   },
+
   async created() {
     this.isSelectFacilityComplete = false
     if (this.userInfo?.facilities?.length === 1) {
@@ -124,16 +131,19 @@ export default {
     }
     await this.getOrganization()
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
     async getOrganization() {
       try {
+        this.$emit('process', true)
         this.loading = true
         this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
         this.loading = false
+        this.$emit('process', false)
       }
     },
   },

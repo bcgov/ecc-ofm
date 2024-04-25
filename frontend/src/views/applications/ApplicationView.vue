@@ -84,7 +84,7 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
-        return !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+        return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
       return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
