@@ -13,12 +13,11 @@ async function getFundingAgreements(req, res) {
       FundingAgreementMappings,
     )})`
 
-    //refactor this using StateCode so we only bring back one (the active) Funding Agreement
     const response = await getOperation(operation)
+    //CRM confirmed that there will only ever be one Funding Agreement per ApplicationID. However response returns an array. If index 0 contains data, return it
     if (response?.value[0]) {
       return res.status(HttpStatus.OK).json(new MappableObjectForFront(response?.value[0], FundingAgreementMappings).toJSON())
     }
-    //Hoang confirmed that there will only ever be one Funding Agreement per ApplicationID.
 
     return res.status(HttpStatus.NO_CONTENT).json()
   } catch (e) {

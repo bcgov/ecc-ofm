@@ -6,11 +6,9 @@
     that applies to your organization.
   </p>
 
-  <div v-if="currentTermDisabled">
-    <AppAlertBanner :type="'warning'">
-      <div>Your current term funding is ending and you are no longer able to make changes. Please apply for Next Term</div>
-    </AppAlertBanner>
-  </div>
+  <AppAlertBanner v-if="currentTermDisabled" type="warning">
+    <div>Your current term funding is ending and you are no longer able to make changes. Please apply for Next Term</div>
+  </AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
@@ -59,8 +57,8 @@
       </template>
     </AppDialog>
 
-    <AppAlertBanner v-if="!hasGoodStanding && !loading" :type="'warning'">
-      A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.
+    <AppAlertBanner v-if="!hasGoodStanding && !loading" type="warning">
+      {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
     </AppAlertBanner>
     <!-- I use v-show here because if I use a v-if, this component has issues re-rendering if a user switches between two apps quickly -->
     <div v-show="!nextTermActive">
@@ -73,20 +71,20 @@
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance
-              v-if="panel.id === 'indigenous'"
+              v-if="panel.id === INDIGENOUS"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
               @update="updateModel"
-              :isCurrentModelDisabled="currentTermDisabled || isFormDisabled" />
+              :formDisabled="currentTermDisabled || formDisabled" />
             <SupportNeedsProgrammingAllowance
-              v-if="panel.id === 'support-needs'"
+              v-if="panel.id === SUPPORT_NEEDS"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :isCurrentModelDisabled="currentTermDisabled || isFormDisabled"
+              :formDisabled="currentTermDisabled || formDisabled"
               @update="updateModel" />
             <TransportationAllowance
-              v-if="panel.id === 'transportation'"
+              v-if="panel.id === TRANSPORTATION"
               :transportModels="getTransportModels(renewalTerm)"
-              :isCurrentModelDisabled="currentTermDisabled || isFormDisabled"
+              :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="renewalTerm"
               @update="updateModel"
               @addModel="addBlankTransportModel"
@@ -106,20 +104,20 @@
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <IndigenousProgrammingAllowance
-              v-if="panel.id === 'indigenous'"
+              v-if="panel.id === INDIGENOUS"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
               @update="updateModel"
-              :isCurrentModelDisabled="isFormDisabled" />
+              :formDisabled="formDisabled" />
             <SupportNeedsProgrammingAllowance
-              v-if="panel.id === 'support-needs'"
+              v-if="panel.id === SUPPORT_NEEDS"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :isCurrentModelDisabled="isFormDisabled"
+              :formDisabled="formDisabled"
               @update="updateModel" />
             <TransportationAllowance
-              v-if="panel.id === 'transportation'"
+              v-if="panel.id === TRANSPORTATION"
               :transportModels="getTransportModels(nextRenewalTerm)"
-              :isCurrentModelDisabled="isFormDisabled"
+              :formDisabled="formDisabled"
               :renewalTerm="nextRenewalTerm"
               @update="updateModel"
               @addModel="addBlankTransportModel"
@@ -144,7 +142,7 @@ import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/Suppo
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
 import alertMixin from '@/mixins/alertMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
-import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -214,7 +212,7 @@ export default {
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === GOOD_STANDING_STATUS_CODES.GOOD
     },
-    isFormDisabled() {
+    formDisabled() {
       //placeholder function that will incorporate permissions, good/bad standing status
       return !this.hasGoodStanding
     },
@@ -245,22 +243,26 @@ export default {
     },
   },
   async created() {
+    this.TRANSPORTATION = 'transportation'
+    this.SUPPORT_NEEDS = 'support-needs'
+    this.INDIGENOUS = 'indigenous'
     this.PANELS = [
       {
         title: 'Indigenous Programming Allowance',
-        id: 'indigenous',
+        id: this.INDIGENOUS,
       },
       {
         title: 'Support Needs Programming Allowance',
-        id: 'support-needs',
+        id: this.SUPPORT_NEEDS,
       },
       {
         title: 'Transportation Allowance',
-        id: 'transportation',
+        id: this.TRANSPORTATION,
       },
     ]
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
+    this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
     this.DAYS_BEFORE_TERM_EXPIRES = 45
     this.DAYS_BEFORE_NEXT_TERM_ENABLED = 120
     this.setSuppTermDates()
@@ -382,7 +384,6 @@ export default {
       }
 
       this.clonedModels = cloneDeep(this.models)
-
       this.setNext()
       this.loading = false
       this.$emit('process', false)
@@ -409,19 +410,19 @@ export default {
       )
     },
     getModel(type, currentTerm) {
-      return this.models?.find((el) => el.supplementaryType === type && el.renewalTerm == currentTerm)
+      return this.models?.find((el) => el.supplementaryType === type && el.renewalTerm === currentTerm)
     },
     getTransportModels(term) {
-      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm == term)
+      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm === term)
     },
     findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
-      const found = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
+      const foundApp = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
       modelToUpdate.renewalTerm = renewalTerm
-      return found ? found : modelToUpdate
+      return foundApp ?? modelToUpdate
     },
     updateTransportModel(transportApplications, term) {
-      const found = transportApplications.find((application) => application.renewalTerm == term)
-      if (!found) {
+      const foundApp = transportApplications.find((application) => application.renewalTerm == term)
+      if (!foundApp) {
         this.addBlankTransportModel({
           monthlyLease: 0.0,
           estimatedMileage: null,
@@ -449,6 +450,8 @@ export default {
       delete modelData.endDate
       delete modelData.renewalTerm
 
+      //we delete the fields above because they will always have a value - so when running our isEmpty check below- those fields would fail the isEmpty check-
+      //and then our application would be trying to save empty models.
       return Object.values(modelData).every((value) => {
         return isEmpty(value)
       })
@@ -527,13 +530,15 @@ export default {
       this.nextTermActive = value
     },
     isFundingActive(panel, term) {
-      if (panel === 'transportation') {
-        const models = this.getTransportModels(term)
-        return models.some((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED)
-      } else if (panel === 'support-needs') {
-        return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
-      } else if (panel === 'indigenous') {
-        return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      switch (panel) {
+        case this.TRANSPORTATION: {
+          const models = this.getTransportModels(term)
+          return models.some((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED)
+        }
+        case this.SUPPORT_NEEDS:
+          return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+        case this.INDIGENOUS:
+          return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
       }
     },
   },
@@ -546,7 +551,7 @@ export default {
 }
 .active-label {
   font-weight: 700;
-  font-size: 17px;
+  font-size: 18px;
   color: green;
 }
 </style>

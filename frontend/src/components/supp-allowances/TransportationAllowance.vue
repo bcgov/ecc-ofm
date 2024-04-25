@@ -33,20 +33,19 @@
     </v-col>
   </v-row>
 
-  <div v-if="isWarningDisplayed">
-    <AppAlertBanner :type="'info'">
-      <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
-    </AppAlertBanner>
-  </div>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">
+    <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
+  </AppAlertBanner>
+
   <v-divider class="my-5"></v-divider>
 
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
-    <v-card class="my-10" :class="{ greyTop: isReadOnly(model), 'home-card': !isReadOnly(model) }" :disabled="isReadOnly(model)">
+    <v-card class="my-10" :class="{ greyTop: readOnly(model), 'home-card': !readOnly(model) }" :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
         <v-col cols="1">
           <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
         </v-col>
-        <v-col v-if="!isReadOnly(model)">
+        <v-col v-if="!readOnly(model)">
           <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
         </v-col>
       </v-row>
@@ -65,7 +64,7 @@
                   variant="outlined"
                   density="compact"
                   :rules="rules.required"
-                  :disabled="isReadOnly(model)"
+                  :disabled="readOnly(model)"
                   maxlength="17"
                   @input="model.VIN = model.VIN.toUpperCase()"></v-text-field>
               </v-col>
@@ -91,7 +90,7 @@
                   variant="outlined"
                   density="compact"
                   :rules="[rules.max(999999), ...rules.required]"
-                  :disabled="isReadOnly(model)"></v-text-field>
+                  :disabled="readOnly(model)"></v-text-field>
               </v-col>
             </v-row>
           </v-col>
@@ -109,7 +108,7 @@
                   variant="outlined"
                   density="compact"
                   :rules="[rules.max(999999), ...rules.required]"
-                  :disabled="isReadOnly(model)"></v-text-field>
+                  :disabled="readOnly(model)"></v-text-field>
               </v-col>
             </v-row>
           </v-col>
@@ -119,7 +118,7 @@
                 <p>Vehicle financing/Lease cost per month: (If any)</p>
               </v-col>
               <v-col cols="6" xl="7" class="pt-2 text-center">
-                <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="isReadOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
+                <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="readOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
               </v-col>
             </v-row>
           </v-col>
@@ -136,7 +135,7 @@
               :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
               v-model="model.documentsToUpload"
               entityName="ofm_allowances"
-              :loading="isReadOnly(model)"
+              :loading="readOnly(model)"
               :uploadedDocuments="model.uploadedDocuments"
               @deleteUploadedDocument="deleteUploadedDocument" />
 
@@ -152,7 +151,7 @@
     </v-card>
   </div>
 
-  <v-row v-if="!isCurrentModelDisabled" class="d-flex flex-column align-end my-8">
+  <v-row v-if="!formDisabled" class="d-flex flex-column align-end my-8">
     <AppButton v-if="isAddButtonEnabled" id="add-vehicle" :primary="false" size="large" width="300px" @click="addModel()">+ Add another vehicle</AppButton>
   </v-row>
 </template>
@@ -179,7 +178,7 @@ export default {
         return []
       },
     },
-    isCurrentModelDisabled: {
+    formDisabled: {
       type: Boolean,
       required: true,
     },
@@ -191,7 +190,6 @@ export default {
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
     return {
-      panel: [],
       models: [],
       rules,
       monthlyLeaseFormat: {
@@ -208,7 +206,7 @@ export default {
       return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
     },
     isWarningDisplayed() {
-      return this.models?.some((el) => this.isReadOnly(el))
+      return this.models?.some((el) => this.readOnly(el))
     },
   },
   async created() {
@@ -257,7 +255,7 @@ export default {
       }
       this.$emit('deleteDocument', documentId)
     },
-    isReadOnly(model) {
+    readOnly(model) {
       if (!model.statusCode) {
         return false
       }
