@@ -256,7 +256,9 @@ export default {
       this.$emit('deleteDocument', documentId)
     },
     readOnly(model) {
-      if (!model.statusCode) {
+      if (this.formDisabled) {
+        return true
+      } else if (!model.statusCode) {
         return false
       }
       return isApplicationLocked(model?.statusCode)
