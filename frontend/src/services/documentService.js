@@ -16,6 +16,7 @@ function mapDocumentFileObjectForBack(documents) {
       ofm_subject: fileName,
       ofm_extension: getFileExtensionWithDot(fileName),
       ofm_file_size: file?.size,
+      ofm_category: document.documentType ?? '',
       ofm_description: document.description ?? '',
       entity_name_set: document.entityName,
       regardingid: document.entityId,

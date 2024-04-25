@@ -30,19 +30,50 @@
       <AppMissingInfoError v-if="validation && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
       <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
       <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
-      <div v-if="isRentLease" no-gutters class="pb-6">
-        <AppLabel>Supporting Documents</AppLabel>
-        <AppMissingInfoError v-if="validation && !isDocumentUploaded && !processing">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}</AppMissingInfoError>
+    </div>
+    <v-row>
+      <v-col>
+        <h4>Upload Documents</h4>
+        {{ SUPPORTED_DOCUMENTS_MESSAGE }}
+        <AppMissingInfoError v-if="validation && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="validation && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
+      </v-col>
+    </v-row>
+    <v-card class="mt-2 pa-4" variant="outlined">
+      <v-card class="mt-2 mb-4 pa-4">
         <AppDocumentUpload
-          id="application-document-upload"
-          v-model="documentsToUpload"
+          id="financial-document-upload"
+          v-model="financialStatement.documentsToUpload"
           entityName="ofm_applications"
+          :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
           :loading="processing"
           :readonly="readonly"
-          :uploadedDocuments="uploadedDocuments"
+          :uploadedDocuments="financialStatement.uploadedDocuments"
           @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-      </div>
-    </div>
+      </v-card>
+      <v-card class="mt-2 mb-4 pa-4">
+        <AppDocumentUpload
+          id="balance-sheet-document-upload"
+          v-model="balanceSheet.documentsToUpload"
+          entityName="ofm_applications"
+          :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
+          :loading="processing"
+          :readonly="readonly"
+          :uploadedDocuments="balanceSheet.uploadedDocuments"
+          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+      </v-card>
+      <v-card class="mt-2 mb-4 pa-4">
+        <AppDocumentUpload
+          id="supporting-document-upload"
+          v-model="supporting.documentsToUpload"
+          entityName="ofm_applications"
+          :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
+          :loading="processing"
+          :readonly="readonly"
+          :uploadedDocuments="supporting.uploadedDocuments"
+          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+      </v-card>
+    </v-card>
   </v-form>
 </template>
 
@@ -60,7 +91,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
@@ -91,9 +122,21 @@ export default {
     return {
       rules,
       model: {},
-      uploadedDocuments: [],
-      documentsToUpload: [],
-      documentsToDelete: [],
+      financialStatement: {
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        documentsToDelete: [],
+      },
+      balanceSheet: {
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        documentsToDelete: [],
+      },
+      supporting: {
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        documentsToDelete: [],
+      },
       processing: false,
     }
   },
@@ -114,7 +157,7 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
-      return this.model.facilityType && this.totalOperationalCost > 0 && this.isDocumentUploaded
+      return this.model.facilityType && this.totalOperationalCost > 0 && this.isFinancialDocsUploaded
     },
     totalOperationalCost() {
       const costsModel = Object.assign({}, this.model)
@@ -124,8 +167,19 @@ export default {
     isRentLease() {
       return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
     },
-    isDocumentUploaded() {
-      return !this.isRentLease || (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocuments)))
+    isFinancialDocsUploaded() {
+      const isFinancialStatementUploaded = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments)
+      const isBalanceSheetUploaded = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments)
+      return isFinancialStatementUploaded && isBalanceSheetUploaded
+    },
+    isSupportingDocsUploaded() {
+      return !isEmpty(this.supporting?.documentsToUpload) || !isEmpty(this.supporting?.uploadedDocuments)
+    },
+    isDocumentsToProcess() {
+      const isFinancialDocsToProcess = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.documentsToDelete)
+      const isBalanceSheetToProcess = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.documentsToDelete)
+      const isSupportingDocsToProcess = !isEmpty(this.supporting?.documentsToUpload) || !isEmpty(this.supporting?.documentsToDelete)
+      return isFinancialDocsToProcess || isBalanceSheetToProcess || isSupportingDocsToProcess
     },
   },
   watch: {
@@ -156,7 +210,9 @@ export default {
     this.model.facilityType = this.currentApplication?.facilityType
     this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
-    this.uploadedDocuments = this.currentApplication?.uploadedDocuments
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
+    this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
+    this.getUploadedDocuments(this.currentApplication?.uploadedDocuments)
   },
   async mounted() {
     if (this.validation) {
@@ -172,9 +228,10 @@ export default {
         let reloadApplication = false
         this.$emit('process', true)
         this.processing = true
-        if (this.isRentLease && (!isEmpty(this.documentsToUpload) || !isEmpty(this.documentsToDelete))) {
-          await this.processDocuments()
-          reloadApplication = true
+        if (this.isDocumentsToProcess) {
+          const reload = await this.processDocuments()
+          if (reload)
+            reloadApplication = true
         }
         if (ApplicationService.isApplicationUpdated(this.sanitizedModel)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.sanitizedModel)
@@ -182,7 +239,7 @@ export default {
         }
         if (reloadApplication) {
           await this.getApplication(this.$route.params.applicationGuid)
-          this.uploadedDocuments = this.currentApplication?.uploadedDocuments
+          this.getUploadedDocuments(this.currentApplication?.uploadedDocuments)
         }
         if (showAlert) {
           this.setSuccessAlert('Application saved successfully')
@@ -199,32 +256,69 @@ export default {
       }
     },
 
-    async deleteUploadedDocument(documentId) {
-      const index = this.uploadedDocuments.findIndex((item) => item.documentId === documentId)
-      if (index > -1) {
-        this.documentsToDelete.push(documentId)
-        this.uploadedDocuments.splice(index, 1)
+    async deleteUploadedDocument(documentId, documentType) {
+      if (Object.values(this.DOCUMENT_TYPES).includes(documentType)) {
+        this.deleteDocumentFromType(documentId, documentType)
+      } else {
+        throw Error('Invalid document type')
+      }
+    },
+
+    deleteDocumentFromType(documentId, documentType) {
+      const docTypeMapping = {
+        [this.DOCUMENT_TYPES.FINANCIAL_STATEMENT]: this.financialStatement,
+        [this.DOCUMENT_TYPES.BALANCE_SHEET]: this.balanceSheet,
+        [this.DOCUMENT_TYPES.SUPPORTING_DOCS]: this.supporting,
+      }
+      const docTypeObj = docTypeMapping[documentType]
+      if (docTypeObj) {
+        const index = docTypeObj.uploadedDocuments.findIndex((item) => item.documentId === documentId)
+        if (index > -1) {
+          docTypeObj.documentsToDelete.push(documentId)
+          docTypeObj.uploadedDocuments.splice(index, 1)
+        }
+      } else {
+        throw Error('Invalid document type');
       }
     },
 
     async processDocuments() {
-      if (!isEmpty(this.documentsToUpload)) {
-        await DocumentService.createDocuments(this.documentsToUpload, this.$route.params.applicationGuid)
-        this.documentsToUpload = []
+      const documentTypes = [this.financialStatement, this.balanceSheet, this.supporting]
+      let atLeastOneDocumentProcessed = false
+      for (const docType of documentTypes) {
+        if (!isEmpty(docType.documentsToUpload) || !isEmpty(docType.documentsToDelete)) {
+          await this.processDocumentType(docType)
+          atLeastOneDocumentProcessed = true
+        }
       }
-      if (!isEmpty(this.documentsToDelete)) {
+      return atLeastOneDocumentProcessed
+    },
+
+    async processDocumentType(docTypeObj) {
+      if (!isEmpty(docTypeObj.documentsToUpload)) {
+        await DocumentService.createDocuments(docTypeObj.documentsToUpload, this.$route.params.applicationGuid);
+        docTypeObj.documentsToUpload = []
+      }
+      if (!isEmpty(docTypeObj.documentsToDelete)) {
         await Promise.all(
-          this.documentsToDelete.map(async (documentId) => {
+          docTypeObj.documentsToDelete.map(async (documentId) => {
             await DocumentService.deleteDocument(documentId)
           }),
-        )
-        this.documentsToDelete = []
+        );
+        docTypeObj.documentsToDelete = []
       }
     },
 
     updateModel(updatedModel) {
       Object.entries(updatedModel)?.forEach(([key, value]) => (this.model[key] = Number(value)))
     },
+
+    getUploadedDocuments(uploadedDocuments) {
+      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
+      this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
+      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
+    }
+
   },
 }
 </script>

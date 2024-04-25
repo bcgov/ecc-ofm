@@ -1,9 +1,7 @@
 <template>
-  <div v-if="isReadOnly">
-    <AppWarningMessage>
-      <div>You have already received the Indigenous Programming Allowance for the current term.</div>
-    </AppWarningMessage>
-  </div>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">
+    <div>You have already received the Indigenous Programming Allowance for the current term.</div>
+  </AppAlertBanner>
   <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
       <AppLabel>Purpose of the fund:</AppLabel>
@@ -45,13 +43,13 @@
   </v-row>
 
   <v-row v-for="item in INDIG_CHECKBOX_LABELS" :key="item.value" no-gutters>
-    <v-checkbox v-model="model.indigenousFundingModel" density="compact" :disabled="isReadOnly" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
+    <v-checkbox v-model="model.indigenousFundingModel" density="compact" :disabled="readOnly" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
     <v-textarea
       v-model.trim="model.indigenousOtherDescription"
-      :disabled="isReadOnly"
+      :disabled="readOnly"
       placeholder="Detailed description of other expenses"
       counter
       maxlength="1000"
@@ -61,14 +59,14 @@
 </template>
 
 <script>
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppWarningMessage from '@/components/ui/AppWarningMessage.vue'
 import rules from '@/utils/rules'
 import { INDIG_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
 import { isApplicationLocked } from '@/utils/common'
 
 export default {
-  components: { AppLabel, AppWarningMessage },
+  components: { AppAlertBanner, AppLabel },
   props: {
     indigenousProgrammingModel: {
       type: Object,
@@ -77,11 +75,14 @@ export default {
         return {}
       },
     },
+    formDisabled: {
+      type: Boolean,
+      required: true,
+    },
   },
   emits: ['update'],
   data() {
     return {
-      panel: [],
       model: {},
       rules,
     }
@@ -90,7 +91,10 @@ export default {
     isOtherBoxDisplayed() {
       return this.model.indigenousFundingModel.includes('9')
     },
-    isReadOnly() {
+    readOnly() {
+      return isApplicationLocked(this.indigenousProgrammingModel?.statusCode) || this.formDisabled
+    },
+    isWarningDisplayed() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode)
     },
   },
