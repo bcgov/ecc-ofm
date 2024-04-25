@@ -26,7 +26,7 @@
         v-model="model.applicationDeclaration"
         color="primary"
         :rules="rules.required"
-        :disabled="readonly"
+        :disabled="readonly || !isApplicationComplete"
         :hide-details="readonly"
         label="I certify that all of the information provided is true and complete to the best of my knowledge."
         class="my-5"></v-checkbox>
@@ -87,7 +87,7 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete']),
     ...mapWritableState(useApplicationsStore, ['isDeclareSubmitComplete']),
   },
 
