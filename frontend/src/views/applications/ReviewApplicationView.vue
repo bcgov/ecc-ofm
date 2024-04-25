@@ -24,10 +24,10 @@
               </div>
               <div v-else>
                 <span class="header-label">{{ page.title }}</span>
-                <div v-if="!readonly">
+                <span v-if="!readonly">
                   <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
                   <span class="error-message">Your form is missing required information.</span>
-                </div>
+                </span>
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>

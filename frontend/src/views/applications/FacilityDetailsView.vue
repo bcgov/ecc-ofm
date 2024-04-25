@@ -158,7 +158,6 @@ export default {
   data() {
     return {
       rules,
-      model: {},
       isFormComplete: false,
       processing: false,
       primaryContact: undefined,

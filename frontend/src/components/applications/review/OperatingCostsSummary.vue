@@ -22,7 +22,7 @@
           <v-card class="mt-2 mb-3 pa-3">
             <AppDocumentUpload :readonly="true" :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT" :uploadedDocuments="documentsFinancialStatements">
               <AppMissingInfoError
-                v-if="!documentsFinancialStatements.length"
+                v-if="!readonly && !documentsFinancialStatements.length"
                 :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.FINANCIAL_STATEMENT }} document upload required
               </AppMissingInfoError>
@@ -31,7 +31,7 @@
           <v-card class="pl-3">
             <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :documentType="DOCUMENT_TYPES.BALANCE_SHEET" :uploadedDocuments="documentsBalanceSheets">
               <AppMissingInfoError
-                v-if="!documentsBalanceSheets.length"
+                v-if="!readonly && !documentsBalanceSheets.length"
                 :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
               </AppMissingInfoError>
@@ -40,7 +40,7 @@
           <v-card class="pl-3 mt-3 pt-0">
             <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploadedDocuments="documentsSupporting">
               <AppMissingInfoError
-                v-if="isRentLease && !documentsSupporting.length"
+                v-if="!readonly && isRentLease && !documentsSupporting.length"
                 :to="{ name: 'operating-costs', hash: '#supporting-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.SUPPORTING_DOCS }} upload required
               </AppMissingInfoError>
@@ -61,7 +61,6 @@ import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES } from '@/utils/constants'
-import { isEmpty } from 'lodash'
 
 export default {
   components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },

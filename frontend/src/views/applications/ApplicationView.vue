@@ -58,6 +58,7 @@ import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { APPLICATION_ROUTES } from '@/utils/constants'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'ApplicationView',
@@ -74,7 +75,7 @@ export default {
       save: false,
       submit: false,
       showCancelDialog: false,
-      facility: undefined,
+      facility: {},
       contacts: [],
     }
   },
@@ -83,7 +84,10 @@ export default {
     ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly', 'validation']),
     readonly() {
-      return this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
+        return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      }
+      return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showValidation() {
       return !this.readonly && this.validation
@@ -113,9 +117,14 @@ export default {
       )
     },
     showNext() {
-      return [APPLICATION_ROUTES.FACILITY_DETAILS, APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.REVIEW].includes(
-        this.$route.name,
-      )
+      return [
+        APPLICATION_ROUTES.SELECT_FACILITY,
+        APPLICATION_ROUTES.FACILITY_DETAILS,
+        APPLICATION_ROUTES.SERVICE_DELIVERY,
+        APPLICATION_ROUTES.OPERATING_COSTS,
+        APPLICATION_ROUTES.STAFFING,
+        APPLICATION_ROUTES.REVIEW,
+      ].includes(this.$route.name)
     },
     showSave() {
       return (
@@ -151,6 +160,14 @@ export default {
     },
   },
 
+  watch: {
+    '$route.params.applicationGuid': {
+      async handler() {
+        await this.loadApplication()
+      },
+    },
+  },
+
   async created() {
     await this.loadApplication()
   },
@@ -172,6 +189,7 @@ export default {
 
     async getContacts() {
       try {
+        if (isEmpty(this.currentApplication)) return
         this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
         this.contacts?.forEach((contact) => {
           contact.fullName = `${contact.firstName} ${contact.lastName}`
@@ -184,6 +202,7 @@ export default {
 
     async getFacility() {
       try {
+        if (isEmpty(this.currentApplication)) return
         this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
       } catch (error) {
         this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
