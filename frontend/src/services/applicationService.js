@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
 import { ApiRoutes } from '@/utils/constants'
@@ -168,7 +169,6 @@ export default {
 
   checkFundingAgreement(fundingAgreement) {
     const isUnexpired = new Date() < new Date(fundingAgreement?.endDate)
-
     return fundingAgreement?.stateCode === CRM_STATE_CODES.ACTIVE && isUnexpired
   },
 
@@ -176,8 +176,9 @@ export default {
     const results = await Promise.all(
       facilities.map(async (facility) => {
         const applications = await this.getApplicationsByFacilityId(facility.facilityId)
-        return applications?.some((application) => {
-          return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreements)
+        return applications?.some(async (application) => {
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+          return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreement)
         })
       }),
     )
