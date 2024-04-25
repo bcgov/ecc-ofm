@@ -144,9 +144,10 @@ export default {
         this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyId)
         await Promise.all(
           this.sections?.map(async (section) => {
-            section.questions = await ReportsService.getSectionQuestions(section?.sectionId)
+            section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
           }),
         )
+
         this.filterSectionQuestionsUsingSurveyResponseType()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()

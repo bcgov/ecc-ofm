@@ -1,6 +1,12 @@
 # Editor directories and files
 .vscode/*
 .idea/*
+Session.vim
+.vim/
+
+# Shell environment
+.envrc
+.direnv/
 
 #yarn files
 yarn.lock

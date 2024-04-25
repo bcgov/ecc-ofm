@@ -10,6 +10,7 @@
         Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti.
       </v-col>
     </v-row>
+    <<<<<<< HEAD
     <template v-if="hasPermission(PERMISSIONS.APPLY_FOR_FUNDING)">
       <v-row>
         <v-col class="pb-0 d-flex align-end">
@@ -51,6 +52,45 @@
         </v-col>
       </v-row>
     </template>
+    =======
+    <v-row>
+      <v-col class="pb-0 d-flex align-end">
+        <h3>Add New Application</h3>
+      </v-col>
+      <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
+        <AppAlertBanner v-if="!hasGoodStanding" type="warning">
+          {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
+        </AppAlertBanner>
+        <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="pt-1">
+        <v-card class="home-card justify-center">
+          <v-card-title class="text-center">
+            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+            OFM Application
+          </v-card-title>
+          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">Before starting an application, verify your organization and facility details in Account Management.</v-card-text>
+          <v-card-actions class="d-flex flex-column align-center">
+            <AppButton id="supp-allowances-button" size="large" width="250px" :to="{ name: 'select-facility' }" class="mt-8 mb-0">Add OFM Application</AppButton>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col class="pt-1">
+        <v-card class="home-card justify-center">
+          <v-card-title class="text-center">
+            <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+            Supplementary Allowance Application
+          </v-card-title>
+          <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
+          <v-card-actions class="d-flex flex-column align-center">
+            <AppButton id="supp-allowances-button" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">Add Supplementary Application</AppButton>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+    >>>>>>> main
     <v-row>
       <v-col cols="12" md="5" lg="5" xl="5" class="mt-2">
         <h3>Applications Summary</h3>
@@ -98,6 +138,7 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
@@ -106,13 +147,13 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -161,7 +202,8 @@ export default {
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
-      await this.getApplicationsAndFundingAgreements()
+      this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
+      await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
       if (!this.currentOrg) {
@@ -212,11 +254,11 @@ export default {
       this.facilityNameFilter = newVal
     },
 
-    async getApplicationsAndFundingAgreements() {
+    async getApplicationsAndFundingAgreement() {
       this.applications = await ApplicationService.getApplications()
       await Promise.all(
         this.applications?.map(async (application) => {
-          application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
         }),
       )
     },

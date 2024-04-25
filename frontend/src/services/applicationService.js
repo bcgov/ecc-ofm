@@ -155,7 +155,7 @@ export default {
   },
 
   isValidApplication(application) {
-    return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreements)
+    return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreement)
   },
 
   checkApplicationStatus(application) {
@@ -166,12 +166,10 @@ export default {
     return isActive && hasCorrectStatus
   },
 
-  checkFundingAgreement(fundingAgreements) {
-    return fundingAgreements?.some((funding) => {
-      const isActive = funding?.stateCode === CRM_STATE_CODES.ACTIVE
-      const isUnexpired = new Date() < new Date(funding?.endDate)
-      return isActive && isUnexpired
-    })
+  checkFundingAgreement(fundingAgreement) {
+    const isUnexpired = new Date() < new Date(fundingAgreement?.endDate)
+
+    return fundingAgreement?.stateCode === CRM_STATE_CODES.ACTIVE && isUnexpired
   },
 
   async hasActiveApplicationOrFundingAgreement(facilities = []) {

@@ -178,6 +178,7 @@ const OrganizationMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_business_type', front: 'businessTypeCode' },
   { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'ofm_doing_business_as', front: 'doingBusinessAsName' },
   { back: 'telephone1', front: 'phoneLandline' },
   { back: 'telephone2', front: 'phoneCell' },
   { back: 'address1_line1', front: 'streetAddress1' },
@@ -270,6 +271,7 @@ const DocumentMappings = [
   { back: 'ofm_file_name', front: 'fileName' },
   { back: 'ofm_subject', front: 'subject' },
   { back: 'ofm_description', front: 'description' },
+  { back: 'ofm_category', front: 'documentType' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
@@ -307,6 +309,9 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_transport_odometer', front: 'odometer' },
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
   { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_renewal_term', front: 'renewalTerm' },
 ]
 
 const RoleMappings = [
@@ -336,7 +341,6 @@ const SurveyQuestionMappings = [
   { back: 'ofm_sequence', front: 'sequence' },
   { back: 'ofm_question_choice', front: 'choices' },
   { back: 'ofm_response_required', front: 'responseRequired' },
-  { back: 'ofm_fixed_response', front: 'fixedResponse' },
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
   { back: 'ofm_occurence@OData.Community.Display.V1.FormattedValue', front: 'surveyResponseType' },
