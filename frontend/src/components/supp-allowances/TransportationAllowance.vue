@@ -139,7 +139,7 @@
               :uploadedDocuments="model.uploadedDocuments"
               @deleteUploadedDocument="deleteUploadedDocument" />
 
-            <div v-if="areDocumentsMissing(model)">
+            <div v-if="areDocumentsMissing(model) && !readOnly">
               <v-row class="my-5">
                 <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
                 <p class="text-error ml-2">You must upload all Supporting Documents</p>
@@ -206,7 +206,7 @@ export default {
       return this.models?.length < this.MAX_TRANSPORT_APPLICATIONS
     },
     isWarningDisplayed() {
-      return this.models?.some((el) => this.readOnly(el))
+      return this.models?.some((el) => isApplicationLocked(el?.statusCode))
     },
   },
   async created() {
