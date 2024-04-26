@@ -102,8 +102,9 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import { useApplicationsStore } from '@/stores/applications'
 import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 
@@ -138,6 +139,7 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
+    ...mapWritableState(useApplicationsStore, ['loadedApplications']),
     hasAValidApplication() {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
@@ -216,6 +218,7 @@ export default {
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
         }),
       )
+      this.loadedApplications = this.applications
     },
 
     async getSupplementaryApplications() {

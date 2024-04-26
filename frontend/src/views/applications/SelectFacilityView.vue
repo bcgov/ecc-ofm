@@ -47,6 +47,7 @@ import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
+import { APPLICATION_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'SelectFacilityView',
@@ -78,7 +79,7 @@ export default {
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
+    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete', 'currentApplication', 'loadedApplications']),
   },
   watch: {
     isFormComplete: {
@@ -95,23 +96,32 @@ export default {
       async handler() {
         this.$refs.form?.validate()
         if (!this.isFormComplete) return
-        try {
-          this.$emit('process', true)
-          const payload = {
-            facilityId: this.facilityId,
-            organizationId: this.organization?.organizationId,
-            providerType: this.organization?.providerType,
-            ownership: this.organization?.ownership,
-            createdBy: this.userInfo?.contactId,
+
+        this.$emit('process', true)
+        //TODO - we will likely want to prevent users from starting and completing multiple apps for the same fac, but these requirements are not in place yet
+        const draftAppFound = this.loadedApplications.find((el) => el.facilityId === this.facilityId && el.statusCode === APPLICATION_STATUS_CODES.DRAFT)
+
+        if (draftAppFound) {
+          await this.getApplication(draftAppFound.applicationId)
+          this.$router.push({ name: 'facility-details', params: { applicationGuid: draftAppFound.applicationId } })
+        } else {
+          try {
+            const payload = {
+              facilityId: this.facilityId,
+              organizationId: this.organization?.organizationId,
+              providerType: this.organization?.providerType,
+              ownership: this.organization?.ownership,
+              createdBy: this.userInfo?.contactId,
+            }
+            const response = await ApplicationService.createApplication(payload)
+            await this.getApplication(response?.applicationId)
+            this.setSuccessAlert('Started a new application successfully')
+            this.$router.push({ name: 'facility-details', params: { applicationGuid: response?.applicationId } })
+          } catch (error) {
+            this.setFailureAlert('Failed to start a new application', error)
+          } finally {
+            this.$emit('process', false)
           }
-          const response = await ApplicationService.createApplication(payload)
-          await this.getApplication(response?.applicationId)
-          this.setSuccessAlert('Started a new application successfully')
-          this.$router.push({ name: 'facility-details', params: { applicationGuid: response?.applicationId } })
-        } catch (error) {
-          this.setFailureAlert('Failed to start a new application', error)
-        } finally {
-          this.$emit('process', false)
         }
       },
     },
@@ -122,6 +132,10 @@ export default {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }
     await this.getOrganization()
+
+    if (!this.loadedApplications) {
+      this.loadedApplications = await ApplicationService.getApplications()
+    }
   },
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
