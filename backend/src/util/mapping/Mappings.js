@@ -282,6 +282,7 @@ const FundingAgreementMappings = [
   { back: 'ofm_fundingid', front: 'fundingId' },
   { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
   { back: '_ofm_application_value', front: 'applicationId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'statuscode', front: 'statusCode' },

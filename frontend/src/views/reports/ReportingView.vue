@@ -68,9 +68,10 @@
         </v-tab>
       </v-tabs>
       <v-card-text>
-        <v-window v-model="tab">
-          <v-window-item value="history">
-            <!-- <v-card variant="outlined" class="pa-4 mb-4">
+        <v-skeleton-loader :loading="loading" type="table-tbody">
+          <v-window v-model="tab">
+            <v-window-item value="history">
+              <!-- <v-card variant="outlined" class="pa-4 mb-4">
               <v-row>
                 <v-col cols="12" lg="6">
                   <v-row no-gutters>
@@ -146,7 +147,7 @@
                       <v-select v-model="selectedStatus" :items="statusTypes" item-title="title" item-value="id" label="Select status to report on" density="compact" variant="outlined" clearable />
                     </v-col>
                   </v-row>  -->
-            <!-- <v-row>
+              <!-- <v-row>
                 <v-col cols="4">
                   <AppLabel>Include Submitted:</AppLabel>
                 </v-col>
@@ -169,7 +170,7 @@
               <AppButton id="run-report" size="large" :disabled="!selectedFacility" width="150px" @click="search()">Search</AppButton>
             </div>-->
 
-            <v-skeleton-loader :loading="loading" type="table-tbody">
+              <!-- <v-skeleton-loader :loading="loading" type="table-tbody">
               <v-data-table :headers="headers" :items="displayedFacilities" item-key="reportId" :items-per-page="15" density="compact">
                 <template #[`item.alertType`]="{ item }">
                   <v-icon v-if="item.alertType === 'Due'" color="#c48600" size="34" title="Due now">mdi-alert</v-icon>
@@ -182,10 +183,15 @@
                   </router-link>
                 </template>
               </v-data-table>
-            </v-skeleton-loader>
-          </v-window-item>
-          <v-window-item value="analytics">Reporting History</v-window-item>
-        </v-window>
+            </v-skeleton-loader> -->
+              <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">
+                <div>You are up to date with your monthly reports.</div>
+              </AppAlertBanner>
+              <PendingReportsTable v-else :pendingReports="pendingReports" />
+            </v-window-item>
+            <v-window-item value="analytics">Reporting History</v-window-item>
+          </v-window>
+        </v-skeleton-loader>
       </v-card-text>
     </v-card>
 
@@ -199,21 +205,28 @@
 
 <script>
 import { SURVEY_RESPONSE_TYPES } from '@/utils/constants'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
+
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDateFilter from '@/components/ui/AppDateFilter.vue'
-
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import PendingReportsTable from '@/components/reports/PendingReportsTable.vue'
+
+import FundingAgreementService from '@/services/fundingAgreementService'
+
 import ReportsService from '@/services/reportsService'
 import alertMixin from '@/mixins/alertMixin'
+import reportMixin from '@/mixins/reportMixin'
+
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 
 export default {
   name: 'ReportingView',
-  components: { AppLabel, AppButton, AppBackButton, AppDateFilter },
-  mixins: [alertMixin],
+  components: { AppAlertBanner, AppLabel, AppButton, AppBackButton, AppDateFilter, PendingReportsTable },
+  mixins: [alertMixin, reportMixin],
   data() {
     return {
       loading: false,
@@ -297,16 +310,48 @@ export default {
       // TODO (vietle-cgi) Add ANNUAL type when we know which month to use
       return responseType
     },
+
+    pendingReports() {
+      let pendingReports = []
+
+      return pendingReports
+    },
   },
 
-  created() {
+  async created() {
     this.selectedFacility = this.currentFacility.facilityId
     this.selectedFiscalYear = this.defaultFiscalYear
     this.selectedReportingMonth = this.defaultReportingMonth
-    this.search()
+    this.facilities = this.userInfo?.facilities
+    await this.loadData()
+    console.log(this.facilities)
+    // this.search()
   },
 
   methods: {
+    async loadData() {
+      try {
+        this.loading = true
+        await this.getFundingAgreementsForFacilities()
+      } catch (error) {
+        this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async getFundingAgreementsForFacilities() {
+      try {
+        await Promise.all(
+          this.facilities?.map(async (facility) => {
+            facility.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId)
+          }),
+        )
+      } catch (error) {
+        this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
+      }
+    },
+
     async getFacilityReportsSummary(selectedFacility) {
       try {
         this.facilities = await ReportsService.getFacilityReports(selectedFacility)

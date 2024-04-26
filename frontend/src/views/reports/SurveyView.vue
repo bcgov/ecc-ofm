@@ -182,6 +182,7 @@ export default {
     },
 
     async save(showAlert) {
+      if (this.readonly) return
       try {
         this.processing = true
         const responsesToDelete = this.clonedResponses?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response))
