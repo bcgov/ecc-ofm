@@ -3,7 +3,7 @@ const { getOperation, getLabelFromValue } = require('./utils')
 const HttpStatus = require('http-status-codes')
 const _ = require('lodash')
 const cache = require('memory-cache')
-const { RequestCategoryMappings, RequestSubCategoryMappings, FiscalYearMappings, MonthMappings } = require('../util/mapping/Mappings')
+const { PermissionMappings, RequestCategoryMappings, RequestSubCategoryMappings, RoleMappings, FiscalYearMappings, MonthMappings } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('../components/logger')
 
@@ -73,9 +73,26 @@ async function fetchAndCacheData(cacheKey, operationName) {
   }
   return data
 }
-
+// TODO (weskubo-cgi) Remove this
 async function getUserRoles() {
   return fetchAndCacheData('userRoles', 'ofm_portal_role')
+}
+
+async function getRoles() {
+  let roles = lookupCache.get('roles')
+  if (!roles) {
+    roles = []
+    const response = await getOperation(
+      'ofm_portal_roles?$select=ofm_name,ofm_portal_role_number&$expand=ofm_portal_role_permission($select=ofm_portal_permissionid,ofm_portal_privilege;$expand=ofm_portal_privilege($select=ofm_portal_privilege_number,ofm_category,ofm_name))&pageSize=100',
+    )
+    response?.value?.forEach((item) => {
+      const role = new MappableObjectForFront(item, RoleMappings)
+      role.data.permissions = item.ofm_portal_role_permission.map((p) => new MappableObjectForFront(p.ofm_portal_privilege, PermissionMappings).toJSON())
+      roles.push(role)
+    })
+    lookupCache.put('roles', roles, ONE_HOUR_MS)
+  }
+  return roles
 }
 
 async function getHealthAuthorities() {
@@ -99,10 +116,11 @@ async function getReportQuestionTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, requestSubCategories, userRoles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
+    const [requestCategories, requestSubCategories, userRoles, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
       getRequestCategories(),
       getRequestSubCategories(),
       getUserRoles(),
+      getRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
       getLicenceTypes(),
@@ -113,7 +131,9 @@ async function getLookupInfo(_req, res) {
     const resData = {
       requestCategories: requestCategories,
       requestSubCategories: requestSubCategories,
+      // TODO (weskubo-cgi) Remove this
       userRoles: userRoles,
+      roles: roles,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
@@ -129,4 +149,5 @@ async function getLookupInfo(_req, res) {
 
 module.exports = {
   getLookupInfo,
+  getRoles,
 }
