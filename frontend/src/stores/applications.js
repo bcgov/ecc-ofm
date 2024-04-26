@@ -65,7 +65,6 @@ export const useApplicationsStore = defineStore('applications', {
     isStaffingComplete: false,
     isDeclareSubmitComplete: false,
     validation: false,
-    loadedApplications: undefined,
   }),
   getters: {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,

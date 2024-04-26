@@ -146,7 +146,6 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
-    ...mapWritableState(useApplicationsStore, ['loadedApplications']),
     hasAValidApplication() {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
@@ -227,7 +226,6 @@ export default {
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
         }),
       )
-      this.loadedApplications = this.applications
     },
 
     async getSupplementaryApplications() {

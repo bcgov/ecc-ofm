@@ -77,12 +77,13 @@ export default {
       facilityId: undefined,
       isFormComplete: false,
       organization: undefined,
+      loadedApplications: undefined,
     }
   },
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete', 'currentApplication', 'loadedApplications']),
+    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete', 'currentApplication']),
   },
 
   watch: {
@@ -103,7 +104,7 @@ export default {
         if (!this.isFormComplete) return
 
         this.$emit('process', true)
-        //TODO - we will likely want to prevent users from starting and completing multiple apps for the same fac, but these requirements are not in place yet
+
         const draftAppFound = this.loadedApplications.find((el) => el.facilityId === this.facilityId && el.statusCode === APPLICATION_STATUS_CODES.DRAFT)
 
         if (draftAppFound) {
@@ -139,9 +140,7 @@ export default {
     }
     await this.getOrganization()
 
-    if (!this.loadedApplications) {
-      this.loadedApplications = await ApplicationService.getApplications()
-    }
+    this.loadedApplications = await ApplicationService.getApplications()
   },
 
   methods: {
