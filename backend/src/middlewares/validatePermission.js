@@ -9,7 +9,7 @@ const { getRoles } = require('../components/lookup')
  */
 module.exports = function (permission) {
   return async function (req, res, next) {
-    log.info(`validating permission ${permission}`)
+    log.debug(`validating permission ${permission}`)
 
     const userRole = req.session?.passport?.user?.role
 

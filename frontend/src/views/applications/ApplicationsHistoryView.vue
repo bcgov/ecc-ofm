@@ -100,7 +100,7 @@
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
-import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'

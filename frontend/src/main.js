@@ -38,6 +38,8 @@ async function loadLookupInfo() {
   } catch (e) {
     if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
       // this.logout()
+      // TODO (weskubo-cgi) this.$router isn't available in main.js
+      // Instead set a flag and redirect in route
       this.$router.replace({
         name: 'error',
         query: { message: `500_${e.data || 'ServerError'}` },

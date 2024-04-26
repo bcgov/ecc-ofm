@@ -62,7 +62,7 @@ app.use(
 
 const logStream = {
   write: (message) => {
-    log.http(message)
+    log.info(message)
   },
 }
 
@@ -127,11 +127,10 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         }
 
         // Set additional user info for validation
-        log.info('Setting user info')
         await populateUserInfo(profile)
 
         //set access and refresh tokens
-        profile.jwtFrontend = await auth.generateUiToken(profile.username)
+        profile.jwtFrontend = await auth.generateUiToken(profile)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
@@ -153,7 +152,7 @@ async function populateUserInfo(profile) {
     profile.org = user?.organization?.accountid
   } else if (idp === 'idir') {
     // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
-    log.info('Found idir user')
+    log.debug('Found idir user')
   }
 }
 
