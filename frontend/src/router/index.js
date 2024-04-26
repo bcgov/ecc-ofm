@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
-import { ROLES } from '@/utils/constants'
+import { APPLICATION_ROUTES, ROLES } from '@/utils/constants'
+import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
 import ErrorView from '@/views/ErrorView.vue'
@@ -155,6 +156,7 @@ const router = createRouter({
       component: ApplicationsHistoryView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
       },
     },
     {
@@ -164,47 +166,54 @@ const router = createRouter({
       redirect: '/applications/select-facility',
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
       },
       children: [
         {
           path: 'select-facility',
-          name: 'select-facility',
+          name: APPLICATION_ROUTES.SELECT_FACILITY,
           component: SelectFacilityView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
         },
         {
           path: ':applicationGuid/facility-details',
-          name: 'facility-details',
+          name: APPLICATION_ROUTES.FACILITY_DETAILS,
           component: FacilityDetailsView,
         },
         {
           path: ':applicationGuid/service-delivery',
-          name: 'service-delivery',
+          name: APPLICATION_ROUTES.SERVICE_DELIVERY,
           component: ServiceDeliveryView,
         },
         {
           path: ':applicationGuid/operating-costs',
-          name: 'operating-costs',
+          name: APPLICATION_ROUTES.OPERATING_COSTS,
           component: OperatingCostsView,
         },
         {
           path: ':applicationGuid/staffing',
-          name: 'staffing',
+          name: APPLICATION_ROUTES.STAFFING,
           component: StaffingView,
         },
         {
           path: ':applicationGuid/review',
-          name: 'review-application',
+          name: APPLICATION_ROUTES.REVIEW,
           component: ReviewApplicationView,
         },
         {
           path: ':applicationGuid/declare-submit',
-          name: 'declare-submit',
+          name: APPLICATION_ROUTES.SUBMIT,
           component: DeclareSubmitView,
         },
         {
           path: ':applicationGuid/confirmation',
-          name: 'application-confirmation',
+          name: APPLICATION_ROUTES.CONFIRMATION,
           component: ApplicationConfirmationView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
         },
       ],
     },
@@ -215,6 +224,7 @@ const router = createRouter({
       redirect: { name: 'supp-allowances-form' },
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
       },
       children: [
         {
@@ -226,6 +236,7 @@ const router = createRouter({
           path: ':applicationGuid/declare-submit',
           name: 'supp-allowances-submit',
           component: SupplementarySubmitView,
+          permission: PERMISSIONS.APPLY_FOR_FUNDING,
         },
       ],
     },
@@ -235,6 +246,7 @@ const router = createRouter({
       component: SupplementaryConfirmationView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.APPLY_FOR_FUNDING,
       },
     },
     {
@@ -352,14 +364,15 @@ router.beforeEach((to, _from, next) => {
               if (!authStore.hasFacilities) {
                 return next('unauthorized')
               }
-              // Validate specific role
-              if (to.meta.role && !authStore.hasRole(to.meta.role)) {
+              // Validate specific permission
+              if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
                 return next('unauthorized')
               }
             }
             next()
           })
           .catch((error) => {
+            console.log('error', error)
             if (error.response?.status == '401') {
               next('unauthorized')
               return

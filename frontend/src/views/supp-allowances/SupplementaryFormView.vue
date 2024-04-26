@@ -141,6 +141,7 @@ import IndigenousProgrammingAllowance from '@/components/supp-allowances/Indigen
 import SupportNeedsProgrammingAllowance from '@/components/supp-allowances/SupportNeedsProgrammingAllowance.vue'
 import TransportationAllowance from '@/components/supp-allowances/TransportationAllowance.vue'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
@@ -153,7 +154,7 @@ import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
 export default {
   name: 'SupplementaryFormView',
   components: { AppAlertBanner, AppButton, AppDialog, AppLabel, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   props: {
     applicationId: {
       type: String,
@@ -213,8 +214,8 @@ export default {
       return this.currentOrg?.goodStandingStatusCode === GOOD_STANDING_STATUS_CODES.GOOD
     },
     formDisabled() {
-      //placeholder function that will incorporate permissions, good/bad standing status
-      return !this.hasGoodStanding
+      //disable all components on the form if user is in bad standing or does not have correct permissions
+      return !this.hasGoodStanding || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
   },
   watch: {

@@ -69,13 +69,14 @@ import { mapState } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 import rules from '@/utils/rules'
 
 export default {
   name: 'SupplementaryAllowanceView',
   components: { AppLabel, AppNavButtons },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   emits: ['process'],
   data() {
     return {
@@ -105,7 +106,7 @@ export default {
       return !isEmpty(this.application)
     },
     showSave() {
-      return !isEmpty(this.application)
+      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showNext() {
       return !isEmpty(this.application) && ['supp-allowances-form'].includes(this.$route.name)

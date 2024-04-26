@@ -12,6 +12,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 const utils = require('./components/utils')
 const auth = require('./components/auth')
+const { getUserProfile } = require('./components/user')
 const bodyParser = require('body-parser')
 dotenv.config()
 
@@ -120,13 +121,16 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         scope: 'openid',
         kc_idp_hint: kc_idp_hint,
       },
-      (_issuer, profile, _context, _idToken, accessToken, refreshToken, done) => {
+      async (_issuer, profile, _context, _idToken, accessToken, refreshToken, done) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
           return done('No access token', null)
         }
 
+        // Set additional user info for validation
+        await populateUserInfo(profile)
+
         //set access and refresh tokens
-        profile.jwtFrontend = auth.generateUiToken()
+        profile.jwtFrontend = await auth.generateUiToken(profile)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
@@ -134,6 +138,22 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
       },
     ),
   )
+}
+
+async function populateUserInfo(profile) {
+  // Username is username@idp, e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
+  const profileArray = profile.username.split('@')
+  const idp = profileArray[1]
+
+  // Get UserProfile for BCeID users
+  if (idp === 'bceidbusiness') {
+    const user = await getUserProfile(profileArray[0])
+    profile.role = user?.role
+    profile.org = user?.organization?.accountid
+  } else if (idp === 'idir') {
+    // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
+    log.verbose('Found idir user')
+  }
 }
 
 const parseJwt = (token) => {

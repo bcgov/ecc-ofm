@@ -25,7 +25,7 @@
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <LicenceDetails :licence="licence" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
+            <LicenceDetails :licence="licence" :readOnly="readonly" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -35,13 +35,14 @@
         color="primary"
         :rules="rules.required"
         :disabled="readonly"
+        :hide-details="readonly"
         label="I confirm that the above information is correct."
         class="mt-4"></v-checkbox>
     </div>
 
     <AppMissingInfoError v-else-if="validation && !processing">{{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}</AppMissingInfoError>
 
-    <p id="account-management">
+    <p id="account-management" class="pb-3">
       Your organization account manager can update licence details in
       <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
     </p>
@@ -54,7 +55,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import LicenceService from '@/services/licenceService'
@@ -67,13 +68,19 @@ export default {
   name: 'ServiceDeliveryView',
   components: { AppButton, AppMissingInfoError, LicenceHeader, LicenceDetails },
   mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -87,7 +94,9 @@ export default {
       default: false,
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
@@ -98,16 +107,15 @@ export default {
       changedLicences: [],
     }
   },
+
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
-    readonly() {
-      return this.isApplicationReadonly || this.processing
-    },
     allLicenceIDs() {
       return this.currentApplication?.licences?.map((licence) => licence.licenceId)
     },
   },
+
   watch: {
     licenceDeclaration: {
       handler() {
@@ -116,7 +124,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'facility-details', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -126,21 +134,24 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'operating-costs', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
+
   created() {
     this.$emit('process', false)
     this.licenceDeclaration = this.currentApplication?.licenceDeclaration
     this.panel = this.allLicenceIDs
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
   },
+
   async mounted() {
     if (this.validation) {
       await this.$refs.form?.validate()
     }
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
     isEmpty,
@@ -199,6 +210,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .facility-name {
   color: #003366;
