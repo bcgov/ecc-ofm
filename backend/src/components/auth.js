@@ -115,7 +115,7 @@ const auth = {
 
     const privateKey = config.get('tokenGenerate:privateKey')
     const uiToken = jsonwebtoken.sign({}, privateKey, signOptions)
-    log.info('Generated JWT', uiToken)
+    log.verbose('Generated JWT', uiToken)
     return uiToken
   },
 
@@ -160,7 +160,7 @@ const auth = {
           log.info('error is from verify', e)
           return res.status(HttpStatus.UNAUTHORIZED).json()
         }
-        log.debug('Backend token is valid moving to next')
+        log.verbose('Backend token is valid moving to next')
         return next()
       } else {
         log.info('no jwt responding back 401')

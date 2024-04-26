@@ -152,7 +152,7 @@ async function populateUserInfo(profile) {
     profile.org = user?.organization?.accountid
   } else if (idp === 'idir') {
     // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
-    log.debug('Found idir user')
+    log.verbose('Found idir user')
   }
 }
 
