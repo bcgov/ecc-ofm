@@ -1,25 +1,23 @@
 <template>
-  <v-container fluid>
-    <v-skeleton-loader :loading="loading" type="table-tbody">
-      <v-data-table :headers="headers" :items="pendingReports" item-key="reportId" :items-per-page="15" density="compact">
-        <template #[`item.alertType`]="{ item }">
-          <v-icon v-if="item.alertType === 'Due'" color="#c48600" size="34" title="Due">mdi-alert</v-icon>
-          <v-icon v-else-if="item.alertType === 'Overdue'" color="error" size="34" title="Overdue">mdi-alert-octagon</v-icon>
-        </template>
-        <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
-        </template>
-        <template #[`item.actions`]="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="false">
-            <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
-          </v-btn>
-          <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
-            <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
-          </v-btn>
-        </template>
-      </v-data-table>
-    </v-skeleton-loader>
-  </v-container>
+  <v-data-table :headers="headers" :items="pendingReports" item-key="reportId" :items-per-page="15" density="compact">
+    <template #[`item.alertType`]="{ item }">
+      <span v-if="item.alertType === 'Due'">
+        <v-icon color="warning">mdi-alert</v-icon>
+        Due
+      </span>
+      <span v-else-if="item.alertType === 'Overdue'">
+        <v-icon color="error">mdi-alert-circle</v-icon>
+        Overdue
+      </span>
+    </template>
+    <!-- <template #[`item.status`]="{ item }">
+        <span :class="getStatusClass(item.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
+      </template> -->
+    <template #[`item.actions`]="{ item }">
+      <v-btn icon="mdi-folder-open-outline" variant="text" class="pa-0" @click="openSurveyResponse(item)" />
+      <v-btn icon="mdi-trash-can-outline" variant="text" class="pa-0" @click="false" />
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -41,18 +39,47 @@ export default {
       format,
       headers: [
         { title: 'Alert', key: 'alertType' },
-        { title: 'Report ID', key: 'surveyResponseId' },
+        { title: 'Report ID', key: 'surveyResponseReferenceNumber' },
         { title: 'Title', key: 'title' },
         { title: 'Facility', key: 'facilityName' },
         { title: 'Status', key: 'status' },
-        { title: 'Latest Activity', key: 'lastActivityDate' },
+        { title: 'Latest Activity', key: 'latestActivity' },
         { title: 'Actions', key: 'actions' },
       ],
     }
   },
   computed: {},
   async created() {},
-  methods: {},
+  methods: {
+    async openSurveyResponse(surveyResponse) {
+      console.log(surveyResponse)
+      // if (!(surveyResponse?.surveyResponseId)) {
+      //   this.createSurveyResponse(surveyResponse)
+      // }
+    },
+
+    async createSurveyResponse() {
+      // try {
+      //   this.processing = true
+      //   const payload = {
+      //     contactId: this.userInfo?.contactId,
+      //     facilityId: this.selectedFacility,
+      //     surveyId: '16fb81de-6dc1-ee11-9079-000d3af4865d',
+      //     fiscalYearId: this.selectedFiscalYear?.fiscalYearId,
+      //     reportingMonthId: this.selectedReportingMonth?.monthId,
+      //     surveyResponseType: this.surveyResponseType,
+      //   }
+      //   const response = await ReportsService.createSurveyResponse(payload)
+      //   if (response?.surveyResponseId) {
+      //     this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: response?.surveyResponseId } })
+      //   }
+      // } catch (error) {
+      //   this.setFailureAlert('Failed to create new report response', error)
+      // } finally {
+      //   this.processing = false
+      // }
+    },
+  },
 }
 </script>
 

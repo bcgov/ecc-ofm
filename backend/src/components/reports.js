@@ -5,6 +5,7 @@ const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, Q
 const log = require('../components/logger')
 const HttpStatus = require('http-status-codes')
 const { isEmpty, orderBy } = require('lodash')
+const { buildFilterQuery } = require('../util/common')
 
 function mapQuestionObjectForFront(data) {
   const question = new MappableObjectForFront(data, SurveyQuestionMappings).toJSON()
@@ -138,6 +139,25 @@ async function getQuestionFixedResponse(fixedResponseQuery, entityId) {
   }
 }
 
+async function getSurveyResponses(req, res) {
+  try {
+    if (isEmpty(req?.query)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+    }
+    const surveyResponses = []
+    const operation = `ofm_survey_responses?$filter=(${buildFilterQuery(req?.query, SurveyResponseMappings)})`
+    const response = await getOperation(operation)
+    response?.value?.forEach((surveyResponse) => surveyResponses.push(new MappableObjectForFront(surveyResponse, SurveyResponseMappings).toJSON()))
+    if (isEmpty(surveyResponses)) {
+      return res.status(HttpStatus.NO_CONTENT).json()
+    }
+    return res.status(HttpStatus.OK).json(surveyResponses)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function createSurveyResponse(req, res) {
   try {
     const payload = {
@@ -243,6 +263,7 @@ module.exports = {
   getSurveySections,
   getSurveyQuestions,
   getSurveyResponse,
+  getSurveyResponses,
   createSurveyResponse,
   updateSurveyResponse,
   getQuestionResponses,

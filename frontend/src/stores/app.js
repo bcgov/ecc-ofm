@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { defineStore } from 'pinia'
 
 import ApiService from '@/common/apiService'
@@ -70,6 +71,31 @@ export const useAppStore = defineStore('app', {
       return (id) => {
         const questionType = state.reportQuestionTypes?.find((questionType) => questionType.id === id)
         return questionType?.description
+      }
+    },
+    getMonthIdByName: (state) => {
+      return (monthName) => {
+        const month = state.months?.find((month) => month.name === monthName)
+        return month?.monthId
+      }
+    },
+    getFiscalYearIdByDate: (state) => {
+      return (date) => {
+        const year = state.fiscalYears?.find((fiscalYear) => moment(fiscalYear.startDate).isSameOrBefore(moment(date)) && moment(fiscalYear.endDate).isSameOrAfter(moment(date)))
+        return year?.fiscalYearId
+      }
+    },
+    getFiscalYearIdsByDates: (state) => {
+      return (start, end) => {
+        const startDate = moment(start)
+        const endDate = moment(end)
+        const years = state.fiscalYears?.filter(
+          (fiscalYear) =>
+            (moment(fiscalYear.startDate).isSameOrBefore(startDate) && moment(fiscalYear.endDate).isSameOrAfter(startDate)) ||
+            (moment(fiscalYear.startDate).isSameOrBefore(endDate) && moment(fiscalYear.endDate).isSameOrAfter(endDate)) ||
+            (moment(fiscalYear.startDate).isSameOrAfter(startDate) && moment(fiscalYear.endDate).isSameOrBefore(endDate)),
+        )
+        return years?.map((year) => year.fiscalYearId)
       }
     },
   },

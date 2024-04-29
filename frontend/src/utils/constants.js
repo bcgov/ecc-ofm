@@ -132,6 +132,10 @@ export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
   NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
 })
 
+export const SURVEY_IDS = Object.freeze({
+  MONTHLY_REPORTING: '16fb81de-6dc1-ee11-9079-000d3af4865d',
+})
+
 export const SURVEY_RESPONSE_TYPES = Object.freeze({
   MONTHLY: 'Monthly',
   QUARTERLY: 'Quarterly',

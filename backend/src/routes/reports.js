@@ -9,6 +9,7 @@ const {
   getSurveySections,
   getSurveyQuestions,
   getSurveyResponse,
+  getSurveyResponses,
   createSurveyResponse,
   updateSurveyResponse,
   getQuestionResponses,
@@ -104,6 +105,16 @@ router.get(
 router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
   return getQuestionResponses(req, res)
+})
+
+/**
+ * Get questions' responses using query
+ * Accepted queries:
+ * - facilityId and fiscalYearId: to find all survey responses for a facility in a fiscal year
+ */
+router.get('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  validationResult(req).throw()
+  return getSurveyResponses(req, res)
 })
 
 /**

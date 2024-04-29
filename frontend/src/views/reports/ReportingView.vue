@@ -58,20 +58,21 @@
     </v-row> -->
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
-        <v-tab value="history">
+        <v-tab value="pending-reports-table">
           <v-icon size="large">mdi-history</v-icon>
           Pending Reports
         </v-tab>
-        <v-tab value="analytics">
+        <v-tab value="reporting-history-table">
           <v-icon size="large">mdi-finance</v-icon>
           Reporting History
         </v-tab>
       </v-tabs>
       <v-card-text>
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-window v-model="tab">
-            <v-window-item value="history">
-              <!-- <v-card variant="outlined" class="pa-4 mb-4">
+          <v-container fluid class="pa-0">
+            <v-window v-model="tab">
+              <v-window-item value="pending-reports-table">
+                <!-- <v-card variant="outlined" class="pa-4 mb-4">
               <v-row>
                 <v-col cols="12" lg="6">
                   <v-row no-gutters>
@@ -147,7 +148,7 @@
                       <v-select v-model="selectedStatus" :items="statusTypes" item-title="title" item-value="id" label="Select status to report on" density="compact" variant="outlined" clearable />
                     </v-col>
                   </v-row>  -->
-              <!-- <v-row>
+                <!-- <v-row>
                 <v-col cols="4">
                   <AppLabel>Include Submitted:</AppLabel>
                 </v-col>
@@ -170,7 +171,7 @@
               <AppButton id="run-report" size="large" :disabled="!selectedFacility" width="150px" @click="search()">Search</AppButton>
             </div>-->
 
-              <!-- <v-skeleton-loader :loading="loading" type="table-tbody">
+                <!-- <v-skeleton-loader :loading="loading" type="table-tbody">
               <v-data-table :headers="headers" :items="displayedFacilities" item-key="reportId" :items-per-page="15" density="compact">
                 <template #[`item.alertType`]="{ item }">
                   <v-icon v-if="item.alertType === 'Due'" color="#c48600" size="34" title="Due now">mdi-alert</v-icon>
@@ -184,13 +185,14 @@
                 </template>
               </v-data-table>
             </v-skeleton-loader> -->
-              <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">
-                <div>You are up to date with your monthly reports.</div>
-              </AppAlertBanner>
-              <PendingReportsTable v-else :pendingReports="pendingReports" />
-            </v-window-item>
-            <v-window-item value="analytics">Reporting History</v-window-item>
-          </v-window>
+                <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">
+                  <div>You are up to date with your monthly reports.</div>
+                </AppAlertBanner>
+                <PendingReportsTable v-else :pendingReports="pendingReports" />
+              </v-window-item>
+              <v-window-item value="reporting-history-table">Reporting History</v-window-item>
+            </v-window>
+          </v-container>
         </v-skeleton-loader>
       </v-card-text>
     </v-card>
@@ -204,7 +206,10 @@
 </template>
 
 <script>
-import { SURVEY_RESPONSE_TYPES } from '@/utils/constants'
+import moment from 'moment'
+import { isEmpty } from 'lodash'
+
+import { SURVEY_IDS, SURVEY_RESPONSE_TYPES } from '@/utils/constants'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
 import AppLabel from '@/components/ui/AppLabel.vue'
@@ -267,12 +272,13 @@ export default {
         { title: 'Latest Activity', key: 'lastActivityDate' },
         { title: 'Actions', key: 'actions' },
       ],
+      surveyResponses: [],
     }
   },
 
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'currentFacility']),
-    ...mapState(useAppStore, ['fiscalYears', 'months']),
+    ...mapState(useAppStore, ['fiscalYears', 'months', 'getMonthIdByName', 'getFiscalYearIdByDate', 'getFiscalYearIdsByDates']),
     formattedFromDate: {
       get() {
         return this.formatDate(this.fromDate)
@@ -313,7 +319,27 @@ export default {
 
     pendingReports() {
       let pendingReports = []
-
+      this.facilities?.forEach((facility) => {
+        const reportingMonths = this.getMonthsBetweenDates(facility.fundingAgreement?.startDate, facility.fundingAgreement?.endDate)
+        reportingMonths?.forEach((month) => {
+          const monthName = moment(month).format('MMMM')
+          const monthId = this.getMonthIdByName(monthName)
+          const fiscalYearId = this.getFiscalYearIdByDate(month)
+          const surveyResponse = this.surveyResponses?.find((item) => item.facilityId === facility.facilityId && item.fiscalYearId === fiscalYearId && item.monthId === monthId)
+          const year = moment(month).format('yyyy')
+          pendingReports.push({
+            alertType: 'Overdue',
+            surveyResponseReferenceNumber: 'AR-240100004',
+            surveyResponseId: surveyResponse?.surveyResponseId,
+            title: `Monthly Report - ${monthName} ${year}`,
+            facilityId: facility.facilityId,
+            facilityName: facility.facilityName,
+            status: 'Draft',
+            latestActivity: month,
+          })
+        })
+      })
+      // console.log(pendingReports)
       return pendingReports
     },
   },
@@ -333,6 +359,8 @@ export default {
       try {
         this.loading = true
         await this.getFundingAgreementsForFacilities()
+        await this.getSurveyResponsesForFacilities()
+        console.log(this.surveyResponses)
       } catch (error) {
         this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
       } finally {
@@ -350,6 +378,40 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
       }
+    },
+
+    async getSurveyResponsesForFacilities() {
+      try {
+        await Promise.all(
+          this.facilities?.map(async (facility) => {
+            const fiscalYearIds = this.getFiscalYearIdsByDates(facility.fundingAgreement?.startDate, facility.fundingAgreement?.endDate)
+            await Promise.all(
+              fiscalYearIds?.map(async (fiscalYearId) => {
+                const responses = await ReportsService.getSurveyResponsesBySurveyAndFacilityAndFiscalYear(SURVEY_IDS.MONTHLY_REPORTING, facility?.facilityId, fiscalYearId)
+                if (!isEmpty(responses)) {
+                  this.surveyResponses = this.surveyResponses.concat(responses)
+                }
+              }),
+            )
+          }),
+        )
+      } catch (error) {
+        this.setFailureAlert('Failed to get survey responses for facilities ', error)
+      }
+    },
+
+    getMonthsBetweenDates(start, end) {
+      const startDate = moment(start)
+      const endDate = moment(end)
+      const result = []
+      if (endDate.isBefore(startDate)) {
+        throw 'End date must be greater than start date.'
+      }
+      while (startDate.isBefore(endDate)) {
+        result.push(startDate.format('YYYY-MM-01'))
+        startDate.add(1, 'month')
+      }
+      return result
     },
 
     async getFacilityReportsSummary(selectedFacility) {
@@ -423,7 +485,7 @@ export default {
         const payload = {
           contactId: this.userInfo?.contactId,
           facilityId: this.selectedFacility,
-          surveyId: '16fb81de-6dc1-ee11-9079-000d3af4865d',
+          surveyId: SURVEY_IDS.MONTHLY_REPORTING,
           fiscalYearId: this.selectedFiscalYear?.fiscalYearId,
           reportingMonthId: this.selectedReportingMonth?.monthId,
           surveyResponseType: this.surveyResponseType,
