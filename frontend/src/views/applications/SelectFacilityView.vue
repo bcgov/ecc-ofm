@@ -105,7 +105,7 @@ export default {
 
         this.$emit('process', true)
 
-        const draftAppFound = this.loadedApplications.find((el) => el.facilityId === this.facilityId && el.statusCode === APPLICATION_STATUS_CODES.DRAFT)
+        const draftAppFound = this.loadedApplications?.find((el) => el.facilityId === this.facilityId && el.statusCode === APPLICATION_STATUS_CODES.DRAFT)
 
         if (draftAppFound) {
           this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: draftAppFound.applicationId } })
