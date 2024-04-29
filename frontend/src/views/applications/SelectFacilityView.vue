@@ -40,7 +40,7 @@
 <script>
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
-import { mapActions, mapState, mapWritableState } from 'pinia'
+import { mapState, mapWritableState } from 'pinia'
 import rules from '@/utils/rules'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
@@ -83,7 +83,7 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete', 'currentApplication']),
+    ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
   },
 
   watch: {
@@ -108,7 +108,6 @@ export default {
         const draftAppFound = this.loadedApplications.find((el) => el.facilityId === this.facilityId && el.statusCode === APPLICATION_STATUS_CODES.DRAFT)
 
         if (draftAppFound) {
-          await this.getApplication(draftAppFound.applicationId)
           this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: draftAppFound.applicationId } })
         } else {
           try {
@@ -120,7 +119,6 @@ export default {
               createdBy: this.userInfo?.contactId,
             }
             const response = await ApplicationService.createApplication(payload)
-            await this.getApplication(response?.applicationId)
             this.setSuccessAlert('Started a new application successfully')
             this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
           } catch (error) {
@@ -144,7 +142,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
     async getOrganization() {
       try {
         this.$emit('process', true)
