@@ -22,7 +22,7 @@
         </v-col>
         <v-col cols="12" md="8" lg="10">
           <v-select
-            id="facilityId"
+            id="select-facility"
             v-model="facilityId"
             :items="userInfo?.facilities"
             item-title="facilityName"
