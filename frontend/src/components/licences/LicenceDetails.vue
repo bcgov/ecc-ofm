@@ -156,7 +156,8 @@
                           variant="outlined"
                           rows="4"
                           :rules="rules.required"
-                          :readonly="readOnly"
+                          :disabled="readOnly"
+                          :hide-details="readOnly"
                           @blur="update(licenceDetail)"></v-textarea>
                       </v-col>
                     </v-row>

@@ -5,7 +5,7 @@ const UserProfileMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'telephone1', front: 'phone' },
 ]
 
@@ -99,7 +99,7 @@ const UserMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]
@@ -231,7 +231,7 @@ const ContactMappings = [
   { back: 'ofm_last_name', front: 'lastName' },
   { back: 'telephone1', front: 'phone' },
   { back: 'emailaddress1', front: 'email' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
 ]
 
@@ -315,6 +315,17 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_renewal_term', front: 'renewalTerm' },
 ]
 
+const RoleMappings = [
+  { back: 'ofm_name', front: 'roleName' },
+  { back: 'ofm_portal_role_number', front: 'roleNumber' },
+  { back: 'ofm_portal_roleid', front: 'roleId' },
+]
+
+const PermissionMappings = [
+  { back: 'ofm_name', front: 'permissionName' },
+  { back: 'ofm_portal_privilege_number', front: 'permissionNumber' },
+]
+
 const SurveySectionMappings = [
   { back: 'ofm_sectionid', front: 'sectionId' },
   { back: 'ofm_section_title', front: 'title' },
@@ -394,6 +405,16 @@ module.exports = {
   MonthMappings,
   NotificationMappings,
   OrganizationMappings,
+  PermissionMappings,
+  QuestionResponseMappings,
+  RequestCategoryMappings,
+  RequestSubCategoryMappings,
+  RoleMappings,
+  SupplementaryApplicationMappings,
+  SurveySectionMappings,
+  SurveyQuestionMappings,
+  SurveyQuestionBusinessRulesMappings,
+  SurveyResponseMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,
@@ -401,12 +422,4 @@ module.exports = {
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
-  RequestCategoryMappings,
-  RequestSubCategoryMappings,
-  SupplementaryApplicationMappings,
-  SurveySectionMappings,
-  SurveyQuestionMappings,
-  SurveyQuestionBusinessRulesMappings,
-  SurveyResponseMappings,
-  QuestionResponseMappings,
 }

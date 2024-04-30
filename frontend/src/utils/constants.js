@@ -109,6 +109,17 @@ export const OFM_PROGRAM_CODES = Object.freeze({
   TDAD: 3,
 })
 
+export const APPLICATION_ROUTES = Object.freeze({
+  SELECT_FACILITY: 'select-facility',
+  FACILITY_DETAILS: 'facility-details',
+  SERVICE_DELIVERY: 'service-delivery',
+  OPERATING_COSTS: 'operating-costs',
+  STAFFING: 'staffing',
+  REVIEW: 'review-application',
+  SUBMIT: 'declare-submit',
+  CONFIRMATION: 'application-confirmation',
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',

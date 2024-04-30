@@ -4,8 +4,7 @@ import ApiService from '@/common/apiService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
-import { ApiRoutes } from '@/utils/constants'
-import { APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 function sortApplications(applications) {
   applications?.sort((app1, app2) => {

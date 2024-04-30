@@ -91,19 +91,25 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
   components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
   mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -117,7 +123,9 @@ export default {
       default: false,
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
@@ -140,13 +148,11 @@ export default {
       processing: false,
     }
   },
+
   computed: {
     ...mapState(useAppStore, ['facilityTypes']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
-    readonly() {
-      return this.isApplicationReadonly || this.processing
-    },
     sanitizedModel() {
       const sanitizedModel = {}
       Object.keys(this.model)?.forEach((key) => {
@@ -182,6 +188,7 @@ export default {
       return isFinancialDocsToProcess || isBalanceSheetToProcess || isSupportingDocsToProcess
     },
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
@@ -191,7 +198,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'service-delivery', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -201,10 +208,11 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'staffing', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
+
   created() {
     this.$emit('process', false)
     this.model.facilityType = this.currentApplication?.facilityType
@@ -214,11 +222,13 @@ export default {
     this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
     this.getUploadedDocuments(this.currentApplication?.uploadedDocuments)
   },
+
   async mounted() {
     if (this.validation) {
       await this.$refs.form?.validate()
     }
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
 
@@ -230,8 +240,7 @@ export default {
         this.processing = true
         if (this.isDocumentsToProcess) {
           const reload = await this.processDocuments()
-          if (reload)
-            reloadApplication = true
+          if (reload) reloadApplication = true
         }
         if (ApplicationService.isApplicationUpdated(this.sanitizedModel)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.sanitizedModel)
@@ -278,7 +287,7 @@ export default {
           docTypeObj.uploadedDocuments.splice(index, 1)
         }
       } else {
-        throw Error('Invalid document type');
+        throw Error('Invalid document type')
       }
     },
 
@@ -296,7 +305,7 @@ export default {
 
     async processDocumentType(docTypeObj) {
       if (!isEmpty(docTypeObj.documentsToUpload)) {
-        await DocumentService.createDocuments(docTypeObj.documentsToUpload, this.$route.params.applicationGuid);
+        await DocumentService.createDocuments(docTypeObj.documentsToUpload, this.$route.params.applicationGuid)
         docTypeObj.documentsToUpload = []
       }
       if (!isEmpty(docTypeObj.documentsToDelete)) {
@@ -304,7 +313,7 @@ export default {
           docTypeObj.documentsToDelete.map(async (documentId) => {
             await DocumentService.deleteDocument(documentId)
           }),
-        );
+        )
         docTypeObj.documentsToDelete = []
       }
     },
@@ -314,11 +323,10 @@ export default {
     },
 
     getUploadedDocuments(uploadedDocuments) {
-      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
-      this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
-      this.supporting.uploadedDocuments = uploadedDocuments?.filter(doc => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
-    }
-
+      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
+      this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
+      this.supporting.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
+    },
   },
 }
 </script>

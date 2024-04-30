@@ -128,23 +128,29 @@
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
-
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import { APPLICATION_ROUTES } from '@/utils/constants'
 
 export default {
   name: 'StaffingView',
   components: { AppLabel, AppMissingInfoError },
   mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -158,19 +164,19 @@ export default {
       default: false,
     },
   },
+
   emits: ['process'],
+
   data() {
     return {
       model: {},
       processing: false,
     }
   },
+
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
-    readonly() {
-      return this.isApplicationReadonly || this.processing
-    },
     totalFullTimePosition() {
       return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime
     },
@@ -182,6 +188,7 @@ export default {
       return totalStaffs > 0
     },
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
@@ -190,7 +197,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'operating-costs', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -200,10 +207,11 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'review-application', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
   },
+
   created() {
     this.$emit('process', false)
     this.model = {
@@ -217,6 +225,7 @@ export default {
       staffingResponsibleAdultPartTime: this.currentApplication?.staffingResponsibleAdultPartTime ?? 0,
     }
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
 
@@ -246,6 +255,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 :deep(input) {
   text-align: center;

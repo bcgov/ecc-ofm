@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
-    <AppMissingInfoError v-if="!isStaffingComplete" :to="{ name: 'staffing', params: { applicationGuid: $route.params.applicationGuid } }">
+    <AppMissingInfoError v-if="!readonly && !isStaffingComplete" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
     </AppMissingInfoError>
     <v-card v-else class="px-4 py-2" variant="outlined">
@@ -83,10 +83,18 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
-import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
 
 export default {
   components: { AppLabel, AppMissingInfoError },
+
+  props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'isStaffingComplete']),
     totalFullTimePosition() {
@@ -106,8 +114,10 @@ export default {
       )
     },
   },
+
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+    this.APPLICATION_ROUTES = APPLICATION_ROUTES
   },
 }
 </script>

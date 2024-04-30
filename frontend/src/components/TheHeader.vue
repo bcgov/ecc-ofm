@@ -3,9 +3,9 @@
     <!-- Navbar content -->
     <v-container :class="{ sizingForIconXLScreen: xl }" :fluid="true">
       <v-row class="justify-space-between">
-        <a tabindex="-1" href="/">
+        <router-link tabindex="-1" :to="{ name: 'home' }">
           <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
-        </a>
+        </router-link>
         <v-row class="vertical-line my-auto">
           <v-row class="my-auto">
             <v-toolbar-title fill-height style="font-size: 14px">
@@ -89,21 +89,28 @@ export default {
       return this.isAuthenticated && this.userInfo && !this.isMinistryUser
     },
   },
-  async created() {
-    try {
-      await this.getUserInfo()
-      if (this.showMessagingIcon) {
-        await this.getNotifications(this.userInfo?.contactId)
-        await this.getAssistanceRequests(this.userInfo?.contactId)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  watch: {
+    userInfo: {
+      handler(_value) {
+        this.loadUserInfo()
+      },
+      deep: true,
+    },
   },
   methods: {
     ...mapActions(useAuthStore, ['getUserInfo']),
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     ...mapActions(useNotificationsStore, ['getNotifications']),
+    async loadUserInfo() {
+      try {
+        if (this.showMessagingIcon) {
+          await this.getNotifications(this.userInfo?.contactId)
+          await this.getAssistanceRequests(this.userInfo?.contactId)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
   },
 }
 </script>
