@@ -17,12 +17,7 @@
 
     <v-data-table :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact">
       <template #[`item.status`]="{ item }">
-        <span :class="getStatusClass(item.status)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
-      </template>
-      <template #[`item.endDate`]="{ item }">
-        <div>
-          {{ format.formatDate(item.endDate) }}
-        </div>
+        <span :class="getStatusClass(item.status)" class="px-2 py-1">{{ item.status }}</span>
       </template>
       <template #[`item.actions`]="{ item }">
         <v-btn icon="mdi-eye-outline" variant="text" @click="viewSurveyResponse(item)" />
@@ -34,7 +29,6 @@
 
 <script>
 import { isEmpty } from 'lodash'
-import format from '@/utils/format'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 
 export default {
@@ -62,7 +56,7 @@ export default {
         { title: 'Title', key: 'surveyResponseTitle' },
         { title: 'Facility', key: 'facilityName' },
         { title: 'Status', key: 'status' },
-        { title: 'Submitted Date', key: 'endDate' },
+        { title: 'Submitted Date', key: 'submittedDate' },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       facilityNameFilter: undefined,
@@ -81,10 +75,6 @@ export default {
       const filteredFacilities = this.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
-  },
-
-  async created() {
-    this.format = format
   },
 
   methods: {

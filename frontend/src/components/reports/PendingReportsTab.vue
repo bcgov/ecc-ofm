@@ -23,7 +23,7 @@
           <span class="pl-1">{{ item.alertType }}</span>
         </template>
         <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item.status)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
+          <span :class="getStatusClass(item.status)" class="px-2 py-1">{{ item.status }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn icon="mdi-folder-open-outline" variant="text" @click="openSurveyResponse(item)" />

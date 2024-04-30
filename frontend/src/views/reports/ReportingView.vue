@@ -78,7 +78,7 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['fiscalYears', 'months', 'getMonthIdByName', 'getFiscalYearIdByDate', 'getFiscalYearIdsByDates', 'getFiscalYearNameById']),
+    ...mapState(useAppStore, ['getMonthIdByName', 'getFiscalYearIdByDate', 'getFiscalYearIdsByDates', 'getFiscalYearNameById']),
 
     pendingReports() {
       let pendingReports = []
