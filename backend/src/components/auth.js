@@ -101,14 +101,14 @@ const auth = {
     next()
   },
 
-  generateUiToken() {
-    const i = config.get('tokenGenerate:issuer')
-    const s = 'user@penrequest.ca'
-    const a = config.get('server:frontend')
+  generateUiToken(user) {
+    const issuer = config.get('tokenGenerate:issuer')
+    const subject = user.username
+    const audience = config.get('server:frontend')
     const signOptions = {
-      issuer: i,
-      subject: s,
-      audience: a,
+      issuer,
+      subject,
+      audience,
       expiresIn: '30m',
       algorithm: 'RS256',
     }
@@ -160,7 +160,7 @@ const auth = {
           log.info('error is from verify', e)
           return res.status(HttpStatus.UNAUTHORIZED).json()
         }
-        log.info('Backend token is valid moving to next')
+        log.verbose('Backend token is valid moving to next')
         return next()
       } else {
         log.info('no jwt responding back 401')

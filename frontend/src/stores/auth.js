@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
+import { useAppStore } from '@/stores/app'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -13,12 +14,18 @@ export const useAuthStore = defineStore('auth', {
     userInfo: null,
     impersonateId: null,
     currentFacility: {},
+    permissions: [],
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
     hasFacilities: (state) => state.userInfo?.facilities?.length > 0,
     hasRole: (state) => {
       return (role) => state.userInfo?.role === role
+    },
+    hasPermission: (state) => {
+      return (permission) => {
+        return state.permissions.some((p) => p === permission)
+      }
     },
   },
   actions: {
@@ -30,16 +37,6 @@ export const useAuthStore = defineStore('auth', {
       } else {
         this.isAuthenticated = false
         localStorage.removeItem('jwtToken')
-      }
-    },
-    // TODO Remove setter. Just use state
-    async setAuthorizedUser(isAdminUser) {
-      if (isAdminUser) {
-        this.isAuthorizedUser = true
-        localStorage.setItem('isAuthorizedUser', 'true')
-      } else {
-        this.isAuthorizedUser = false
-        localStorage.removeItem('isAuthorizedUser')
       }
     },
     //sets the token required for refreshing expired json web tokens
@@ -55,6 +52,7 @@ export const useAuthStore = defineStore('auth', {
       }
       if (localStorage.getItem('jwtToken')) {
         if (!this.isUserInfoLoaded) {
+          const appStore = useAppStore()
           let userInfoRes = undefined
           if (this.impersonateId && this.isMinistryUser) {
             userInfoRes = await ApiService.getUserImpersonateInfo(this.impersonateId)
@@ -69,6 +67,8 @@ export const useAuthStore = defineStore('auth', {
           if (this.isActingProvider && this.hasFacilities) {
             this.currentFacility = this.userInfo.facilities[0]
           }
+          // Lookup the permissions
+          this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role.ofm_portal_roleid)?.permissions.map((p) => p.permissionName)
 
           this.isUserInfoLoaded = true
         }
@@ -96,9 +96,6 @@ export const useAuthStore = defineStore('auth', {
         await this.setJwtToken(response.jwtFrontend)
       }
       ApiService.setAuthHeader(response.jwtFrontend)
-
-      // TODO: Once roles are more clear need to sort out this logic...
-      await this.setAuthorizedUser(response.isAuthorizedUser)
     },
   },
 })

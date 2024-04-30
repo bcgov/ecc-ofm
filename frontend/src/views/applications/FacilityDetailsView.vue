@@ -8,7 +8,7 @@
     </div>
     <div>
       <h4>Facility Information</h4>
-      <FacilityInfo :loading="loading" :facility="facility" />
+      <FacilityInfo :facility="facility" />
     </div>
     <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
@@ -35,7 +35,7 @@
               return-object></v-select>
           </v-col>
         </v-row>
-        <ContactInfo v-if="primaryContact" :loading="loading" :contact="primaryContact" />
+        <ContactInfo v-if="primaryContact" :contact="primaryContact" />
       </v-card>
     </div>
     <div id="secondary-contact" class="mt-8">
@@ -63,7 +63,7 @@
               return-object></v-select>
           </v-col>
         </v-row>
-        <ContactInfo v-if="secondaryContact" :loading="loading" :contact="secondaryContact" />
+        <ContactInfo v-if="secondaryContact" :contact="secondaryContact" />
       </v-card>
     </div>
     <div id="expense-authority" class="mt-8">
@@ -91,7 +91,7 @@
               return-object></v-select>
           </v-col>
         </v-row>
-        <ContactInfo v-if="expenseAuthority" :loading="loading" :contact="expenseAuthority" />
+        <ContactInfo v-if="expenseAuthority" :contact="expenseAuthority" />
       </v-card>
     </div>
   </v-form>
@@ -100,26 +100,31 @@
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
+import { APPLICATION_ROUTES } from '@/utils/constants'
 import rules from '@/utils/rules'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
-import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'FacilityDetailsView',
   components: { AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
     if (!this.readonly) {
       await this.saveApplication()
     }
     next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -132,29 +137,34 @@ export default {
       type: Boolean,
       default: false,
     },
+    facility: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+    contacts: {
+      type: Array,
+      default: () => [],
+    },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
-      model: {},
       isFormComplete: false,
-      facility: undefined,
-      contacts: [],
-      loading: false,
       processing: false,
       primaryContact: undefined,
       secondaryContact: undefined,
       expenseAuthority: undefined,
     }
   },
+
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'validation', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
-    readonly() {
-      return this.isApplicationReadonly || this.loading || this.processing
-    },
     // The primary contact cannot be the same as the secondary contact
     availableSecondaryContacts() {
       return this.contacts?.filter((contact) => contact?.contactId != this.primaryContact?.contactId)
@@ -163,10 +173,10 @@ export default {
       return this.contacts?.filter((contact) => contact?.isExpenseAuthority)
     },
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
-        if (this.loading) return
         this.isFacilityDetailsComplete = value
       },
     },
@@ -182,7 +192,7 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'service-delivery', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     primaryContact: {
@@ -192,9 +202,9 @@ export default {
       },
     },
   },
-  async created() {
+
+  async mounted() {
     this.$emit('process', false)
-    await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
     this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
@@ -202,39 +212,9 @@ export default {
       await this.$refs.form?.validate()
     }
   },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
-
-    async loadData() {
-      try {
-        this.$emit('process', true)
-        this.loading = true
-        await Promise.all([this.getFacility(), this.getContacts()])
-      } finally {
-        this.loading = false
-        this.$emit('process', false)
-      }
-    },
-
-    async getContacts() {
-      try {
-        this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
-        this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
-        })
-      } catch (error) {
-        this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
-
-    async getFacility() {
-      try {
-        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
 
     async saveApplication(showAlert = false) {
       try {
@@ -262,6 +242,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .facility-name {
   color: #003366;

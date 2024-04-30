@@ -316,6 +316,7 @@ module.exports = {
   getUserByBCeID,
   getUserFacilities,
   getUserInfo,
+  getUserProfile,
   getUsersPermissionsFacilities,
   updateUser,
   updateUserFacilityPermission,

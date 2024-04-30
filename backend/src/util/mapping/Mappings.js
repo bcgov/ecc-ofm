@@ -5,7 +5,7 @@ const UserProfileMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'telephone1', front: 'phone' },
 ]
 
@@ -99,7 +99,7 @@ const UserMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]
@@ -231,7 +231,7 @@ const ContactMappings = [
   { back: 'ofm_last_name', front: 'lastName' },
   { back: 'telephone1', front: 'phone' },
   { back: 'emailaddress1', front: 'email' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
 ]
 
@@ -271,6 +271,7 @@ const DocumentMappings = [
   { back: 'ofm_file_name', front: 'fileName' },
   { back: 'ofm_subject', front: 'subject' },
   { back: 'ofm_description', front: 'description' },
+  { back: 'ofm_category', front: 'documentType' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
@@ -308,6 +309,20 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_transport_odometer', front: 'odometer' },
   { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
   { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_renewal_term', front: 'renewalTerm' },
+]
+
+const RoleMappings = [
+  { back: 'ofm_name', front: 'roleName' },
+  { back: 'ofm_portal_role_number', front: 'roleNumber' },
+  { back: 'ofm_portal_roleid', front: 'roleId' },
+]
+
+const PermissionMappings = [
+  { back: 'ofm_name', front: 'permissionName' },
+  { back: 'ofm_portal_privilege_number', front: 'permissionNumber' },
 ]
 
 const SurveySectionMappings = [
@@ -382,6 +397,16 @@ module.exports = {
   MonthMappings,
   NotificationMappings,
   OrganizationMappings,
+  PermissionMappings,
+  QuestionResponseMappings,
+  RequestCategoryMappings,
+  RequestSubCategoryMappings,
+  RoleMappings,
+  SupplementaryApplicationMappings,
+  SurveySectionMappings,
+  SurveyQuestionMappings,
+  SurveyQuestionBusinessRulesMappings,
+  SurveyResponseMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,
@@ -389,12 +414,4 @@ module.exports = {
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
-  RequestCategoryMappings,
-  RequestSubCategoryMappings,
-  SupplementaryApplicationMappings,
-  SurveySectionMappings,
-  SurveyQuestionMappings,
-  SurveyQuestionBusinessRulesMappings,
-  SurveyResponseMappings,
-  QuestionResponseMappings,
 }

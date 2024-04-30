@@ -16,3 +16,9 @@ export const SUPPORT_CHECKBOX_LABELS = Object.freeze([
   { label: 'Accessibility enhancements in the facility', value: '3', tooltip: 'e.g. Wheelchair ramps, automatic door installations, bathroom renovations for accessibility' },
   { label: 'Other', value: '4' },
 ])
+
+export const SUPP_TERM_CODES = Object.freeze({
+  TERM_ONE: 1,
+  TERM_TWO: 2,
+  TERM_THREE: 3,
+})

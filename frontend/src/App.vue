@@ -32,21 +32,6 @@ export default {
     TheSnackBar,
     TheFooter,
   },
-  async created() {
-    this.getJwtToken()
-      .then(() => Promise.all([this.getLookupInfo()]))
-      .catch((e) => {
-        if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-          // this.logout()
-          console.log(e)
-          this.$router.replace({
-            name: 'error',
-            query: { message: `500_${e.data || 'ServerError'}` },
-          })
-        }
-      })
-      .finally(() => {})
-  },
   methods: {
     ...mapActions(useAppStore, ['getLookupInfo']),
     ...mapActions(useAuthStore, ['getJwtToken']),

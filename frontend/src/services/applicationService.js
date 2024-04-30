@@ -1,10 +1,10 @@
 import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
-import { ApiRoutes } from '@/utils/constants'
-import { APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 function sortApplications(applications) {
   applications?.sort((app1, app2) => {
@@ -155,7 +155,7 @@ export default {
   },
 
   isValidApplication(application) {
-    return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreements)
+    return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreement)
   },
 
   checkApplicationStatus(application) {
@@ -166,20 +166,18 @@ export default {
     return isActive && hasCorrectStatus
   },
 
-  checkFundingAgreement(fundingAgreements) {
-    return fundingAgreements?.some((funding) => {
-      const isActive = funding?.stateCode === CRM_STATE_CODES.ACTIVE
-      const isUnexpired = new Date() < new Date(funding?.endDate)
-      return isActive && isUnexpired
-    })
+  checkFundingAgreement(fundingAgreement) {
+    const isUnexpired = new Date() < new Date(fundingAgreement?.endDate)
+    return fundingAgreement?.stateCode === CRM_STATE_CODES.ACTIVE && isUnexpired
   },
 
   async hasActiveApplicationOrFundingAgreement(facilities = []) {
     const results = await Promise.all(
       facilities.map(async (facility) => {
         const applications = await this.getApplicationsByFacilityId(facility.facilityId)
-        return applications?.some((application) => {
-          return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreements)
+        return applications?.some(async (application) => {
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+          return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreement)
         })
       }),
     )

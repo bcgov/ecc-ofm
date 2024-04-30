@@ -30,9 +30,9 @@
         <div v-if="application">
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
-
           <router-view
             :applicationId="application?.applicationId"
+            :fundingAgreement="application?.fundingAgreement"
             :cancel="cancel"
             :back="back"
             :next="next"
@@ -69,13 +69,14 @@ import { mapState } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 import rules from '@/utils/rules'
 
 export default {
   name: 'SupplementaryAllowanceView',
   components: { AppLabel, AppNavButtons },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   emits: ['process'],
   data() {
     return {
@@ -105,7 +106,7 @@ export default {
       return !isEmpty(this.application)
     },
     showSave() {
-      return !isEmpty(this.application)
+      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showNext() {
       return !isEmpty(this.application) && ['supp-allowances-form'].includes(this.$route.name)
@@ -139,6 +140,7 @@ export default {
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
+          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid)
         }
         // navigate from the Application History page
         else {
@@ -146,7 +148,7 @@ export default {
           this.applications = this.applications?.filter((application) => ApplicationService.checkApplicationStatus(application))
           await Promise.all(
             this.applications?.map(async (application) => {
-              application.fundingAgreements = await FundingAgreementService.getActiveFundingAgreementsByApplicationId(application.applicationId)
+              application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
             }),
           )
           this.facilities = this.userInfo?.facilities?.filter((facility) => this.getValidApplication(facility.facilityId))

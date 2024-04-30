@@ -14,6 +14,8 @@ const {
   deleteSupplementaryApplication,
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -22,12 +24,28 @@ const createApplicationSchema = {
     in: ['body'],
     exists: { errorMessage: '[facilityId] is required' },
   },
+  organizationId: {
+    in: ['body'],
+    exists: { errorMessage: '[organizationId] is required' },
+  },
+  providerType: {
+    in: ['body'],
+    exists: { providerType: '[providerType] is required' },
+  },
+  ownership: {
+    in: ['body'],
+    exists: { ownership: '[ownership] is required' },
+  },
+  createdBy: {
+    in: ['body'],
+    exists: { createdBy: '[createdBy] is required' },
+  },
 }
 
 /**
  * Get the list of applications
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_APPLICATIONS), (req, res) => {
   validationResult(req).throw()
   return getApplications(req, res)
 })
@@ -35,7 +53,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Create a new Application
  */
-router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(createApplicationSchema)], (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.APPLY_FOR_FUNDING), [checkSchema(createApplicationSchema)], (req, res) => {
   validationResult(req).throw()
   return createApplication(req, res)
 })
@@ -43,18 +61,32 @@ router.post('/', passport.authenticate('jwt', { session: false }), isValidBacken
 /**
  * Get an existing Application details using applicationId
  */
-router.get('/:applicationId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getApplication(req, res)
-})
+router.get(
+  '/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getApplication(req, res)
+  },
+)
 
 /**
  * Update an existing Application using applicationId
  */
-router.put('/:applicationId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return updateApplication(req, res)
-})
+router.put(
+  '/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateApplication(req, res)
+  },
+)
 
 /**
  * Get an existing Supplementary Application details using applicationId
@@ -63,6 +95,7 @@ router.get(
   '/supplementary/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
   [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -73,7 +106,7 @@ router.get(
 /**
  * Create a new Supplementary Application
  */
-router.post('/supplementary/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.post('/supplementary/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.APPLY_FOR_FUNDING), (req, res) => {
   validationResult(req).throw()
   return createSupplementaryApplication(req, res)
 })
@@ -85,6 +118,7 @@ router.patch(
   '/supplementary/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
   [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -99,6 +133,7 @@ router.delete(
   '/supplementary/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
   [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
