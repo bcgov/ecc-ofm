@@ -15,6 +15,7 @@ const {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   ContactMappings,
+  RoleMappings,
 } = require('../util/mapping/Mappings')
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
@@ -173,15 +174,23 @@ function parseFacilityPermissions(userResponse) {
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
   const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
+
+  if (usersPermissionsFacilities?.role) {
+    const role = new MappableObjectForFront(usersPermissionsFacilities?.role, RoleMappings).toJSON()
+    usersPermissionsFacilities.role = role
+  }
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
-      let facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
+      const facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
       facilityData.accountNumber = facilityData.address?.accountnumber
       facilityData.city = facilityData.address?.address1_city
       facilityData.address = facilityData.address?.address1_line1
       return facilityData
     })
+
+    return usersPermissionsFacilities
   }
+
   return {
     ...usersPermissionsFacilities,
     role: usersPermissionsFacilities.role ? Number(usersPermissionsFacilities.role) : usersPermissionsFacilities.role,
@@ -191,10 +200,11 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,ofm_portal_role,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,ofm_portal_role,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => {
-      usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
+      const newItem = mapUsersPermissionsFacilitiesObjectForFront(item)
+      usersPermissionsFacilities.push(newItem)
     })
     return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
@@ -226,6 +236,7 @@ async function getUserFacilities(req, res, onlyWithPortalAccess) {
 }
 
 function mapUserObjectForBack(data) {
+  // TODO (weskubo-cgi) Fix this
   let newUser = new MappableObjectForBack(data, UserMappings).toJSON()
   newUser.ofm_portal_role = String(newUser.ofm_portal_role)
   newUser['parentcustomerid_account@odata.bind'] = `/accounts(${data?.organizationId})`

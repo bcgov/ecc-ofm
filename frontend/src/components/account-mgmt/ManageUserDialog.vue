@@ -285,6 +285,7 @@ export default {
           return
         }
         this.user.organizationId = this.userInfo.organizationId
+        // TODO (jgstorey) Make this a service function
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
         this.user = response.data
         this.user.facilities = {}
@@ -300,6 +301,7 @@ export default {
      */
     async updateUser(user) {
       try {
+        // TODO (jgstorey) Make this a service function
         await ApiService.apiAxios.post(ApiRoutes.USER + '/update', user)
         this.$emit('update-success-event', true)
       } catch (error) {
@@ -312,6 +314,7 @@ export default {
      */
     async getUserFacilities(contactId, onlyWithPortalAccess) {
       try {
+        // TODO (jgstorey) Make this a service function
         const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`)
         return this.sortFacilities(res.data)
       } catch (error) {
@@ -425,6 +428,7 @@ export default {
     async checkBCeIDExists(userName) {
       try {
         if (this.user.userName) {
+          // TODO (jgstorey) Make this a service function
           const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`)
           this.errorMessages = res.data.length >= 1 ? ['A user with this BCeID already exists.'] : []
         }
@@ -438,6 +442,7 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
+        // TODO (jgstorey) Make this a service function
         const res = await ApiService.apiAxios.get(
           `${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`,
         )

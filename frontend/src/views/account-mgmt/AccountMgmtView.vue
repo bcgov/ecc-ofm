@@ -9,7 +9,7 @@
           </template>
           <router-link :to="{ name: 'manage-organization' }">Manage Organization/Facilities</router-link>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="hasPermission(PERMISSIONS.MANAGE_USERS)">
           <template v-slot:prepend>
             <v-icon>mdi-account-group</v-icon>
           </template>
@@ -22,14 +22,15 @@
 </template>
 
 <script>
-import AppBackButton from '@/components/ui/AppBackButton.vue'
-import rolesMixin from '@/mixins/rolesMixin.js'
 import { mapActions } from 'pinia'
+
+import AppBackButton from '@/components/ui/AppBackButton.vue'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: { AppBackButton },
-  mixins: [rolesMixin],
+  mixins: [permissionsMixin],
   methods: {
     ...mapActions(useAuthStore, ['hasRole']),
   },

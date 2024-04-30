@@ -189,7 +189,6 @@ export default {
         this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
         this.contacts?.forEach((contact) => {
           contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)

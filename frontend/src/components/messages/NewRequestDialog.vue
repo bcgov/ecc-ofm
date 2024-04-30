@@ -12,7 +12,7 @@
                 v-model="newRequestModel.requestCategoryId"
                 placeholder="[select a topic]"
                 variant="outlined"
-                :items="requestCategories"
+                :items="permittedRequestCategories"
                 item-title="categoryName"
                 item-value="categoryId"
                 :rules="rules.required"
@@ -234,7 +234,12 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :disabled="isDisabled" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
+            <AppDocumentUpload
+              v-model="documentsToUpload"
+              entityName="ofm_assistance_requests"
+              :disabled="isDisabled"
+              :loading="isLoading"
+              @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
           <template v-if="!isAnAccountMaintenanceRequest">
             <v-row no-gutters class="mt-4">
@@ -270,10 +275,7 @@
         </v-row>
       </template>
     </AppDialog>
-    <UnableToSubmitCrDialog
-      :show="showUnableToSubmitCrDialog"
-      :displayType="preventChangeRequestType"
-      @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
     <NewRequestConfirmationDialog
       :referenceNumber="referenceNumber"
       :show="showNewRequestConfirmationDialog"
@@ -295,6 +297,7 @@ import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
@@ -305,7 +308,7 @@ import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL
 export default {
   name: 'NewRequestDialog',
   components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   props: {
     show: {
       type: Boolean,
@@ -350,6 +353,14 @@ export default {
   computed: {
     ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
+    permittedRequestCategories() {
+      // Prevent users without 'Submit Change Request from AM' from selecting the Account Maintenance option
+      if (!this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
+        console.log(this.requestCategories)
+        return this.requestCategories.filter((cat) => cat.categoryName !== 'Account Maintenance')
+      }
+      return this.requestCategories
+    },
     facilities() {
       return this.userInfo?.facilities
     },
@@ -445,12 +456,12 @@ export default {
         }
         await this.validateSubCategories(value)
       },
-      deep: true
+      deep: true,
     },
     defaultFacility: {
       handler(value) {
         this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value.facilityId)]
-      }
+      },
     },
     'newRequestModel.facilities': {
       async handler() {
@@ -464,7 +475,7 @@ export default {
         }
         this.isInitialLoad = true
       },
-      deep: true
+      deep: true,
     },
     'newRequestModel.requestCategoryId': {
       handler(value) {
@@ -472,7 +483,6 @@ export default {
         this.resetModelData(isAccountMaintenance)
       },
     },
-
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
@@ -497,7 +507,7 @@ export default {
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
       const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
-      if ((this.requestFacilities[0]?.programCode in programCodeMapping) && !hasValidApplicationOrFunding) {
+      if (this.requestFacilities[0]?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
         this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
         this.showFacilityNotInOFMMessage = true
         return false
@@ -516,7 +526,11 @@ export default {
     },
 
     facilityChangeTypesChecked(subCategories) {
-      return subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) || subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL))
+      return subCategories.some(
+        (subCategory) =>
+          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
+          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL),
+      )
     },
 
     toggleUnableToSubmitCrDialog() {
@@ -703,7 +717,7 @@ export default {
       }
       this.disabled = false
     },
-  }
+  },
 }
 </script>
 

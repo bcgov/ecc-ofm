@@ -139,10 +139,7 @@
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       :defaultFacility="facility"
       @close="toggleChangeRequestDialog" />
-    <UnableToSubmitCrDialog
-      :show="showUnableToSubmitCrDialog"
-      :displayType="preventChangeRequestType"
-      @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -151,7 +148,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin'
-import rolesMixin from '@/mixins/rolesMixin.js'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
 import { useAppStore } from '@/stores/app'
@@ -176,7 +173,7 @@ import { isEmpty } from 'lodash'
 export default {
   name: 'ManageFacilityView',
   components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, NewRequestDialog, UnableToSubmitCrDialog },
-  mixins: [alertMixin, rolesMixin],
+  mixins: [alertMixin, permissionsMixin],
   data() {
     return {
       facilityId: null,
@@ -218,7 +215,7 @@ export default {
       return this.licences?.map((licence) => licence.licenceId)
     },
     editable() {
-      return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT) && this.hasAccessToFacility(this.facilityId)
+      return this.hasPermission(this.PERMISSIONS.UPDATE_ORG_FACILITY) && this.hasAccessToFacility(this.facilityId)
     },
     sortedContacts() {
       if (!this.contacts) return []
@@ -238,7 +235,6 @@ export default {
     this.primaryContactLastSaved = this.primaryContact
   },
   methods: {
-    ...mapActions(useAuthStore, ['hasRole']),
     /**
      * Load the data for the page
      */
@@ -259,7 +255,6 @@ export default {
         this.contacts = await FacilityService.getContacts(this.facilityId)
         this.contacts?.forEach((contact) => {
           contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.facilityId, error)
@@ -338,6 +333,7 @@ export default {
         const contactsToUpdate = contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
         let updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
+            // TODO (jgstorey) Make this a service function
             await ApiService.apiAxios.patch(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + contact.bceidFacilityId, contact)
           } catch (error) {
             this.setFailureAlert(`Failed to update ${property} for contactId = ` + contact.contactId, error)
@@ -391,7 +387,7 @@ export default {
 
     /**
      * Open/close the Change Request dialog
-    */
+     */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
@@ -402,7 +398,7 @@ export default {
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
       const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([{ facilityId: this.facility.facilityId }])
-      if ((this.facility?.programCode in programCodeMapping) && !hasValidApplicationOrFunding) {
+      if (this.facility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
         this.preventChangeRequestType = programCodeMapping[this.facility.programCode]
         this.showUnableToSubmitCrDialog = true
       } else {
@@ -413,7 +409,6 @@ export default {
     toggleUnableToSubmitCrDialog() {
       this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
     },
-
   },
 }
 </script>

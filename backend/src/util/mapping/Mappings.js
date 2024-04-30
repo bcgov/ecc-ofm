@@ -99,7 +99,7 @@ const UserMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'role', front: 'role' },
+  { back: 'ofm_portal_role_id', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]

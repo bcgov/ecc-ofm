@@ -4,7 +4,7 @@
       <v-col class="ml-6 mt-10 pb-0">
         <h4>Organization Details</h4>
       </v-col>
-      <v-col v-if="isAccountManager" class="ml-6 mt-6 pb-0">
+      <v-col v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" class="ml-6 mt-6 pb-0">
         <v-row no-gutters justify="end">
           <AppButton size="large" width="300px" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
@@ -14,7 +14,7 @@
       <v-col class="ml-6 pt-0">
         <OrganizationInfo
           :loading="loading"
-          :editable="isAccountManager"
+          :editable="hasPermission(PERMISSIONS.UPDATE_ORG_FACILITY)"
           :organization="organization"
           :showDocuments="true"
           :uploadedDocuments="uploadedDocuments"
@@ -32,14 +32,14 @@
         <v-card class="pa-6" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-row>
-              <v-col v-if="isAccountManager">
+              <v-col v-if="hasPermission(PERMISSIONS.UPDATE_ORG_FACILITY)">
                 <v-expansion-panels v-model="panelYourFacilities" multiple class="pb-4">
                   <v-expansion-panel>
                     <v-expansion-panel-title class="header-label">
                       <h4>Your Facilities</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in accountManagerFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card>
+                      <v-card v-for="item in userFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -72,35 +72,32 @@
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       @close="toggleChangeRequestDialog" />
-    <UnableToSubmitCrDialog
-      :show="showUnableToSubmitCrDialog"
-      :displayType="preventChangeRequestType"
-      @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
-import AppBackButton from '@/components/ui/AppBackButton.vue'
-import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
-import OrganizationService from '@/services/organizationService'
-import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import { isEmpty } from 'lodash'
+import { mapActions, mapState } from 'pinia'
+
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
+import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
-import rolesMixin from '@/mixins/rolesMixin.js'
-import { mapState } from 'pinia'
-import { mapActions } from 'pinia'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { isEmpty } from 'lodash'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
   components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog },
-  mixins: [alertMixin, rolesMixin],
+  mixins: [alertMixin, permissionsMixin],
   data() {
     return {
       facilities: [],
@@ -117,20 +114,15 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-
-    isAccountManager() {
-      return this.hasRole(this.ROLES.ACCOUNT_MANAGEMENT)
-    },
-    accountManagerFacilities() {
+    userFacilities() {
       return this.userInfo.facilities
     },
     otherFacilities() {
-      return this.facilities.filter((f) => !this.accountManagerFacilities.some((facility) => facility.facilityId === f.facilityId))
+      return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
     hasAnOFMFacility() {
-      return this.facilities.some(facility => facility.programCode === OFM_PROGRAM_CODES.OFM)
+      return this.facilities.some((facility) => facility.programCode === OFM_PROGRAM_CODES.OFM)
     },
-
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
@@ -252,7 +244,6 @@ export default {
     toggleUnableToSubmitCrDialog() {
       this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
     },
-
   },
 }
 </script>
