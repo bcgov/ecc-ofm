@@ -355,10 +355,7 @@ export default {
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     permittedRequestCategories() {
       // Prevent users without 'Submit Change Request from AM' from selecting the Account Maintenance option
-      if (!this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-        return this.requestCategories.filter((cat) => cat.categoryName !== 'Account Maintenance')
-      }
-      return this.requestCategories
+      return this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST) ? this.requestCategories : this.requestCategories.filter((cat) => cat.categoryName !== this.CATEGORY_ACCCOUNT_MAINTENANCE)
     },
     facilities() {
       return this.userInfo?.facilities
@@ -487,6 +484,7 @@ export default {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
     this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
+    this.CATEGORY_ACCCOUNT_MAINTENANCE = 'Account Maintenance'
     this.setUpDefaultNewRequestModel()
   },
   methods: {

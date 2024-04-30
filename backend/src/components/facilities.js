@@ -3,7 +3,6 @@ const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
-const { userInfo } = require('os')
 
 async function getFacility(req, res) {
   try {
