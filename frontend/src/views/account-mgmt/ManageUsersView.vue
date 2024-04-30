@@ -87,12 +87,11 @@
 
 <script>
 import { mapState } from 'pinia'
-import { useAppStore } from '@/stores/app'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import alertMixin from '@/mixins/alertMixin'
-import { CRM_STATE_CODES } from '@/utils/constants'
+import { CRM_STATE_CODES, ROLES } from '@/utils/constants'
 import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
 import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
@@ -133,7 +132,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
@@ -149,7 +147,7 @@ export default {
     },
   },
   async created() {
-    this.ACCOUNT_MANAGER = 'Account Manager'
+    this.ROLES = ROLES
     await this.getUsersAndFacilities()
   },
   methods: {
@@ -199,10 +197,7 @@ export default {
      * Get the status description for a status code
      */
     getStatusDescription(user) {
-      if (this.isDeactivatedUser(user) || user?.stateCode === CRM_STATE_CODES.INACTIVE) {
-        return 'Inactive'
-      }
-      return 'Active'
+      return this.isDeactivatedUser(user) || user?.stateCode === CRM_STATE_CODES.INACTIVE ? 'Inactive' : 'Active'
     },
 
     /**
@@ -213,8 +208,8 @@ export default {
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
         // TODO (weskubo-cgi) Revisit this requirement given new Roles Security Matrix
-        const roleA = a.role === this.ACCOUNT_MANAGER
-        const roleB = b.role === this.ACCOUNT_MANAGER
+        const roleA = a.role === this.ROLES.ACCOUNT_MANAGER
+        const roleB = b.role === this.ROLES.ACCOUNT_MANAGER
         if (roleA && !roleB) return -1
         if (!roleA && roleB) return 1
 

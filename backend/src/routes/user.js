@@ -48,6 +48,8 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
  * Get profile information for a given user name
  */
 router.get('/:queryUserName', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  // TODO (weskubo-cgi) Create a separate endpoint for verifying whether a profile exists
+  // TODO (weskubo-cgi) Secure this as average users shouldn't be able to query arbitrary user names
   if (req.query.providerProfile === 'false') {
     getUserByBCeID(req, res)
   } else {
@@ -92,7 +94,7 @@ router.get('/:contactId/facilities', passport.authenticate('jwt', { session: fal
 /**
  * Create a new user/contact
  */
-router.post('/create', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission('DOES NOT EXIST'), [checkSchema(createUserSchema)], (req, res) => {
+router.post('/create', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS), [checkSchema(createUserSchema)], (req, res) => {
   validationResult(req).throw()
   return createUser(req, res)
 })
@@ -100,7 +102,7 @@ router.post('/create', passport.authenticate('jwt', { session: false }), isValid
 /**
  * Update a user/contact
  */
-router.post('/update', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission('DOES NOT EXIST'), [checkSchema(updateUserSchema)], (req, res) => {
+router.post('/update', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS), [checkSchema(updateUserSchema)], (req, res) => {
   validationResult(req).throw()
   return updateUser(req, res)
 })

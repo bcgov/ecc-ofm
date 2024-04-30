@@ -236,9 +236,10 @@ async function getUserFacilities(req, res, onlyWithPortalAccess) {
 }
 
 function mapUserObjectForBack(data) {
-  // TODO (weskubo-cgi) Fix this
   let newUser = new MappableObjectForBack(data, UserMappings).toJSON()
-  newUser.ofm_portal_role = String(newUser.ofm_portal_role)
+  delete newUser.ofm_portal_role_id
+
+  newUser['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${data?.role?.roleId})`
   newUser['parentcustomerid_account@odata.bind'] = `/accounts(${data?.organizationId})`
   return newUser
 }
@@ -248,7 +249,7 @@ async function createUser(req, res) {
     const payload = mapUserObjectForBack(req.body)
     const response = await postOperation('contacts', payload)
     const returnVal = new MappableObjectForFront(response, UserMappings).toJSON()
-    returnVal.role = Number(returnVal.role)
+    returnVal.role = { roleId: response._ofm_portal_role_id_value }
     return res.status(HttpStatus.OK).json(returnVal)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -259,6 +260,8 @@ function mapContactForBack(data) {
   const contact = new MappableObjectForBack(data, ContactMappings).toJSON()
   contact.entityNameSet = 'contacts'
   contact.actionMode = 'Update'
+  contact['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${data?.role?.roleId})`
+  delete contact.role
   return contact
 }
 

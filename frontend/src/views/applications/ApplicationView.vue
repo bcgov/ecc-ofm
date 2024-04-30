@@ -80,7 +80,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {

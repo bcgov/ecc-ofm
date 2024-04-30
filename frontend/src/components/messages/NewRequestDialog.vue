@@ -356,7 +356,6 @@ export default {
     permittedRequestCategories() {
       // Prevent users without 'Submit Change Request from AM' from selecting the Account Maintenance option
       if (!this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-        console.log(this.requestCategories)
         return this.requestCategories.filter((cat) => cat.categoryName !== 'Account Maintenance')
       }
       return this.requestCategories

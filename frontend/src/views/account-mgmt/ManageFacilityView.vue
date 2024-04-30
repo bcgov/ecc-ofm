@@ -134,6 +134,7 @@
       </v-col>
     </v-row>
     <NewRequestDialog
+      v-if="editable"
       class="pa-0"
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
@@ -194,7 +195,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById', 'getRequestCategoryIdByName']),
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
     ...mapState(useAuthStore, ['userInfo']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
