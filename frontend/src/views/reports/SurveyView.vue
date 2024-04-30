@@ -159,8 +159,10 @@ export default {
     },
 
     async back() {
-      if (this.isFirstSection(this.currentSection)) return
       await this.save()
+      if (this.isFirstSection(this.currentSection)) {
+        this.$router.push({ name: 'reporting' })
+      }
       this.currentSection = this.sections[this.currentSectionIndex - 1]
     },
 

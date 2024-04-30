@@ -176,3 +176,5 @@ export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan fai
 
 export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
   'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.'
+
+export const BLANK_FIELD = '- - - -'

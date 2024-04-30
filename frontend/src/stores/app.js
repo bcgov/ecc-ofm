@@ -79,6 +79,12 @@ export const useAppStore = defineStore('app', {
         return month?.monthId
       }
     },
+    getFiscalYearNameById: (state) => {
+      return (id) => {
+        const year = state.fiscalYears?.find((fiscalYear) => fiscalYear.fiscalYearId === id)
+        return year?.name
+      }
+    },
     getFiscalYearIdByDate: (state) => {
       return (date) => {
         const year = state.fiscalYears?.find((fiscalYear) => moment(fiscalYear.startDate).isSameOrBefore(moment(date)) && moment(fiscalYear.endDate).isSameOrAfter(moment(date)))

@@ -5,7 +5,6 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { param, validationResult, checkSchema } = require('express-validator')
 const {
-  getFacilityReports,
   getSurveySections,
   getSurveyQuestions,
   getSurveyResponse,
@@ -57,11 +56,6 @@ const postQuestionResponseSchema = {
     exists: { errorMessage: '[value] is required' },
   },
 }
-
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
-  validationResult(req).throw()
-  return getFacilityReports(req, res)
-})
 
 /**
  * Get survey's sections using query:

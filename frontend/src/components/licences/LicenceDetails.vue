@@ -177,6 +177,7 @@ import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
 import rules from '@/utils/rules'
 import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
+import { BLANK_FIELD } from '@/utils/constants'
 
 export default {
   components: { AppLabel, AppYesNoInput },
@@ -213,7 +214,7 @@ export default {
     },
   },
   async created() {
-    this.BLANK_FIELD = '- - - -'
+    this.BLANK_FIELD = BLANK_FIELD
     this.panel = this.allLicenceDetailsID
   },
   async mounted() {
