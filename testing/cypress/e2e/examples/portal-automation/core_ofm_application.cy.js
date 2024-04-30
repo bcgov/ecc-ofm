@@ -74,8 +74,10 @@ before("Submit an application from the portal", () => {
   // Facility Details
   cy.contains("facility:")
     .find("span")
+    .invoke("text")
     .then((text) => {
       facility.facilityName = text;
+      console.log(text);
     });
 
   facilityContactInfo.map((info) => {
@@ -204,7 +206,7 @@ before("Submit an application from the portal", () => {
   cy.contains("Facility:")
     .invoke("text")
     .then((text) => {
-      facility.facilityName = text.split(":")[1].trim();
+      expect(facility.facilityName).to.equal(text.split(":")[1].trim());
     });
 
   facilityContactInfo.map((info) => {
@@ -309,26 +311,36 @@ before("Submit an application from the portal", () => {
 });
 
 beforeEach(() => {
+  cy.origin(CRM_BASE_URL, () => {
+    cy.on("uncaught:exception", (e) => {
+      return false;
+    });
+  });
   cy.loginToAAD(AAD_USERNAME, AAD_PASSWORD, CRM_URL, CRM_BASE_URL);
   cy.visit(CRM_URL);
+
   cy.origin(CRM_BASE_URL, () => {
     cy.on("uncaught:exception", (e) => {
       return false;
     });
     cy.get('li[aria-label="Case Management"]')
       .find('li[aria-label="Applications"]')
-      .click();
+      .click({ timeout: 30000 });
     cy.get('input[aria-label="Application Filter by keyword"]').type(
-      "APP-24000683{enter}"
+      "APP-23000010{enter}"
     );
-    cy.contains("APP-24000683").last().click();
+    cy.contains("APP-23000010").last().click();
   });
 });
 
 describe("Checks the portal application fields on CRM", () => {
   it("Does stuff", () => {
     cy.origin(CRM_BASE_URL, () => {
-      expect(true).to.equal(true);
+      cy.on("uncaught:exception", (e) => {
+        return false;
+      });
+      cy.contains("Street Address 1").should("exist");
     });
+    expect(true).to.equal(true);
   });
 });
