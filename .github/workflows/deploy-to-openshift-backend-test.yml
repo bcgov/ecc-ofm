@@ -9,6 +9,7 @@ env:
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   # 🖊️ EDIT to set the kube context's namespace after login. Leave blank to use your user's default namespace.
   OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-dev
+  COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
 
   # SPLUNK_TOKEN: ${{ secrets.SPLUNK_TOKEN }}
 
@@ -135,7 +136,19 @@ jobs:
             | oc apply -f -
 
           # Process update-configmap
-          # curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh | bash /dev/stdin test ${{ env.APP_NAME }} ${{ env.NAMESPACE }} ${{ env.SPLUNK_TOKEN }}
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/master/tools/config/update-configmap.sh \
+            | bash /dev/stdin \
+                test \
+                ${{ env.APP_NAME }} \
+                ${{ env.NAMESPACE }} \
+                ${{ env.COMMON_NAMESPACE }} \
+                ${{ secrets.D365_API_PREFIX }} \
+                ${{ secrets.D365_API_KEY_HEADER }} \
+                ${{ secrets.D365_API_KEY_VALUE }} \
+                ${{ secrets.SOAM_CLIENT_ID }} \
+                ${{ secrets.SOAM_CLIENT_SECRET }} \
+                ${{ secrets.SOAM_CLIENT_ID_IDIR }} \
+                ${{ secrets.SOAM_CLIENT_SECRET_IDIR }}
 
           # Start rollout (if necessary) and follow it
           oc rollout latest dc/${{ env.APP_NAME }}-${{ env.APP_NAME_BACKEND }}-${{ env.APP_ENVIRONMENT }} 2> /dev/null \
