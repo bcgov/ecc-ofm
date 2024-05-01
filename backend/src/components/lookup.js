@@ -86,7 +86,7 @@ async function getRoles() {
       role.data.permissions = item.ofm_portal_role_permission.map((p) => new MappableObjectForFront(p.ofm_portal_privilege, PermissionMappings).toJSON())
       roles.push(role)
     })
-    roles = roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
+    roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
     lookupCache.put('roles', roles, ONE_HOUR_MS)
   }
   return roles
