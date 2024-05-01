@@ -1,9 +1,7 @@
 <template>
+  <OrganizationHeader :showFacility="false" />
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-6">Reporting</h1>
-
-    <h2 class="mb-6">{{ userInfo?.organizationName }}</h2>
-
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
         <v-tab value="pending-reports-table">
@@ -48,10 +46,11 @@
 <script>
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import { CRM_STATE_CODES, SURVEY_IDS, BLANK_FIELD } from '@/utils/constants'
+import { CRM_STATE_CODES, SURVEY_IDS, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 import format from '@/utils/format'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import PendingReportsTab from '@/components/reports/PendingReportsTab.vue'
 import ReportingHistoryTab from '@/components/reports/ReportingHistoryTab.vue'
 import FundingAgreementService from '@/services/fundingAgreementService'
@@ -64,7 +63,7 @@ import { useAppStore } from '@/stores/app'
 
 export default {
   name: 'ReportingView',
-  components: { AppAlertBanner, AppBackButton, PendingReportsTab, ReportingHistoryTab },
+  components: { AppAlertBanner, AppBackButton, OrganizationHeader, PendingReportsTab, ReportingHistoryTab },
   mixins: [alertMixin, reportMixin],
   data() {
     return {
@@ -81,7 +80,7 @@ export default {
     ...mapState(useAppStore, ['getMonthIdByName', 'getFiscalYearIdByDate', 'getFiscalYearIdsByDates', 'getFiscalYearNameById']),
 
     pendingReports() {
-      let pendingReports = []
+      const pendingReports = []
       this.facilities?.forEach((facility) => {
         const reportingMonths = this.getMonthsBetweenDates(facility.fundingAgreement?.startDate, facility.fundingAgreement?.endDate)
         reportingMonths?.forEach((month) => {
@@ -104,7 +103,7 @@ export default {
               reportingMonthId: monthId,
               reportingMonthName: monthName,
               fiscalYearId: fiscalYearId,
-              status: !isEmpty(surveyResponse) ? 'Draft' : BLANK_FIELD,
+              status: !isEmpty(surveyResponse) ? SURVEY_RESPONSE_STATUSES.DRAFT : BLANK_FIELD,
               latestActivity: surveyResponse?.latestActivity ? format.formatDate(surveyResponse?.latestActivity) : BLANK_FIELD,
             })
           }
@@ -117,7 +116,7 @@ export default {
       const submittedReports = this.surveyResponses?.filter((response) => response.stateCode === CRM_STATE_CODES.INACTIVE)
       submittedReports?.forEach((response) => {
         response.submittedDate = format.formatDate(response?.endDate)
-        response.status = response?.isSubmittedLate ? 'Completed - Late' : 'Completed'
+        response.status = response?.isSubmittedLate ? SURVEY_RESPONSE_STATUSES.COMPLETED_LATE : SURVEY_RESPONSE_STATUSES.COMPLETED
       })
       submittedReports?.sort((a, b) => {
         const dateA = new Date(a.submittedDate)

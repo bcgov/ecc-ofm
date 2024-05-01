@@ -1,12 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
-    <p class="my-4">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-      sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
-
-    <v-row class="mt-8 mb-4">
+    <v-row class="mt-1 mb-4">
       <v-col cols="12" md="5">
         <h2>Report Details</h2>
       </v-col>
@@ -29,6 +23,7 @@
 
 <script>
 import { isEmpty } from 'lodash'
+import { SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 
 export default {
@@ -84,10 +79,11 @@ export default {
     },
 
     getStatusClass(status) {
-      if (status === 'Completed - Late') {
-        return 'status-red'
-      } else if (status === 'Completed') {
-        return 'status-green'
+      switch (status) {
+        case SURVEY_RESPONSE_STATUSES.COMPLETED_LATE:
+          return 'status-red'
+        case SURVEY_RESPONSE_STATUSES.COMPLETED:
+          return 'status-green'
       }
       // TODO (vietle-cgi) - Add "Re-Submitted" status - pending on CRM team to add it.
     },
@@ -104,6 +100,7 @@ export default {
 
 <style scoped>
 .status-red {
+  color: white;
   background-color: #d8292f;
   border-radius: 5px;
 }

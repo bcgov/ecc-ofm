@@ -1,12 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
-    <p class="my-4">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-      sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
-
-    <v-row class="mt-8 mb-4">
+    <v-row class="mt-1 mb-4">
       <v-col cols="12" md="5">
         <h2>Report Details</h2>
       </v-col>
@@ -23,7 +17,7 @@
           <span class="pl-1">{{ item.alertType }}</span>
         </template>
         <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item.status)" class="px-2 py-1">{{ item.status }}</span>
+          <span :class="{ 'status-gray': item.status === SURVEY_RESPONSE_STATUSES.DRAFT }" class="px-2 py-1">{{ item.status }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn icon="mdi-folder-open-outline" variant="text" @click="openSurveyResponse(item)" />
@@ -39,7 +33,7 @@
 import { isEmpty } from 'lodash'
 
 import alertMixin from '@/mixins/alertMixin'
-import { SURVEY_IDS, SURVEY_RESPONSE_TYPES } from '@/utils/constants'
+import { SURVEY_IDS, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
@@ -96,6 +90,10 @@ export default {
     },
   },
 
+  created() {
+    this.SURVEY_RESPONSE_STATUSES = SURVEY_RESPONSE_STATUSES
+  },
+
   methods: {
     async openSurveyResponse(surveyResponse) {
       if (surveyResponse?.surveyResponseId) {
@@ -129,6 +127,7 @@ export default {
       }
     },
 
+    // TODO (vietle-cgi) Update the reporting month once we get the confirmation from the business
     getSurveyResponseType(reportingMonthName) {
       let responseType = SURVEY_RESPONSE_TYPES.MONTHLY
       if (['November'].includes(reportingMonthName)) {
@@ -138,12 +137,6 @@ export default {
       }
       // TODO (vietle-cgi) Add ANNUAL type when we know which month to use
       return responseType
-    },
-
-    getStatusClass(status) {
-      if (status === 'Draft') {
-        return 'status-gray'
-      }
     },
 
     toggleCancelDialog() {
