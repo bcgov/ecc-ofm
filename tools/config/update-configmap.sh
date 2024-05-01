@@ -102,7 +102,7 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
 
 echo
 echo Setting environment variables for "$APP_NAME-backend-$SOAM_KC_REALM_ID" application
-oc -n "$OPENSHIFT_NAMESPACE-$envValue set env" \
+oc -n "$OPENSHIFT_NAMESPACE-$envValue" set env \
   --from="configmap/$APP_NAME-backend-config-map" \
   "dc/$APP_NAME-backend-$SOAM_KC_REALM_ID"
 
