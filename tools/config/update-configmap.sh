@@ -78,7 +78,7 @@ rm tempPenBackendkey.pub
 
 echo Creating config map "$APP_NAME-backend-config-map"
 oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
-  "$APP_NAME-backend-config-map" \
+  "$APP_NAME-backend-$envValue-config-map" \
   --from-literal="CLAMAV_HOST=clamav.$COMMON_NAMESPACE-$envValue.svc.cluster.local" \
   --from-literal=CLAMAV_PORT=3310 \
   --from-literal="UI_PRIVATE_KEY=$UI_PRIVATE_KEY_VAL" \
@@ -101,8 +101,8 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
   --dry-run -o yaml | oc apply -f -
 
 echo
-echo Setting environment variables for "$APP_NAME-backend-$SOAM_KC_REALM_ID" application
+echo Setting environment variables for "$APP_NAME-backend-$envValue" application
 oc -n "$OPENSHIFT_NAMESPACE-$envValue" set env \
-  --from="configmap/$APP_NAME-backend-config-map" \
-  "dc/$APP_NAME-backend-$SOAM_KC_REALM_ID"
+  --from="configmap/$APP_NAME-backend-$envValue-config-map" \
+  "dc/$APP_NAME-backend-$envValue"
 
