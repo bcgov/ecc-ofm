@@ -190,9 +190,6 @@ export default {
       const startDate = moment(start)
       const endDate = moment(end)
       const result = []
-      if (endDate?.isBefore(startDate)) {
-        throw 'End date must be greater than start date.'
-      }
       while (startDate?.isBefore(endDate)) {
         result.push(startDate.format('YYYY-MM-01'))
         startDate.add(1, 'month')
