@@ -175,7 +175,7 @@ jobs:
             | oc apply -f -
 
           # Process update-configmap
-          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/master/tools/config/update-configmap.sh \
+          curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \
             | bash /dev/stdin \
                 dev \
                 ${{ env.APP_NAME }} \
