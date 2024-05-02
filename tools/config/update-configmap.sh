@@ -29,30 +29,9 @@ else
   logLevel="error"
 fi
 
-SOAM_KC_LOAD_USER_ADMIN=$(oc -n "$COMMON_NAMESPACE-$envValue" -o json \
-  get secret "sso-admin-$envValue" \
-  | sed -n 's/.*"username": "\(.*\)"/\1/p' \
-  | base64 --decode)
-
-SOAM_KC_LOAD_USER_PASS=$(oc -n "$COMMON_NAMESPACE-$envValue" -o json \
-  get secret "sso-admin-$envValue" \
-  | sed -n 's/.*"password": "\(.*\)",/\1/p' \
-  | base64 --decode)
-
-echo Fetching SOAM token
-TKN=$(curl -s \
-  -d "client_id=admin-cli" \
-  -d "username=$SOAM_KC_LOAD_USER_ADMIN" \
-  -d "password=$SOAM_KC_LOAD_USER_PASS" \
-  -d "grant_type=password" \
-  "https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/token" \
-  | jq -r '.access_token')
-
 echo Fetching one-liner public key from SOAM
-soamOneLineKey=$(curl -sX GET "https://$SOAM_KC/auth/admin/realms/$SOAM_KC_REALM_ID/keys" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TKN" \
-  | jq -r '.keys | .[] | select(has("publicKey")) | .publicKey')
+soamOneLineKey=$(curl -sX GET "https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID" \
+  | jq -r .public_key)
 
 echo Formatting public key from SOAM
 formattedPublicKey=$(cat << PUBKEY
