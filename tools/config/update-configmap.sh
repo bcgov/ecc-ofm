@@ -73,7 +73,7 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
   --from-literal="D365_API_KEY_VALUE=$D365_API_KEY_VALUE" \
   --from-literal="SOAM_PUBLIC_KEY=$formattedPublicKey" \
   --from-literal="SOAM_DISCOVERY=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/.well-known/openid-configuration" \
-  --from-literal="SOAM_URL=https://$SOAM_KC" \
+  --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
   --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$siteMinderLogoutUrl" \
   --from-literal="LOG_LEVEL=$logLevel" \
   --from-literal="NODE_ENV=$envValue" \
