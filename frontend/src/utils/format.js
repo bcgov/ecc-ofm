@@ -1,6 +1,7 @@
-import { DateTimeFormatterBuilder, LocalDate, LocalDateTime, ResolverStyle } from '@js-joda/core'
-
 import moment from 'moment'
+
+import { BLANK_FIELD } from '@/utils/constants'
+import { DateTimeFormatterBuilder, LocalDate, LocalDateTime, ResolverStyle } from '@js-joda/core'
 
 function formatPen(pen) {
   if (pen?.length === 9) {
@@ -63,12 +64,12 @@ function formatPhoneNumber(phoneNumber) {
 }
 
 function formatDate(date) {
-  if (!date) return '- - - -'
+  if (!date) return BLANK_FIELD
   return moment(date).format('YYYY-MMM-DD')
 }
 
 function formatDateTime(date) {
-  if (!date) return '- - - -'
+  if (!date) return BLANK_FIELD
   return moment(date).format('YYYY-MMM-DD hh:mm A')
 }
 

@@ -143,11 +143,22 @@ export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
   NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
 })
 
+// TODO (vietle-cgi) Change survey guid to a readable id - pending on CRM
+export const SURVEY_IDS = Object.freeze({
+  MONTHLY_REPORTING: '16fb81de-6dc1-ee11-9079-000d3af4865d',
+})
+
 export const SURVEY_RESPONSE_TYPES = Object.freeze({
   MONTHLY: 'Monthly',
   QUARTERLY: 'Quarterly',
   BI_ANNUAL: 'Bi-annual',
   ANNUAL: 'Annual',
+})
+
+export const SURVEY_RESPONSE_STATUSES = Object.freeze({
+  DRAFT: 'Draft',
+  COMPLETED: 'Completed',
+  COMPLETED_LATE: 'Completed - Late',
 })
 
 export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
@@ -183,3 +194,5 @@ export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan fai
 
 export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
   'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.'
+
+export const BLANK_FIELD = '- - - -'

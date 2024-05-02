@@ -15,16 +15,6 @@ function convertQuestionsChoices(questions) {
 }
 
 export default {
-  async getFacilityReports(facilityId) {
-    try {
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}?facilityId=${facilityId}`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get facilities reporting activity for facility - ${error}`)
-      throw error
-    }
-  },
-
   async getSurveySections(surveyId) {
     try {
       if (!surveyId) return []
@@ -45,6 +35,17 @@ export default {
       return questions
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
+      throw error
+    }
+  },
+
+  async getSurveyResponsesBySurveyAndFacilityAndFiscalYear(surveyId, facilityId, fiscalYearId) {
+    try {
+      if (!facilityId || !fiscalYearId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses?surveyId=${surveyId}&facilityId=${facilityId}&fiscalYearId=${fiscalYearId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the survey response by Facility and Fiscal Year - ${error}`)
       throw error
     }
   },
