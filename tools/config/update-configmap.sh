@@ -12,8 +12,8 @@ SOAM_CLIENT_SECRET=$9
 SOAM_CLIENT_ID_IDIR=${10}
 SOAM_CLIENT_SECRET_IDIR=${11}
 
-SOAM_KC_REALM_ID="master"
-SOAM_KC="soam-$envValue.apps.silver.devops.gov.bc.ca"
+SOAM_KC_REALM_ID="standard"
+SOAM_KC="$envValue.loginproxy.gov.bc.ca"
 SERVER_FRONTEND="https://ofm-frontend-$envValue-$OPENSHIFT_NAMESPACE.apps.silver.devops.gov.bc.ca"
 D365_API_ENDPOINT="http://$D365_API_PREFIX-$envValue:5091"
 
