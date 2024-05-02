@@ -1,6 +1,6 @@
 set -euo pipefail
 
-envValue=$1
+ENV_VAL=$1
 APP_NAME=$2
 OPENSHIFT_NAMESPACE=$3
 COMMON_NAMESPACE=$4
@@ -13,13 +13,13 @@ SOAM_CLIENT_ID_IDIR=${10}
 SOAM_CLIENT_SECRET_IDIR=${11}
 
 SOAM_KC_REALM_ID="standard"
-SOAM_KC="$envValue.loginproxy.gov.bc.ca"
-SERVER_FRONTEND="https://ofm-frontend-$envValue-$OPENSHIFT_NAMESPACE-$envValue.apps.silver.devops.gov.bc.ca"
-D365_API_ENDPOINT="http://$D365_API_PREFIX-$envValue:5091"
+SOAM_KC="$ENV_VAL.loginproxy.gov.bc.ca"
+SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$OPENSHIFT_NAMESPACE-$ENV_VAL.apps.silver.devops.gov.bc.ca"
+D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 
 siteMinderLogoutUrl=""
 logLevel=""
-if [ "$envValue" != "prod" ]
+if [ "$ENV_VAL" != "prod" ]
 then
   siteMinderLogoutUrl="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
   logLevel="verbose"
@@ -56,9 +56,9 @@ rm tempPenBackendkey
 rm tempPenBackendkey.pub
 
 echo Creating config map "$APP_NAME-backend-config-map"
-oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
-  "$APP_NAME-backend-$envValue-config-map" \
-  --from-literal="CLAMAV_HOST=clamav.$COMMON_NAMESPACE-$envValue.svc.cluster.local" \
+oc create -n "$OPENSHIFT_NAMESPACE-$ENV_VAL" configmap \
+  "$APP_NAME-backend-$ENV_VAL-config-map" \
+  --from-literal="CLAMAV_HOST=clamav.$COMMON_NAMESPACE-$ENV_VAL.svc.cluster.local" \
   --from-literal=CLAMAV_PORT=3310 \
   --from-literal="UI_PRIVATE_KEY=$UI_PRIVATE_KEY_VAL" \
   --from-literal="UI_PUBLIC_KEY=$UI_PUBLIC_KEY_VAL" \
@@ -77,12 +77,12 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
   --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
   --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$siteMinderLogoutUrl" \
   --from-literal="LOG_LEVEL=$logLevel" \
-  --from-literal="NODE_ENV=$envValue" \
+  --from-literal="NODE_ENV=$ENV_VAL" \
   --dry-run -o yaml | oc apply -f -
 
 echo
-echo Setting environment variables for "$APP_NAME-backend-$envValue" application
-oc -n "$OPENSHIFT_NAMESPACE-$envValue" set env \
-  --from="configmap/$APP_NAME-backend-$envValue-config-map" \
-  "dc/$APP_NAME-backend-$envValue"
+echo Setting environment variables for "$APP_NAME-backend-$ENV_VAL" application
+oc -n "$OPENSHIFT_NAMESPACE-$ENV_VAL" set env \
+  --from="configmap/$APP_NAME-backend-$ENV_VAL-config-map" \
+  "dc/$APP_NAME-backend-$ENV_VAL"
 
