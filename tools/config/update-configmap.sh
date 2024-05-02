@@ -42,10 +42,6 @@ PUBKEY
 )
 echo "$formattedPublicKey"
 
-getSecret(){
-head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5000 | base64
-}
-
 echo Generating private and public keys
 ssh-keygen -b 4096 -t rsa -f tempPenBackendkey -m pem -q -N ""
 UI_PRIVATE_KEY_VAL="$(cat tempPenBackendkey)"
