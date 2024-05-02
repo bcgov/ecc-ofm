@@ -67,6 +67,7 @@ oc create -n "$OPENSHIFT_NAMESPACE-$envValue" configmap \
   --from-literal="SOAM_CLIENT_ID_IDIR=$SOAM_CLIENT_ID_IDIR" \
   --from-literal="SOAM_CLIENT_SECRET_IDIR=$SOAM_CLIENT_SECRET_IDIR" \
   --from-literal="SERVER_FRONTEND=$SERVER_FRONTEND" \
+  --from-literal=SERVER_PORT=8080 \
   --from-literal=ISSUER=ECC_OFM \
   --from-literal="D365_API_ENDPOINT=$D365_API_ENDPOINT" \
   --from-literal="D365_API_KEY_HEADER=$D365_API_KEY_HEADER" \
