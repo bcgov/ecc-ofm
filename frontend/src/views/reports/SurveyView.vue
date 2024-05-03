@@ -159,8 +159,10 @@ export default {
     },
 
     async back() {
-      if (this.isFirstSection(this.currentSection)) return
       await this.save()
+      if (this.isFirstSection(this.currentSection)) {
+        this.$router.push({ name: 'reporting' })
+      }
       this.currentSection = this.sections[this.currentSectionIndex - 1]
     },
 
@@ -182,6 +184,7 @@ export default {
     },
 
     async save(showAlert) {
+      if (this.readonly) return
       try {
         this.processing = true
         const responsesToDelete = this.clonedResponses?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response))
