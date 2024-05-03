@@ -2,7 +2,7 @@ set -euo pipefail
 
 ENV_VAL=$1
 APP_NAME=$2
-OPENSHIFT_NAMESPACE=$3
+OPENSHIFT_NAMESPACE_NO_ENV=$3
 COMMON_NAMESPACE=$4
 D365_API_PREFIX=$5
 D365_API_KEY_HEADER=$6
@@ -14,8 +14,16 @@ SOAM_CLIENT_SECRET_IDIR=${11}
 
 SOAM_KC_REALM_ID="standard"
 SOAM_KC="$ENV_VAL.loginproxy.gov.bc.ca"
-SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$OPENSHIFT_NAMESPACE-$ENV_VAL.apps.silver.devops.gov.bc.ca"
 D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
+
+openshiftNamespace="$OPENSHIFT_NAMESPACE_NO_ENV-$ENV_VAL"
+if [ "$ENV_VAL" = "dev" ] || [ "$ENV_VAL" = "test" ]; then
+  openshiftNamespace="$OPENSHIFT_NAMESPACE_NO_ENV-dev"
+elif [ "$ENV_VAL" = "uat" ]; then
+  openshiftNamespace="$OPENSHIFT_NAMESPACE_NO_ENV-test"
+fi
+
+SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$openshiftNamespace.apps.silver.devops.gov.bc.ca"
 
 siteMinderLogoutUrl=""
 logLevel=""
@@ -52,7 +60,7 @@ rm tempPenBackendkey
 rm tempPenBackendkey.pub
 
 echo Creating config map "$APP_NAME-backend-config-map"
-oc create -n "$OPENSHIFT_NAMESPACE-$ENV_VAL" configmap \
+oc create -n "$OPENSHIFT_NAMESPACE_NO_ENV-$ENV_VAL" configmap \
   "$APP_NAME-backend-$ENV_VAL-config-map" \
   --from-literal="CLAMAV_HOST=clamav.$COMMON_NAMESPACE-$ENV_VAL.svc.cluster.local" \
   --from-literal=CLAMAV_PORT=3310 \
@@ -78,7 +86,7 @@ oc create -n "$OPENSHIFT_NAMESPACE-$ENV_VAL" configmap \
 
 echo
 echo Setting environment variables for "$APP_NAME-backend-$ENV_VAL" application
-oc -n "$OPENSHIFT_NAMESPACE-$ENV_VAL" set env \
+oc -n "$OPENSHIFT_NAMESPACE_NO_ENV-$ENV_VAL" set env \
   --from="configmap/$APP_NAME-backend-$ENV_VAL-config-map" \
   "dc/$APP_NAME-backend-$ENV_VAL"
 
