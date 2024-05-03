@@ -11,9 +11,7 @@ readonly SOAM_CLIENT_ID=$8
 readonly SOAM_CLIENT_SECRET=$9
 readonly SOAM_CLIENT_ID_IDIR=${10}
 readonly SOAM_CLIENT_SECRET_IDIR=${11}
-
 readonly SOAM_KC_REALM_ID="standard"
-readonly SOAM_KC="$ENV_VAL.loginproxy.gov.bc.ca"
 readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 
 NAMESPACE_SUFFIX="$ENV_VAL"
@@ -23,6 +21,13 @@ elif [ "$ENV_VAL" = "uat" ]; then
   NAMESPACE_SUFFIX="test"
 fi
 readonly NAMESPACE_SUFFIX
+readonly SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
+
+NODE_ENV="prod"
+if [ "$ENV_VAL" != "prod" ]; then
+  NODE_ENV="dev"
+fi
+readonly NODE_ENV
 
 readonly OPENSHIFT_NAMESPACE="$NAMESPACE_PREFIX-$NAMESPACE_SUFFIX"
 
@@ -92,7 +97,7 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
   --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$SITE_MINDER_LOGOUT_URL" \
   --from-literal="LOG_LEVEL=$LOG_LEVEL" \
-  --from-literal="NODE_ENV=$ENV_VAL" \
+  --from-literal="NODE_ENV=$NODE_ENV" \
   --dry-run -o yaml | oc apply -f -
 
 echo
