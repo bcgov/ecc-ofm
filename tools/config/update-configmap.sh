@@ -1,59 +1,65 @@
 set -euo pipefail
 
-ENV_VAL=$1
-APP_NAME=$2
-OPENSHIFT_NAMESPACE_NO_ENV=$3
-COMMON_NAMESPACE=$4
-D365_API_PREFIX=$5
-D365_API_KEY_HEADER=$6
-D365_API_KEY_VALUE=$7
-SOAM_CLIENT_ID=$8
-SOAM_CLIENT_SECRET=$9
-SOAM_CLIENT_ID_IDIR=${10}
-SOAM_CLIENT_SECRET_IDIR=${11}
+readonly ENV_VAL=$1
+readonly APP_NAME=$2
+readonly OPENSHIFT_NAMESPACE_NO_ENV=$3
+readonly COMMON_NAMESPACE=$4
+readonly D365_API_PREFIX=$5
+readonly D365_API_KEY_HEADER=$6
+readonly D365_API_KEY_VALUE=$7
+readonly SOAM_CLIENT_ID=$8
+readonly SOAM_CLIENT_SECRET=$9
+readonly SOAM_CLIENT_ID_IDIR=${10}
+readonly SOAM_CLIENT_SECRET_IDIR=${11}
 
-SOAM_KC_REALM_ID="standard"
-SOAM_KC="$ENV_VAL.loginproxy.gov.bc.ca"
-D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
+readonly SOAM_KC_REALM_ID="standard"
+readonly SOAM_KC="$ENV_VAL.loginproxy.gov.bc.ca"
+readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 
-openshiftNamespace="$OPENSHIFT_NAMESPACE_NO_ENV-$ENV_VAL"
+OPENSHIFT_NAMESPACE="$OPENSHIFT_NAMESPACE_NO_ENV-$ENV_VAL"
 if [ "$ENV_VAL" = "dev" ] || [ "$ENV_VAL" = "test" ]; then
-  openshiftNamespace="$OPENSHIFT_NAMESPACE_NO_ENV-dev"
+  OPENSHIFT_NAMESPACE="$OPENSHIFT_NAMESPACE_NO_ENV-dev"
 elif [ "$ENV_VAL" = "uat" ]; then
-  openshiftNamespace="$OPENSHIFT_NAMESPACE_NO_ENV-test"
+  OPENSHIFT_NAMESPACE="$OPENSHIFT_NAMESPACE_NO_ENV-test"
 fi
+readonly OPENSHIFT_NAMESPACE
 
-SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$openshiftNamespace.apps.silver.devops.gov.bc.ca"
+readonly SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$OPENSHIFT_NAMESPACE.apps.silver.devops.gov.bc.ca"
 
-siteMinderLogoutUrl=""
-logLevel=""
+SITE_MINDER_LOGOUT_URL=""
+LOG_LEVEL=""
 if [ "$ENV_VAL" != "prod" ]
 then
-  siteMinderLogoutUrl="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
-  logLevel="verbose"
+  SITE_MINDER_LOGOUT_URL="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
+  LOG_LEVEL="verbose"
 else
   SERVER_FRONTEND="https://ofm.gov.bc.ca" # TODO: Set this to whatever our prod domain will be
-  siteMinderLogoutUrl="https://logon7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
-  logLevel="error"
+  SITE_MINDER_LOGOUT_URL="https://logon7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
+  LOG_LEVEL="error"
 fi
+readonly SITE_MINDER_LOGOUT_URL
 
 echo Fetching one-liner public key from SOAM
-soamOneLineKey=$(curl -sX GET "https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID" \
+SOAM_ONE_LINE_KEY=$(curl -sX GET "https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID" \
   | jq -r .public_key)
+readonly SOAM_ONE_LINE_KEY
 
 echo Formatting public key from SOAM
-formattedPublicKey=$(cat << PUBKEY
+FORMATTED_PUBLIC_KEY=$(cat << PUBKEY
 -----BEGIN PUBLIC KEY-----
-$(echo "$soamOneLineKey" | sed -e "s/.\{64\}/&\n/g")
+$(echo "$SOAM_ONE_LINE_KEY" | sed -e "s/.\{64\}/&\n/g")
 -----END PUBLIC KEY-----
 PUBKEY
 )
-echo "$formattedPublicKey"
+readonly FORMATTED_PUBLIC_KEY
+echo "$FORMATTED_PUBLIC_KEY"
 
 echo Generating private and public keys
 ssh-keygen -b 4096 -t rsa -f tempPenBackendkey -m pem -q -N ""
 UI_PRIVATE_KEY_VAL="$(cat tempPenBackendkey)"
 UI_PUBLIC_KEY_VAL="$(ssh-keygen -f tempPenBackendkey -e -m pem)"
+readonly UI_PRIVATE_KEY_VAL
+readonly UI_PUBLIC_KEY_VAL
 
 echo Removing key files
 rm tempPenBackendkey
@@ -76,11 +82,11 @@ oc create -n "$OPENSHIFT_NAMESPACE_NO_ENV-$ENV_VAL" configmap \
   --from-literal="D365_API_ENDPOINT=$D365_API_ENDPOINT" \
   --from-literal="D365_API_KEY_HEADER=$D365_API_KEY_HEADER" \
   --from-literal="D365_API_KEY_VALUE=$D365_API_KEY_VALUE" \
-  --from-literal="SOAM_PUBLIC_KEY=$formattedPublicKey" \
+  --from-literal="SOAM_PUBLIC_KEY=$FORMATTED_PUBLIC_KEY" \
   --from-literal="SOAM_DISCOVERY=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/.well-known/openid-configuration" \
   --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
-  --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$siteMinderLogoutUrl" \
-  --from-literal="LOG_LEVEL=$logLevel" \
+  --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$SITE_MINDER_LOGOUT_URL" \
+  --from-literal="LOG_LEVEL=$LOG_LEVEL" \
   --from-literal="NODE_ENV=$ENV_VAL" \
   --dry-run -o yaml | oc apply -f -
 
