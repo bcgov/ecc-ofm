@@ -46,11 +46,12 @@ export const CRM_STATE_CODES = Object.freeze({
   INACTIVE: 1,
 })
 
+// Roles are just buckets for permissions and shouldn't have
+// any inherit logic surrounding them. However, there are
+// a couple special cases so define them here
 export const ROLES = Object.freeze({
-  ADMIN: 1,
-  ACCOUNT_MANAGEMENT: 2,
-  FINANCIAL: 3,
-  REPORTING: 4,
+  ACCOUNT_MANAGER: 'Account Manager',
+  IMPERSONATE: 'Impersonate',
 })
 
 export const APPLICATION_STATUS_CODES = Object.freeze({

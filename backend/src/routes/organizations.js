@@ -5,6 +5,8 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getOrganization, getOrganizationFacilities, getOrganizationUsers, updateOrganization } = require('../components/organizations')
 const { param, validationResult } = require('express-validator')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -37,6 +39,7 @@ router.put(
   '/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()

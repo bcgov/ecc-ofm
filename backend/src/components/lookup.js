@@ -73,10 +73,6 @@ async function fetchAndCacheData(cacheKey, operationName) {
   }
   return data
 }
-// TODO (weskubo-cgi) Remove this
-async function getUserRoles() {
-  return fetchAndCacheData('userRoles', 'ofm_portal_role')
-}
 
 async function getRoles() {
   let roles = lookupCache.get('roles')
@@ -90,6 +86,7 @@ async function getRoles() {
       role.data.permissions = item.ofm_portal_role_permission.map((p) => new MappableObjectForFront(p.ofm_portal_privilege, PermissionMappings).toJSON())
       roles.push(role)
     })
+    roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
     lookupCache.put('roles', roles, ONE_HOUR_MS)
   }
   return roles
@@ -116,10 +113,9 @@ async function getReportQuestionTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, requestSubCategories, userRoles, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
+    const [requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
       getRequestCategories(),
       getRequestSubCategories(),
-      getUserRoles(),
       getRoles(),
       getHealthAuthorities(),
       getFacilityTypes(),
@@ -131,8 +127,6 @@ async function getLookupInfo(_req, res) {
     const resData = {
       requestCategories: requestCategories,
       requestSubCategories: requestSubCategories,
-      // TODO (weskubo-cgi) Remove this
-      userRoles: userRoles,
       roles: roles,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
