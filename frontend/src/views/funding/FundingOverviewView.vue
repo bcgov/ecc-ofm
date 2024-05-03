@@ -29,6 +29,47 @@
       <v-card-text>
         <v-window v-model="tab">
           <v-window-item value="agreements">
+            <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1">
+              <v-row>
+                <v-col class="v-col-1">
+                  <AppLabel>Facility:</AppLabel>
+                </v-col>
+                <v-col class="v-col-4">
+                  <v-select
+                    :items="userInfo.facilities"
+                    v-model="selectedFacility"
+                    item-title="facilityName"
+                    label="Select"
+                    :disabled="loading"
+                    density="compact"
+                    variant="outlined"
+                    return-object />
+                </v-col>
+                <v-col class="v-col-2" />
+                <v-col class="v-col-1">
+                  <AppLabel>Date:</AppLabel>
+                </v-col>
+                <v-col>
+                  <AppButtonRadioGroup :options="radioOptions" :defaultOption="selectedRadio" @input="updateSelectedOption" />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="v-col-1">
+                  <AppLabel>Payment Type:</AppLabel>
+                </v-col>
+                <v-col class="v-col-4">
+                  <v-row>
+                    <v-checkbox label="Base Funding" />
+                    <v-checkbox label="Supplementary Allowances" />
+                    <v-checkbox label="Other" />
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-card>
+            <v-row class="d-flex flex-column align-end pb-3">
+              <!-- ??? AppButton id="reset" :primary="false" size="large" width="100px" class="mr-8" @click="resetFilters()">Reset</AppButton -->
+              <AppButton id="run-report" size="large" width="150px" class="mr-4" @click="search()">Search</AppButton>
+            </v-row>
             <h2>Funding Details</h2>
             <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact">
               <template #[`item.actions`]="{ item }">
@@ -54,15 +95,24 @@
 </template>
 
 <script>
+import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
+import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
+import FundingAgreementService from '@/services/fundingAgreementService'
+import { mapState } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'FundingOverviewView',
-  components: { AppBackButton, OrganizationHeader },
+  components: { AppButton, AppBackButton, AppLabel, AppButtonRadioGroup, OrganizationHeader },
+  emits: ['update'],
   data() {
     return {
       tab: null,
+      loading: false,
+      selectedFacility: undefined,
       fundingAgreements: [
         {
           guid: '54a30624-a9ec-4355-b747-899519aae4e9',
@@ -92,9 +142,54 @@ export default {
         { title: 'Status', key: 'status' },
         { title: 'Actions', key: 'actions' },
       ],
+      selectedRadio: 1,
+      radioOptions: [
+        { label: '3 Months', value: 1 },
+        { label: '6 Months', value: 2 },
+        { label: 'YTD', value: 3 },
+        { label: 'Custom', value: 4 },
+      ],
+      fundingAgreements2: [],
     }
+  },
+  computed: {
+    ...mapState(useAuthStore, ['userInfo']),
+  },
+  async created() {
+    await this.getFundingAgreements()
+    console.log('Funding Overview View created: ', JSON.stringify(this.fundingAgreements2, null, 2))
+  },
+  methods: {
+    updateSelectedOption(value) {
+      this.selectedRadio = value
+      console.log('Selected Radio:', value)
+    },
+
+    async getFundingAgreements() {
+      for (let facility of this.userInfo.facilities) {
+        try {
+          const result = await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId);
+          this.fundingAgreements2.push(result);
+        } catch (error) {
+          console.error(`Error getting funding agreements for facility ID ${facility.facilityId}:`, error);
+        }
+      }
+    },
+
   },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-checkbox :deep(.v-input--selection-controls__input) {
+  transform: scale(1.33);
+}
+
+.custom-checkbox :deep(.v-input--selection-controls__ripple::before) {
+  background-color: blue;
+}
+
+.custom-checkbox :deep(.v-icon.v-icon--checkbox) {
+  color: white;
+}
+</style>
