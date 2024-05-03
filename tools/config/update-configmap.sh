@@ -24,21 +24,25 @@ elif [ "$ENV_VAL" = "uat" ]; then
 fi
 readonly NAMESPACE_SUFFIX
 
-readonly SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$OPENSHIFT_NAMESPACE.apps.silver.devops.gov.bc.ca"
 readonly OPENSHIFT_NAMESPACE="$NAMESPACE_PREFIX-$NAMESPACE_SUFFIX"
 
 SITE_MINDER_LOGOUT_URL=""
-LOG_LEVEL=""
+SERVER_FRONTEND="https://ofm-frontend-$ENV_VAL-$OPENSHIFT_NAMESPACE.apps.silver.devops.gov.bc.ca"
 if [ "$ENV_VAL" != "prod" ]
 then
   SITE_MINDER_LOGOUT_URL="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
-  LOG_LEVEL="verbose"
 else
   SERVER_FRONTEND="https://ofm.gov.bc.ca" # TODO: Set this to whatever our prod domain will be
   SITE_MINDER_LOGOUT_URL="https://logon7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
-  LOG_LEVEL="error"
 fi
 readonly SITE_MINDER_LOGOUT_URL
+readonly SERVER_FRONTEND
+
+LOG_LEVEL="http"
+if [ "$ENV_VAL" = "dev" ]; then
+  LOG_LEVEL="verbose"
+fi
+readonly LOG_LEVEL
 
 echo Fetching one-liner public key from SOAM
 SOAM_ONE_LINE_KEY=$(curl -sX GET "https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID" \
