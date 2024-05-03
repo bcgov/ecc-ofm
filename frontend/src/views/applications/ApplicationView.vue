@@ -47,7 +47,6 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import FacilityService from '@/services/facilityService'
 import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'

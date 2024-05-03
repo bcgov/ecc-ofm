@@ -28,7 +28,7 @@ export const useAppStore = defineStore('app', {
     getRoleNameById: (state) => {
       return (id) => {
         const role = state.roles?.find((role) => role.roleId === id)
-        return role?.description
+        return role?.roleName
       }
     },
     getLicenceTypeNameById: (state) => {

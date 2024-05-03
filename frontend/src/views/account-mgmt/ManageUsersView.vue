@@ -147,7 +147,6 @@ export default {
     },
   },
   async created() {
-    this.ROLES = ROLES
     await this.getUsersAndFacilities()
   },
   methods: {
@@ -208,8 +207,8 @@ export default {
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
         // TODO (weskubo-cgi) Revisit this requirement given new Roles Security Matrix
-        const roleA = a.role === this.ROLES.ACCOUNT_MANAGER
-        const roleB = b.role === this.ROLES.ACCOUNT_MANAGER
+        const roleA = a.role?.roleName === ROLES.ACCOUNT_MANAGER
+        const roleB = b.role?.roleName === ROLES.ACCOUNT_MANAGER
         if (roleA && !roleB) return -1
         if (!roleA && roleB) return 1
 

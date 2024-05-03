@@ -230,7 +230,6 @@ export default {
   },
   async created() {
     this.facilitiesToAdminister = await this.getUserFacilities(this.userInfo.contactId, true)
-    this.ROLES = ROLES
   },
   methods: {
     /**

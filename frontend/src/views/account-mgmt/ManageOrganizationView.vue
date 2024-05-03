@@ -78,7 +78,7 @@
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapActions, mapState } from 'pinia'
+import { mapState } from 'pinia'
 
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -131,7 +131,6 @@ export default {
     await this.loadData()
   },
   methods: {
-    ...mapActions(useAuthStore, ['hasRole']),
     /**
      * Load the data for the page
      */

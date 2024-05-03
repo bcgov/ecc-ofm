@@ -22,17 +22,11 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia'
-
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: { AppBackButton },
   mixins: [permissionsMixin],
-  methods: {
-    ...mapActions(useAuthStore, ['hasRole']),
-  },
 }
 </script>
