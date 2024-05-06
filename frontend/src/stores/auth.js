@@ -72,11 +72,10 @@ export const useAuthStore = defineStore('auth', {
           // A facility can apply for a core application if there is an Open Intake or it is in the allowed facility list of a Limited Intake
           this.userInfo?.facilities?.forEach((facility) => {
             facility.isAddCoreApplicationAllowed = appStore.applicationIntakes?.some((intake) => {
-              const allowedFacilities = intake?.facilities?.map((facility) => facility.facilityId)
               const isWithinApplicationIntakeWindow = moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
               const isOpenIntake = intake.type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE
-              const isFacilityAllowedToApply = allowedFacilities?.includes(facility.facilityId)
-              return (isOpenIntake && isWithinApplicationIntakeWindow) || (isWithinApplicationIntakeWindow && isFacilityAllowedToApply)
+              const limitedIntakeFacilities = intake?.facilities?.map((facility) => facility.facilityId)
+              return isWithinApplicationIntakeWindow && (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
             })
           })
           this.isUserInfoLoaded = true
