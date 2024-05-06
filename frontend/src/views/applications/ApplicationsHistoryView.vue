@@ -11,33 +11,32 @@
       </v-col>
     </v-row>
     <template v-if="hasPermission(PERMISSIONS.APPLY_FOR_FUNDING)">
-      <v-row>
-        <v-col class="pb-0 d-flex align-end">
-          <h3>Add New Application</h3>
-        </v-col>
-        <v-col v-if="!hasAValidApplication && !loading" class="pb-0">
-          <AppAlertBanner v-if="!hasGoodStanding" type="warning">
-            {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
-          </AppAlertBanner>
-          <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col class="pt-1">
+      <h3 class="mt-6 mb-2">Add New Application</h3>
+      <v-row class="align-end">
+        <v-col cols="12" md="6">
           <v-card class="home-card justify-center">
             <v-card-title class="text-center">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               OFM Application
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-              Before starting an application, verify your organization and facility details in Account Management.
+              <div v-if="isAddCoreApplicationAllowed">Before starting an application, verify your organization and facility details in Account Management.</div>
+              <div v-else>The Application intake is currently closed.</div>
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="core-application-button" size="large" width="250px" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="mt-8 mb-0">Add OFM Application</AppButton>
+              <AppButton id="core-application-button" size="large" width="250px" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="mt-8 mb-0">
+                Add OFM Application
+              </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
-        <v-col class="pt-1">
+        <v-col cols="12" md="6">
+          <div v-if="!hasAValidApplication && !loading">
+            <AppAlertBanner v-if="!hasGoodStanding" type="warning">
+              {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
+            </AppAlertBanner>
+            <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
+          </div>
           <v-card class="home-card justify-center">
             <v-card-title class="text-center">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
@@ -53,12 +52,12 @@
         </v-col>
       </v-row>
     </template>
-    <v-row>
+    <v-row class="mt-6">
       <v-col cols="12" md="5" lg="5" xl="5" class="mt-2">
         <h3>Applications Summary</h3>
       </v-col>
       <v-col cols="12" md="7" lg="7" xl="7" class="d-flex align-end mb-3">
-        <FacilityFilter :loading="loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter v-if="!loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
@@ -155,6 +154,9 @@ export default {
       return this.sortApplicationItems(
         this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
+    },
+    isAddCoreApplicationAllowed() {
+      return this.userInfo?.facilities?.some((facility) => facility.isAddCoreApplicationAllowed)
     },
   },
   async created() {

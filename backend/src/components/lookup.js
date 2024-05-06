@@ -1,11 +1,20 @@
 'use strict'
-const { getOperation, getLabelFromValue } = require('./utils')
+const { getOperation } = require('./utils')
 const HttpStatus = require('http-status-codes')
 const _ = require('lodash')
 const cache = require('memory-cache')
-const { PermissionMappings, RequestCategoryMappings, RequestSubCategoryMappings, RoleMappings, FiscalYearMappings, MonthMappings } = require('../util/mapping/Mappings')
+const {
+  ApplicationIntakeMappings,
+  FacilityIntakeMappings,
+  PermissionMappings,
+  RequestCategoryMappings,
+  RequestSubCategoryMappings,
+  RoleMappings,
+  FiscalYearMappings,
+  MonthMappings,
+} = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
-const log = require('../components/logger')
+const log = require('./logger')
 
 const lookupCache = new cache.Cache()
 const ONE_HOUR_MS = 60 * 60 * 1000 // Cache timeout set for one hour
@@ -74,6 +83,23 @@ async function fetchAndCacheData(cacheKey, operationName) {
   return data
 }
 
+async function getApplicationIntakes() {
+  let applicationIntakes = lookupCache.get('applicationIntakes')
+  if (!applicationIntakes) {
+    applicationIntakes = []
+    const response = await getOperation(
+      'ofm_intakes?$select=ofm_intakeid,ofm_intake_type,ofm_start_date,ofm_end_date&$filter=(statecode eq 0)&$expand=ofm_intake_facilityintake($select=ofm_facility_intakeid,_ofm_facility_value)',
+    )
+    response?.value?.forEach((item) => {
+      const intake = new MappableObjectForFront(item, ApplicationIntakeMappings).toJSON()
+      intake.facilities = item.ofm_intake_facilityintake?.map((facility) => new MappableObjectForFront(facility, FacilityIntakeMappings).toJSON())
+      applicationIntakes.push(intake)
+    })
+    lookupCache.put('applicationIntakes', applicationIntakes, ONE_HOUR_MS)
+  }
+  return applicationIntakes
+}
+
 async function getRoles() {
   let roles = lookupCache.get('roles')
   if (!roles) {
@@ -113,7 +139,8 @@ async function getReportQuestionTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
+      getApplicationIntakes(),
       getRequestCategories(),
       getRequestSubCategories(),
       getRoles(),
@@ -125,6 +152,7 @@ async function getLookupInfo(_req, res) {
       getMonths(),
     ])
     const resData = {
+      applicationIntakes: applicationIntakes,
       requestCategories: requestCategories,
       requestSubCategories: requestSubCategories,
       roles: roles,
@@ -137,6 +165,7 @@ async function getLookupInfo(_req, res) {
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
