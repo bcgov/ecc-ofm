@@ -177,12 +177,9 @@
 
 <script>
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppButton from '@/components/ui/AppButton.vue'
-import alertMixin from '@/mixins/alertMixin'
 
 export default {
-  components: { AppLabel, AppButton },
-  mixins: [alertMixin],
+  components: { AppLabel },
   props: {
     facility: {
       type: Object,
