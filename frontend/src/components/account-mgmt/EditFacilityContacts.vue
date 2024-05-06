@@ -49,8 +49,8 @@
                         </template>
                         <template v-if="editable" v-slot:item.actions="{ item }">
                           <v-row v-if="editMode" justify="end">
-                            <AppButton variant="text" :disabled="loading">
-                              <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon" @click="deleteContact(item)"></v-icon>
+                            <AppButton variant="text" :disabled="loading" @click="deleteContact(item)">
+                              <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon"></v-icon>
                             </AppButton>
                           </v-row>
                         </template>

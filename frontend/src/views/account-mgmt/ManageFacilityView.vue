@@ -86,8 +86,8 @@
                 </v-col>
                 <v-col cols="1">
                   <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
-                    <AppButton variant="text" :disabled="editMode || loading">
-                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditPrimaryContact()"></v-icon>
+                    <AppButton variant="text" :disabled="editMode || loading" @click="toggleEditPrimaryContact()">
+                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>
                   </v-row>
                 </v-col>
@@ -154,7 +154,6 @@ import rules from '@/utils/rules'
 import { ApiRoutes } from '@/utils/constants'
 import { useAppStore } from '@/stores/app'
 import { mapState } from 'pinia'
-import { mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import ApiService from '@/common/apiService'
 import ApplicationService from '@/services/applicationService'
