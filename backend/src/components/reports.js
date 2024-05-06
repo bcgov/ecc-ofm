@@ -5,6 +5,7 @@ const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, Q
 const log = require('../components/logger')
 const HttpStatus = require('http-status-codes')
 const { isEmpty, orderBy } = require('lodash')
+const { buildFilterQuery } = require('../util/common')
 
 function mapQuestionObjectForFront(data) {
   const question = new MappableObjectForFront(data, SurveyQuestionMappings).toJSON()
@@ -43,44 +44,6 @@ function mapFixedResponseObjectForFront(fixedResponseQuery, data) {
     }
   })
   return result
-}
-
-// TODO Remove this method when Reporting screen complete
-async function getFacilityReports(req, res) {
-  try {
-    const data = [
-      {
-        alertType: 'Overdue',
-        title: '2022 Provider Profile',
-        reportType: 'Annual',
-        reportId: 'AR-1104100006',
-        status: '',
-        lastActivityDate: '',
-        actions: 'Open',
-      },
-      {
-        alertType: 'Due',
-        title: 'December 2023',
-        reportType: 'Monthly',
-        reportId: 'MR-231200001',
-        status: 'Draft',
-        lastActivityDate: '1/12/2024',
-        actions: 'Open/Discard',
-      },
-      {
-        alertType: 'Completed',
-        title: 'Quarterly Service Details Confirmation',
-        reportType: 'Other',
-        reportId: 'OR-224100006',
-        status: 'Submitted',
-        lastActivityDate: '2/2/2024',
-        actions: 'Open/Download',
-      },
-    ]
-    return res.status(HttpStatus.OK).json(data)
-  } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
 }
 
 async function getSurveySections(req, res) {
@@ -138,6 +101,25 @@ async function getQuestionFixedResponse(fixedResponseQuery, entityId) {
   }
 }
 
+async function getSurveyResponses(req, res) {
+  try {
+    if (isEmpty(req?.query)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+    }
+    const surveyResponses = []
+    const operation = `ofm_survey_responses?$filter=(${buildFilterQuery(req?.query, SurveyResponseMappings)})`
+    const response = await getOperation(operation)
+    response?.value?.forEach((surveyResponse) => surveyResponses.push(new MappableObjectForFront(surveyResponse, SurveyResponseMappings).toJSON()))
+    if (isEmpty(surveyResponses)) {
+      return res.status(HttpStatus.NO_CONTENT).json()
+    }
+    return res.status(HttpStatus.OK).json(surveyResponses)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function createSurveyResponse(req, res) {
   try {
     const payload = {
@@ -147,6 +129,7 @@ async function createSurveyResponse(req, res) {
       'ofm_fiscal_year@odata.bind': `/ofm_fiscal_years(${req.body?.fiscalYearId})`,
       'ofm_reporting_month@odata.bind': `/ofm_months(${req.body?.reportingMonthId})`,
       ofm_response_type: req.body?.surveyResponseType,
+      ofm_name: req.body?.surveyResponseTitle,
     }
     const response = await postOperation('ofm_survey_responses', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
@@ -239,10 +222,10 @@ async function deleteQuestionResponse(req, res) {
 }
 
 module.exports = {
-  getFacilityReports,
   getSurveySections,
   getSurveyQuestions,
   getSurveyResponse,
+  getSurveyResponses,
   createSurveyResponse,
   updateSurveyResponse,
   getQuestionResponses,

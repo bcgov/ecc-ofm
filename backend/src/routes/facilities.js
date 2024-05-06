@@ -5,6 +5,8 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility, updateFacilityPrimaryContact } = require('../components/facilities')
 const { param, validationResult } = require('express-validator')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -27,10 +29,17 @@ router.get('/:facilityId/contacts', passport.authenticate('jwt', { session: fals
 /**
  * Update a Facility
  */
-router.put('/:facilityId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return updateFacility(req, res)
-})
+router.put(
+  '/:facilityId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
+  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateFacility(req, res)
+  },
+)
 
 /**
  * Get facility's licences by facilityId.
@@ -42,6 +51,7 @@ router.get('/:facilityId/licences', passport.authenticate('jwt', { session: fals
 
 /**
  * Update an Facilities Primary Contact
+ * TODO (jgstorey) This doesn't appear to be used anymore
  */
 router.put('/:facilityId/contacts', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()

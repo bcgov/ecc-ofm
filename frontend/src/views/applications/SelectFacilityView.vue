@@ -24,7 +24,7 @@
           <v-select
             id="select-facility"
             v-model="facilityId"
-            :items="userInfo?.facilities"
+            :items="filteredFacilities"
             item-title="facilityName"
             item-value="facilityId"
             :rules="rules.required"
@@ -84,6 +84,10 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
+
+    filteredFacilities() {
+      return this.userInfo?.facilities?.filter((facility) => facility.isAddCoreApplicationAllowed)
+    },
   },
 
   watch: {

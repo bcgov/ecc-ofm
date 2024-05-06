@@ -45,19 +45,19 @@
                           {{ `${item.firstName} ${item.lastName}` }}
                         </template>
                         <template v-slot:item.role="{ item }">
-                          {{ getRoleNameById(item.role) }}
+                          {{ item.role?.roleName }}
                         </template>
                         <template v-if="editable" v-slot:item.actions="{ item }">
                           <v-row v-if="editMode" justify="end">
-                            <AppButton variant="text" :disabled="loading">
-                              <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon" @click="deleteContact(item)"></v-icon>
+                            <AppButton variant="text" :disabled="loading" @click="deleteContact(item)">
+                              <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon"></v-icon>
                             </AppButton>
                           </v-row>
                         </template>
                         <template v-if="editable" v-slot:[`header.actions`]>
                           <v-row v-if="!editMode" justify="end">
-                            <AppButton variant="text" :disabled="parentInEditMode || loading">
-                              <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon" @click="toggleEditMode()"></v-icon>
+                            <AppButton variant="text" :disabled="parentInEditMode || loading" @click="toggleEditMode()">
+                              <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                             </AppButton>
                           </v-row>
                         </template>
@@ -86,8 +86,6 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
 
 export default {
   name: 'EditFacilityContacts',
@@ -150,7 +148,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     isSaveDisabled() {
       return this.updatedContactsToAdd?.length === 0 && this.updatedContactsToRemove?.length === 0
     },

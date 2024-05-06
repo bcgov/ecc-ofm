@@ -47,7 +47,6 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import FacilityService from '@/services/facilityService'
 import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'
@@ -80,7 +79,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
@@ -189,7 +187,6 @@ export default {
         this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
         this.contacts?.forEach((contact) => {
           contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
