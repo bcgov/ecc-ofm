@@ -1,6 +1,6 @@
 'use strict'
-const { getOperation } = require('./utils')
-const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { getOperation, patchOperationWithObjectId } = require('./utils')
+const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildFilterQuery } = require('../util/common')
 const { FundingAgreementMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
@@ -26,6 +26,18 @@ async function getFundingAgreements(req, res) {
   }
 }
 
+async function updateFundingAgreement(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, FundingAgreementMappings).toJSON()
+    const response = await patchOperationWithObjectId('ofm_fundings', req.params.fundingAgreementId, payload)
+    return res.status(HttpStatus.NO_CONTENT).json(response)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getFundingAgreements,
+  updateFundingAgreement,
 }

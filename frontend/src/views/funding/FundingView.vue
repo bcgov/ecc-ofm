@@ -1,30 +1,166 @@
 <template>
-  <OrganizationHeader :showFacility="false" />
+  <OrganizationHeader :show-facility="false" />
   <v-container fluid v-bind="$attrs">
-    <h1>FA-######</h1>
-    <div style="color: #999999">FA GUID: {{ $route.params.fundingGuid }}</div>
+    <h1>OFM-24000102-00</h1>
+    <!-- <div style="color: #999999">FA GUID: {{ $route.params.fundingGuid }}</div> -->
     <p>Carefully review your funding agreement.</p>
-    <h4>Service Delivery Details</h4>
-    <h4>Declaration</h4>
-    <div style="background-color: #eeeeee; border: 1px solid #333333; padding: 5px">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam viverra risus et auctor malesuada. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam
-      finibus odio lacus, et ultrices orci congue vel. Nam dui ligula, eleifend ac est in, cursus interdum metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi molestie massa et risus
-      mattis, vel lobortis ex condimentum. Mauris efficitur eros ac arcu efficitur, at sodales enim commodo. Maecenas non diam lorem. Cras consectetur, odio sit amet blandit euismod, odio turpis
-      finibus dui, a facilisis enim mi in est.
-    </div>
-    <v-checkbox label="I agree" />
-    <v-text-field placeholder="Name of authorized person" />
-    <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+
+    <h4 class="lg-px-10 my-10">Service Delivery Details</h4>
+
+    <v-row class="lg-mt-10 lg-px-10">
+      <v-col cols="12" class="pt-0">
+        <v-card elevation="0" variant="outlined" class="">
+          <v-skeleton-loader :loading="loading" type="table-tbody">
+            <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
+              <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
+                <v-expansion-panel-title>
+                  <LicenceHeader :licence="licence" />
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <LicenceDetails :read-only="true" :licence="licence" />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+            <div v-else class="pa-5">0 Licences</div>
+          </v-skeleton-loader>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <br />
+    <br />
+    <h4 class="lg-px-10">Declaration</h4>
+    <br />
+    <br />
+
+    <v-row class="lg-px-10">
+      <v-col cols="12" class="pt-0">
+        <div style="background-color: #eeeeee; border: 1px solid #333333" class="lg-pa-10 pa-5 overflow-y-auto">
+          I do hereby certify that I am the
+          <strong>authorized signing authority</strong>
+          and that all of the information provided is true and complete to the best of my knowledge and belief. I consent to the Ministry contacting other branches within the Ministry and other
+          Province ministries to validate the accuracy of any information that I have provided.
+          <br />
+          <br />
+          By completing and submitting this Program Confirmation Form (the Form) electronically, I hereby confirm that I have carefully read this Form and the corresponding terms and conditions of the
+          Operating Funding Model (OFM) Funding Agreement (the Funding Agreement) and that I agree to be bound by such terms and conditions. I further confirm that by clicking “I agree” below, I
+          represent and warrant that:
+          <br />
+          <br />
+          <ol>
+            <li class="pl-4">I am the authorized representative and signing authority of the Provider as named in the OFM Agreement (the Provider);</li>
+            <li class="pl-4">
+              I have authority to submit the Form on behalf of the Provider and that by clicking “I agree”, I do hereby bind the Provider to the terms and conditions of the Funding Agreement if the
+              Province accepts this Form and enrolls the Provider in the Operating Funding Model Program; and
+            </li>
+            <li class="pl-4">
+              All information provided in the Form or otherwise in support of the Provider to receive funding under the Funding Agreement is true and complete to the best of my knowledge and belief. I
+              understand and acknowledge thatproviding false or misleading information either on the Form or otherwise to the Province to obtain any funding under the Funding Agreement or otherwise
+              failing to comply with the Funding Agreement could result in certain penalties or repayment obligations, or both, under any or all of the Child Care BC Act, any successor legislation, or
+              the Funding Agreement.
+              <br />
+              <br />
+              I understand and acknowledge that until such time as the Province confirms approval or temporary approval of enrolment, in writing the Provider is not formally enrolled in the Program.
+              The Province is not responsible for any pre-payments the Provider may make in anticipation of enrolment in either of these initiatives and any pre-payments made are at the Provider's own
+              risk.
+            </li>
+          </ol>
+        </div>
+      </v-col>
+    </v-row>
+    <v-checkbox v-model="agreeConsentCertify" :disabled="!canEdit" label="I agree, consent and certify" />
+
+    <v-row class="justify-space-between mx-5">
+      <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+      <AppButton id="submit-funding-agreement" size="large" width="220px" class="mt-2" :disabled="!agreeConsentCertify" :loading="loading" @click="submit()">Submit</AppButton>
+    </v-row>
   </v-container>
 </template>
 
 <script>
+import alertMixin from '@/mixins/alertMixin'
+import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import FacilityService from '@/services/facilityService'
+import FundingAgreementService from '@/services/fundingAgreementService'
+import LicenceService from '@/services/licenceService'
+import LicenceHeader from '@/components/licences/LicenceHeader.vue'
+import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'FundingView',
-  components: { AppBackButton, OrganizationHeader },
+  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader },
+  mixins: [alertMixin, permissionsMixin],
+  props: {
+    facility: {
+      type: Object,
+      required: false, //should be true
+      default: () => {
+        return { facilityId: '03d677db-0f04-ef11-9f8a-000d3af4865d' }
+      },
+    },
+  },
+  data() {
+    return {
+      facilityId: '03d677db-0f04-ef11-9f8a-000d3af4865d',
+      licences: [],
+      contacts: [],
+      panel: [],
+      primaryContact: undefined,
+      primaryContactLastSaved: undefined,
+      loading: false,
+      agreeConsentCertify: false,
+      editMode: false,
+      editModePrimaryContact: false,
+
+      showChangeRequestDialog: false,
+      showUnableToSubmitCrDialog: false,
+      preventChangeRequestType: undefined,
+    }
+  },
+  computed: {
+    canEdit() {
+      return this.hasPermission(this.PERMISSIONS.SIGN_FUNDING_AGREEMENT)
+    },
+  },
+  async created() {
+    await this.loadData()
+  },
+  methods: {
+    async loadData() {
+      try {
+        this.loading = true
+        //await Promise.all([this.getFacility(), this.getContacts(), this.getLicences()])
+        await this.getLicences()
+      } finally {
+        this.loading = false
+      }
+    },
+    async getLicences() {
+      try {
+        this.licences = await FacilityService.getLicences(this.facility?.facilityId)
+        await Promise.all(
+          this.licences.map(async (licence) => {
+            licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
+          }),
+        )
+      } catch (error) {
+        this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
+      }
+    },
+
+    async submit() {
+      const payload = {
+        agreeConsentCertify: this.agreeConsentCertify,
+        statusCode: FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, //TODO: JB - add mapping for this
+      }
+
+      await FundingAgreementService.updateFundingAgreement('e60816e0-5106-ef11-9f89-000d3af44815', payload)
+    },
+  },
 }
 </script>
 

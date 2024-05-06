@@ -64,6 +64,19 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
 
 export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({
   DRAFT: 1,
+  //2??
+  FA_REVIEW: 3,
+  IN_REVIEW_WITH_MINISTRY_EA: 4,
+  SIGNATURE_PENDING: 5,
+  SUBMITTED: 6,
+  //7??
+  ACTIVE: 8,
+  //9??
+  CANCELLED: 10,
+})
+
+export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
+  DRAFT: 1,
   CANCELLED: 2,
   SUBMITTED: 3,
   IN_REVIEW: 4,

@@ -286,6 +286,7 @@ const FundingAgreementMappings = [
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
+  { back: 'ofm_declaration', front: 'agreeConsentCertify' },
 ]
 //the three different supp applications share the same data structure, so irrelevant fields will just be null.
 const SupplementaryApplicationMappings = [

@@ -14,5 +14,17 @@ export default {
     }
   },
 
+  async updateFundingAgreement(fundingAgreementId, payload) {
+    console.log('called')
+    try {
+      if (!fundingAgreementId) return
+      const response = await ApiService.apiAxios.patch(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}`, payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
+      throw error
+    }
+  },
+
   //TODO: other screens may require a table of all previous funding agreements. Add an endpoint and function here to support that functionality.
 }
