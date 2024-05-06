@@ -121,6 +121,11 @@ export const APPLICATION_ROUTES = Object.freeze({
   CONFIRMATION: 'application-confirmation',
 })
 
+export const APPLICATION_INTAKE_TYPES = Object.freeze({
+  OPEN_INTAKE: 1,
+  LIMITED_INTAKE: 2,
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',

@@ -128,6 +128,18 @@ const UsersPermissionsFacilityMappings = [
   { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
 ]
 
+const ApplicationIntakeMappings = [
+  { back: 'ofm_intakeid', front: 'applicationIntakeId' },
+  { back: 'ofm_intake_type', front: 'type' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+]
+
+const FacilityIntakeMappings = [
+  { back: 'ofm_facility_intakeid', front: 'facilityIntakeId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+]
+
 const ApplicationMappings = [
   { back: 'ofm_applicationid', front: 'applicationId' },
   { back: 'ofm_application', front: 'referenceNumber' },
@@ -391,12 +403,14 @@ const QuestionResponseMappings = [
 ]
 
 module.exports = {
+  ApplicationIntakeMappings,
   ApplicationMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
   DocumentMappings,
+  FacilityIntakeMappings,
   FacilityMappings,
   FiscalYearMappings,
   FundingAgreementMappings,
