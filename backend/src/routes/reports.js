@@ -64,7 +64,7 @@ const postQuestionResponseSchema = {
  * Accepted queries:
  * - surveyId: to find all sections in a survey
  */
-router.get('/survey-sections', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/survey-sections', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
   validationResult(req).throw()
   return getSurveySections(req, res)
 })
@@ -74,7 +74,7 @@ router.get('/survey-sections', passport.authenticate('jwt', { session: false }),
  * Accepted queries:
  * - sectionId: to find all questions in a survey section
  */
-router.get('/survey-questions', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/survey-questions', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
   validationResult(req).throw()
   return getSurveyQuestions(req, res)
 })
@@ -86,6 +86,7 @@ router.get(
   '/survey-responses/:surveyResponseId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
   [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -98,7 +99,7 @@ router.get(
  * Accepted queries:
  * - surveyResponseId: to find all question responses in a survey response
  */
-router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
   validationResult(req).throw()
   return getQuestionResponses(req, res)
 })
@@ -108,7 +109,7 @@ router.get('/question-responses', passport.authenticate('jwt', { session: false 
  * Accepted queries:
  * - facilityId and fiscalYearId: to find all survey responses for a facility in a fiscal year
  */
-router.get('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
   validationResult(req).throw()
   return getSurveyResponses(req, res)
 })
