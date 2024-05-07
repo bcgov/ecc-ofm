@@ -15,6 +15,17 @@ export default {
     }
   },
 
+  async getFundingAgreementById(fundingAgreementId) {
+    try {
+      if (!fundingAgreementId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
+      throw error
+    }
+  },
+
   async updateFundingAgreement(fundingAgreementId, payload) {
     try {
       if (!fundingAgreementId) return

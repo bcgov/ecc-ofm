@@ -1,13 +1,13 @@
 <template>
   <OrganizationHeader :show-facility="false" />
-  <v-container fluid v-bind="$attrs">
+  <v-container fluid v-bind="$attrs" class="px-md-16">
     <h1>{{ fundingAgreement?.fundingAgreementNumber }}</h1>
-    <!-- <div style="color: #999999">FA GUID: {{ $route.params.fundingGuid }}</div> -->
+
     <p>Carefully review your funding agreement.</p>
 
-    <h4 class="lg-px-10 my-10">Service Delivery Details</h4>
+    <h4 class="my-10">Service Delivery Details</h4>
 
-    <v-row class="lg-mt-10 lg-px-10">
+    <v-row class="mt-lg-10">
       <v-col cols="12" class="pt-0">
         <v-card elevation="0" variant="outlined" class="">
           <v-skeleton-loader :loading="loading" type="table-tbody">
@@ -34,9 +34,9 @@
     <br />
 
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-    <v-row v-else class="lg-px-10">
+    <v-row v-else class="">
       <v-col cols="12" class="pt-0">
-        <div style="background-color: #eeeeee; border: 1px solid #333333" class="lg-pa-10 pa-5 overflow-y-auto">
+        <div style="background-color: #eeeeee; border: 1px solid #333333" class="pa-lg-7 pa-5 overflow-y-auto">
           I do hereby certify that I am the
           <strong>authorized signing authority</strong>
           and that all of the information provided is true and complete to the best of my knowledge and belief. I consent to the Ministry contacting other branches within the Ministry and other
@@ -69,12 +69,21 @@
         </div>
       </v-col>
 
-      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="!canEdit" label="I agree, consent and certify" />
+      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="!canEditFA" label="I agree, consent and certify" />
     </v-row>
 
-    <v-row v-if="!loading" class="justify-space-between mx-5">
-      <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
-      <AppButton id="submit-funding-agreement" size="large" width="220px" class="mt-2" :disabled="!fundingAgreement.agreeConsentCertify" :loading="loading" @click="submit()">Submit</AppButton>
+    <v-row v-if="!loading" class="justify-center justify-md-space-between mx-md-7 my-3">
+      <AppBackButton id="back-home-button" width="240px" :to="{ name: 'home' }">Home</AppBackButton>
+      <AppButton
+        id="submit-funding-agreement"
+        size="large"
+        width="240px"
+        class="mt-2"
+        :disabled="isFundingAgreementLocked || !fundingAgreement.agreeConsentCertify"
+        :loading="loading"
+        @click="submit()">
+        Submit
+      </AppButton>
     </v-row>
   </v-container>
 </template>
@@ -96,15 +105,6 @@ export default {
   name: 'FundingView',
   components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader },
   mixins: [alertMixin, permissionsMixin],
-  props: {
-    facility: {
-      type: Object,
-      required: false, //should be true
-      default: () => {
-        return { facilityId: '03d677db-0f04-ef11-9f8a-000d3af4865d' }
-      },
-    },
-  },
   data() {
     return {
       fundingAgreement: undefined,
@@ -114,7 +114,7 @@ export default {
     }
   },
   computed: {
-    canEdit() {
+    canEditFA() {
       return this.hasPermission(this.PERMISSIONS.SIGN_FUNDING_AGREEMENT) && !this.isFundingAgreementLocked
     },
     isFundingAgreementLocked() {
@@ -133,7 +133,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByFacilityId(this.facility.facilityId)
+        this.fundingAgreement = await FundingAgreementService.getFundingAgreementById(this.$route.params.fundingGuid)
         await this.getLicences()
       } finally {
         this.loading = false
@@ -141,14 +141,14 @@ export default {
     },
     async getLicences() {
       try {
-        this.licences = await FacilityService.getLicences(this.facility?.facilityId)
+        this.licences = await FacilityService.getLicences(this.fundingAgreement?.facilityId)
         await Promise.all(
           this.licences.map(async (licence) => {
             licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
           }),
         )
       } catch (error) {
-        this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
+        this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.fundingAgreement?.facilityId, error)
       }
     },
 
@@ -163,6 +163,7 @@ export default {
       try {
         await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
         this.setSuccessAlert('Funding Agreement submitted')
+        this.$router.push({ name: 'funding-confirmation' })
       } catch (error) {
         this.setFailureAlert('Failed to submit funding agreement')
       }
