@@ -7,8 +7,6 @@ const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 const { isEmpty } = require('lodash')
 
-const getFundingSelectString = '$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
-
 async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []

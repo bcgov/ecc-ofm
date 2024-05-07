@@ -144,7 +144,7 @@ export default {
         this.licences = await FacilityService.getLicences(this.fundingAgreement?.facilityId)
         await Promise.all(
           this.licences.map(async (licence) => {
-            licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
+            licence.licenceDetails = await LicenceService.getLicenceDetails(licence?.licenceId)
           }),
         )
       } catch (error) {
