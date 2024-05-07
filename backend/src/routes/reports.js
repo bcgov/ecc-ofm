@@ -16,6 +16,8 @@ const {
   updateQuestionResponse,
   deleteQuestionResponse,
 } = require('../components/reports')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -114,10 +116,17 @@ router.get('/survey-responses', passport.authenticate('jwt', { session: false })
 /**
  * Create a survey response
  */
-router.post('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(postSurveyResponseSchema)], (req, res) => {
-  validationResult(req).throw()
-  return createSurveyResponse(req, res)
-})
+router.post(
+  '/survey-responses',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
+  [checkSchema(postSurveyResponseSchema)],
+  (req, res) => {
+    validationResult(req).throw()
+    return createSurveyResponse(req, res)
+  },
+)
 
 /**
  * Update a survey response
@@ -126,6 +135,7 @@ router.patch(
   '/survey-responses/:surveyResponseId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
   [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -136,10 +146,17 @@ router.patch(
 /**
  * Create a question response
  */
-router.post('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(postQuestionResponseSchema)], (req, res) => {
-  validationResult(req).throw()
-  return createQuestionResponse(req, res)
-})
+router.post(
+  '/question-responses',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
+  [checkSchema(postQuestionResponseSchema)],
+  (req, res) => {
+    validationResult(req).throw()
+    return createQuestionResponse(req, res)
+  },
+)
 
 /**
  * Update a question response
@@ -148,6 +165,7 @@ router.patch(
   '/question-responses/:questionResponseId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
   [param('questionResponseId', 'URL param: [questionResponseId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -162,9 +180,26 @@ router.delete(
   '/question-responses/:questionResponseId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
   [param('questionResponseId', 'URL param: [questionResponseId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return deleteQuestionResponse(req, res)
   },
 )
+
+/**
+ * Delete a survey response
+ * TODO (vietle-cgi) Remove this method if reports are cancelled, not delete
+ */
+// router.delete(
+//   '/survey-responses/:surveyResponseId',
+//   passport.authenticate('jwt', { session: false }),
+//   isValidBackendToken,
+//   validatePermission(PERMISSIONS.DELETE_DRAFT_REPORTS_DRAFT_REPORTS),
+//   [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
+//   (req, res) => {
+//     validationResult(req).throw()
+//     return deleteSurveyResponse(req, res)
+//   },
+// )

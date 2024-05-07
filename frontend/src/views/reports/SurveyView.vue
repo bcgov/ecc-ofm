@@ -44,9 +44,10 @@ import { isEmpty, cloneDeep } from 'lodash'
 import { CRM_STATE_CODES, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
-import { mapState } from 'pinia'
+import { mapActions, mapState } from 'pinia'
 
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import alertMixin from '@/mixins/alertMixin'
 import reportMixin from '@/mixins/reportMixin'
 
@@ -58,6 +59,7 @@ import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
 import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
 import SurveySection from '@/components/reports/SurveySection.vue'
 import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitConfirmationDialog.vue'
+import { PERMISSIONS } from '@/utils/constants/permissions.js'
 
 export default {
   name: 'SurveyView',
@@ -83,7 +85,7 @@ export default {
   computed: {
     ...mapState(useAppStore, ['months']),
     readonly() {
-      return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE
+      return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE || !this.hasPermission(this.PERMISSIONS?.SUBMIT_DRAFT_REPORTS)
     },
     showCancel() {
       return !this.readonly
@@ -131,11 +133,15 @@ export default {
   },
 
   async created() {
+    // XXX The permissionsMixin isn't being used here because the computed property readonly()
+    // gets executed before PERMISSIONS and hasPermission are available
+    this.PERMISSIONS = PERMISSIONS
     await this.loadData()
     this.currentSection = this.sections[0]
   },
 
   methods: {
+    ...mapActions(useAuthStore, ['hasPermission']),
     async loadData() {
       try {
         this.loading = true

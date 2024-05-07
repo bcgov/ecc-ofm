@@ -20,8 +20,8 @@
           <span :class="{ 'status-gray': item.status === SURVEY_RESPONSE_STATUSES.DRAFT }" class="px-2 py-1">{{ item.status }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn icon="mdi-folder-open-outline" variant="text" @click="openSurveyResponse(item)" />
-          <v-btn v-if="item.surveyResponseId" icon="mdi-trash-can-outline" variant="text" @click="toggleCancelDialog" />
+          <v-btn v-if="showOpen(item)" icon="mdi-folder-open-outline" variant="text" @click="openSurveyResponse(item)" />
+          <v-btn v-if="showTrash(item)" icon="mdi-trash-can-outline" variant="text" @click="toggleCancelDialog" />
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -32,17 +32,16 @@
 <script>
 import { isEmpty } from 'lodash'
 
-import alertMixin from '@/mixins/alertMixin'
-import { SURVEY_IDS, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
-
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
-
+import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
+import { SURVEY_IDS, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 
 export default {
   components: { FacilityFilter, CancelSurveyResponseDialog },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
 
   props: {
     loading: {
@@ -148,6 +147,19 @@ export default {
      */
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
+    },
+
+    showOpen(surveyResponse) {
+      // Always allow navigation to an existing report. It will be readonly for users without 'Submit Draft Reports'
+      if (surveyResponse?.surveyResponseId) {
+        return true
+      }
+      // Only users with 'Submit Draft Reports' can start a new report
+      return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)
+    },
+
+    showTrash(surveyResponse) {
+      return surveyResponse.surveyResponseId && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
   },
 }
