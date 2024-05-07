@@ -159,7 +159,7 @@ export default {
     },
 
     showTrash(surveyResponse) {
-      return surveyResponse.surveyResponseId && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
+      return surveyResponse?.surveyResponseId && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
   },
 }
