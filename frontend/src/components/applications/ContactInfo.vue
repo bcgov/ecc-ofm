@@ -25,7 +25,7 @@
                 <AppLabel>Role:</AppLabel>
               </v-col>
               <v-col cols="12" sm="6" lg="7" xl="8">
-                {{ contact?.roleName }}
+                {{ contact?.role?.roleName }}
               </v-col>
             </v-row>
           </v-col>

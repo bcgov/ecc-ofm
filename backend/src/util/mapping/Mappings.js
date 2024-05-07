@@ -99,7 +99,7 @@ const UserMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'role', front: 'role' },
+  { back: 'ofm_portal_role_id', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]
@@ -126,6 +126,18 @@ const UsersPermissionsFacilityMappings = [
   { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
+]
+
+const ApplicationIntakeMappings = [
+  { back: 'ofm_intakeid', front: 'applicationIntakeId' },
+  { back: 'ofm_intake_type', front: 'type' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+]
+
+const FacilityIntakeMappings = [
+  { back: 'ofm_facility_intakeid', front: 'facilityIntakeId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
 ]
 
 const ApplicationMappings = [
@@ -391,12 +403,14 @@ const QuestionResponseMappings = [
 ]
 
 module.exports = {
+  ApplicationIntakeMappings,
   ApplicationMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
   DocumentMappings,
+  FacilityIntakeMappings,
   FacilityMappings,
   FiscalYearMappings,
   FundingAgreementMappings,

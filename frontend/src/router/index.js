@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
-import { APPLICATION_ROUTES, ROLES } from '@/utils/constants'
+import { APPLICATION_ROUTES } from '@/utils/constants'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
@@ -284,7 +284,7 @@ const router = createRouter({
           name: 'manage-users',
           component: ManageUsersView,
           meta: {
-            role: ROLES.ACCOUNT_MANAGEMENT,
+            permission: PERMISSIONS.MANAGE_USERS,
           },
         },
       ],

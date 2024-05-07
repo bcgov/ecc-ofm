@@ -72,10 +72,10 @@
             <v-col cols="12" md="9">
               <v-select
                 id="role"
-                :items="userRoles"
-                v-model="user.role"
-                item-title="description"
-                item-value="id"
+                :items="validRoles"
+                v-model="user.role.roleId"
+                item-title="roleName"
+                item-value="roleId"
                 label="Select Role"
                 :rules="rules.required"
                 :disabled="isLoading || isSameUser"
@@ -147,7 +147,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
-import { ApiRoutes } from '@/utils/constants'
+import { ApiRoutes, ROLES } from '@/utils/constants'
 import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
 
 const ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
@@ -188,8 +188,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['userRoles']),
+    ...mapState(useAppStore, ['roles']),
     ...mapState(useAuthStore, ['userInfo']),
+    validRoles() {
+      // Impersonate is a pseudo-role and should never be assigned to a portal user
+      return this.roles.filter((role) => role.roleName !== ROLES.IMPERSONATE)
+    },
     isAddingUser() {
       return this.userOperationType === 'add'
     },
@@ -220,6 +224,7 @@ export default {
         this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update'
         this.selectedFacilityIds = value.facilities
         this.user = value
+        if (!this.user.role) this.user.role = {}
       },
     },
   },
@@ -256,7 +261,7 @@ export default {
           if (this.hasUserFacilityAccessChanged(this.selectedFacilityIds, this.user.facilities)) {
             this.user.facilities = await this.getUpdatedFacilityAccess(this.user, this.selectedFacilityIds)
           }
-          await this.updateUser(this.user)
+          await this.updateUser()
           this.closeManageUserDialog()
         }
       } finally {
@@ -285,6 +290,8 @@ export default {
           return
         }
         this.user.organizationId = this.userInfo.organizationId
+
+        // TODO (jgstorey) Make this a service function
         const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
         this.user = response.data
         this.user.facilities = {}
@@ -298,9 +305,10 @@ export default {
     /**
      * Update user and emit success/fail event.
      */
-    async updateUser(user) {
+    async updateUser() {
       try {
-        await ApiService.apiAxios.post(ApiRoutes.USER + '/update', user)
+        // TODO (jgstorey) Make this a service function
+        await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
         this.$emit('update-success-event', true)
       } catch (error) {
         this.$emit('update-success-event', false, error)
@@ -312,6 +320,7 @@ export default {
      */
     async getUserFacilities(contactId, onlyWithPortalAccess) {
       try {
+        // TODO (jgstorey) Make this a service function
         const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`)
         return this.sortFacilities(res.data)
       } catch (error) {
@@ -425,6 +434,7 @@ export default {
     async checkBCeIDExists(userName) {
       try {
         if (this.user.userName) {
+          // TODO (jgstorey) Make this a service function
           const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`)
           this.errorMessages = res.data.length >= 1 ? ['A user with this BCeID already exists.'] : []
         }
@@ -438,6 +448,7 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
+        // TODO (jgstorey) Make this a service function
         const res = await ApiService.apiAxios.get(
           `${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`,
         )

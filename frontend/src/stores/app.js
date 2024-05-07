@@ -17,8 +17,6 @@ export const useAppStore = defineStore('app', {
     // Lookup data from Dynamics365
     requestCategories: {},
     requestSubCategories: {},
-    // TODO (weskubo-cgi) Remove this
-    userRoles: {},
     roles: {},
     healthAuthorities: {},
     facilityTypes: {},
@@ -26,12 +24,13 @@ export const useAppStore = defineStore('app', {
     reportQuestionTypes: {},
     fiscalYears: {},
     months: {},
+    applicationIntakes: {},
   }),
   getters: {
     getRoleNameById: (state) => {
       return (id) => {
-        const role = state.userRoles?.find((role) => role.id === id)
-        return role?.description
+        const role = state.roles?.find((role) => role.roleId === id)
+        return role?.roleName
       }
     },
     getLicenceTypeNameById: (state) => {
@@ -109,7 +108,6 @@ export const useAppStore = defineStore('app', {
         const lookupInfo = await ApiService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.requestSubCategories = lookupInfo?.data?.requestSubCategories
-        this.userRoles = lookupInfo?.data?.userRoles
         this.roles = lookupInfo?.data?.roles
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
@@ -117,6 +115,7 @@ export const useAppStore = defineStore('app', {
         this.reportQuestionTypes = lookupInfo?.data?.reportQuestionTypes
         this.fiscalYears = lookupInfo?.data?.fiscalYears
         this.months = lookupInfo?.data?.months
+        this.applicationIntakes = lookupInfo?.data?.applicationIntakes
       }
     },
     async setAlertNotificationText(alertNotificationText) {

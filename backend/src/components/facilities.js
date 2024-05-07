@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { FacilityMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
+const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
 async function getFacility(req, res) {
@@ -16,15 +16,20 @@ async function getFacility(req, res) {
 
 async function getFacilityContacts(req, res) {
   try {
-    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,ofm_portal_role,emailaddress1,telephone1,ccof_username)&$filter=(_ofm_facility_value eq ${req?.params?.facilityId}) and (ofm_portal_access eq true)`
+    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,ofm_portal_role,emailaddress1,telephone1,ccof_username;$expand=ofm_portal_role_id($select=ofm_portal_role_number,ofm_name);)&$filter=(_ofm_facility_value eq ${req?.params?.facilityId}) and (ofm_portal_access eq true) and (statecode eq 0)`
     const response = await getOperation(operation)
     const contacts = []
-    response?.value?.forEach((item) =>
+    response?.value?.forEach((item) => {
+      const user = new MappableObjectForFront(item.ofm_bceid, UserMappings).toJSON()
+      if (user?.role) {
+        const role = new MappableObjectForFront(user?.role, RoleMappings).toJSON()
+        user.role = role
+      }
       contacts.push({
         ...new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON(),
-        ...new MappableObjectForFront(item.ofm_bceid, UserMappings).toJSON(),
-      }),
-    )
+        ...user,
+      })
+    })
     return res.status(HttpStatus.OK).json(contacts)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)

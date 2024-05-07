@@ -72,6 +72,7 @@ export default {
             }
           }),
         }
+        // TODO (jgstorey) Make this a service function
         await ApiService.apiAxios.post(ApiRoutes.USER + '/update', payload)
         this.$emit('deactivate')
         this.setSuccessAlert(`User with BCeID ${this.user?.userName} is deactivated successfully`)
