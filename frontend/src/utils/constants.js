@@ -65,14 +65,14 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
   DRAFT: 1,
-  //2??
+  EXPIRED: 2,
   FA_REVIEW: 3,
   IN_REVIEW_WITH_MINISTRY_EA: 4,
   SIGNATURE_PENDING: 5,
   SUBMITTED: 6,
-  //7??
+  //7 does not exist in CRM
   ACTIVE: 8,
-  //9??
+  TERMINATED: 9,
   CANCELLED: 10,
 })
 
