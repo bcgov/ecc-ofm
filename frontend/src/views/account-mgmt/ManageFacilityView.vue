@@ -221,7 +221,7 @@ export default {
       if (!this.contacts) return []
       const contactsCopy = [...this.contacts]
       return contactsCopy.sort((a, b) => {
-        return a.firstName.localeCompare(b.firstName)
+        return a.firstName?.localeCompare(b.firstName)
       })
     },
   },
@@ -254,7 +254,7 @@ export default {
       try {
         this.contacts = await FacilityService.getContacts(this.facilityId)
         this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
+          contact.fullName = `${contact.firstName ?? ''} ${contact.lastName}`
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.facilityId, error)
