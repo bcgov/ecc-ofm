@@ -10,7 +10,7 @@ const { isEmpty } = require('lodash')
 async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []
-    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode&$filter=(${buildFilterQuery(
+    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode&$filter=(${buildFilterQuery(
       req?.query,
       FundingAgreementMappings,
     )})`

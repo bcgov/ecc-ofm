@@ -16,7 +16,6 @@ export default {
   },
 
   async updateFundingAgreement(fundingAgreementId, payload) {
-    console.log('called')
     try {
       if (!fundingAgreementId) return
       const response = await ApiService.apiAxios.patch(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}`, payload)

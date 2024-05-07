@@ -1,7 +1,7 @@
 <template>
   <OrganizationHeader :show-facility="false" />
   <v-container fluid v-bind="$attrs">
-    <h1>OFM-24000102-00</h1>
+    <h1>{{ fundingAgreement?.fundingAgreementNumber }}</h1>
     <!-- <div style="color: #999999">FA GUID: {{ $route.params.fundingGuid }}</div> -->
     <p>Carefully review your funding agreement.</p>
 
@@ -33,7 +33,8 @@
     <br />
     <br />
 
-    <v-row class="lg-px-10">
+    <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
+    <v-row v-else class="lg-px-10">
       <v-col cols="12" class="pt-0">
         <div style="background-color: #eeeeee; border: 1px solid #333333" class="lg-pa-10 pa-5 overflow-y-auto">
           I do hereby certify that I am the
@@ -47,7 +48,7 @@
           represent and warrant that:
           <br />
           <br />
-          <ol>
+          <ol class="pl-4">
             <li class="pl-4">I am the authorized representative and signing authority of the Provider as named in the OFM Agreement (the Provider);</li>
             <li class="pl-4">
               I have authority to submit the Form on behalf of the Provider and that by clicking “I agree”, I do hereby bind the Provider to the terms and conditions of the Funding Agreement if the
@@ -67,12 +68,13 @@
           </ol>
         </div>
       </v-col>
-    </v-row>
-    <v-checkbox v-model="agreeConsentCertify" :disabled="!canEdit" label="I agree, consent and certify" />
 
-    <v-row class="justify-space-between mx-5">
+      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="!canEdit" label="I agree, consent and certify" />
+    </v-row>
+
+    <v-row v-if="!loading" class="justify-space-between mx-5">
       <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
-      <AppButton id="submit-funding-agreement" size="large" width="220px" class="mt-2" :disabled="!agreeConsentCertify" :loading="loading" @click="submit()">Submit</AppButton>
+      <AppButton id="submit-funding-agreement" size="large" width="220px" class="mt-2" :disabled="!fundingAgreement.agreeConsentCertify" :loading="loading" @click="submit()">Submit</AppButton>
     </v-row>
   </v-container>
 </template>
@@ -105,25 +107,23 @@ export default {
   },
   data() {
     return {
-      facilityId: '03d677db-0f04-ef11-9f8a-000d3af4865d',
+      fundingAgreement: undefined,
       licences: [],
-      contacts: [],
       panel: [],
-      primaryContact: undefined,
-      primaryContactLastSaved: undefined,
       loading: false,
-      agreeConsentCertify: false,
-      editMode: false,
-      editModePrimaryContact: false,
-
-      showChangeRequestDialog: false,
-      showUnableToSubmitCrDialog: false,
-      preventChangeRequestType: undefined,
     }
   },
   computed: {
     canEdit() {
-      return this.hasPermission(this.PERMISSIONS.SIGN_FUNDING_AGREEMENT)
+      return this.hasPermission(this.PERMISSIONS.SIGN_FUNDING_AGREEMENT) && !this.isFundingAgreementLocked
+    },
+    isFundingAgreementLocked() {
+      return (
+        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA ||
+        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED ||
+        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE ||
+        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.CANCELLED
+      )
     },
   },
   async created() {
@@ -133,7 +133,7 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        //await Promise.all([this.getFacility(), this.getContacts(), this.getLicences()])
+        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByFacilityId(this.facility.facilityId)
         await this.getLicences()
       } finally {
         this.loading = false
@@ -153,12 +153,19 @@ export default {
     },
 
     async submit() {
+      this.fundingAgreement.statusCode = FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED
+
       const payload = {
-        agreeConsentCertify: this.agreeConsentCertify,
-        statusCode: FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, //TODO: JB - add mapping for this
+        agreeConsentCertify: this.fundingAgreement?.agreeConsentCertify,
+        statusCode: this.fundingAgreement.statusCode,
       }
 
-      await FundingAgreementService.updateFundingAgreement('e60816e0-5106-ef11-9f89-000d3af44815', payload)
+      try {
+        await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
+        this.setSuccessAlert('Funding Agreement submitted')
+      } catch (error) {
+        this.setFailureAlert('Failed to submit funding agreement')
+      }
     },
   },
 }
