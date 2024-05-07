@@ -206,7 +206,6 @@ export default {
       if (!users) return []
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
-        // TODO (weskubo-cgi) Revisit this requirement given new Roles Security Matrix
         const roleA = a.role?.roleName === ROLES.ACCOUNT_MANAGER
         const roleB = b.role?.roleName === ROLES.ACCOUNT_MANAGER
         if (roleA && !roleB) return -1
