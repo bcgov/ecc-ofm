@@ -116,6 +116,7 @@ const router = createRouter({
       component: ReportingView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.SEARCH_VIEW_REPORTS,
       },
     },
     {
@@ -124,6 +125,7 @@ const router = createRouter({
       component: SurveyView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.SEARCH_VIEW_REPORTS,
       },
     },
     {

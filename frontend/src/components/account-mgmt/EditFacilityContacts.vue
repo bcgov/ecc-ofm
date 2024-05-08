@@ -42,7 +42,7 @@
                     <v-col class="pt-2">
                       <v-data-table :headers="headers" :items="sortedContacts" density="compact">
                         <template v-slot:item.name="{ item }">
-                          {{ `${item.firstName} ${item.lastName}` }}
+                          {{ item.fullName }}
                         </template>
                         <template v-slot:item.role="{ item }">
                           {{ item.role?.roleName }}
