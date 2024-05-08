@@ -9,7 +9,7 @@
 
     <v-row class="mt-lg-10">
       <v-col cols="12" class="pt-0">
-        <v-card elevation="0" variant="outlined" class="">
+        <v-card elevation="0" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
               <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
