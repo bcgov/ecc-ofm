@@ -35,44 +35,57 @@
       <v-col>
         <h4>Upload Documents</h4>
         {{ SUPPORTED_DOCUMENTS_MESSAGE }}
+
+        <br />
+        <br />
+
         <AppMissingInfoError v-if="validation && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
         <AppMissingInfoError v-if="validation && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
       </v-col>
     </v-row>
     <v-card class="mt-2 pa-4" variant="outlined">
-      <v-card class="mt-2 mb-4 pa-4">
-        <AppDocumentUpload
-          id="financial-document-upload"
-          v-model="financialStatement.documentsToUpload"
-          entityName="ofm_applications"
-          :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
-          :loading="processing"
-          :readonly="readonly"
-          :uploadedDocuments="financialStatement.uploadedDocuments"
-          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-      </v-card>
-      <v-card class="mt-2 mb-4 pa-4">
-        <AppDocumentUpload
-          id="balance-sheet-document-upload"
-          v-model="balanceSheet.documentsToUpload"
-          entityName="ofm_applications"
-          :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
-          :loading="processing"
-          :readonly="readonly"
-          :uploadedDocuments="balanceSheet.uploadedDocuments"
-          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-      </v-card>
-      <v-card class="mt-2 mb-4 pa-4">
-        <AppDocumentUpload
-          id="supporting-document-upload"
-          v-model="supporting.documentsToUpload"
-          entityName="ofm_applications"
-          :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
-          :loading="processing"
-          :readonly="readonly"
-          :uploadedDocuments="supporting.uploadedDocuments"
-          @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-      </v-card>
+      <h5>Financial Documents</h5>
+      <div class="greyCards py-2 px-4">
+        <v-card class="mt-2 mb-4 pa-4">
+          <AppDocumentUpload
+            id="financial-document-upload"
+            v-model="financialStatement.documentsToUpload"
+            entityName="ofm_applications"
+            :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
+            :loading="processing"
+            :readonly="readonly"
+            :uploadedDocuments="financialStatement.uploadedDocuments"
+            @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+        </v-card>
+        <v-card class="mt-2 mb-4 pa-4">
+          <AppDocumentUpload
+            id="balance-sheet-document-upload"
+            v-model="balanceSheet.documentsToUpload"
+            entityName="ofm_applications"
+            :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
+            :loading="processing"
+            :readonly="readonly"
+            :uploadedDocuments="balanceSheet.uploadedDocuments"
+            @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+        </v-card>
+      </div>
+      <div class="greyCards py-2 px-4 mt-14">
+        <v-card class="mt-2 pt-4 mb-4 pa-4">
+          <AppDocumentUpload
+            id="supporting-document-upload"
+            v-model="supporting.documentsToUpload"
+            entityName="ofm_applications"
+            :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
+            :loading="processing"
+            :readonly="readonly"
+            :uploadedDocuments="supporting.uploadedDocuments"
+            @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+
+          <ul class="ml-7">
+            <li>Your yearly operating cost Rent/Lease payment schedule</li>
+          </ul>
+        </v-card>
+      </div>
     </v-card>
   </v-form>
 </template>
@@ -330,3 +343,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.greyCards {
+  border: 1px solid #0000001a;
+  background-color: #0f0f0f09;
+  border-radius: 4px;
+}
+</style>
