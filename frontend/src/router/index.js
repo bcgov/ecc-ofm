@@ -31,7 +31,7 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
-import FundingConfirmation from '@/views/funding/FundingConfirmationView.vue'
+import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
 import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
 import FundingView from '@/views/funding/FundingView.vue'
 import ReportingView from '@/views/reports/ReportingView.vue'
@@ -143,9 +143,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/funding-confirmation',
+      path: '/funding/confirmation',
       name: 'funding-confirmation',
-      component: FundingConfirmation,
+      component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
       },

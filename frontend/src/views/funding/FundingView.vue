@@ -34,7 +34,7 @@
     <br />
 
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-    <v-row v-else class="">
+    <v-row v-else>
       <v-col cols="12" class="pt-0">
         <div style="background-color: #eeeeee; border: 1px solid #333333" class="pa-lg-7 pa-5 overflow-y-auto">
           I do hereby certify that I am the
@@ -74,16 +74,7 @@
 
     <v-row v-if="!loading" class="justify-center justify-md-space-between mx-md-7 my-3">
       <AppBackButton id="back-home-button" width="240px" :to="{ name: 'home' }">Home</AppBackButton>
-      <AppButton
-        id="submit-funding-agreement"
-        size="large"
-        width="240px"
-        class="mt-2"
-        :disabled="isFundingAgreementLocked || !fundingAgreement.agreeConsentCertify"
-        :loading="loading"
-        @click="submit()">
-        Submit
-      </AppButton>
+      <AppButton id="submit-funding-agreement" size="large" width="240px" class="mt-2" :disabled="submitDisabled" :loading="loading" @click="submit()">Submit</AppButton>
     </v-row>
   </v-container>
 </template>
@@ -100,6 +91,13 @@ import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+
+const LOCKED_STATUSES = [
+  FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
+  FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
+  FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
+  FUNDING_AGREEMENT_STATUS_CODES.CANCELLED,
+]
 
 export default {
   name: 'FundingView',
@@ -118,12 +116,10 @@ export default {
       return this.hasPermission(this.PERMISSIONS.SIGN_FUNDING_AGREEMENT) && !this.isFundingAgreementLocked
     },
     isFundingAgreementLocked() {
-      return (
-        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA ||
-        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED ||
-        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE ||
-        this.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.CANCELLED
-      )
+      return LOCKED_STATUSES.includes(this.fundingAgreement?.statusCode)
+    },
+    submitDisabled() {
+      return this.isFundingAgreementLocked || !this.fundingAgreement.agreeConsentCertify
     },
   },
   async created() {
@@ -153,11 +149,9 @@ export default {
     },
 
     async submit() {
-      this.fundingAgreement.statusCode = FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED
-
       const payload = {
         agreeConsentCertify: this.fundingAgreement?.agreeConsentCertify,
-        statusCode: this.fundingAgreement.statusCode,
+        statusCode: FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
       }
 
       try {

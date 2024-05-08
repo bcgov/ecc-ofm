@@ -32,7 +32,7 @@ export default {
       const response = await ApiService.apiAxios.patch(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}`, payload)
       return response?.data
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
+      console.log(`Failed to update the Funding Agreement - ${error}`)
       throw error
     }
   },

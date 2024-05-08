@@ -22,7 +22,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
-  name: 'ApplicationConfirmationView',
+  name: 'FundingConfirmationView',
   components: { AppButton, AppBackButton },
 }
 </script>
