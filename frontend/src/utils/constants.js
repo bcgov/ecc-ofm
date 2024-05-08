@@ -145,7 +145,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   LICENCE_INFO: 'Licence information required',
   LICENCE_CONFIRMATION: 'Confirmation of licence information required',
   DOCUMENT_UPLOAD: 'Document upload required',
-  DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
+  DOCUMENT_INCOME_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
