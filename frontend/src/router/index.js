@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { APPLICATION_ROUTES } from '@/utils/constants'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
@@ -349,6 +350,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from, next) => {
+  const appStore = useAppStore()
+  // Check for backend errors raised on startup
+  if (appStore.backendError && to.name !== 'error') {
+    return next('error')
+  }
+
   // TODO (weskubo-cgi)
   // 1. Don't allow access to Logout page if not logged in
   // 2. Don't allow access to Login if Logged in
