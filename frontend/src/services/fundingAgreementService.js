@@ -49,4 +49,29 @@ export default {
       throw error
     }
   },
+
+  // JSTOREY inactive ones?
+  async getFAByFacilityIdAndStartDateThreshold(facilityId, startDateThreshold) {
+    try {
+      if (!facilityId && !startDateThreshold) return
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateThreshold=${startDateThreshold}`
+      const response = await ApiService.apiAxios.get(url)
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`)
+      throw error
+    }
+  },
+
+  async getFAByFacilityIdAndStartFromEndDates(facilityId, startDateFrom, startDateTo) {
+    try {
+      if (!facilityId && !(startDateFrom || startDateTo)) return //JSTOREY need to deal with 1 not the other
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}`
+      const response = await ApiService.apiAxios.get(url)
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the list of active funding agreements by facility id and start dates (from/to) - ${error}`)
+      throw error
+    }
+  },
 }

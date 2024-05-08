@@ -4,7 +4,7 @@
       v-for="option in options"
       :key="option.value"
       :value="option.value"
-      :class="internalSelection === option.value ? 'active-button' : 'inactive-button'">
+      :class="{ 'active-button': internalSelection === option.value, 'inactive-button': internalSelection !== option.value }">
       {{ option.label }}
     </v-btn>
   </v-btn-toggle>
@@ -17,6 +17,9 @@ export default {
     options: {
       type: Array,
       required: true,
+      validator: function (array) {
+        return array.every(item => Object.prototype.hasOwnProperty.call(item, 'value') && Object.prototype.hasOwnProperty.call(item, 'label'))
+      }
     },
     defaultOption: {
       type: [Number, String],
@@ -31,11 +34,8 @@ export default {
     }
   },
   watch: {
-    value(newValue) {
+    defaultOption(newValue) {
       this.internalSelection = newValue
-    },
-    internalSelection(newValue) {
-      this.$emit('input', newValue)
     },
   },
   methods: {
