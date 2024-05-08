@@ -151,11 +151,8 @@ export default {
 
     showOpen(surveyResponse) {
       // Always allow navigation to an existing report. It will be readonly for users without 'Submit Draft Reports'
-      if (surveyResponse?.surveyResponseId) {
-        return true
-      }
       // Only users with 'Submit Draft Reports' can start a new report
-      return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)
+      return surveyResponse?.surveyResponseId || this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)
     },
 
     showTrash(surveyResponse) {

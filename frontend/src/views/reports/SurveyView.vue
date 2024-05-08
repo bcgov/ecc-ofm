@@ -78,7 +78,6 @@ export default {
       currentSection: undefined,
       originalResponses: [],
       clonedResponses: [],
-      deletedTableResponses: [],
     }
   },
 
