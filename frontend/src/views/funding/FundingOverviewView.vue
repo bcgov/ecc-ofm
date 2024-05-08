@@ -115,7 +115,7 @@ export default {
       selectedFacility: undefined,
       fundingAgreements: [
         {
-          guid: '54a30624-a9ec-4355-b747-899519aae4e9',
+          guid: '21d0d405-900c-ef11-9f89-000d3af44283',
           faNumber: 'FA-123456',
           faType: 'Base Funding',
           facility: 'Facility 1',
@@ -124,7 +124,7 @@ export default {
           status: 'FA Signature Pending',
         },
         {
-          guid: 'f02b23d7-e658-4298-9967-11ae77d49fbe',
+          guid: '21d0d405-900c-ef11-9f89-000d3af44283',
           faNumber: 'FA-000002',
           faType: 'Supplementary Allowances',
           facility: 'Facility 2',

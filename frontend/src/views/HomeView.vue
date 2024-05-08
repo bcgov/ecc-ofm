@@ -10,7 +10,7 @@
       </p>
     </v-row>
     <v-row>
-      <v-col cols="12" md="6" lg="4">
+      <v-col cols="12" md="6" lg="4" v-if="hasPermission(PERMISSIONS.SEARCH_VIEW_REPORTS)">
         <v-card class="home-card" prepend-icon="mdi-file-chart-outline" title="Reporting" @click="$router.push({ name: 'reporting' })">
           <v-card-text>
             Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
