@@ -35,11 +35,9 @@
       <v-col>
         <h4>Upload Documents</h4>
         {{ SUPPORTED_DOCUMENTS_MESSAGE }}
-
         <br />
         <br />
-
-        <AppMissingInfoError v-if="validation && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_INCOME_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="validation && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
         <AppMissingInfoError v-if="validation && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
       </v-col>
     </v-row>
@@ -51,7 +49,7 @@
             id="financial-document-upload"
             v-model="financialStatement.documentsToUpload"
             entityName="ofm_applications"
-            :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT"
+            :documentType="DOCUMENT_TYPES.INCOME_STATEMENT"
             :loading="processing"
             :readonly="readonly"
             :uploadedDocuments="financialStatement.uploadedDocuments"
@@ -288,7 +286,7 @@ export default {
 
     deleteDocumentFromType(documentId, documentType) {
       const docTypeMapping = {
-        [this.DOCUMENT_TYPES.FINANCIAL_STATEMENT]: this.financialStatement,
+        [this.DOCUMENT_TYPES.INCOME_STATEMENT]: this.financialStatement,
         [this.DOCUMENT_TYPES.BALANCE_SHEET]: this.balanceSheet,
         [this.DOCUMENT_TYPES.SUPPORTING_DOCS]: this.supporting,
       }
@@ -336,7 +334,7 @@ export default {
     },
 
     getUploadedDocuments(uploadedDocuments) {
-      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
+      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT)
       this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
       this.supporting.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
     },
