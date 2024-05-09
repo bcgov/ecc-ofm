@@ -53,7 +53,7 @@ export default {
   async getFAByFacilityIdAndStartDateThreshold(facilityId, startDateThreshold) {
     try {
       if (!facilityId && !startDateThreshold) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateThreshold=${startDateThreshold}`
+      const url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateThreshold=${startDateThreshold}`
       const response = await ApiService.apiAxios.get(url)
       return response?.data[0]
     } catch (error) {
@@ -65,7 +65,7 @@ export default {
   async getFAByFacilityIdAndStartFromEndDates(facilityId, startDateFrom, startDateTo) {
     try {
       if (!facilityId && !(startDateFrom || startDateTo)) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}`
+      const url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}`
       const response = await ApiService.apiAxios.get(url)
       return response?.data[0]
     } catch (error) {

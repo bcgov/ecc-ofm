@@ -28,127 +28,128 @@
       <v-card-text>
         <v-window v-model="tab">
           <v-window-item value="agreements">
-            <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1">
-              <v-row>
-                <v-col class="v-col-1">
-                  <AppLabel>Facility:</AppLabel>
-                </v-col>
-                <v-col class="v-col-4">
-                  <v-select
-                    :items="userInfo.facilities"
-                    v-model="selectedFacility"
-                    item-title="facilityName"
-                    label="Select"
-                    :disabled="loading"
-                    density="compact"
-                    variant="outlined"
-                    return-object />
-                </v-col>
-                <v-col class="v-col-2" />
-                <v-col class="v-col-1">
-                  <AppLabel>Date:</AppLabel>
-                </v-col>
-                <v-col>
-                  <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="dateFilterTypes" :defaultOption="selectedDateFilterType" />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="v-col-1">
-                  <AppLabel>Payment Type:</AppLabel>
-                </v-col>
-                <v-col class="v-col-4">
-                  <v-row>
-                    <v-checkbox
-                      v-for="(item, index) in paymentFilterTypes"
-                      :key="index"
-                      v-model="selectedPaymentFilterTypes"
-                      :label="item.label"
-                      :value="item.value"
-                      :disabled="loading" />
-                  </v-row>
-                </v-col>
-                <v-col class="v-col-2" />
-                <template v-if="selectedDateFilterType === 'Custom'">
+            <v-form ref="faForm" v-model="isFormComplete">
+              <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1">
+                <v-row>
                   <v-col class="v-col-1">
-                    <AppLabel>Date Range:</AppLabel>
+                    <AppLabel>Facility:</AppLabel>
                   </v-col>
-                  <v-col cols="auto">
-                    <v-menu
-                      v-model="menuStartDateFrom"
-                      :close-on-content-click="false"
-                      :nudge-right="800"
-                      :nudge-bottom="200"
-                      min-width="auto">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          id="start-date-from"
-                          v-model="formattedStartDateFrom"
-                          label="Start Date From"
-                          style="width: 194px;"
-                          prepend-icon="mdi-calendar"
-                          v-bind="attrs"
-                          :disabled="loading"
-                          :rules="[v => !!v && moment(v, 'YYYY-MMM-DD', true).isValid() || 'Date must be in YYYY-MMM-DD format']"
-                          @click="on && on.click"
-                          @click:prepend="menuStartDateFrom = !menuStartDateFrom"></v-text-field>
-                      </template>
-                      <v-date-picker v-model="startDateFrom" @input="menuStartDateFrom = false"></v-date-picker>
-                    </v-menu>
+                  <v-col class="v-col-4">
+                    <v-select
+                      :items="userInfo.facilities"
+                      v-model="selectedFacility"
+                      item-title="facilityName"
+                      label="Select"
+                      :disabled="loading"
+                      density="compact"
+                      variant="outlined"
+                      return-object />
                   </v-col>
-                  <v-col class="v-col-2">
-                    <v-menu
-                      v-model="menuStartDateTo"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          id="start-date-to"
-                          v-model="formattedStartDateTo"
-                          label="Start Date To"
-                          prepend-icon="mdi-calendar"
-                          style="width: 194px;"
-                          v-bind="attrs"
-                          :disabled="loading"
-                          :rules="[v => !!v && moment(v, 'YYYY-MMM-DD', true).isValid() || 'Date must be in YYYY-MMM-DD format',
-  v => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date']"
-                          @click="on && on.click"
-                          @click:prepend="menuStartDateTo = !menuStartDateTo"></v-text-field>
-                      </template>
-                      <v-date-picker v-model="startDateTo" @input="menuStartDateTo = false"></v-date-picker>
-                    </v-menu>
+                  <v-col class="v-col-2" />
+                  <v-col class="v-col-1">
+                    <AppLabel>Date:</AppLabel>
                   </v-col>
-                </template>
+                  <v-col>
+                    <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_TYPES" :defaultOption="selectedDateFilterType" />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="v-col-1">
+                    <AppLabel>Payment Type:</AppLabel>
+                  </v-col>
+                  <v-col class="v-col-4">
+                    <v-row>
+                      <v-checkbox
+                        v-for="(item, index) in PAYMENT_FILTER_TYPES"
+                        :key="index"
+                        v-model="selectedPaymentFilterTypes"
+                        :label="item.label"
+                        :value="item.value"
+                        :disabled="loading" />
+                    </v-row>
+                  </v-col>
+                  <v-col class="v-col-2" />
+                  <template v-if="selectedDateFilterType === 'Custom'">
+                    <v-col class="v-col-1">
+                      <AppLabel>Date Range:</AppLabel>
+                    </v-col>
+                    <v-col cols="auto">
+                      <v-menu
+                        v-model="menuStartDateFrom"
+                        :close-on-content-click="false"
+                        :nudge-right="800"
+                        :nudge-bottom="200"
+                        min-width="auto">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            id="start-date-from"
+                            v-model="formattedStartDateFrom"
+                            label="Start Date From"
+                            style="width: 194px;"
+                            prepend-icon="mdi-calendar"
+                            v-bind="attrs"
+                            :disabled="loading"
+                            :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format']"
+                            @click="on && on.click"
+                            @click:prepend="menuStartDateFrom = !menuStartDateFrom"></v-text-field>
+                        </template>
+                        <v-date-picker v-model="startDateFrom" @input="menuStartDateFrom = false"></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col class="v-col-2">
+                      <v-menu
+                        v-model="menuStartDateTo"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            id="start-date-to"
+                            v-model="formattedStartDateTo"
+                            label="Start Date To"
+                            prepend-icon="mdi-calendar"
+                            style="width: 194px;"
+                            v-bind="attrs"
+                            :disabled="loading"
+                            :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format', v => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date']"
+                            @click="on && on.click"
+                            @click:prepend="menuStartDateTo = !menuStartDateTo"></v-text-field>
+                        </template>
+                        <v-date-picker v-model="startDateTo" @input="menuStartDateTo = false"></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                  </template>
+                </v-row>
+              </v-card>
+              <v-row class="d-flex justify-end pb-3">
+                <AppButton id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="resetFilter()">Reset</AppButton>
+                <AppButton id="search" size="large" width="150px" class="mr-4" :loading="loading" @click="search()">Search</AppButton>
               </v-row>
-            </v-card>
-            <v-row class="d-flex justify-end pb-3">
-              <AppButton id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="initialize()">Reset</AppButton>
-              <AppButton id="search" size="large" width="150px" class="mr-4" :loading="loading" @click="getFundingAgreements()">Search</AppButton>
-            </v-row>
-            <h2>Funding Details</h2>
-            <v-skeleton-loader :loading="loading" type="table-tbody">
-              <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact">
-                <template #item.startDate="{ item }">
-                  {{ format.formatDate(item?.startDate) }}
-                </template>
-                <template #item.endDate="{ item }">
-                  {{ format.formatDate(item?.endDate) }}
-                </template>
-                <template #item.status="{ item }">
-                  <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
-                </template>
-                <template #[`item.actions`]="{ item }">
-                  <v-btn v-if="item?.status === 'FA Signature Pending'" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-                    <v-icon size="large">mdi-signature-freehand</v-icon>
-                  </v-btn>
-                  <v-btn v-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.guid } })">
-                    <v-icon size="large">mdi-folder-open-outline</v-icon>
-                  </v-btn>
-                </template>
-              </v-data-table>
-            </v-skeleton-loader>
+              <h2>Funding Details</h2>
+              <v-skeleton-loader :loading="loading" type="table-tbody">
+                <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact">
+                  <template #item.startDate="{ item }">
+                    {{ format.formatDate(item?.startDate) }}
+                  </template>
+                  <template #item.endDate="{ item }">
+                    {{ format.formatDate(item?.endDate) }}
+                  </template>
+                  <template #item.status="{ item }">
+                    <span :class="{ 'status-gray': isDraftStatus(item?.statusCode), 'status-yellow': isSignaturePendingStatus(item?.statusCode), 'status-blue': (isReviewStatus(item?.statusCode) || isSubmittedStatus(item?.statusCode)), 'status-green': isActiveStatus(item?.statusCode), 'status-red': isExpiredStatus(item?.statusCode) }" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
+                  </template>
+                  <template #[`item.actions`]="{ item }">
+                    <v-btn v-if="item?.status === 'FA Signature Pending'" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
+                      <v-icon size="large">mdi-signature-freehand</v-icon>
+                    </v-btn>
+                    <v-btn v-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.guid } })">
+                      <v-icon size="large">mdi-folder-open-outline</v-icon>
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-skeleton-loader>
+            </v-form>
           </v-window-item>
           <v-window-item value="history">Funding History</v-window-item>
           <v-window-item value="upcoming">Upcoming Funding</v-window-item>
@@ -169,13 +170,13 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
 import FundingAgreementService from '@/services/fundingAgreementService'
+import OrganizationService from '@/services/organizationService'
 import ApplicationService from '@/services/applicationService'
 import format from '@/utils/format'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { ApiRoutes } from '@/utils/constants'
-import ApiService from '@/common/apiService'
+import { isValidEndDate } from '@/utils/validation.js'
 import moment from 'moment'
 
 export default {
@@ -184,7 +185,9 @@ export default {
   data() {
     return {
       format,
+      moment,
       tab: null,
+      isFormComplete: false,
       loading: false,
       fundingAgreements: [],
       orgUsers: [],
@@ -205,64 +208,119 @@ export default {
         { title: 'Status', key: 'status' },
         { title: 'Actions', key: 'actions' },
       ],
-      dateFilterTypes: [
-        { label: '3 Months', value: '3Months' },
-        { label: '6 Months', value: '6Months' },
-        { label: 'YTD', value: 'YTD' },
-        { label: 'Custom', value: 'Custom' },
-      ],
-      paymentFilterTypes: [
-        { label: 'Base Funding', value: 'baseFunding' },
-        { label: 'Supplementary Allowances', value: 'supplementaryAllowances' },
-        { label: 'Other', value: 'other' },
-      ],
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    formattedStartDateFrom() {
-      return this.startDateFrom ? format.formatDate(this.startDateFrom) : ''
+    startDateThreshold() {
+      switch (this.selectedDateFilterType) {
+        case this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS:
+          return this.dateByMonthsInPast(3)
+        case this.DATE_FILTER_TYPE_VALUES.SIX_MONTHS:
+          return this.dateByMonthsInPast(6)
+        case this.DATE_FILTER_TYPE_VALUES.YTD:
+          return this.dateByMonthsInPast(12)
+        default:
+          return null
+      }
     },
-    formattedStartDateTo() {
-      return this.startDateTo ? format.formatDate(this.startDateTo) : ''
-    }
+    formattedStartDateFrom: {
+      get() {
+        if (moment(this.startDateFrom, true).isValid()) {
+          return this.startDateFrom ? moment(this.startDateFrom).format('MM/DD/YYYY') : null
+        }
+        return this.startDateFrom
+      },
+      set(value) {
+        this.startDateFrom = value
+      },
+    },
+    formattedStartDateTo: {
+      get() {
+        if (moment(this.startDateTo, true).isValid()) {
+          return this.startDateTo ? moment(this.startDateTo).format('MM/DD/YYYY') : null
+        }
+        return this.startDateTo
+      },
+      set(value) {
+        this.startDateTo = value
+      },
+    },
   },
+
   async created() {
-    this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
-    this.initialize()
-    await this.getOrgUsers() // Retrieve the list of users to retrieve the expense authority name
-    await this.getFundingAgreements()
+    this.DATE_FILTER_TYPE_VALUES = {
+      THREE_MONTHS: '3 Months',
+      SIX_MONTHS: '6 Months',
+      YTD: 'YTD',
+      CUSTOM: 'Custom',
+    }
+    this.DATE_FILTER_TYPES = [
+      { label: this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS, value: this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS },
+      { label: this.DATE_FILTER_TYPE_VALUES.SIX_MONTHS, value: this.DATE_FILTER_TYPE_VALUES.SIX_MONTHS },
+      { label: this.DATE_FILTER_TYPE_VALUES.YTD, value: this.DATE_FILTER_TYPE_VALUES.YTD },
+      { label: this.DATE_FILTER_TYPE_VALUES.CUSTOM, value: this.DATE_FILTER_TYPE_VALUES.CUSTOM },
+    ]
+    this.PAYMENT_FILTER_TYPE_VALUES = {
+      BASE_FUNDING: 'Base Funding',
+      SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
+      OTHER: 'Other',
+    }
+    this.PAYMENT_FILTER_TYPES = [
+      { label: this.PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, value: this.PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING },
+      { label: this.PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, value: this.PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES },
+      { label: this.PAYMENT_FILTER_TYPE_VALUES.OTHER, value: this.PAYMENT_FILTER_TYPE_VALUES.OTHER },
+    ]
+    this.statusNameMap = {
+      [FUNDING_AGREEMENT_STATUS_CODES.DRAFT]: 'Draft',
+      [FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]: 'FA Review',
+      [FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING]: 'FA Signature Pending',
+      [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED]: 'FA Submitted to Ministry',
+      [FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW]: 'In Review with Ministry EA',
+      [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE]: 'Active',
+      [FUNDING_AGREEMENT_STATUS_CODES.EXPIRED]: 'Expired',
+    }
+    this.resetFilter()
+    this.orgUsers = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
+    await this.load()
   },
   methods: {
-    initialize() {
-      this.selectedFacility = null
-      this.selectedDateFilterType = '3Months'
-      this.selectedPaymentFilterTypes = ['baseFunding', 'supplementaryAllowances', 'other']
-      this.startDateFrom = null
-      this.startDateTo = null
+    isValidEndDate,
+    isDraftStatus(statusCode) {
+      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.DRAFT
+    },
+    isSignaturePendingStatus(statusCode) {
+      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING
+    },
+    isReviewStatus(statusCode) {
+      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW
+    },
+    isSubmittedStatus(statusCode) {
+      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED
+    },
+    isActiveStatus(statusCode) {
+      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
+    },
+    isExpiredStatus(statusCode) {
+      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED
     },
 
-    async getOrgUsers() {
-      try {
-        this.loading = true
-        const res = await ApiService.apiAxios.get(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + this.userInfo.organizationId)
-        this.orgUsers = res.data
-      } catch (error) {
-        this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
-      } finally {
-        this.loading = false
-      }
+    resetFilter() {
+      this.selectedFacility = null
+      this.selectedDateFilterType = this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS
+      this.selectedPaymentFilterTypes = [this.PAYMENT_FILTER_TYPES.BASE_FUNDING, this.PAYMENT_FILTER_TYPES.SUPPLEMENTARY_ALLOWANCES, this.PAYMENT_FILTER_TYPES.OTHER]
+      this.startDateFrom = null
+      this.startDateTo = null
     },
 
     /** 
      * TODO: Payment type is displayed in UI but is not yet integrated into this method as required CRM data is not yet in place.
      * This is a know issue and postponed to a future sprint.
      */
-    async getFundingAgreements() {
+    async load() {
       try {
         this.loading = true
         this.fundingAgreements = []
-        const startDateThreshold = this.startDateThreshold()
         const facilities = this.selectedFacility ? [this.selectedFacility] : this.userInfo.facilities
         for (let facility of facilities) {
           try {
@@ -270,7 +328,7 @@ export default {
             if (this.selectedDateFilterType === 'Custom') {
               payload = await FundingAgreementService.getFAByFacilityIdAndStartFromEndDates(facility.facilityId, this.startDateFrom, this.startDateTo)
             } else {
-              payload = await FundingAgreementService.getFAByFacilityIdAndStartDateThreshold(facility.facilityId, startDateThreshold)
+              payload = await FundingAgreementService.getFAByFacilityIdAndStartDateThreshold(facility.facilityId, this.startDateThreshold)
             }
             if (!payload) continue
             await this.enrichFundingAgreementData(payload)
@@ -284,6 +342,14 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    async search() {
+      this.$refs.faForm?.validate()
+      if (!this.isFormComplete) {
+        return
+      }
+      await this.load()
     },
 
     async enrichFundingAgreementData(result) {
@@ -305,23 +371,6 @@ export default {
       }
     },
 
-    updateSelectedDateFilterType(value) {
-      this.selectedDateFilterType = value
-    },
-
-    startDateThreshold() {
-      switch (this.selectedDateFilterType) {
-        case '3Months':
-          return this.dateByMonthsInPast(3)
-        case '6Months':
-          return this.dateByMonthsInPast(6)
-        case 'YTD':
-          return this.dateByMonthsInPast(12)
-        default:
-          return null
-      }
-    },
-
     dateByMonthsInPast(months) {
       const date = new Date()
       date.setMonth(date.getMonth() - months)
@@ -329,42 +378,16 @@ export default {
     },
 
     facilityName(facilityId) {
-      return this.userInfo.facilities.find(facility => facility.facilityId === facilityId).facilityName
+      return this.userInfo.facilities.find(facility => facility.facilityId === facilityId)?.facilityName
     },
 
     statusName(statusCode) {
-      switch (statusCode) {
-        case FUNDING_AGREEMENT_STATUS_CODES.DRAFT:
-          return 'Draft'
-        case FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW:
-          return 'FA Review'
-        case FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING:
-          return 'FA Signature Pending'
-        case FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED:
-          return 'FA Submitted to Ministry'
-        case FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW:
-          return 'In Review with Ministry EA'
-        case FUNDING_AGREEMENT_STATUS_CODES.ACTIVE:
-          return 'Active'
-        case FUNDING_AGREEMENT_STATUS_CODES.EXPIRED:
-          return 'Expired'
-        default:
-          console.log('Unknown status code:', statusCode)
-          return 'Unknown'
-      }
-    },
-
-    getStatusClass(statusCode) {
-      if (this.FUNDING_AGREEMENT_STATUS_CODES.DRAFT === statusCode) {
-        return 'status-gray'
-      } else if ([FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode)) {
-        return 'status-green'
-      } else if ([FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING].includes(statusCode)) {
-        return 'status-yellow'
-      } else if ([FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED].includes(statusCode)) {
-        return 'status-blue'
-      } else if (this.FUNDING_AGREEMENT_STATUS_CODES.EXPIRED === statusCode) {
-        return 'status-red'
+      const statusName = this.statusNameMap[statusCode];
+      if (statusName) {
+        return statusName;
+      } else {
+        console.log('Unknown status code:', statusCode);
+        return 'Unknown';
       }
     },
 

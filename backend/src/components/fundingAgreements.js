@@ -12,7 +12,8 @@ function buildFilterQueryDates(queryParams) {
     const startDateThreshold = queryParams.startDateThreshold
     delete queryParams.startDateThreshold
     return `ofm_start_date ge ${startDateThreshold} and `
-  } else if (queryParams?.startDateFrom && queryParams?.startDateTo) {
+  }
+  if (queryParams?.startDateFrom && queryParams?.startDateTo) {
     const startDateFrom = formatToISODateFormat(queryParams.startDateFrom)
     const startDateTo = formatToISODateFormat(queryParams.startDateTo)
     delete queryParams.startDateFrom

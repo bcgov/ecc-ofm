@@ -17,14 +17,9 @@ function buildFilterQuery(query, mapping) {
 function formatToISODateFormat(dateString) {
   if (moment(dateString, 'YYYY-MM-DD', true).isValid()) {
     return dateString
-  } else {
-    const date = moment(dateString)
-    if (date.isValid()) {
-      return date.format('YYYY-MM-DD')
-    } else {
-      return 'Invalid date'
-    }
   }
+  const date = moment(dateString)
+  return date.isValid() ? date.format('YYYY-MM-DD') : 'Invalid date'
 }
 
 module.exports = {
