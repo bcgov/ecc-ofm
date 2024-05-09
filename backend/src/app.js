@@ -162,9 +162,10 @@ const parseJwt = (token) => {
 }
 //initialize our authentication strategy
 utils.getOidcDiscovery().then((discovery) => {
-  //OIDC Strategy is used for authorization
-  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', config.get('oidc:idpHintIdir'), 'oidc:clientIdIDIR', 'oidc:clientSecretIDIR')
-  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', config.get('oidc:idpHint'), 'oidc:clientId', 'oidc:clientSecret')
+  // OIDC Strategy is used for authorization
+  // XXX We maintain two separate strategies because of the different idpHint. Otherwise they are equivalent.
+  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', config.get('oidc:idpHintIdir'), 'oidc:clientId', 'oidc:clientSecret')
+  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', config.get('oidc:idpHintBceid'), 'oidc:clientId', 'oidc:clientSecret')
 
   //JWT strategy is used for authorization  keycloak_bcdevexchange_idir
   passport.use(
