@@ -49,7 +49,7 @@
                   <AppLabel>Date:</AppLabel>
                 </v-col>
                 <v-col>
-                  <AppButtonRadioGroup v-model="selectedDateFilterType" :options="dateFilterTypes" :defaultOption="selectedDateFilterType" />
+                  <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="dateFilterTypes" :defaultOption="selectedDateFilterType" />
                 </v-col>
               </v-row>
               <v-row>
@@ -63,7 +63,8 @@
                       :key="index"
                       v-model="selectedPaymentFilterTypes"
                       :label="item.label"
-                      :value="item.value" />
+                      :value="item.value"
+                      :disabled="loading" />
                   </v-row>
                 </v-col>
                 <v-col class="v-col-2" />
@@ -86,6 +87,8 @@
                           style="width: 194px;"
                           prepend-icon="mdi-calendar"
                           v-bind="attrs"
+                          :disabled="loading"
+                          :rules="[v => !!v && moment(v, 'YYYY-MMM-DD', true).isValid() || 'Date must be in YYYY-MMM-DD format']"
                           @click="on && on.click"
                           @click:prepend="menuStartDateFrom = !menuStartDateFrom"></v-text-field>
                       </template>
@@ -108,6 +111,9 @@
                           prepend-icon="mdi-calendar"
                           style="width: 194px;"
                           v-bind="attrs"
+                          :disabled="loading"
+                          :rules="[v => !!v && moment(v, 'YYYY-MMM-DD', true).isValid() || 'Date must be in YYYY-MMM-DD format',
+  v => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date']"
                           @click="on && on.click"
                           @click:prepend="menuStartDateTo = !menuStartDateTo"></v-text-field>
                       </template>
@@ -118,29 +124,31 @@
               </v-row>
             </v-card>
             <v-row class="d-flex justify-end pb-3">
-              <AppButton id="reset" :primary="false" size="large" width="100px" class="mr-8" @click="initialize()">Reset</AppButton>
-              <AppButton id="search" size="large" width="150px" class="mr-4" @click="getFundingAgreements()">Search</AppButton>
+              <AppButton id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="initialize()">Reset</AppButton>
+              <AppButton id="search" size="large" width="150px" class="mr-4" :loading="loading" @click="getFundingAgreements()">Search</AppButton>
             </v-row>
             <h2>Funding Details</h2>
-            <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact">
-              <template #item.startDate="{ item }">
-                {{ format.formatDate(item?.startDate) }}
-              </template>
-              <template #item.endDate="{ item }">
-                {{ format.formatDate(item?.endDate) }}
-              </template>
-              <template #item.status="{ item }">
-                <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
-              </template>
-              <template #[`item.actions`]="{ item }">
-                <v-btn v-if="item?.status === 'FA Signature Pending'" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-                  <v-icon size="large">mdi-signature-freehand</v-icon>
-                </v-btn>
-                <v-btn v-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.guid } })">
-                  <v-icon size="large">mdi-folder-open-outline</v-icon>
-                </v-btn>
-              </template>
-            </v-data-table>
+            <v-skeleton-loader :loading="loading" type="table-tbody">
+              <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact">
+                <template #item.startDate="{ item }">
+                  {{ format.formatDate(item?.startDate) }}
+                </template>
+                <template #item.endDate="{ item }">
+                  {{ format.formatDate(item?.endDate) }}
+                </template>
+                <template #item.status="{ item }">
+                  <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
+                </template>
+                <template #[`item.actions`]="{ item }">
+                  <v-btn v-if="item?.status === 'FA Signature Pending'" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
+                    <v-icon size="large">mdi-signature-freehand</v-icon>
+                  </v-btn>
+                  <v-btn v-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.guid } })">
+                    <v-icon size="large">mdi-folder-open-outline</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </v-skeleton-loader>
           </v-window-item>
           <v-window-item value="history">Funding History</v-window-item>
           <v-window-item value="upcoming">Upcoming Funding</v-window-item>
@@ -168,6 +176,7 @@ import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
+import moment from 'moment'
 
 export default {
   name: 'FundingOverviewView',
@@ -217,14 +226,12 @@ export default {
     formattedStartDateTo() {
       return this.startDateTo ? format.formatDate(this.startDateTo) : ''
     }
-
   },
   async created() {
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
     this.initialize()
     await this.getOrgUsers() // Retrieve the list of users to retrieve the expense authority name
     await this.getFundingAgreements()
-    console.log('this.fundingAgreements = ', JSON.stringify(this.fundingAgreements, null, 2))
   },
   methods: {
     initialize() {
@@ -247,8 +254,13 @@ export default {
       }
     },
 
+    /** 
+     * TODO: Payment type is displayed in UI but is not yet integrated into this method as required CRM data is not yet in place.
+     * This is a know issue and postponed to a future sprint.
+     */
     async getFundingAgreements() {
       try {
+        this.loading = true
         this.fundingAgreements = []
         const startDateThreshold = this.startDateThreshold()
         const facilities = this.selectedFacility ? [this.selectedFacility] : this.userInfo.facilities
@@ -269,16 +281,16 @@ export default {
         }
       } catch (error) {
         console.error(`Error getting funding agreements:`, error)
+      } finally {
+        this.loading = false
       }
     },
 
     async enrichFundingAgreementData(result) {
-      if (result) {
-        result.fundingAgreementType = 'Base Funding'
-        result.facility = this.facilityName(result.facilityId)
-        result.status = this.statusName(result.statusCode)
-        result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
-      }
+      result.fundingAgreementType = 'Base Funding'
+      result.facility = this.facilityName(result.facilityId)
+      result.status = this.statusName(result.statusCode)
+      result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
     },
 
     async getExpenseAuthorityName(applicationId) {
@@ -295,7 +307,6 @@ export default {
 
     updateSelectedDateFilterType(value) {
       this.selectedDateFilterType = value
-      console.log('selectedDateFilterType = ', this.selectedDateFilterType)
     },
 
     startDateThreshold() {
@@ -352,6 +363,8 @@ export default {
         return 'status-yellow'
       } else if ([FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED].includes(statusCode)) {
         return 'status-blue'
+      } else if (this.FUNDING_AGREEMENT_STATUS_CODES.EXPIRED === statusCode) {
+        return 'status-red'
       }
     },
 

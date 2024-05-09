@@ -50,7 +50,6 @@ export default {
     }
   },
 
-  // JSTOREY inactive ones?
   async getFAByFacilityIdAndStartDateThreshold(facilityId, startDateThreshold) {
     try {
       if (!facilityId && !startDateThreshold) return
@@ -65,7 +64,7 @@ export default {
 
   async getFAByFacilityIdAndStartFromEndDates(facilityId, startDateFrom, startDateTo) {
     try {
-      if (!facilityId && !(startDateFrom || startDateTo)) return //JSTOREY need to deal with 1 not the other
+      if (!facilityId && !(startDateFrom || startDateTo)) return
       let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}`
       const response = await ApiService.apiAxios.get(url)
       return response?.data[0]

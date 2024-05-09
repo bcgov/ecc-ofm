@@ -8,7 +8,6 @@ const log = require('./logger')
 const { isEmpty } = require('lodash')
 
 function buildFilterQueryDates(queryParams) {
-  console.log('queryParams', queryParams)
   if (queryParams?.startDateThreshold) {
     const startDateThreshold = queryParams.startDateThreshold
     delete queryParams.startDateThreshold
@@ -25,7 +24,6 @@ function buildFilterQueryDates(queryParams) {
 
 async function getFundingAgreements(req, res) {
   try {
-    console.log('req.query', req.query)
     const fundingAgreements = []
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode&$filter=(${buildFilterQueryDates(
       req?.query,
