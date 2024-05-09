@@ -143,7 +143,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
 async function populateUserInfo(profile) {
   const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
-  if (username.idp === config.get('oidc:idpHint')) {
+  if (username.idp === config.get('oidc:idpHintBceid')) {
     const user = await getUserProfile(username.guid)
     profile.role = user?.role
     profile.org = user?.organization?.accountid
