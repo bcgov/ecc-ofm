@@ -20,11 +20,11 @@
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
           <v-card class="mt-2 mb-3 pa-3">
-            <AppDocumentUpload :readonly="true" :documentType="DOCUMENT_TYPES.FINANCIAL_STATEMENT" :uploadedDocuments="documentsFinancialStatements">
+            <AppDocumentUpload :readonly="true" :documentType="DOCUMENT_TYPES.INCOME_STATEMENT" :uploadedDocuments="documentsFinancialStatements">
               <AppMissingInfoError
                 v-if="!readonly && !documentsFinancialStatements.length"
                 :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
-                {{ DOCUMENT_TYPES.FINANCIAL_STATEMENT }} document upload required
+                {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
           </v-card>
@@ -86,7 +86,7 @@ export default {
       return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
     },
     documentsFinancialStatements() {
-      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.FINANCIAL_STATEMENT)
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT)
     },
     documentsBalanceSheets() {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
