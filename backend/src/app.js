@@ -141,18 +141,15 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
 }
 
 async function populateUserInfo(profile) {
-  // Username is username@idp, e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
-  const profileArray = profile.username.split('@')
-  const idp = profileArray[1]
-
+  const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
-  if (idp === 'bceidbusiness') {
-    const user = await getUserProfile(profileArray[0])
+  if (username.idp === config.get('oidc:idpHint')) {
+    const user = await getUserProfile(username.guid)
     profile.role = user?.role
     profile.org = user?.organization?.accountid
-  } else if (idp === 'idir') {
+  } else if (username.idp === config.get('oidc:idpHintIdir')) {
     // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
-    log.verbose('Found idir user')
+    log.info('Found idir user')
   }
 }
 
@@ -166,8 +163,8 @@ const parseJwt = (token) => {
 //initialize our authentication strategy
 utils.getOidcDiscovery().then((discovery) => {
   //OIDC Strategy is used for authorization
-  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', 'keycloak_bcdevexchange_idir', 'oidc:clientIdIDIR', 'oidc:clientSecretIDIR')
-  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', 'keycloak_bcdevexchange_bceid', 'oidc:clientId', 'oidc:clientSecret')
+  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', config.get('oidc:idpHintIdir'), 'oidc:clientIdIDIR', 'oidc:clientSecretIDIR')
+  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', config.get('oidc:idpHint'), 'oidc:clientId', 'oidc:clientSecret')
 
   //JWT strategy is used for authorization  keycloak_bcdevexchange_idir
   passport.use(

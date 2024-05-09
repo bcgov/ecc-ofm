@@ -64,7 +64,7 @@ function minify(obj, keys = ['documentData']) {
 }
 
 function getSessionUser(req) {
-  log.verbose('getSessionUser', req.session)
+  log.info('getSessionUser', req.session)
   const session = req.session
   return session && session.passport && session.passport.user
 }
@@ -74,11 +74,18 @@ function getUserGuid(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  let guid = req.session?.passport?.user?._json?.bceid_user_guid
-  if (!guid) {
-    guid = req.session?.passport?.user?._json?.idir_user_guid
-  }
-  return guid
+  return splitUsername(userInfo._json.preferred_username).guid
+}
+
+/**
+ * Splits the username into it's component parts.
+ * Format is username@idp e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
+ * @param {*} username
+ * @returns
+ */
+function splitUsername(username) {
+  const usernameArray = username.split('@')
+  return { guid: usernameArray[0].toUpperCase(), idp: usernameArray[1] }
 }
 
 function isIdirUser(req) {
@@ -106,6 +113,7 @@ function getUserName(req) {
 }
 
 function getBusinessName(req) {
+  // XXX This isn't available in the childcare-applications realm but also isn't currently used in the frontend
   let businessName = req.session?.passport?.user?._json?.bceid_business_name
   return businessName
 }
@@ -297,6 +305,7 @@ const utils = {
   deleteOperation,
   sleep,
   postDocuments,
+  splitUsername,
 }
 
 module.exports = utils
