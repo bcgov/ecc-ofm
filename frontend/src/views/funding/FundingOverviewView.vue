@@ -31,7 +31,7 @@
             <v-form ref="faForm" v-model="isFormComplete">
               <v-card class="d-flex ma-1" fluid>
                 <v-row>
-                  <v-col cols="12" sm="6" lg="7" xl="7" class="pl-0">
+                  <v-col cols="12" sm="7" lg="7" xl="7" class="pl-0">
                     <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
                       <v-row>
                         <v-col cols="12" sm="6" lg="2" xl="2">
@@ -67,7 +67,7 @@
                       </v-row>
                     </v-card>
                   </v-col>
-                  <v-col cols="12" sm="5" lg="5" xl="5" class="pl-0 pr-0">
+                  <v-col cols="12" sm="10" lg="5" xl="5" class="pl-0 pr-0">
                     <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
                       <v-row>
                         <v-col cols="12" sm="5" lg="2" xl="2">
