@@ -29,101 +29,113 @@
         <v-window v-model="tab">
           <v-window-item value="agreements">
             <v-form ref="faForm" v-model="isFormComplete">
-              <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1">
+              <v-card class="d-flex ma-1" fluid>
                 <v-row>
-                  <v-col class="v-col-1">
-                    <AppLabel>Facility:</AppLabel>
-                  </v-col>
-                  <v-col class="v-col-4">
-                    <v-select
-                      :items="userInfo.facilities"
-                      v-model="selectedFacility"
-                      item-title="facilityName"
-                      label="Select"
-                      :disabled="loading"
-                      density="compact"
-                      variant="outlined"
-                      return-object />
-                  </v-col>
-                  <v-col class="v-col-2" />
-                  <v-col class="v-col-1">
-                    <AppLabel>Date:</AppLabel>
-                  </v-col>
-                  <v-col>
-                    <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_TYPES" :defaultOption="selectedDateFilterType" />
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col class="v-col-1">
-                    <AppLabel>Payment Type:</AppLabel>
-                  </v-col>
-                  <v-col class="v-col-4">
-                    <v-row>
-                      <v-checkbox
-                        v-for="(item, index) in PAYMENT_FILTER_TYPES"
-                        :key="index"
-                        v-model="selectedPaymentFilterTypes"
-                        :label="item.label"
-                        :value="item.value"
-                        :disabled="loading" />
-                    </v-row>
-                  </v-col>
-                  <v-col class="v-col-2" />
-                  <template v-if="selectedDateFilterType === 'Custom'">
-                    <v-col class="v-col-1">
-                      <AppLabel>Date Range:</AppLabel>
-                    </v-col>
-                    <v-col cols="auto">
-                      <v-menu
-                        v-model="menuStartDateFrom"
-                        :close-on-content-click="false"
-                        :nudge-right="800"
-                        :nudge-bottom="200"
-                        min-width="auto">
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            id="start-date-from"
-                            v-model="formattedStartDateFrom"
-                            label="Start Date From"
-                            style="width: 194px;"
-                            prepend-icon="mdi-calendar"
-                            v-bind="attrs"
+                  <v-col cols="12" sm="6" xl="7" class="pl-0">
+                    <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
+                      <v-row>
+                        <v-col cols="12" sm="6" lg="2" xl="2">
+                          <AppLabel>Facility:</AppLabel>
+                        </v-col>
+                        <v-col cols="12" sm="9" lg="8" xl="7">
+                          <v-select
+                            :items="userInfo.facilities"
+                            v-model="selectedFacility"
+                            item-title="facilityName"
+                            label="Select"
                             :disabled="loading"
-                            :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format']"
-                            @click="on && on.click"
-                            @click:prepend="menuStartDateFrom = !menuStartDateFrom"></v-text-field>
+                            density="compact"
+                            variant="outlined"
+                            return-object />
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" lg="2" xl="2">
+                          <AppLabel>Payment Type:</AppLabel>
+                        </v-col>
+                        <v-col cols="12" sm="9" lg="9">
+                          <v-row>
+                            <v-checkbox
+                              v-for="(item, index) in PAYMENT_FILTER_TYPES"
+                              :key="index"
+                              v-model="selectedPaymentFilterTypes"
+                              :label="item.label"
+                              :value="item.value"
+                              :disabled="loading" />
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" sm="6" lg="6" xl="5" class="pl-0 pr-0">
+                    <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
+                      <v-row>
+                        <v-col cols="12" sm="6" lg="2" xl="2">
+                          <AppLabel>Date:</AppLabel>
+                        </v-col>
+                        <v-col cols="12" sm="12" lg="9" xl="7">
+                          <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_TYPES" :defaultOption="selectedDateFilterType" />
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <template v-if="selectedDateFilterType === 'Custom'">
+                          <v-col cols="12" sm="7" lg="2">
+                            <AppLabel>Date Range:</AppLabel>
+                          </v-col>
+                          <v-col cols="12" sm="6" lg="4">
+                            <v-menu
+                              v-model="menuStartDateFrom"
+                              :close-on-content-click="false"
+                              :nudge-right="800"
+                              :nudge-bottom="200"
+                              min-width="2">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  id="start-date-from"
+                                  v-model="formattedStartDateFrom"
+                                  label="Start Date From"
+                                  style="width: 194px;"
+                                  prepend-icon="mdi-calendar"
+                                  v-bind="attrs"
+                                  :disabled="loading"
+                                  :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format']"
+                                  @click="on && on.click"
+                                  @click:prepend="menuStartDateFrom = !menuStartDateFrom"></v-text-field>
+                              </template>
+                              <v-date-picker v-model="startDateFrom" @input="menuStartDateFrom = false"></v-date-picker>
+                            </v-menu>
+                          </v-col>
+                          <v-col cols="12" sm="7" lg="3">
+                            <v-menu
+                              v-model="menuStartDateTo"
+                              :close-on-content-click="false"
+                              :nudge-right="40"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="290px">
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  id="start-date-to"
+                                  v-model="formattedStartDateTo"
+                                  label="Start Date To"
+                                  prepend-icon="mdi-calendar"
+                                  style="width: 194px;"
+                                  v-bind="attrs"
+                                  :disabled="loading"
+                                  :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format', v => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date']"
+                                  @click="on && on.click"
+                                  @click:prepend="menuStartDateTo = !menuStartDateTo"></v-text-field>
+                              </template>
+                              <v-date-picker v-model="startDateTo" @input="menuStartDateTo = false"></v-date-picker>
+                            </v-menu>
+                          </v-col>
                         </template>
-                        <v-date-picker v-model="startDateFrom" @input="menuStartDateFrom = false"></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col class="v-col-2">
-                      <v-menu
-                        v-model="menuStartDateTo"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px">
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            id="start-date-to"
-                            v-model="formattedStartDateTo"
-                            label="Start Date To"
-                            prepend-icon="mdi-calendar"
-                            style="width: 194px;"
-                            v-bind="attrs"
-                            :disabled="loading"
-                            :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format', v => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date']"
-                            @click="on && on.click"
-                            @click:prepend="menuStartDateTo = !menuStartDateTo"></v-text-field>
-                        </template>
-                        <v-date-picker v-model="startDateTo" @input="menuStartDateTo = false"></v-date-picker>
-                      </v-menu>
-                    </v-col>
-                  </template>
+                      </v-row>
+                    </v-card>
+                  </v-col>
                 </v-row>
               </v-card>
-              <v-row class="d-flex justify-end pb-3">
+              <v-row class="d-flex justify-end pb-3 mt-1">
                 <AppButton id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="resetFilter()">Reset</AppButton>
                 <AppButton id="search" size="large" width="150px" class="mr-4" :loading="loading" @click="search()">Search</AppButton>
               </v-row>
@@ -137,13 +149,13 @@
                     {{ format.formatDate(item?.endDate) }}
                   </template>
                   <template #item.status="{ item }">
-                    <span :class="{ 'status-gray': isDraftStatus(item?.statusCode), 'status-yellow': isSignaturePendingStatus(item?.statusCode), 'status-blue': (isReviewStatus(item?.statusCode) || isSubmittedStatus(item?.statusCode)), 'status-green': isActiveStatus(item?.statusCode), 'status-red': isExpiredStatus(item?.statusCode) }" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
+                    <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
                   </template>
                   <template #[`item.actions`]="{ item }">
                     <v-btn v-if="item?.status === 'FA Signature Pending'" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
                       <v-icon size="large">mdi-signature-freehand</v-icon>
                     </v-btn>
-                    <v-btn v-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.guid } })">
+                    <v-btn v-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" variant="text" @click="this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
                       <v-icon size="large">mdi-folder-open-outline</v-icon>
                     </v-btn>
                   </template>
@@ -279,31 +291,14 @@ export default {
       [FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW]: 'In Review with Ministry EA',
       [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE]: 'Active',
       [FUNDING_AGREEMENT_STATUS_CODES.EXPIRED]: 'Expired',
+      [FUNDING_AGREEMENT_STATUS_CODES.TERMINATED]: 'Terminated',
     }
     this.resetFilter()
-    this.orgUsers = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
-    await this.load()
+    await this.loadOrganizationUsers()
+    await this.loadFundingAgreements()
   },
   methods: {
     isValidEndDate,
-    isDraftStatus(statusCode) {
-      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.DRAFT
-    },
-    isSignaturePendingStatus(statusCode) {
-      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING
-    },
-    isReviewStatus(statusCode) {
-      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW
-    },
-    isSubmittedStatus(statusCode) {
-      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED
-    },
-    isActiveStatus(statusCode) {
-      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
-    },
-    isExpiredStatus(statusCode) {
-      return statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED
-    },
 
     resetFilter() {
       this.selectedFacility = null
@@ -313,11 +308,22 @@ export default {
       this.startDateTo = null
     },
 
+    async loadOrganizationUsers() {
+      try {
+        this.loading = true
+        this.orgUsers = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
+      } catch (error) {
+        console.error('Error getting organization users:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
     /** 
      * TODO: Payment type is displayed in UI but is not yet integrated into this method as required CRM data is not yet in place.
      * This is a know issue and postponed to a future sprint.
      */
-    async load() {
+    async loadFundingAgreements() {
       try {
         this.loading = true
         this.fundingAgreements = []
@@ -382,14 +388,23 @@ export default {
     },
 
     statusName(statusCode) {
-      const statusName = this.statusNameMap[statusCode];
+      const statusName = this.statusNameMap[statusCode]
       if (statusName) {
-        return statusName;
+        return statusName
       } else {
-        console.log('Unknown status code:', statusCode);
-        return 'Unknown';
+        return 'Unknown'
       }
     },
+
+    getStatusClass(statusCode) {
+      return {
+        'status-gray': [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
+        'status-yellow': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
+        'status-green': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
+        'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
+        'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
+      }
+    }
 
   }
 }

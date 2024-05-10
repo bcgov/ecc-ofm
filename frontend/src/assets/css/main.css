@@ -170,6 +170,11 @@ input[type='number'] {
   border-radius: 5px;
 }
 
+.status-purple {
+  background-color: #ba93d1;
+  border-radius: 5px;
+}
+
 .status-yellow {
   background-color: #ffe082;
   border-radius: 5px;

@@ -92,11 +92,10 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import alertMixin from '@/mixins/alertMixin'
 import { CRM_STATE_CODES, ROLES } from '@/utils/constants'
-import { ApiRoutes } from '@/utils/constants'
-import ApiService from '@/common/apiService'
 import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import OrganizationService from '@/services/organizationService'
 
 export default {
   components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, FacilityFilter },
@@ -169,7 +168,7 @@ export default {
       try {
         this.loading = true
         // TODO (jgstorey) Make this a service function
-        const res = await ApiService.apiAxios.get(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + this.userInfo.organizationId)
+        const res = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
         this.usersAndFacilities = res.data
       } catch (error) {
         this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
