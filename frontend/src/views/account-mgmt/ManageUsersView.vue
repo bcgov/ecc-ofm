@@ -98,6 +98,7 @@ import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import OrganizationService from '@/services/organizationService'
 
 export default {
+  name: 'ManageUsersView',
   components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, FacilityFilter },
   mixins: [alertMixin],
   data() {
