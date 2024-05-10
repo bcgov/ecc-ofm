@@ -31,7 +31,7 @@
             <v-form ref="faForm" v-model="isFormComplete">
               <v-card class="d-flex ma-1" fluid>
                 <v-row>
-                  <v-col cols="12" sm="6" xl="7" class="pl-0">
+                  <v-col cols="12" sm="6" lg="7" xl="7" class="pl-0">
                     <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
                       <v-row>
                         <v-col cols="12" sm="6" lg="2" xl="2">
@@ -67,10 +67,10 @@
                       </v-row>
                     </v-card>
                   </v-col>
-                  <v-col cols="12" sm="6" lg="6" xl="5" class="pl-0 pr-0">
+                  <v-col cols="12" sm="5" lg="5" xl="5" class="pl-0 pr-0">
                     <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
                       <v-row>
-                        <v-col cols="12" sm="6" lg="2" xl="2">
+                        <v-col cols="12" sm="5" lg="2" xl="2">
                           <AppLabel>Date:</AppLabel>
                         </v-col>
                         <v-col cols="12" sm="12" lg="9" xl="7">
@@ -82,7 +82,7 @@
                           <v-col cols="12" sm="7" lg="2">
                             <AppLabel>Date Range:</AppLabel>
                           </v-col>
-                          <v-col cols="12" sm="6" lg="4">
+                          <v-col cols="12" sm="6" lg="5">
                             <v-menu
                               v-model="menuStartDateFrom"
                               :close-on-content-click="false"
@@ -191,6 +191,43 @@ import { useAuthStore } from '@/stores/auth'
 import { isValidEndDate } from '@/utils/validation.js'
 import moment from 'moment'
 
+const DATE_FILTER_TYPE_VALUES = {
+  THREE_MONTHS: '3 Months',
+  SIX_MONTHS: '6 Months',
+  YTD: 'YTD',
+  CUSTOM: 'Custom',
+}
+
+const PAYMENT_FILTER_TYPE_VALUES = {
+  BASE_FUNDING: 'Base Funding',
+  SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
+  OTHER: 'Other',
+}
+
+const PAYMENT_FILTER_TYPES = [
+  { label: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, value: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING },
+  { label: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, value: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES },
+  { label: PAYMENT_FILTER_TYPE_VALUES.OTHER, value: PAYMENT_FILTER_TYPE_VALUES.OTHER },
+]
+
+const statusNameMap = {
+  [FUNDING_AGREEMENT_STATUS_CODES.DRAFT]: 'Draft',
+  [FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]: 'FA Review',
+  [FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING]: 'FA Signature Pending',
+  [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED]: 'FA Submitted to Ministry',
+  [FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW]: 'In Review with Ministry EA',
+  [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE]: 'Active',
+  [FUNDING_AGREEMENT_STATUS_CODES.EXPIRED]: 'Expired',
+  [FUNDING_AGREEMENT_STATUS_CODES.TERMINATED]: 'Terminated',
+}
+
+const DATE_FILTER_TYPES = [
+  { label: DATE_FILTER_TYPE_VALUES.THREE_MONTHS, value: DATE_FILTER_TYPE_VALUES.THREE_MONTHS },
+  { label: DATE_FILTER_TYPE_VALUES.SIX_MONTHS, value: DATE_FILTER_TYPE_VALUES.SIX_MONTHS },
+  { label: DATE_FILTER_TYPE_VALUES.YTD, value: DATE_FILTER_TYPE_VALUES.YTD },
+  { label: DATE_FILTER_TYPE_VALUES.CUSTOM, value: DATE_FILTER_TYPE_VALUES.CUSTOM },
+]
+
 export default {
   name: 'FundingOverviewView',
   components: { AppButton, AppBackButton, AppLabel, AppButtonRadioGroup, OrganizationHeader },
@@ -226,11 +263,11 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     startDateThreshold() {
       switch (this.selectedDateFilterType) {
-        case this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS:
+        case DATE_FILTER_TYPE_VALUES.THREE_MONTHS:
           return this.dateByMonthsInPast(3)
-        case this.DATE_FILTER_TYPE_VALUES.SIX_MONTHS:
+        case DATE_FILTER_TYPE_VALUES.SIX_MONTHS:
           return this.dateByMonthsInPast(6)
-        case this.DATE_FILTER_TYPE_VALUES.YTD:
+        case DATE_FILTER_TYPE_VALUES.YTD:
           return this.dateByMonthsInPast(12)
         default:
           return null
@@ -261,38 +298,9 @@ export default {
   },
 
   async created() {
-    this.DATE_FILTER_TYPE_VALUES = {
-      THREE_MONTHS: '3 Months',
-      SIX_MONTHS: '6 Months',
-      YTD: 'YTD',
-      CUSTOM: 'Custom',
-    }
-    this.DATE_FILTER_TYPES = [
-      { label: this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS, value: this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS },
-      { label: this.DATE_FILTER_TYPE_VALUES.SIX_MONTHS, value: this.DATE_FILTER_TYPE_VALUES.SIX_MONTHS },
-      { label: this.DATE_FILTER_TYPE_VALUES.YTD, value: this.DATE_FILTER_TYPE_VALUES.YTD },
-      { label: this.DATE_FILTER_TYPE_VALUES.CUSTOM, value: this.DATE_FILTER_TYPE_VALUES.CUSTOM },
-    ]
-    this.PAYMENT_FILTER_TYPE_VALUES = {
-      BASE_FUNDING: 'Base Funding',
-      SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
-      OTHER: 'Other',
-    }
-    this.PAYMENT_FILTER_TYPES = [
-      { label: this.PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, value: this.PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING },
-      { label: this.PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, value: this.PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES },
-      { label: this.PAYMENT_FILTER_TYPE_VALUES.OTHER, value: this.PAYMENT_FILTER_TYPE_VALUES.OTHER },
-    ]
-    this.statusNameMap = {
-      [FUNDING_AGREEMENT_STATUS_CODES.DRAFT]: 'Draft',
-      [FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]: 'FA Review',
-      [FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING]: 'FA Signature Pending',
-      [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED]: 'FA Submitted to Ministry',
-      [FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW]: 'In Review with Ministry EA',
-      [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE]: 'Active',
-      [FUNDING_AGREEMENT_STATUS_CODES.EXPIRED]: 'Expired',
-      [FUNDING_AGREEMENT_STATUS_CODES.TERMINATED]: 'Terminated',
-    }
+    this.PAYMENT_FILTER_TYPES = PAYMENT_FILTER_TYPES
+    this.DATE_FILTER_TYPES = DATE_FILTER_TYPES
+    this.DATE_FILTER_TYPE_VALUES = DATE_FILTER_TYPE_VALUES
     this.resetFilter()
     await this.loadOrganizationUsers()
     await this.loadFundingAgreements()
@@ -302,8 +310,8 @@ export default {
 
     resetFilter() {
       this.selectedFacility = null
-      this.selectedDateFilterType = this.DATE_FILTER_TYPE_VALUES.THREE_MONTHS
-      this.selectedPaymentFilterTypes = [this.PAYMENT_FILTER_TYPES.BASE_FUNDING, this.PAYMENT_FILTER_TYPES.SUPPLEMENTARY_ALLOWANCES, this.PAYMENT_FILTER_TYPES.OTHER]
+      this.selectedDateFilterType = DATE_FILTER_TYPE_VALUES.THREE_MONTHS
+      this.selectedPaymentFilterTypes = [PAYMENT_FILTER_TYPES.BASE_FUNDING, PAYMENT_FILTER_TYPES.SUPPLEMENTARY_ALLOWANCES, PAYMENT_FILTER_TYPES.OTHER]
       this.startDateFrom = null
       this.startDateTo = null
     },
@@ -359,7 +367,7 @@ export default {
     },
 
     async enrichFundingAgreementData(result) {
-      result.fundingAgreementType = this.PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
+      result.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
       result.facility = this.facilityName(result.facilityId)
       result.status = this.statusName(result.statusCode)
       result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
@@ -388,12 +396,7 @@ export default {
     },
 
     statusName(statusCode) {
-      const statusName = this.statusNameMap[statusCode]
-      if (statusName) {
-        return statusName
-      } else {
-        return 'Unknown'
-      }
+      return statusNameMap[statusCode] ?? 'Unknown'
     },
 
     getStatusClass(statusCode) {
