@@ -359,7 +359,7 @@ export default {
     },
 
     async enrichFundingAgreementData(result) {
-      result.fundingAgreementType = 'Base Funding'
+      result.fundingAgreementType = this.PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
       result.facility = this.facilityName(result.facilityId)
       result.status = this.statusName(result.statusCode)
       result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
