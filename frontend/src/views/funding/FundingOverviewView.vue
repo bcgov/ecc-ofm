@@ -311,7 +311,7 @@ export default {
     resetFilter() {
       this.selectedFacility = null
       this.selectedDateFilterType = DATE_FILTER_TYPE_VALUES.THREE_MONTHS
-      this.selectedPaymentFilterTypes = [PAYMENT_FILTER_TYPES.BASE_FUNDING, PAYMENT_FILTER_TYPES.SUPPLEMENTARY_ALLOWANCES, PAYMENT_FILTER_TYPES.OTHER]
+      this.selectedPaymentFilterTypes = [PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, PAYMENT_FILTER_TYPE_VALUES.OTHER]
       this.startDateFrom = null
       this.startDateTo = null
     },
