@@ -300,7 +300,6 @@ export default {
   async created() {
     this.PAYMENT_FILTER_TYPES = PAYMENT_FILTER_TYPES
     this.DATE_FILTER_TYPES = DATE_FILTER_TYPES
-    this.DATE_FILTER_TYPE_VALUES = DATE_FILTER_TYPE_VALUES
     this.resetFilter()
     await this.loadOrganizationUsers()
     await this.loadFundingAgreements()
@@ -336,6 +335,7 @@ export default {
         this.loading = true
         this.fundingAgreements = []
         const facilities = this.selectedFacility ? [this.selectedFacility] : this.userInfo.facilities
+        // TODO use "await Promise.all(facilities?.map(async (facility) => {....}" instead of for loop!
         for (let facility of facilities) {
           try {
             let payload
@@ -346,7 +346,7 @@ export default {
             }
             if (!payload) continue
             await this.enrichFundingAgreementData(payload)
-            this.fundingAgreements.push(payload)
+            this.fundingAgreements.push(...payload)
           } catch (error) {
             console.error(`Error getting funding agreements for facility ID ${facility.facilityId}:`, error)
           }
@@ -366,11 +366,13 @@ export default {
       await this.loadFundingAgreements()
     },
 
-    async enrichFundingAgreementData(result) {
-      result.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
-      result.facility = this.facilityName(result.facilityId)
-      result.status = this.statusName(result.statusCode)
-      result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
+    async enrichFundingAgreementData(results) {
+      for (let result of results) {
+        result.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
+        result.facility = this.facilityName(result.facilityId)
+        result.status = this.statusName(result.statusCode)
+        result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
+      }
     },
 
     async getExpenseAuthorityName(applicationId) {

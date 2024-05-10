@@ -167,7 +167,6 @@ export default {
     async getUsersAndFacilities() {
       try {
         this.loading = true
-        // TODO (jgstorey) Make this a service function
         const res = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
         this.usersAndFacilities = res.data
       } catch (error) {
