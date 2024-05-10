@@ -355,7 +355,7 @@ export default {
       if (!this.isFormComplete) {
         return
       }
-      await this.load()
+      await this.loadFundingAgreements()
     },
 
     async enrichFundingAgreementData(result) {
