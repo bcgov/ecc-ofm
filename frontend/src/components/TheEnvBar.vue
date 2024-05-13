@@ -4,14 +4,9 @@
       <h3 class="env-text">{{ bannerEnvironment }} Environment</h3>
     </div>
   </v-app-bar>
-  <div>
-    <h3 class="subBanner" v-if="subtitleBanner != ''">{{ subtitleBanner }}</h3>
-  </div>
 </template>
 
 <script>
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
 import StaticConfig from '@/common/staticConfig'
 
 export default {
@@ -21,9 +16,6 @@ export default {
       bannerEnvironment: StaticConfig.BANNER_ENVIRONMENT,
       bannerColor: StaticConfig.BANNER_COLOR,
     }
-  },
-  computed: {
-    ...mapState(useAppStore, ['subtitleBanner']),
   },
 }
 </script>
