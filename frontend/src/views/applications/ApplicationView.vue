@@ -16,14 +16,14 @@
           <router-view
             class="min-screen-height"
             :readonly="readonly"
-            :facility="facility"
-            :contacts="contacts"
             :cancel="cancel"
             :back="back"
             :next="next"
             :save="save"
             :submit="submit"
-            @process="process"></router-view>
+            :facility="facility"
+            :contacts="contacts"
+            @process="process" />
           <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
           <AppNavButtons
             :loading="processing"
@@ -38,7 +38,7 @@
             @cancel="toggleCancel"
             @save="toggleSave"
             @next="toggleNext"
-            @submit="toggleSubmit"></AppNavButtons>
+            @submit="toggleSubmit" />
         </v-col>
       </v-row>
     </div>
