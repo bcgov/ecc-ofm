@@ -113,7 +113,8 @@ export default {
   },
   computed: {
     canEditFA() {
-      return this.hasPermission(this.PERMISSIONS.SIGN_FUNDING_AGREEMENT) && !this.isFundingAgreementLocked
+      //TODO - JB: add permissions back in when complete
+      return !this.isFundingAgreementLocked
     },
     isFundingAgreementLocked() {
       return LOCKED_STATUSES.includes(this.fundingAgreement?.statusCode)
