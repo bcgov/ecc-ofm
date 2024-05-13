@@ -48,11 +48,11 @@
         </v-row>
         <StaffingCertificateInput
           v-if="totalInfantECEducatorStaff > 0 || updatedITECertificates?.length > 0"
-          v-model="updatedITECertificates"
           :readonly="readonly"
           :employee-count="totalInfantECEducatorStaff"
           :employee-type="APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE"
-          :all-certificates="allUpdatedCertificates" />
+          :all-certificates="allUpdatedCertificates"
+          @update="updateITECertificates" />
       </v-card>
 
       <v-card class="soft-outline my-6 py-4" variant="outlined">
@@ -83,11 +83,11 @@
         </v-row>
         <StaffingCertificateInput
           v-if="totalECEducatorStaff > 0 || updatedECECertificates?.length > 0"
-          v-model="updatedECECertificates"
           :readonly="readonly"
           :employee-count="totalECEducatorStaff"
           :employee-type="APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE"
-          :all-certificates="allUpdatedCertificates" />
+          :all-certificates="allUpdatedCertificates"
+          @update="updateECECertificates" />
       </v-card>
 
       <v-card class="soft-outline my-6 py-4" variant="outlined">
@@ -118,11 +118,11 @@
         </v-row>
         <StaffingCertificateInput
           v-if="totalECEducatorAssistantStaff > 0 || updatedECEACertificates?.length > 0"
-          v-model="updatedECEACertificates"
           :readonly="readonly"
           :employee-count="totalECEducatorAssistantStaff"
           :employee-type="APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA"
-          :all-certificates="allUpdatedCertificates" />
+          :all-certificates="allUpdatedCertificates"
+          @update="updateECEACertificates" />
       </v-card>
 
       <v-card class="soft-outline my-6 pa-4" variant="outlined">
@@ -384,6 +384,18 @@ export default {
       this.updatedECECertificates = cloneDeep(this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE))
       this.updatedECEACertificates = cloneDeep(this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA))
       this.updatedITECertificates = cloneDeep(this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE))
+    },
+
+    updateITECertificates(certificates) {
+      this.updatedITECertificates = certificates
+    },
+
+    updateECECertificates(certificates) {
+      this.updatedECECertificates = certificates
+    },
+
+    updateECEACertificates(certificates) {
+      this.updatedECEACertificates = certificates
     },
   },
 }

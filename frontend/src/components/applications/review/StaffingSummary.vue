@@ -179,16 +179,11 @@ export default {
   },
 
   methods: {
-    ...mapActions(useApplicationsStore, [
-      'isThereAtLeastOneEmployee',
-      'areEmployeeCertificatesComplete',
-      'areAllEmployeeCertificatesEntered',
-      'areAllCertificateInitialsUnique',
-      'areAllCertificateNumbersUnique',
-    ]),
+    ...mapActions(useApplicationsStore, ['isThereAtLeastOneEmployee', 'areAllEmployeeCertificatesEntered', 'areAllCertificateInitialsUnique', 'areAllCertificateNumbersUnique']),
   },
 }
 </script>
+
 <style scoped>
 .border-bottom {
   border-bottom: 2px solid;

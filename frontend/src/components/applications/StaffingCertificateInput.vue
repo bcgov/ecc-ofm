@@ -1,10 +1,10 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mt-8">
-      <v-col v-for="(certificate, index) in certificates" :key="index" cols="12" sm="6" lg="4" xl="3" class="px-6 px-lg-8 mb-2" align="center">
+      <v-col v-for="(certificate, index) in certificates" :key="index" cols="12" md="6" lg="4" xl="3" class="px-6 px-lg-8 mb-2" align="center">
         <v-row no-gutters>
           <v-col cols="12" sm="1" class="pt-2">{{ index + 1 }}.</v-col>
-          <v-col cols="12" sm="4" class="pt-1">
+          <v-col cols="12" sm="4">
             <v-text-field
               v-model.trim="certificate.initials"
               variant="outlined"
@@ -18,7 +18,7 @@
               @input="update(certificate)"
               @blur="checkDuplicateInitials" />
           </v-col>
-          <v-col cols="12" sm="6" class="pt-1">
+          <v-col cols="12" sm="6">
             <v-text-field
               v-model="certificate.certificateNumber"
               variant="outlined"
@@ -32,8 +32,10 @@
               @input="update(certificate)"
               @blur="checkDuplicateCertificateNumbers" />
           </v-col>
-          <v-col v-if="certificate.initials || certificate.certificateNumber" cols="12" sm="1" class="pl-3" align="center">
-            <v-btn icon="mdi-trash-can-outline" variant="text" @click="remove(index)" />
+          <v-col v-if="certificate.initials || certificate.certificateNumber" cols="12" sm="1">
+            <v-btn variant="text" @click="remove(index)">
+              <v-icon icon="mdi-trash-can-outline" size="large" />
+            </v-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -42,7 +44,7 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
+import { isEmpty, cloneDeep } from 'lodash'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
 import rules from '@/utils/rules'
@@ -70,7 +72,7 @@ export default {
     },
   },
 
-  emits: ['update:modelValue'],
+  emits: ['update'],
 
   data() {
     return {
@@ -83,9 +85,13 @@ export default {
 
     certificateNumberPlaceholder() {
       if (this.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA) {
-        return 'ECEA certificate number'
+        return 'ECEA certificate #'
       }
-      return 'ECE certificate number'
+      return 'ECE certificate #'
+    },
+
+    filteredCertificates() {
+      return this.allCertificates?.filter((certificate) => certificate.employeeType === this.employeeType)
     },
   },
 
@@ -101,8 +107,9 @@ export default {
         }
       },
     },
-    allCertificates: {
+    filteredCertificates: {
       async handler() {
+        this.initializeCertificates()
         await this.validateCertificates()
       },
       deep: true,
@@ -120,7 +127,7 @@ export default {
 
   methods: {
     initializeCertificates() {
-      this.certificates = this.allCertificates?.filter((certificate) => certificate.employeeType === this.employeeType)
+      this.certificates = cloneDeep(this.filteredCertificates)
       while (this.certificates?.length < this.employeeCount) {
         this.addBlankCertificate()
       }
@@ -132,7 +139,7 @@ export default {
       if (certificate.providerEmployeeId) {
         certificate.isUpdated = true
       }
-      this.$emit('update:modelValue', this.certificates)
+      this.$emit('update', this.certificates)
     },
 
     remove(index) {
@@ -140,7 +147,7 @@ export default {
       if (this.certificates?.length < this.employeeCount) {
         this.addBlankCertificate()
       }
-      this.$emit('update:modelValue', this.certificates)
+      this.$emit('update', this.certificates)
     },
 
     addBlankCertificate() {
@@ -161,9 +168,9 @@ export default {
     },
 
     async validateCertificates() {
+      this.checkDuplicateInitials()
+      this.checkDuplicateCertificateNumbers()
       if (this.validation) {
-        this.checkDuplicateInitials()
-        this.checkDuplicateCertificateNumbers()
         await this.$refs.form?.validate()
       }
     },
