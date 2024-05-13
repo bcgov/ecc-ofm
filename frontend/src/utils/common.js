@@ -31,3 +31,7 @@ export function hasDuplicateVIN(model, transportModels) {
 export function convertStringToArray(item, separator = ',') {
   return typeof item === 'string' ? item?.split(separator) : item
 }
+
+export function sanitizeWholeNumberInput(input) {
+  return input?.replace(/[^0-9]/g, '')
+}

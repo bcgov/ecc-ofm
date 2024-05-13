@@ -6,23 +6,16 @@ import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
 import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES } from '@/utils/constants'
 
+/*
+  Facility Details page - Helper functions
+*/
 function checkFacilityDetailsComplete(application) {
   return application?.primaryContactId && application?.expenseAuthorityId
 }
 
-function checkStaffingComplete(application) {
-  const totalStaff =
-    application?.staffingInfantECEducatorFullTime +
-    application?.staffingInfantECEducatorPartTime +
-    application?.staffingECEducatorFullTime +
-    application?.staffingECEducatorPartTime +
-    application?.staffingECEducatorAssistantFullTime +
-    application?.staffingECEducatorAssistantPartTime +
-    application?.staffingResponsibleAdultFullTime +
-    application?.staffingResponsibleAdultPartTime
-  return totalStaff > 0
-}
-
+/*
+  Operating Cost page - Helper functions
+*/
 function checkRequiredDocsExist(application, requiredDocumentTypes) {
   return requiredDocumentTypes.every((type) => application.uploadedDocuments.some((doc) => doc.documentType === type))
 }
@@ -42,6 +35,9 @@ function checkOperatingCostsComplete(application) {
   return application?.facilityType && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
 }
 
+/*
+  Service Delivery page - Helper functions
+*/
 function checkServiceDeliveryComplete(application) {
   const allDetailsComplete = application.licences.every((licence) => {
     return licence.licenceDetails.every((detail) => (detail.applyRoomSplitCondition ? !isEmpty(detail.roomSplitDetails) : true))
@@ -50,6 +46,9 @@ function checkServiceDeliveryComplete(application) {
   return application?.licenceDeclaration && !isEmpty(application?.licences) && allDetailsComplete
 }
 
+/*
+  Declare Submit page - Helper functions
+*/
 function checkDeclareSubmitComplete(application) {
   return application?.applicationDeclaration
 }
@@ -75,7 +74,7 @@ export const useApplicationsStore = defineStore('applications', {
       this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
       this.isServiceDeliveryComplete = checkServiceDeliveryComplete(this.currentApplication)
       this.isOperatingCostsComplete = checkOperatingCostsComplete(this.currentApplication)
-      this.isStaffingComplete = checkStaffingComplete(this.currentApplication)
+      this.isStaffingComplete = this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
       this.isDeclareSubmitComplete = checkDeclareSubmitComplete(this.currentApplication)
     },
 
@@ -90,6 +89,46 @@ export const useApplicationsStore = defineStore('applications', {
         console.log(`Failed to get the application by application id - ${error}`)
         throw error
       }
+    },
+
+    /* 
+      Staffing page
+    */
+    isThereAtLeastOneEmployee(application) {
+      const totalStaff =
+        application?.staffingInfantECEducatorFullTime +
+        application?.staffingInfantECEducatorPartTime +
+        application?.staffingECEducatorFullTime +
+        application?.staffingECEducatorPartTime +
+        application?.staffingECEducatorAssistantFullTime +
+        application?.staffingECEducatorAssistantPartTime +
+        application?.staffingResponsibleAdultFullTime +
+        application?.staffingResponsibleAdultPartTime
+      return totalStaff > 0
+    },
+
+    areEmployeeCertificatesComplete(certificates, application) {
+      return this.areAllEmployeeCertificatesEntered(certificates, application) && this.areAllCertificateInitialsUnique(certificates) && this.areAllCertificateNumbersUnique(certificates)
+    },
+
+    areAllEmployeeCertificatesEntered(certificates, application) {
+      const filteredCertificates = certificates?.filter((certificate) => certificate.initials && certificate.certificateNumber)
+      const totalInfantECEducatorStaff = application?.staffingInfantECEducatorFullTime + application?.staffingInfantECEducatorPartTime
+      const totalECEducatorStaff = application?.staffingECEducatorFullTime + application?.staffingECEducatorPartTime
+      const totalECEducatorAssistantStaff = application?.staffingECEducatorAssistantFullTime + application?.staffingECEducatorAssistantPartTime
+      return filteredCertificates?.length === totalInfantECEducatorStaff + totalECEducatorStaff + totalECEducatorAssistantStaff
+    },
+
+    areAllCertificateInitialsUnique(certificates) {
+      const allInitials = certificates?.map((certificate) => certificate.initials)?.filter((initials) => initials)
+      const uniqueInitials = [...new Set(allInitials)]
+      return allInitials?.length === uniqueInitials?.length
+    },
+
+    areAllCertificateNumbersUnique(certificates) {
+      const allCertificateNumbers = certificates?.map((certificate) => certificate.certificateNumber)?.filter((certificateNumber) => certificateNumber)
+      const uniqueCertificateNumbers = [...new Set(allCertificateNumbers)]
+      return allCertificateNumbers?.length === uniqueCertificateNumbers?.length
     },
   },
 })
