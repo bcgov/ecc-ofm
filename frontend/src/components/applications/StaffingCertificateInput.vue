@@ -170,7 +170,10 @@ export default {
 
     checkDuplicateInitials() {
       this.allCertificates?.forEach((certificate) => {
-        if (!certificate.initials) return
+        if (!certificate.initials) {
+          certificate.isInitialsDuplicate = false
+          return
+        }
         const found = this.allCertificates?.filter((item) => item.initials === certificate.initials)
         certificate.isInitialsDuplicate = found?.length > 1
       })
@@ -178,7 +181,10 @@ export default {
 
     checkDuplicateCertificateNumbers() {
       this.allCertificates?.forEach((certificate) => {
-        if (!certificate.certificateNumber) return
+        if (!certificate.certificateNumber) {
+          certificate.isCertificateNumberDuplicate = false
+          return
+        }
         const found = this.allCertificates?.filter((item) => item.certificateNumber === certificate.certificateNumber)
         certificate.isCertificateNumberDuplicate = found?.length > 1
       })

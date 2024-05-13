@@ -47,7 +47,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters class="mt-1">
-          <v-col v-for="(certificate, index) in iteCertificates" :key="index" cols="12" sm="6" xl="4" class="py-2">
+          <v-col v-for="(certificate, index) in iteCertificates" :key="index" cols="12" lg="6" xl="4" class="py-2">
             <strong>{{ index + 1 }}. Initials:</strong>
             <span class="pl-1">{{ certificate.initials }}</span>
             <strong class="pl-4">ECE certificate number:</strong>
@@ -68,7 +68,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters class="mt-1">
-          <v-col v-for="(certificate, index) in eceCertificates" :key="index" cols="12" sm="6" xl="4" class="py-2">
+          <v-col v-for="(certificate, index) in eceCertificates" :key="index" cols="12" lg="6" xl="4" class="py-2">
             <strong>{{ index + 1 }}. Initials:</strong>
             <span class="pl-1">{{ certificate.initials }}</span>
             <strong class="pl-4">ECE certificate number:</strong>
@@ -89,7 +89,7 @@
           </v-col>
         </v-row>
         <v-row no-gutters class="mt-1">
-          <v-col v-for="(certificate, index) in eceaCertificates" :key="index" cols="12" sm="6" xl="4" class="py-2">
+          <v-col v-for="(certificate, index) in eceaCertificates" :key="index" cols="12" lg="6" xl="4" class="py-2">
             <strong>{{ index + 1 }}. Initials:</strong>
             <span class="pl-1">{{ certificate.initials }}</span>
             <strong class="pl-4">ECEA certificate number:</strong>
