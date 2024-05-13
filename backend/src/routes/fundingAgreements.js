@@ -5,8 +5,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById } = require('../components/fundingAgreements')
 const { param, validationResult } = require('express-validator')
-const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+//TODO - JB: add permissions back in when complete
 
 module.exports = router
 
