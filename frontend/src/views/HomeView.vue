@@ -57,17 +57,93 @@
       </v-col>
     </v-row>
   </v-container>
+
+  <AppDialog v-model="isDisplayed" title="Signature Required!" persistent max-width="50%" @close="closeDialog">
+    <template #content>
+      <v-skeleton-loader v-if="fundingAgreements.length === 0" :loading="isLoading" type="heading"></v-skeleton-loader>
+      <v-card v-for="fundingAgreement in fundingAgreements" :key="fundingAgreement.facilityId" class="confirm-dialog-text d-flex flex-column mx-14 py-6">
+        <v-row class="mx-10">
+          <v-col cols="6" class="text-center">{{ fundingAgreement.fundingAgreementNumber }}</v-col>
+          <v-col cols="6" class="text-center">{{ fundingAgreement.facilityName }}</v-col>
+        </v-row>
+      </v-card>
+      <br />
+      <h2 class="confirm-dialog-text d-flex flex-column align-center">You have one or more Funding Agreements ready to sign.</h2>
+      <div class="confirm-dialog-text d-flex flex-column align-center">Please visit the notification center for more details.</div>
+      <div class="confirm-dialog-text d-flex flex-column align-center">Would you like to take action now?</div>
+      <br />
+    </template>
+    <template #button>
+      <v-row justify="space-around">
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Not Now</AppButton>
+        </v-col>
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="500px" :loading="isLoading" @click="goToFunding">Yes, take me to Funding Overview</AppButton>
+        </v-col>
+      </v-row>
+    </template>
+  </AppDialog>
 </template>
 
 <script>
+import { mapState } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 export default {
   name: 'HomeView',
-  components: { AppHeroImage, OrganizationHeader },
+  components: { AppHeroImage, AppButton, AppDialog, OrganizationHeader },
   mixins: [permissionsMixin],
+  data() {
+    return {
+      isLoading: false,
+      isDisplayed: false,
+      fundingAgreements: [],
+    }
+  },
+  computed: {
+    ...mapState(useAuthStore, ['userInfo']),
+  },
+  async created() {
+    await this.loadFundingAgreements()
+  },
+  methods: {
+    closeDialog() {
+      this.isDisplayed = false
+    },
+    goToFunding() {
+      this.$router.push({ name: 'funding-overview' })
+    },
+    async loadFundingAgreements() {
+      this.isLoading = true
+      console.log(this.userInfo?.facilities)
+
+      await Promise.all(
+        this.userInfo?.facilities.map(async (fac) => {
+          console.log(fac.facilityId)
+          const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityId(fac.facilityId)
+
+          console.log(fa)
+          if (fa?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING) {
+            this.fundingAgreements.push(fa)
+          }
+        }),
+      )
+
+      if (this.fundingAgreements.length > 0) {
+        this.isDisplayed = true
+      }
+      this.isLoading = false
+      console.log(this.fundingAgreements)
+    },
+  },
 }
 </script>
 
