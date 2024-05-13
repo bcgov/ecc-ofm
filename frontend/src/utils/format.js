@@ -65,7 +65,7 @@ function formatPhoneNumber(phoneNumber) {
 
 function formatDate(date) {
   if (!date) return BLANK_FIELD
-  return moment(date).format('YYYY-MMM-DD')
+  return moment.utc(date).format('YYYY-MMM-DD')
 }
 
 function formatDateTime(date) {

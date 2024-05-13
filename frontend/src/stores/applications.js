@@ -28,7 +28,7 @@ function checkFacilityTypeRequiredDocs(application, requiredDocumentTypes) {
 }
 
 function checkOperatingCostsComplete(application) {
-  const requiredFinancialDocTypes = [DOCUMENT_TYPES.FINANCIAL_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET]
+  const requiredFinancialDocTypes = [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET]
   const isRequiredFinancialDocsUploaded = checkRequiredDocsExist(application, requiredFinancialDocTypes)
   const isFacilityTypeRequiredDocsUploaded = checkFacilityTypeRequiredDocs(application, [DOCUMENT_TYPES.SUPPORTING_DOCS])
   const areCostsPositive = application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0

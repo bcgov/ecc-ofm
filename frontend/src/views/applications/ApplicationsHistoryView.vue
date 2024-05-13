@@ -349,24 +349,4 @@ export default {
 .soft-outline {
   border: 1px solid #dee2e6 !important;
 }
-
-.status-gray {
-  background-color: #e0e0e0;
-  border-radius: 5px;
-}
-
-.status-green {
-  background-color: #c8e6c9;
-  border-radius: 5px;
-}
-
-.status-blue {
-  background-color: #bbdefb;
-  border-radius: 5px;
-}
-
-.status-yellow {
-  background-color: #ffe082;
-  border-radius: 5px;
-}
 </style>
