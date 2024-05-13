@@ -29,11 +29,11 @@ router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false
 /**
  * Update an existing Application using applicationId
  */
+//TODO - JB: add permissions back in when complete
 router.patch(
   '/:fundingAgreementId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.SIGN_FUNDING_AGREEMENT),
   [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
