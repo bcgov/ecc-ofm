@@ -64,7 +64,7 @@ function minify(obj, keys = ['documentData']) {
 }
 
 function getSessionUser(req) {
-  log.info('getSessionUser', req.session)
+  log.verbose('getSessionUser', req.session)
   const session = req.session
   return session && session.passport && session.passport.user
 }
@@ -93,7 +93,7 @@ function isIdirUser(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  let isIdir = req.session?.passport?.user?._json?.idir_user_guid ? true : false
+  const isIdir = req.session?.passport?.user?._json?.idir_username
 
   //For local development only.
   //generally set isIdirUser to false, so that developers can log in using their
