@@ -139,6 +139,12 @@ export const APPLICATION_INTAKE_TYPES = Object.freeze({
   LIMITED_INTAKE: 2,
 })
 
+export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({
+  ECE: 1, // Early Childhood Educator
+  ECEA: 2, // Early Childhood Educator Assistant
+  ITE: 3, // Infant/Toddler Early Childhood Educator
+})
+
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
@@ -150,6 +156,9 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_TYPE: 'Facility type required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  MISMATCH_NUMBER_STAFF_CERTIFICATE: 'The total of staff and total of certificates must match',
+  DUPLICATE_CERTIFICATE_NUMBERS: 'Certificate number already exists, duplicate certificates are not permitted',
+  DUPLICATE_CERTIFICATE_INITIALS: 'Initials already exists, please ensure staff are entered only once on this page.',
   SPLIT_CLASSROOM_INFO: 'Description of split classrooms required',
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',

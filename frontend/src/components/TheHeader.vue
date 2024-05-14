@@ -98,7 +98,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useAuthStore, ['getUserInfo']),
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
     ...mapActions(useNotificationsStore, ['getNotifications']),
     async loadUserInfo() {

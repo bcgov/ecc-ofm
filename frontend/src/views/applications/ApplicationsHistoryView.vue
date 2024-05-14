@@ -24,7 +24,14 @@
               <div v-else>The Application intake is currently closed.</div>
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="core-application-button" size="large" width="250px" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="mt-8 mb-0">
+              <AppButton
+                id="core-application-button"
+                :loading="loading"
+                size="large"
+                width="250px"
+                :disabled="!isAddCoreApplicationAllowed"
+                :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }"
+                class="mt-8 mb-0">
                 Add OFM Application
               </AppButton>
             </v-card-actions>
@@ -44,7 +51,7 @@
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">
+              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">
                 Add Supplementary Application
               </AppButton>
             </v-card-actions>

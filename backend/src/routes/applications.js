@@ -12,6 +12,9 @@ const {
   createSupplementaryApplication,
   updateSupplementaryApplication,
   deleteSupplementaryApplication,
+  createEmployeeCertificate,
+  updateEmployeeCertificate,
+  deleteEmployeeCertificate,
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
@@ -39,6 +42,25 @@ const createApplicationSchema = {
   createdBy: {
     in: ['body'],
     exists: { createdBy: '[createdBy] is required' },
+  },
+}
+
+const createEmployeeCertificateSchema = {
+  applicationId: {
+    in: ['body'],
+    exists: { errorMessage: '[applicationId] is required' },
+  },
+  certificateNumber: {
+    in: ['body'],
+    exists: { errorMessage: '[certificateNumber] is required' },
+  },
+  initials: {
+    in: ['body'],
+    exists: { providerType: '[initials] is required' },
+  },
+  employeeType: {
+    in: ['body'],
+    exists: { ownership: '[employeeType] is required' },
   },
 }
 
@@ -138,5 +160,50 @@ router.delete(
   (req, res) => {
     validationResult(req).throw()
     return deleteSupplementaryApplication(req, res)
+  },
+)
+
+/**
+ * Create a new provider employee certificate
+ */
+router.post(
+  '/employeeCertificate',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  [checkSchema(createEmployeeCertificateSchema)],
+  (req, res) => {
+    validationResult(req).throw()
+    return createEmployeeCertificate(req, res)
+  },
+)
+
+/**
+ * Update an existing provider employee certificate using providerEmployeeId
+ */
+router.patch(
+  '/employeeCertificate/:providerEmployeeId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return updateEmployeeCertificate(req, res)
+  },
+)
+
+/**
+ * Delete an existing provider employee certificate using providerEmployeeId
+ */
+router.delete(
+  '/employeeCertificate/:providerEmployeeId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return deleteEmployeeCertificate(req, res)
   },
 )

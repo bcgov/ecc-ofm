@@ -1,19 +1,15 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { ApplicationMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
+const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
 
 function mapLatestActivityDate(application) {
-  try {
-    const ministryLastUpdated = new Date(application?.ministryLastUpdated)
-    const providerLastUpdated = new Date(application?.providerLastUpdated)
-    application.latestActivityDate = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
-  } catch (e) {
-    log.info(e)
-  }
+  const ministryLastUpdated = new Date(application?.ministryLastUpdated)
+  const providerLastUpdated = new Date(application?.providerLastUpdated)
+  application.latestActivityDate = ministryLastUpdated > providerLastUpdated ? ministryLastUpdated : providerLastUpdated
 }
 
 function mapApplicationObjectForFront(data) {
@@ -57,16 +53,20 @@ async function getApplications(req, res) {
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 async function getApplication(req, res) {
   try {
-    const operation = `ofm_applications(${req.params.applicationId})`
+    const operation = `ofm_applications(${req.params.applicationId})?$expand=ofm_application_provideremployee($select=ofm_provider_employeeid,ofm_employee_type,ofm_initials,ofm_certificate_number)`
     const response = await getOperation(operation)
-    return res.status(HttpStatus.OK).json(mapApplicationObjectForFront(response))
+    const application = mapApplicationObjectForFront(response)
+    application.providerEmployees = response?.ofm_application_provideremployee?.map((employee) => new MappableObjectForFront(employee, ApplicationProviderEmployeeMappings).toJSON())
+    return res.status(HttpStatus.OK).json(application)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -87,6 +87,7 @@ async function updateApplication(req, res) {
     const response = await patchOperationWithObjectId('ofm_applications', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -101,8 +102,9 @@ async function createApplication(req, res) {
       'ofm_createdby@odata.bind': `/contacts(${req.body?.createdBy})`,
     }
     const response = await postOperation('ofm_applications', payload)
-    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -123,6 +125,7 @@ async function getSupplementaryApplications(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -142,7 +145,7 @@ async function createSupplementaryApplication(req, res) {
     const response = await postOperation('ofm_allowances', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
   } catch (e) {
-    log.info(e)
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -161,6 +164,7 @@ async function updateSupplementaryApplication(req, res) {
     const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -170,6 +174,44 @@ async function deleteSupplementaryApplication(req, res) {
     const response = await deleteOperationWithObjectId('ofm_allowances', req.params.applicationId)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function createEmployeeCertificate(req, res) {
+  try {
+    const payload = {
+      'ofm_application@odata.bind': `/ofm_applications(${req.body?.applicationId})`,
+      ofm_certificate_number: req.body?.certificateNumber,
+      ofm_initials: req.body?.initials,
+      ofm_employee_type: req.body?.employeeType,
+    }
+    const response = await postOperation('ofm_provider_employees', payload)
+    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, ApplicationProviderEmployeeMappings).toJSON())
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function updateEmployeeCertificate(req, res) {
+  try {
+    const payload = new MappableObjectForBack(req.body, ApplicationProviderEmployeeMappings).toJSON()
+    const response = await patchOperationWithObjectId('ofm_provider_employees', req.params.providerEmployeeId, payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function deleteEmployeeCertificate(req, res) {
+  try {
+    const response = await deleteOperationWithObjectId('ofm_provider_employees', req.params.providerEmployeeId)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -183,4 +225,7 @@ module.exports = {
   createSupplementaryApplication,
   updateSupplementaryApplication,
   deleteSupplementaryApplication,
+  createEmployeeCertificate,
+  updateEmployeeCertificate,
+  deleteEmployeeCertificate,
 }
