@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="showSignFADialog" title="Signature Required!" persistent max-width="60%" @close="closeDialog">
+    <AppDialog v-model="isDisplayed" title="Signature Required!" persistent max-width="60%" @close="closeDialog">
       <template #content>
         <v-card v-for="fundingAgreement in fundingAgreements" :key="fundingAgreement.facilityId" class="confirm-dialog-text d-flex flex-column mx-md-14 py-6 my-2">
           <v-row class="mx-md-10">
@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       loading: false,
-      showSignFADialog: false,
+      isDisplayed: false,
       fundingAgreements: [],
     }
   },
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     closeDialog() {
-      this.showSignFADialog = false
+      this.isDisplayed = false
     },
     goToFunding() {
       this.$router.push({ name: 'funding-overview' })
@@ -82,7 +82,7 @@ export default {
       }
 
       if (this.fundingAgreements.length > 0) {
-        this.showSignFADialog = true
+        this.isDisplayed = true
       }
       this.loading = false
       this.$emit('loading', this.loading)
@@ -90,15 +90,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.home-card {
-  border-top: 5px solid #003366 !important;
-  min-height: 225px;
-}
-
-.home-card-disabled {
-  border-top: 5px solid #909090 !important;
-  min-height: 225px;
-}
-</style>
