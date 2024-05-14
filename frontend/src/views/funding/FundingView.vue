@@ -80,6 +80,9 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { getMomentDate } from '@/utils/dateHelpers'
 import alertMixin from '@/mixins/alertMixin'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
@@ -112,6 +115,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(useAuthStore, ['userInfo']),
     canEditFA() {
       //TODO - JB: add permissions back in when complete
       return !this.isFundingAgreementLocked
@@ -153,6 +157,8 @@ export default {
       const payload = {
         agreeConsentCertify: this.fundingAgreement?.agreeConsentCertify,
         statusCode: FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
+        contactId: this.userInfo?.contactId,
+        signedOn: getMomentDate(new Date()),
       }
 
       try {

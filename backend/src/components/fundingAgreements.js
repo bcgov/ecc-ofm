@@ -53,7 +53,17 @@ async function getFundingAgreementById(req, res) {
 
 async function updateFundingAgreement(req, res) {
   try {
-    const payload = new MappableObjectForBack(req.body, FundingAgreementMappings).toJSON()
+    let payload
+    //we are signing the FA, the logged in contact will be bound in CRM
+    if (req?.body.contactId) {
+      payload = {
+        'ofm_provider_approver@odata.bind': `/contacts(${req.body?.contactId})`,
+        ofm_provider_approval_date: req.body?.signedOn,
+        ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
+      }
+    } else {
+      payload = new MappableObjectForBack(req.body, FundingAgreementMappings).toJSON()
+    }
     const response = await patchOperationWithObjectId('ofm_fundings', req?.params?.fundingAgreementId, payload)
     return res.status(HttpStatus.NO_CONTENT).json(response)
   } catch (e) {
