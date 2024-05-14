@@ -11,7 +11,7 @@
     </v-row>
     <v-row v-if="loading">
       <v-col v-for="n in 6" :key="n" cols="12" md="6" lg="4">
-        <v-skeleton-loader :loading="loading" type="card"></v-skeleton-loader>
+        <v-skeleton-loader :loading="loading" type="card" />
       </v-col>
     </v-row>
     <v-row v-else>
@@ -93,11 +93,6 @@ export default {
 <style>
 .home-card {
   border-top: 5px solid #003366 !important;
-  min-height: 225px;
-}
-
-.home-card-disabled {
-  border-top: 5px solid #909090 !important;
   min-height: 225px;
 }
 </style>
