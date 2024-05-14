@@ -65,26 +65,30 @@ export default {
       this.$router.push({ name: 'funding-overview' })
     },
     async loadFundingAgreements() {
-      this.loading = true
-      this.$emit('loading', this.loading)
+      try {
+        this.loading = true
+        this.$emit('loading', this.loading)
 
-      //I use for of here so I can break out of the loop when I hit 3 facilities.
-      //We show 3 max so the popup doesn't take over the screen, and we save on calls to Dynamics.
-      for (const fac of this.userInfo.facilities) {
-        const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING)
+        //I use for of here so I can break out of the loop when I hit 3 facilities.
+        //We show 3 max so the popup doesn't take over the screen, and we save on calls to Dynamics.
+        for (const fac of this.userInfo.facilities) {
+          const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING)
 
-        if (fa) {
-          this.fundingAgreements.push(fa)
+          if (fa) {
+            this.fundingAgreements.push(fa)
+          }
+          if (this.fundingAgreements.length === MAX_FACILITIES_DISPLAYED) {
+            break
+          }
         }
-        if (this.fundingAgreements.length === MAX_FACILITIES_DISPLAYED) {
-          break
+        if (this.fundingAgreements.length > 0) {
+          this.isDisplayed = true
         }
+        this.loading = false
+      } catch (error) {
+        console.log(`Failed to load Funding Agreements - ${error}`)
+        throw error
       }
-
-      if (this.fundingAgreements.length > 0) {
-        this.isDisplayed = true
-      }
-      this.loading = false
       this.$emit('loading', this.loading)
     },
   },
