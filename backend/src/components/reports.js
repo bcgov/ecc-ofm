@@ -57,6 +57,7 @@ async function getSurveySections(req, res) {
     response?.value?.forEach((section) => sections.push(new MappableObjectForFront(section, SurveySectionMappings).toJSON()))
     return res.status(HttpStatus.OK).json(sections)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -84,6 +85,7 @@ async function getSurveyQuestions(req, res) {
     questions = orderBy(questions, 'sequence')
     return res.status(HttpStatus.OK).json(questions)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -107,7 +109,8 @@ async function getSurveyResponses(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const surveyResponses = []
-    const operation = `ofm_survey_responses?$filter=(${buildFilterQuery(req?.query, SurveyResponseMappings)})`
+    const query = `statuscode ne 2 and ${buildFilterQuery(req?.query, SurveyResponseMappings)}` // 2 = INACTIVE status
+    const operation = `ofm_survey_responses?$filter=(${query})`
     const response = await getOperation(operation)
     response?.value?.forEach((surveyResponse) => surveyResponses.push(new MappableObjectForFront(surveyResponse, SurveyResponseMappings).toJSON()))
     if (isEmpty(surveyResponses)) {
@@ -134,6 +137,7 @@ async function createSurveyResponse(req, res) {
     const response = await postOperation('ofm_survey_responses', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -144,6 +148,7 @@ async function getSurveyResponse(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SurveyResponseMappings))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -159,6 +164,7 @@ async function updateSurveyResponse(req, res) {
     const response = await patchOperationWithObjectId('ofm_survey_responses', req.params.surveyResponseId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -177,6 +183,7 @@ async function getQuestionResponses(req, res) {
     response?.value?.forEach((questionResponse) => questionResponses.push(new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON()))
     return res.status(HttpStatus.OK).json(questionResponses)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -195,6 +202,7 @@ async function createQuestionResponse(req, res) {
     const response = await postOperation('ofm_question_responses', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, QuestionResponseMappings).toJSON())
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -208,6 +216,7 @@ async function updateQuestionResponse(req, res) {
     const response = await patchOperationWithObjectId('ofm_question_responses', req.params.questionResponseId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -217,6 +226,7 @@ async function deleteQuestionResponse(req, res) {
     const response = await deleteOperationWithObjectId('ofm_question_responses', req.params.questionResponseId)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

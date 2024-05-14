@@ -97,16 +97,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.status-red {
-  color: white;
-  background-color: #d8292f;
-  border-radius: 5px;
-}
-
-.status-green {
-  background-color: #c8e6c9;
-  border-radius: 5px;
-}
-</style>

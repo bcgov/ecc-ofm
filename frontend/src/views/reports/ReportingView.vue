@@ -21,7 +21,7 @@
                 <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">
                   <div>You are up to date with your monthly reports.</div>
                 </AppAlertBanner>
-                <PendingReportsTab v-else :loading="loading" :pendingReports="pendingReports" :facilities="facilities" />
+                <PendingReportsTab v-else :loading="loading" :pendingReports="pendingReports" :facilities="facilities" @cancel="removeCancelledResponseFromTable" />
               </v-window-item>
               <v-window-item value="reporting-history-table">
                 <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">
@@ -174,6 +174,13 @@ export default {
         )
       } catch (error) {
         this.setFailureAlert('Failed to get survey responses for facilities ', error)
+      }
+    },
+
+    removeCancelledResponseFromTable(surveyResponseId) {
+      const index = this.surveyResponses?.findIndex((item) => item.surveyResponseId === surveyResponseId)
+      if (index > -1) {
+        this.surveyResponses.splice(index, 1)
       }
     },
 

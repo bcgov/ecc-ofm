@@ -21,11 +21,11 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn v-if="showOpen(item)" icon="mdi-folder-open-outline" variant="text" @click="openSurveyResponse(item)" />
-          <v-btn v-if="showTrash(item)" icon="mdi-trash-can-outline" variant="text" @click="toggleCancelDialog" />
+          <v-btn v-if="showTrash(item)" icon="mdi-trash-can-outline" variant="text" @click="toggleCancelDialog(item)" />
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <CancelSurveyResponseDialog :show="showCancelDialog" @close="toggleCancelDialog" />
+    <CancelSurveyResponseDialog :show="showCancelDialog" :survey-response-id="surveyResponseIdToCancel" @close="toggleCancelDialog" @cancel="cancel" />
   </v-container>
 </template>
 
@@ -58,6 +58,8 @@ export default {
     },
   },
 
+  emits: ['cancel'],
+
   data() {
     return {
       headers: [
@@ -71,6 +73,7 @@ export default {
       ],
       processing: false,
       showCancelDialog: false,
+      surveyResponseIdToCancel: undefined,
       facilityNameFilter: undefined,
     }
   },
@@ -138,7 +141,12 @@ export default {
       return responseType
     },
 
-    toggleCancelDialog() {
+    cancel(surveyResponseId) {
+      this.$emit('cancel', surveyResponseId)
+    },
+
+    toggleCancelDialog(surveyResponse) {
+      this.surveyResponseIdToCancel = surveyResponse?.surveyResponseId
       this.showCancelDialog = !this.showCancelDialog
     },
 
@@ -161,10 +169,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.status-gray {
-  background-color: #e0e0e0;
-  border-radius: 5px;
-}
-</style>
