@@ -34,4 +34,15 @@ export default {
       throw error
     }
   },
+
+  async getUserPermissionsFacilities(organizationId) {
+    try {
+      if (!organizationId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + organizationId)
+      return response.data
+    } catch (error) {
+      console.log('Failed to get the list of users by organization id: ' + organizationId, error)
+      throw error
+    }
+  },
 }

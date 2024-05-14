@@ -1,19 +1,34 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { buildFilterQuery } = require('../util/common')
+const { buildFilterQuery, formatToISODateFormat } = require('../util/common')
 const { FundingAgreementMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 const { isEmpty } = require('lodash')
 
+function buildFilterQueryDates(queryParams) {
+  if (queryParams?.startDateThreshold) {
+    const startDateThreshold = queryParams.startDateThreshold
+    delete queryParams.startDateThreshold
+    return `ofm_start_date ge ${startDateThreshold} and `
+  }
+  if (queryParams?.startDateFrom && queryParams?.startDateTo) {
+    const startDateFrom = formatToISODateFormat(queryParams.startDateFrom)
+    const startDateTo = formatToISODateFormat(queryParams.startDateTo)
+    delete queryParams.startDateFrom
+    delete queryParams.startDateTo
+    return `ofm_start_date ge ${startDateFrom} and ofm_start_date le ${startDateTo} and `
+  }
+  return ''
+}
+
 async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []
-    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode&$filter=(${buildFilterQuery(
+    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode&$filter=(${buildFilterQueryDates(
       req?.query,
-      FundingAgreementMappings,
-    )})`
+    )}${buildFilterQuery(req?.query, FundingAgreementMappings)})`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => fundingAgreements.push(new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()))
     if (isEmpty(fundingAgreements)) {

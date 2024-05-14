@@ -183,4 +183,41 @@ export default {
     )
     return results.some((result) => result)
   },
+
+  async createEmployeeCertificate(payload) {
+    try {
+      if (isEmpty(payload)) return
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.APPLICATIONS}/employeeCertificate`, payload)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to create a new employee certificate - ${error}`)
+      throw error
+    }
+  },
+
+  async updateEmployeeCertificate(certificate) {
+    try {
+      if (!certificate?.providerEmployeeId) return
+      const payload = {
+        initials: certificate?.initials,
+        certificateNumber: certificate?.certificateNumber,
+      }
+      const response = await ApiService.apiAxios.patch(`${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`, payload)
+      return response
+    } catch (error) {
+      console.log(`Failed to update the employee certificate - ${error}`)
+      throw error
+    }
+  },
+
+  async deleteEmployeeCertificate(certificate) {
+    try {
+      if (!certificate?.providerEmployeeId) return
+      const response = await ApiService.apiAxios.delete(`${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to delete the employee certificate - ${error}`)
+      throw error
+    }
+  },
 }

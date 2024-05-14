@@ -5,8 +5,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById } = require('../components/fundingAgreements')
 const { param, validationResult } = require('express-validator')
-const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+//TODO - JB: add permissions back in when complete
 
 module.exports = router
 
@@ -29,11 +28,11 @@ router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false
 /**
  * Update an existing Application using applicationId
  */
+//TODO - JB: add permissions back in when complete
 router.patch(
   '/:fundingAgreementId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.SIGN_FUNDING_AGREEMENT),
   [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()

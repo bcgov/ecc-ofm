@@ -1,4 +1,3 @@
-import 'regenerator-runtime/runtime'
 import '@bcgov/bc-sans/css/BCSans.css'
 import '@/assets/css/main.css'
 import '@/assets/css/reset.css'
@@ -21,11 +20,12 @@ const app = createApp(App)
 const pinia = createPinia()
 
 app.provide('$moment', moment)
-app.use(router).use(createMetaManager()).use(pinia).use(vuetify)
+app.use(createMetaManager()).use(pinia).use(vuetify)
 
 // Load lookinfo (with valid jwt) before App is mounted
 // so that the lookupInfo is available in the router
 loadLookupInfo().then(() => {
+  app.use(router)
   app.mount('#app')
 })
 
@@ -36,14 +36,9 @@ async function loadLookupInfo() {
     await auth.getJwtToken()
     await app.getLookupInfo()
   } catch (e) {
+    // Flag errors that aren't 401 UNAUTHORIZED which is expected before the user is logged in
     if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
-      // this.logout()
-      // TODO (weskubo-cgi) this.$router isn't available in main.js
-      // Instead set a flag and redirect in route
-      this.$router.replace({
-        name: 'error',
-        query: { message: `500_${e.data || 'ServerError'}` },
-      })
+      app.backendError = true
     }
   }
 }

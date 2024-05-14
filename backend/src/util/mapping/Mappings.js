@@ -183,6 +183,13 @@ const ApplicationMappings = [
   { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
 ]
 
+const ApplicationProviderEmployeeMappings = [
+  { back: 'ofm_provider_employeeid', front: 'providerEmployeeId' },
+  { back: 'ofm_employee_type', front: 'employeeType' },
+  { back: 'ofm_initials', front: 'initials' },
+  { back: 'ofm_certificate_number', front: 'certificateNumber' },
+]
+
 const OrganizationMappings = [
   { back: 'accountid', front: 'organizationId' },
   { back: 'accountnumber', front: 'accountNumber' },
@@ -406,6 +413,7 @@ const QuestionResponseMappings = [
 module.exports = {
   ApplicationIntakeMappings,
   ApplicationMappings,
+  ApplicationProviderEmployeeMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,

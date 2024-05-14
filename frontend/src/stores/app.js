@@ -6,8 +6,7 @@ import ApiService from '@/common/apiService'
 export const useAppStore = defineStore('app', {
   namespaced: true,
   state: () => ({
-    // TODO (weskubo-cgi) Remove unused state
-    subtitleBanner: '',
+    backendError: '',
 
     // Alert Notifications
     alertNotificationText: '',
