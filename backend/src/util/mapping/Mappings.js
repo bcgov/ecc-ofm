@@ -307,6 +307,7 @@ const FundingAgreementMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
 ]
 //the three different supp applications share the same data structure, so irrelevant fields will just be null.
 const SupplementaryApplicationMappings = [
