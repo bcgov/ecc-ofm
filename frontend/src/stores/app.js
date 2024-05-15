@@ -20,6 +20,7 @@ export const useAppStore = defineStore('app', {
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
+    activeReportTemplates: {},
     reportQuestionTypes: {},
     fiscalYears: {},
     months: {},
@@ -99,6 +100,12 @@ export const useAppStore = defineStore('app', {
         return years?.map((year) => year.fiscalYearId)
       }
     },
+    getReportTemplateIdByName: (state) => {
+      return (name) => {
+        const reportTemplate = state.activeReportTemplates?.find((report) => report.surveyTitle === name)
+        return reportTemplate?.surveyId
+      }
+    },
   },
   actions: {
     async getLookupInfo() {
@@ -111,6 +118,7 @@ export const useAppStore = defineStore('app', {
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes
+        this.activeReportTemplates = lookupInfo?.data?.activeReportTemplates
         this.reportQuestionTypes = lookupInfo?.data?.reportQuestionTypes
         this.fiscalYears = lookupInfo?.data?.fiscalYears
         this.months = lookupInfo?.data?.months

@@ -31,17 +31,17 @@
 
 <script>
 import { isEmpty } from 'lodash'
-
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
+import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { SURVEY_IDS, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { REPORT_TEMPLATE_NAMES, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 
 export default {
   components: { FacilityFilter, CancelSurveyResponseDialog },
-  mixins: [alertMixin, permissionsMixin],
+  mixins: [alertMixin, reportMixin, permissionsMixin],
 
   props: {
     loading: {
@@ -111,7 +111,7 @@ export default {
         const payload = {
           contactId: surveyResponse?.contactId,
           facilityId: surveyResponse?.facilityId,
-          surveyId: SURVEY_IDS.MONTHLY_REPORTING,
+          surveyId: this.getReportTemplateIdByName(REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING),
           surveyResponseTitle: surveyResponse?.title,
           fiscalYearId: surveyResponse?.fiscalYearId,
           reportingMonthId: surveyResponse?.reportingMonthId,

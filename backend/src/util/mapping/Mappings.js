@@ -347,6 +347,12 @@ const PermissionMappings = [
   { back: 'ofm_portal_privilege_number', front: 'permissionNumber' },
 ]
 
+const ReportTemplateMappings = [
+  { back: 'ofm_surveyid', front: 'surveyId' },
+  { back: 'ofm_name', front: 'surveyTitle' },
+  { back: 'ofm_version', front: 'version' },
+]
+
 const SurveySectionMappings = [
   { back: 'ofm_sectionid', front: 'sectionId' },
   { back: 'ofm_section_title', front: 'title' },
@@ -439,6 +445,7 @@ module.exports = {
   SurveyQuestionMappings,
   SurveyQuestionBusinessRulesMappings,
   SurveyResponseMappings,
+  ReportTemplateMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,

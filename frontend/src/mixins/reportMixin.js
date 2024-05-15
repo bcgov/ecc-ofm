@@ -2,11 +2,13 @@ import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { SURVEY_QUESTION_TYPES } from '@/utils/constants'
 
 export default {
   computed: {
-    ...mapState(useAppStore, ['getReportQuestionTypeNameById']),
+    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAppStore, ['getMonthIdByName', 'getFiscalYearIdByDate', 'getFiscalYearIdsByDates', 'getFiscalYearNameById', 'getReportTemplateIdByName', 'getReportQuestionTypeNameById']),
   },
 
   created() {

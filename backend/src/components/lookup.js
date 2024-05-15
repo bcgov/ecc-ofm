@@ -12,6 +12,7 @@ const {
   RoleMappings,
   FiscalYearMappings,
   MonthMappings,
+  ReportTemplateMappings,
 } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('./logger')
@@ -118,6 +119,20 @@ async function getRoles() {
   return roles
 }
 
+async function getActiveReportTemplates() {
+  let activeReportTemplates = lookupCache.get('activeReportTemplates')
+  if (!activeReportTemplates) {
+    activeReportTemplates = []
+    const response = await getOperation('ofm_surveies?$select=ofm_surveyid,ofm_name,ofm_version&$filter=(ofm_is_published eq true)')
+    response?.value?.forEach((item) => {
+      const report = new MappableObjectForFront(item, ReportTemplateMappings)
+      activeReportTemplates.push(report)
+    })
+    lookupCache.put('activeReportTemplates', activeReportTemplates, ONE_HOUR_MS)
+  }
+  return activeReportTemplates
+}
+
 async function getHealthAuthorities() {
   return fetchAndCacheData('healthAuthorities', 'ecc_health_authorities')
 }
@@ -139,18 +154,20 @@ async function getReportQuestionTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
-      getApplicationIntakes(),
-      getRequestCategories(),
-      getRequestSubCategories(),
-      getRoles(),
-      getHealthAuthorities(),
-      getFacilityTypes(),
-      getLicenceTypes(),
-      getReportQuestionTypes(),
-      getFiscalYears(),
-      getMonths(),
-    ])
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, activeReportTemplates, reportQuestionTypes, fiscalYears, months] =
+      await Promise.all([
+        getApplicationIntakes(),
+        getRequestCategories(),
+        getRequestSubCategories(),
+        getRoles(),
+        getHealthAuthorities(),
+        getFacilityTypes(),
+        getLicenceTypes(),
+        getActiveReportTemplates(),
+        getReportQuestionTypes(),
+        getFiscalYears(),
+        getMonths(),
+      ])
     const resData = {
       applicationIntakes: applicationIntakes,
       requestCategories: requestCategories,
@@ -159,6 +176,7 @@ async function getLookupInfo(_req, res) {
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
+      activeReportTemplates: activeReportTemplates,
       reportQuestionTypes: reportQuestionTypes,
       fiscalYears: fiscalYears,
       months: months,

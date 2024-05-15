@@ -46,7 +46,7 @@
 <script>
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import { CRM_STATE_CODES, SURVEY_IDS, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { CRM_STATE_CODES, REPORT_TEMPLATE_NAMES, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 import format from '@/utils/format'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -57,9 +57,6 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import ReportsService from '@/services/reportsService'
 import alertMixin from '@/mixins/alertMixin'
 import reportMixin from '@/mixins/reportMixin'
-import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import { useAppStore } from '@/stores/app'
 
 export default {
   name: 'ReportingView',
@@ -76,9 +73,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['getMonthIdByName', 'getFiscalYearIdByDate', 'getFiscalYearIdsByDates', 'getFiscalYearNameById']),
-
     pendingReports() {
       const pendingReports = []
       this.facilities?.forEach((facility) => {
@@ -97,7 +91,7 @@ export default {
               surveyResponseId: surveyResponse?.surveyResponseId,
               surveyResponseReferenceNumber: surveyResponse?.surveyResponseReferenceNumber ?? BLANK_FIELD,
               alertType: this.getSurveyResponseAlertType(month),
-              title: `Monthly Report - ${monthName} ${fiscalYearName}`,
+              title: `${REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING} - ${monthName} ${fiscalYearName}`,
               facilityId: facility.facilityId,
               facilityName: facility.facilityName,
               reportingMonthId: monthId,
@@ -164,7 +158,11 @@ export default {
             const fiscalYearIds = this.getFiscalYearIdsByDates(facility.fundingAgreement?.startDate, facility.fundingAgreement?.endDate)
             await Promise.all(
               fiscalYearIds?.map(async (fiscalYearId) => {
-                const responses = await ReportsService.getSurveyResponsesBySurveyAndFacilityAndFiscalYear(SURVEY_IDS.MONTHLY_REPORTING, facility?.facilityId, fiscalYearId)
+                const responses = await ReportsService.getSurveyResponsesBySurveyAndFacilityAndFiscalYear(
+                  this.getReportTemplateIdByName(REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING),
+                  facility?.facilityId,
+                  fiscalYearId,
+                )
                 if (!isEmpty(responses)) {
                   this.surveyResponses = this.surveyResponses.concat(responses)
                 }
