@@ -296,7 +296,7 @@ const router = createRouter({
           name: 'manage-users',
           component: ManageUsersView,
           meta: {
-            permission: PERMISSIONS.VIEW_USERS,
+            permission: PERMISSIONS.MANAGE_USERS_VIEW,
           },
         },
       ],

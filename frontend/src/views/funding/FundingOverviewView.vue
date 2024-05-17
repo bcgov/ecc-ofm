@@ -172,7 +172,6 @@ import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import UserService from '@/services/userService'
 import { useAuthStore } from '@/stores/auth'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
@@ -289,7 +288,6 @@ export default {
     ]
 
     this.resetFilter()
-    await this.loadOrganizationUsers()
     await this.loadFundingAgreements()
   },
   methods: {
@@ -301,17 +299,6 @@ export default {
       this.selectedPaymentFilterTypes = [PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, PAYMENT_FILTER_TYPE_VALUES.OTHER]
       this.startDateFrom = null
       this.startDateTo = null
-    },
-
-    async loadOrganizationUsers() {
-      try {
-        this.loading = true
-        this.orgUsers = await UserService.getOrganizationUsers(this.userInfo.organizationId)
-      } catch (error) {
-        console.error('Error getting organization users:', error)
-      } finally {
-        this.loading = false
-      }
     },
 
     /**
