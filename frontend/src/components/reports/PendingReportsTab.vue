@@ -20,8 +20,12 @@
           <span :class="{ 'status-gray': item.status === SURVEY_RESPONSE_STATUSES.DRAFT }" class="px-2 py-1">{{ item.status }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn v-if="showOpen(item)" icon="mdi-folder-open-outline" variant="text" @click="openSurveyResponse(item)" />
-          <v-btn v-if="showTrash(item)" icon="mdi-trash-can-outline" variant="text" @click="toggleCancelDialog(item)" />
+          <v-btn v-if="showOpen(item)" variant="text" @click="openSurveyResponse(item)">
+            <v-icon size="large">mdi-folder-open-outline</v-icon>
+          </v-btn>
+          <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
+            <v-icon size="large">mdi-trash-can-outline</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-skeleton-loader>

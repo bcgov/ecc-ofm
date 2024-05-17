@@ -46,7 +46,7 @@
 <script>
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import { CRM_STATE_CODES, REPORT_TEMPLATE_NAMES, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { CRM_STATE_CODES, FUNDING_AGREEMENT_STATUS_CODES, REPORT_TEMPLATE_NAMES, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 import format from '@/utils/format'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -74,34 +74,9 @@ export default {
 
   computed: {
     pendingReports() {
-      const pendingReports = []
+      let pendingReports = []
       this.facilities?.forEach((facility) => {
-        const reportingMonths = this.getMonthsBetweenDates(facility.fundingAgreement?.startDate, facility.fundingAgreement?.endDate)
-        reportingMonths?.forEach((month) => {
-          const monthName = moment(month).format('MMMM')
-          const monthId = this.getMonthIdByName(monthName)
-          const fiscalYearId = this.getFiscalYearIdByDate(month)
-          const fiscalYearName = this.getFiscalYearNameById(fiscalYearId)
-          const surveyResponse = this.surveyResponses?.find((item) => item.facilityId === facility.facilityId && item.fiscalYearId === fiscalYearId && item.reportingMonthId === monthId)
-          const isPreviousMonth = moment().startOf('month').isAfter(moment(month))
-          const hasNotSubmittedResponse = isEmpty(surveyResponse) || surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
-          if (isPreviousMonth && hasNotSubmittedResponse) {
-            pendingReports.push({
-              contactId: this.userInfo?.contactId,
-              surveyResponseId: surveyResponse?.surveyResponseId,
-              surveyResponseReferenceNumber: surveyResponse?.surveyResponseReferenceNumber ?? BLANK_FIELD,
-              alertType: this.getSurveyResponseAlertType(month),
-              title: `${REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING} - ${monthName} ${fiscalYearName}`,
-              facilityId: facility.facilityId,
-              facilityName: facility.facilityName,
-              reportingMonthId: monthId,
-              reportingMonthName: monthName,
-              fiscalYearId: fiscalYearId,
-              status: !isEmpty(surveyResponse) ? SURVEY_RESPONSE_STATUSES.DRAFT : BLANK_FIELD,
-              latestActivity: surveyResponse?.latestActivity ? format.formatDate(surveyResponse?.latestActivity) : BLANK_FIELD,
-            })
-          }
-        })
+        facility.fundingAgreements?.forEach((fundingAgreement) => (pendingReports = pendingReports.concat(this.populatePendingReportsForFA(facility, fundingAgreement))))
       })
       return pendingReports
     },
@@ -130,8 +105,8 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        await this.getFundingAgreementsForFacilities()
-        await this.getSurveyResponsesForFacilities()
+        await this.getFundingAgreements()
+        await this.getSurveyResponses()
       } catch (error) {
         this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
       } finally {
@@ -139,11 +114,13 @@ export default {
       }
     },
 
-    async getFundingAgreementsForFacilities() {
+    async getFundingAgreements() {
       try {
         await Promise.all(
           this.facilities?.map(async (facility) => {
-            facility.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId)
+            const activeFundingAgreement = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
+            const expiredFundingAgreements = await FundingAgreementService.getFundingAgreementsByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)
+            facility.fundingAgreements = [...expiredFundingAgreements, activeFundingAgreement]
           }),
         )
       } catch (error) {
@@ -151,28 +128,36 @@ export default {
       }
     },
 
-    async getSurveyResponsesForFacilities() {
+    async getSurveyResponses() {
       try {
         await Promise.all(
           this.facilities?.map(async (facility) => {
-            const fiscalYearIds = this.getFiscalYearIdsByDates(facility.fundingAgreement?.startDate, facility.fundingAgreement?.endDate)
-            await Promise.all(
-              fiscalYearIds?.map(async (fiscalYearId) => {
-                const responses = await ReportsService.getSurveyResponsesBySurveyAndFacilityAndFiscalYear(
-                  this.getReportTemplateIdByName(REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING),
-                  facility?.facilityId,
-                  fiscalYearId,
-                )
-                if (!isEmpty(responses)) {
-                  this.surveyResponses = this.surveyResponses.concat(responses)
-                }
-              }),
-            )
+            await this.getSurveyResponsesForFacility(facility)
           }),
         )
       } catch (error) {
         this.setFailureAlert('Failed to get survey responses for facilities ', error)
       }
+    },
+
+    async getSurveyResponsesForFacility(facility) {
+      await Promise.all(
+        facility?.fundingAgreements?.map(async (fundingAgreement) => {
+          const fiscalYearIds = this.getFiscalYearIdsByDates(fundingAgreement?.startDate, fundingAgreement?.endDate)
+          await Promise.all(
+            fiscalYearIds?.map(async (fiscalYearId) => {
+              const responses = await ReportsService.getSurveyResponsesBySurveyAndFacilityAndFiscalYear(
+                this.getReportTemplateIdByName(REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING),
+                facility?.facilityId,
+                fiscalYearId,
+              )
+              if (!isEmpty(responses)) {
+                this.surveyResponses = this.surveyResponses.concat(responses)
+              }
+            }),
+          )
+        }),
+      )
     },
 
     removeCancelledResponseFromTable(surveyResponseId) {
@@ -199,6 +184,37 @@ export default {
         startDate.add(1, 'month')
       }
       return result
+    },
+
+    populatePendingReportsForFA(facility, fundingAgreement) {
+      const pendingReports = []
+      const reportingMonths = this.getMonthsBetweenDates(fundingAgreement?.startDate, fundingAgreement?.endDate)
+      reportingMonths?.forEach((month) => {
+        const monthName = moment(month).format('MMMM')
+        const monthId = this.getMonthIdByName(monthName)
+        const fiscalYearId = this.getFiscalYearIdByDate(month)
+        const fiscalYearName = this.getFiscalYearNameById(fiscalYearId)
+        const surveyResponse = this.surveyResponses?.find((item) => item.facilityId === facility.facilityId && item.fiscalYearId === fiscalYearId && item.reportingMonthId === monthId)
+        const isPreviousMonth = moment().startOf('month').isAfter(moment(month))
+        const hasNotSubmittedResponse = isEmpty(surveyResponse) || surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
+        if (isPreviousMonth && hasNotSubmittedResponse) {
+          pendingReports.push({
+            contactId: this.userInfo?.contactId,
+            surveyResponseId: surveyResponse?.surveyResponseId,
+            surveyResponseReferenceNumber: surveyResponse?.surveyResponseReferenceNumber ?? BLANK_FIELD,
+            alertType: this.getSurveyResponseAlertType(month),
+            title: `${REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING} - ${monthName} ${fiscalYearName}`,
+            facilityId: facility.facilityId,
+            facilityName: facility.facilityName,
+            reportingMonthId: monthId,
+            reportingMonthName: monthName,
+            fiscalYearId: fiscalYearId,
+            status: !isEmpty(surveyResponse) ? SURVEY_RESPONSE_STATUSES.DRAFT : BLANK_FIELD,
+            latestActivity: surveyResponse?.latestActivity ? format.formatDate(surveyResponse?.latestActivity) : BLANK_FIELD,
+          })
+        }
+      })
+      return pendingReports
     },
   },
 }
