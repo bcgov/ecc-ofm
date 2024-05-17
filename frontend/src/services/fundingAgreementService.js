@@ -61,26 +61,17 @@ export default {
     }
   },
 
-  async getFAByFacilityIdAndStartDateThreshold(facilityId, startDateThreshold) {
+  async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
-      if (!facilityId && !startDateThreshold) return
-      const url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateThreshold=${startDateThreshold}`
+      if (!facilityId && !startDateFrom) return
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&includeEA=true&startDateFrom=${startDateFrom}`
+      if (startDateTo) {
+        url += `&startDateTo=${startDateTo}`
+      }
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`)
-      throw error
-    }
-  },
-
-  async getFAByFacilityIdAndStartFromEndDates(facilityId, startDateFrom, startDateTo) {
-    try {
-      if (!facilityId && !(startDateFrom || startDateTo)) return
-      const url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}`
-      const response = await ApiService.apiAxios.get(url)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by facility id and start dates (from/to) - ${error}`)
       throw error
     }
   },
