@@ -10,7 +10,7 @@
         <FacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
       <v-col class="d-flex justify-end align-end pb-0">
-        <AppButton variant="text" @click="toggleDialog({})" :disabled="loading">
+        <AppButton variant="text" @click="toggleDialog({})" :disabled="loading" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
@@ -29,7 +29,7 @@
             </template>
 
             <template v-slot:item.actions="{ item }">
-              <AppButton @click.stop="toggleDialog(item)" variant="text">edit</AppButton>
+              <AppButton @click.stop="toggleDialog(item)" variant="text" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
 
@@ -87,20 +87,22 @@
 
 <script>
 import { mapState } from 'pinia'
-import AppButton from '@/components/ui/AppButton.vue'
-import AppBackButton from '@/components/ui/AppBackButton.vue'
-import { useAuthStore } from '@/stores/auth'
-import alertMixin from '@/mixins/alertMixin'
-import { CRM_STATE_CODES, ROLES } from '@/utils/constants'
-import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
+
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
+import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import OrganizationService from '@/services/organizationService'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import UserService from '@/services/userService'
+import { useAuthStore } from '@/stores/auth'
+import { CRM_STATE_CODES, ROLES } from '@/utils/constants'
 
 export default {
   name: 'ManageUsersView',
   components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, FacilityFilter },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   data() {
     return {
       loading: false,
@@ -159,7 +161,7 @@ export default {
     },
 
     showDeactivateUserButton(user) {
-      return !this.isDeactivatedUser(user) && !this.isSameUser(user) && user?.stateCode === CRM_STATE_CODES.ACTIVE
+      return !this.isDeactivatedUser(user) && !this.isSameUser(user) && user?.stateCode === CRM_STATE_CODES.ACTIVE && this.hasPermission(this.PERMISSIONS.MANAGE_USERS_EDIT)
     },
 
     /**
@@ -168,8 +170,7 @@ export default {
     async getUsersAndFacilities() {
       try {
         this.loading = true
-        const res = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
-        this.usersAndFacilities = res.data
+        this.usersAndFacilities = await UserService.getOrganizationUsers(this.userInfo.organizationId)
       } catch (error) {
         this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
       } finally {

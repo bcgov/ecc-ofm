@@ -94,7 +94,7 @@ router.get('/:contactId/facilities', passport.authenticate('jwt', { session: fal
 /**
  * Create a new user/contact
  */
-router.post('/create', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS), [checkSchema(createUserSchema)], (req, res) => {
+router.post('/create', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), [checkSchema(createUserSchema)], (req, res) => {
   validationResult(req).throw()
   return createUser(req, res)
 })
@@ -102,7 +102,7 @@ router.post('/create', passport.authenticate('jwt', { session: false }), isValid
 /**
  * Update a user/contact
  */
-router.post('/update', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS), [checkSchema(updateUserSchema)], (req, res) => {
+router.post('/update', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), [checkSchema(updateUserSchema)], (req, res) => {
   validationResult(req).throw()
   return updateUser(req, res)
 })
