@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
+const { buildFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
@@ -34,21 +35,16 @@ function mapSupplementaryApplicationObjectForFront(data) {
   return applications
 }
 
-function buildGetApplicationsFilterQuery(query) {
-  let filterQuery = 'statuscode ne 2'
-  if (isEmpty(query)) return filterQuery
-  const mappedQuery = new MappableObjectForBack(query, ApplicationMappings).toJSON()
-  Object.entries(mappedQuery)?.forEach(([key, value]) => {
-    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
-  })
-  return filterQuery
-}
-
 async function getApplications(req, res) {
   try {
+    if (isEmpty(req?.query)) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+    }
     const applications = []
-    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(
-      ${buildGetApplicationsFilterQuery(req?.query)} )`
+    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(${buildFilterQuery(
+      req?.query,
+      ApplicationMappings,
+    )})`
     const response = await getOperation(operation)
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)

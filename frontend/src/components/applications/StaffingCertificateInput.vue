@@ -32,7 +32,7 @@
               @input="update(certificate)"
               @blur="checkDuplicateCertificateNumbers" />
           </v-col>
-          <v-col v-if="certificate.initials || certificate.certificateNumber" cols="12" sm="1">
+          <v-col v-if="!readonly && (certificate.initials || certificate.certificateNumber)" cols="12" sm="1">
             <v-btn variant="text" @click="remove(index)">
               <v-icon icon="mdi-trash-can-outline" size="large" />
             </v-btn>
