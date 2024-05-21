@@ -32,7 +32,7 @@
               @input="update(certificate)"
               @blur="checkDuplicateCertificateNumbers" />
           </v-col>
-          <v-col v-if="!readonly && (certificate.initials || certificate.certificateNumber)" cols="12" sm="1">
+          <v-col v-if="showTrash(certificate)" cols="12" sm="1">
             <v-btn variant="text" @click="remove(index)">
               <v-icon icon="mdi-trash-can-outline" size="large" />
             </v-btn>
@@ -199,6 +199,10 @@ export default {
 
     getErrorMessagesForDuplicateError(isDuplicate) {
       return !this.readonly && isDuplicate ? ['This field is duplicate'] : []
+    },
+
+    showTrash(certificate) {
+      return !this.readonly && (certificate.initials || certificate.certificateNumber)
     },
   },
 }
