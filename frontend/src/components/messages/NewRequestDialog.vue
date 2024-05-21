@@ -605,10 +605,10 @@ export default {
           this.setAssistanceRequestDescription()
           const assistanceRequest = await this.createRequestAndDocuments()
           if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
-            this.updateOrgPhoneEmail()
+            await this.updateOrgPhoneEmail()
           }
           if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
-            this.updateFacilityPhoneEmail()
+            await this.updateFacilityPhoneEmail()
           }
           if (this.isOnlyPhoneEmailChecked) {
             // If only phone/email change is checked, close the request and create an auto reply
@@ -692,11 +692,12 @@ export default {
 
     async updateFacilityPhoneEmail() {
       try {
-        this.facilityModel.facilityId = this.newRequestModel.facilities[0].facilityId
+        const facilityId = this.newRequestModel.facilities[0].facilityId
+        this.facilityModel.facilityId = facilityId
         if (!this.facilityModel.phoneLandline) delete this.facilityModel.phoneLandline
         if (!this.facilityModel.phoneCell) delete this.facilityModel.phoneCell
         if (!this.facilityModel.email) delete this.facilityModel.email
-        await FacilityService.updateFacility(this.newRequestModel.facilities[0].facilityId, this.facilityModel)
+        await FacilityService.updateFacility(facilityId, this.facilityModel)
       } catch (error) {
         this.setFailureAlert('Failed to update facility', error)
         throw error
