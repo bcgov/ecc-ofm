@@ -46,7 +46,7 @@
 <script>
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import { CRM_STATE_CODES, SURVEY_IDS, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { SURVEY_IDS, BLANK_FIELD, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -90,7 +90,7 @@ export default {
           const fiscalYearName = this.getFiscalYearNameById(fiscalYearId)
           const surveyResponse = this.surveyResponses?.find((item) => item.facilityId === facility.facilityId && item.fiscalYearId === fiscalYearId && item.reportingMonthId === monthId)
           const isPreviousMonth = moment().startOf('month').isAfter(moment(month))
-          const hasNotSubmittedResponse = isEmpty(surveyResponse) || surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
+          const hasNotSubmittedResponse = isEmpty(surveyResponse) || !this.isResponseSubmitted(surveyResponse)
           if (isPreviousMonth && hasNotSubmittedResponse) {
             pendingReports.push({
               contactId: this.userInfo?.contactId,
@@ -113,7 +113,7 @@ export default {
     },
 
     submittedReports() {
-      const submittedReports = this.surveyResponses?.filter((response) => response.stateCode === CRM_STATE_CODES.INACTIVE)
+      const submittedReports = this.surveyResponses?.filter((response) => this.isResponseSubmitted(response))
       submittedReports?.forEach((response) => {
         response.submittedDate = format.formatDate(response?.endDate)
         response.status = response?.isSubmittedLate ? SURVEY_RESPONSE_STATUSES.COMPLETED_LATE : SURVEY_RESPONSE_STATUSES.COMPLETED
@@ -194,6 +194,10 @@ export default {
         startDate.add(1, 'month')
       }
       return result
+    },
+
+    isResponseSubmitted(surveyResponse) {
+      return [SURVEY_RESPONSE_STATUS_CODES.COMPLETED, SURVEY_RESPONSE_STATUS_CODES.CLOSED].includes(surveyResponse?.statusCode)
     },
   },
 }
