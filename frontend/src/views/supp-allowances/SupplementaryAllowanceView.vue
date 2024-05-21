@@ -144,7 +144,7 @@ export default {
         }
         // navigate from the Application History page
         else {
-          this.applications = await ApplicationService.getApplications()
+          this.applications = await ApplicationService.getActiveApplications()
           this.applications = this.applications?.filter((application) => ApplicationService.checkApplicationStatus(application))
           await Promise.all(
             this.applications?.map(async (application) => {

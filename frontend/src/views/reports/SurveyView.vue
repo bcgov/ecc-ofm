@@ -44,9 +44,8 @@ import { isEmpty, cloneDeep } from 'lodash'
 import { CRM_STATE_CODES, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
-import { mapActions, mapState } from 'pinia'
+import { mapActions } from 'pinia'
 
-import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import alertMixin from '@/mixins/alertMixin'
 import reportMixin from '@/mixins/reportMixin'
@@ -82,7 +81,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['months']),
     readonly() {
       return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE || !this.hasPermission(this.PERMISSIONS?.SUBMIT_DRAFT_REPORTS)
     },
@@ -178,7 +176,6 @@ export default {
     cancelChanges() {
       this.clonedResponses = cloneDeep(this.originalResponses)
       this.processQuestionsBusinessRules(this.currentSection)
-      this.toggleCancelDialog()
       this.verifySectionComplete(this.currentSection)
     },
 
@@ -237,11 +234,8 @@ export default {
 
     async submit() {
       try {
-        const currentMonth = this.months?.find((month) => month.name === new Date().toLocaleString('en-ca', { month: 'long' }))
         const payload = {
-          statusCode: SURVEY_RESPONSE_STATUS_CODES.SUBMITTED,
-          stateCode: CRM_STATE_CODES.INACTIVE,
-          submittedMonthId: currentMonth?.monthId,
+          statusCode: SURVEY_RESPONSE_STATUS_CODES.COMPLETED,
         }
         await this.save()
         this.processing = true
