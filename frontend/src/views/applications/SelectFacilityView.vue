@@ -113,9 +113,9 @@ export default {
           await this.createApplication()
         } else {
           activeApplications?.sort((a, b) => {
-            const dateA = new Date(a.latestActivityDate)
-            const dateB = new Date(b.latestActivityDate)
-            return dateB - dateA // descending order (most recent LatestActivityDate at the top)
+            const dateA = new Date(a.submittedDate)
+            const dateB = new Date(b.submittedDate)
+            return dateB - dateA // descending order (the most recent submitted application at the top)
           })
           const existingApplication = activeApplications?.find((el) => el.statusCode === APPLICATION_STATUS_CODES.DRAFT) ?? activeApplications[0]
           this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: existingApplication?.applicationId } })
