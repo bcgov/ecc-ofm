@@ -13,10 +13,10 @@ function sortApplications(applications) {
 }
 
 export default {
-  async getApplicationsByFacilityId(facilityId) {
+  async getActiveApplicationsByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)
@@ -24,14 +24,14 @@ export default {
     }
   },
 
-  async getApplications() {
+  async getActiveApplications() {
     try {
       const authStore = useAuthStore()
       const facilities = authStore?.userInfo?.facilities
       let applications = []
       await Promise.all(
         facilities?.map(async (facility) => {
-          const response = await this.getApplicationsByFacilityId(facility.facilityId)
+          const response = await this.getActiveApplicationsByFacilityId(facility.facilityId)
           applications = applications?.concat(response)
         }),
       )
@@ -174,7 +174,7 @@ export default {
   async hasActiveApplicationOrFundingAgreement(facilities = []) {
     const results = await Promise.all(
       facilities.map(async (facility) => {
-        const applications = await this.getApplicationsByFacilityId(facility.facilityId)
+        const applications = await this.getActiveApplicationsByFacilityId(facility.facilityId)
         return applications?.some(async (application) => {
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
           return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreement)

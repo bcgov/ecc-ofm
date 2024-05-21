@@ -54,6 +54,7 @@ export default {
 
     cancelChanges() {
       this.$emit('cancel')
+      this.toggleCancelDialog()
     },
   },
 }

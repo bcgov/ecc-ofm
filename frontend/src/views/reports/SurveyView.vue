@@ -176,7 +176,6 @@ export default {
     cancelChanges() {
       this.clonedResponses = cloneDeep(this.originalResponses)
       this.processQuestionsBusinessRules(this.currentSection)
-      this.toggleCancelDialog()
       this.verifySectionComplete(this.currentSection)
     },
 
