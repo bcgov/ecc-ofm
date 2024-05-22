@@ -27,6 +27,10 @@
       </v-col>
     </v-row>
 
+    <VuePdfEmbed :source="testFile" :height="500" />
+    <!--
+    <iframe title="title" :src="testFile" width="750px"></iframe> -->
+
     <br />
     <br />
     <h4 class="lg-px-10">Declaration</h4>
@@ -94,6 +98,11 @@ import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import VuePdfEmbed from 'vue-pdf-embed'
+import base64 from 'base-64'
+
+// essential styles
+import 'vue-pdf-embed/dist/style/index.css'
 
 const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
@@ -102,12 +111,24 @@ const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.CANCELLED,
 ]
 
+function base64ToBlob(base64, type = 'application/octet-stream') {
+  const binStr = atob(base64)
+  const len = binStr.length
+  const arr = new Uint8Array(len)
+  for (let i = 0; i < len; i++) {
+    arr[i] = binStr.charCodeAt(i)
+  }
+  return new Blob([arr], { type: type })
+}
+
 export default {
   name: 'FundingView',
-  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader },
+  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, VuePdfEmbed },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
+      testFile: undefined,
+      pdfUrl: 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf',
       fundingAgreement: undefined,
       licences: [],
       panel: [],
@@ -135,6 +156,22 @@ export default {
       try {
         this.loading = true
         this.fundingAgreement = await FundingAgreementService.getFundingAgreementById(this.$route.params.fundingGuid)
+        const resp = await FundingAgreementService.getFundingPDFById(this.$route.params.fundingGuid)
+
+        const encoded = base64.encode(resp)
+        //error 431 - Request header fields too large
+        //this.testFile = encoded
+
+        //this.testFile = `'data:application/pdf;base64,${encoded}'`
+
+        //this gives no errors but doesn't work
+        //this.testfile = { data: encoded }
+
+        //found this deep on github - doesn't make sense why it gets converted twice to me - so I'm probably doing something wrong here
+        const blob = base64ToBlob(encoded, 'application/pdf')
+        const url = URL.createObjectURL(blob)
+
+        this.testFile = `'data:application/pdf;base64,'${url}'`
         await this.getLicences()
       } finally {
         this.loading = false
