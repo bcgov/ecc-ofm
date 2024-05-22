@@ -121,9 +121,9 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         scope: 'openid',
         kc_idp_hint: kc_idp_hint,
       },
-      async (_issuer, profile, _context, _idToken, accessToken, refreshToken, done) => {
+      async (_iss, profile, _context, _idToken, accessToken, refreshToken, verified) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
-          return done('No access token', null)
+          return verified('No access token', null)
         }
 
         // Set additional user info for validation
@@ -134,7 +134,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
-        return done(null, profile)
+        return verified(null, profile)
       },
     ),
   )
