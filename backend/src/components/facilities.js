@@ -6,7 +6,7 @@ const HttpStatus = require('http-status-codes')
 
 async function getFacility(req, res) {
   try {
-    const operation = `accounts(${req.params.accountId})?$select=accountid,_ofm_primarycontact_value,accountnumber,name,telephone1,telephone2,emailaddress1,address1_line1,address1_line2,address1_city,address1_postalcode,address1_stateorprovince,ofm_is_mailing_address_different,address2_line1,address2_line2,address2_city,address2_postalcode,address2_stateorprovince,statecode,statuscode,ofm_program`
+    const operation = `accounts(${req.params.accountId})?$select=accountid,_ofm_primarycontact_value,accountnumber,name,telephone1,telephone2,emailaddress1,address1_line1,address1_line2,address1_city,address1_postalcode,address1_stateorprovince,ofm_is_mailing_address_different,address2_line1,address2_line2,address2_city,address2_postalcode,address2_stateorprovince,statecode,statuscode,ofm_program,ofm_ccof_requirement`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FacilityMappings).toJSON())
   } catch (e) {

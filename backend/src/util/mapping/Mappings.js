@@ -242,6 +242,7 @@ const FacilityMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
   { back: 'ofm_program', front: 'programCode' },
+  { back: 'ofm_ccof_requirement', front: 'ccofOneYearEnrolment' },
 ]
 
 const ContactMappings = [
