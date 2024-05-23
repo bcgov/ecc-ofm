@@ -32,7 +32,7 @@ export default {
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}/pdf`)
       return response?.data
     } catch (error) {
-      console.log(`Failed to get the list of funding PDF by funding id - ${error}`)
+      console.log(`Failed to get the funding PDF by funding id - ${error}`)
       throw error
     }
   },

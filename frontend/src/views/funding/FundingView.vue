@@ -6,7 +6,6 @@
     <p>Carefully review your funding agreement.</p>
 
     <AppButton id="s" size="medium" width="240px" class="mt-2" :disabled="false" :loading="loading" @click="goToDecleration()">Scroll to bottom</AppButton>
-    <!-- <v-btn id="" dark variant="text" v-bind="props"></v-btn> -->
 
     <h4 class="my-10">Service Delivery Details</h4>
 
@@ -30,9 +29,9 @@
       </v-col>
     </v-row>
 
-    <section class="my-5 py-10" style="background-color: #eeeeee; border: solid 1px black">
-      <v-card class="mt-5 py-10 q">
-        <VuePdfEmbed class="" :source="pdfFile" />
+    <section class="my-5 py-10 greyDivWithBorder">
+      <v-card class="mt-5 py-10 pdfReader">
+        <VuePdfEmbed :source="pdfFile" />
       </v-card>
     </section>
 
@@ -45,7 +44,7 @@
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
     <v-row v-else>
       <v-col cols="12" class="pt-0">
-        <div style="background-color: #eeeeee; border: 1px solid #333333" class="pa-lg-7 pa-5 overflow-y-auto">
+        <div class="pa-lg-7 pa-5 overflow-y-auto greyDivWithBorder">
           I do hereby certify that I am the
           <strong>authorized signing authority</strong>
           and that all of the information provided is true and complete to the best of my knowledge and belief. I consent to the Ministry contacting other branches within the Ministry and other
@@ -197,12 +196,16 @@ export default {
 </script>
 
 <style>
-.q {
+.greyDivWithBorder {
+  background-color: #eeeeee;
+  border: 1px solid #333333;
+  border-radius: 4px;
+}
+.pdfReader {
   margin: auto;
   border: solid 1px black;
-  max-height: 78vh;
+  max-height: 80vh;
   max-width: 830px;
-
   overflow-y: scroll;
 }
 
