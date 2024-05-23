@@ -65,6 +65,7 @@ export default {
     try {
       if (!facilityId && !startDateFrom) return
       let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&includeEA=true&startDateFrom=${startDateFrom}`
+      console.log(url)
       if (startDateTo) {
         url += `&startDateTo=${startDateTo}`
       }
