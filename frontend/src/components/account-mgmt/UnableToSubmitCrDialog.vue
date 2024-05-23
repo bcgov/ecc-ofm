@@ -25,6 +25,7 @@
             size="large"
             width="250px"
             :href="CCOF_URL"
+            target="_blank"
             @click="closeDialog">MyCCS Change Form</AppButton>
           <AppButton v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM"
             id="dialog-continue"
