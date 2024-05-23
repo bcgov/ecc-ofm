@@ -35,6 +35,8 @@
       </v-card>
     </section>
 
+    <a download="Funding_Agreement" :href="pdfDownloadLink">To download this PDF document, click here</a>
+
     <br />
     <br />
     <h4 id="declaration" class="lg-px-10">Declaration</h4>
@@ -121,6 +123,7 @@ export default {
   data() {
     return {
       pdfFile: undefined,
+      pdfDownloadLink: undefined,
       fundingAgreement: undefined,
       licences: [],
       panel: [],
@@ -152,7 +155,7 @@ export default {
         this.pdfFile = {
           data: atob(resp),
         }
-
+        this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
         await this.getLicences()
       } finally {
         this.loading = false
