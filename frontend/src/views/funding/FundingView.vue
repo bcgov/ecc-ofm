@@ -5,6 +5,9 @@
 
     <p>Carefully review your funding agreement.</p>
 
+    <AppButton id="s" size="medium" width="240px" class="mt-2" :disabled="false" :loading="loading" @click="goToDecleration()">Scroll to bottom</AppButton>
+    <!-- <v-btn id="" dark variant="text" v-bind="props"></v-btn> -->
+
     <h4 class="my-10">Service Delivery Details</h4>
 
     <v-row class="mt-lg-10">
@@ -27,13 +30,15 @@
       </v-col>
     </v-row>
 
-    <VuePdfEmbed :source="testFile" :height="500" />
-    <!--
-    <iframe title="title" :src="testFile" width="750px"></iframe> -->
+    <section class="my-5 py-10" style="background-color: #eeeeee; border: solid 1px black">
+      <v-card class="mt-5 py-10 q">
+        <VuePdfEmbed class="" :source="pdfFile" />
+      </v-card>
+    </section>
 
     <br />
     <br />
-    <h4 class="lg-px-10">Declaration</h4>
+    <h4 id="declaration" class="lg-px-10">Declaration</h4>
     <br />
     <br />
 
@@ -99,7 +104,6 @@ import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import VuePdfEmbed from 'vue-pdf-embed'
-import base64 from 'base-64'
 
 // essential styles
 import 'vue-pdf-embed/dist/style/index.css'
@@ -111,24 +115,13 @@ const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.CANCELLED,
 ]
 
-function base64ToBlob(base64, type = 'application/octet-stream') {
-  const binStr = atob(base64)
-  const len = binStr.length
-  const arr = new Uint8Array(len)
-  for (let i = 0; i < len; i++) {
-    arr[i] = binStr.charCodeAt(i)
-  }
-  return new Blob([arr], { type: type })
-}
-
 export default {
   name: 'FundingView',
   components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, VuePdfEmbed },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
-      testFile: undefined,
-      pdfUrl: 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf',
+      pdfFile: undefined,
       fundingAgreement: undefined,
       licences: [],
       panel: [],
@@ -157,21 +150,10 @@ export default {
         this.loading = true
         this.fundingAgreement = await FundingAgreementService.getFundingAgreementById(this.$route.params.fundingGuid)
         const resp = await FundingAgreementService.getFundingPDFById(this.$route.params.fundingGuid)
+        this.pdfFile = {
+          data: atob(resp),
+        }
 
-        const encoded = base64.encode(resp)
-        //error 431 - Request header fields too large
-        //this.testFile = encoded
-
-        //this.testFile = `'data:application/pdf;base64,${encoded}'`
-
-        //this gives no errors but doesn't work
-        //this.testfile = { data: encoded }
-
-        //found this deep on github - doesn't make sense why it gets converted twice to me - so I'm probably doing something wrong here
-        const blob = base64ToBlob(encoded, 'application/pdf')
-        const url = URL.createObjectURL(blob)
-
-        this.testFile = `'data:application/pdf;base64,'${url}'`
         await this.getLicences()
       } finally {
         this.loading = false
@@ -206,6 +188,26 @@ export default {
         this.setFailureAlert('Failed to submit funding agreement')
       }
     },
+    goToDecleration() {
+      const declarationElement = document.getElementById('declaration')
+      declarationElement.scrollIntoView({ behavior: 'smooth' })
+    },
   },
 }
 </script>
+
+<style>
+.q {
+  margin: auto;
+  border: solid 1px black;
+  max-height: 78vh;
+  max-width: 830px;
+
+  overflow-y: scroll;
+}
+
+.vue-pdf-embed canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+</style>
