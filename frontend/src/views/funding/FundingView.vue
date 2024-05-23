@@ -208,9 +208,4 @@ export default {
   max-width: 830px;
   overflow-y: scroll;
 }
-
-.vue-pdf-embed canvas {
-  width: 100% !important;
-  height: auto !important;
-}
 </style>
