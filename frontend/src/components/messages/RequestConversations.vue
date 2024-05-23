@@ -68,7 +68,7 @@
                     <span class="font-weight-bold">Sent:</span>
                     {{ format.formatDate(item.sentDate) }}
                   </div>
-                  <div class="pt-1">{{ item.message }}</div>
+                  <div class="pt-1" v-html="item.message" />
                 </v-col>
               </v-row>
             </template>
