@@ -127,7 +127,7 @@
               </v-row>
               <h2>Funding Details</h2>
               <v-skeleton-loader :loading="loading" type="table-tbody">
-                <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact">
+                <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" v-model:sort-by="sortBy">
                   <template #item.startDate="{ item }">
                     {{ format.formatDate(item?.startDate) }}
                   </template>
@@ -233,6 +233,7 @@ export default {
         { title: 'Status', key: 'status' },
         { title: 'Actions', key: 'actions' },
       ],
+      sortBy: [{ key: 'priority', order: 'desc' }],
     }
   },
   computed: {
@@ -329,6 +330,16 @@ export default {
             }
           }),
         )
+
+        this.fundingAgreements.forEach((fa) => {
+          if (fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING) {
+            fa.priority = 1
+          } else {
+            fa.priority = 0
+          }
+        })
+
+        console.log(this.fundingAgreements)
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
       } finally {
