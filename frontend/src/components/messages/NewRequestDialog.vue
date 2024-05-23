@@ -604,8 +604,12 @@ export default {
           this.isLoading = true
           this.setAssistanceRequestDescription()
           const assistanceRequest = await this.createRequestAndDocuments()
-          this.updateOrgPhoneEmail()
-          this.updateFacilityPhoneEmail()
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
+            await this.updateOrgPhoneEmail()
+          }
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+            await this.updateFacilityPhoneEmail()
+          }
           if (this.isOnlyPhoneEmailChecked) {
             // If only phone/email change is checked, close the request and create an auto reply
             await this.closeAssistanceRequest(assistanceRequest.assistanceRequestId)
@@ -676,11 +680,9 @@ export default {
 
     async updateOrgPhoneEmail() {
       try {
-        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL)) {
-          if (!this.organizationModel.phoneLandline) delete this.organizationModel.phoneLandline
-          if (!this.organizationModel.phoneCell) delete this.organizationModel.phoneCell
-          if (!this.organizationModel.email) delete this.organizationModel.email
-        }
+        if (!this.organizationModel.phoneLandline) delete this.organizationModel.phoneLandline
+        if (!this.organizationModel.phoneCell) delete this.organizationModel.phoneCell
+        if (!this.organizationModel.email) delete this.organizationModel.email
         await OrganizationService.updateOrganization(this.userInfo?.organizationId, this.organizationModel)
       } catch (error) {
         this.setFailureAlert('Failed to update organization', error)
@@ -690,13 +692,12 @@ export default {
 
     async updateFacilityPhoneEmail() {
       try {
-        if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
-          this.facilityModel.facilityId = this.newRequestModel.facilities[0].facilityId
-          if (!this.facilityModel.phoneLandline) delete this.facilityModel.phoneLandline
-          if (!this.facilityModel.phoneCell) delete this.facilityModel.phoneCell
-          if (!this.facilityModel.email) delete this.facilityModel.email
-          await FacilityService.updateFacility(this.newRequestModel.facilities[0].facilityId, this.facilityModel)
-        }
+        const facilityId = this.newRequestModel.facilities[0].facilityId
+        this.facilityModel.facilityId = facilityId
+        if (!this.facilityModel.phoneLandline) delete this.facilityModel.phoneLandline
+        if (!this.facilityModel.phoneCell) delete this.facilityModel.phoneCell
+        if (!this.facilityModel.email) delete this.facilityModel.email
+        await FacilityService.updateFacility(facilityId, this.facilityModel)
       } catch (error) {
         this.setFailureAlert('Failed to update facility', error)
         throw error
