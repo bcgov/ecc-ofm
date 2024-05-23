@@ -12,22 +12,24 @@ import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES } from '@/utils/constants'
   1. There is an Open Intake or the facility is in the allowed facility list of a Limited Intake
   2. If the facility is in the CCOF program, their program start date must >= 1 year from the current date.
 */
-async function checkAddCoreApplicationEligibility(facility) {
-  try {
-    const appStore = useAppStore()
-    const facilityInfo = await FacilityService.getFacility(facility?.facilityId)
-    // TODO (vietle-cgi) - include TDAD program to programCheck
-    const programCheck = facilityInfo?.programCode === OFM_PROGRAM_CODES.OFM || (facilityInfo?.programCode === OFM_PROGRAM_CODES.CCOF && facilityInfo?.ccofOneYearEnrolment)
+function intakeWindowCheckForAddApplication(facility) {
+  const appStore = useAppStore()
+  const intakeWindowCheck = appStore.applicationIntakes?.some((intake) => {
+    const isWithinApplicationIntakeWindow = moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
+    const isOpenIntake = intake.type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE
+    const limitedIntakeFacilities = intake?.facilities?.map((facility) => facility.facilityId)
+    return isWithinApplicationIntakeWindow && (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
+  })
+  return intakeWindowCheck
+}
 
-    const intakeWindowCheck = appStore.applicationIntakes?.some((intake) => {
-      const isWithinApplicationIntakeWindow = moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
-      const isOpenIntake = intake.type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE
-      const limitedIntakeFacilities = intake?.facilities?.map((facility) => facility.facilityId)
-      return isWithinApplicationIntakeWindow && (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
-    })
-    return programCheck && intakeWindowCheck
+async function ccofEnrolmentCheckForAddApplication(facility) {
+  try {
+    const facilityInfo = await FacilityService.getFacility(facility?.facilityId)
+    const enrolmentCheck = facilityInfo?.programCode !== OFM_PROGRAM_CODES.CCOF || (facilityInfo?.programCode === OFM_PROGRAM_CODES.CCOF && facilityInfo?.ccofOneYearEnrolment)
+    return enrolmentCheck
   } catch (error) {
-    console.log(`Failed to check if the facility is eligible to apply for Core Application - ${error}`)
+    console.log(`Failed to check CCOF Enrolment for Add Application - ${error}`)
     throw error
   }
 }
@@ -97,7 +99,8 @@ export const useAuthStore = defineStore('auth', {
 
           await Promise.all(
             this.userInfo?.facilities?.map(async (facility) => {
-              facility.isAddCoreApplicationAllowed = await checkAddCoreApplicationEligibility(facility)
+              facility.intakeWindowCheckForAddApplication = intakeWindowCheckForAddApplication(facility)
+              facility.ccofEnrolmentCheckForAddApplication = await ccofEnrolmentCheckForAddApplication(facility)
             }),
           )
 
