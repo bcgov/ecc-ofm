@@ -333,7 +333,7 @@ export default {
 
         //Sort by statusCode doesn't work, as there are numbers higher than FA pending.
         this.fundingAgreements.forEach((fa) => {
-          fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? (fa.priority = 1) : (fa.priority = 0)
+          fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
         })
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
