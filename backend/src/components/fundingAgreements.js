@@ -48,7 +48,7 @@ async function getFundingAgreementById(req, res) {
 
 async function getFundingPDFById(req, res) {
   try {
-    let operation = `ofm_fundings(${req?.params?.fundingAgreementId})/ofm_agreement_file`
+    const operation = `ofm_fundings(${req?.params?.fundingAgreementId})/ofm_agreement_file`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
