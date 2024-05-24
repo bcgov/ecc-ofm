@@ -26,7 +26,9 @@
           <v-window-item value="agreements">
             <FundingAgreementsTab />
           </v-window-item>
-          <v-window-item value="payment-records">Payment Records</v-window-item>
+          <v-window-item value="payment-records">
+            <PaymentRecordsTab />
+          </v-window-item>
           <v-window-item value="analytics">Funding Analytics</v-window-item>
           <v-window-item value="reallocation">Funding Re-allocation</v-window-item>
         </v-window>
@@ -40,13 +42,12 @@
 <script>
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import FundingAgreementsTab from '@/components/funding/FundingAgreementsTab.vue'
+import PaymentRecordsTab from '@/components/funding/PaymentRecordsTab.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
-import alertMixin from '@/mixins/alertMixin.js'
 
 export default {
   name: 'FundingOverviewView',
-  components: { AppBackButton, FundingAgreementsTab, OrganizationHeader },
-  mixins: [alertMixin],
+  components: { AppBackButton, FundingAgreementsTab, PaymentRecordsTab, OrganizationHeader },
   data() {
     return {
       tab: null,

@@ -1,7 +1,29 @@
 <template>
   <v-container fluid class="pa-0">
     <FundingSearchCard :loading="loading" @search="loadFundingAgreements" />
-    <h2 class="mt-8 mb-2">Funding Details</h2>
+
+    <h2 class="mt-8 mb-2">Payment History</h2>
+    <v-skeleton-loader :loading="loading" type="table-tbody">
+      <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
+        <template #[`item.startDate`]="{ item }">
+          {{ format.formatDate(item?.startDate) }}
+        </template>
+        <template #[`item.endDate`]="{ item }">
+          {{ format.formatDate(item?.endDate) }}
+        </template>
+        <template #[`item.status`]="{ item }">
+          <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
+        </template>
+        <template #[`item.actions`]="{ item }">
+          <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
+            <v-icon v-if="item?.status === 'FA Signature Pending'" size="large">mdi-signature-freehand</v-icon>
+            <v-icon v-else-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" size="large">mdi-folder-open-outline</v-icon>
+          </v-btn>
+        </template>
+      </v-data-table>
+    </v-skeleton-loader>
+
+    <h2 class="mt-8 mb-2">Scheduled Payments</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.startDate`]="{ item }">
@@ -51,7 +73,7 @@ const statusNameMap = {
 }
 
 export default {
-  name: 'FundingAgreementsTab',
+  name: 'PaymentRecordsTab',
   components: { FundingSearchCard },
   mixins: [alertMixin],
   data() {

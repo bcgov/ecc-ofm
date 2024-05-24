@@ -14,18 +14,24 @@
                 item-title="facilityName"
                 label="Select Facility"
                 :disabled="loading"
+                :rules="rules.required"
                 density="compact"
                 variant="outlined"
-                chips
                 multiple
                 return-object>
-                <template v-slot:prepend-item>
+                <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllFacilities">
-                    <template v-slot:prepend>
+                    <template #prepend>
                       <v-checkbox-btn :color="someFacilitiesSelected ? '#003366' : undefined" :indeterminate="someFacilitiesSelected && !allFacilitiesSelected" :model-value="someFacilitiesSelected" />
                     </template>
                   </v-list-item>
                   <v-divider class="mt-2" />
+                </template>
+                <template #selection="{ item, index }">
+                  <v-chip v-if="index < MAX_NUMBER_FACILITIES_DISPLAY">
+                    <span>{{ item.title }}</span>
+                  </v-chip>
+                  <span v-if="index === MAX_NUMBER_FACILITIES_DISPLAY" class="text-grey text-caption align-self-center">(+{{ selectedFacilities.length - MAX_NUMBER_FACILITIES_DISPLAY }} others)</span>
                 </template>
               </v-select>
             </v-col>
@@ -45,9 +51,9 @@
                 label="Select Payment Types"
                 chips
                 multiple>
-                <template v-slot:prepend-item>
+                <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllPaymentTypes">
-                    <template v-slot:prepend>
+                    <template #prepend>
                       <v-checkbox-btn
                         :color="somePaymentTypesSelected ? '#003366' : undefined"
                         :indeterminate="somePaymentTypesSelected && !allPaymentTypesSelected"
@@ -185,6 +191,7 @@ export default {
       { label: DATE_FILTER_TYPE_VALUES.YTD, value: DATE_FILTER_TYPE_VALUES.YTD },
       { label: DATE_FILTER_TYPE_VALUES.CUSTOM, value: DATE_FILTER_TYPE_VALUES.CUSTOM },
     ]
+    this.MAX_NUMBER_FACILITIES_DISPLAY = 4
     this.resetFilter()
   },
 
