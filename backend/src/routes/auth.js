@@ -21,6 +21,7 @@ router.get(
   '/callback',
   passport.authenticate('oidcBceid', {
     failureRedirect: 'error',
+    keepSessionInfo: true
   }),
   (_req, res) => {
     res.redirect(config.get('server:frontend'))
@@ -31,6 +32,7 @@ router.get(
   '/callback_idir',
   passport.authenticate('oidcIdir', {
     failureRedirect: 'error',
+    keepSessionInfo: true
   }),
   (_req, res) => {
     res.redirect(config.get('server:frontend'))
@@ -47,22 +49,26 @@ router.get(
   '/login',
   passport.authenticate('oidcBceid', {
     failureRedirect: 'error',
+    keepSessionInfo: true
   }),
 )
 router.get(
   '/login-idir',
   passport.authenticate('oidcIdir', {
     failureRedirect: 'error',
+    keepSessionInfo: true
   }),
 )
 
 //removes tokens and destroys session
 router.get('/logout', async (req, res, next) => {
-  req.logout(function (err) {
+  req.logout({ keepSessionInfo: true }, function (err) {
     if (err) {
       return next(err)
     }
-    req.session.destroy()
+    const idToken = req.session?.idToken
+    // const queryParams = endpoint =>
+    //   `?post_logout_redirect_uri=${config.get('server:frontend)}`
     let retUrl
     if (req.query && req.query.sessionExpired) {
       retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/session-expired')
@@ -75,9 +81,10 @@ router.get('/logout', async (req, res, next) => {
     } else if (req.query && req.query.loginBceidActivateDistrictUser) {
       retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_district_user')
     } else {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/logout')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?post_logout_redirect_uri=' + config.get('server:frontend') + '&id_token_hint=' + idToken)
     }
     log.verbose('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl)
+    req.session.destroy()
     res.redirect(config.get('siteMinder_logout_endpoint') + retUrl)
   })
 })

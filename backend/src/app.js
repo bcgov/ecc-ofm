@@ -88,6 +88,7 @@ app.use(
 )
 
 app.use(require('./routes/health-check').router)
+
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize())
 app.use(passport.session())
@@ -120,8 +121,9 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         callbackURL: callbackURI,
         scope: 'openid',
         kc_idp_hint: kc_idp_hint,
+        passReqToCallback: true
       },
-      async (_iss, profile, _context, _idToken, accessToken, refreshToken, verified) => {
+      async (req, _iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
           return verified('No access token', null)
         }
@@ -134,6 +136,8 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
+        req.session.idToken=idToken
+        req.session.save()
         return verified(null, profile)
       },
     ),
