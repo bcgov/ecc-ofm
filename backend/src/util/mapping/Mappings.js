@@ -24,6 +24,8 @@ const UserProfileFacilityMappings = [
   { back: 'name', front: 'facilityName' },
   { back: 'ccof_accounttype', front: 'facilityType' },
   { back: 'ofm_program', front: 'programCode' },
+  { back: 'ofm_ccof_requirement', front: 'ccofOneYearEnrolment' },
+  { back: 'ofm_program_start_date', front: 'programStartDate' },
   { back: 'statecode', front: 'facilityStateCode' },
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
@@ -242,7 +244,6 @@ const FacilityMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
   { back: 'ofm_program', front: 'programCode' },
-  { back: 'ofm_ccof_requirement', front: 'ccofOneYearEnrolment' },
 ]
 
 const ContactMappings = [

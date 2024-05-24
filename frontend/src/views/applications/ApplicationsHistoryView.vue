@@ -20,11 +20,7 @@
               OFM Application
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-              <div v-if="isAddCoreApplicationAllowed">Before starting an application, verify your organization and facility details in Account Management.</div>
-              <div v-else>
-                <div v-if="!isCCOFEnrolmentCheckSatisfied">Enrolment in CCOF for greater than 1 year is required to apply.</div>
-                <div v-else>The Application intake is currently closed.</div>
-              </div>
+              {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
               <AppButton
@@ -166,6 +162,15 @@ export default {
       return this.sortApplicationItems(
         this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
+    },
+    ofmApplicationCardText() {
+      if (this.isAddCoreApplicationAllowed) {
+        return 'Before starting an application, verify your organization and facility details in Account Management.'
+      } else if (!this.isCCOFEnrolmentCheckSatisfied) {
+        return 'Enrolment in CCOF for greater than 1 year is required to apply.'
+      } else {
+        return 'The Application intake is currently closed.'
+      }
     },
     isAddCoreApplicationAllowed() {
       return this.userInfo?.facilities?.some((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
