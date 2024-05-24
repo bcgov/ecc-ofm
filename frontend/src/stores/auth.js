@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_INTAKE_TYPES } from '@/utils/constants'
+import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES } from '@/utils/constants'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -69,15 +69,21 @@ export const useAuthStore = defineStore('auth', {
           // Lookup the permissions
           this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role?.ofm_portal_roleid)?.permissions.map((p) => p.permissionName)
 
-          // A facility can apply for a core application if there is an Open Intake or it is in the allowed facility list of a Limited Intake
+          /*
+            A facility can apply for a core application if it satisfies these conditions:
+            1. There is an Open Intake or the facility is in the allowed facility list of a Limited Intake
+            2. If the facility is in the CCOF program, their program start date must >= 1 year from the current date.
+          */
           this.userInfo?.facilities?.forEach((facility) => {
-            facility.isAddCoreApplicationAllowed = appStore.applicationIntakes?.some((intake) => {
+            facility.intakeWindowCheckForAddApplication = appStore.applicationIntakes?.some((intake) => {
               const isWithinApplicationIntakeWindow = moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
               const isOpenIntake = intake.type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE
               const limitedIntakeFacilities = intake?.facilities?.map((facility) => facility.facilityId)
               return isWithinApplicationIntakeWindow && (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
             })
+            facility.ccofEnrolmentCheckForAddApplication = facility?.programCode !== OFM_PROGRAM_CODES.CCOF || (facility?.programCode === OFM_PROGRAM_CODES.CCOF && facility?.ccofOneYearEnrolment)
           })
+
           this.isUserInfoLoaded = true
         }
       }
