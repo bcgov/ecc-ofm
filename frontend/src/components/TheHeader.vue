@@ -49,12 +49,15 @@
 
 <script>
 import { mapActions, mapState } from 'pinia'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
 import { AuthRoutes } from '@/utils/constants'
 
 export default {
+  name: 'TheHeader',
+  mixins: [permissionsMixin],
   data() {
     return {
       authRoutes: AuthRoutes,
@@ -86,7 +89,7 @@ export default {
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
     showMessagingIcon() {
-      return this.isAuthenticated && this.userInfo && !this.isMinistryUser
+      return this.isAuthenticated && this.userInfo && this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
     },
   },
   watch: {

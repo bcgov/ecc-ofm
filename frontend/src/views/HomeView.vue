@@ -22,7 +22,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" lg="4">
+      <v-col  v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" cols="12" md="6" lg="4">
         <v-card class="home-card" prepend-icon="mdi-currency-usd" title="Funding" @click="$router.push({ name: 'funding-overview' })">
           <v-card-text>
             Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti.
@@ -45,7 +45,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" md="6" lg="4">
+      <v-col v-if="hasPermission(PERMISSIONS.VIEW_ORG_FACILITY) || hasPermission(PERMISSIONS.MANAGE_USERS_VIEW)" cols="12" md="6" lg="4">
         <v-card class="home-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
           <v-card-text>
             Donec iaculis nec quam vel congue. Fusce consequat mattis rhoncus. Sed id ipsum sed purus placerat euismod vel ut erat. Nullam ligula leo, fermentum vel interdum sit amet, tempor at nunc.
@@ -63,7 +63,7 @@
     </v-row>
   </v-container>
 
-  <SignFundingPopup @loading="setloading" />
+  <SignFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setloading" />
 </template>
 
 <script>
