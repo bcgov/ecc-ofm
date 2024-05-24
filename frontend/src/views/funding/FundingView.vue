@@ -5,7 +5,7 @@
 
     <p>Carefully review your funding agreement.</p>
 
-    <AppButton id="s" size="medium" width="240px" class="mt-2" :disabled="false" :loading="loading" @click="goToDecleration()">Scroll to bottom</AppButton>
+    <AppButton size="medium" width="240px" class="mt-2" :disabled="false" :loading="loading" @click="goToDecleration()">Scroll to bottom</AppButton>
 
     <h4 class="my-10">Service Delivery Details</h4>
 
@@ -35,7 +35,9 @@
       </v-card>
     </section>
 
-    <a download="Funding_Agreement" :href="pdfDownloadLink">To download this PDF document, click here</a>
+    <a style="text-decoration: none" :download="'Funding_Agreement_' + fundingAgreement?.fundingAgreementNumber" :href="pdfDownloadLink">
+      <AppButton size="medium" width="240px" class="mt-2" :disabled="false" :loading="loading">Download PDF</AppButton>
+    </a>
 
     <br />
     <br />
