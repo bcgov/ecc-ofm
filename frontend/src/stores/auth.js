@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', {
             1. There is an Open Intake or the facility is in the allowed facility list of a Limited Intake
             2. If the facility is in the CCOF program, their program start date must >= 1 year from the current date.
           */
-          this.userInfo?.facilities?.forEach(async (facility) => {
+          this.userInfo?.facilities?.forEach((facility) => {
             facility.intakeWindowCheckForAddApplication = appStore.applicationIntakes?.some((intake) => {
               const isWithinApplicationIntakeWindow = moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
               const isOpenIntake = intake.type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE
