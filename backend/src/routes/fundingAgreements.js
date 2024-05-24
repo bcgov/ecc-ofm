@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById } = require('../components/fundingAgreements')
+const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById } = require('../components/fundingAgreements')
 const { param, validationResult } = require('express-validator')
 //TODO - JB: add permissions back in when complete
 
@@ -23,6 +23,14 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
   validationResult(req).throw()
   return getFundingAgreementById(req, res)
+})
+
+/**
+ * Get Funding Agreement PDF by ID
+ */
+router.get('/:fundingAgreementId/pdf', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  validationResult(req).throw()
+  return getFundingPDFById(req, res)
 })
 
 /**

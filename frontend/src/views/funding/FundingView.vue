@@ -5,6 +5,8 @@
 
     <p>Carefully review your funding agreement.</p>
 
+    <AppButton size="medium" width="240px" class="mt-2" :loading="loading" @click="goToDeclaration()">Scroll to bottom</AppButton>
+
     <h4 class="my-10">Service Delivery Details</h4>
 
     <v-row class="mt-lg-10">
@@ -27,16 +29,26 @@
       </v-col>
     </v-row>
 
+    <section class="my-5 py-10 grey-div-with-border">
+      <v-card class="mt-5 py-10 pdf-reader">
+        <VuePdfEmbed :source="pdfFile" />
+      </v-card>
+    </section>
+
+    <a style="text-decoration: none" :download="'Funding_Agreement_' + fundingAgreement?.fundingAgreementNumber" :href="pdfDownloadLink">
+      <AppButton size="medium" width="240px" class="mt-2" :loading="loading">Download PDF</AppButton>
+    </a>
+
     <br />
     <br />
-    <h4 class="lg-px-10">Declaration</h4>
+    <h4 id="declaration" class="lg-px-10">Declaration</h4>
     <br />
     <br />
 
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
     <v-row v-else>
       <v-col cols="12" class="pt-0">
-        <div style="background-color: #eeeeee; border: 1px solid #333333" class="pa-lg-7 pa-5 overflow-y-auto">
+        <div class="pa-lg-7 pa-5 overflow-y-auto grey-div-with-border">
           I do hereby certify that I am the
           <strong>authorized signing authority</strong>
           and that all of the information provided is true and complete to the best of my knowledge and belief. I consent to the Ministry contacting other branches within the Ministry and other
@@ -94,6 +106,10 @@ import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import VuePdfEmbed from 'vue-pdf-embed'
+
+// essential styles
+import 'vue-pdf-embed/dist/style/index.css'
 
 const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
@@ -104,10 +120,12 @@ const LOCKED_STATUSES = [
 
 export default {
   name: 'FundingView',
-  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader },
+  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, VuePdfEmbed },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
+      pdfFile: undefined,
+      pdfDownloadLink: undefined,
       fundingAgreement: undefined,
       licences: [],
       panel: [],
@@ -135,6 +153,11 @@ export default {
       try {
         this.loading = true
         this.fundingAgreement = await FundingAgreementService.getFundingAgreementById(this.$route.params.fundingGuid)
+        const resp = await FundingAgreementService.getFundingPDFById(this.$route.params.fundingGuid)
+        this.pdfFile = {
+          data: atob(resp),
+        }
+        this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
         await this.getLicences()
       } finally {
         this.loading = false
@@ -169,6 +192,25 @@ export default {
         this.setFailureAlert('Failed to submit funding agreement')
       }
     },
+    goToDeclaration() {
+      const declarationElement = document.getElementById('declaration')
+      declarationElement.scrollIntoView({ behavior: 'smooth' })
+    },
   },
 }
 </script>
+
+<style>
+.grey-div-with-border {
+  background-color: #eeeeee;
+  border: 1px solid #333333;
+  border-radius: 4px;
+}
+.pdf-reader {
+  margin: auto;
+  border: solid 1px black;
+  max-height: 80vh;
+  max-width: 830px;
+  overflow-y: scroll;
+}
+</style>
