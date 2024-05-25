@@ -43,14 +43,15 @@
             <v-col cols="12" sm="9" lg="8" xl="7">
               <v-select
                 v-model.lazy="selectedPaymentFilterTypes"
-                :items="PAYMENT_FILTER_TYPES"
+                :items="paymentTypes"
                 :disabled="loading"
                 :rules="rules.required"
-                item-title="label"
+                item-title="description"
                 variant="outlined"
                 label="Select Payment Types"
                 chips
-                multiple>
+                multiple
+                return-object>
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllPaymentTypes">
                     <template #prepend>
@@ -72,7 +73,7 @@
               <AppLabel>Date:</AppLabel>
             </v-col>
             <v-col cols="12" sm="12" lg="9" xl="7">
-              <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_TYPES" :default-option="selectedDateFilterType" />
+              <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_OPTIONS" :default-option="selectedDateFilterType" />
             </v-col>
           </v-row>
           <v-row v-if="selectedDateFilterType === 'Custom'">
@@ -80,15 +81,15 @@
               <AppLabel>Date Range:</AppLabel>
             </v-col>
             <v-col cols="12" sm="6" lg="5">
-              <v-date-input id="start-date-from" v-model="startDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" label="Start Date From" variant="outlined" />
+              <v-date-input id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" label="From" variant="outlined" />
             </v-col>
             <v-col cols="12" sm="6" lg="5">
               <v-date-input
-                id="start-date-to"
-                v-model="startDateTo"
-                :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(startDateFrom)]"
+                id="date-to"
+                v-model="selectedDateTo"
+                :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(selectedDateFrom)]"
                 :disabled="loading"
-                label="Start Date To"
+                label="To"
                 variant="outlined" />
             </v-col>
           </v-row>
@@ -103,6 +104,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import rules from '@/utils/rules'
 import { mapState } from 'pinia'
 
@@ -110,31 +112,26 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin.js'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-
-const DATE_FILTER_TYPE_VALUES = {
-  THREE_MONTHS: '3 Months',
-  SIX_MONTHS: '6 Months',
-  YTD: 'YTD',
-  CUSTOM: 'Custom',
-}
-
-const PAYMENT_FILTER_TYPE_VALUES = {
-  BASE_FUNDING: 'Base Funding',
-  SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
-  OTHER: 'Other',
-}
+import { DATE_FILTER_TYPES } from '@/utils/constants'
 
 export default {
   name: 'FundingSearchCard',
   components: { AppButton, AppLabel, AppButtonRadioGroup },
   mixins: [alertMixin],
+
   props: {
     loading: {
       type: Boolean,
       default: true,
     },
+    defaultDateFilter: {
+      type: String,
+      default: DATE_FILTER_TYPES.THREE_MONTHS,
+    },
   },
+
   emits: ['search'],
 
   data() {
@@ -143,29 +140,40 @@ export default {
       selectedFacilities: null,
       selectedDateFilterType: null,
       selectedPaymentFilterTypes: [],
-      startDateFrom: null,
-      startDateTo: null,
-      menuStartDateFrom: false,
-      menuStartDateTo: false,
+      selectedDateFrom: null,
+      selectedDateTo: null,
     }
   },
 
   computed: {
+    ...mapState(useAppStore, ['paymentTypes']),
     ...mapState(useAuthStore, ['userInfo']),
-    startDateThreshold() {
+    dateFrom() {
       switch (this.selectedDateFilterType) {
-        case DATE_FILTER_TYPE_VALUES.THREE_MONTHS:
-          return this.dateByMonthsInPast(3)
-        case DATE_FILTER_TYPE_VALUES.SIX_MONTHS:
-          return this.dateByMonthsInPast(6)
-        case DATE_FILTER_TYPE_VALUES.YTD:
-          return this.dateByMonthsInPast(12)
+        case DATE_FILTER_TYPES.THREE_MONTHS:
+          return moment().subtract(3, 'months')
+        case DATE_FILTER_TYPES.SIX_MONTHS:
+          return moment().subtract(6, 'months')
+        case DATE_FILTER_TYPES.YTD:
+          return moment().startOf('year')
+        case DATE_FILTER_TYPES.CUSTOM:
+          return this.selectedDateFrom
+        default:
+          return null
+      }
+    },
+    dateTo() {
+      switch (this.selectedDateFilterType) {
+        case DATE_FILTER_TYPES.YTD:
+          return moment()
+        case DATE_FILTER_TYPES.CUSTOM:
+          return this.selectedDateFrom
         default:
           return null
       }
     },
     allPaymentTypesSelected() {
-      return this.selectedPaymentFilterTypes?.length === this.PAYMENT_FILTER_TYPES?.length
+      return this.selectedPaymentFilterTypes?.length === this.paymentTypes?.length
     },
     somePaymentTypesSelected() {
       return this.selectedPaymentFilterTypes?.length > 0
@@ -180,16 +188,11 @@ export default {
 
   created() {
     this.rules = rules
-    this.PAYMENT_FILTER_TYPES = [
-      { label: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, value: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING },
-      { label: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, value: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES },
-      { label: PAYMENT_FILTER_TYPE_VALUES.OTHER, value: PAYMENT_FILTER_TYPE_VALUES.OTHER },
-    ]
-    this.DATE_FILTER_TYPES = [
-      { label: DATE_FILTER_TYPE_VALUES.THREE_MONTHS, value: DATE_FILTER_TYPE_VALUES.THREE_MONTHS },
-      { label: DATE_FILTER_TYPE_VALUES.SIX_MONTHS, value: DATE_FILTER_TYPE_VALUES.SIX_MONTHS },
-      { label: DATE_FILTER_TYPE_VALUES.YTD, value: DATE_FILTER_TYPE_VALUES.YTD },
-      { label: DATE_FILTER_TYPE_VALUES.CUSTOM, value: DATE_FILTER_TYPE_VALUES.CUSTOM },
+    this.DATE_FILTER_OPTIONS = [
+      { label: DATE_FILTER_TYPES.THREE_MONTHS, value: DATE_FILTER_TYPES.THREE_MONTHS },
+      { label: DATE_FILTER_TYPES.SIX_MONTHS, value: DATE_FILTER_TYPES.SIX_MONTHS },
+      { label: DATE_FILTER_TYPES.YTD, value: DATE_FILTER_TYPES.YTD },
+      { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM },
     ]
     this.MAX_NUMBER_FACILITIES_DISPLAY = 4
     this.resetFilter()
@@ -202,10 +205,10 @@ export default {
   methods: {
     resetFilter() {
       this.selectedFacilities = this.userInfo?.facilities
-      this.selectedDateFilterType = DATE_FILTER_TYPE_VALUES.THREE_MONTHS
-      this.selectedPaymentFilterTypes = [PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, PAYMENT_FILTER_TYPE_VALUES.OTHER]
-      this.startDateFrom = null
-      this.startDateTo = null
+      this.selectedDateFilterType = this.defaultDateFilter
+      this.selectedPaymentFilterTypes = this.paymentTypes
+      this.selectedDateFrom = null
+      this.selectedDateTo = null
     },
 
     async search() {
@@ -213,39 +216,20 @@ export default {
       if (!this.isFormComplete) return
       const searchQueries = {
         facilities: this.selectedFacilities,
+        paymentFilterTypes: this.selectedPaymentFilterTypes?.map((paymentType) => paymentType.id),
         dateFilterType: this.selectedDateFilterType,
-        paymentFilterTypes: this.selectedPaymentFilterTypes,
-        startDateThreshold: this.startDateThreshold,
-        startDateFrom: this.formatDate(this.startDateFrom),
-        startDateTo: this.formatDate(this.startDateTo),
+        dateFrom: this.dateFrom,
+        dateTo: this.dateTo,
       }
       this.$emit('search', searchQueries)
     },
 
-    dateByMonthsInPast(months) {
-      const date = new Date()
-      date.setMonth(date.getMonth() - months)
-      return date.toISOString().split('T')[0]
-    },
-
     toggleAllPaymentTypes() {
-      if (this.allPaymentTypesSelected) {
-        this.selectedPaymentFilterTypes = []
-      } else {
-        this.selectedPaymentFilterTypes = [PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, PAYMENT_FILTER_TYPE_VALUES.OTHER]
-      }
+      this.selectedPaymentFilterTypes = this.allPaymentTypesSelected ? [] : this.paymentTypes
     },
 
     toggleAllFacilities() {
-      if (this.allFacilitiesSelected) {
-        this.selectedFacilities = []
-      } else {
-        this.selectedFacilities = this.userInfo?.facilities
-      }
-    },
-
-    formatDate(date) {
-      return date?.toISOString().split('T')[0]
+      this.selectedFacilities = this.allFacilitiesSelected ? [] : this.userInfo?.facilities
     },
   },
 }

@@ -32,6 +32,7 @@ const organizationsRouter = require('./routes/organizations')
 const fundingAgreementsRouter = require('./routes/fundingAgreements')
 const facilitiesRouter = require('./routes/facilities')
 const licencesRouter = require('./routes/licences')
+const paymentsRouter = require('./routes/payments')
 const reportsRouter = require('./routes/reports')
 
 const connectRedis = require('connect-redis')
@@ -221,6 +222,7 @@ apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
 apiRouter.use('/funding-agreements', fundingAgreementsRouter)
 apiRouter.use('/licences', licencesRouter)
+apiRouter.use('/payments', paymentsRouter)
 apiRouter.use('/reports', reportsRouter)
 
 //Handle 500 error

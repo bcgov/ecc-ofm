@@ -42,4 +42,5 @@ function formatToISODateFormat(dateString) {
 module.exports = {
   buildDateFilterQuery,
   buildFilterQuery,
+  formatToISODateFormat,
 }

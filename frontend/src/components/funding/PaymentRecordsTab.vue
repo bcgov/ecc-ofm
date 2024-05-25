@@ -1,76 +1,52 @@
 <template>
   <v-container fluid class="pa-0">
-    <FundingSearchCard :loading="loading" @search="loadFundingAgreements" />
+    <FundingSearchCard :loading="loading" :default-date-filter="DATE_FILTER_TYPES.YTD" @search="loadPayments" />
 
     <h2 class="mt-8 mb-2">Payment History</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
-        <template #[`item.startDate`]="{ item }">
-          {{ format.formatDate(item?.startDate) }}
+      <v-data-table
+        :headers="paymentHistoryHeaders"
+        :items="filteredPaymentHistory"
+        item-key="paymentId"
+        :items-per-page="10"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
+        <template #[`item.invoiceDate`]="{ item }">
+          {{ format.formatDate(item?.invoiceDate) }}
         </template>
-        <template #[`item.endDate`]="{ item }">
-          {{ format.formatDate(item?.endDate) }}
-        </template>
-        <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
-        </template>
-        <template #[`item.actions`]="{ item }">
-          <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-            <v-icon v-if="item?.status === 'FA Signature Pending'" size="large">mdi-signature-freehand</v-icon>
-            <v-icon v-else-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" size="large">mdi-folder-open-outline</v-icon>
-          </v-btn>
-        </template>
+        <template #[`item.amount`]="{ item }">$ {{ format.formatDecimalNumber(item?.amount) }}</template>
       </v-data-table>
     </v-skeleton-loader>
 
     <h2 class="mt-8 mb-2">Scheduled Payments</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
-        <template #[`item.startDate`]="{ item }">
-          {{ format.formatDate(item?.startDate) }}
+      <v-data-table
+        :headers="scheduledPaymentsHeaders"
+        :items="filteredScheduledPayments"
+        item-key="paymentId"
+        :items-per-page="10"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
+        <template #[`item.invoiceDate`]="{ item }">
+          {{ format.formatDate(item?.invoiceDate) }}
         </template>
-        <template #[`item.endDate`]="{ item }">
-          {{ format.formatDate(item?.endDate) }}
-        </template>
-        <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
-        </template>
-        <template #[`item.actions`]="{ item }">
-          <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-            <v-icon v-if="item?.status === 'FA Signature Pending'" size="large">mdi-signature-freehand</v-icon>
-            <v-icon v-else-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" size="large">mdi-folder-open-outline</v-icon>
-          </v-btn>
-        </template>
+        <template #[`item.amount`]="{ item }">$ {{ format.formatDecimalNumber(item?.amount) }}</template>
       </v-data-table>
     </v-skeleton-loader>
   </v-container>
 </template>
 
 <script>
+import moment from 'moment'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
-import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import PaymentService from '@/services/paymentService'
+import { PAYMENT_STATUS_CODES, DATE_FILTER_TYPES } from '@/utils/constants'
 import format from '@/utils/format'
-
-const STATUS_UNKNOWN = 'Unknown'
-
-const PAYMENT_FILTER_TYPE_VALUES = {
-  BASE_FUNDING: 'Base Funding',
-  SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
-  OTHER: 'Other',
-}
-
-const statusNameMap = {
-  [FUNDING_AGREEMENT_STATUS_CODES.DRAFT]: 'Draft',
-  [FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]: 'FA Review',
-  [FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING]: 'FA Signature Pending',
-  [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED]: 'FA Submitted to Ministry',
-  [FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW]: 'In Review with Ministry EA',
-  [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE]: 'Active',
-  [FUNDING_AGREEMENT_STATUS_CODES.EXPIRED]: 'Expired',
-  [FUNDING_AGREEMENT_STATUS_CODES.TERMINATED]: 'Terminated',
-}
 
 export default {
   name: 'PaymentRecordsTab',
@@ -78,70 +54,111 @@ export default {
   mixins: [alertMixin],
   data() {
     return {
-      tab: null,
       loading: false,
-      fundingAgreements: [],
-      headers: [
+      paymentHistory: [],
+      scheduledPayments: [],
+      searchQueries: {},
+      paymentHistoryHeaders: [
+        { title: 'Payment ID', key: 'paymentNumber' },
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
-        { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
-        { title: 'Facility Name', key: 'facility' },
-        { title: 'Signing Expense Authority', key: 'expenseAuthority' },
-        { title: 'Start Date', key: 'startDate' },
-        { title: 'End Date', key: 'endDate' },
-        { title: 'Status', key: 'status' },
-        { title: 'Actions', key: 'actions' },
+        { title: 'Payment Type', key: 'paymentTypeName' },
+        { title: 'Facility Name', key: 'facilityName' },
+        { title: 'Payment Date', key: 'invoiceDate' },
+        { title: 'Payment Amount', key: 'amount' },
+      ],
+      scheduledPaymentsHeaders: [
+        { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
+        { title: 'Payment Type', key: 'paymentTypeName' },
+        { title: 'Facility Name', key: 'facilityName' },
+        { title: 'Scheduled Payment Date', key: 'invoiceDate' },
+        { title: 'Projected Payment Amount', key: 'amount' },
       ],
     }
   },
 
+  computed: {
+    filteredPaymentHistory() {
+      const filteredPayments = this.paymentHistory?.filter((payment) => this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode))
+      filteredPayments?.sort((a, b) => {
+        const dateA = new Date(a.invoiceDate)
+        const dateB = new Date(b.invoiceDate)
+        return dateB - dateA // descending order (the most recent Paid Payment at the top)
+      })
+      return filteredPayments
+    },
+    filteredScheduledPayments() {
+      const filteredPayments = this.scheduledPayments?.filter((payment) => this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode))
+      filteredPayments?.sort((a, b) => {
+        const dateA = new Date(a.invoiceDate)
+        const dateB = new Date(b.invoiceDate)
+        return dateA - dateB // ascending order (the most recent Scheduled/Future Payment at the top)
+      })
+      return filteredPayments
+    },
+  },
+
   created() {
     this.format = format
+    this.DATE_FILTER_TYPES = DATE_FILTER_TYPES
   },
 
   methods: {
-    /**
-     * TODO: Payment type is displayed in UI but is not yet integrated into this method as required CRM data is not yet in place.
-     * This is a know issue and postponed to a future sprint.
-     */
-    async loadFundingAgreements(searchQueries) {
+    async loadPayments(searchQueries) {
       try {
         console.log(searchQueries)
         this.loading = true
-        this.fundingAgreements = []
-        console.log(searchQueries)
-        await Promise.all(
-          searchQueries?.facilities?.map(async (facility) => {
-            let facilityFas = []
-            if (searchQueries?.dateFilterType === 'Custom') {
-              facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.startDateFrom, searchQueries?.startDateTo)
-            } else {
-              facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.startDateThreshold)
-            }
-            if (facilityFas) {
-              facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
-                fa.facility = facility.facilityName
-                fa.status = statusNameMap[fa.statusCode] ?? STATUS_UNKNOWN
-              })
-              this.fundingAgreements.push(...facilityFas)
-            }
-          }),
-        )
+        this.searchQueries = searchQueries
+        this.paymentHistory = await this.loadPaymentHistory()
+        this.scheduledPayments = await this.loadSchedulesPayments()
       } catch (error) {
-        this.setFailureAlert('Failed to load funding agreements', error)
+        this.setFailureAlert('Failed to load payments', error)
       } finally {
         this.loading = false
       }
     },
 
-    getStatusClass(statusCode) {
-      return {
-        'status-gray': [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
-        'status-yellow': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
-        'status-green': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
-        'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
-        'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
+    async loadPaymentHistory() {
+      let paymentHistory = []
+      await Promise.all(
+        this.searchQueries?.facilities?.map(async (facility) => {
+          const paidPaymentsForFacility = await PaymentService.getPaymentsByFacilityIdAndStatusAndDate(
+            facility.facilityId,
+            PAYMENT_STATUS_CODES.PAID,
+            this.searchQueries?.dateFrom,
+            this.searchQueries?.dateTo,
+          )
+          paymentHistory = paymentHistory?.concat(paidPaymentsForFacility)
+        }),
+      )
+      return paymentHistory
+    },
+
+    // YTD date filter is not applicable for Scheduled Payments, so we'll return all outstanding payments if Date Filter = YTD
+    async loadSchedulesPayments() {
+      let scheduledPayments = []
+      const dateFrom = this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.CUSTOM ? this.searchQueries?.dateFrom : moment()
+      let dateTo
+      switch (this.searchQueries?.dateFilterType) {
+        case DATE_FILTER_TYPES.THREE_MONTHS:
+          dateTo = moment().add(3, 'months').endOf('month')
+          break
+        case DATE_FILTER_TYPES.SIX_MONTHS:
+          dateTo = moment().add(6, 'months').endOf('month')
+          break
+        case DATE_FILTER_TYPES.CUSTOM:
+          dateTo = this.searchQueries?.dateTo
+          break
       }
+      await Promise.all(
+        this.searchQueries?.facilities?.map(async (facility) => {
+          const scheduledPaymentsForFacility =
+            this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.YTD
+              ? await PaymentService.getActivePaymentsByFacilityId(facility.facilityId)
+              : await PaymentService.getActivePaymentsByFacilityIdAndDate(facility.facilityId, dateFrom, dateTo)
+          scheduledPayments = scheduledPayments?.concat(scheduledPaymentsForFacility)
+        }),
+      )
+      return scheduledPayments
     },
   },
 }

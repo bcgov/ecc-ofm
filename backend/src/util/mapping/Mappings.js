@@ -309,6 +309,22 @@ const FundingAgreementMappings = [
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
 ]
+
+const PaymentMappings = [
+  { back: 'ofm_paymentid', front: 'paymentId' },
+  { back: 'ofm_name', front: 'paymentNumber' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+  { back: '_ofm_funding_value', front: 'fundingId' },
+  { back: '_ofm_funding_value@OData.Community.Display.V1.FormattedValue', front: 'fundingAgreementNumber' },
+  { back: 'ofm_payment_type', front: 'paymentTypeCode' },
+  { back: 'ofm_payment_type@OData.Community.Display.V1.FormattedValue', front: 'paymentTypeName' },
+  { back: 'ofm_amount', front: 'amount' },
+  { back: 'ofm_invoice_date', front: 'invoiceDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
 //the three different supp applications share the same data structure, so irrelevant fields will just be null.
 const SupplementaryApplicationMappings = [
   { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
@@ -426,6 +442,7 @@ module.exports = {
   MonthMappings,
   NotificationMappings,
   OrganizationMappings,
+  PaymentMappings,
   PermissionMappings,
   QuestionResponseMappings,
   RequestCategoryMappings,

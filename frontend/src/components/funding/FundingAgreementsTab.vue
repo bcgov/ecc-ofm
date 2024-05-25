@@ -15,8 +15,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-            <v-icon v-if="item?.status === 'FA Signature Pending'" size="large">mdi-signature-freehand</v-icon>
-            <v-icon v-else-if="['FA Submitted to Ministry', 'Active'].includes(item?.status)" size="large">mdi-folder-open-outline</v-icon>
+            <v-icon v-if="item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING" size="large">mdi-signature-freehand</v-icon>
+            <v-icon v-else-if="[FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode)" size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -56,7 +56,6 @@ export default {
   mixins: [alertMixin],
   data() {
     return {
-      tab: null,
       loading: false,
       fundingAgreements: [],
       headers: [
@@ -74,6 +73,7 @@ export default {
 
   created() {
     this.format = format
+    this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
   },
 
   methods: {
@@ -83,18 +83,12 @@ export default {
      */
     async loadFundingAgreements(searchQueries) {
       try {
-        console.log(searchQueries)
         this.loading = true
         this.fundingAgreements = []
         console.log(searchQueries)
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
-            let facilityFas = []
-            if (searchQueries?.dateFilterType === 'Custom') {
-              facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.startDateFrom, searchQueries?.startDateTo)
-            } else {
-              facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.startDateThreshold)
-            }
+            const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
                 fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING

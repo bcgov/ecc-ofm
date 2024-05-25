@@ -10,7 +10,7 @@
               <p>Rent/Lease</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.rentLeaseCost) }}
+              {{ format.formatDecimalNumber(currentApplication?.rentLeaseCost) }}
             </v-col>
           </v-row>
         </v-col>
@@ -24,7 +24,7 @@
               <p>Mortgage</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.mortgageCost) }}
+              {{ format.formatDecimalNumber(currentApplication?.mortgageCost) }}
             </v-col>
           </v-row>
         </v-col>
@@ -34,7 +34,7 @@
               <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.propertyTax) }}
+              {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}
             </v-col>
           </v-row>
         </v-col>
@@ -44,7 +44,7 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.strataFee) }}
+              {{ format.formatDecimalNumber(currentApplication?.strataFee) }}
             </v-col>
           </v-row>
         </v-col>
@@ -58,7 +58,7 @@
               <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.propertyTax) }}
+              {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}
             </v-col>
           </v-row>
         </v-col>
@@ -68,7 +68,7 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.strataFee) }}
+              {{ format.formatDecimalNumber(currentApplication?.strataFee) }}
             </v-col>
           </v-row>
         </v-col>
@@ -82,7 +82,7 @@
               <p>Fee (If Applicable)</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.applicableFee) }}
+              {{ format.formatDecimalNumber(currentApplication?.applicableFee) }}
             </v-col>
           </v-row>
         </v-col>
@@ -92,7 +92,7 @@
               <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.propertyTax) }}
+              {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}
             </v-col>
           </v-row>
         </v-col>
@@ -102,7 +102,7 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="6" xl="7" class="px-2">
-              {{ formatDecimalNumber(currentApplication?.strataFee) }}
+              {{ format.formatDecimalNumber(currentApplication?.strataFee) }}
             </v-col>
           </v-row>
         </v-col>
@@ -115,7 +115,7 @@
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
             <v-col cols="6" xl="7" class="px-2 totalYearlyCost">
-              {{ formatDecimalNumber(currentApplication?.totalYearlyFacilityCosts) }}
+              {{ format.formatDecimalNumber(currentApplication?.totalYearlyFacilityCosts) }}
             </v-col>
           </v-row>
         </v-col>
@@ -129,7 +129,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
 import { FACILITY_TYPES } from '@/utils/constants'
-import { formatDecimalNumber } from '@/utils/common'
+import format from '@/utils/format'
 
 export default {
   components: { AppLabel },
@@ -141,9 +141,7 @@ export default {
   },
   created() {
     this.FACILITY_TYPES = FACILITY_TYPES
-  },
-  methods: {
-    formatDecimalNumber,
+    this.format = format
   },
 }
 </script>
