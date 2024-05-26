@@ -52,7 +52,7 @@ export default {
   async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
       if (!facilityId && !statusCode) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&statusCode=${statusCode}`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`)
       return response?.data[0]
     } catch (error) {
       console.log(`Failed to get the list of active funding agreements by application id - ${error}`)

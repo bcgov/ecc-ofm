@@ -305,6 +305,7 @@ const FundingAgreementMappings = [
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },

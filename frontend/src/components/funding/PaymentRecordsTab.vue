@@ -105,7 +105,6 @@ export default {
   methods: {
     async loadPayments(searchQueries) {
       try {
-        console.log(searchQueries)
         this.loading = true
         this.searchQueries = searchQueries
         this.paymentHistory = await this.loadPaymentHistory()

@@ -1,18 +1,18 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="ma-2">
     <v-card class="pa-6">
-      <v-row>
-        <v-col cols="12" md="6">
+      <v-row no-gutters>
+        <v-col cols="12" lg="6" class="mb-6 mb-lg-0">
           <v-row>
-            <v-col cols="12" sm="6" lg="2" xl="3">
-              <AppLabel>Facility:</AppLabel>
+            <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
+              <AppLabel>Facility(s):</AppLabel>
             </v-col>
             <v-col cols="12" sm="9" lg="8" xl="7">
               <v-select
                 v-model="selectedFacilities"
                 :items="userInfo.facilities"
                 item-title="facilityName"
-                label="Select Facility"
+                label="Select Facility(s)"
                 :disabled="loading"
                 :rules="rules.required"
                 density="compact"
@@ -37,8 +37,8 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="6" lg="2" xl="3">
-              <AppLabel>Payment Type:</AppLabel>
+            <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
+              <AppLabel>Payment Type(s):</AppLabel>
             </v-col>
             <v-col cols="12" sm="9" lg="8" xl="7">
               <v-select
@@ -48,7 +48,7 @@
                 :rules="rules.required"
                 item-title="description"
                 variant="outlined"
-                label="Select Payment Types"
+                label="Select Payment Type(s)"
                 chips
                 multiple
                 return-object>
@@ -67,9 +67,9 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="12" md="6">
+        <v-col cols="12" lg="6">
           <v-row>
-            <v-col cols="12" sm="5" lg="2" xl="2">
+            <v-col cols="12" sm="5" lg="2" xl="2" class="pb-0">
               <AppLabel>Date:</AppLabel>
             </v-col>
             <v-col cols="12" sm="12" lg="9" xl="7">
@@ -77,7 +77,7 @@
             </v-col>
           </v-row>
           <v-row v-if="selectedDateFilterType === 'Custom'">
-            <v-col cols="12" sm="12" lg="2">
+            <v-col cols="12" sm="12" lg="2" class="pb-0">
               <AppLabel>Date Range:</AppLabel>
             </v-col>
             <v-col cols="12" sm="6" lg="5">
@@ -111,7 +111,6 @@ import { mapState } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import alertMixin from '@/mixins/alertMixin.js'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { DATE_FILTER_TYPES } from '@/utils/constants'
@@ -119,8 +118,6 @@ import { DATE_FILTER_TYPES } from '@/utils/constants'
 export default {
   name: 'FundingSearchCard',
   components: { AppButton, AppLabel, AppButtonRadioGroup },
-  mixins: [alertMixin],
-
   props: {
     loading: {
       type: Boolean,
@@ -167,7 +164,7 @@ export default {
         case DATE_FILTER_TYPES.YTD:
           return moment()
         case DATE_FILTER_TYPES.CUSTOM:
-          return this.selectedDateFrom
+          return this.selectedDateTo
         default:
           return null
       }

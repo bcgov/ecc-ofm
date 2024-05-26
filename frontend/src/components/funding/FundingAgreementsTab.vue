@@ -11,7 +11,7 @@
           {{ format.formatDate(item?.endDate) }}
         </template>
         <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.status }}</span>
+          <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
@@ -31,23 +31,11 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
-const STATUS_UNKNOWN = 'Unknown'
-
+// TODO: Remove this constant after we have Payment Type for FA in CRM
 const PAYMENT_FILTER_TYPE_VALUES = {
   BASE_FUNDING: 'Base Funding',
   SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
   OTHER: 'Other',
-}
-
-const statusNameMap = {
-  [FUNDING_AGREEMENT_STATUS_CODES.DRAFT]: 'Draft',
-  [FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]: 'FA Review',
-  [FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING]: 'FA Signature Pending',
-  [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED]: 'FA Submitted to Ministry',
-  [FUNDING_AGREEMENT_STATUS_CODES.FA_IN_REVIEW]: 'In Review with Ministry EA',
-  [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE]: 'Active',
-  [FUNDING_AGREEMENT_STATUS_CODES.EXPIRED]: 'Expired',
-  [FUNDING_AGREEMENT_STATUS_CODES.TERMINATED]: 'Terminated',
 }
 
 export default {
@@ -61,7 +49,7 @@ export default {
       headers: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
-        { title: 'Facility Name', key: 'facility' },
+        { title: 'Facility Name', key: 'facilityName' },
         { title: 'Signing Expense Authority', key: 'expenseAuthority' },
         { title: 'Start Date', key: 'startDate' },
         { title: 'End Date', key: 'endDate' },
@@ -85,16 +73,11 @@ export default {
       try {
         this.loading = true
         this.fundingAgreements = []
-        console.log(searchQueries)
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
-              facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
-                fa.facility = facility.facilityName
-                fa.status = statusNameMap[fa.statusCode] ?? STATUS_UNKNOWN
-              })
+              facilityFas.forEach((fa) => (fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING))
               this.fundingAgreements.push(...facilityFas)
             }
           }),
