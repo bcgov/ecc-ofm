@@ -87,7 +87,7 @@ export default {
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
 
     filteredFacilities() {
-      return this.userInfo?.facilities?.filter((facility) => facility.isAddCoreApplicationAllowed)
+      return this.userInfo?.facilities?.filter((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
     },
   },
 
