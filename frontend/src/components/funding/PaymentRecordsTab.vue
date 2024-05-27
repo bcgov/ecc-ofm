@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
-    <FundingSearchCard :loading="loading" :default-date-filter="DATE_FILTER_TYPES.YTD" @search="loadPayments" />
+    <FundingSearchCard :loading="loading" :show-payment-types-filter="true" :default-date-filter="DATE_FILTER_TYPES.YTD" @search="loadPayments" />
 
     <h2 class="mt-8 mb-2">Payment History</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
@@ -108,7 +108,7 @@ export default {
         this.loading = true
         this.searchQueries = searchQueries
         this.paymentHistory = await this.loadPaymentHistory()
-        this.scheduledPayments = await this.loadSchedulesPayments()
+        this.scheduledPayments = await this.loadScheduledPayments()
       } catch (error) {
         this.setFailureAlert('Failed to load payments', error)
       } finally {
@@ -133,7 +133,7 @@ export default {
     },
 
     // YTD date filter is not applicable for Scheduled Payments, so we'll return all outstanding payments if Date Filter = YTD
-    async loadSchedulesPayments() {
+    async loadScheduledPayments() {
       let scheduledPayments = []
       const dateFrom = this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.CUSTOM ? this.searchQueries?.dateFrom : moment().startOf('day')
       let dateTo

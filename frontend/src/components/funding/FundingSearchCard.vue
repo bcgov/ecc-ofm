@@ -36,7 +36,7 @@
               </v-select>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row v-if="showPaymentTypesFilter">
             <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
               <AppLabel>Payment Type(s):</AppLabel>
             </v-col>
@@ -106,7 +106,6 @@
 
 <script>
 import moment from 'moment'
-import rules from '@/utils/rules'
 import { mapState } from 'pinia'
 
 import AppButton from '@/components/ui/AppButton.vue'
@@ -115,6 +114,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { DATE_FILTER_TYPES } from '@/utils/constants'
+import rules from '@/utils/rules'
 
 export default {
   name: 'FundingSearchCard',
@@ -123,6 +123,10 @@ export default {
     loading: {
       type: Boolean,
       default: true,
+    },
+    showPaymentTypesFilter: {
+      type: Boolean,
+      default: false,
     },
     defaultDateFilter: {
       type: String,
@@ -212,10 +216,12 @@ export default {
       if (!this.isFormComplete) return
       const searchQueries = {
         facilities: this.selectedFacilities,
-        paymentFilterTypes: this.selectedPaymentFilterTypes?.map((paymentType) => paymentType.id),
         dateFilterType: this.selectedDateFilterType,
         dateFrom: this.dateFrom,
         dateTo: this.dateTo,
+      }
+      if (this.showPaymentTypesFilter) {
+        searchQueries.paymentFilterTypes = this.selectedPaymentFilterTypes?.map((paymentType) => paymentType.id)
       }
       this.$emit('search', searchQueries)
     },

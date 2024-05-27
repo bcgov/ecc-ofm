@@ -15,8 +15,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-            <v-icon v-if="item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING" aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
-            <v-icon v-else-if="[FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode)" aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
+            <v-icon v-if="showSign(item)" aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
+            <v-icon v-else-if="showOpen(item)" aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -30,13 +30,6 @@ import alertMixin from '@/mixins/alertMixin.js'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
-
-// TODO: Remove this constant after we have Payment Type for FA in CRM
-const PAYMENT_FILTER_TYPE_VALUES = {
-  BASE_FUNDING: 'Base Funding',
-  SUPPLEMENTARY_ALLOWANCES: 'Supplementary Allowances',
-  OTHER: 'Other',
-}
 
 export default {
   name: 'FundingAgreementsTab',
@@ -65,10 +58,6 @@ export default {
   },
 
   methods: {
-    /**
-     * TODO: Payment type is displayed in UI but is not yet integrated into this method as required CRM data is not yet in place.
-     * This is a know issue and postponed to a future sprint.
-     */
     async loadFundingAgreements(searchQueries) {
       try {
         this.loading = true
@@ -78,7 +67,7 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
+                fa.fundingAgreementType = 'Base Funding' // Base Funding is the only Funding Agreement type. This field/column can be removed in the future.
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
               })
               this.fundingAgreements.push(...facilityFas)
@@ -91,6 +80,14 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    showSign(fundingAgreement) {
+      return fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING
+    },
+
+    showOpen(fundingAgreement) {
+      return [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(fundingAgreement?.statusCode)
     },
 
     getStatusClass(statusCode) {
