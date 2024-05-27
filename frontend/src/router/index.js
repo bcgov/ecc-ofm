@@ -66,7 +66,6 @@ const router = createRouter({
       component: HomeView,
       meta: {
         requiresAuth: true,
-        showHeroImage: true,
       },
     },
     {
@@ -75,16 +74,14 @@ const router = createRouter({
       component: LoginView,
       meta: {
         requiresAuth: false,
-        showHeroImage: true,
       },
     },
     {
       path: '/internal',
-      name: 'ministry login',
+      name: 'internal',
       component: MinistryLoginView,
       meta: {
         requiresAuth: false,
-        showHeroImage: true,
       },
     },
     {
@@ -109,6 +106,7 @@ const router = createRouter({
       component: MessagingView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.MANAGE_NOTIFICATIONS,
       },
     },
     {
@@ -356,11 +354,6 @@ router.beforeEach((to, _from, next) => {
     return next('error')
   }
 
-  // TODO (weskubo-cgi)
-  // 1. Don't allow access to Logout page if not logged in
-  // 2. Don't allow access to Login if Logged in
-  // 3. Don't allow access to Internal if logged in
-
   const authStore = useAuthStore()
   if (to.meta.requiresAuth) {
     authStore
@@ -386,6 +379,10 @@ router.beforeEach((to, _from, next) => {
               if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
                 return next('unauthorized')
               }
+              // Block access to Impersonate
+              if (to.name === 'impersonate') {
+                return next('unauthorized')
+              }
             }
             next()
           })
@@ -406,6 +403,10 @@ router.beforeEach((to, _from, next) => {
         next('/token-expired')
       })
   } else {
+    // Block access to Login/Internal/Logout when authenticated
+    if ((to.name === 'login' || to.name === 'internal' || to.name === 'logout') && authStore.isAuthenticated) {
+      return next('home')
+    }
     next()
   }
 })

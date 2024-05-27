@@ -10,9 +10,12 @@ const atob = require('atob')
 const passport = require('passport')
 const helmet = require('helmet')
 const cors = require('cors')
-const utils = require('./components/utils')
+
 const auth = require('./components/auth')
+const { getRoles } = require('./components/lookup')
 const { getUserProfile } = require('./components/user')
+const utils = require('./components/utils')
+
 const bodyParser = require('body-parser')
 dotenv.config()
 
@@ -33,6 +36,8 @@ const fundingAgreementsRouter = require('./routes/fundingAgreements')
 const facilitiesRouter = require('./routes/facilities')
 const licencesRouter = require('./routes/licences')
 const reportsRouter = require('./routes/reports')
+const { MappableObjectForBack } = require('./util/mapping/MappableObject')
+const { RoleMappings } = require('./util/mapping/Mappings')
 
 const connectRedis = require('connect-redis')
 const promMid = require('express-prometheus-middleware')
@@ -151,8 +156,14 @@ async function populateUserInfo(profile) {
     profile.role = user?.role
     profile.org = user?.organization?.accountid
   } else if (idp === 'idir') {
-    // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
-    log.verbose('Found idir user')
+    const roles = await getRoles()
+    const role = roles.find((role) => role.data.roleName === 'Impersonate')
+    
+    // Store the role in Dynamics format to match BCeID
+    profile.role = new MappableObjectForBack(role.toJSON(), RoleMappings).toJSON()
+
+    // IDIR users don't have an Organization
+    // The Org is only assigned in the frontend when impersonating a BCeID user
   }
 }
 
