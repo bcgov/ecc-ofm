@@ -15,8 +15,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-            <v-icon v-if="item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING" size="large">mdi-signature-freehand</v-icon>
-            <v-icon v-else-if="[FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode)" size="large">mdi-folder-open-outline</v-icon>
+            <v-icon v-if="item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING" aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
+            <v-icon v-else-if="[FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode)" aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
         </template>
       </v-data-table>
