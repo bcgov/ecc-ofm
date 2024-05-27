@@ -74,9 +74,9 @@ export default {
   async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
       if (!facilityId && !startDateFrom) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&includeEA=true&startDateFrom=${startDateFrom}`
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&includeEA=true&dateFrom=${startDateFrom}`
       if (startDateTo) {
-        url += `&startDateTo=${startDateTo}`
+        url += `&dateTo=${startDateTo}`
       }
       const response = await ApiService.apiAxios.get(url)
       return response?.data

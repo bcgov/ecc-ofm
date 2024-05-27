@@ -14,7 +14,7 @@ async function getFundingAgreements(req, res) {
     if (req.query?.includeEA) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }
-    const filter = `${buildDateFilterQuery(req?.query)}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
+    const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
     operation += `&$filter=(${filter})`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {

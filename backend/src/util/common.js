@@ -14,18 +14,18 @@ function buildFilterQuery(query, mapping) {
   return filterQuery
 }
 
-function buildDateFilterQuery(query) {
+function buildDateFilterQuery(query, crmDateFieldName) {
   if (isEmpty(query)) return
   let filterQuery = ''
-  if (query?.startDateFrom) {
-    const startDateFrom = formatToISODateFormat(query.startDateFrom)
-    delete query.startDateFrom
-    filterQuery += `ofm_start_date ge ${startDateFrom} and `
+  if (query?.dateFrom) {
+    const dateFrom = formatToISODateFormat(query.dateFrom)
+    delete query.dateFrom
+    filterQuery += `${crmDateFieldName} ge ${dateFrom} and `
   }
-  if (query?.startDateTo) {
-    const startDateTo = formatToISODateFormat(query.startDateTo)
-    delete query.startDateTo
-    filterQuery += `ofm_start_date le ${startDateTo} and `
+  if (query?.dateTo) {
+    const dateTo = formatToISODateFormat(query.dateTo)
+    delete query.dateTo
+    filterQuery += `${crmDateFieldName} le ${dateTo} and `
   }
   return filterQuery
 }
@@ -42,5 +42,4 @@ function formatToISODateFormat(dateString) {
 module.exports = {
   buildDateFilterQuery,
   buildFilterQuery,
-  formatToISODateFormat,
 }
