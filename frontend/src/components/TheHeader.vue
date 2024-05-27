@@ -9,7 +9,7 @@
         <v-row class="vertical-line my-auto">
           <v-row class="my-auto">
             <v-toolbar-title fill-height style="font-size: 14px">
-              <h5 v-if="xs"><span v-html="appTitleXs" /></h5>
+              <h5 class="main-title" v-if="xs"><span v-html="appTitleXs" /></h5>
               <h2 class="main-title" v-else>{{ appTitle }}</h2>
             </v-toolbar-title>
           </v-row>
@@ -49,12 +49,15 @@
 
 <script>
 import { mapActions, mapState } from 'pinia'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
 import { AuthRoutes } from '@/utils/constants'
 
 export default {
+  name: 'TheHeader',
+  mixins: [permissionsMixin],
   data() {
     return {
       authRoutes: AuthRoutes,
@@ -86,7 +89,7 @@ export default {
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
     showMessagingIcon() {
-      return this.isAuthenticated && this.userInfo && !this.isMinistryUser
+      return this.isAuthenticated && this.userInfo && this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
     },
   },
   watch: {

@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES } from '@/utils/constants'
+import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES, ROLES } from '@/utils/constants'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -66,8 +66,16 @@ export const useAuthStore = defineStore('auth', {
           if (this.isActingProvider && this.hasFacilities) {
             this.currentFacility = this.userInfo.facilities[0]
           }
+          
           // Lookup the permissions
-          this.permissions = appStore.roles.find((role) => role.roleId === this.userInfo.role?.ofm_portal_roleid)?.permissions.map((p) => p.permissionName)
+          let role
+          if (this.isImpersonating) {
+            // When impersonating always use 'Impersonate', not the impersonated user's role
+            role = appStore.roles.find((role) => role.roleName === ROLES.IMPERSONATE)
+          } else {
+            role = appStore.roles.find((role) => role.roleId === this.userInfo.role?.ofm_portal_roleid)
+          }
+          this.permissions = role?.permissions.map((p) => p.permissionName)
 
           /*
             A facility can apply for a core application if it satisfies these conditions:
