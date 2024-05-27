@@ -19,9 +19,7 @@ router.get('/', (_req, res) => {
 
 router.get(
   '/callback',
-  passport.authenticate('oidcBceid', {
-    failureRedirect: 'error',
-  }),
+  passport.authenticate('oidcBceid', { failureRedirect: 'error' }),
   (_req, res) => {
     res.redirect(config.get('server:frontend'))
   },
@@ -29,9 +27,7 @@ router.get(
 
 router.get(
   '/callback_idir',
-  passport.authenticate('oidcIdir', {
-    failureRedirect: 'error',
-  }),
+  passport.authenticate('oidcIdir', { failureRedirect: 'error' }),
   (_req, res) => {
     res.redirect(config.get('server:frontend'))
   },
@@ -45,37 +41,39 @@ router.get('/error', (_req, res) => {
 //redirects to the SSO login screen
 router.get(
   '/login',
-  passport.authenticate('oidcBceid', {
-    failureRedirect: 'error',
-  }),
+  passport.authenticate('oidcBceid', { failureRedirect: 'error' }),
 )
 router.get(
   '/login-idir',
-  passport.authenticate('oidcIdir', {
-    failureRedirect: 'error',
-  }),
+  passport.authenticate('oidcIdir', { failureRedirect: 'error' }),
 )
 
 //removes tokens and destroys session
 router.get('/logout', async (req, res, next) => {
+  const idToken = req.session?.passport?.user?.idToken;
+  const queryParams = endpoint =>
+    `?post_logout_redirect_uri=${config.get('server:frontend')}${endpoint || ''}&id_token_hint=${idToken}`
+
   req.logout(function (err) {
     if (err) {
       return next(err)
     }
+
     req.session.destroy()
+
     let retUrl
     if (req.query && req.query.sessionExpired) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/session-expired')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/session-expired'))
     } else if (req.query && req.query.loginError) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/login-error')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/login-error'))
     } else if (req.query && req.query.loginBceid) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/api/auth/login_bceid'))
     } else if (req.query && req.query.loginBceidActivateUser) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_user')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/api/auth/login_bceid_activate_user'))
     } else if (req.query && req.query.loginBceidActivateDistrictUser) {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/api/auth/login_bceid_activate_district_user')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/api/auth/login_bceid_activate_district_user'))
     } else {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + '?redirect_uri=' + config.get('server:frontend') + '/logout')
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams())
     }
     log.verbose('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl)
     res.redirect(config.get('siteMinder_logout_endpoint') + retUrl)
