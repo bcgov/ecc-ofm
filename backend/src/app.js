@@ -120,10 +120,9 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         clientSecret: config.get(clientSecret),
         callbackURL: callbackURI,
         scope: 'openid',
-        kc_idp_hint: kc_idp_hint,
-        passReqToCallback: true
+        kc_idp_hint: kc_idp_hint
       },
-      async (req, _iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
+      async (_iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
           return verified('No access token', null)
         }
@@ -136,8 +135,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
-        req.session.idToken=idToken
-        req.session.save()
+        profile.idToken = idToken
         return verified(null, profile)
       },
     ),
