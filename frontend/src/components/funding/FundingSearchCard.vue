@@ -81,7 +81,7 @@
               <AppLabel>Date Range:</AppLabel>
             </v-col>
             <v-col cols="12" sm="6" lg="5">
-              <v-date-input id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" label="From" variant="outlined" />
+              <v-date-input id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" hide-actions label="From" variant="outlined" />
             </v-col>
             <v-col cols="12" sm="6" lg="5">
               <v-date-input
@@ -89,6 +89,7 @@
                 v-model="selectedDateTo"
                 :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(selectedDateFrom)]"
                 :disabled="loading"
+                hide-actions
                 label="To"
                 variant="outlined" />
             </v-col>
@@ -148,25 +149,23 @@ export default {
     dateFrom() {
       switch (this.selectedDateFilterType) {
         case DATE_FILTER_TYPES.THREE_MONTHS:
-          return moment().subtract(3, 'months')
+          return moment().subtract(3, 'months').startOf('day')
         case DATE_FILTER_TYPES.SIX_MONTHS:
-          return moment().subtract(6, 'months')
+          return moment().subtract(6, 'months').startOf('day')
         case DATE_FILTER_TYPES.YTD:
           return moment().startOf('year')
         case DATE_FILTER_TYPES.CUSTOM:
-          return this.selectedDateFrom
+          return moment(this.selectedDateFrom).startOf('day')
         default:
           return null
       }
     },
     dateTo() {
       switch (this.selectedDateFilterType) {
-        case DATE_FILTER_TYPES.YTD:
-          return moment()
         case DATE_FILTER_TYPES.CUSTOM:
-          return this.selectedDateTo
+          return moment(this.selectedDateTo).endOf('day')
         default:
-          return null
+          return moment().endOf('day')
       }
     },
     allPaymentTypesSelected() {

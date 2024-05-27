@@ -1,5 +1,3 @@
-import moment from 'moment'
-
 const REQUIRED_MSG = 'This field is required'
 const rules = {
   email: (v) => !v || /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required', // https://emailregex.com/
@@ -16,9 +14,9 @@ const rules = {
     },
   ],
   postalCode: [(v) => !v || /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(v) || 'A valid postal code is required'],
-  MMDDYYYY: (v) => (!!v && moment(v, 'MM/DD/YYYY', true).isValid()) || 'Date must be in MM/DD/YYYY format',
+  MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Date must be in MM/DD/YYYY format',
   validEndDate(startDate) {
-    return (v) => moment(v).isAfter(moment(startDate)) || 'End date must be after start date'
+    return (v) => new Date(v) > new Date(startDate) || 'End date must be after start date'
   },
   max(number) {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`

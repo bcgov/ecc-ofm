@@ -77,11 +77,15 @@ export default {
           searchQueries?.facilities?.map(async (facility) => {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
-              facilityFas.forEach((fa) => (fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING))
+              facilityFas.forEach((fa) => {
+                fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
+                fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
+              })
               this.fundingAgreements.push(...facilityFas)
             }
           }),
         )
+        this.fundingAgreements?.sort((a, b) => b.priority - a.priority) // FA Signature Pending status at the top
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
       } finally {

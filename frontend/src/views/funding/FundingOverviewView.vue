@@ -1,5 +1,5 @@
 <template>
-  <OrganizationHeader :showFacility="false" />
+  <OrganizationHeader :show-facility="false" />
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-2">Funding</h1>
     <v-card>

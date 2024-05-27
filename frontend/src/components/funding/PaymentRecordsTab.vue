@@ -135,7 +135,7 @@ export default {
     // YTD date filter is not applicable for Scheduled Payments, so we'll return all outstanding payments if Date Filter = YTD
     async loadSchedulesPayments() {
       let scheduledPayments = []
-      const dateFrom = this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.CUSTOM ? this.searchQueries?.dateFrom : moment()
+      const dateFrom = this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.CUSTOM ? this.searchQueries?.dateFrom : moment().startOf('day')
       let dateTo
       switch (this.searchQueries?.dateFilterType) {
         case DATE_FILTER_TYPES.THREE_MONTHS:
