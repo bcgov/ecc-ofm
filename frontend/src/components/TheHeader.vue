@@ -9,7 +9,7 @@
         <v-row class="vertical-line my-auto">
           <v-row class="my-auto">
             <v-toolbar-title fill-height style="font-size: 14px">
-              <h5 v-if="xs"><span v-html="appTitleXs" /></h5>
+              <h5 class="main-title" v-if="xs"><span v-html="appTitleXs" /></h5>
               <h2 class="main-title" v-else>{{ appTitle }}</h2>
             </v-toolbar-title>
           </v-row>
