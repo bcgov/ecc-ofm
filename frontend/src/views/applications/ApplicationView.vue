@@ -186,7 +186,7 @@ export default {
         if (isEmpty(this.currentApplication)) return
         this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
         this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
+          contact.fullName = `${contact.firstName ?? ''} ${contact.lastName}`
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
