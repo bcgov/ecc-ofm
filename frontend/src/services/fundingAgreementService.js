@@ -74,7 +74,7 @@ export default {
   async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
       if (!facilityId && !startDateFrom) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&includeEA=true&dateFrom=${startDateFrom}`
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&includeEA=true&dateFrom=${startDateFrom}`
       if (startDateTo) {
         url += `&dateTo=${startDateTo}`
       }
