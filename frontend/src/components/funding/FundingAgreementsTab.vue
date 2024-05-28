@@ -14,7 +14,7 @@
           <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
+          <v-btn v-if="showActionButton(item)" variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
             <v-icon v-if="showSign(item)" aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
             <v-icon v-else-if="showOpen(item)" aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
@@ -80,6 +80,10 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    showActionButton(fundingAgreement) {
+      return this.showSign(fundingAgreement) || this.showOpen(fundingAgreement)
     },
 
     showSign(fundingAgreement) {
