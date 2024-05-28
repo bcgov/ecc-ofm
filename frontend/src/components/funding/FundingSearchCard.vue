@@ -169,7 +169,7 @@ export default {
         case DATE_FILTER_TYPES.CUSTOM:
           return moment(this.selectedDateTo).endOf('day')
         default:
-          return moment().endOf('day')
+          return null
       }
     },
     allPaymentTypesSelected() {
