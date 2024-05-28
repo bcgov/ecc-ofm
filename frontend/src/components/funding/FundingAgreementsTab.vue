@@ -14,9 +14,11 @@
           <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn variant="text" @click="$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })">
-            <v-icon v-if="showSign(item)" aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
-            <v-icon v-else-if="showOpen(item)" aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
+          <v-btn v-if="showSign(item)" variant="text" @click="goToFundingAgreement(item)">
+            <v-icon aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
+          </v-btn>
+          <v-btn v-else-if="showOpen(item)" variant="text" @click="goToFundingAgreement(item)">
+            <v-icon aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -88,6 +90,10 @@ export default {
 
     showOpen(fundingAgreement) {
       return [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(fundingAgreement?.statusCode)
+    },
+
+    goToFundingAgreement(fundingAgreement) {
+      this.$router.push({ name: 'funding', params: { fundingGuid: fundingAgreement.fundingId } })
     },
 
     getStatusClass(statusCode) {
