@@ -134,23 +134,29 @@ async function getReportQuestionTypes() {
   return fetchAndCacheData('reportQuestionTypes', 'ofm_reportingquestiontype')
 }
 
+async function getPaymentTypes() {
+  return fetchAndCacheData('paymentTypes', 'ecc_payment_type')
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
-      getApplicationIntakes(),
-      getRequestCategories(),
-      getRequestSubCategories(),
-      getRoles(),
-      getHealthAuthorities(),
-      getFacilityTypes(),
-      getLicenceTypes(),
-      getReportQuestionTypes(),
-      getFiscalYears(),
-      getMonths(),
-    ])
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, paymentTypes, fiscalYears, months] =
+      await Promise.all([
+        getApplicationIntakes(),
+        getRequestCategories(),
+        getRequestSubCategories(),
+        getRoles(),
+        getHealthAuthorities(),
+        getFacilityTypes(),
+        getLicenceTypes(),
+        getReportQuestionTypes(),
+        getPaymentTypes(),
+        getFiscalYears(),
+        getMonths(),
+      ])
     const resData = {
       applicationIntakes: applicationIntakes,
       requestCategories: requestCategories,
@@ -160,6 +166,7 @@ async function getLookupInfo(_req, res) {
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
       reportQuestionTypes: reportQuestionTypes,
+      paymentTypes: paymentTypes,
       fiscalYears: fiscalYears,
       months: months,
     }

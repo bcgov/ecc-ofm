@@ -14,8 +14,10 @@ const rules = {
     },
   ],
   postalCode: [(v) => !v || /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(v) || 'A valid postal code is required'],
-  YYYY: [(v) => (v > 1900 && v < 2100) || 'A valid year is required'],
-  notRequired: [() => true],
+  MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Date must be in MM/DD/YYYY format',
+  validEndDate(startDate) {
+    return (v) => new Date(v) > new Date(startDate) || 'End date must be after start date'
+  },
   max(number) {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
   },

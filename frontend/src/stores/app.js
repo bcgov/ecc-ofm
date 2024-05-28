@@ -24,6 +24,7 @@ export const useAppStore = defineStore('app', {
     fiscalYears: {},
     months: {},
     applicationIntakes: {},
+    paymentTypes: {},
   }),
   getters: {
     getRoleNameById: (state) => {
@@ -115,6 +116,7 @@ export const useAppStore = defineStore('app', {
         this.fiscalYears = lookupInfo?.data?.fiscalYears
         this.months = lookupInfo?.data?.months
         this.applicationIntakes = lookupInfo?.data?.applicationIntakes
+        this.paymentTypes = lookupInfo?.data?.paymentTypes
       }
     },
     async setAlertNotificationText(alertNotificationText) {
