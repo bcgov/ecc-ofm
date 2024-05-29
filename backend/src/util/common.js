@@ -39,7 +39,16 @@ function formatToISODateFormat(dateString) {
   return date.isValid() ? date.format(ISO_DATE_FORMAT) : 'Invalid date'
 }
 
+/**
+ * Dynamics can take a selector with a list of fields
+ * Use this function to generate a list of fields based on mappings
+ */
+function getMappingString(mappings) {
+  return mappings.map((item) => item.back).join(',')
+}
+
 module.exports = {
   buildDateFilterQuery,
   buildFilterQuery,
+  getMappingString,
 }
