@@ -108,9 +108,9 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-divider />
+        <v-divider v-if="facility?.additionalAddresses.length === 0" />
 
-        <v-expansion-panels v-if="facility?.additionalAddresses.length > 0">
+        <v-expansion-panels v-else>
           <v-expansion-panel>
             <v-expansion-panel-title><AppLabel>Additional Addresses</AppLabel></v-expansion-panel-title>
             <v-expansion-panel-text>

@@ -44,11 +44,7 @@ function formatToISODateFormat(dateString) {
  * Use this function to generate a list of fields based on mappings
  */
 function getMappingString(mappings) {
-  return mappings
-    .map((item) => {
-      return item.back
-    })
-    .join(',')
+  return mappings.map((item) => item.back).join(',')
 }
 
 module.exports = {
