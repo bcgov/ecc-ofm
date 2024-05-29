@@ -73,7 +73,7 @@ router.get('/logout', async (req, res, next) => {
     } else if (req.query && req.query.loginBceidActivateDistrictUser) {
       retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/api/auth/login_bceid_activate_district_user'))
     } else {
-      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams())
+      retUrl = encodeURIComponent(config.get('logoutEndpoint') + queryParams('/logout'))
     }
     log.verbose('URL: ' + config.get('siteMinder_logout_endpoint') + retUrl)
     res.redirect(config.get('siteMinder_logout_endpoint') + retUrl)
