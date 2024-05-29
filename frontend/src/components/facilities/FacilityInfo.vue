@@ -109,69 +109,6 @@
           </v-col>
         </v-row>
         <v-divider />
-        <v-row no-gutters>
-          <v-col cols="12">
-            <v-row no-gutters class="ma-2">
-              <h4>Mailing address</h4>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="6">
-                <v-row no-gutters class="ma-2">
-                  <v-col cols="12" md="6" lg="5" xl="4">
-                    <AppLabel>Street address 1:</AppLabel>
-                  </v-col>
-                  <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress1 : facility?.streetAddress1 }}
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-row no-gutters class="ma-2">
-                  <v-col cols="12" md="6" lg="5" xl="4">
-                    <AppLabel>Street address 2:</AppLabel>
-                  </v-col>
-                  <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress2 : facility?.streetAddress2 }}
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="6">
-                <v-row no-gutters class="ma-2">
-                  <v-col cols="12" md="6" lg="5" xl="4">
-                    <AppLabel>City:</AppLabel>
-                  </v-col>
-                  <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingCity : facility?.city }}
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-row no-gutters class="ma-2">
-                  <v-col cols="12" md="6" lg="5" xl="4">
-                    <AppLabel>Province:</AppLabel>
-                  </v-col>
-                  <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingProvince : facility?.province }}
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-row no-gutters class="ma-2">
-                  <v-col cols="12" md="6" lg="5" xl="4">
-                    <AppLabel>Postal code:</AppLabel>
-                  </v-col>
-                  <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingPostalCode : facility?.postalCode }}
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-
-        <v-divider />
 
         <v-expansion-panels v-if="facility?.additionalAddresses.length > 0">
           <v-expansion-panel>
@@ -242,6 +179,68 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
+
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-row no-gutters class="ma-2">
+              <h4>Mailing address</h4>
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="6">
+                <v-row no-gutters class="ma-2">
+                  <v-col cols="12" md="6" lg="5" xl="4">
+                    <AppLabel>Street address 1:</AppLabel>
+                  </v-col>
+                  <v-col cols="12" md="6" lg="7" xl="8">
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress1 : facility?.streetAddress1 }}
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-row no-gutters class="ma-2">
+                  <v-col cols="12" md="6" lg="5" xl="4">
+                    <AppLabel>Street address 2:</AppLabel>
+                  </v-col>
+                  <v-col cols="12" md="6" lg="7" xl="8">
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress2 : facility?.streetAddress2 }}
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="6">
+                <v-row no-gutters class="ma-2">
+                  <v-col cols="12" md="6" lg="5" xl="4">
+                    <AppLabel>City:</AppLabel>
+                  </v-col>
+                  <v-col cols="12" md="6" lg="7" xl="8">
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingCity : facility?.city }}
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-row no-gutters class="ma-2">
+                  <v-col cols="12" md="6" lg="5" xl="4">
+                    <AppLabel>Province:</AppLabel>
+                  </v-col>
+                  <v-col cols="12" md="6" lg="7" xl="8">
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingProvince : facility?.province }}
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-row no-gutters class="ma-2">
+                  <v-col cols="12" md="6" lg="5" xl="4">
+                    <AppLabel>Postal code:</AppLabel>
+                  </v-col>
+                  <v-col cols="12" md="6" lg="7" xl="8">
+                    {{ facility?.isMailingAddressDifferent ? facility?.mailingPostalCode : facility?.postalCode }}
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
       </v-container>
     </v-skeleton-loader>
   </v-card>

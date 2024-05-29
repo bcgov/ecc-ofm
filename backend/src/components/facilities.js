@@ -2,22 +2,10 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings, FacilityAdditionalAddressMappings } = require('../util/mapping/Mappings')
+const { getMappingString } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 
-/**
- * Dynamics can take a selector with a list of fields
- * Use this function to generate a list of fields based on mappings
- */
-function getMappingString(mappings) {
-  let retVal = mappings
-    .map((item) => {
-      return item.back
-    })
-    .join(',')
-  return retVal
-}
-
-function makeThePayloadPretty(response) {
+function formatPayload(response) {
   //these numbers are specified in Dynamics. There is no 1 or 2 because that
   //is the typical mailing / physical address fields.
   const FIRST_ADDITIONAL_ADDRESS_NUMBER = 3
@@ -49,7 +37,7 @@ async function getFacility(req, res) {
 
     const response = await getOperation(operation)
     const resp = new MappableObjectForFront(response, FacilityMappings).toJSON()
-    resp.additionalAddresses = makeThePayloadPretty(response)
+    resp.additionalAddresses = formatPayload(response)
     return res.status(HttpStatus.OK).json(resp)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
