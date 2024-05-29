@@ -133,7 +133,7 @@ const router = createRouter({
       component: FundingOverviewView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING,
+        permission: [PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS],
       },
     },
     {
@@ -142,7 +142,7 @@ const router = createRouter({
       component: FundingView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
     {
@@ -151,7 +151,7 @@ const router = createRouter({
       component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
 

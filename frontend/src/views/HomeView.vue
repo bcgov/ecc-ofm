@@ -22,7 +22,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col  v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS)" cols="12" md="6" lg="4">
+      <v-col v-if="hasPermission([PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS])" cols="12" md="6" lg="4">
         <v-card class="home-card" prepend-icon="mdi-currency-usd" title="Funding" @click="$router.push({ name: 'funding-overview' })">
           <v-card-text>
             Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti.
