@@ -154,6 +154,7 @@ async function populateUserInfo(profile) {
   // Get UserProfile for BCeID users
   if (idp === 'bceidbusiness') {
     const user = await getUserProfile(profileArray[0])
+    profile.contactId = user?.contactid
     profile.role = user?.role
     profile.org = user?.organization?.accountid
   } else if (idp === 'idir') {
