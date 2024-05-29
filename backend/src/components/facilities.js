@@ -4,8 +4,6 @@ const { MappableObjectForFront, MappableObjectForBack } = require('../util/mappi
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings, FacilityAdditionalAddressMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 
-const log = require('../components/logger')
-
 /**
  * Dynamics can take a selector with a list of fields
  * Use this function to generate a list of fields based on mappings
@@ -54,7 +52,6 @@ async function getFacility(req, res) {
     resp.additionalAddresses = makeThePayloadPretty(response)
     return res.status(HttpStatus.OK).json(resp)
   } catch (e) {
-    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
