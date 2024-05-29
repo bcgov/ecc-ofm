@@ -16,7 +16,7 @@ async function getFacility(req, res) {
 
 async function getFacilityContacts(req, res) {
   try {
-    const contacts = getRawFacilityContacts(req?.params?.facilityId)
+    const contacts = await getRawFacilityContacts(req?.params?.facilityId)
     return res.status(HttpStatus.OK).json(contacts)
   } catch (e) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)

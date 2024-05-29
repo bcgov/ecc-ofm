@@ -12,14 +12,6 @@
           <v-icon size="large">mdi-history</v-icon>
           <strong>Payment Records</strong>
         </v-tab>
-        <v-tab value="analytics">
-          <v-icon size="large">mdi-finance</v-icon>
-          <strong>Funding Analytics</strong>
-        </v-tab>
-        <v-tab value="reallocation">
-          <v-icon size="large">mdi-call-split</v-icon>
-          <strong>Funding Re-allocation</strong>
-        </v-tab>
       </v-tabs>
       <v-card-text>
         <v-window v-model="tab">
@@ -29,8 +21,6 @@
           <v-window-item value="payment-records">
             <PaymentRecordsTab />
           </v-window-item>
-          <v-window-item value="analytics">Funding Analytics</v-window-item>
-          <v-window-item value="reallocation">Funding Re-allocation</v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
