@@ -5,11 +5,12 @@ const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMa
 const { getMappingString } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 
+//these numbers are specified in Dynamics. There is no 1 or 2 because that
+//is the typical mailing / physical address fields.
+const FIRST_ADDITIONAL_ADDRESS_NUMBER = 3
+const LAST_ADDITIONAL_ADDRESS_NUMBER = 13
+
 function formatPayload(response) {
-  //these numbers are specified in Dynamics. There is no 1 or 2 because that
-  //is the typical mailing / physical address fields.
-  const FIRST_ADDITIONAL_ADDRESS_NUMBER = 3
-  const LAST_ADDITIONAL_ADDRESS_NUMBER = 13
   const addressArr = []
 
   for (let i = FIRST_ADDITIONAL_ADDRESS_NUMBER; i <= LAST_ADDITIONAL_ADDRESS_NUMBER; i++) {
@@ -27,79 +28,18 @@ function formatPayload(response) {
   return addressArr
 }
 
-const FacilityAdditionalAddressFields = [
-  'ofm_additional_address3',
-  'ofm_address3_line1',
-  'ofm_address3_line2',
-  'ofm_address3_city',
-  'ofm_address3_postal_code',
-  'ofm_address3_province',
-  'ofm_additional_address4',
-  'ofm_address4_line1',
-  'ofm_address4_line2',
-  'ofm_address4_city',
-  'ofm_address4_postal_code',
-  'ofm_address4_province',
-  'ofm_additional_address5',
-  'ofm_address5_line1',
-  'ofm_address5_line2',
-  'ofm_address5_city',
-  'ofm_address5_postal_code',
-  'ofm_address5_province',
-  'ofm_additional_address6',
-  'ofm_address6_line1',
-  'ofm_address6_line2',
-  'ofm_address6_city',
-  'ofm_address6_postal_code',
-  'ofm_address6_province',
-  'ofm_additional_address7',
-  'ofm_address7_line1',
-  'ofm_address7_line2',
-  'ofm_address7_city',
-  'ofm_address7_postal_code',
-  'ofm_address7_province',
-  'ofm_additional_address8',
-  'ofm_address8_line1',
-  'ofm_address8_line2',
-  'ofm_address8_city',
-  'ofm_address8_postal_code',
-  'ofm_address8_province',
-  'ofm_additional_address9',
-  'ofm_address9_line1',
-  'ofm_address9_line2',
-  'ofm_address9_city',
-  'ofm_address9_postal_code',
-  'ofm_address9_province',
-  'ofm_additional_address10',
-  'ofm_address10_line1',
-  'ofm_address10_line2',
-  'ofm_address10_city',
-  'ofm_address10_postal_code',
-  'ofm_address10_province',
-  'ofm_additional_address11',
-  'ofm_address11_line1',
-  'ofm_address11_line2',
-  'ofm_address11_city',
-  'ofm_address11_postal_code',
-  'ofm_address11_province',
-  'ofm_additional_address12',
-  'ofm_address12_line1',
-  'ofm_address12_line2',
-  'ofm_address12_city',
-  'ofm_address12_postal_code',
-  'ofm_address12_province',
-  'ofm_additional_address13',
-  'ofm_address13_line1',
-  'ofm_address13_line2',
-  'ofm_address13_city',
-  'ofm_address13_postal_code',
-  'ofm_address13_province',
-]
+function formatQueryString() {
+  const fields = []
+  for (let i = FIRST_ADDITIONAL_ADDRESS_NUMBER; i <= LAST_ADDITIONAL_ADDRESS_NUMBER; i++) {
+    fields.push(`ofm_additional_address${i}`, `ofm_address${i}_line1`, `ofm_address${i}_line2`, `ofm_address${i}_city`, `ofm_address${i}_postal_code`, `ofm_address${i}_province`)
+  }
+  return fields.join(',')
+}
 
 async function getFacility(req, res) {
   try {
     const facilityMappingString = getMappingString(FacilityMappings)
-    const operation = `accounts(${req.params.accountId})?$select=${facilityMappingString},${FacilityAdditionalAddressFields.join(',')}`
+    const operation = `accounts(${req.params.accountId})?$select=${facilityMappingString},${formatQueryString()}`
     const response = await getOperation(operation)
     const resp = new MappableObjectForFront(response, FacilityMappings).toJSON()
     resp.additionalAddresses = formatPayload(response)
