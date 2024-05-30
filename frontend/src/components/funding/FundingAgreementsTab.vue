@@ -27,8 +27,10 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
+import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
@@ -52,6 +54,10 @@ export default {
         { title: 'Actions', key: 'actions' },
       ],
     }
+  },
+
+  computed: {
+    ...mapState(useAuthStore, ['userInfo']),
   },
 
   created() {
@@ -85,11 +91,18 @@ export default {
     },
 
     showSign(fundingAgreement) {
-      return fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING
+      return fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && this.isExpenseAuthority(fundingAgreement)
     },
 
     showOpen(fundingAgreement) {
-      return [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(fundingAgreement?.statusCode)
+      return (
+        [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(fundingAgreement?.statusCode) ||
+        (fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(fundingAgreement))
+      )
+    },
+
+    isExpenseAuthority(fundingAgreement) {
+      return this.userInfo?.facilities?.some((facility) => facility.facilityId === fundingAgreement?.facilityId && facility.isExpenseAuthority)
     },
 
     goToFundingAgreement(fundingAgreement) {
