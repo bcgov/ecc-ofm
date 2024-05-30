@@ -224,6 +224,7 @@ const OrganizationMappings = [
 ]
 
 const FacilityMappings = [
+  { back: 'ofm_program', front: 'programCode' },
   { back: 'accountid', front: 'facilityId' },
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'name' },
@@ -244,7 +245,6 @@ const FacilityMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
-  { back: 'ofm_program', front: 'programCode' },
 ]
 
 const ContactMappings = [
