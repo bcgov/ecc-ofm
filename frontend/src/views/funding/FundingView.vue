@@ -68,7 +68,7 @@
             </li>
             <li class="pl-4">
               All information provided in the Form or otherwise in support of the Provider to receive funding under the Funding Agreement is true and complete to the best of my knowledge and belief. I
-              understand and acknowledge thatproviding false or misleading information either on the Form or otherwise to the Province to obtain any funding under the Funding Agreement or otherwise
+              understand and acknowledge that providing false or misleading information either on the Form or otherwise to the Province to obtain any funding under the Funding Agreement or otherwise
               failing to comply with the Funding Agreement could result in certain penalties or repayment obligations, or both, under any or all of the Child Care BC Act, any successor legislation, or
               the Funding Agreement.
               <br />
@@ -81,7 +81,7 @@
         </div>
       </v-col>
 
-      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="!canEditFA" label="I agree, consent and certify" />
+      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="readonly" color="primary" label="I agree, consent and certify" />
     </v-row>
 
     <v-row v-if="!loading" class="justify-center justify-md-space-between mx-md-7 my-3">
@@ -104,7 +104,6 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import LicenceService from '@/services/licenceService'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import VuePdfEmbed from 'vue-pdf-embed'
 
@@ -121,7 +120,7 @@ const LOCKED_STATUSES = [
 export default {
   name: 'FundingView',
   components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, VuePdfEmbed },
-  mixins: [alertMixin, permissionsMixin],
+  mixins: [alertMixin],
   data() {
     return {
       pdfFile: undefined,
@@ -132,22 +131,22 @@ export default {
       loading: false,
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    canEditFA() {
-      //TODO - JB: add permissions back in when complete
-      return !this.isFundingAgreementLocked
-    },
-    isFundingAgreementLocked() {
-      return LOCKED_STATUSES.includes(this.fundingAgreement?.statusCode)
+    readonly() {
+      const isExpenseAuthority = this.userInfo?.facilities?.some((facility) => facility.facilityId === this.fundingAgreement?.facilityId && facility.isExpenseAuthority)
+      return !isExpenseAuthority || LOCKED_STATUSES.includes(this.fundingAgreement?.statusCode)
     },
     submitDisabled() {
-      return this.isFundingAgreementLocked || !this.fundingAgreement.agreeConsentCertify
+      return this.readonly || !this.fundingAgreement.agreeConsentCertify
     },
   },
+
   async created() {
     await this.loadData()
   },
+
   methods: {
     async loadData() {
       try {
@@ -163,6 +162,7 @@ export default {
         this.loading = false
       }
     },
+
     async getLicences() {
       try {
         this.licences = await FacilityService.getLicences(this.fundingAgreement?.facilityId)

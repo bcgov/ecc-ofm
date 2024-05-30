@@ -168,7 +168,12 @@ async function getUserProfile(userGuid, userName) {
 function parseFacilityPermissions(userResponse) {
   return userResponse.facility_permission
     .filter((fp) => fp.ofm_portal_access)
-    .map((fp) => new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data)
+    .map((fp) => {
+      return {
+        ...new MappableObjectForFront(fp, UsersPermissionsFacilityMappings).data,
+        ...new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data,
+      }
+    })
     .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
