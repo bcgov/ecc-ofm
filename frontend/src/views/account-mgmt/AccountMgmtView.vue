@@ -9,7 +9,7 @@
           </template>
           <router-link :to="{ name: 'manage-organization' }">Manage Organization/Facilities</router-link>
         </v-list-item>
-        <v-list-item v-if="hasPermission(PERMISSIONS.MANAGE_USERS)">
+        <v-list-item v-if="hasPermission(PERMISSIONS.MANAGE_USERS_VIEW)">
           <template v-slot:prepend>
             <v-icon>mdi-account-group</v-icon>
           </template>

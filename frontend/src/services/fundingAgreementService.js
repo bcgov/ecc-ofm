@@ -37,7 +37,6 @@ export default {
     }
   },
 
-  //TODO: other screens may require a table of all previous funding agreements. Add an endpoint and function here to support that functionality.
   // A facility can have only 1 Active funding agreement
   async getActiveFundingAgreementByFacilityId(facilityId) {
     try {
@@ -50,26 +49,29 @@ export default {
     }
   },
 
-  async getFAByFacilityIdAndStartDateThreshold(facilityId, startDateThreshold) {
+  // A facility can have only 1 Active funding agreement
+  async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
-      if (!facilityId && !startDateThreshold) return
-      const url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateThreshold=${startDateThreshold}`
-      const response = await ApiService.apiAxios.get(url)
-      return response?.data
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&statusCode=${statusCode}`)
+      return response?.data[0]
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`)
+      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
       throw error
     }
   },
 
-  async getFAByFacilityIdAndStartFromEndDates(facilityId, startDateFrom, startDateTo) {
+  async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
-      if (!facilityId && !(startDateFrom || startDateTo)) return
-      const url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&startDateFrom=${startDateFrom}&startDateTo=${startDateTo}`
+      if (!facilityId && !startDateFrom) return
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&includeEA=true&startDateFrom=${startDateFrom}`
+      if (startDateTo) {
+        url += `&startDateTo=${startDateTo}`
+      }
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by facility id and start dates (from/to) - ${error}`)
+      console.log(`Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`)
       throw error
     }
   },

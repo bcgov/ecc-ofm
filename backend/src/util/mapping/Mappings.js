@@ -307,6 +307,7 @@ const FundingAgreementMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
 ]
 //the three different supp applications share the same data structure, so irrelevant fields will just be null.
 const SupplementaryApplicationMappings = [
@@ -391,10 +392,7 @@ const SurveyResponseMappings = [
   { back: '_ofm_fiscal_year_value@OData.Community.Display.V1.FormattedValue', front: 'fiscalYearName' },
   { back: '_ofm_reporting_month_value', front: 'reportingMonthId' },
   { back: '_ofm_reporting_month_value@OData.Community.Display.V1.FormattedValue', front: 'reportingMonthName' },
-  { back: '_ofm_submitted_month_value', front: 'submittedMonthId' },
   { back: 'ofm_response_type', front: 'surveyResponseType' },
-  { back: 'ofm_start_date', front: 'startDate' },
-  { back: 'ofm_end_date', front: 'endDate' },
   { back: 'modifiedon', front: 'latestActivity' },
   { back: 'ofm_late_flag', front: 'isSubmittedLate' },
   { back: 'statuscode', front: 'statusCode' },

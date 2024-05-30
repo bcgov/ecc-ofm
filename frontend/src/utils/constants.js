@@ -190,7 +190,10 @@ export const SURVEY_RESPONSE_STATUSES = Object.freeze({
 })
 
 export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
-  SUBMITTED: 506580000,
+  ACTIVE: 1,
+  INACTIVE: 2,
+  COMPLETED: 3,
+  CLOSED: 4,
 })
 
 export const SURVEY_QUESTION_TYPES = Object.freeze({

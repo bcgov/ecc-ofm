@@ -1,36 +1,31 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { buildFilterQuery, formatToISODateFormat } = require('../util/common')
+const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { FundingAgreementMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 const { isEmpty } = require('lodash')
 
-function buildFilterQueryDates(queryParams) {
-  if (queryParams?.startDateThreshold) {
-    const startDateThreshold = queryParams.startDateThreshold
-    delete queryParams.startDateThreshold
-    return `ofm_start_date ge ${startDateThreshold} and `
-  }
-  if (queryParams?.startDateFrom && queryParams?.startDateTo) {
-    const startDateFrom = formatToISODateFormat(queryParams.startDateFrom)
-    const startDateTo = formatToISODateFormat(queryParams.startDateTo)
-    delete queryParams.startDateFrom
-    delete queryParams.startDateTo
-    return `ofm_start_date ge ${startDateFrom} and ofm_start_date le ${startDateTo} and `
-  }
-  return ''
-}
-
 async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []
-    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode&$filter=(${buildFilterQueryDates(
-      req?.query,
-    )}${buildFilterQuery(req?.query, FundingAgreementMappings)})`
+    let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
+    if (req.query?.includeEA) {
+      operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
+    }
+    const filter = `${buildDateFilterQuery(req?.query)}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
+    operation += `&$filter=(${filter})`
     const response = await getOperation(operation)
-    response?.value?.forEach((funding) => fundingAgreements.push(new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()))
+    response?.value?.forEach((funding) => {
+      const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
+      if (req.query?.includeEA) {
+        const ea = funding.ofm_application?.ofm_expense_authority
+        fa.expenseAuthority = ea ? `${ea.ofm_first_name} ${ea.ofm_last_name}` : ''
+      }
+
+      fundingAgreements.push(fa)
+    })
     if (isEmpty(fundingAgreements)) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
@@ -53,7 +48,17 @@ async function getFundingAgreementById(req, res) {
 
 async function updateFundingAgreement(req, res) {
   try {
-    const payload = new MappableObjectForBack(req.body, FundingAgreementMappings).toJSON()
+    let payload
+    //we are signing the FA, the logged in contact will be bound in CRM
+    if (req?.body.contactId) {
+      payload = {
+        'ofm_provider_approver@odata.bind': `/contacts(${req.body?.contactId})`,
+        ofm_provider_approval_date: req.body?.signedOn,
+        ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
+      }
+    } else {
+      payload = new MappableObjectForBack(req.body, FundingAgreementMappings).toJSON()
+    }
     const response = await patchOperationWithObjectId('ofm_fundings', req?.params?.fundingAgreementId, payload)
     return res.status(HttpStatus.NO_CONTENT).json(response)
   } catch (e) {

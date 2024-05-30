@@ -31,7 +31,7 @@
             <v-form ref="faForm" v-model="isFormComplete">
               <v-card class="d-flex ma-1" fluid>
                 <v-row>
-                  <v-col cols="12" sm="7" md="6" lg="7" xl="7" class="pl-0">
+                  <v-col cols="12" sm="7" md="6" class="pl-0">
                     <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
                       <v-row>
                         <v-col cols="12" sm="6" lg="2" xl="2">
@@ -55,19 +55,13 @@
                         </v-col>
                         <v-col cols="12" sm="9" lg="9">
                           <v-row>
-                            <v-checkbox
-                              v-for="(item, index) in PAYMENT_FILTER_TYPES"
-                              :key="index"
-                              v-model="selectedPaymentFilterTypes"
-                              :label="item.label"
-                              :value="item.value"
-                              :disabled="loading" />
+                            <v-checkbox v-for="(item, index) in PAYMENT_FILTER_TYPES" :key="index" v-model="selectedPaymentFilterTypes" :label="item.label" :value="item.value" :disabled="loading" />
                           </v-row>
                         </v-col>
                       </v-row>
                     </v-card>
                   </v-col>
-                  <v-col cols="12" sm="10" md="6" lg="5" xl="5" class="pl-0 pr-0">
+                  <v-col cols="12" sm="10" md="6" class="pl-0 pr-0">
                     <v-card class="pa-4 mb-4 ml-1 mr-1 mt-1" elevation="0">
                       <v-row>
                         <v-col cols="12" sm="5" lg="2" xl="2">
@@ -83,22 +77,17 @@
                             <AppLabel>Date Range:</AppLabel>
                           </v-col>
                           <v-col cols="12" sm="6" lg="5">
-                            <v-menu
-                              v-model="menuStartDateFrom"
-                              :close-on-content-click="false"
-                              :nudge-right="800"
-                              :nudge-bottom="200"
-                              min-width="2">
+                            <v-menu v-model="menuStartDateFrom" :close-on-content-click="false" :nudge-right="800" :nudge-bottom="200" min-width="2">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
                                   id="start-date-from"
                                   v-model="formattedStartDateFrom"
                                   label="Start Date From"
-                                  style="width: 194px;"
+                                  style="width: 194px"
                                   prepend-icon="mdi-calendar"
                                   v-bind="attrs"
                                   :disabled="loading"
-                                  :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format']"
+                                  :rules="[(v) => (!!v && moment(v, 'MM/DD/YYYY', true).isValid()) || 'Date must be in MM/DD/YYYY format']"
                                   @click="on && on.click"
                                   @click:prepend="menuStartDateFrom = !menuStartDateFrom"></v-text-field>
                               </template>
@@ -106,23 +95,20 @@
                             </v-menu>
                           </v-col>
                           <v-col cols="12" sm="7" lg="3">
-                            <v-menu
-                              v-model="menuStartDateTo"
-                              :close-on-content-click="false"
-                              :nudge-right="40"
-                              transition="scale-transition"
-                              offset-y
-                              min-width="290px">
+                            <v-menu v-model="menuStartDateTo" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
                                   id="start-date-to"
                                   v-model="formattedStartDateTo"
                                   label="Start Date To"
                                   prepend-icon="mdi-calendar"
-                                  style="width: 194px;"
+                                  style="width: 194px"
                                   v-bind="attrs"
                                   :disabled="loading"
-                                  :rules="[v => !!v && moment(v, 'MM/DD/YYYY', true).isValid() || 'Date must be in MM/DD/YYYY format', v => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date']"
+                                  :rules="[
+                                    (v) => (!!v && moment(v, 'MM/DD/YYYY', true).isValid()) || 'Date must be in MM/DD/YYYY format',
+                                    (v) => isValidEndDate({ startDate: formattedStartDateFrom, endDate: v }) || 'End date must be after start date',
+                                  ]"
                                   @click="on && on.click"
                                   @click:prepend="menuStartDateTo = !menuStartDateTo"></v-text-field>
                               </template>
@@ -176,20 +162,22 @@
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
-import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
-import AppBackButton from '@/components/ui/AppBackButton.vue'
-import AppLabel from '@/components/ui/AppLabel.vue'
-import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
-import FundingAgreementService from '@/services/fundingAgreementService'
-import OrganizationService from '@/services/organizationService'
-import ApplicationService from '@/services/applicationService'
-import format from '@/utils/format'
-import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
-import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import { isValidEndDate } from '@/utils/validation.js'
 import moment from 'moment'
+import { mapState } from 'pinia'
+
+import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
+import alertMixin from '@/mixins/alertMixin.js'
+import FundingAgreementService from '@/services/fundingAgreementService'
+import { useAuthStore } from '@/stores/auth'
+import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import format from '@/utils/format'
+import { isValidEndDate } from '@/utils/validation.js'
+
+const STATUS_UNKNOWN = 'Unknown'
 
 const DATE_FILTER_TYPE_VALUES = {
   THREE_MONTHS: '3 Months',
@@ -204,12 +192,6 @@ const PAYMENT_FILTER_TYPE_VALUES = {
   OTHER: 'Other',
 }
 
-const PAYMENT_FILTER_TYPES = [
-  { label: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, value: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING },
-  { label: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, value: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES },
-  { label: PAYMENT_FILTER_TYPE_VALUES.OTHER, value: PAYMENT_FILTER_TYPE_VALUES.OTHER },
-]
-
 const statusNameMap = {
   [FUNDING_AGREEMENT_STATUS_CODES.DRAFT]: 'Draft',
   [FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]: 'FA Review',
@@ -221,16 +203,10 @@ const statusNameMap = {
   [FUNDING_AGREEMENT_STATUS_CODES.TERMINATED]: 'Terminated',
 }
 
-const DATE_FILTER_TYPES = [
-  { label: DATE_FILTER_TYPE_VALUES.THREE_MONTHS, value: DATE_FILTER_TYPE_VALUES.THREE_MONTHS },
-  { label: DATE_FILTER_TYPE_VALUES.SIX_MONTHS, value: DATE_FILTER_TYPE_VALUES.SIX_MONTHS },
-  { label: DATE_FILTER_TYPE_VALUES.YTD, value: DATE_FILTER_TYPE_VALUES.YTD },
-  { label: DATE_FILTER_TYPE_VALUES.CUSTOM, value: DATE_FILTER_TYPE_VALUES.CUSTOM },
-]
-
 export default {
   name: 'FundingOverviewView',
   components: { AppButton, AppBackButton, AppLabel, AppButtonRadioGroup, OrganizationHeader },
+  mixins: [alertMixin],
   data() {
     return {
       format,
@@ -251,7 +227,7 @@ export default {
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
         { title: 'Facility Name', key: 'facility' },
-        { title: 'Signing Expense Authority', key: 'expenseAuthorityName' },
+        { title: 'Signing Expense Authority', key: 'expenseAuthority' },
         { title: 'Start Date', key: 'startDate' },
         { title: 'End Date', key: 'endDate' },
         { title: 'Status', key: 'status' },
@@ -298,10 +274,20 @@ export default {
   },
 
   async created() {
-    this.PAYMENT_FILTER_TYPES = PAYMENT_FILTER_TYPES
-    this.DATE_FILTER_TYPES = DATE_FILTER_TYPES
+    this.PAYMENT_FILTER_TYPES = [
+      { label: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING, value: PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING },
+      { label: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES, value: PAYMENT_FILTER_TYPE_VALUES.SUPPLEMENTARY_ALLOWANCES },
+      { label: PAYMENT_FILTER_TYPE_VALUES.OTHER, value: PAYMENT_FILTER_TYPE_VALUES.OTHER },
+    ]
+
+    this.DATE_FILTER_TYPES = [
+      { label: DATE_FILTER_TYPE_VALUES.THREE_MONTHS, value: DATE_FILTER_TYPE_VALUES.THREE_MONTHS },
+      { label: DATE_FILTER_TYPE_VALUES.SIX_MONTHS, value: DATE_FILTER_TYPE_VALUES.SIX_MONTHS },
+      { label: DATE_FILTER_TYPE_VALUES.YTD, value: DATE_FILTER_TYPE_VALUES.YTD },
+      { label: DATE_FILTER_TYPE_VALUES.CUSTOM, value: DATE_FILTER_TYPE_VALUES.CUSTOM },
+    ]
+
     this.resetFilter()
-    await this.loadOrganizationUsers()
     await this.loadFundingAgreements()
   },
   methods: {
@@ -315,18 +301,7 @@ export default {
       this.startDateTo = null
     },
 
-    async loadOrganizationUsers() {
-      try {
-        this.loading = true
-        this.orgUsers = await OrganizationService.getUserPermissionsFacilities(this.userInfo.organizationId)
-      } catch (error) {
-        console.error('Error getting organization users:', error)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    /** 
+    /**
      * TODO: Payment type is displayed in UI but is not yet integrated into this method as required CRM data is not yet in place.
      * This is a know issue and postponed to a future sprint.
      */
@@ -335,24 +310,27 @@ export default {
         this.loading = true
         this.fundingAgreements = []
         const facilities = this.selectedFacility ? [this.selectedFacility] : this.userInfo.facilities
-        // TODO use "await Promise.all(facilities?.map(async (facility) => {....}" instead of for loop!
-        for (let facility of facilities) {
-          try {
-            let payload
+
+        await Promise.all(
+          facilities?.map(async (facility) => {
+            let facilityFas = []
             if (this.selectedDateFilterType === 'Custom') {
-              payload = await FundingAgreementService.getFAByFacilityIdAndStartFromEndDates(facility.facilityId, this.startDateFrom, this.startDateTo)
+              facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, this.startDateFrom, this.startDateTo)
             } else {
-              payload = await FundingAgreementService.getFAByFacilityIdAndStartDateThreshold(facility.facilityId, this.startDateThreshold)
+              facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, this.startDateThreshold)
             }
-            if (!payload) continue
-            await this.enrichFundingAgreementData(payload)
-            this.fundingAgreements.push(...payload)
-          } catch (error) {
-            console.error(`Error getting funding agreements for facility ID ${facility.facilityId}:`, error)
-          }
-        }
+            if (facilityFas) {
+              facilityFas.forEach((fa) => {
+                fa.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
+                fa.facility = facility.facilityName
+                fa.status = statusNameMap[fa.statusCode] ?? STATUS_UNKNOWN
+              })
+              this.fundingAgreements.push(...facilityFas)
+            }
+          }),
+        )
       } catch (error) {
-        console.error(`Error getting funding agreements:`, error)
+        this.setFailureAlert('Failed to load funding agreements', error)
       } finally {
         this.loading = false
       }
@@ -366,39 +344,10 @@ export default {
       await this.loadFundingAgreements()
     },
 
-    async enrichFundingAgreementData(results) {
-      for (let result of results) {
-        result.fundingAgreementType = PAYMENT_FILTER_TYPE_VALUES.BASE_FUNDING
-        result.facility = this.facilityName(result.facilityId)
-        result.status = this.statusName(result.statusCode)
-        result.expenseAuthorityName = await this.getExpenseAuthorityName(result.applicationId)
-      }
-    },
-
-    async getExpenseAuthorityName(applicationId) {
-      try {
-        const application = await ApplicationService.getApplication(applicationId)
-        if (!application?.expenseAuthorityId) return ''
-        const expenseAuthorityUser = this.orgUsers.find(user => user.contactId === application.expenseAuthorityId)
-        return `${expenseAuthorityUser?.firstName} ${expenseAuthorityUser?.lastName}`
-      } catch (error) {
-        console.error('Error getting expense authority name:', error)
-        return ''
-      }
-    },
-
     dateByMonthsInPast(months) {
       const date = new Date()
       date.setMonth(date.getMonth() - months)
       return date.toISOString().split('T')[0]
-    },
-
-    facilityName(facilityId) {
-      return this.userInfo.facilities.find(facility => facility.facilityId === facilityId)?.facilityName
-    },
-
-    statusName(statusCode) {
-      return statusNameMap[statusCode] ?? 'Unknown'
     },
 
     getStatusClass(statusCode) {
@@ -409,8 +358,7 @@ export default {
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
       }
-    }
-
-  }
+    },
+  },
 }
 </script>
