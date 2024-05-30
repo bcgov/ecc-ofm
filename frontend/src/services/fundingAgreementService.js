@@ -1,12 +1,11 @@
 import ApiService from '@/common/apiService'
-import { ApiRoutes } from '@/utils/constants'
+import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
-//There is only ever one active funding agreement - so this function returns it
 export default {
   async getActiveFundingAgreementByApplicationId(applicationId) {
     try {
       if (!applicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=0`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       //CRM confirmed that there will only ever be one Funding Agreement per ApplicationID. However response returns an array. If index 0 contains data, return it
       return response?.data[0]
     } catch (error) {
@@ -26,6 +25,17 @@ export default {
     }
   },
 
+  async getFundingPDFById(fundingAgreementId) {
+    try {
+      if (!fundingAgreementId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}/pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the funding PDF by funding id - ${error}`)
+      throw error
+    }
+  },
+
   async updateFundingAgreement(fundingAgreementId, payload) {
     try {
       if (!fundingAgreementId) return
@@ -41,7 +51,7 @@ export default {
   async getActiveFundingAgreementByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       return response?.data[0]
     } catch (error) {
       console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
@@ -52,8 +62,8 @@ export default {
   // A facility can have only 1 Active funding agreement
   async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
-      if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&statusCode=${statusCode}`)
+      if (!facilityId && !statusCode) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`)
       return response?.data[0]
     } catch (error) {
       console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
@@ -64,9 +74,9 @@ export default {
   async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
       if (!facilityId && !startDateFrom) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=0&includeEA=true&startDateFrom=${startDateFrom}`
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&includeEA=true&dateFrom=${startDateFrom}`
       if (startDateTo) {
-        url += `&startDateTo=${startDateTo}`
+        url += `&dateTo=${startDateTo}`
       }
       const response = await ApiService.apiAxios.get(url)
       return response?.data

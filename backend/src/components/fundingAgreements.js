@@ -14,7 +14,7 @@ async function getFundingAgreements(req, res) {
     if (req.query?.includeEA) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }
-    const filter = `${buildDateFilterQuery(req?.query)}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
+    const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
     operation += `&$filter=(${filter})`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
@@ -46,6 +46,17 @@ async function getFundingAgreementById(req, res) {
   }
 }
 
+async function getFundingPDFById(req, res) {
+  try {
+    const operation = `ofm_fundings(${req?.params?.fundingAgreementId})/ofm_agreement_file`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function updateFundingAgreement(req, res) {
   try {
     let payload
@@ -71,4 +82,5 @@ module.exports = {
   getFundingAgreements,
   updateFundingAgreement,
   getFundingAgreementById,
+  getFundingPDFById,
 }

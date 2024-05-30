@@ -105,7 +105,7 @@ async function getRoles() {
   if (!roles) {
     roles = []
     const response = await getOperation(
-      'ofm_portal_roles?$select=ofm_name,ofm_portal_role_number&$expand=ofm_portal_role_permission($select=ofm_portal_permissionid,ofm_portal_privilege;$expand=ofm_portal_privilege($select=ofm_portal_privilege_number,ofm_category,ofm_name))&pageSize=100',
+      'ofm_portal_roles?$select=ofm_name,ofm_portal_role_number&$expand=ofm_portal_role_permission($select=ofm_portal_permissionid,ofm_portal_privilege;$filter=statecode eq 0;$expand=ofm_portal_privilege($select=ofm_portal_privilege_number,ofm_category,ofm_name;$filter=statecode eq 0))&pageSize=100&$filter=(statecode eq 0)',
     )
     response?.value?.forEach((item) => {
       const role = new MappableObjectForFront(item, RoleMappings)
@@ -134,23 +134,29 @@ async function getReportQuestionTypes() {
   return fetchAndCacheData('reportQuestionTypes', 'ofm_reportingquestiontype')
 }
 
+async function getPaymentTypes() {
+  return fetchAndCacheData('paymentTypes', 'ecc_payment_type')
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, fiscalYears, months] = await Promise.all([
-      getApplicationIntakes(),
-      getRequestCategories(),
-      getRequestSubCategories(),
-      getRoles(),
-      getHealthAuthorities(),
-      getFacilityTypes(),
-      getLicenceTypes(),
-      getReportQuestionTypes(),
-      getFiscalYears(),
-      getMonths(),
-    ])
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportQuestionTypes, paymentTypes, fiscalYears, months] =
+      await Promise.all([
+        getApplicationIntakes(),
+        getRequestCategories(),
+        getRequestSubCategories(),
+        getRoles(),
+        getHealthAuthorities(),
+        getFacilityTypes(),
+        getLicenceTypes(),
+        getReportQuestionTypes(),
+        getPaymentTypes(),
+        getFiscalYears(),
+        getMonths(),
+      ])
     const resData = {
       applicationIntakes: applicationIntakes,
       requestCategories: requestCategories,
@@ -160,6 +166,7 @@ async function getLookupInfo(_req, res) {
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
       reportQuestionTypes: reportQuestionTypes,
+      paymentTypes: paymentTypes,
       fiscalYears: fiscalYears,
       months: months,
     }

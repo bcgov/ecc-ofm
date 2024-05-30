@@ -25,6 +25,7 @@ export const ApiRoutes = Object.freeze({
   ORGANIZATIONS: baseRoot + '/organizations',
   ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
   ORGANIZATIONS_USERS: '/:organizationId/users',
+  PAYMENTS: baseRoot + '/payments',
   REPORTS: baseRoot + '/reports',
   SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
   SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
@@ -74,6 +75,24 @@ export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
   ACTIVE: 8,
   TERMINATED: 9,
   CANCELLED: 10,
+})
+
+export const PAYMENT_STATUS_CODES = Object.freeze({
+  PENDING_PAYMENT: 1,
+  PAID: 2, // INACTIVE state
+  AWAITING_APPROVAL: 3,
+  APPROVED_FOR_PAYMENT: 4,
+  PROCESSING_PAYMENT: 5,
+  PROCESSING_ERROR: 6,
+  CANCELLED: 7, // INACTIVE state
+  QR_APPROVED: 8,
+})
+
+export const DATE_FILTER_TYPES = Object.freeze({
+  THREE_MONTHS: '3 Months',
+  SIX_MONTHS: '6 Months',
+  YTD: 'YTD',
+  CUSTOM: 'Custom',
 })
 
 export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({

@@ -43,7 +43,7 @@
     </v-row>
     <v-card class="mt-2 pa-4" variant="outlined">
       <h5>Financial Documents</h5>
-      <div class="greyCards py-2 px-4">
+      <div class="greyCards py-2 px-4 mt-2">
         <v-card class="mt-2 mb-4 pa-4">
           <AppDocumentUpload
             id="financial-document-upload"
@@ -67,7 +67,7 @@
             @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
         </v-card>
       </div>
-      <div class="greyCards py-2 px-4 mt-14">
+      <div class="greyCards py-2 px-4 mt-8">
         <v-card class="mt-2 pt-4 mb-4 pa-4">
           <AppDocumentUpload
             id="supporting-document-upload"
@@ -79,7 +79,7 @@
             :uploadedDocuments="supporting.uploadedDocuments"
             @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
 
-          <ul class="ml-7">
+          <ul class="ml-7 mt-4">
             <li>Your yearly operating cost Rent/Lease payment schedule</li>
           </ul>
         </v-card>

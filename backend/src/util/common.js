@@ -14,18 +14,18 @@ function buildFilterQuery(query, mapping) {
   return filterQuery
 }
 
-function buildDateFilterQuery(query) {
+function buildDateFilterQuery(query, crmDateFieldName) {
   if (isEmpty(query)) return
   let filterQuery = ''
-  if (query?.startDateFrom) {
-    const startDateFrom = formatToISODateFormat(query.startDateFrom)
-    delete query.startDateFrom
-    filterQuery += `ofm_start_date ge ${startDateFrom} and `
+  if (query?.dateFrom) {
+    const dateFrom = formatToISODateFormat(query.dateFrom)
+    delete query.dateFrom
+    filterQuery += `${crmDateFieldName} ge ${dateFrom} and `
   }
-  if (query?.startDateTo) {
-    const startDateTo = formatToISODateFormat(query.startDateTo)
-    delete query.startDateTo
-    filterQuery += `ofm_start_date le ${startDateTo} and `
+  if (query?.dateTo) {
+    const dateTo = formatToISODateFormat(query.dateTo)
+    delete query.dateTo
+    filterQuery += `${crmDateFieldName} le ${dateTo} and `
   }
   return filterQuery
 }
@@ -39,7 +39,16 @@ function formatToISODateFormat(dateString) {
   return date.isValid() ? date.format(ISO_DATE_FORMAT) : 'Invalid date'
 }
 
+/**
+ * Dynamics can take a selector with a list of fields
+ * Use this function to generate a list of fields based on mappings
+ */
+function getMappingString(mappings) {
+  return mappings.map((item) => item.back).join(',')
+}
+
 module.exports = {
   buildDateFilterQuery,
   buildFilterQuery,
+  getMappingString,
 }

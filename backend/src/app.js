@@ -10,9 +10,12 @@ const atob = require('atob')
 const passport = require('passport')
 const helmet = require('helmet')
 const cors = require('cors')
-const utils = require('./components/utils')
+
 const auth = require('./components/auth')
+const { getRoles } = require('./components/lookup')
 const { getUserProfile } = require('./components/user')
+const utils = require('./components/utils')
+
 const bodyParser = require('body-parser')
 dotenv.config()
 
@@ -32,7 +35,10 @@ const organizationsRouter = require('./routes/organizations')
 const fundingAgreementsRouter = require('./routes/fundingAgreements')
 const facilitiesRouter = require('./routes/facilities')
 const licencesRouter = require('./routes/licences')
+const paymentsRouter = require('./routes/payments')
 const reportsRouter = require('./routes/reports')
+const { MappableObjectForBack } = require('./util/mapping/MappableObject')
+const { RoleMappings } = require('./util/mapping/Mappings')
 
 const connectRedis = require('connect-redis')
 const promMid = require('express-prometheus-middleware')
@@ -120,7 +126,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         clientSecret: config.get(clientSecret),
         callbackURL: callbackURI,
         scope: 'openid',
-        kc_idp_hint: kc_idp_hint
+        kc_idp_hint: kc_idp_hint,
       },
       async (_iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
@@ -150,8 +156,14 @@ async function populateUserInfo(profile) {
     profile.role = user?.role
     profile.org = user?.organization?.accountid
   } else if (username.idp === config.get('oidc:idpHintIdir')) {
-    // TODO (weskubo-cgi) Handle hardcoded roles for Impersonate
-    log.info('Found idir user')
+    const roles = await getRoles()
+    const role = roles.find((role) => role.data.roleName === 'Impersonate')
+
+    // Store the role in Dynamics format to match BCeID
+    profile.role = new MappableObjectForBack(role.toJSON(), RoleMappings).toJSON()
+
+    // IDIR users don't have an Organization
+    // The Org is only assigned in the frontend when impersonating a BCeID user
   }
 }
 
@@ -221,6 +233,7 @@ apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
 apiRouter.use('/funding-agreements', fundingAgreementsRouter)
 apiRouter.use('/licences', licencesRouter)
+apiRouter.use('/payments', paymentsRouter)
 apiRouter.use('/reports', reportsRouter)
 
 //Handle 500 error
