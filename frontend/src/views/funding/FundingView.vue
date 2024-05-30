@@ -81,7 +81,7 @@
         </div>
       </v-col>
 
-      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="readonly" label="I agree, consent and certify" />
+      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="readonly" color="primary" label="I agree, consent and certify" />
     </v-row>
 
     <v-row v-if="!loading" class="justify-center justify-md-space-between mx-md-7 my-3">
