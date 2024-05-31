@@ -9,8 +9,8 @@ readonly D365_API_KEY_HEADER=$6
 readonly D365_API_KEY_VALUE=$7
 readonly SOAM_CLIENT_ID=$8
 readonly SOAM_CLIENT_SECRET=$9
-readonly SOAM_CLIENT_ID_IDIR=${10}
-readonly SOAM_CLIENT_SECRET_IDIR=${11}
+readonly SOAM_IDP_HINT_BCEID=${10}
+readonly SOAM_IDP_HINT_IDIR=${11}
 readonly SOAM_KC_REALM_ID="standard"
 readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 
@@ -84,8 +84,8 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="UI_PUBLIC_KEY=$UI_PUBLIC_KEY_VAL" \
   --from-literal="SOAM_CLIENT_ID=$SOAM_CLIENT_ID" \
   --from-literal="SOAM_CLIENT_SECRET=$SOAM_CLIENT_SECRET" \
-  --from-literal="SOAM_CLIENT_ID_IDIR=$SOAM_CLIENT_ID_IDIR" \
-  --from-literal="SOAM_CLIENT_SECRET_IDIR=$SOAM_CLIENT_SECRET_IDIR" \
+  --from-literal="SOAM_IDP_HINT_BCEID=$SOAM_IDP_HINT_BCEID" \
+  --from-literal="SOAM_IDP_HINT_IDIR=$SOAM_IDP_HINT_IDIR" \
   --from-literal="SERVER_FRONTEND=$SERVER_FRONTEND" \
   --from-literal=SERVER_PORT=8080 \
   --from-literal=ISSUER=ECC_OFM \
