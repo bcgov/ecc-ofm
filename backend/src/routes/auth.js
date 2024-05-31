@@ -118,8 +118,7 @@ router.get('/token', auth.refreshJWT, (req, res) => {
   }
 })
 async function generateTokens(req, res) {
-  let isIdir = req.session?.passport?.user?._json?.idir_user_guid ? true : false
-  const result = await auth.renew(req.user.refreshToken, isIdir)
+  const result = await auth.renew(req.user.refreshToken)
   if (result && result.jwt && result.refreshToken) {
     req.user.jwt = result.jwt
     req.user.refreshToken = result.refreshToken
