@@ -24,7 +24,7 @@
             :facility="facility"
             :contacts="contacts"
             @process="process" />
-          <CancelApplicationDialog :show="showCancelDialog" :applicationId="currentApplication?.applicationId" @close="toggleCancelDialog" @cancel="cancelApplication" />
+          <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
             :loading="processing"
             :showBack="showBack"
@@ -49,9 +49,9 @@
 import { mapState, mapActions } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
 import FacilityService from '@/services/facilityService'
+import AppCancelDialog from '../../components/ui/AppCancelDialog.vue'
 import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
-import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
@@ -60,7 +60,7 @@ import { isEmpty } from 'lodash'
 
 export default {
   name: 'ApplicationView',
-  components: { ApplicationNavBar, ApplicationHeader, AppNavButtons, CancelApplicationDialog },
+  components: { AppCancelDialog, ApplicationNavBar, ApplicationHeader, AppNavButtons },
   mixins: [alertMixin, permissionsMixin],
 
   data() {
@@ -186,7 +186,7 @@ export default {
         if (isEmpty(this.currentApplication)) return
         this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
         this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
+          contact.fullName = `${contact.firstName ?? ''} ${contact.lastName}`
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
@@ -223,8 +223,16 @@ export default {
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
     },
-    cancelApplication() {
-      this.$router.push({ name: 'applications-history' })
+    async cancelChanges() {
+      try {
+        if (!this.$route.params.applicationGuid) return
+        this.loading = true
+        await this.getApplication(this.$route.params.applicationGuid)
+      } catch (error) {
+        this.setFailureAlert('Failed to reload the application', error)
+      } finally {
+        this.loading = false
+      }
     },
     process(value) {
       this.processing = value

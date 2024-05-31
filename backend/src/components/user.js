@@ -168,7 +168,12 @@ async function getUserProfile(userGuid, userName) {
 function parseFacilityPermissions(userResponse) {
   return userResponse.facility_permission
     .filter((fp) => fp.ofm_portal_access)
-    .map((fp) => new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data)
+    .map((fp) => {
+      return {
+        ...new MappableObjectForFront(fp, UsersPermissionsFacilityMappings).data,
+        ...new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data,
+      }
+    })
     .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
@@ -200,7 +205,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,ofm_portal_role,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))

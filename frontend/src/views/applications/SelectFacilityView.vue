@@ -47,6 +47,7 @@ import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'SelectFacilityView',
@@ -86,7 +87,7 @@ export default {
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
 
     filteredFacilities() {
-      return this.userInfo?.facilities?.filter((facility) => facility.isAddCoreApplicationAllowed)
+      return this.userInfo?.facilities?.filter((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
     },
   },
 
@@ -106,30 +107,18 @@ export default {
       async handler() {
         this.$refs.form?.validate()
         if (!this.isFormComplete) return
-
         this.$emit('process', true)
-
-        const draftAppFound = this.loadedApplications?.find((el) => el.facilityId === this.facilityId && el.statusCode === APPLICATION_STATUS_CODES.DRAFT)
-
-        if (draftAppFound) {
-          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: draftAppFound.applicationId } })
+        const activeApplications = this.loadedApplications?.filter((el) => el.facilityId === this.facilityId)
+        if (isEmpty(activeApplications)) {
+          await this.createApplication()
         } else {
-          try {
-            const payload = {
-              facilityId: this.facilityId,
-              organizationId: this.organization?.organizationId,
-              providerType: this.organization?.providerType,
-              ownership: this.organization?.ownership,
-              createdBy: this.userInfo?.contactId,
-            }
-            const response = await ApplicationService.createApplication(payload)
-            this.setSuccessAlert('Started a new application successfully')
-            this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
-          } catch (error) {
-            this.setFailureAlert('Failed to start a new application', error)
-          } finally {
-            this.$emit('process', false)
-          }
+          activeApplications?.sort((a, b) => {
+            const dateA = new Date(a.submittedDate)
+            const dateB = new Date(b.submittedDate)
+            return dateB - dateA // descending order (the most recent submitted application at the top)
+          })
+          const existingApplication = activeApplications?.find((el) => el.statusCode === APPLICATION_STATUS_CODES.DRAFT) ?? activeApplications[0]
+          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: existingApplication?.applicationId } })
         }
       },
     },
@@ -141,8 +130,7 @@ export default {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }
     await this.getOrganization()
-
-    this.loadedApplications = await ApplicationService.getApplications()
+    this.loadedApplications = await ApplicationService.getActiveApplications()
   },
 
   methods: {
@@ -155,6 +143,26 @@ export default {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
         this.loading = false
+        this.$emit('process', false)
+      }
+    },
+
+    async createApplication() {
+      try {
+        this.$emit('process', true)
+        const payload = {
+          facilityId: this.facilityId,
+          organizationId: this.organization?.organizationId,
+          providerType: this.organization?.providerType,
+          ownership: this.organization?.ownership,
+          createdBy: this.userInfo?.contactId,
+        }
+        const response = await ApplicationService.createApplication(payload)
+        this.setSuccessAlert('Started a new application successfully')
+        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+      } catch (error) {
+        this.setFailureAlert('Failed to start a new application', error)
+      } finally {
         this.$emit('process', false)
       }
     },

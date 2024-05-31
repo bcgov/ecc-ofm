@@ -46,7 +46,7 @@
 <script>
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import { CRM_STATE_CODES, FUNDING_AGREEMENT_STATUS_CODES, REPORT_TEMPLATE_NAMES, BLANK_FIELD, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, REPORT_TEMPLATE_NAMES, BLANK_FIELD, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -82,7 +82,7 @@ export default {
     },
 
     submittedReports() {
-      const submittedReports = this.surveyResponses?.filter((response) => response.stateCode === CRM_STATE_CODES.INACTIVE)
+      const submittedReports = this.surveyResponses?.filter((response) => this.isResponseSubmitted(response))
       submittedReports?.forEach((response) => {
         response.submittedDate = format.formatDate(response?.endDate)
         response.status = response?.isSubmittedLate ? SURVEY_RESPONSE_STATUSES.COMPLETED_LATE : SURVEY_RESPONSE_STATUSES.COMPLETED
@@ -215,6 +215,10 @@ export default {
         }
       })
       return pendingReports
+    },
+
+    isResponseSubmitted(surveyResponse) {
+      return [SURVEY_RESPONSE_STATUS_CODES.COMPLETED, SURVEY_RESPONSE_STATUS_CODES.CLOSED].includes(surveyResponse?.statusCode)
     },
   },
 }

@@ -20,8 +20,7 @@
               OFM Application
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-              <div v-if="isAddCoreApplicationAllowed">Before starting an application, verify your organization and facility details in Account Management.</div>
-              <div v-else>The Application intake is currently closed.</div>
+              {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
               <AppButton
@@ -123,6 +122,7 @@ import { useOrgStore } from '@/stores/org'
 export default {
   components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
   mixins: [alertMixin, permissionsMixin],
+
   data() {
     return {
       format,
@@ -148,6 +148,7 @@ export default {
       orgInfo: undefined,
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
@@ -162,14 +163,26 @@ export default {
         this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
     },
+    ofmApplicationCardText() {
+      if (this.isAddCoreApplicationAllowed) {
+        return 'Before starting an application, verify your organization and facility details in Account Management.'
+      } else if (!this.isCCOFEnrolmentCheckSatisfied) {
+        return 'Enrolment in CCOF for greater than 1 year is required to apply.'
+      } else {
+        return 'The Application intake is currently closed.'
+      }
+    },
     isAddCoreApplicationAllowed() {
-      return this.userInfo?.facilities?.some((facility) => facility.isAddCoreApplicationAllowed)
+      return this.userInfo?.facilities?.some((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
+    },
+    isCCOFEnrolmentCheckSatisfied() {
+      return this.userInfo?.facilities?.some((facility) => facility.ccofEnrolmentCheckForAddApplication)
     },
   },
+
   async created() {
     try {
       this.loading = true
-      this.CARD_INFO_MESSAGE = 'If you are totally new in OFM you need to make a OFM application before apply for Supplementary Allowances.'
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
@@ -187,6 +200,7 @@ export default {
       this.loading = false
     }
   },
+
   methods: {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
@@ -227,7 +241,7 @@ export default {
     },
 
     async getApplicationsAndFundingAgreement() {
-      this.applications = await ApplicationService.getApplications()
+      this.applications = await ApplicationService.getActiveApplications()
       // Applications' funding agreements are used in applications validation to enable the Add Supplementary Application button
       await Promise.all(
         this.applications?.map(async (application) => {

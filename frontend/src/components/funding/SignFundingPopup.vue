@@ -50,13 +50,19 @@ export default {
       fundingAgreements: [],
     }
   },
+
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+
+    filteredFacilities() {
+      return this.userInfo?.facilities?.filter((facility) => facility.isExpenseAuthority)
+    },
   },
+
   async created() {
-    //TODO - JB: check if user has permissions to view / sign the FA before we bother loading all the Funding Agreements
     await this.loadFundingAgreements()
   },
+
   methods: {
     closeDialog() {
       this.isDisplayed = false
@@ -71,7 +77,7 @@ export default {
 
         //I use for of here so I can break out of the loop when I hit 3 facilities.
         //We show 3 max so the popup doesn't take over the screen, and we save on calls to Dynamics.
-        for (const fac of this.userInfo.facilities) {
+        for (const fac of this.filteredFacilities) {
           const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING)
 
           if (fa) {

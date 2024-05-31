@@ -8,8 +8,8 @@ function mapDocumentFileObjectForBack(documents) {
   let formData = new FormData()
   let fileMapping = []
   documents?.forEach((document, index) => {
-    if (isEmpty(document.file)) return
-    const file = document.file[0]
+    if (!document.file) return
+    const file = document.file
     let fileName = file?.name
     fileName = isHeicFile(fileName) ? updateHeicFileNameToJpg(fileName) : fileName
     fileMapping.push({
