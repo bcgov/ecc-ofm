@@ -11,7 +11,6 @@
           Messages
           <div v-if="unreadMessageCount > 0">&nbsp;({{ unreadMessageCount }})</div>
         </v-tab>
-        <v-tab value="archive">Archive</v-tab>
       </v-tabs>
       <v-card-text>
         <v-window v-model="tab">
@@ -21,7 +20,6 @@
           <v-window-item value="messages">
             <MessagesTab />
           </v-window-item>
-          <v-window-item value="archive">Archive</v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
