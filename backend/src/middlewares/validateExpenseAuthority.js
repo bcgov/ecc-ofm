@@ -12,13 +12,12 @@ module.exports = function () {
 
     const contactId = req?.body.contactId
     // Only validate a signing update (which will include contactId)
-    if (!contactId) next()
+    if (!contactId) return next()
 
     const user = req.session?.passport?.user
     // Validate that the contactId represents the currentUser as you can only sign for yourself
     if (contactId !== user?.contactId) {
-      res.sendStatus(403)
-      return
+      return res.sendStatus(403)
     }
 
     // Send raw queries since we don't want to mess with the request/response
