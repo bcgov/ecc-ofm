@@ -1,4 +1,3 @@
-const { getRawFacilityContacts } = require('../components/facilities')
 const { getRawFundingAgreementById } = require('../components/fundingAgreements')
 const log = require('../components/logger')
 
@@ -15,8 +14,9 @@ module.exports = function () {
     // Only validate a signing update (which will include contactId)
     if (!contactId) next()
 
+    const user = req.session?.passport?.user
     // Validate that the contactId represents the currentUser as you can only sign for yourself
-    if (contactId !== req.session?.passport?.user?.contactId ) {
+    if (contactId !== user?.contactId) {
       res.sendStatus(403)
       return
     }
@@ -24,11 +24,8 @@ module.exports = function () {
     // Send raw queries since we don't want to mess with the request/response
     const fundingAgreement = await getRawFundingAgreementById(req?.params?.fundingAgreementId)
 
-    // TODO (weskubo-cgi) Use the information on the passport.user instead once available from CRM
-    const contacts = await getRawFacilityContacts(fundingAgreement?.facilityId)
-
-    // Check that the current user is an expense authority for the facility    
-    const valid = contacts.some((contact) => contact.contactId === contactId && contact.isExpenseAuthority)
+    // Check that the current user is an expense authority for the facility
+    const valid = user?.facilities?.some((f) => f.facilityId === fundingAgreement?.facilityId && f.isExpenseAuthority)
 
     valid ? next() : res.sendStatus(403)
   }

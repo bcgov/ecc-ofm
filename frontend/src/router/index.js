@@ -11,6 +11,7 @@ import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import MinistryLogoutView from '@/views/MinistryLogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
@@ -78,7 +79,7 @@ const router = createRouter({
     },
     {
       path: '/internal',
-      name: 'internal',
+      name: 'ministry-login',
       component: MinistryLoginView,
       meta: {
         requiresAuth: false,
@@ -88,6 +89,14 @@ const router = createRouter({
       path: '/logout',
       name: 'logout',
       component: LogoutView,
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/internal-logout',
+      name: 'ministry-logout',
+      component: MinistryLogoutView,
       meta: {
         requiresAuth: false,
       },
@@ -413,7 +422,7 @@ router.beforeEach((to, _from, next) => {
       })
   } else {
     // Block access to Login/Internal/Logout when authenticated
-    if ((to.name === 'login' || to.name === 'internal' || to.name === 'logout') && authStore.isAuthenticated) {
+    if ((to.name.endsWith('login') || to.name.endsWith('logout')) && authStore.isAuthenticated) {
       return next('home')
     }
     next()
