@@ -11,7 +11,7 @@
           {{ format.formatDate(item?.endDate) }}
         </template>
         <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item?.statusName }}</span>
+          <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn v-if="showSign(item)" variant="text" @click="goToFundingAgreement(item)">
@@ -51,7 +51,7 @@ export default {
         { title: 'Start Date', key: 'startDate' },
         { title: 'End Date', key: 'endDate' },
         { title: 'Status', key: 'status' },
-        { title: 'Actions', key: 'actions' },
+        { title: 'Actions', key: 'actions', sortable: false },
       ],
     }
   },

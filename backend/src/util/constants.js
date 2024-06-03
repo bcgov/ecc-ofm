@@ -42,8 +42,16 @@ const PERMISSIONS = Object.freeze({
   MANAGE_NOTIFICATIONS: 'Manage Notification and Messages',
 })
 
+const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
+  ACTIVE: 1,
+  INACTIVE: 2,
+  COMPLETED: 3,
+  CLOSED: 4,
+})
+
 module.exports = {
   ASSISTANCE_REQUEST_STATUS_CODES,
   SCAN_RESULTS,
+  SURVEY_RESPONSE_STATUS_CODES,
   PERMISSIONS,
 }

@@ -5,19 +5,33 @@
         <h2>Report Details</h2>
       </v-col>
       <v-col cols="12" md="7">
-        <FacilityFilter :loading="loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter v-if="!isEmpty(pendingReports)" :loading="loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
 
-    <v-skeleton-loader :loading="processing" type="table-tbody">
-      <v-data-table :headers="headers" :items="filteredPendingReports" item-key="surveyResponseReferenceNumber" density="compact">
-        <template #[`item.alertType`]="{ item }">
-          <v-icon v-if="item.alertType === 'Due'" color="warning">mdi-alert</v-icon>
-          <v-icon v-else-if="item.alertType === 'Overdue'" color="error">mdi-alert-circle</v-icon>
-          <span class="pl-1">{{ item.alertType }}</span>
+    <v-skeleton-loader :loading="loading" type="table-tbody">
+      <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">
+        <div>You are up to date with your monthly reports.</div>
+      </AppAlertBanner>
+      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyResponseReferenceNumber" density="compact">
+        <template #[`item.alert`]="{ item }">
+          <span v-if="isOverdue(item)">
+            <v-icon color="error">mdi-alert</v-icon>
+            Overdue
+          </span>
+          <span v-else>
+            <v-icon color="warning">mdi-alert</v-icon>
+            Due
+          </span>
         </template>
-        <template #[`item.status`]="{ item }">
-          <span :class="{ 'status-gray': item.status === SURVEY_RESPONSE_STATUSES.DRAFT }" class="px-2 py-1">{{ item.status }}</span>
+        <template #[`item.title`]="{ item }">
+          <span>{{ getReportTitle(item) }}</span>
+        </template>
+        <template #[`item.status`]>
+          <span class="status-gray">Draft</span>
+        </template>
+        <template #[`item.latestActivity`]="{ item }">
+          {{ format.formatDate(item?.latestActivity) }}
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn v-if="showOpen(item)" variant="text" @click="openSurveyResponse(item)">
@@ -35,39 +49,23 @@
 
 <script>
 import { isEmpty } from 'lodash'
+import moment from 'moment'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
-import alertMixin from '@/mixins/alertMixin'
+import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { REPORT_TEMPLATE_NAMES, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 
 export default {
-  components: { FacilityFilter, CancelSurveyResponseDialog },
+  components: { AppAlertBanner, FacilityFilter, CancelSurveyResponseDialog },
   mixins: [alertMixin, reportMixin, permissionsMixin],
-
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    pendingReports: {
-      type: Array,
-      default: () => [],
-    },
-    facilities: {
-      type: Array,
-      default: () => [],
-    },
-  },
-
-  emits: ['cancel'],
-
   data() {
     return {
       headers: [
-        { title: 'Alerts', key: 'alertType' },
+        { title: 'Alerts', key: 'alert' },
         { title: 'Report ID', key: 'surveyResponseReferenceNumber' },
         { title: 'Title', key: 'title' },
         { title: 'Facility', key: 'facilityName' },
@@ -75,10 +73,11 @@ export default {
         { title: 'Latest Activity', key: 'latestActivity' },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
-      processing: false,
+      loading: false,
       showCancelDialog: false,
       surveyResponseIdToCancel: undefined,
       facilityNameFilter: undefined,
+      pendingReports: [],
     }
   },
 
@@ -91,48 +90,51 @@ export default {
     },
 
     filteredFacilityIds() {
-      const filteredFacilities = this.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
+      const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
   },
 
-  created() {
+  async created() {
     this.SURVEY_RESPONSE_STATUSES = SURVEY_RESPONSE_STATUSES
+    await this.loadPendingReports()
   },
 
   methods: {
-    async openSurveyResponse(surveyResponse) {
-      if (surveyResponse?.surveyResponseId) {
-        this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: surveyResponse?.surveyResponseId } })
-      } else {
-        this.createSurveyResponse(surveyResponse)
-      }
-    },
-
-    async createSurveyResponse(surveyResponse) {
+    async loadPendingReports() {
       try {
-        this.processing = true
-        const payload = {
-          contactId: surveyResponse?.contactId,
-          facilityId: surveyResponse?.facilityId,
-          surveyId: this.getReportTemplateIdByName(REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING),
-          surveyResponseTitle: surveyResponse?.title,
-          fiscalYearId: surveyResponse?.fiscalYearId,
-          reportingMonthId: surveyResponse?.reportingMonthId,
-          surveyResponseType: this.getSurveyResponseType(surveyResponse?.reportingMonthName),
-        }
-        const response = await ReportsService.createSurveyResponse(payload)
-        this.setSuccessAlert('Started a new report response successfully')
-        if (response?.surveyResponseId) {
-          this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: response?.surveyResponseId } })
-        }
+        this.loading = true
+        this.pendingReports = []
+        await Promise.all(
+          this.userInfo?.facilities?.map(async (facility) => {
+            const response = await ReportsService.getDraftSurveyResponsesByFacility(facility.facilityId)
+            if (!isEmpty(response)) {
+              this.pendingReports = this.pendingReports?.concat(response)
+            }
+          }),
+        )
+        this.sortPendingReports()
       } catch (error) {
-        this.setFailureAlert('Failed to start new report response', error)
+        this.setFailureAlert('Failed to get pending reports for facilities ', error)
       } finally {
-        this.processing = false
+        this.loading = false
       }
     },
 
+    // All Over Due reports are at top of the list. If two reports have the same alert, sort them by Latest Activity in descending order
+    sortPendingReports() {
+      this.pendingReports?.sort((a, b) => {
+        const isOverdueA = this.isOverdue(a) ? 1 : -1
+        const isOverdueB = this.isOverdue(b) ? 1 : -1
+        return isOverdueA === isOverdueB ? new Date(b.latestActivity) - new Date(a.latestActivity) : isOverdueB
+      })
+    },
+
+    openSurveyResponse(surveyResponse) {
+      this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: surveyResponse?.surveyResponseId } })
+    },
+
+    /*
     // TODO (vietle-cgi) Update the reporting month once we get the confirmation from the business
     getSurveyResponseType(reportingMonthName) {
       let responseType = SURVEY_RESPONSE_TYPES.MONTHLY
@@ -144,6 +146,7 @@ export default {
       // TODO (vietle-cgi) Add ANNUAL type when we know which month to use
       return responseType
     },
+    */
 
     cancel(surveyResponseId) {
       this.$emit('cancel', surveyResponseId)
@@ -169,6 +172,10 @@ export default {
 
     showTrash(surveyResponse) {
       return surveyResponse?.surveyResponseId && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
+    },
+
+    isOverdue(report) {
+      return moment(report.dueDate).isBefore(moment())
     },
   },
 }

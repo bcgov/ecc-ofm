@@ -446,15 +446,14 @@ export default {
     },
 
     verifySectionComplete(section) {
-      const responseRequiredQuestions = section?.questions?.filter((question) => question.responseRequired)
+      const responseRequiredQuestions = section?.questions?.filter((question) => !question.hide && question.responseRequired)
       const isComplete = responseRequiredQuestions?.every((question) => {
-        const index = this.clonedResponses.findIndex(
+        return this.clonedResponses.some(
           (response) =>
             !this.isHiddenOrDeleted(response) &&
             ((this.isLastSection(section) && response.value === 'Yes') || (!this.isLastSection(section) && !isEmpty(response.value))) &&
             (response.questionId === question.questionId || (this.isTableQuestion(question) && response.tableQuestionId === question.questionId)),
         )
-        return question.hide || index > -1
       })
       section.isComplete = isComplete
       return isComplete

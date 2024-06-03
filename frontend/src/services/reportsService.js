@@ -39,6 +39,32 @@ export default {
     }
   },
 
+  async getDraftSurveyResponsesByFacility(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=false`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the draft survey response by Facility - ${error}`)
+      throw error
+    }
+  },
+
+  async getSubmittedSurveyResponsesByFacilityAndSubmittedDate(facilityId, dateFrom, dateTo) {
+    try {
+      if (!facilityId) return
+      let url = `${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=true&dateFrom=${dateFrom}`
+      if (dateTo) {
+        url += `&dateTo=${dateTo}`
+      }
+      const response = await ApiService.apiAxios.get(url)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the submitted survey response by Facility - ${error}`)
+      throw error
+    }
+  },
+
   async getSurveyResponsesBySurveyAndFacilityAndFiscalYear(surveyId, facilityId, fiscalYearId) {
     try {
       if (!facilityId || !fiscalYearId) return
@@ -57,17 +83,6 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the survey response by surveyResponseId - ${error}`)
-      throw error
-    }
-  },
-
-  async createSurveyResponse(payload) {
-    try {
-      if (isEmpty(payload)) return
-      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/survey-responses`, payload)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to create survey response - ${error}`)
       throw error
     }
   },

@@ -9,7 +9,6 @@ const {
   getSurveyQuestions,
   getSurveyResponse,
   getSurveyResponses,
-  createSurveyResponse,
   updateSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,
@@ -113,21 +112,6 @@ router.get('/survey-responses', passport.authenticate('jwt', { session: false })
   validationResult(req).throw()
   return getSurveyResponses(req, res)
 })
-
-/**
- * Create a survey response
- */
-router.post(
-  '/survey-responses',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [checkSchema(postSurveyResponseSchema)],
-  (req, res) => {
-    validationResult(req).throw()
-    return createSurveyResponse(req, res)
-  },
-)
 
 /**
  * Update a survey response

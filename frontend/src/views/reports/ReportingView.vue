@@ -14,24 +14,14 @@
         </v-tab>
       </v-tabs>
       <v-card-text>
-        <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-container fluid class="pa-0">
-            <v-window v-model="tab">
-              <v-window-item value="pending-reports-table">
-                <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">
-                  <div>You are up to date with your monthly reports.</div>
-                </AppAlertBanner>
-                <PendingReportsTab v-else :loading="loading" :pendingReports="pendingReports" :facilities="facilities" @cancel="removeCancelledResponseFromTable" />
-              </v-window-item>
-              <v-window-item value="reporting-history-table">
-                <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">
-                  <div>You have no submitted reports.</div>
-                </AppAlertBanner>
-                <ReportingHistoryTab v-else :loading="loading" :submittedReports="submittedReports" :facilities="facilities" />
-              </v-window-item>
-            </v-window>
-          </v-container>
-        </v-skeleton-loader>
+        <v-window v-model="tab">
+          <v-window-item value="pending-reports-table">
+            <PendingReportsTab />
+          </v-window-item>
+          <v-window-item value="reporting-history-table">
+            <ReportingHistoryTab />
+          </v-window-item>
+        </v-window>
       </v-card-text>
     </v-card>
 
@@ -44,182 +34,18 @@
 </template>
 
 <script>
-import moment from 'moment'
-import { isEmpty } from 'lodash'
-import { FUNDING_AGREEMENT_STATUS_CODES, REPORT_TEMPLATE_NAMES, BLANK_FIELD, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
-import format from '@/utils/format'
-import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import PendingReportsTab from '@/components/reports/PendingReportsTab.vue'
 import ReportingHistoryTab from '@/components/reports/ReportingHistoryTab.vue'
-import FundingAgreementService from '@/services/fundingAgreementService'
-import ReportsService from '@/services/reportsService'
-import alertMixin from '@/mixins/alertMixin'
-import reportMixin from '@/mixins/reportMixin'
 
 export default {
   name: 'ReportingView',
-  components: { AppAlertBanner, AppBackButton, OrganizationHeader, PendingReportsTab, ReportingHistoryTab },
-  mixins: [alertMixin, reportMixin],
+  components: { AppBackButton, OrganizationHeader, PendingReportsTab, ReportingHistoryTab },
   data() {
     return {
-      loading: false,
-      processing: false,
-      facilities: [],
       tab: undefined,
-      surveyResponses: [],
     }
-  },
-
-  computed: {
-    pendingReports() {
-      let pendingReports = []
-      this.facilities?.forEach((facility) => {
-        facility.fundingAgreements?.forEach((fundingAgreement) => (pendingReports = pendingReports.concat(this.populatePendingReportsForFA(facility, fundingAgreement))))
-      })
-      return pendingReports
-    },
-
-    submittedReports() {
-      const submittedReports = this.surveyResponses?.filter((response) => this.isResponseSubmitted(response))
-      submittedReports?.forEach((response) => {
-        response.submittedDate = format.formatDate(response?.endDate)
-        response.status = response?.isSubmittedLate ? SURVEY_RESPONSE_STATUSES.COMPLETED_LATE : SURVEY_RESPONSE_STATUSES.COMPLETED
-      })
-      submittedReports?.sort((a, b) => {
-        const dateA = new Date(a.submittedDate)
-        const dateB = new Date(b.submittedDate)
-        return dateB - dateA // descending order (most recent Submitted Date at the top)
-      })
-      return submittedReports
-    },
-  },
-
-  async created() {
-    this.facilities = this.userInfo?.facilities
-    await this.loadData()
-  },
-
-  methods: {
-    async loadData() {
-      try {
-        this.loading = true
-        await this.getFundingAgreements()
-        await this.getSurveyResponses()
-      } catch (error) {
-        this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async getFundingAgreements() {
-      try {
-        await Promise.all(
-          this.facilities?.map(async (facility) => {
-            const activeFundingAgreement = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-            const expiredFundingAgreements = await FundingAgreementService.getFundingAgreementsByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)
-            facility.fundingAgreements = [...expiredFundingAgreements, activeFundingAgreement]
-          }),
-        )
-      } catch (error) {
-        this.setFailureAlert('Failed to get funding agreement info for facilities ', error)
-      }
-    },
-
-    async getSurveyResponses() {
-      try {
-        await Promise.all(
-          this.facilities?.map(async (facility) => {
-            await this.getSurveyResponsesForFacility(facility)
-          }),
-        )
-      } catch (error) {
-        this.setFailureAlert('Failed to get survey responses for facilities ', error)
-      }
-    },
-
-    async getSurveyResponsesForFacility(facility) {
-      await Promise.all(
-        facility?.fundingAgreements?.map(async (fundingAgreement) => {
-          const fiscalYearIds = this.getFiscalYearIdsByDates(fundingAgreement?.startDate, fundingAgreement?.endDate)
-          await Promise.all(
-            fiscalYearIds?.map(async (fiscalYearId) => {
-              const responses = await ReportsService.getSurveyResponsesBySurveyAndFacilityAndFiscalYear(
-                this.getReportTemplateIdByName(REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING),
-                facility?.facilityId,
-                fiscalYearId,
-              )
-              if (!isEmpty(responses)) {
-                this.surveyResponses = this.surveyResponses.concat(responses)
-              }
-            }),
-          )
-        }),
-      )
-    },
-
-    removeCancelledResponseFromTable(surveyResponseId) {
-      const index = this.surveyResponses?.findIndex((item) => item.surveyResponseId === surveyResponseId)
-      if (index > -1) {
-        this.surveyResponses.splice(index, 1)
-      }
-    },
-
-    getSurveyResponseAlertType(month) {
-      const monthName = moment(month).format('MMMM')
-      const previousMonth = moment().subtract(1, 'month').format('MMMM')
-      const year = moment(month).format('yyyy')
-      const currentYear = moment().format('yyyy')
-      return monthName === previousMonth && year === currentYear ? 'Due' : 'Overdue'
-    },
-
-    getMonthsBetweenDates(start, end) {
-      const startDate = moment(start)
-      const endDate = moment(end)
-      const result = []
-      while (startDate?.isBefore(endDate)) {
-        result.push(startDate.format('YYYY-MM-01'))
-        startDate.add(1, 'month')
-      }
-      return result
-    },
-
-    populatePendingReportsForFA(facility, fundingAgreement) {
-      const pendingReports = []
-      const reportingMonths = this.getMonthsBetweenDates(fundingAgreement?.startDate, fundingAgreement?.endDate)
-      reportingMonths?.forEach((month) => {
-        const monthName = moment(month).format('MMMM')
-        const monthId = this.getMonthIdByName(monthName)
-        const fiscalYearId = this.getFiscalYearIdByDate(month)
-        const fiscalYearName = this.getFiscalYearNameById(fiscalYearId)
-        const surveyResponse = this.surveyResponses?.find((item) => item.facilityId === facility.facilityId && item.fiscalYearId === fiscalYearId && item.reportingMonthId === monthId)
-        const isPreviousMonth = moment().startOf('month').isAfter(moment(month))
-        const hasNotSubmittedResponse = isEmpty(surveyResponse) || surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
-        if (isPreviousMonth && hasNotSubmittedResponse) {
-          pendingReports.push({
-            contactId: this.userInfo?.contactId,
-            surveyResponseId: surveyResponse?.surveyResponseId,
-            surveyResponseReferenceNumber: surveyResponse?.surveyResponseReferenceNumber ?? BLANK_FIELD,
-            alertType: this.getSurveyResponseAlertType(month),
-            title: `${REPORT_TEMPLATE_NAMES.MONTHLY_REPORTING} - ${monthName} ${fiscalYearName}`,
-            facilityId: facility.facilityId,
-            facilityName: facility.facilityName,
-            reportingMonthId: monthId,
-            reportingMonthName: monthName,
-            fiscalYearId: fiscalYearId,
-            status: !isEmpty(surveyResponse) ? SURVEY_RESPONSE_STATUSES.DRAFT : BLANK_FIELD,
-            latestActivity: surveyResponse?.latestActivity ? format.formatDate(surveyResponse?.latestActivity) : BLANK_FIELD,
-          })
-        }
-      })
-      return pendingReports
-    },
-
-    isResponseSubmitted(surveyResponse) {
-      return [SURVEY_RESPONSE_STATUS_CODES.COMPLETED, SURVEY_RESPONSE_STATUS_CODES.CLOSED].includes(surveyResponse?.statusCode)
-    },
   },
 }
 </script>

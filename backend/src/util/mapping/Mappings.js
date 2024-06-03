@@ -419,6 +419,8 @@ const SurveyResponseMappings = [
   { back: '_ofm_reporting_month_value@OData.Community.Display.V1.FormattedValue', front: 'reportingMonthName' },
   { back: 'ofm_response_type', front: 'surveyResponseType' },
   { back: 'modifiedon', front: 'latestActivity' },
+  { back: 'ofm_submitted_on', front: 'submittedDate' },
+  { back: 'ofm_duedate', front: 'dueDate' },
   { back: 'ofm_late_flag', front: 'isSubmittedLate' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },

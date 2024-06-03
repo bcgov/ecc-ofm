@@ -5,7 +5,8 @@ const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, Q
 const log = require('../components/logger')
 const HttpStatus = require('http-status-codes')
 const { isEmpty, orderBy } = require('lodash')
-const { buildFilterQuery } = require('../util/common')
+const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
+const { SURVEY_RESPONSE_STATUS_CODES } = require('../util/constants')
 
 function mapQuestionObjectForFront(data) {
   const question = new MappableObjectForFront(data, SurveyQuestionMappings).toJSON()
@@ -109,33 +110,20 @@ async function getSurveyResponses(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const surveyResponses = []
-    const query = `statuscode ne 2 and ${buildFilterQuery(req?.query, SurveyResponseMappings)}` // 2 = INACTIVE status
-    const operation = `ofm_survey_responses?$filter=(${query})`
+    let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)}`
+    if (req.query?.isSubmitted != null) {
+      filter +=
+        req.query?.isSubmitted === 'true'
+          ? ` and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.ACTIVE}`
+          : ` and statuscode eq ${SURVEY_RESPONSE_STATUS_CODES.ACTIVE}`
+    }
+    const operation = `ofm_survey_responses?$filter=(${filter})`
     const response = await getOperation(operation)
     response?.value?.forEach((surveyResponse) => surveyResponses.push(new MappableObjectForFront(surveyResponse, SurveyResponseMappings).toJSON()))
     if (isEmpty(surveyResponses)) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
     return res.status(HttpStatus.OK).json(surveyResponses)
-  } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
-async function createSurveyResponse(req, res) {
-  try {
-    const payload = {
-      'ofm_contact@odata.bind': `/contacts(${req.body?.contactId})`,
-      'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
-      'ofm_survey@odata.bind': `/ofm_surveies(${req.body?.surveyId})`,
-      'ofm_fiscal_year@odata.bind': `/ofm_fiscal_years(${req.body?.fiscalYearId})`,
-      'ofm_reporting_month@odata.bind': `/ofm_months(${req.body?.reportingMonthId})`,
-      ofm_response_type: req.body?.surveyResponseType,
-      ofm_name: req.body?.surveyResponseTitle,
-    }
-    const response = await postOperation('ofm_survey_responses', payload)
-    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -236,7 +224,6 @@ module.exports = {
   getSurveyQuestions,
   getSurveyResponse,
   getSurveyResponses,
-  createSurveyResponse,
   updateSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,

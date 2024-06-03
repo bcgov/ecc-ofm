@@ -76,6 +76,12 @@ export const useAppStore = defineStore('app', {
         return month?.monthId
       }
     },
+    getMonthNameById: (state) => {
+      return (id) => {
+        const month = state.months?.find((month) => month.monthId === id)
+        return month?.name
+      }
+    },
     getFiscalYearNameById: (state) => {
       return (id) => {
         const year = state.fiscalYears?.find((fiscalYear) => fiscalYear.fiscalYearId === id)
@@ -105,6 +111,12 @@ export const useAppStore = defineStore('app', {
       return (name) => {
         const reportTemplate = state.activeReportTemplates?.find((report) => report.surveyTitle === name)
         return reportTemplate?.surveyId
+      }
+    },
+    getReportTemplateNameById: (state) => {
+      return (id) => {
+        const reportTemplate = state.activeReportTemplates?.find((report) => report.surveyId === id)
+        return reportTemplate?.surveyTitle
       }
     },
   },
