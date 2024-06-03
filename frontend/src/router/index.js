@@ -16,8 +16,7 @@ import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
-import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
-import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
 import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
@@ -323,15 +322,7 @@ const router = createRouter({
     {
       path: '/unauthorized',
       name: 'unauthorized',
-      component: UnAuthorizedView,
-      meta: {
-        requiresAuth: false,
-      },
-    },
-    {
-      path: '/unauthorized-page',
-      name: 'unauthorized-page',
-      component: UnAuthorizedPageView,
+      component: UnauthorizedView,
       meta: {
         requiresAuth: false,
       },

@@ -149,6 +149,11 @@ input[type='number'] {
   border: 1px solid #00000040 !important;
 }
 
+.basic-card {
+  margin-top: 5rem;
+  border-top: 5px solid #003366 !important;
+}
+
 /** Vuetify overrides */
 .v-data-table__th {
   font-weight: 600 !important;

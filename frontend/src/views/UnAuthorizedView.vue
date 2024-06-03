@@ -1,13 +1,17 @@
 <template>
   <v-container fluid>
-    <AppAlertBanner type="error">You do not have required role to perform the requested action.</AppAlertBanner>
+    <AppSimpleCard>
+      <template #title>Unauthorized Access</template>
+      <template #text>You do not have required role to perform the requested action.</template>
+    </AppSimpleCard>
   </v-container>
 </template>
 
 <script>
-import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
+import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 
 export default {
-  components: { AppAlertBanner },
+  name: 'UnauthorizedView',
+  components: { AppSimpleCard },
 }
 </script>
