@@ -5,6 +5,8 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getLicenceDetails, updateLicenceDetails } = require('../components/licences')
 const { param, validationResult } = require('express-validator')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -29,6 +31,7 @@ router.patch(
   '/:licenceDetailId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
   [param('licenceDetailId', 'URL param: [licenceDetailId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()

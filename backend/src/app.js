@@ -155,6 +155,14 @@ async function populateUserInfo(profile) {
     const user = await getUserProfile(username.guid)
     profile.role = user?.role
     profile.org = user?.organization?.accountid
+    profile.contactId = user?.contactid
+
+    profile.facilities = user?.facility_permission.map((fp) => {
+      return {
+        facilityId: fp.facility.accountid,
+        isExpenseAuthority: fp.ofm_is_expense_authority,
+      }
+    })
   } else if (username.idp === config.get('oidc:idpHintIdir')) {
     const roles = await getRoles()
     const role = roles.find((role) => role.data.roleName === 'Impersonate')

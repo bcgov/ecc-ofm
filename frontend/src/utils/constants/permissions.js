@@ -8,7 +8,6 @@ export const PERMISSIONS = Object.freeze({
   VIEW_FUNDING_AMOUNTS: 'View Funding Amounts',
   REQUEST_FUNDING_CHANGE: 'Request Funding Change',
   VIEW_FUNDING_AGREEMENT: 'View Funding Agreement',
-  SIGN_FUNDING_AGREEMENT: 'Sign Funding Agreement',
 
   // Documents
   DOCUMENT_MANAGEMENT: 'Document Management',

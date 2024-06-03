@@ -142,6 +142,7 @@ const router = createRouter({
       component: FundingOverviewView,
       meta: {
         requiresAuth: true,
+        permission: [PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS],
       },
     },
     {
@@ -150,6 +151,7 @@ const router = createRouter({
       component: FundingView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
     {
@@ -158,6 +160,7 @@ const router = createRouter({
       component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
 
@@ -167,6 +170,7 @@ const router = createRouter({
       component: DocumentsView,
       meta: {
         requiresAuth: true,
+        hidden: true,
       },
     },
     {
@@ -361,6 +365,11 @@ router.beforeEach((to, _from, next) => {
   // Check for backend errors raised on startup
   if (appStore.backendError && to.name !== 'error') {
     return next('error')
+  }
+
+  // Check for routes which aren't available yet
+  if (to.meta.hidden) {
+    return next('home')
   }
 
   const authStore = useAuthStore()
