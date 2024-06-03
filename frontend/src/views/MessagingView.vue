@@ -36,6 +36,7 @@ import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
 
 export default {
+  name: 'MessagingView',
   components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
   data() {
     return {
