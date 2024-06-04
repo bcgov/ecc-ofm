@@ -38,12 +38,17 @@ async function getFundingAgreements(req, res) {
 
 async function getFundingAgreementById(req, res) {
   try {
-    const response = await getOperationWithObjectId('ofm_fundings', req?.params?.fundingAgreementId)
-    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FundingAgreementMappings).toJSON())
+    const fundingAgreement = await getRawFundingAgreementById(req?.params?.fundingAgreementId)
+    return res.status(HttpStatus.OK).json(fundingAgreement)
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
+}
+
+async function getRawFundingAgreementById(fundingAgreementId) {
+  const response = await getOperationWithObjectId('ofm_fundings', fundingAgreementId)
+  return new MappableObjectForFront(response, FundingAgreementMappings).toJSON()
 }
 
 async function getFundingPDFById(req, res) {
@@ -82,5 +87,6 @@ module.exports = {
   getFundingAgreements,
   updateFundingAgreement,
   getFundingAgreementById,
+  getRawFundingAgreementById,
   getFundingPDFById,
 }

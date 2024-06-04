@@ -14,7 +14,7 @@ module.exports = function (permission) {
     const userRole = req.session?.passport?.user?.role
 
     if (!userRole) {
-      res.sendStatus(403)
+      return res.sendStatus(403)
     }
 
     const roles = await getRoles()

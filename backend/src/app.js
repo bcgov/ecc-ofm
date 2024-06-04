@@ -94,6 +94,7 @@ app.use(
 )
 
 app.use(require('./routes/health-check').router)
+
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize())
 app.use(passport.session())
@@ -127,9 +128,9 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         scope: 'openid',
         kc_idp_hint: kc_idp_hint,
       },
-      async (_issuer, profile, _context, _idToken, accessToken, refreshToken, done) => {
+      async (_iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
         if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
-          return done('No access token', null)
+          return verified('No access token', null)
         }
 
         // Set additional user info for validation
@@ -140,26 +141,32 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
-        return done(null, profile)
+        profile.idToken = idToken
+        return verified(null, profile)
       },
     ),
   )
 }
 
 async function populateUserInfo(profile) {
-  // Username is username@idp, e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
-  const profileArray = profile.username.split('@')
-  const idp = profileArray[1]
-
+  const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
-  if (idp === 'bceidbusiness') {
-    const user = await getUserProfile(profileArray[0])
+  if (username.idp === config.get('oidc:idpHintBceid')) {
+    const user = await getUserProfile(username.guid)
     profile.role = user?.role
     profile.org = user?.organization?.accountid
-  } else if (idp === 'idir') {
+    profile.contactId = user?.contactid
+
+    profile.facilities = user?.facility_permission.map((fp) => {
+      return {
+        facilityId: fp.facility.accountid,
+        isExpenseAuthority: fp.ofm_is_expense_authority,
+      }
+    })
+  } else if (username.idp === config.get('oidc:idpHintIdir')) {
     const roles = await getRoles()
     const role = roles.find((role) => role.data.roleName === 'Impersonate')
-    
+
     // Store the role in Dynamics format to match BCeID
     profile.role = new MappableObjectForBack(role.toJSON(), RoleMappings).toJSON()
 
@@ -177,9 +184,10 @@ const parseJwt = (token) => {
 }
 //initialize our authentication strategy
 utils.getOidcDiscovery().then((discovery) => {
-  //OIDC Strategy is used for authorization
-  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', 'keycloak_bcdevexchange_idir', 'oidc:clientIdIDIR', 'oidc:clientSecretIDIR')
-  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', 'keycloak_bcdevexchange_bceid', 'oidc:clientId', 'oidc:clientSecret')
+  // OIDC Strategy is used for authorization
+  // XXX We maintain two separate strategies because of the different idpHint. Otherwise they are equivalent.
+  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', config.get('oidc:idpHintIdir'), 'oidc:clientId', 'oidc:clientSecret')
+  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', config.get('oidc:idpHintBceid'), 'oidc:clientId', 'oidc:clientSecret')
 
   //JWT strategy is used for authorization  keycloak_bcdevexchange_idir
   passport.use(

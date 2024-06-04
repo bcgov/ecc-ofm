@@ -1,12 +1,8 @@
 <template>
   <v-container fluid>
     <AppSimpleCard>
-      <template #title>System Error</template>
-      <template #text>
-        You have encountered a System Error.
-        <br />
-        Close your Web browser, open a new session, then try again.
-      </template>
+      <template #title>Unauthorized Access</template>
+      <template #text>You do not have required role to perform the requested action.</template>
     </AppSimpleCard>
   </v-container>
 </template>
@@ -15,7 +11,7 @@
 import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 
 export default {
-  name: 'ErrorView',
+  name: 'UnauthorizedView',
   components: { AppSimpleCard },
 }
 </script>

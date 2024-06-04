@@ -11,12 +11,12 @@ import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
+import MinistryLogoutView from '@/views/MinistryLogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
-import UnAuthorizedPageView from '@/views/UnAuthorizedPageView.vue'
-import UnAuthorizedView from '@/views/UnAuthorizedView.vue'
+import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
 import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
@@ -78,7 +78,7 @@ const router = createRouter({
     },
     {
       path: '/internal',
-      name: 'internal',
+      name: 'ministry-login',
       component: MinistryLoginView,
       meta: {
         requiresAuth: false,
@@ -88,6 +88,14 @@ const router = createRouter({
       path: '/logout',
       name: 'logout',
       component: LogoutView,
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/internal-logout',
+      name: 'ministry-logout',
+      component: MinistryLogoutView,
       meta: {
         requiresAuth: false,
       },
@@ -133,6 +141,7 @@ const router = createRouter({
       component: FundingOverviewView,
       meta: {
         requiresAuth: true,
+        permission: [PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS],
       },
     },
     {
@@ -141,6 +150,7 @@ const router = createRouter({
       component: FundingView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
     {
@@ -149,6 +159,7 @@ const router = createRouter({
       component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
 
@@ -158,6 +169,7 @@ const router = createRouter({
       component: DocumentsView,
       meta: {
         requiresAuth: true,
+        hidden: true,
       },
     },
     {
@@ -310,15 +322,7 @@ const router = createRouter({
     {
       path: '/unauthorized',
       name: 'unauthorized',
-      component: UnAuthorizedView,
-      meta: {
-        requiresAuth: false,
-      },
-    },
-    {
-      path: '/unauthorized-page',
-      name: 'unauthorized-page',
-      component: UnAuthorizedPageView,
+      component: UnauthorizedView,
       meta: {
         requiresAuth: false,
       },
@@ -352,6 +356,11 @@ router.beforeEach((to, _from, next) => {
   // Check for backend errors raised on startup
   if (appStore.backendError && to.name !== 'error') {
     return next('error')
+  }
+
+  // Check for routes which aren't available yet
+  if (to.meta.hidden) {
+    return next('home')
   }
 
   const authStore = useAuthStore()
@@ -404,7 +413,7 @@ router.beforeEach((to, _from, next) => {
       })
   } else {
     // Block access to Login/Internal/Logout when authenticated
-    if ((to.name === 'login' || to.name === 'internal' || to.name === 'logout') && authStore.isAuthenticated) {
+    if ((to.name.endsWith('login') || to.name.endsWith('logout')) && authStore.isAuthenticated) {
       return next('home')
     }
     next()
