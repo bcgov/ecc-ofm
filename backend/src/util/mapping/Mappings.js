@@ -400,6 +400,7 @@ const SurveyQuestionBusinessRulesMappings = [
   { back: '_ofm_true_child_question_value', front: 'trueChildQuestionId' },
   { back: '_ofm_false_child_question_value', front: 'falseChildQuestionId' },
   { back: 'ofm_condition', front: 'conditionValue' },
+  { back: '_ofm_parentquestionid_value', front: 'parentQuestionId' },
   { back: 'ofm_parent_has_response', front: 'parentHasResponse' },
   { back: '_ofm_child_question_value', front: 'valueInheritanceChildQuestionId' },
 ]

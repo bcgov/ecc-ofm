@@ -10,9 +10,11 @@ const { SURVEY_RESPONSE_STATUS_CODES } = require('../util/constants')
 
 function mapQuestionObjectForFront(data) {
   const question = new MappableObjectForFront(data, SurveyQuestionMappings).toJSON()
-  if (!isEmpty(question) && 'ofm_question_business_rule_ques' in data) {
+  if (!isEmpty(question) && 'ofm_ofm_question_ofm_question_business_rule_parentquestionid' in data) {
     question.businessRules = []
-    data['ofm_question_business_rule_ques']?.forEach((rule) => question?.businessRules.push(new MappableObjectForFront(rule, SurveyQuestionBusinessRulesMappings).toJSON()))
+    data['ofm_ofm_question_ofm_question_business_rule_parentquestionid']?.forEach((rule) =>
+      question?.businessRules.push(new MappableObjectForFront(rule, SurveyQuestionBusinessRulesMappings).toJSON()),
+    )
   }
   return question
 }
@@ -70,7 +72,7 @@ async function getSurveyQuestions(req, res) {
     }
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_response_required,ofm_occurence&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_response_required,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_occurence&$expand=ofm_ofm_question_ofm_question_business_rule_parentquestionid($select=_ofm_child_question_value,ofm_condition,_ofm_false_child_question_value,ofm_parent_has_response,_ofm_parentquestionid_value,ofm_question_business_ruleid,_ofm_true_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
     }
     const response = await getOperation(operation)
     let questions = []
