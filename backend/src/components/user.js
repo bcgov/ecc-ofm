@@ -4,6 +4,8 @@ const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
 const HttpStatus = require('http-status-codes')
+const { isEmpty } = require('lodash')
+
 const log = require('../components/logger')
 
 const {
@@ -34,7 +36,7 @@ async function getUserInfo(req, res) {
   }
   const userGuid = getUserGuid(req)
   const isIdir = isIdirUser(req)
-  const queryUserName = req.params?.queryUserName
+  const queryUserName = req.params?.userName
   const userName = getUserName(req)
   const businessName = getBusinessName(req)
 
@@ -224,13 +226,10 @@ function mapUserFacilityObjectForFront(data) {
   return userFacilities
 }
 
-async function getUserFacilities(req, res, onlyWithPortalAccess) {
+async function getUserFacilities(req, res) {
   try {
-    let userFacilities = []
-    let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name,ofm_program)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
-    if (onlyWithPortalAccess) {
-      operation = operation + ` and (ofm_portal_access eq true)`
-    }
+    const userFacilities = []
+    const operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name,ofm_program)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
     return res.status(HttpStatus.OK).json(userFacilities)
@@ -304,12 +303,11 @@ async function updateUser(req, res) {
   }
 }
 
-async function getUserByBCeID(req, res) {
+async function userExists(req, res) {
   try {
-    const operation = `contacts?$select=contactid,ccof_username,ofm_first_name,ofm_last_name,emailaddress1&$filter=ccof_username eq '${req.params.queryUserName}'`
+    const operation = `contacts?$select=contactid&$filter=ccof_username eq '${req.params.userName}'`
     const response = await getOperation(operation)
-    const user = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
-    return res.status(HttpStatus.OK).json(user)
+    return res.status(HttpStatus.OK).json({ exists: !isEmpty(response.value) })
   } catch (e) {
     log.info('Error in getUserByBCeID:', e)
     const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
@@ -331,11 +329,11 @@ async function updateUserFacilityPermission(req, res) {
 
 module.exports = {
   createUser,
-  getUserByBCeID,
   getUserFacilities,
   getUserInfo,
   getUserProfile,
   getUsersPermissionsFacilities,
   updateUser,
   updateUserFacilityPermission,
+  userExists,
 }

@@ -24,13 +24,13 @@ export const ApiRoutes = Object.freeze({
   NOTIFICATIONS: baseRoot + '/notifications',
   ORGANIZATIONS: baseRoot + '/organizations',
   ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
-  ORGANIZATIONS_USERS: '/:organizationId/users',
+  ORGANIZATIONS_USERS: baseRoot + '/organizations/:organizationId/users',
   PAYMENTS: baseRoot + '/payments',
   REPORTS: baseRoot + '/reports',
   SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
   SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
   USER: baseRoot + '/user',
-  USER_FACILITIES: '/:contactId/facilities',
+  USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
 })
 

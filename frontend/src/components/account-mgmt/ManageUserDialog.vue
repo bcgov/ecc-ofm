@@ -115,7 +115,7 @@
             </v-col>
           </v-row>
           <v-row v-else-if="wasNewUserAdded" no-gutters>
-            <v-col cols="12" class="pl-0 d-flex align-center justify-center">{{ getAddUserSuccessMsg() }}</v-col>
+            <v-col cols="12" class="pl-0 d-flex align-center justify-center">{{ ADD_USER_SUCCESS_MSG }}</v-col>
           </v-row>
         </v-form>
       </template>
@@ -139,18 +139,18 @@
 
 <script>
 import { mapState } from 'pinia'
-import ApiService from '@/common/apiService'
-import alertMixin from '@/mixins/alertMixin'
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
+
+import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
+import alertMixin from '@/mixins/alertMixin'
+import OrganizationService from '@/services/organizationService'
+import UserService from '@/services/UserService'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { ROLES } from '@/utils/constants'
 import rules from '@/utils/rules'
-import { ApiRoutes, ROLES } from '@/utils/constants'
-import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
-
-const ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
 
 export default {
   name: 'ManageUserDialog',
@@ -229,7 +229,8 @@ export default {
     },
   },
   async created() {
-    this.facilitiesToAdminister = await this.getUserFacilities(this.userInfo.contactId, true)
+    this.ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
+    this.facilitiesToAdminister = this.sortFacilities([...this.userInfo.facilities])
   },
   methods: {
     /**
@@ -291,12 +292,10 @@ export default {
         }
         this.user.organizationId = this.userInfo.organizationId
 
-        // TODO (jgstorey) Make this a service function
-        const response = await ApiService.apiAxios.post(ApiRoutes.USER + '/create', this.user)
-        this.user = response.data
+        this.user = await UserService.createUser(this.user)
         this.user.facilities = {}
         this.wasNewUserAdded = true
-        this.setSuccessAlert(ADD_USER_SUCCESS_MSG)
+        this.setSuccessAlert(this.ADD_USER_SUCCESS_MSG)
       } catch (error) {
         this.setFailureAlert('User account creation failed.', error)
       }
@@ -307,8 +306,7 @@ export default {
      */
     async updateUser() {
       try {
-        // TODO (jgstorey) Make this a service function
-        await ApiService.apiAxios.post(ApiRoutes.USER + '/update', this.user)
+        await UserService.updateUser(this.user)
         this.$emit('update-success-event', true)
       } catch (error) {
         this.$emit('update-success-event', false, error)
@@ -316,13 +314,12 @@ export default {
     },
 
     /**
-     * Get the list of facilities by contact id. If onlyWithPortalAccess is true, only return facilities with portal access.
+     * Get the list of facilities by contact id.
      */
-    async getUserFacilities(contactId, onlyWithPortalAccess) {
+    async getUserFacilities(contactId) {
       try {
-        // TODO (jgstorey) Make this a service function
-        const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}${ApiRoutes.USER_FACILITIES.replace(':contactId', contactId)}?onlyWithPortalAccess=${onlyWithPortalAccess}`)
-        return this.sortFacilities(res.data)
+        const res = await UserService.getUserFacilities(contactId)
+        return this.sortFacilities(res)
       } catch (error) {
         this.setFailureAlert('Failed to get the list of facilities by contact id: ' + this.userInfo.contactId, error)
       }
@@ -346,13 +343,6 @@ export default {
     },
 
     /**
-     * Get the add user success message constant.
-     */
-    getAddUserSuccessMsg() {
-      return ADD_USER_SUCCESS_MSG
-    },
-
-    /**
      * Returns true if users facility access has changed, false otherwise.
      */
     hasUserFacilityAccessChanged(selectedFacilityIds, userFacilities) {
@@ -371,7 +361,7 @@ export default {
       // Get facility objects selected by facilityIds
       const selectedFacilities = this.getSelectedFacilitiesByIds(selectedFacilityIds)
       // Get users current facilities
-      const userFacilities = await this.getUserFacilities(user.contactId, false)
+      const userFacilities = await this.getUserFacilities(user.contactId)
       // If user has no facilities, all selectedFacilities are to be added
       if (Object.keys(user.facilities).length === 0) {
         facilitiesToAdd = selectedFacilities
@@ -434,9 +424,8 @@ export default {
     async checkBCeIDExists(userName) {
       try {
         if (this.user.userName) {
-          // TODO (jgstorey) Make this a service function
-          const res = await ApiService.apiAxios.get(`${ApiRoutes.USER}/${userName}?providerProfile=false`)
-          this.errorMessages = res.data.length >= 1 ? ['A user with this BCeID already exists.'] : []
+          const res = await UserService.userExists(userName)
+          this.errorMessages = res.exists ? ['A user with this BCeID already exists.'] : []
         }
       } catch (error) {
         this.setFailureAlert('Failed to check if BCeID already exists in provider organization: ' + userName, error)
@@ -448,11 +437,8 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
-        // TODO (jgstorey) Make this a service function
-        const res = await ApiService.apiAxios.get(
-          `${ApiRoutes.ORGANIZATIONS}${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', this.userInfo.organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`,
-        )
-        if (Array.isArray(res.data) && res.data.length >= 1) {
+        const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName, lastName, email)
+        if (Array.isArray(res) && res.length >= 1) {
           return true
         }
         this.errorMessages = []

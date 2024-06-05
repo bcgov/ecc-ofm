@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, getUserByBCeID, updateUserFacilityPermission } = require('../components/user')
+const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, userExists, updateUserFacilityPermission } = require('../components/user')
 const { param, validationResult, checkSchema } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
@@ -47,14 +47,15 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Get profile information for a given user name
  */
-router.get('/:queryUserName', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
-  // TODO (weskubo-cgi) Create a separate endpoint for verifying whether a profile exists
-  // TODO (weskubo-cgi) Secure this as average users shouldn't be able to query arbitrary user names
-  if (req.query.providerProfile === 'false') {
-    getUserByBCeID(req, res)
-  } else {
-    getUserInfo(req, res)
-  }
+router.get('/:userName', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+  getUserInfo(req, res)
+})
+
+/**
+ * Checks if the specified username exists.
+ */
+router.get('/:userName/exists', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), (req, res) => {
+  userExists(req, res)
 })
 
 /**
@@ -84,17 +85,17 @@ router.patch(
 )
 
 /**
- * Get all facilities for a user. NOTE: if onlyWithPortalAccess is true, then only facilities with portal access will be returned.
+ * Get all facilities for a user.
  */
 router.get('/:contactId/facilities', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()
-  return getUserFacilities(req, res, req.query.onlyWithPortalAccess === 'true')
+  return getUserFacilities(req, res)
 })
 
 /**
  * Create a new user/contact
  */
-router.post('/create', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), [checkSchema(createUserSchema)], (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), [checkSchema(createUserSchema)], (req, res) => {
   validationResult(req).throw()
   return createUser(req, res)
 })
@@ -102,7 +103,7 @@ router.post('/create', passport.authenticate('jwt', { session: false }), isValid
 /**
  * Update a user/contact
  */
-router.post('/update', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), [checkSchema(updateUserSchema)], (req, res) => {
+router.put('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.MANAGE_USERS_EDIT), [checkSchema(updateUserSchema)], (req, res) => {
   validationResult(req).throw()
   return updateUser(req, res)
 })
