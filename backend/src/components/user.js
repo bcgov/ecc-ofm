@@ -264,8 +264,15 @@ function mapContactForBack(data) {
   const contact = new MappableObjectForBack(data, ContactMappings).toJSON()
   contact.entityNameSet = 'contacts'
   contact.actionMode = 'Update'
-  contact['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${data?.role?.roleId})`
+
+  // Handle role Update/Delete
+  if (contact.role) {
+    contact['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${contact.role.roleId})`
+  } else {
+    contact['ofm_portal_role_id'] = null
+  }
   delete contact.role
+
   return contact
 }
 
