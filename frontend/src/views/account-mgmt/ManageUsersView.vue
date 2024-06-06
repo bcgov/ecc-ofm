@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import { mapState } from 'pinia'
 
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
@@ -226,7 +227,7 @@ export default {
      */
     toggleDialog(user) {
       this.editedIndex = this.usersAndFacilities.indexOf(user)
-      this.userToUpdate = Object.assign({}, user)
+      this.userToUpdate = cloneDeep(user)
       this.showManageUserDialog = !this.showManageUserDialog
     },
 
