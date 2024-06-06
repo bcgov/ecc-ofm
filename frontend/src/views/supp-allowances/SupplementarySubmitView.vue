@@ -52,11 +52,13 @@
                 </div>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <IndigenousProgrammingSummary v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId" :indigenousProgrammingModels="getIndigModels()"></IndigenousProgrammingSummary>
-                <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModels="getSupportModels()"></SupportNeedsSummary>
+                <IndigenousProgrammingSummary
+                  v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
+                  :indigenousProgrammingModels="getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
+                <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModels="getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)"></SupportNeedsSummary>
                 <TransportationSummary
                   v-if="panel.id === 'transportation' && panel.supplementaryApplicationId"
-                  :draftTransportModels="getTransportModels()"
+                  :draftTransportModels="getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)"
                   :allTransportModels="allTransportModels"></TransportationSummary>
               </v-expansion-panel-text>
             </div>
@@ -160,7 +162,7 @@ export default {
       return model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value) && !isEmpty(model.supportOtherDescription)
     },
     isTransportComplete() {
-      const models = this.getTransportModels()
+      const models = this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)
       return models.every((model) => {
         if (!model.VIN || !model.estimatedMileage || !model.odometer || hasDuplicateVIN(model, this.allTransportModels)) {
           return false
@@ -240,7 +242,7 @@ export default {
 
         this.setSuppTermDates()
         //we need submitted transport applications to verify that all VINs are unique, even in past applications
-        this.allTransportModels = [...this.getTransportModels()]
+        this.allTransportModels = [...this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)]
         this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 
         for (const el of this.models) {
@@ -291,14 +293,8 @@ export default {
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
       }
     },
-    getTransportModels() {
-      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
-    },
-    getIndigModels() {
-      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.INDIGENOUS)
-    },
-    getSupportModels() {
-      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.SUPPORT)
+    getModelsByType(supplementaryType) {
+      return this.models?.filter((el) => el.supplementaryType === supplementaryType)
     },
     getModel(type) {
       return this.models?.find((el) => el.supplementaryType === type)
