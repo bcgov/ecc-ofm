@@ -17,11 +17,10 @@
 </template>
 
 <script>
-import ApiService from '@/common/apiService'
-import { ApiRoutes } from '@/utils/constants'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
+import UserService from '@/services/userService'
 
 export default {
   name: 'DeactivateUserDialog',
@@ -72,8 +71,7 @@ export default {
             }
           }),
         }
-        // TODO (jgstorey) Make this a service function
-        await ApiService.apiAxios.post(ApiRoutes.USER + '/update', payload)
+        await UserService.updateUser(payload)
         this.$emit('deactivate')
         this.setSuccessAlert(`User with BCeID ${this.user?.userName} is deactivated successfully`)
       } catch (error) {

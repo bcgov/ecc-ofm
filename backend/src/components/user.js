@@ -29,9 +29,7 @@ const NO_PERMISSIONS = 'No permissions.'
 const NO_PROFILE_FOUND = 'No profile found.'
 
 async function getUserInfo(req, res) {
-  log.info('getUserInfo')
   const userInfo = getSessionUser(req)
-  log.info('userInfo', userInfo)
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     return res.status(HttpStatus.UNAUTHORIZED).json({
       message: 'No session data',

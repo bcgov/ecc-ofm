@@ -153,11 +153,9 @@ async function populateUserInfo(profile) {
   const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
   if (username.idp === config.get('oidc:idpHintBceid')) {
-    const bceidUsername = profile._json.bceid_username
-
     // If the userGuid cannot be found in Dynamics, then Dynamics will check if the userName exists,
     // If userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
-    const user = await getUserProfile(username.guid, bceidUsername)
+    const user = await getUserProfile(username.guid, profile._json.bceid_username)
 
     profile.role = user?.role
     profile.org = user?.organization?.accountid
