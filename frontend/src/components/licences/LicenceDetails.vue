@@ -49,7 +49,7 @@
       </v-row>
       <v-row>
         <v-col class="pb-0">
-          <h4 class="mb-2 text-decoration-underline">Category Details</h4>
+          <h4 class="mb-2 text-decoration-underline">Types of Service</h4>
         </v-col>
       </v-row>
       <v-row>
