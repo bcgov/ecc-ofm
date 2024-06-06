@@ -7,21 +7,29 @@
   </p>
 
   <AppAlertBanner v-if="currentTermDisabled" type="warning">
-    <div>Your current term funding is ending and you are no longer able to make changes. Please apply for Next Term</div>
+    <div>Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</div>
   </AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
       <v-col cols="12" lg="1" class="">
-        <AppLabel>Application Term:</AppLabel>
+        <AppLabel>Application Year:</AppLabel>
       </v-col>
 
       <!-- These buttons should always be enabled/disabled with FA dates as we might not have a supp app date to go off of-->
       <v-col cols="6" lg="2" class="d-flex flex-column align-end">
-        <AppButton id="current-term-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Term</AppButton>
+        <AppButton id="current-year-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Year</AppButton>
       </v-col>
       <v-col cols="6" lg="2" class="">
-        <AppButton id="next-term-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Term</AppButton>
+        <AppButton id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Year</AppButton>
+      </v-col>
+    </v-row>
+    <v-row v-if="fundingExpiryDate">
+      <v-col cols="12" class="">
+        <div>
+          If you apply for and receive funding in the current year of your funding agreement, the funds must be used by
+          {{ new Date(Date.parse(fundingExpiryDate.toISOString())).toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'full' }) }}
+        </div>
       </v-col>
     </v-row>
     <v-row no-gutters class="mb-2">
@@ -94,7 +102,7 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
-    <div v-if="nextTermActive">
+    <div v-show="nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
         <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
@@ -150,6 +158,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
 import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'SupplementaryFormView',
@@ -202,6 +211,7 @@ export default {
       isNextTermEnabled: false,
       currentTermDisabled: false,
       nextTermActive: false,
+      fundingExpiryDate: undefined,
     }
   },
   computed: {
@@ -267,6 +277,7 @@ export default {
     this.DAYS_BEFORE_TERM_EXPIRES = 45
     this.DAYS_BEFORE_NEXT_TERM_ENABLED = 120
     this.setSuppTermDates()
+    this.route = useRoute()
     await this.loadData()
   },
   methods: {
@@ -281,6 +292,9 @@ export default {
         this.$emit('process', true)
         if (!this.currentOrg) {
           await this.getOrganizationInfo(this.userInfo?.organizationId)
+        }
+        if (this.route?.query?.nextTerm === 'true') {
+          this.setActiveTerm(true)
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
@@ -351,7 +365,6 @@ export default {
         indigenousOtherDescription: null,
         supplementaryApplicationId: undefined,
         supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
-        id: uuid.v1(),
       }
 
       const supportModel = {
@@ -359,7 +372,6 @@ export default {
         supportOtherDescription: null,
         supplementaryApplicationId: undefined,
         supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
-        id: uuid.v1(),
       }
 
       this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) }, { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) }]
@@ -383,7 +395,6 @@ export default {
         }
         this.models = [...this.models, ...transportApplications]
       }
-
       this.clonedModels = cloneDeep(this.models)
       this.setNext()
       this.loading = false
@@ -419,6 +430,7 @@ export default {
     findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
       const foundApp = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
       modelToUpdate.renewalTerm = renewalTerm
+      modelToUpdate.id = uuid.v4()
       return foundApp ?? modelToUpdate
     },
     updateTransportModel(transportApplications, term) {
@@ -433,7 +445,7 @@ export default {
           supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
           uploadedDocuments: [],
           documentsToUpload: [],
-          id: uuid.v1(),
+          id: uuid.v4(),
           renewalTerm: term,
         })
       }
@@ -495,6 +507,7 @@ export default {
 
       switch (true) {
         case today < termOneEndDate:
+          this.fundingExpiryDate = termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.setIsCurrentTermDisabled(termOneEndDate, today)
@@ -502,6 +515,7 @@ export default {
           break
 
         case today < termTwoEndDate:
+          this.fundingExpiryDate = termTwoEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(termTwoEndDate, today)
@@ -509,6 +523,7 @@ export default {
           break
 
         case today < formattedEndDate:
+          this.fundingExpiryDate = formattedEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(formattedEndDate, today)
           break
@@ -537,9 +552,9 @@ export default {
           return models.some((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED)
         }
         case this.SUPPORT_NEEDS:
-          return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+          return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
         case this.INDIGENOUS:
-          return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term).statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+          return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
       }
     },
   },

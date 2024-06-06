@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model.indigenousFundingModel.includes('9')
+      return this.model?.indigenousFundingModel?.includes('9')
     },
     readOnly() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode) || this.formDisabled

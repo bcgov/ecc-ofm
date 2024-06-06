@@ -52,10 +52,8 @@
                 </div>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <IndigenousProgrammingSummary
-                  v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
-                  :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
-                <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT)"></SupportNeedsSummary>
+                <IndigenousProgrammingSummary v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId" :indigenousProgrammingModels="getIndigModels()"></IndigenousProgrammingSummary>
+                <SupportNeedsSummary v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId" :supportModels="getSupportModels()"></SupportNeedsSummary>
                 <TransportationSummary
                   v-if="panel.id === 'transportation' && panel.supplementaryApplicationId"
                   :draftTransportModels="getTransportModels()"
@@ -85,12 +83,13 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 import DocumentService from '@/services/documentService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import IndigenousProgrammingSummary from '@/components/supp-allowances/IndigenousProgrammingSummary.vue'
 import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummary.vue'
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS } from '@/utils/constants/suppConstants'
+import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
 import { hasDuplicateVIN } from '@/utils/common'
 
 import rules from '@/utils/rules'
@@ -124,6 +123,8 @@ export default {
   data() {
     return {
       supplementaryDeclaration: false,
+      fundingAgreement: undefined,
+      renewalTerm: undefined,
       loading: false,
       processing: false,
       panel: undefined,
@@ -235,7 +236,9 @@ export default {
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
+        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid)
 
+        this.setSuppTermDates()
         //we need submitted transport applications to verify that all VINs are unique, even in past applications
         this.allTransportModels = [...this.getTransportModels()]
         this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
@@ -247,7 +250,12 @@ export default {
           if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
             el.uploadedDocuments = await DocumentService.getDocuments(el.supplementaryApplicationId)
           }
+
+          //check if the model is for current or next term -
+          //so the "missing info" red links point to the correct section
+          el.isNextTerm = el?.renewalTerm !== this.renewalTerm
         }
+
         //every model should have the same decleration status
         this.supplementaryDeclaration = this.models.every((el) => el.supplementaryDeclaration)
         this.setSubmit()
@@ -258,8 +266,39 @@ export default {
         this.$emit('process', false)
       }
     },
+    setSuppTermDates() {
+      const today = new Date()
+
+      const formattedEndDate = new Date(this.fundingAgreement.endDate)
+      const termTwoEndDate = new Date(new Date(formattedEndDate).setFullYear(new Date(formattedEndDate).getFullYear() - 1))
+      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
+
+      switch (true) {
+        case today < termOneEndDate:
+          this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
+          break
+
+        case today < termTwoEndDate:
+          this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
+          break
+
+        case today < formattedEndDate:
+          this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
+          break
+
+        default:
+          //outside of funding term, so most recent term should be read only? we don't have requirements on this
+          this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
+      }
+    },
     getTransportModels() {
       return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+    },
+    getIndigModels() {
+      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.INDIGENOUS)
+    },
+    getSupportModels() {
+      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.SUPPORT)
     },
     getModel(type) {
       return this.models?.find((el) => el.supplementaryType === type)
