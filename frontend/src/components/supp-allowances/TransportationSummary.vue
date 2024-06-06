@@ -4,11 +4,11 @@
       <h4 class="text-decoration-underline">Transport</h4>
     </div>
 
-    <v-card v-for="(model, index) in draftTransportModels" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" class="pb-0 my-5">
+    <v-card v-for="model in draftTransportModels" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" class="pb-0 my-8">
       <v-row class="pa-7">
         <v-col cols="11">
           <div class="">
-            <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
+            <AppLabel>Vehicle</AppLabel>
           </div>
         </v-col>
       </v-row>
@@ -18,12 +18,12 @@
         <div>This Supplementary Application is for Next Year</div>
       </AppAlertBanner>
 
-      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model) && !hasDuplicateVIN(model, allTransportModels)" no-gutters class="mt-2 pt-2">
+      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model) && !hasDuplicateVIN(model, allTransportModels)" no-gutters class="mt-2 py-2">
         <v-col cols="12" lg="7" class="px-4">
           <v-col class="px-4">
             <v-row no-gutters>
               <v-col cols="6" xl="5" class="pt-2">
-                <p>VIN:</p>
+                <p>Vehicle Identification Number:</p>
               </v-col>
               <v-col cols="6" xl="7" class="pt-2 text-center">
                 <p>{{ model.VIN }}</p>

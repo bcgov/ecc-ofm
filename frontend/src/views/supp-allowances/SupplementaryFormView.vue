@@ -26,7 +26,7 @@
     </v-row>
     <v-row v-if="fundingExpiryDate">
       <v-col cols="12" class="">
-        <div>
+        <div v-if="!nextTermActive">
           If you apply for and receive funding in the current year of your funding agreement, the funds must be used by
           {{ new Date(Date.parse(fundingExpiryDate.toISOString())).toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'full' }) }}
         </div>

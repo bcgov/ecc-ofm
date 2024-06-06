@@ -43,7 +43,7 @@
     <v-card class="my-10" :class="{ greyTop: readOnly(model), 'home-card': !readOnly(model) }" :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
         <v-col cols="1">
-          <AppLabel>Vehicle {{ Number(index) + 1 }}</AppLabel>
+          <AppLabel>Vehicle</AppLabel>
         </v-col>
         <v-col v-if="!readOnly(model)">
           <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
@@ -55,7 +55,7 @@
           <v-col class="px-4">
             <v-row no-gutters>
               <v-col cols="6" xl="5" class="pt-2">
-                <p>VIN:</p>
+                <p>Vehicle Identification Number:</p>
               </v-col>
               <v-col cols="6" xl="7" class="pt-2 text-center">
                 <v-text-field
