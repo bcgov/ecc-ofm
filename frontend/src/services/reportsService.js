@@ -15,10 +15,10 @@ function convertQuestionsChoices(questions) {
 }
 
 export default {
-  async getSurveySections(surveyId) {
+  async getSurveySections(surveyTemplateId) {
     try {
-      if (!surveyId) return []
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-sections?surveyId=${surveyId}`)
+      if (!surveyTemplateId) return []
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-sections?surveyTemplateId=${surveyTemplateId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
@@ -65,10 +65,10 @@ export default {
     }
   },
 
-  async getSurveyResponsesBySurveyAndFacilityAndFiscalYear(surveyId, facilityId, fiscalYearId) {
+  async getSurveyResponsesBySurveyAndFacilityAndFiscalYear(surveyTemplateId, facilityId, fiscalYearId) {
     try {
       if (!facilityId || !fiscalYearId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses?surveyId=${surveyId}&facilityId=${facilityId}&fiscalYearId=${fiscalYearId}`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses?surveyTemplateId=${surveyTemplateId}&facilityId=${facilityId}&fiscalYearId=${fiscalYearId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the survey response by Facility and Fiscal Year - ${error}`)

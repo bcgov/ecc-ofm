@@ -9,17 +9,7 @@ import format from '@/utils/format'
 export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, [
-      'activeReportTemplates',
-      'getMonthIdByName',
-      'getMonthNameById',
-      'getFiscalYearIdByDate',
-      'getFiscalYearIdsByDates',
-      'getFiscalYearNameById',
-      'getReportTemplateIdByName',
-      'getReportTemplateNameById',
-      'getReportQuestionTypeNameById',
-    ]),
+    ...mapState(useAppStore, ['reportTemplates', 'getReportQuestionTypeNameById']),
   },
 
   created() {
@@ -31,11 +21,7 @@ export default {
     isEmpty,
 
     getReportTitle(surveyResponse) {
-      if (isEmpty(surveyResponse)) return BLANK_FIELD
-      const reportName = this.getReportTemplateNameById(surveyResponse.surveyId)
-      const month = this.getMonthNameById(surveyResponse.reportingMonthId)
-      const fiscalYear = this.getFiscalYearNameById(surveyResponse.fiscalYearId)?.slice(0, -3)
-      return `${reportName} - ${month} ${fiscalYear}`
+      return isEmpty(surveyResponse) ? BLANK_FIELD : `${surveyResponse?.surveyTemplateName} - ${surveyResponse?.monthName} ${surveyResponse?.fiscalYearName?.slice(0, -3)}`
     },
 
     isHiddenOrDeleted(item) {

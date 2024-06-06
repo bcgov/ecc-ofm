@@ -124,7 +124,8 @@ input[type='number'] {
 }
 
 .status-red {
-  background-color: #ef9a9a;
+  background-color: #d8292f;
+  color: white;
   border-radius: 5px;
   padding: 2px 6px 2px 6px;
 }

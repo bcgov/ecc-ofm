@@ -40,21 +40,6 @@ const RequestSubCategoryMappings = [
   { back: 'ofm_subcategoryid', front: 'subCategoryId' },
 ]
 
-const FiscalYearMappings = [
-  { back: 'ofm_fiscal_yearid', front: 'fiscalYearId' },
-  { back: 'ofm_caption', front: 'name' },
-  { back: 'ofm_fiscal_year_number', front: 'order' },
-  { back: 'ofm_start_date', front: 'startDate' },
-  { back: 'ofm_end_date', front: 'endDate' },
-  { back: 'statecode', front: 'stateCode' },
-  { back: 'statuscode', front: 'statusCode' },
-]
-
-const MonthMappings = [
-  { back: 'ofm_monthid', front: 'monthId' },
-  { back: 'ofm_name', front: 'name' },
-]
-
 const AssistanceRequestMappings = [
   { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
   { back: 'ofm_subject', front: 'subject' },
@@ -367,8 +352,8 @@ const PermissionMappings = [
 ]
 
 const ReportTemplateMappings = [
-  { back: 'ofm_surveyid', front: 'surveyId' },
-  { back: 'ofm_name', front: 'surveyTitle' },
+  { back: 'ofm_surveyid', front: 'surveyTemplateId' },
+  { back: 'ofm_name', front: 'surveyTemplateName' },
   { back: 'ofm_version', front: 'version' },
 ]
 
@@ -376,7 +361,7 @@ const SurveySectionMappings = [
   { back: 'ofm_sectionid', front: 'sectionId' },
   { back: 'ofm_section_title', front: 'title' },
   { back: 'ofm_section_order', front: 'order' },
-  { back: '_ofm_survey_value', front: 'surveyId' },
+  { back: '_ofm_survey_value', front: 'surveyTemplateId' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -390,7 +375,6 @@ const SurveyQuestionMappings = [
   { back: 'ofm_response_required', front: 'responseRequired' },
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
-  { back: 'ofm_occurence@OData.Community.Display.V1.FormattedValue', front: 'surveyResponseType' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -407,19 +391,15 @@ const SurveyQuestionBusinessRulesMappings = [
 
 const SurveyResponseMappings = [
   { back: 'ofm_survey_responseid', front: 'surveyResponseId' },
-  { back: 'ofm_response_id', front: 'surveyResponseReferenceNumber' },
-  { back: '_ofm_survey_value', front: 'surveyId' },
-  { back: '_ofm_survey_value@OData.Community.Display.V1.FormattedValue', front: 'surveyName' },
-  { back: 'ofm_name', front: 'surveyResponseTitle' },
-  { back: '_ofm_contact_value', front: 'contactId' },
+  { back: 'ofm_name', front: 'surveyResponseReferenceNumber' },
+  { back: '_ofm_survey_value', front: 'surveyTemplateId' },
+  { back: '_ofm_survey_value@OData.Community.Display.V1.FormattedValue', front: 'surveyTemplateName' },
   { back: '_ofm_facility_value', front: 'facilityId' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
   { back: '_ofm_fiscal_year_value', front: 'fiscalYearId' },
   { back: '_ofm_fiscal_year_value@OData.Community.Display.V1.FormattedValue', front: 'fiscalYearName' },
-  { back: '_ofm_reporting_month_value', front: 'reportingMonthId' },
-  { back: '_ofm_reporting_month_value@OData.Community.Display.V1.FormattedValue', front: 'reportingMonthName' },
-  { back: 'ofm_response_type', front: 'surveyResponseType' },
-  { back: 'modifiedon', front: 'latestActivity' },
+  { back: 'ofm_report_month@OData.Community.Display.V1.FormattedValue', front: 'monthName' },
+  { back: '_ofm_contact_value', front: 'submittedBy' },
   { back: 'ofm_submitted_on', front: 'submittedDate' },
   { back: 'ofm_duedate', front: 'dueDate' },
   { back: 'ofm_late_flag', front: 'isSubmittedLate' },
@@ -447,11 +427,9 @@ module.exports = {
   DocumentMappings,
   FacilityIntakeMappings,
   FacilityMappings,
-  FiscalYearMappings,
   FundingAgreementMappings,
   LicenceMappings,
   LicenceDetailsMappings,
-  MonthMappings,
   NotificationMappings,
   OrganizationMappings,
   PaymentMappings,

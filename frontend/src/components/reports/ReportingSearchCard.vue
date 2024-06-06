@@ -9,11 +9,11 @@
             </v-col>
             <v-col cols="12" sm="9" lg="8" xl="7">
               <v-select
-                v-model.lazy="selectedReportFilterTypes"
-                :items="activeReportTemplates"
+                v-model.lazy="selectedReportTypes"
+                :items="reportTemplates"
                 :disabled="loading"
                 :rules="rules.required"
-                item-title="surveyTitle"
+                item-title="surveyTemplateName"
                 variant="outlined"
                 label="Select Report Type(s)"
                 chips
@@ -40,12 +40,9 @@
             <v-col cols="12" sm="9" lg="8" xl="7">
               <v-select v-model.lazy="selectedStatuses" :items="STATUS_FILTER_OPTIONS" :disabled="loading" :rules="rules.required" variant="outlined" label="Select Status(s)" chips multiple>
                 <template #prepend-item>
-                  <v-list-item title="Select All" @click="toggleAllReportTypes">
+                  <v-list-item title="Select All" @click="toggleAllStatuses">
                     <template #prepend>
-                      <v-checkbox-btn
-                        :color="someReportTypesSelected ? '#003366' : undefined"
-                        :indeterminate="someReportTypesSelected && !allReportTypesSelected"
-                        :model-value="someReportTypesSelected" />
+                      <v-checkbox-btn :color="someStatusesSelected ? '#003366' : undefined" :indeterminate="someStatusesSelected && !allStatusesSelected" :model-value="someStatusesSelected" />
                     </template>
                   </v-list-item>
                   <v-divider class="mt-2" />
@@ -117,9 +114,8 @@ export default {
   data() {
     return {
       isFormComplete: false,
-      selectedFacilities: null,
       selectedDateFilterType: null,
-      selectedReportFilterTypes: [],
+      selectedReportTypes: [],
       selectedStatuses: null,
       selectedDateFrom: null,
       selectedDateTo: null,
@@ -150,10 +146,16 @@ export default {
       }
     },
     allReportTypesSelected() {
-      return this.selectedReportFilterTypes?.length === this.activeReportTemplates?.length
+      return this.selectedReportTypes?.length === this.reportTemplates?.length
     },
     someReportTypesSelected() {
-      return this.selectedReportFilterTypes?.length > 0
+      return this.selectedReportTypes?.length > 0
+    },
+    allStatusesSelected() {
+      return this.selectedStatuses?.length === this.STATUS_FILTER_OPTIONS?.length
+    },
+    someStatusesSelected() {
+      return this.selectedStatuses?.length > 0
     },
   },
 
@@ -176,10 +178,9 @@ export default {
 
   methods: {
     resetFilter() {
-      this.selectedFacilities = this.userInfo?.facilities
-      this.selectedDateFilterType = DATE_FILTER_TYPES.THREE_MONTHS
-      this.selectedReportFilterTypes = this.activeReportTemplates
+      this.selectedReportTypes = this.reportTemplates
       this.selectedStatuses = this.STATUS_FILTER_OPTIONS
+      this.selectedDateFilterType = DATE_FILTER_TYPES.THREE_MONTHS
       this.selectedDateFrom = null
       this.selectedDateTo = null
     },
@@ -188,6 +189,8 @@ export default {
       await this.$refs.form?.validate()
       if (!this.isFormComplete) return
       const searchQueries = {
+        reportTypes: this.selectedReportTypes,
+        statuses: this.selectedStatuses,
         dateFilterType: this.selectedDateFilterType,
         dateFrom: this.dateFrom,
         dateTo: this.dateTo,
@@ -196,7 +199,11 @@ export default {
     },
 
     toggleAllReportTypes() {
-      this.selectedReportFilterTypes = this.allReportTypesSelected ? [] : this.activeReportTemplates
+      this.selectedReportTypes = this.allReportTypesSelected ? [] : this.reportTemplates
+    },
+
+    toggleAllStatuses() {
+      this.selectedStatuses = this.allStatusesSelected ? [] : this.STATUS_FILTER_OPTIONS
     },
   },
 }

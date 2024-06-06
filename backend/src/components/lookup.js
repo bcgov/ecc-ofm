@@ -10,8 +10,6 @@ const {
   RequestCategoryMappings,
   RequestSubCategoryMappings,
   RoleMappings,
-  FiscalYearMappings,
-  MonthMappings,
   ReportTemplateMappings,
 } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
@@ -40,30 +38,6 @@ async function getRequestSubCategories() {
     lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
   }
   return requestSubCategories
-}
-
-async function getFiscalYears() {
-  let fiscalYears = lookupCache.get('fiscalYears')
-  if (!fiscalYears) {
-    fiscalYears = []
-    const response = await getOperation(
-      'ofm_fiscal_years?$select=ofm_fiscal_yearid,ofm_caption,ofm_fiscal_year_number,ofm_start_date,ofm_end_date,statuscode,statecode&$orderby=ofm_fiscal_year_number',
-    )
-    response?.value?.forEach((item) => fiscalYears.push(new MappableObjectForFront(item, FiscalYearMappings)))
-    lookupCache.put('fiscalYears', fiscalYears, ONE_HOUR_MS)
-  }
-  return fiscalYears
-}
-
-async function getMonths() {
-  let months = lookupCache.get('months')
-  if (!months) {
-    months = []
-    const response = await getOperation('ofm_months?$select=ofm_monthid,ofm_name')
-    response?.value?.forEach((item) => months.push(new MappableObjectForFront(item, MonthMappings)))
-    lookupCache.put('months', months, ONE_HOUR_MS)
-  }
-  return months
 }
 
 async function fetchAndCacheData(cacheKey, operationName) {
@@ -119,18 +93,20 @@ async function getRoles() {
   return roles
 }
 
-async function getActiveReportTemplates() {
-  let activeReportTemplates = lookupCache.get('activeReportTemplates')
-  if (!activeReportTemplates) {
-    activeReportTemplates = []
-    const response = await getOperation('ofm_surveies?$select=ofm_surveyid,ofm_name,ofm_version&$filter=(ofm_is_published eq true)')
+async function getReportTemplates() {
+  let reportTemplates = lookupCache.get('reportTemplates')
+  if (!reportTemplates) {
+    reportTemplates = []
+    // TODO (vietle-cgi) - we will need to revisit this queries once we receive confirmation from CRM about how to get all currently-published or used-to-be-published templates
+    const response = await getOperation('ofm_surveies?$select=ofm_surveyid,ofm_name,ofm_version')
     response?.value?.forEach((item) => {
-      const report = new MappableObjectForFront(item, ReportTemplateMappings)
-      activeReportTemplates.push(report)
+      const report = new MappableObjectForFront(item, ReportTemplateMappings).toJSON()
+      reportTemplates.push(report)
     })
-    lookupCache.put('activeReportTemplates', activeReportTemplates, ONE_HOUR_MS)
+    reportTemplates = [...new Set(reportTemplates?.map((template) => template.surveyTemplateName))]
+    lookupCache.put('reportTemplates', reportTemplates, ONE_HOUR_MS)
   }
-  return activeReportTemplates
+  return reportTemplates
 }
 
 async function getHealthAuthorities() {
@@ -158,20 +134,7 @@ async function getPaymentTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [
-      applicationIntakes,
-      requestCategories,
-      requestSubCategories,
-      roles,
-      healthAuthorities,
-      facilityTypes,
-      licenceTypes,
-      activeReportTemplates,
-      reportQuestionTypes,
-      paymentTypes,
-      fiscalYears,
-      months,
-    ] = await Promise.all([
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportTemplates, reportQuestionTypes, paymentTypes] = await Promise.all([
       getApplicationIntakes(),
       getRequestCategories(),
       getRequestSubCategories(),
@@ -179,11 +142,9 @@ async function getLookupInfo(_req, res) {
       getHealthAuthorities(),
       getFacilityTypes(),
       getLicenceTypes(),
-      getActiveReportTemplates(),
+      getReportTemplates(),
       getReportQuestionTypes(),
       getPaymentTypes(),
-      getFiscalYears(),
-      getMonths(),
     ])
     const resData = {
       applicationIntakes: applicationIntakes,
@@ -193,11 +154,9 @@ async function getLookupInfo(_req, res) {
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
-      activeReportTemplates: activeReportTemplates,
+      reportTemplates: reportTemplates,
       reportQuestionTypes: reportQuestionTypes,
       paymentTypes: paymentTypes,
-      fiscalYears: fiscalYears,
-      months: months,
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {

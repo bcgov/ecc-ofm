@@ -190,17 +190,6 @@ export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
   NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
 })
 
-export const REPORT_TEMPLATE_NAMES = Object.freeze({
-  MONTHLY_REPORTING: 'Monthly Reporting',
-})
-
-export const SURVEY_RESPONSE_TYPES = Object.freeze({
-  MONTHLY: 'Monthly',
-  QUARTERLY: 'Quarterly',
-  BI_ANNUAL: 'Bi-annual',
-  ANNUAL: 'Annual',
-})
-
 export const SURVEY_RESPONSE_STATUSES = Object.freeze({
   DRAFT: 'Draft',
   COMPLETED: 'Completed',

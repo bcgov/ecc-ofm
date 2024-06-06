@@ -13,7 +13,7 @@
       <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">
         <div>You are up to date with your monthly reports.</div>
       </AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyResponseReferenceNumber" density="compact">
+      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact">
         <template #[`item.alert`]="{ item }">
           <span v-if="isOverdue(item)">
             <v-icon color="error">mdi-alert</v-icon>
@@ -30,14 +30,11 @@
         <template #[`item.status`]>
           <span class="status-gray">Draft</span>
         </template>
-        <template #[`item.latestActivity`]="{ item }">
-          {{ format.formatDate(item?.latestActivity) }}
-        </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn v-if="showOpen(item)" variant="text" @click="openSurveyResponse(item)">
+          <v-btn variant="text" @click="openSurveyResponse(item)">
             <v-icon size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
-          <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
+          <v-btn v-if="showTrash" variant="text" @click="toggleCancelDialog(item)">
             <v-icon size="large">mdi-trash-can-outline</v-icon>
           </v-btn>
         </template>
@@ -57,7 +54,7 @@ import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 
 export default {
   components: { AppAlertBanner, FacilityFilter, CancelSurveyResponseDialog },
@@ -70,7 +67,6 @@ export default {
         { title: 'Title', key: 'title' },
         { title: 'Facility', key: 'facilityName' },
         { title: 'Status', key: 'status' },
-        { title: 'Latest Activity', key: 'latestActivity' },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       loading: false,
@@ -92,6 +88,10 @@ export default {
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
+    },
+
+    showTrash() {
+      return this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
   },
 
@@ -121,32 +121,18 @@ export default {
       }
     },
 
-    // All Over Due reports are at top of the list. If two reports have the same alert, sort them by Latest Activity in descending order
+    // All Over Due reports are at top of the list.
     sortPendingReports() {
       this.pendingReports?.sort((a, b) => {
-        const isOverdueA = this.isOverdue(a) ? 1 : -1
-        const isOverdueB = this.isOverdue(b) ? 1 : -1
-        return isOverdueA === isOverdueB ? new Date(b.latestActivity) - new Date(a.latestActivity) : isOverdueB
+        const isOverdueA = this.isOverdue(a) ? -1 : 1
+        const isOverdueB = this.isOverdue(b) ? -1 : 1
+        return isOverdueA - isOverdueB
       })
     },
 
     openSurveyResponse(surveyResponse) {
       this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: surveyResponse?.surveyResponseId } })
     },
-
-    /*
-    // TODO (vietle-cgi) Update the reporting month once we get the confirmation from the business
-    getSurveyResponseType(reportingMonthName) {
-      let responseType = SURVEY_RESPONSE_TYPES.MONTHLY
-      if (['November'].includes(reportingMonthName)) {
-        responseType = SURVEY_RESPONSE_TYPES.QUARTERLY
-      } else if (['December'].includes(reportingMonthName)) {
-        responseType = SURVEY_RESPONSE_TYPES.BI_ANNUAL
-      }
-      // TODO (vietle-cgi) Add ANNUAL type when we know which month to use
-      return responseType
-    },
-    */
 
     cancel(surveyResponseId) {
       this.$emit('cancel', surveyResponseId)
@@ -162,16 +148,6 @@ export default {
      */
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
-    },
-
-    showOpen(surveyResponse) {
-      // Always allow navigation to an existing report. It will be readonly for users without 'Submit Draft Reports'
-      // Only users with 'Submit Draft Reports' can start a new report
-      return surveyResponse?.surveyResponseId || this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)
-    },
-
-    showTrash(surveyResponse) {
-      return surveyResponse?.surveyResponseId && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
 
     isOverdue(report) {

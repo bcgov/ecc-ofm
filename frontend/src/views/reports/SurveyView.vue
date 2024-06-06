@@ -41,7 +41,7 @@
 
 <script>
 import { isEmpty, cloneDeep } from 'lodash'
-import { CRM_STATE_CODES, SURVEY_RESPONSE_TYPES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
+import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
 import { mapActions } from 'pinia'
@@ -68,7 +68,7 @@ export default {
     return {
       rules,
       loading: false,
-      validation: undefined,
+      validation: false,
       processing: false,
       showSubmitConfirmationDialog: false,
       showCancelDialog: false,
@@ -116,7 +116,7 @@ export default {
       async handler() {
         try {
           if (this.readonly || !this.showSubmit) return
-          this.validation = this.validation ?? this.showSubmit
+          this.validation = this.validation || this.showSubmit
           this.processing = true
           await this.getQuestionsResponses()
           this.verifySurveyComplete()
@@ -144,14 +144,12 @@ export default {
         this.loading = true
         this.surveyResponse = await ReportsService.getSurveyResponse(this.$route.params.surveyResponseGuid)
         await this.getQuestionsResponses()
-        this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyId)
+        this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyTemplateId)
         await Promise.all(
           this.sections?.map(async (section) => {
             section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
           }),
         )
-
-        this.filterSectionQuestionsUsingSurveyResponseType()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()
       } catch (error) {
@@ -236,6 +234,7 @@ export default {
       try {
         const payload = {
           statusCode: SURVEY_RESPONSE_STATUS_CODES.COMPLETED,
+          submittedBy: this.userInfo?.contactId,
         }
         await this.save()
         this.processing = true
@@ -246,24 +245,6 @@ export default {
       } finally {
         this.processing = false
       }
-    },
-
-    filterSectionQuestionsUsingSurveyResponseType() {
-      let surveyResponseTypeToBeIncluded = [SURVEY_RESPONSE_TYPES.MONTHLY]
-      switch (this.surveyResponse?.surveyResponseType) {
-        case SURVEY_RESPONSE_TYPES.QUARTERLY:
-          surveyResponseTypeToBeIncluded.push(SURVEY_RESPONSE_TYPES.QUARTERLY)
-          break
-        case SURVEY_RESPONSE_TYPES.BI_ANNUAL:
-          surveyResponseTypeToBeIncluded.push(SURVEY_RESPONSE_TYPES.BI_ANNUAL)
-          break
-        case SURVEY_RESPONSE_TYPES.ANNUAL:
-          surveyResponseTypeToBeIncluded.push(SURVEY_RESPONSE_TYPES.ANNUAL)
-      }
-      this.sections?.forEach((section) => {
-        section.questions = section.questions?.filter((question) => surveyResponseTypeToBeIncluded.includes(question.surveyResponseType))
-      })
-      this.sections = this.sections?.filter((section) => !isEmpty(section.questions))
     },
 
     async getQuestionsResponses() {
@@ -478,11 +459,13 @@ export default {
     },
 
     isLastSection(section) {
+      if (isEmpty(this.sections)) return
       const index = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
       return index === this.sections?.length - 1
     },
 
     isFirstSection(section) {
+      if (isEmpty(this.sections)) return
       const index = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
       return index === 0
     },

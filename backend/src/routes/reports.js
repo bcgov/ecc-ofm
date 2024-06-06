@@ -20,29 +20,6 @@ const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
-const postSurveyResponseSchema = {
-  contactId: {
-    in: ['body'],
-    exists: { errorMessage: '[contactId] is required' },
-  },
-  facilityId: {
-    in: ['body'],
-    exists: { errorMessage: '[facilityId] is required' },
-  },
-  surveyId: {
-    in: ['body'],
-    exists: { errorMessage: '[surveyId] is required' },
-  },
-  fiscalYearId: {
-    in: ['body'],
-    exists: { errorMessage: '[fiscalYearId] is required' },
-  },
-  reportingMonthId: {
-    in: ['body'],
-    exists: { errorMessage: '[reportingMonthId] is required' },
-  },
-}
-
 const postQuestionResponseSchema = {
   questionId: {
     in: ['body'],
@@ -61,7 +38,7 @@ const postQuestionResponseSchema = {
 /**
  * Get survey's sections using query:
  * Accepted queries:
- * - surveyId: to find all sections in a survey
+ * - surveyTemplateId: to find all sections in a survey
  */
 router.get('/survey-sections', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
   validationResult(req).throw()

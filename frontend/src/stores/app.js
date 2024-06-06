@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { defineStore } from 'pinia'
 
 import ApiService from '@/common/apiService'
@@ -20,10 +19,8 @@ export const useAppStore = defineStore('app', {
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
-    activeReportTemplates: {},
+    reportTemplates: {},
     reportQuestionTypes: {},
-    fiscalYears: {},
-    months: {},
     applicationIntakes: {},
     paymentTypes: {},
   }),
@@ -70,55 +67,6 @@ export const useAppStore = defineStore('app', {
         return questionType?.description
       }
     },
-    getMonthIdByName: (state) => {
-      return (monthName) => {
-        const month = state.months?.find((month) => month.name === monthName)
-        return month?.monthId
-      }
-    },
-    getMonthNameById: (state) => {
-      return (id) => {
-        const month = state.months?.find((month) => month.monthId === id)
-        return month?.name
-      }
-    },
-    getFiscalYearNameById: (state) => {
-      return (id) => {
-        const year = state.fiscalYears?.find((fiscalYear) => fiscalYear.fiscalYearId === id)
-        return year?.name
-      }
-    },
-    getFiscalYearIdByDate: (state) => {
-      return (date) => {
-        const year = state.fiscalYears?.find((fiscalYear) => moment(fiscalYear.startDate).isSameOrBefore(moment(date)) && moment(fiscalYear.endDate).isSameOrAfter(moment(date)))
-        return year?.fiscalYearId
-      }
-    },
-    getFiscalYearIdsByDates: (state) => {
-      return (start, end) => {
-        const startDate = moment(start)
-        const endDate = moment(end)
-        const years = state.fiscalYears?.filter(
-          (fiscalYear) =>
-            (moment(fiscalYear.startDate).isSameOrBefore(startDate) && moment(fiscalYear.endDate).isSameOrAfter(startDate)) ||
-            (moment(fiscalYear.startDate).isSameOrBefore(endDate) && moment(fiscalYear.endDate).isSameOrAfter(endDate)) ||
-            (moment(fiscalYear.startDate).isSameOrAfter(startDate) && moment(fiscalYear.endDate).isSameOrBefore(endDate)),
-        )
-        return years?.map((year) => year.fiscalYearId)
-      }
-    },
-    getReportTemplateIdByName: (state) => {
-      return (name) => {
-        const reportTemplate = state.activeReportTemplates?.find((report) => report.surveyTitle === name)
-        return reportTemplate?.surveyId
-      }
-    },
-    getReportTemplateNameById: (state) => {
-      return (id) => {
-        const reportTemplate = state.activeReportTemplates?.find((report) => report.surveyId === id)
-        return reportTemplate?.surveyTitle
-      }
-    },
   },
   actions: {
     async getLookupInfo() {
@@ -131,10 +79,8 @@ export const useAppStore = defineStore('app', {
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes
-        this.activeReportTemplates = lookupInfo?.data?.activeReportTemplates
+        this.reportTemplates = lookupInfo?.data?.reportTemplates
         this.reportQuestionTypes = lookupInfo?.data?.reportQuestionTypes
-        this.fiscalYears = lookupInfo?.data?.fiscalYears
-        this.months = lookupInfo?.data?.months
         this.applicationIntakes = lookupInfo?.data?.applicationIntakes
         this.paymentTypes = lookupInfo?.data?.paymentTypes
       }

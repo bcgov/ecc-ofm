@@ -20,8 +20,6 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { SURVEY_RESPONSE_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
-import ReportsService from '@/services/reportsService'
 
 export default {
   name: 'CancelSurveyResponseDialog',
@@ -66,11 +64,6 @@ export default {
     async cancel() {
       try {
         this.loading = true
-        const payload = {
-          statusCode: SURVEY_RESPONSE_STATUS_CODES.INACTIVE,
-          stateCode: CRM_STATE_CODES.INACTIVE,
-        }
-        await ReportsService.updateSurveyResponse(this.surveyResponseId, payload)
         this.$emit('cancel', this.surveyResponseId)
         this.setSuccessAlert(`Report response cancelled successfully`)
       } catch (error) {

@@ -59,15 +59,22 @@ export default {
       facilities: [],
       submittedReports: [],
       facilityNameFilter: undefined,
+      searchQueries: {},
     }
   },
 
   computed: {
     filteredSubmittedReports() {
+      let filteredReports = this.submittedReports
       if (!isEmpty(this.facilityNameFilter)) {
-        return this.submittedReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
+        filteredReports = filteredReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
       }
-      return this.submittedReports
+      if (!isEmpty(this.searchQueries)) {
+        filteredReports = filteredReports?.filter(
+          (report) => this.searchQueries?.reportTypes?.includes(report.surveyTemplateName) && this.searchQueries?.statuses?.includes(this.getStatusText(report)),
+        )
+      }
+      return filteredReports
     },
 
     filteredFacilityIds() {
@@ -81,6 +88,7 @@ export default {
       try {
         this.loading = true
         this.submittedReports = []
+        this.searchQueries = searchQueries
         await Promise.all(
           this.userInfo?.facilities?.map(async (facility) => {
             const response = await ReportsService.getSubmittedSurveyResponsesByFacilityAndSubmittedDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
