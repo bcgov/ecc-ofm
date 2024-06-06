@@ -1,4 +1,8 @@
-'use strict';
+const IOREDIS = require('ioredis');
+const config = require('../../config');
+const log = require('../../components/logger');
+const connectRedis = require('connect-redis');
+
 let redisClient;
 let connectionClosed = false;
 const Redis = {
@@ -8,9 +12,6 @@ const Redis = {
    * The redis client can be reused rather than creating multiple clients.
    */
   init() {
-    const IOREDIS = require('ioredis');
-    const config = require('../../config');
-    const log = require('../../components/logger');
     if (config.get('redis:clustered') == 'true') {
       log.info('using CLUSTERED Redis implementation');
       redisClient = new IOREDIS.Cluster([{ //TODO implement clustering
@@ -45,4 +46,18 @@ const Redis = {
     return redisClient;
   }
 };
-module.exports = Redis;
+
+function getRedisDbSession(expressSession) {
+  if (redisClient === undefined) Redis.init();
+  const RedisStore = connectRedis(expressSession)
+  const dbSession = new RedisStore({
+    client: Redis.getRedisClient(),
+    prefix: 'ccof-sess:',
+  })
+  return dbSession
+}
+
+module.exports = {
+  Redis,
+  getRedisDbSession
+};

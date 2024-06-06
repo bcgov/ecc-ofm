@@ -39,8 +39,8 @@ const paymentsRouter = require('./routes/payments')
 const reportsRouter = require('./routes/reports')
 const { MappableObjectForBack } = require('./util/mapping/MappableObject')
 const { RoleMappings } = require('./util/mapping/Mappings')
+const { getRedisDbSession } = require('./util/redis/redis-client');
 
-const connectRedis = require('connect-redis')
 const promMid = require('express-prometheus-middleware')
 
 //initialize app
@@ -72,7 +72,8 @@ const logStream = {
   },
 }
 
-const dbSession = getRedisDbSession()
+const dbSession = config.get('redis:enable') ? getRedisDbSession(session) : undefined
+
 const cookie = {
   secure: true,
   httpOnly: true,
@@ -98,20 +99,6 @@ app.use(require('./routes/health-check').router)
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize())
 app.use(passport.session())
-
-function getRedisDbSession() {
-  if (config.get('redis:use') == 'true') {
-    const Redis = require('./util/redis/redis-client')
-    Redis.init() // call the init to initialize appropriate client, and reuse it across the app.
-    const RedisStore = connectRedis(session)
-    const dbSession = new RedisStore({
-      client: Redis.getRedisClient(),
-      prefix: 'ccof-sess:',
-    })
-    return dbSession
-  }
-  return undefined
-}
 
 function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, clientId, clientSecret) {
   passport.use(
