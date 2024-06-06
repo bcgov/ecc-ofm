@@ -133,15 +133,16 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
           return verified('No access token', null)
         }
 
-        // Set additional user info for validation
-        await populateUserInfo(profile)
-
         //set access and refresh tokens
         profile.jwtFrontend = await auth.generateUiToken(profile)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
         profile.idToken = idToken
+
+        // Set additional user info for validation
+        await populateUserInfo(profile)
+
         return verified(null, profile)
       },
     ),
@@ -152,7 +153,12 @@ async function populateUserInfo(profile) {
   const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
   if (username.idp === config.get('oidc:idpHintBceid')) {
-    const user = await getUserProfile(username.guid)
+    const bceidUsername = profile._json.bceid_username
+
+    // If the userGuid cannot be found in Dynamics, then Dynamics will check if the userName exists,
+    // If userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
+    const user = await getUserProfile(username.guid, bceidUsername)
+
     profile.role = user?.role
     profile.org = user?.organization?.accountid
     profile.contactId = user?.contactid

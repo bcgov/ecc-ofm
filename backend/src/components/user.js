@@ -22,13 +22,16 @@ const {
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
+const { Http } = require('winston/lib/winston/transports')
 
 const USER_NOT_FOUND = 'User not found.'
 const NO_PERMISSIONS = 'No permissions.'
 const NO_PROFILE_FOUND = 'No profile found.'
 
 async function getUserInfo(req, res) {
+  log.info('getUserInfo')
   const userInfo = getSessionUser(req)
+  log.info('userInfo', userInfo)
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     return res.status(HttpStatus.UNAUTHORIZED).json({
       message: 'No session data',
@@ -37,7 +40,7 @@ async function getUserInfo(req, res) {
   const userGuid = getUserGuid(req)
   const isIdir = isIdirUser(req)
   const queryUserName = req.params?.userName
-  const userName = getUserName(req)
+  const currentUserName = getUserName(req)
   const businessName = getBusinessName(req)
 
   // if is idir user (ministry user), make sure they are a user in dynamics
@@ -54,8 +57,8 @@ async function getUserInfo(req, res) {
   }
 
   let resData = {
-    displayName: queryUserName ? userName + '-' + queryUserName : userName,
-    userName: userName,
+    displayName: queryUserName ? currentUserName + '-' + queryUserName : currentUserName,
+    userName: currentUserName,
     businessName: businessName,
     isMinistryUser: isIdir,
     serverTime: new Date(),
@@ -65,7 +68,7 @@ async function getUserInfo(req, res) {
   if (isIdir) {
     if (queryUserName) {
       try {
-        log.info(`Ministry user [${userName}] is impersonating with username: [${queryUserName}].`)
+        log.info(`Ministry user [${currentUserName}] is impersonating with username: [${queryUserName}].`)
         // dynamics api requires a userID. if userID not found then it wil use the query name
         // put a random userID so that we only search by queryname
         userResponse = await getUserProfile(null, queryUserName)
@@ -88,11 +91,10 @@ async function getUserInfo(req, res) {
       return res.status(HttpStatus.OK).json(resData)
     }
   } else {
-    // This is a BCeID user: if the userGuid cannot be found in dyanmics, then dyanmics will check if the userName exists,
-    // if userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
+    // This is a BCeID user
     try {
-      log.verbose('BCEID User guid: ' + userGuid + ' username: ' + userName)
-      userResponse = await getUserProfile(userGuid, userName)
+      log.verbose('BCEID User guid: ' + userGuid + ' username: ' + currentUserName)
+      userResponse = await getUserProfile(userGuid, currentUserName)
     } catch (e) {
       log.error('getUserProfile Error', e.response ? e.response.status : e.message)
       return res.status(HttpStatus.UNAUTHORIZED).json(resData)
@@ -149,10 +151,20 @@ async function getUserProfile(userGuid, userName) {
     }
 
     log.verbose('UserProfile Url is', url)
-    let response = undefined
-    response = await axios.get(url, getHttpHeader())
-    log.verbose('getUserProfile response:', response.data)
-    return response.data
+    const response = await axios.get(url, getHttpHeader())
+    const userProfile = response.data
+    log.verbose('getUserProfile response:', userProfile)
+
+    // If querying by userGuid and userName validate that the returned profile matches the userGuid since
+    // the userName alone can result in a match
+    // BCeID usernames can change but the guid won't so check for a mismatch to prevent unauthorized access
+    if (userGuid) {
+      if (userProfile.ccof_userid !== userGuid) {
+        return null
+      }
+    }
+
+    return userProfile
   } catch (e) {
     if (e.response?.status == '404') {
       const data = e.response?.data
