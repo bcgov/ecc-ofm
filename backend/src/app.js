@@ -72,7 +72,7 @@ const logStream = {
   },
 }
 
-const dbSession = config.get('redis:enable') ? getRedisDbSession(session) : undefined
+const dbSession = config.get('redis:enable') == 'true' ? getRedisDbSession(session) : undefined
 
 const cookie = {
   secure: true,
