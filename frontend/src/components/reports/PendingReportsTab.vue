@@ -95,6 +95,7 @@ export default {
     async loadPendingReports() {
       try {
         this.loading = true
+        this.facilityNameFilter = null
         this.pendingReports = []
         await Promise.all(
           this.userInfo?.facilities?.map(async (facility) => {
