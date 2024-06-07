@@ -9,7 +9,7 @@ export default {
       //CRM confirmed that there will only ever be one Funding Agreement per ApplicationID. However response returns an array. If index 0 contains data, return it
       return response?.data[0]
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
+      console.log(`Failed to get the active funding agreement by application id - ${error}`)
       throw error
     }
   },
@@ -54,7 +54,7 @@ export default {
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       return response?.data[0]
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
+      console.log(`Failed to get the active funding agreement by facility id - ${error}`)
       throw error
     }
   },
@@ -66,7 +66,7 @@ export default {
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`)
       return response?.data[0]
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by application id - ${error}`)
+      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
       throw error
     }
   },

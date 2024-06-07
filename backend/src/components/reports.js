@@ -5,13 +5,16 @@ const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, Q
 const log = require('../components/logger')
 const HttpStatus = require('http-status-codes')
 const { isEmpty, orderBy } = require('lodash')
-const { buildFilterQuery } = require('../util/common')
+const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
+const { SURVEY_RESPONSE_STATUS_CODES } = require('../util/constants')
 
 function mapQuestionObjectForFront(data) {
   const question = new MappableObjectForFront(data, SurveyQuestionMappings).toJSON()
-  if (!isEmpty(question) && 'ofm_question_business_rule_ques' in data) {
+  if (!isEmpty(question) && 'ofm_ofm_question_ofm_question_business_rule_parentquestionid' in data) {
     question.businessRules = []
-    data['ofm_question_business_rule_ques']?.forEach((rule) => question?.businessRules.push(new MappableObjectForFront(rule, SurveyQuestionBusinessRulesMappings).toJSON()))
+    data['ofm_ofm_question_ofm_question_business_rule_parentquestionid']?.forEach((rule) =>
+      question?.businessRules.push(new MappableObjectForFront(rule, SurveyQuestionBusinessRulesMappings).toJSON()),
+    )
   }
   return question
 }
@@ -52,11 +55,12 @@ async function getSurveySections(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const sections = []
-    const operation = `ofm_sections?$filter=ofm_is_published eq true and _ofm_survey_value eq '${req?.query?.surveyId}'&$orderby=ofm_section_order`
+    const operation = `ofm_sections?$filter=ofm_is_published eq true and _ofm_survey_value eq '${req?.query?.surveyTemplateId}'&$orderby=ofm_section_order`
     const response = await getOperation(operation)
     response?.value?.forEach((section) => sections.push(new MappableObjectForFront(section, SurveySectionMappings).toJSON()))
     return res.status(HttpStatus.OK).json(sections)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -68,7 +72,7 @@ async function getSurveyQuestions(req, res) {
     }
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows,ofm_response_required,ofm_occurence&$expand=ofm_question_business_rule_ques($select=_ofm_true_child_question_value,_ofm_false_child_question_value,ofm_question_business_ruleid,ofm_condition,ofm_parent_has_response,_ofm_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_response_required,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows&$expand=ofm_ofm_question_ofm_question_business_rule_parentquestionid($select=_ofm_child_question_value,ofm_condition,_ofm_false_child_question_value,ofm_parent_has_response,_ofm_parentquestionid_value,ofm_question_business_ruleid,_ofm_true_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
     }
     const response = await getOperation(operation)
     let questions = []
@@ -84,6 +88,7 @@ async function getSurveyQuestions(req, res) {
     questions = orderBy(questions, 'sequence')
     return res.status(HttpStatus.OK).json(questions)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -107,7 +112,11 @@ async function getSurveyResponses(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const surveyResponses = []
-    const operation = `ofm_survey_responses?$filter=(${buildFilterQuery(req?.query, SurveyResponseMappings)})`
+    let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE}`
+    if (req.query?.isSubmitted != null) {
+      filter += req.query?.isSubmitted === 'true' ? ` and ofm_submitted_on ne null` : ` and ofm_submitted_on eq null`
+    }
+    const operation = `ofm_survey_responses?$filter=(${filter})`
     const response = await getOperation(operation)
     response?.value?.forEach((surveyResponse) => surveyResponses.push(new MappableObjectForFront(surveyResponse, SurveyResponseMappings).toJSON()))
     if (isEmpty(surveyResponses)) {
@@ -120,30 +129,13 @@ async function getSurveyResponses(req, res) {
   }
 }
 
-async function createSurveyResponse(req, res) {
-  try {
-    const payload = {
-      'ofm_contact@odata.bind': `/contacts(${req.body?.contactId})`,
-      'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
-      'ofm_survey@odata.bind': `/ofm_surveies(${req.body?.surveyId})`,
-      'ofm_fiscal_year@odata.bind': `/ofm_fiscal_years(${req.body?.fiscalYearId})`,
-      'ofm_reporting_month@odata.bind': `/ofm_months(${req.body?.reportingMonthId})`,
-      ofm_response_type: req.body?.surveyResponseType,
-      ofm_name: req.body?.surveyResponseTitle,
-    }
-    const response = await postOperation('ofm_survey_responses', payload)
-    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SurveyResponseMappings).toJSON())
-  } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
 async function getSurveyResponse(req, res) {
   try {
     const operation = `ofm_survey_responses(${req?.params?.surveyResponseId})`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SurveyResponseMappings))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -151,14 +143,15 @@ async function getSurveyResponse(req, res) {
 async function updateSurveyResponse(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, SurveyResponseMappings).toJSON()
-    // ofm_submitted_month field is a lookup field in CRM, so we need to replace them with data binding syntax
-    if ('_ofm_submitted_month_value' in payload) {
-      payload['ofm_submitted_month@odata.bind'] = `/ofm_months(${payload['_ofm_submitted_month_value']})`
-      delete payload['_ofm_submitted_month_value']
+    // ofm_contact field is a lookup field in CRM, so we need to replace them with data binding syntax
+    if ('_ofm_contact_value' in payload) {
+      payload['ofm_contact@odata.bind'] = payload['_ofm_contact_value'] ? `/contacts(${payload['_ofm_contact_value']})` : null
+      delete payload['_ofm_contact_value']
     }
     const response = await patchOperationWithObjectId('ofm_survey_responses', req.params.surveyResponseId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -177,6 +170,7 @@ async function getQuestionResponses(req, res) {
     response?.value?.forEach((questionResponse) => questionResponses.push(new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON()))
     return res.status(HttpStatus.OK).json(questionResponses)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -195,6 +189,7 @@ async function createQuestionResponse(req, res) {
     const response = await postOperation('ofm_question_responses', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, QuestionResponseMappings).toJSON())
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -208,6 +203,7 @@ async function updateQuestionResponse(req, res) {
     const response = await patchOperationWithObjectId('ofm_question_responses', req.params.questionResponseId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -217,6 +213,7 @@ async function deleteQuestionResponse(req, res) {
     const response = await deleteOperationWithObjectId('ofm_question_responses', req.params.questionResponseId)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -226,7 +223,6 @@ module.exports = {
   getSurveyQuestions,
   getSurveyResponse,
   getSurveyResponses,
-  createSurveyResponse,
   updateSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,

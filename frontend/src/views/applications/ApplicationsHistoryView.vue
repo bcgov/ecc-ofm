@@ -70,7 +70,7 @@
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
       <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" class="soft-outline" density="compact">
         <template #item.status="{ item }">
-          <span :class="getStatusClass(item.statusCode)" class="pt-1 pb-1 pl-2 pr-2">{{ item.status }}</span>
+          <span :class="getStatusClass(item.statusCode)">{{ item.status }}</span>
         </template>
 
         <template #item.actions="{ item }">
