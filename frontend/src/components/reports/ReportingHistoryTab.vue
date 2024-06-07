@@ -10,9 +10,7 @@
       </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">
-        <div>You have no submitted reports.</div>
-      </AppAlertBanner>
+      <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">You have no submitted reports.</AppAlertBanner>
       <v-data-table v-else :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.title`]="{ item }">
           <span>{{ getReportTitle(item) }}</span>
@@ -24,8 +22,12 @@
           {{ format.formatDate(item?.submittedDate) }}
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn icon="mdi-eye-outline" variant="text" @click="viewSurveyResponse(item)" />
-          <v-btn icon="mdi-tray-arrow-down" variant="text" @click="false" />
+          <v-btn variant="text" @click="viewSurveyResponse(item)">
+            <v-icon aria-label="View" size="large">mdi-eye-outline</v-icon>
+          </v-btn>
+          <v-btn variant="text" @click="false">
+            <v-icon aria-label="Download" size="large">mdi-tray-arrow-down</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -65,14 +67,7 @@ export default {
 
   computed: {
     filteredSubmittedReports() {
-      let filteredReports = this.submittedReports
-      if (!isEmpty(this.facilityNameFilter)) {
-        filteredReports = filteredReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
-      }
-      if (!isEmpty(this.searchQueries)) {
-        filteredReports = filteredReports?.filter((report) => this.searchQueries?.statuses?.includes(this.getStatusText(report)))
-      }
-      return filteredReports
+      return isEmpty(this.facilityNameFilter) ? this.submittedReports : this.submittedReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
 
     filteredFacilityIds() {
@@ -95,6 +90,7 @@ export default {
             }
           }),
         )
+        this.submittedReports = this.submittedReports?.filter((report) => this.searchQueries?.statuses?.includes(this.getStatusText(report)))
         this.sortSubmittedReports()
       } catch (error) {
         this.setFailureAlert('Failed to get submitted reports for facilities ', error)
@@ -125,10 +121,7 @@ export default {
     },
 
     getStatusClass(surveyResponse) {
-      if (surveyResponse?.isSubmittedLate) {
-        return 'status-red'
-      }
-      return 'status-green'
+      return surveyResponse?.isSubmittedLate ? 'status-red' : 'status-green'
       // TODO (vietle-cgi) - Add "Re-Submitted" status - pending on CRM team to add it.
     },
 

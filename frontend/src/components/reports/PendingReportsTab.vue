@@ -5,15 +5,13 @@
         <h2>Report Details</h2>
       </v-col>
       <v-col cols="12" md="7">
-        <FacilityFilter v-if="!isEmpty(pendingReports)" :loading="loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter v-if="!isEmpty(pendingReports)" :loading="loading" :default-show-input="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
 
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">
-        <div>You are up to date with your monthly reports.</div>
-      </AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" class="soft-outline">
+      <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">You are up to date with your monthly reports.</AppAlertBanner>
+      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.alert`]="{ item }">
           <span v-if="isOverdue(item)">
             <v-icon color="error">mdi-alert-circle</v-icon>
@@ -32,10 +30,10 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-btn variant="text" @click="openSurveyResponse(item)">
-            <v-icon size="large">mdi-folder-open-outline</v-icon>
+            <v-icon aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
           <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
-            <v-icon size="large">mdi-trash-can-outline</v-icon>
+            <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -79,10 +77,7 @@ export default {
 
   computed: {
     filteredPendingReports() {
-      if (!isEmpty(this.facilityNameFilter)) {
-        return this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
-      }
-      return this.pendingReports
+      return isEmpty(this.facilityNameFilter) ? this.pendingReports : this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
 
     filteredFacilityIds() {

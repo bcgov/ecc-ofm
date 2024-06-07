@@ -23,11 +23,8 @@ import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'CancelSurveyResponseDialog',
-
   components: { AppButton, AppDialog },
-
   mixins: [alertMixin],
-
   props: {
     show: {
       type: Boolean,
@@ -38,16 +35,13 @@ export default {
       default: '',
     },
   },
-
   emits: ['close', 'cancel'],
-
   data() {
     return {
       loading: false,
       isDisplayed: false,
     }
   },
-
   watch: {
     show: {
       handler(value) {
@@ -55,12 +49,10 @@ export default {
       },
     },
   },
-
   methods: {
     closeDialog() {
       this.$emit('close')
     },
-
     // TODO (vietle-cgi) - Complete this function once CRM add Bulk delete to Dynamics API.
     async cancel() {
       try {

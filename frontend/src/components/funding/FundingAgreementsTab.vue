@@ -10,7 +10,7 @@
         <template #[`item.endDate`]="{ item }">
           {{ format.formatDate(item?.endDate) }}
         </template>
-        <template #[`item.status`]="{ item }">
+        <template #[`item.statusName`]="{ item }">
           <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
@@ -50,7 +50,7 @@ export default {
         { title: 'Signing Expense Authority', key: 'expenseAuthority' },
         { title: 'Start Date', key: 'startDate' },
         { title: 'End Date', key: 'endDate' },
-        { title: 'Status', key: 'status' },
+        { title: 'Status', key: 'statusName' },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
     }
