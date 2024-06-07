@@ -61,6 +61,7 @@ export default {
       this.$emit('close')
     },
 
+    // TODO (vietle-cgi) - Complete this function once CRM add Bulk delete to Dynamics API.
     async cancel() {
       try {
         this.loading = true

@@ -71,17 +71,6 @@ export default {
     }
   },
 
-  async getFundingAgreementsByFacilityIdAndStatus(facilityId, statusCode) {
-    try {
-      if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&statusCode=${statusCode}`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by facility id and status - ${error}`)
-      throw error
-    }
-  },
-
   async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
       if (!facilityId && !startDateFrom) return
