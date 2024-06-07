@@ -35,7 +35,7 @@
           </v-row> -->
           <v-row>
             <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
-              <AppLabel>Status(s):</AppLabel>
+              <AppLabel>Status(es):</AppLabel>
             </v-col>
             <v-col cols="12" sm="9" lg="8" xl="7">
               <v-select v-model.lazy="selectedStatuses" :items="STATUS_FILTER_OPTIONS" :disabled="loading" :rules="rules.required" variant="outlined" label="Select Status(s)" chips multiple>

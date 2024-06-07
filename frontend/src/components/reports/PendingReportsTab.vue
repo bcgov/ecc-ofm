@@ -13,14 +13,14 @@
       <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">You are up to date with your monthly reports.</AppAlertBanner>
       <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.alert`]="{ item }">
-          <span v-if="isOverdue(item)">
+          <template v-if="isOverdue(item)">
             <v-icon color="error">mdi-alert-circle</v-icon>
             Overdue
-          </span>
-          <span v-else>
+          </template>
+          <template v-else>
             <v-icon color="warning">mdi-alert</v-icon>
             Due
-          </span>
+          </template>
         </template>
         <template #[`item.title`]="{ item }">
           <span>{{ getReportTitle(item) }}</span>
