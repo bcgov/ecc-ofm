@@ -70,9 +70,7 @@ export default {
         filteredReports = filteredReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
       }
       if (!isEmpty(this.searchQueries)) {
-        filteredReports = filteredReports?.filter(
-          (report) => this.searchQueries?.reportTypes?.includes(report.surveyTemplateName) && this.searchQueries?.statuses?.includes(this.getStatusText(report)),
-        )
+        filteredReports = filteredReports?.filter((report) => this.searchQueries?.statuses?.includes(this.getStatusText(report)))
       }
       return filteredReports
     },

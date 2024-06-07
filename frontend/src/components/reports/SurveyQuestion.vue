@@ -1,11 +1,11 @@
 <template>
   <v-form ref="form">
-    <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.NUMBER">
+    <div v-if="question?.type === SURVEY_QUESTION_TYPES.NUMBER">
       <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponse ? question?.fixedResponse : '0' }}</strong>
       <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
     </div>
 
-    <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CURRENCY">
+    <div v-if="question?.type === SURVEY_QUESTION_TYPES.CURRENCY">
       <strong v-if="isFixedResponseQuestion">$ {{ question?.fixedResponse ? question?.fixedResponse : '0.00' }}</strong>
       <AppNumberInput
         v-else
@@ -18,23 +18,23 @@
         :disabled="disabled" />
     </div>
 
-    <div v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT">
+    <div v-if="question?.type === SURVEY_QUESTION_TYPES.TEXT">
       <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponse }}</strong>
       <v-text-field v-else v-model.trim="updatedResponse.value" variant="outlined" density="compact" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
     </div>
 
     <v-textarea
-      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TEXT_AREA"
+      v-if="question?.type === SURVEY_QUESTION_TYPES.TEXT_AREA"
       v-model.trim="updatedResponse.value"
       variant="outlined"
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
       :disabled="disabled" />
 
-    <v-date-picker v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.DATE" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
+    <v-date-picker v-if="question?.type === SURVEY_QUESTION_TYPES.DATE" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
 
     <v-radio-group
-      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TWO_OPTION"
+      v-if="question?.type === SURVEY_QUESTION_TYPES.TWO_OPTION"
       v-model="updatedResponse.value"
       :rules="rules.required"
       :hide-details="isEmpty(validationRules)"
@@ -46,7 +46,7 @@
     </v-radio-group>
 
     <v-select
-      v-if="getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.CHOICE"
+      v-if="question?.type === SURVEY_QUESTION_TYPES.CHOICE"
       v-model="updatedResponse.value"
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
@@ -57,7 +57,7 @@
       return-object />
 
     <v-select
-      v-if="isMultipleChoiceQuestion(question?.type)"
+      v-if="question?.type === SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE"
       v-model.lazy="updatedResponse.value"
       :rules="validationRules"
       :hide-details="isEmpty(validationRules)"
@@ -142,7 +142,7 @@ export default {
   watch: {
     response: {
       handler() {
-        this.updatedResponse.value = this.isMultipleChoiceQuestion(this.question?.type) ? convertStringToArray(this.response.value) : this.response.value
+        this.updatedResponse.value = this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE ? convertStringToArray(this.response.value) : this.response.value
       },
       deep: true,
     },
@@ -184,10 +184,10 @@ export default {
       this.updatedResponse.hasConditionalChildren = this.question?.hasConditionalChildren
       this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
       this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
-      if (this.isMultipleChoiceQuestion(this.question?.type)) {
+      if (this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE) {
         this.updatedResponse.value = convertStringToArray(this.updatedResponse.value)
       } else if (
-        [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.getReportQuestionTypeNameById(this.question?.type)) &&
+        [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.question?.type) &&
         isEmpty(this.updatedResponse.questionResponseId) &&
         this.updatedResponse.value == null
       ) {

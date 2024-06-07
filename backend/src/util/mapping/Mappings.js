@@ -351,11 +351,11 @@ const PermissionMappings = [
   { back: 'ofm_portal_privilege_number', front: 'permissionNumber' },
 ]
 
-const ReportTemplateMappings = [
-  { back: 'ofm_surveyid', front: 'surveyTemplateId' },
-  { back: 'ofm_name', front: 'surveyTemplateName' },
-  { back: 'ofm_version', front: 'version' },
-]
+// const ReportTemplateMappings = [
+//   { back: 'ofm_surveyid', front: 'surveyTemplateId' },
+//   { back: 'ofm_name', front: 'surveyTemplateName' },
+//   { back: 'ofm_version', front: 'version' },
+// ]
 
 const SurveySectionMappings = [
   { back: 'ofm_sectionid', front: 'sectionId' },
@@ -369,7 +369,7 @@ const SurveySectionMappings = [
 const SurveyQuestionMappings = [
   { back: 'ofm_questionid', front: 'questionId' },
   { back: 'ofm_question_text', front: 'text' },
-  { back: 'ofm_question_type', front: 'type' },
+  { back: 'ofm_question_type@OData.Community.Display.V1.FormattedValue', front: 'type' },
   { back: 'ofm_sequence', front: 'sequence' },
   { back: 'ofm_question_choice', front: 'choices' },
   { back: 'ofm_response_required', front: 'responseRequired' },
@@ -443,7 +443,7 @@ module.exports = {
   SurveyQuestionMappings,
   SurveyQuestionBusinessRulesMappings,
   SurveyResponseMappings,
-  ReportTemplateMappings,
+  // ReportTemplateMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,

@@ -1,14 +1,12 @@
 import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
-import { useAppStore } from '@/stores/app'
 import { convertStringToArray } from '@/utils/common'
 import { ApiRoutes, SURVEY_QUESTION_TYPES } from '@/utils/constants'
 
 function convertQuestionsChoices(questions) {
-  const appStore = useAppStore()
   questions?.forEach((question) => {
-    if ([SURVEY_QUESTION_TYPES.TWO_OPTION, SURVEY_QUESTION_TYPES.CHOICE, SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE].includes(appStore?.getReportQuestionTypeNameById(question?.type))) {
+    if ([SURVEY_QUESTION_TYPES.TWO_OPTION, SURVEY_QUESTION_TYPES.CHOICE, SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE].includes(question?.type)) {
       question.choices = convertStringToArray(question.choices?.replace(/[\\"]/g, ''))
     }
   })

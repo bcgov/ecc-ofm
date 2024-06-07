@@ -19,8 +19,7 @@ export const useAppStore = defineStore('app', {
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
-    reportTemplates: {},
-    reportQuestionTypes: {},
+    // reportTemplates: {},
     applicationIntakes: {},
     paymentTypes: {},
   }),
@@ -61,12 +60,6 @@ export const useAppStore = defineStore('app', {
         return requestSubCategory?.subCategoryId
       }
     },
-    getReportQuestionTypeNameById: (state) => {
-      return (id) => {
-        const questionType = state.reportQuestionTypes?.find((questionType) => questionType.id === id)
-        return questionType?.description
-      }
-    },
   },
   actions: {
     async getLookupInfo() {
@@ -79,8 +72,7 @@ export const useAppStore = defineStore('app', {
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes
-        this.reportTemplates = lookupInfo?.data?.reportTemplates
-        this.reportQuestionTypes = lookupInfo?.data?.reportQuestionTypes
+        // this.reportTemplates = lookupInfo?.data?.reportTemplates
         this.applicationIntakes = lookupInfo?.data?.applicationIntakes
         this.paymentTypes = lookupInfo?.data?.paymentTypes
       }

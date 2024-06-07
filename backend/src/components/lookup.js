@@ -10,7 +10,7 @@ const {
   RequestCategoryMappings,
   RequestSubCategoryMappings,
   RoleMappings,
-  ReportTemplateMappings,
+  // ReportTemplateMappings,
 } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('./logger')
@@ -93,11 +93,13 @@ async function getRoles() {
   return roles
 }
 
+/*
+// TODO (vietle-cgi) - This function is to get report templates for the Report Search Card in Reporting History tab.
+// We comment out this function because we currently have only the Monthly Report template. We will add this function back once we have some new report templates.
 async function getReportTemplates() {
   let reportTemplates = lookupCache.get('reportTemplates')
   if (!reportTemplates) {
     reportTemplates = []
-    // TODO (vietle-cgi) - we will need to revisit this queries once we receive confirmation from CRM about how to get all currently-published or used-to-be-published templates
     const response = await getOperation('ofm_surveies?$select=ofm_surveyid,ofm_name,ofm_version')
     response?.value?.forEach((item) => {
       const report = new MappableObjectForFront(item, ReportTemplateMappings).toJSON()
@@ -108,6 +110,7 @@ async function getReportTemplates() {
   }
   return reportTemplates
 }
+*/
 
 async function getHealthAuthorities() {
   return fetchAndCacheData('healthAuthorities', 'ecc_health_authorities')
@@ -121,10 +124,6 @@ async function getLicenceTypes() {
   return fetchAndCacheData('licenceTypes', 'ecc_licence_type')
 }
 
-async function getReportQuestionTypes() {
-  return fetchAndCacheData('reportQuestionTypes', 'ofm_reportingquestiontype')
-}
-
 async function getPaymentTypes() {
   return fetchAndCacheData('paymentTypes', 'ecc_payment_type')
 }
@@ -134,7 +133,7 @@ async function getPaymentTypes() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, reportTemplates, reportQuestionTypes, paymentTypes] = await Promise.all([
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, paymentTypes] = await Promise.all([
       getApplicationIntakes(),
       getRequestCategories(),
       getRequestSubCategories(),
@@ -142,8 +141,7 @@ async function getLookupInfo(_req, res) {
       getHealthAuthorities(),
       getFacilityTypes(),
       getLicenceTypes(),
-      getReportTemplates(),
-      getReportQuestionTypes(),
+      // getReportTemplates(),
       getPaymentTypes(),
     ])
     const resData = {
@@ -154,8 +152,7 @@ async function getLookupInfo(_req, res) {
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,
-      reportTemplates: reportTemplates,
-      reportQuestionTypes: reportQuestionTypes,
+      // reportTemplates: reportTemplates,
       paymentTypes: paymentTypes,
     }
     return res.status(HttpStatus.OK).json(resData)

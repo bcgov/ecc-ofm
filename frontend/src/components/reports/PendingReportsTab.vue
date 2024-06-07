@@ -34,7 +34,7 @@
           <v-btn variant="text" @click="openSurveyResponse(item)">
             <v-icon size="large">mdi-folder-open-outline</v-icon>
           </v-btn>
-          <v-btn v-if="showTrash" variant="text" @click="toggleCancelDialog(item)">
+          <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon size="large">mdi-trash-can-outline</v-icon>
           </v-btn>
         </template>
@@ -54,7 +54,7 @@ import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 
 export default {
   components: { AppAlertBanner, FacilityFilter, CancelSurveyResponseDialog },
@@ -88,10 +88,6 @@ export default {
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
-    },
-
-    showTrash() {
-      return this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
   },
 
@@ -148,6 +144,10 @@ export default {
      */
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
+    },
+
+    showTrash(surveyResponse) {
+      return surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
 
     isOverdue(report) {

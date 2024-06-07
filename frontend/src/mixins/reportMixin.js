@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
-import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { BLANK_FIELD, SURVEY_QUESTION_TYPES } from '@/utils/constants'
 import format from '@/utils/format'
@@ -9,7 +8,6 @@ import format from '@/utils/format'
 export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['reportTemplates', 'getReportQuestionTypeNameById']),
   },
 
   created() {
@@ -29,7 +27,7 @@ export default {
     },
 
     isTableQuestion(question) {
-      return this.getReportQuestionTypeNameById(question?.type) === SURVEY_QUESTION_TYPES.TABLE
+      return question?.type === SURVEY_QUESTION_TYPES.TABLE
     },
 
     isTableQuestionHeader(question) {
@@ -38,10 +36,6 @@ export default {
 
     isTableQuestionResponse(response) {
       return !isEmpty(response?.tableQuestionId)
-    },
-
-    isMultipleChoiceQuestion(questionType) {
-      return this.getReportQuestionTypeNameById(questionType) === SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE
     },
   },
 }

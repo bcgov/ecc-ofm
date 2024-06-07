@@ -3,7 +3,7 @@
     <v-card class="pa-6">
       <v-row no-gutters>
         <v-col cols="12" lg="6" class="mb-6 mb-lg-0">
-          <v-row>
+          <!-- <v-row>
             <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
               <AppLabel>Report Type(s):</AppLabel>
             </v-col>
@@ -32,7 +32,7 @@
                 </template>
               </v-select>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row>
             <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
               <AppLabel>Status(s):</AppLabel>
@@ -115,7 +115,7 @@ export default {
     return {
       isFormComplete: false,
       selectedDateFilterType: null,
-      selectedReportTypes: [],
+      // selectedReportTypes: [],
       selectedStatuses: null,
       selectedDateFrom: null,
       selectedDateTo: null,
@@ -145,12 +145,14 @@ export default {
           return null
       }
     },
+    /* TODO (vietle-cgi) - We comment out these functions because we currently have only the Monthly Report template. We will add this function back once we have some new report templates.
     allReportTypesSelected() {
       return this.selectedReportTypes?.length === this.reportTemplates?.length
     },
     someReportTypesSelected() {
       return this.selectedReportTypes?.length > 0
     },
+    */
     allStatusesSelected() {
       return this.selectedStatuses?.length === this.STATUS_FILTER_OPTIONS?.length
     },
@@ -168,7 +170,6 @@ export default {
       { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM },
     ]
     this.STATUS_FILTER_OPTIONS = [SURVEY_RESPONSE_STATUSES.COMPLETED, SURVEY_RESPONSE_STATUSES.COMPLETED_LATE]
-    this.MAX_NUMBER_FACILITIES_DISPLAY = 4
     this.resetFilter()
   },
 
@@ -178,7 +179,7 @@ export default {
 
   methods: {
     resetFilter() {
-      this.selectedReportTypes = this.reportTemplates
+      // this.selectedReportTypes = this.reportTemplates
       this.selectedStatuses = this.STATUS_FILTER_OPTIONS
       this.selectedDateFilterType = DATE_FILTER_TYPES.THREE_MONTHS
       this.selectedDateFrom = null
@@ -189,7 +190,7 @@ export default {
       await this.$refs.form?.validate()
       if (!this.isFormComplete) return
       const searchQueries = {
-        reportTypes: this.selectedReportTypes,
+        // reportTypes: this.selectedReportTypes,
         statuses: this.selectedStatuses,
         dateFilterType: this.selectedDateFilterType,
         dateFrom: this.dateFrom,
@@ -198,9 +199,11 @@ export default {
       this.$emit('search', searchQueries)
     },
 
+    /* TODO (vietle-cgi) - We comment out this function because we currently have only the Monthly Report template. We will add this function back once we have some new report templates.
     toggleAllReportTypes() {
       this.selectedReportTypes = this.allReportTypesSelected ? [] : this.reportTemplates
     },
+    */
 
     toggleAllStatuses() {
       this.selectedStatuses = this.allStatusesSelected ? [] : this.STATUS_FILTER_OPTIONS

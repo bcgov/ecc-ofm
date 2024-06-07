@@ -112,12 +112,9 @@ async function getSurveyResponses(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const surveyResponses = []
-    let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)}`
+    let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE}`
     if (req.query?.isSubmitted != null) {
-      filter +=
-        req.query?.isSubmitted === 'true'
-          ? ` and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.ACTIVE}`
-          : ` and statuscode eq ${SURVEY_RESPONSE_STATUS_CODES.ACTIVE}`
+      filter += req.query?.isSubmitted === 'true' ? ` and ofm_submitted_on ne null` : ` and ofm_submitted_on eq null`
     }
     const operation = `ofm_survey_responses?$filter=(${filter})`
     const response = await getOperation(operation)
