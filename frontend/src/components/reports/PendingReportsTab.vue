@@ -16,7 +16,7 @@
       <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact">
         <template #[`item.alert`]="{ item }">
           <span v-if="isOverdue(item)">
-            <v-icon color="error">mdi-alert</v-icon>
+            <v-icon color="error">mdi-alert-circle</v-icon>
             Overdue
           </span>
           <span v-else>
