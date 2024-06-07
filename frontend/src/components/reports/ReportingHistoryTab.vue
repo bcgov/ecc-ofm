@@ -80,6 +80,7 @@ export default {
     async loadSubmittedReports(searchQueries) {
       try {
         this.loading = true
+        this.facilityNameFilter = null
         this.submittedReports = []
         this.searchQueries = searchQueries
         await Promise.all(
