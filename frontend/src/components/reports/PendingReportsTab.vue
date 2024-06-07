@@ -13,7 +13,7 @@
       <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">
         <div>You are up to date with your monthly reports.</div>
       </AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact">
+      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" class="soft-outline">
         <template #[`item.alert`]="{ item }">
           <span v-if="isOverdue(item)">
             <v-icon color="error">mdi-alert-circle</v-icon>

@@ -13,7 +13,7 @@
       <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">
         <div>You have no submitted reports.</div>
       </AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact" :mobile="null" mobile-breakpoint="md">
+      <v-data-table v-else :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.title`]="{ item }">
           <span>{{ getReportTitle(item) }}</span>
         </template>
