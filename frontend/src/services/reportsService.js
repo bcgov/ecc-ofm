@@ -37,6 +37,17 @@ export default {
     }
   },
 
+  async getSurveyResponse(surveyResponseId) {
+    try {
+      if (!surveyResponseId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the survey response by surveyResponseId - ${error}`)
+      throw error
+    }
+  },
+
   async getDraftSurveyResponsesByFacility(facilityId) {
     try {
       if (!facilityId) return
@@ -59,28 +70,6 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the submitted survey response by Facility - ${error}`)
-      throw error
-    }
-  },
-
-  async getSurveyResponsesBySurveyAndFacilityAndFiscalYear(surveyTemplateId, facilityId, fiscalYearId) {
-    try {
-      if (!facilityId || !fiscalYearId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses?surveyTemplateId=${surveyTemplateId}&facilityId=${facilityId}&fiscalYearId=${fiscalYearId}`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the survey response by Facility and Fiscal Year - ${error}`)
-      throw error
-    }
-  },
-
-  async getSurveyResponse(surveyResponseId) {
-    try {
-      if (!surveyResponseId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the survey response by surveyResponseId - ${error}`)
       throw error
     }
   },
