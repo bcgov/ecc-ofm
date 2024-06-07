@@ -5,7 +5,7 @@ export const AuthRoutes = Object.freeze({
   LOGIN: authRoot + '/login',
   LOGIN_IDIR: authRoot + '/login-idir',
   LOGOUT: authRoot + '/logout',
-  SESSION_EXPIRED: authRoot + '/logout?sessionExpired=true',
+  LOGOUT_IDIR: authRoot + '/logout-idir',
   REFRESH: authRoot + '/refresh',
   TOKEN: authRoot + '/token',
   SESSION_REMAINING_TIME: authRoot + '/user-session-remaining-time',

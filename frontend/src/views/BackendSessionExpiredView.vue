@@ -5,24 +5,28 @@
 </template>
 
 <script>
-import { AuthRoutes } from '@/utils/constants'
+import { mapState } from 'pinia'
+
 import { useAuthStore } from '@/stores/auth'
-import { mapActions } from 'pinia'
+import { AuthRoutes } from '@/utils/constants'
+
 export default {
   name: 'BackendSessionExpiredView',
   data() {
     return {
-      link: AuthRoutes.SESSION_EXPIRED,
+      link: '/stuff',
     }
   },
   mounted() {
-    window.location = document.getElementById('logout_href').href
+    console.log('isMinistryUser', this.isMinistryUser)
+    console.log('href', document.getElementById('logout_href').href)
+    console.log('link', this.link)
+    const logoutPath = this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT
+
+    window.location = `${logoutPath}?sessionExpired=true`
   },
-  methods: {
-    ...mapActions(useAuthStore, ['setJwtToken']),
-    logout() {
-      this.setJwtToken()
-    },
+  computed: {
+    ...mapState(useAuthStore, ['isMinistryUser']),
   },
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div style="display: none">
-    <a id="logout_href" :href="authRoutes.SESSION_EXPIRED" />
+    <!-- <a id="logout_href" :href="authRoutes.SESSION_EXPIRED" /> -->
   </div>
 </template>
 
@@ -12,14 +12,14 @@ import { useAuthStore } from '@/stores/auth'
 export default {
   data() {
     return {
-      authRoutes: AuthRoutes
+      authRoutes: AuthRoutes,
     }
   },
   async mounted() {
     await this.checkAndLogoutUserOnSessionExpiry()
   },
   computed: {
-    ...mapState(useAuthStore, ['isAuthenticated'])
+    ...mapState(useAuthStore, ['isAuthenticated']),
   },
   methods: {
     async checkAndLogoutUserOnSessionExpiry() {
@@ -39,7 +39,7 @@ export default {
           window.location = document.getElementById('logout_href').href
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
