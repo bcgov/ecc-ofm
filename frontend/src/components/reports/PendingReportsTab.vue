@@ -22,9 +22,6 @@
             Due
           </template>
         </template>
-        <template #[`item.title`]="{ item }">
-          <span>{{ getReportTitle(item) }}</span>
-        </template>
         <template #[`item.status`]>
           <span class="status-gray">Draft</span>
         </template>
@@ -105,6 +102,7 @@ export default {
             }
           }),
         )
+        this.pendingReports?.forEach((report) => (report.title = this.getReportTitle(report)))
         this.sortPendingReports()
       } catch (error) {
         this.setFailureAlert('Failed to get pending reports for facilities ', error)
