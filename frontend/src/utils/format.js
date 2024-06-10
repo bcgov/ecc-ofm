@@ -12,6 +12,10 @@ function formatDateTime(date) {
   return moment(date).format('YYYY-MMM-DD hh:mm A')
 }
 
+function formatDateToUTC(date) {
+  return new Date(date).toLocaleString('en-CA', { timeZone: 'UTC', dateStyle: 'full' })
+}
+
 /**
  * This function will return a decimal number in this format ###,###,###.## (e.g.: 123,456,999.12).
  * You can specify the number of fraction digits using "numberOfFractionDigits". Default is 2 fractional digits
@@ -26,4 +30,5 @@ export default {
   formatDate,
   formatDateTime,
   formatDecimalNumber,
+  formatDateToUTC,
 }
