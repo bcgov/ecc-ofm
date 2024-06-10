@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     isDeactivatedUser(user) {
-      return user?.facilities?.length === 0 && !user?.role
+      return user?.facilities?.length === 0
     },
 
     isSameUser(user) {

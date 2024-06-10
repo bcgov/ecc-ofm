@@ -64,7 +64,6 @@ export default {
         this.isLoading = true
         const payload = {
           contactId: this.user?.contactId,
-          role: null,
           facilities: this.user?.facilities?.map((facility) => {
             return {
               bceidFacilityId: facility.bceidFacilityId,
