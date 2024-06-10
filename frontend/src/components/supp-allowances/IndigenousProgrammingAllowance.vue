@@ -1,7 +1,5 @@
 <template>
-  <AppAlertBanner v-if="isWarningDisplayed" type="info">
-    <div>You have already received the Indigenous Programming Allowance for the current term.</div>
-  </AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Indigenous Programming Allowance for the current term.</AppAlertBanner>
   <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
       <AppLabel>Purpose of the fund:</AppLabel>
@@ -89,7 +87,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.indigenousFundingModel?.includes('9')
+      return this.model?.indigenousFundingModel?.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
     },
     readOnly() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode) || this.formDisabled

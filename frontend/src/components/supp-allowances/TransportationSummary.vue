@@ -14,11 +14,9 @@
       </v-row>
       <v-divider class="mt-3"></v-divider>
 
-      <AppAlertBanner v-if="model.isNextTerm" type="info">
-        <div>This Supplementary Application is for Next Year</div>
-      </AppAlertBanner>
+      <AppAlertBanner v-if="model.isNextTerm" type="info">This Supplementary Application is for Next Year</AppAlertBanner>
 
-      <v-row v-if="model.VIN && model.odometer && model.estimatedMileage && !areDocumentsMissing(model) && !hasDuplicateVIN(model, allTransportModels)" no-gutters class="mt-2 py-2">
+      <v-row v-if="isModelComplete(model)" no-gutters class="mt-2 py-2">
         <v-col cols="12" lg="7" class="px-4">
           <v-col class="px-4">
             <v-row no-gutters>
@@ -77,21 +75,21 @@
       <v-row v-else>
         <v-col cols="12" class="px-4">
           <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid }, query: { nextTerm: model.isNextTerm } }">
-            <slot v-if="!model.VIN || !model.odometer || !model.estimatedMileage">
+            <template v-if="!model.VIN || !model.odometer || !model.estimatedMileage">
               {{ APPLICATION_ERROR_MESSAGES.SUPP_TRANSPORT }}
               <br />
               <br />
-            </slot>
-            <slot v-if="areDocumentsMissing(model)">
+            </template>
+            <template v-if="areDocumentsMissing(model)">
               {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_UPLOAD }}
               <br />
               <br />
-            </slot>
-            <slot v-if="hasDuplicateVIN(model, allTransportModels)">
+            </template>
+            <template v-if="hasDuplicateVIN(model, allTransportModels)">
               {{ APPLICATION_ERROR_MESSAGES.SUPP_DUPLICATE_VIN }}
               <br />
               <br />
-            </slot>
+            </template>
           </AppMissingInfoError>
         </v-col>
       </v-row>
@@ -124,7 +122,6 @@ export default {
       required: true,
     },
   },
-
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.hasDuplicateVIN = hasDuplicateVIN
@@ -135,6 +132,9 @@ export default {
         return model.uploadedDocuments?.length < 1
       }
       return model.uploadedDocuments?.length < 2
+    },
+    isModelComplete(model) {
+      return model.VIN && model.odometer && model.estimatedMileage && !this.areDocumentsMissing(model) && !hasDuplicateVIN(model, this.allTransportModels)
     },
   },
 }

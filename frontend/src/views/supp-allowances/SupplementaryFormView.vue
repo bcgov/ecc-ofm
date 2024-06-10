@@ -6,13 +6,11 @@
     that applies to your organization.
   </p>
 
-  <AppAlertBanner v-if="currentTermDisabled" type="warning">
-    <div>Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</div>
-  </AppAlertBanner>
+  <AppAlertBanner v-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
-      <v-col cols="12" lg="1" class="">
+      <v-col cols="12" lg="1">
         <AppLabel>Application Year:</AppLabel>
       </v-col>
 
@@ -20,16 +18,13 @@
       <v-col cols="6" lg="2" class="d-flex flex-column align-end">
         <AppButton id="current-year-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Year</AppButton>
       </v-col>
-      <v-col cols="6" lg="2" class="">
+      <v-col cols="6" lg="2">
         <AppButton id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Year</AppButton>
       </v-col>
     </v-row>
     <v-row v-if="fundingExpiryDate">
-      <v-col cols="12" class="">
-        <div v-if="!nextTermActive">
-          If you apply for and receive funding in the current year of your funding agreement, the funds must be used by
-          {{ new Date(Date.parse(fundingExpiryDate.toISOString())).toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'full' }) }}
-        </div>
+      <v-col cols="12">
+        <div v-if="!nextTermActive">If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToUTC(fundingExpiryDate) }}</div>
       </v-col>
     </v-row>
     <v-row no-gutters class="mb-2">
@@ -68,8 +63,7 @@
     <AppAlertBanner v-if="!hasGoodStanding && !loading" type="warning">
       {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
     </AppAlertBanner>
-    <!-- I use v-show here because if I use a v-if, this component has issues re-rendering if a user switches between two apps quickly -->
-    <div v-show="!nextTermActive">
+    <div v-if="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
         <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
@@ -102,7 +96,7 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
-    <div v-show="nextTermActive">
+    <div v-if="nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
         <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
@@ -158,7 +152,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
 import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
-import { useRoute } from 'vue-router'
+import format from '@/utils/format'
 
 export default {
   name: 'SupplementaryFormView',
@@ -254,6 +248,7 @@ export default {
     },
   },
   async created() {
+    this.format = format
     this.TRANSPORTATION = 'transportation'
     this.SUPPORT_NEEDS = 'support-needs'
     this.INDIGENOUS = 'indigenous'
@@ -277,7 +272,6 @@ export default {
     this.DAYS_BEFORE_TERM_EXPIRES = 45
     this.DAYS_BEFORE_NEXT_TERM_ENABLED = 120
     this.setSuppTermDates()
-    this.route = useRoute()
     await this.loadData()
   },
   methods: {
@@ -293,7 +287,7 @@ export default {
         if (!this.currentOrg) {
           await this.getOrganizationInfo(this.userInfo?.organizationId)
         }
-        if (this.route?.query?.nextTerm === 'true') {
+        if (this.$route?.query?.nextTerm === 'true') {
           this.setActiveTerm(true)
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
@@ -500,10 +494,9 @@ export default {
     },
     setSuppTermDates() {
       const today = new Date()
-
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const termTwoEndDate = new Date(new Date(formattedEndDate).setFullYear(new Date(formattedEndDate).getFullYear() - 1))
-      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
+      const termTwoEndDate = new Date(formattedEndDate.setFullYear(formattedEndDate.getFullYear() - 1))
+      const termOneEndDate = new Date(termTwoEndDate.setFullYear(termTwoEndDate.getFullYear() - 1))
 
       switch (true) {
         case today < termOneEndDate:

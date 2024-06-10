@@ -33,9 +33,7 @@
     </v-col>
   </v-row>
 
-  <AppAlertBanner v-if="isWarningDisplayed" type="info">
-    <div>You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</div>
-  </AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</AppAlertBanner>
 
   <v-divider class="my-5"></v-divider>
 

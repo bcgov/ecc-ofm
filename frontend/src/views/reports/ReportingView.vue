@@ -18,15 +18,11 @@
           <v-container fluid class="pa-0">
             <v-window v-model="tab">
               <v-window-item value="pending-reports-table">
-                <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">
-                  <div>You are up to date with your monthly reports.</div>
-                </AppAlertBanner>
+                <AppAlertBanner v-if="isEmpty(pendingReports)" type="info" class="mt-4">You are up to date with your monthly reports.</AppAlertBanner>
                 <PendingReportsTab v-else :loading="loading" :pendingReports="pendingReports" :facilities="facilities" />
               </v-window-item>
               <v-window-item value="reporting-history-table">
-                <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">
-                  <div>You have no submitted reports.</div>
-                </AppAlertBanner>
+                <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">You have no submitted reports.</AppAlertBanner>
                 <ReportingHistoryTab v-else :loading="loading" :submittedReports="submittedReports" :facilities="facilities" />
               </v-window-item>
             </v-window>

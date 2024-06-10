@@ -1,8 +1,6 @@
 <template>
   <v-card v-for="model in indigenousProgrammingModels" :key="model.indigenousProgrammingModels ? model.indigenousProgrammingModels : model.id" fluid class="pb-0 my-5">
-    <AppAlertBanner v-if="model.isNextTerm" type="info">
-      <div>This Supplementary Application is for Next Year</div>
-    </AppAlertBanner>
+    <AppAlertBanner v-if="model.isNextTerm" type="info">This Supplementary Application is for Next Year</AppAlertBanner>
     <div class="px-5">
       <div class="mt-2">
         <h4 class="text-decoration-underline">Funding Selected</h4>
@@ -44,7 +42,6 @@ export default {
       required: true,
     },
   },
-  computed: {},
   created() {
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
