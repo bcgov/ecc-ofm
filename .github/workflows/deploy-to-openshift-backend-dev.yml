@@ -186,8 +186,8 @@ jobs:
                 ${{ secrets.D365_API_KEY_VALUE }} \
                 ${{ secrets.SOAM_CLIENT_ID }} \
                 ${{ secrets.SOAM_CLIENT_SECRET }} \
-                ${{ secrets.SOAM_CLIENT_ID_IDIR }} \
-                ${{ secrets.SOAM_CLIENT_SECRET_IDIR }}
+                ${{ secrets.SOAM_IDP_HINT_BCEID }} \
+                ${{ secrets.SOAM_IDP_HINT_IDIR }}
 
           # Start rollout (if necessary) and follow it
           oc rollout latest dc/${{ env.APP_NAME }}-${{ env.APP_NAME_BACKEND }}-${{ env.APP_ENVIRONMENT }} 2> /dev/null \

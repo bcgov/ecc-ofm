@@ -5,14 +5,16 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById } = require('../components/fundingAgreements')
 const { param, validationResult } = require('express-validator')
-//TODO - JB: add permissions back in when complete
+const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
 /**
  * Get the list of Funding Agreements
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), (req, res) => {
   validationResult(req).throw()
   return getFundingAgreements(req, res)
 })
@@ -20,7 +22,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
 /**
  * Get Funding Agreement by ID
  */
-router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), (req, res) => {
   validationResult(req).throw()
   return getFundingAgreementById(req, res)
 })
@@ -28,19 +30,20 @@ router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false
 /**
  * Get Funding Agreement PDF by ID
  */
-router.get('/:fundingAgreementId/pdf', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/:fundingAgreementId/pdf', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), (req, res) => {
   validationResult(req).throw()
   return getFundingPDFById(req, res)
 })
 
 /**
- * Update an existing Application using applicationId
+ * Update an existing Funding Agreement using fundingAgreementId
  */
-//TODO - JB: add permissions back in when complete
 router.patch(
   '/:fundingAgreementId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  validateExpenseAuthority(),
   [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
