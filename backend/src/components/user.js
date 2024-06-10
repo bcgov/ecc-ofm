@@ -265,11 +265,9 @@ function mapContactForBack(data) {
   contact.entityNameSet = 'contacts'
   contact.actionMode = 'Update'
 
-  // Handle role Update/Delete
+  // Handle role Update
   if (contact.role) {
     contact['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${contact.role.roleId})`
-  } else {
-    contact['ofm_portal_role_id'] = null
   }
   delete contact.role
 
