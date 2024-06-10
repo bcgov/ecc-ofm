@@ -146,7 +146,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.supportFundingModel?.includes('4') && this.hasInclusionPolicy
+      return this.model?.supportFundingModel?.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
     },
     readOnly() {
       return isApplicationLocked(this.supportModel?.statusCode) || this.formDisabled
