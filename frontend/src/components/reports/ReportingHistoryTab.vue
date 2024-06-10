@@ -12,11 +12,8 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">You have no submitted reports.</AppAlertBanner>
       <v-data-table v-else :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
-        <template #[`item.title`]="{ item }">
-          <span>{{ getReportTitle(item) }}</span>
-        </template>
         <template #[`item.status`]="{ item }">
-          <span :class="getStatusClass(item)">{{ getStatusText(item) }}</span>
+          <span :class="getStatusClass(item)">{{ item.status }}</span>
         </template>
         <template #[`item.submittedDate`]="{ item }">
           {{ format.formatDate(item?.submittedDate) }}
@@ -91,6 +88,10 @@ export default {
             }
           }),
         )
+        this.submittedReports?.forEach((report) => {
+          report.title = this.getReportTitle(report)
+          report.status = this.getStatusText(report)
+        })
         this.submittedReports = this.submittedReports?.filter((report) => this.searchQueries?.statuses?.includes(this.getStatusText(report)))
         this.sortSubmittedReports()
       } catch (error) {

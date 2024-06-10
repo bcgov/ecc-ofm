@@ -13,7 +13,7 @@
       <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">You are up to date with your monthly reports.</AppAlertBanner>
       <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.alert`]="{ item }">
-          <template v-if="isOverdue(item)">
+          <template v-if="item.alert">
             <v-icon color="error">mdi-alert-circle</v-icon>
             Overdue
           </template>
@@ -21,9 +21,6 @@
             <v-icon color="warning">mdi-alert</v-icon>
             Due
           </template>
-        </template>
-        <template #[`item.title`]="{ item }">
-          <span>{{ getReportTitle(item) }}</span>
         </template>
         <template #[`item.status`]>
           <span class="status-gray">Draft</span>
@@ -105,6 +102,10 @@ export default {
             }
           }),
         )
+        this.pendingReports?.forEach((report) => {
+          report.alert = this.isOverdue(report)
+          report.title = this.getReportTitle(report)
+        })
         this.sortPendingReports()
       } catch (error) {
         this.setFailureAlert('Failed to get pending reports for facilities ', error)
