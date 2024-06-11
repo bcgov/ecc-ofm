@@ -1,7 +1,5 @@
 <template>
-  <AppAlertBanner v-if="isWarningDisplayed && hasInclusionPolicy" type="info">
-    <div>You have already received the Support Needs Allowance for the current term.</div>
-  </AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed && hasInclusionPolicy" type="info">You have already received the Support Needs Allowance for the current term.</AppAlertBanner>
 
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
@@ -148,7 +146,7 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.supportFundingModel?.includes('4') && this.hasInclusionPolicy
+      return this.model?.supportFundingModel?.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
     },
     readOnly() {
       return isApplicationLocked(this.supportModel?.statusCode) || this.formDisabled

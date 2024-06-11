@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
 import FacilityService from '@/services/facilityService'
 import AppCancelDialog from '../../components/ui/AppCancelDialog.vue'
@@ -80,6 +80,7 @@ export default {
 
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
+    ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
@@ -171,6 +172,7 @@ export default {
     async loadApplication() {
       try {
         if (!this.$route.params.applicationGuid) return
+        this.validation = false
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
         await Promise.all([this.getContacts(), this.getFacility()])
