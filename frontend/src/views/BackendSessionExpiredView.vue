@@ -18,15 +18,11 @@ export default {
     }
   },
   mounted() {
-    console.log('isMinistryUser', this.isMinistryUser)
-    console.log('href', document.getElementById('logout_href').href)
-    console.log('link', this.link)
     const logoutPath = this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT
-
     window.location = `${logoutPath}?sessionExpired=true`
   },
   computed: {
-    ...mapState(useAuthStore, ['isMinistryUser']),
+    ...mapState(useAuthStore, ['isMinistryUser', 'userInfo']),
   },
 }
 </script>
