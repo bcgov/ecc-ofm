@@ -54,7 +54,7 @@ async function getUserInfo(req, res) {
   }
 
   let resData = {
-    displayName: queryUserName ? currentUserName + '-' + queryUserName : currentUserName,
+    displayName: queryUserName ? `${currentUserName}-${queryUserName}` : currentUserName,
     userName: currentUserName,
     businessName: businessName,
     isMinistryUser: isIdir,
@@ -155,10 +155,8 @@ async function getUserProfile(userGuid, userName) {
     // If querying by userGuid and userName validate that the returned profile matches the userGuid since
     // the userName alone can result in a match
     // BCeID usernames can change but the guid won't so check for a mismatch to prevent unauthorized access
-    if (userGuid) {
-      if (userProfile.ccof_userid !== userGuid) {
-        return null
-      }
+    if (userGuid && userProfile.ccof_userid !== userGuid) {
+      return null
     }
 
     return userProfile
