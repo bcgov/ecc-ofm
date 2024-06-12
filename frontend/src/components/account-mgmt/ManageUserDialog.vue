@@ -250,6 +250,7 @@ export default {
      * Create or update user.
      */
     async saveUser() {
+      await this.checkBCeIDExists(this.user?.userName)
       this.$refs.userForm?.validate()
       if (!this.isFormComplete) {
         return
@@ -438,11 +439,7 @@ export default {
     async doesUserExist(firstName, lastName, email) {
       try {
         const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName, lastName, email)
-        if (Array.isArray(res) && res.length >= 1) {
-          return true
-        }
-        this.errorMessages = []
-        return false
+        return Array.isArray(res) && res.length >= 1
       } catch (error) {
         this.setFailureAlert('Failed to check if user already exists in provider organization', error)
       }
