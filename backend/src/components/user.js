@@ -22,7 +22,6 @@ const {
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const _ = require('lodash')
-const { Http } = require('winston/lib/winston/transports')
 
 const USER_NOT_FOUND = 'User not found.'
 const NO_PERMISSIONS = 'No permissions.'
@@ -164,7 +163,10 @@ async function getUserProfile(userGuid, userName) {
 
     return userProfile
   } catch (e) {
-    if (e.response?.status == '404') {
+    if (e.response?.status === 401) {
+      return null
+    }
+    if (e.response?.status === 404) {
       const data = e.response?.data
       log.verbose('response ', data)
       if (data?.startsWith(USER_NOT_FOUND) || data?.startsWith(NO_PERMISSIONS) || data?.startsWith(NO_PROFILE_FOUND)) {
