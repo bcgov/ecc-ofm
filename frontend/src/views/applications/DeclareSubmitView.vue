@@ -140,7 +140,7 @@ export default {
     },
 
     async submitApplication() {
-      this.model.submittedBy = this.userInfo?.userName
+      this.model.submittedBy = this.userInfo?.contactId
       this.model.statusCode = APPLICATION_STATUS_CODES.SUBMITTED
       await this.saveApplication()
       if (this.currentApplication?.statusCode === APPLICATION_STATUS_CODES.SUBMITTED) {
