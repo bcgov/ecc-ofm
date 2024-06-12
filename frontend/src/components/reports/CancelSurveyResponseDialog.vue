@@ -1,15 +1,15 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="loading" persistent max-width="50%" @close="closeDialog">
     <template #content>
       <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to cancel this report response?</div>
     </template>
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="closeDialog">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="closeDialog">Cancel response</AppButton>
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="loading" @click="cancel">Cancel response</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -30,15 +30,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    surveyResponseId: {
+      type: String,
+      default: '',
+    },
   },
-  emits: ['close'],
+  emits: ['close', 'cancel'],
   data() {
     return {
-      isLoading: false,
+      loading: false,
       isDisplayed: false,
     }
   },
-  computed: {},
   watch: {
     show: {
       handler(value) {
@@ -50,9 +53,18 @@ export default {
     closeDialog() {
       this.$emit('close')
     },
-    // TODO (vietle-cgi) - check with the business team to see if we should delete or cancel the survey response. If cancel, pending on CRM to add Cancelled status
-    cancelResponse() {
-      this.$emit('close')
+    // TODO (vietle-cgi) - Complete this function once CRM add Bulk delete to Dynamics API.
+    async cancel() {
+      try {
+        this.loading = true
+        this.$emit('cancel', this.surveyResponseId)
+        this.setSuccessAlert(`Report response cancelled successfully`)
+      } catch (error) {
+        this.setFailureAlert(`Failed to cancel your report response`, error)
+      } finally {
+        this.loading = false
+        this.closeDialog()
+      }
     },
   },
 }

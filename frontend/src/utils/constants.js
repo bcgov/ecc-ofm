@@ -57,11 +57,15 @@ export const ROLES = Object.freeze({
 
 export const APPLICATION_STATUS_CODES = Object.freeze({
   DRAFT: 1,
-  CANCELLED: 2,
+  INELIGIBLE: 2, // INACTIVE state
   SUBMITTED: 3,
   IN_REVIEW: 4,
   AWAITING_PROVIDER: 5,
   APPROVED: 6,
+  CANCELLED_BY_MINISTRY: 7, // INACTIVE state
+  CANCELLED_BY_SP: 8, // INACTIVE state
+  EXPIRED: 9, // INACTIVE state
+  VERIFIED: 10,
 })
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
@@ -97,11 +101,13 @@ export const DATE_FILTER_TYPES = Object.freeze({
 
 export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({
   DRAFT: 1,
-  CANCELLED: 2,
+  INELIGIBLE: 2, // INACTIVE state
   SUBMITTED: 3,
   IN_REVIEW: 4,
   ACTION_REQUIRED: 5,
   APPROVED: 6,
+  EXPIRED: 7, // INACTIVE state
+  CANCELLED: 8, // INACTIVE state
 })
 
 export const FACILITY_TYPES = Object.freeze({
@@ -188,18 +194,6 @@ export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
   IN_CCOF_PROGRAM: 'Facility in CCOF Program',
   IN_TDAD_PROGRAM: 'Facility in TDAD Program',
   NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
-})
-
-// TODO (vietle-cgi) Change survey guid to a readable id - pending on CRM
-export const SURVEY_IDS = Object.freeze({
-  MONTHLY_REPORTING: '16fb81de-6dc1-ee11-9079-000d3af4865d',
-})
-
-export const SURVEY_RESPONSE_TYPES = Object.freeze({
-  MONTHLY: 'Monthly',
-  QUARTERLY: 'Quarterly',
-  BI_ANNUAL: 'Bi-annual',
-  ANNUAL: 'Annual',
 })
 
 export const SURVEY_RESPONSE_STATUSES = Object.freeze({

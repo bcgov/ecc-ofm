@@ -27,18 +27,16 @@
       </v-col>
     </v-row>
     <div v-if="model.facilityType">
-      <AppMissingInfoError v-if="validation && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
+      <AppMissingInfoError v-if="showErrorMessage && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
       <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
       <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
     </div>
     <v-row>
       <v-col>
         <h4>Upload Documents</h4>
-        {{ SUPPORTED_DOCUMENTS_MESSAGE }}
-        <br />
-        <br />
-        <AppMissingInfoError v-if="validation && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
-        <AppMissingInfoError v-if="validation && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
+        <div>{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
+        <AppMissingInfoError v-if="showErrorMessage && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
       </v-col>
     </v-row>
     <v-card class="mt-2 pa-4" variant="outlined">
@@ -197,6 +195,9 @@ export default {
       const isBalanceSheetToProcess = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.documentsToDelete)
       const isSupportingDocsToProcess = !isEmpty(this.supporting?.documentsToUpload) || !isEmpty(this.supporting?.documentsToDelete)
       return isFinancialDocsToProcess || isBalanceSheetToProcess || isSupportingDocsToProcess
+    },
+    showErrorMessage() {
+      return !this.readonly && !this.processing && this.validation
     },
   },
 

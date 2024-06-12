@@ -134,7 +134,7 @@ jobs:
             -f tools/openshift/frontend.dc.yaml \
             -p APP_NAME=${{ env.APP_NAME }} \
             -p REPO_NAME=${{ env.REPO_NAME }} \
-            -p BRANCH=${{ env.BRANCH }} \ \
+            -p BRANCH=${{ env.BRANCH }} \
             -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} \
             -p TAG=${{ steps.get-latest-tag.outputs.tag }} \
             -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} \
