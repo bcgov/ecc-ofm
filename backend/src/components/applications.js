@@ -80,6 +80,10 @@ async function updateApplication(req, res) {
       delete payload['_ofm_secondary_contact_value']
       delete payload['_ofm_expense_authority_value']
     }
+    if ('_ofm_summary_submittedby_value' in payload) {
+      payload['ofm_summary_submittedby@odata.bind'] = payload['_ofm_summary_submittedby_value'] ? `/contacts(${payload['_ofm_summary_submittedby_value']})` : null
+      delete payload['_ofm_summary_submittedby_value']
+    }
     const response = await patchOperationWithObjectId('ofm_applications', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
