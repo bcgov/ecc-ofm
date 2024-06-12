@@ -326,7 +326,7 @@ async function userExists(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json({ exists: !isEmpty(response.value) })
   } catch (e) {
-    log.info('Error in getUserByBCeID:', e)
+    log.error('Error in getUserByBCeID:', e)
     const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
   }

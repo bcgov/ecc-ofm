@@ -65,7 +65,7 @@ function logout(req, res, next, isIdir) {
       const retUrl = encodeURIComponent(`${config.get('logoutEndpoint')}?post_logout_redirect_uri=${redirectUri}&id_token_hint=${idToken}`)
       const logoutUrl = config.get('siteMinder_logout_endpoint') + retUrl
 
-      log.info(`URL: ${logoutUrl}`)
+      log.verbose(`URL: ${logoutUrl}`)
       res.redirect(logoutUrl)
     })
   } catch (e) {
