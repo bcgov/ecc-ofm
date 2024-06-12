@@ -20,7 +20,7 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 
 export default {
@@ -68,7 +68,7 @@ export default {
       try {
         this.isLoading = true
         const payload = {
-          statusCode: APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
+          statusCode: this.sourceApplicationType === 'Application' ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
         if (this.applicationType === 'OFM') {
