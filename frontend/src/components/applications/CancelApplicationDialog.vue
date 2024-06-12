@@ -68,7 +68,7 @@ export default {
       try {
         this.isLoading = true
         const payload = {
-          statusCode: APPLICATION_STATUS_CODES.CANCELLED,
+          statusCode: APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
         if (this.applicationType === 'OFM') {

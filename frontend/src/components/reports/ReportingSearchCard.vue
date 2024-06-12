@@ -38,7 +38,7 @@
               <AppLabel>Status(es):</AppLabel>
             </v-col>
             <v-col cols="12" sm="9" lg="8" xl="7">
-              <v-select v-model.lazy="selectedStatuses" :items="STATUS_FILTER_OPTIONS" :disabled="loading" :rules="rules.required" variant="outlined" label="Select Status(s)" chips multiple>
+              <v-select v-model.lazy="selectedStatuses" :items="STATUS_FILTER_OPTIONS" :disabled="loading" :rules="rules.required" variant="outlined" label="Select Status(es)" chips multiple>
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllStatuses">
                     <template #prepend>

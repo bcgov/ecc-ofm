@@ -245,6 +245,7 @@ export default {
       // Applications' funding agreements are used in applications validation to enable the Add Supplementary Application button
       await Promise.all(
         this.applications?.map(async (application) => {
+          application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
         }),
       )
@@ -325,9 +326,13 @@ export default {
       if (this.DRAFT_STATUS_CODES.includes(statusCode)) {
         return 'status-gray'
       } else if (
-        [APPLICATION_STATUS_CODES.IN_REVIEW, SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.SUBMITTED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED].includes(
-          statusCode,
-        )
+        [
+          APPLICATION_STATUS_CODES.VERIFIED,
+          APPLICATION_STATUS_CODES.IN_REVIEW,
+          SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW,
+          APPLICATION_STATUS_CODES.SUBMITTED,
+          SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED,
+        ].includes(statusCode)
       ) {
         return 'status-green'
       } else if ([APPLICATION_STATUS_CODES.APPROVED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED].includes(statusCode)) {
