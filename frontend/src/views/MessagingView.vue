@@ -5,11 +5,11 @@
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
         <v-tab value="notifications">
           Notifications
-          <div v-if="unreadNotificationCount > 0">&nbsp;({{ unreadNotificationCount }})</div>
+          <template v-if="unreadNotificationCount > 0">({{ unreadNotificationCount }} unread)</template>
         </v-tab>
         <v-tab value="messages">
           Messages
-          <div v-if="unreadMessageCount > 0">&nbsp;({{ unreadMessageCount }})</div>
+          <template v-if="unreadMessageCount > 0">({{ unreadMessageCount }} unread)</template>
         </v-tab>
       </v-tabs>
       <v-card-text>
