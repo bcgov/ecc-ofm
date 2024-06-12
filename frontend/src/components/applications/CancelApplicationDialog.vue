@@ -23,6 +23,11 @@ import alertMixin from '@/mixins/alertMixin'
 import { APPLICATION_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 
+const APPLICATION_TYPES = {
+  APPLICATION: 'Application',
+  SUPP_APPLICATION: 'Supplementary Application',
+}
+
 export default {
   name: 'CancelApplicationDialog',
   components: { AppButton, AppDialog },
@@ -50,7 +55,7 @@ export default {
   },
   computed: {
     sourceApplicationType() {
-      return this.applicationType === 'OFM' ? 'Application' : 'Supplementary Application'
+      return this.applicationType === 'OFM' ? APPLICATION_TYPES.APPLICATION : APPLICATION_TYPES.SUPP_APPLICATION
     },
   },
   watch: {
@@ -68,10 +73,10 @@ export default {
       try {
         this.isLoading = true
         const payload = {
-          statusCode: this.sourceApplicationType === 'Application' ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
+          statusCode: this.sourceApplicationType === APPLICATION_TYPES.APPLICATION ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        if (this.applicationType === 'OFM') {
+        if (this.sourceApplicationType === APPLICATION_TYPES.APPLICATION) {
           await ApplicationService.updateApplication(this.applicationId, payload)
         } else {
           await ApplicationService.updateSupplementaryApplication(this.applicationId, payload)
