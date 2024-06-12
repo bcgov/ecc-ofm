@@ -1,4 +1,6 @@
-const IOREDIS = require('ioredis');
+'use-strict';
+
+const ioRedis = require('ioredis');
 const config = require('../../config');
 const log = require('../../components/logger');
 const connectRedis = require('connect-redis');
@@ -14,13 +16,13 @@ const Redis = {
   init() {
     if (config.get('redis:clustered') == 'true') {
       log.info('using CLUSTERED Redis implementation');
-      redisClient = new IOREDIS.Cluster([{ //TODO implement clustering
+      redisClient = new ioRedis.Cluster([{ //TODO implement clustering
         host: config.get('redis:host'),
         port: config.get('redis:port'),
       }]);
     } else {
       log.info('using STANDALONE Redis implementation');
-      redisClient = new IOREDIS({
+      redisClient = new ioRedis({
         host: config.get('redis:host'),
         port: config.get('redis:port'),
       });
@@ -52,7 +54,7 @@ function getRedisDbSession(expressSession) {
   const RedisStore = connectRedis(expressSession)
   const dbSession = new RedisStore({
     client: Redis.getRedisClient(),
-    prefix: 'ccof-sess:',
+    prefix: 'ofm-sess:',
   })
   return dbSession
 }

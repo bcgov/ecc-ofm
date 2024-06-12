@@ -59,7 +59,7 @@ nconf.defaults({
     natsCluster: process.env.NATS_CLUSTER,
   },
   redis: {
-    use: process.env.REDIS_ENABLE,
+    enable: process.env.REDIS_ENABLE,
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
     clustered: process.env.REDIS_USE_CLUSTERED

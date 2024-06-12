@@ -39,7 +39,7 @@ const paymentsRouter = require('./routes/payments')
 const reportsRouter = require('./routes/reports')
 const { MappableObjectForBack } = require('./util/mapping/MappableObject')
 const { RoleMappings } = require('./util/mapping/Mappings')
-const { getRedisDbSession } = require('./util/redis/redis-client');
+const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
 
@@ -72,7 +72,7 @@ const logStream = {
   },
 }
 
-const dbSession = config.get('redis:enable') == 'true' ? getRedisDbSession(session) : undefined
+const dbSession = String(config.get('redis:enable')) === 'true' ? getRedisDbSession(session) : undefined
 
 const cookie = {
   secure: true,
