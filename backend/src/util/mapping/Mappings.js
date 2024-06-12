@@ -131,7 +131,7 @@ const ApplicationMappings = [
   { back: 'ofm_applicationid', front: 'applicationId' },
   { back: 'ofm_application', front: 'referenceNumber' },
   { back: 'ofm_summary_submittedon', front: 'submittedDate' },
-  { back: 'ofm_summary_submittedby', front: 'submittedBy' },
+  { back: '_ofm_summary_submittedby_value', front: 'submittedBy' },
   { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
   { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
   { back: '_ofm_facility_value', front: 'facilityId' },
