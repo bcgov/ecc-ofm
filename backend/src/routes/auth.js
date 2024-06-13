@@ -34,11 +34,18 @@ router.get('/error', (_req, res) => {
 router.get('/login', passport.authenticate('oidcBceid', { failureRedirect: 'error' }))
 router.get('/login-idir', passport.authenticate('oidcIdir', { failureRedirect: 'error' }))
 
-//removes tokens and destroys session
+//removes tokens and destroys session for BCeID users
 router.get('/logout', async (req, res, next) => {
-  try {
-    const idirUser = isIdirUser(req)
+  logout(req, res, next, false)
+})
 
+//removes tokens and destroys session for IDIR users
+router.get('/logout-idir', async (req, res, next) => {
+  logout(req, res, next, true)
+})
+
+function logout(req, res, next, isIdir) {
+  try {
     const idToken = req.session?.passport?.user?.idToken
 
     req.logout(function (err) {
@@ -48,15 +55,12 @@ router.get('/logout', async (req, res, next) => {
 
       req.session.destroy()
 
-      // Build the chained logout URL
-      let endpoint = ''
+      // If the session has expired just return as SSO logout isn't required
       if (req.query?.sessionExpired) {
-        endpoint = '/session-expired'
-      } else if (idirUser) {
-        endpoint = '/internal-logout'
-      } else {
-        endpoint = '/logout'
+        return res.redirect(`/session-expired${isIdir ? '?internal=true' : ''}`)
       }
+
+      const endpoint = `/logout${isIdir ? '?internal=true' : ''}`
       const redirectUri = `${config.get('server:frontend')}${endpoint}`
       const retUrl = encodeURIComponent(`${config.get('logoutEndpoint')}?post_logout_redirect_uri=${redirectUri}&id_token_hint=${idToken}`)
       const logoutUrl = config.get('siteMinder_logout_endpoint') + retUrl
@@ -68,7 +72,7 @@ router.get('/logout', async (req, res, next) => {
     log.error(e)
     next()
   }
-})
+}
 
 const UnauthorizedRsp = {
   error: 'Unauthorized',

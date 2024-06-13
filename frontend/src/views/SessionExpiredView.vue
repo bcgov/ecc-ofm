@@ -5,7 +5,7 @@
       <template #text>
         Your secure session has ended as a result of inactivity.
         <br />
-        <a id="login-button" :href="authRoutes.LOGIN" @click="clearStorage">Log In</a>
+        <a id="login-button" :href="loginPath" @click="clearStorage">Log In</a>
         again to continue.
       </template>
     </AppSimpleCard>
@@ -21,13 +21,13 @@ import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 export default {
   name: 'SessionExpiredView',
   components: { AppSimpleCard },
-  data() {
-    return {
-      authRoutes: AuthRoutes,
-    }
-  },
   mounted() {
     this.setJwtToken()
+  },
+  computed: {
+    loginPath() {
+      return this.$route.query.internal ? AuthRoutes.LOGIN_IDIR : AuthRoutes.LOGIN
+    },
   },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import ApiService from '@/common/apiService'
+import LookupService from '@/services/lookupService'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -65,7 +65,7 @@ export const useAppStore = defineStore('app', {
     async getLookupInfo() {
       if (localStorage.getItem('jwtToken')) {
         // DONT Call api if there is no token.
-        const lookupInfo = await ApiService.getLookupInfo()
+        const lookupInfo = await LookupService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.requestSubCategories = lookupInfo?.data?.requestSubCategories
         this.roles = lookupInfo?.data?.roles

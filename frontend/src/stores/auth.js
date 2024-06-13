@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
+import UserService from '@/services/userService'
 import { useAppStore } from '@/stores/app'
 import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES, ROLES } from '@/utils/constants'
 
@@ -55,10 +56,10 @@ export const useAuthStore = defineStore('auth', {
           const appStore = useAppStore()
           let userInfoRes = undefined
           if (this.impersonateId && this.isMinistryUser) {
-            userInfoRes = await ApiService.getUserImpersonateInfo(this.impersonateId)
+            userInfoRes = await UserService.getUser(this.impersonateId)
             this.isImpersonating = true
           } else {
-            userInfoRes = await ApiService.getUserInfo()
+            userInfoRes = await UserService.getCurrentUser()
             this.isMinistryUser = userInfoRes.data.isMinistryUser
             delete userInfoRes.data.isMinistryUser
           }
@@ -67,7 +68,7 @@ export const useAuthStore = defineStore('auth', {
           if (this.isActingProvider && this.hasFacilities) {
             this.currentFacility = this.userInfo.facilities[0]
           }
-          
+
           // Lookup the permissions
           let role
           if (this.isImpersonating) {

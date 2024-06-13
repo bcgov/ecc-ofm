@@ -36,7 +36,7 @@
                 </template>
                 <v-list dark style="background-color: #003366; color: white">
                   <v-list-item class="user-link" id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
-                  <v-list-item class="user-link" id="logout_button" :href="authRoutes.LOGOUT" title="Log Out" />
+                  <v-list-item class="user-link" id="logout_button" :href="logoutPath" title="Log Out" />
                 </v-list>
               </v-menu>
             </v-col>
@@ -58,11 +58,6 @@ import { AuthRoutes } from '@/utils/constants'
 export default {
   name: 'TheHeader',
   mixins: [permissionsMixin],
-  data() {
-    return {
-      authRoutes: AuthRoutes,
-    }
-  },
   computed: {
     ...mapState(useAuthStore, ['userInfo', 'isAuthenticated', 'isMinistryUser']),
     ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
@@ -90,6 +85,9 @@ export default {
     },
     showMessagingIcon() {
       return this.isAuthenticated && this.userInfo && this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
+    },
+    logoutPath() {
+      return this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT
     },
   },
   watch: {

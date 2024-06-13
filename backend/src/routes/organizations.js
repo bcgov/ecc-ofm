@@ -11,12 +11,19 @@ const { PERMISSIONS } = require('../util/constants')
 module.exports = router
 
 /**
- * Get organization's details using accountId/organizationId
+ * Get organization's details using organizationId.
  */
-router.get('/:accountId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('accountId', 'URL param: [accountId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getOrganization(req, res)
-})
+router.get(
+  '/:organizationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  // TODO Validate User Organization ID
+  [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getOrganization(req, res)
+  },
+)
 
 /**
  * Get an organization's facilities by facilityId.
@@ -25,6 +32,7 @@ router.get(
   '/:organizationId/facilities',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -40,6 +48,7 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
+  // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -54,6 +63,8 @@ router.get(
   '/:organizationId/users',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_USERS_EDIT),
+  // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
