@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
 import { useAuthStore } from '@/stores/auth'
-import { BLANK_FIELD, SURVEY_QUESTION_TYPES } from '@/utils/constants'
+import { BLANK_FIELD, CRM_STATE_CODES, SURVEY_QUESTION_TYPES } from '@/utils/constants'
 import format from '@/utils/format'
 
 export default {
@@ -17,6 +17,10 @@ export default {
 
   methods: {
     isEmpty,
+
+    isActiveReport(surveyResponse) {
+      return surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
+    },
 
     getReportTitle(surveyResponse) {
       return isEmpty(surveyResponse) ? BLANK_FIELD : `${surveyResponse?.surveyTemplateName} - ${surveyResponse?.monthName} ${surveyResponse?.fiscalYearName?.slice(0, -3)}`
