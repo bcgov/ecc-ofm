@@ -14,7 +14,7 @@ const Redis = {
    * The redis client can be reused rather than creating multiple clients.
    */
   init() {
-    if (config.get('redis:clustered') == 'true') {
+    if (String(config.get('redis:clustered')) === 'true') {
       log.info('using CLUSTERED Redis implementation');
       redisClient = new ioRedis.Cluster([{ //TODO implement clustering
         host: config.get('redis:host'),
