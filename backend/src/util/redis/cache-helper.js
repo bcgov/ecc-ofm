@@ -1,5 +1,6 @@
-'use strict';
-const Redis = require('./redis-client');
+'use-strict';
+
+const { Redis } = require('./redis-client');
 const config = require('../../config/index');
 
 const log = require('../../components/logger');

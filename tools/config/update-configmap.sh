@@ -79,25 +79,29 @@ echo Creating config map "$APP_NAME-backend-config-map"
 oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   "$APP_NAME-backend-$ENV_VAL-config-map" \
   --from-literal="CLAMAV_HOST=clamav.$COMMON_NAMESPACE-$NAMESPACE_SUFFIX.svc.cluster.local" \
-  --from-literal=CLAMAV_PORT=3310 \
-  --from-literal="UI_PRIVATE_KEY=$UI_PRIVATE_KEY_VAL" \
-  --from-literal="UI_PUBLIC_KEY=$UI_PUBLIC_KEY_VAL" \
-  --from-literal="SOAM_CLIENT_ID=$SOAM_CLIENT_ID" \
-  --from-literal="SOAM_CLIENT_SECRET=$SOAM_CLIENT_SECRET" \
-  --from-literal="SOAM_IDP_HINT_BCEID=$SOAM_IDP_HINT_BCEID" \
-  --from-literal="SOAM_IDP_HINT_IDIR=$SOAM_IDP_HINT_IDIR" \
-  --from-literal="SERVER_FRONTEND=$SERVER_FRONTEND" \
-  --from-literal=SERVER_PORT=8080 \
-  --from-literal=ISSUER=ECC_OFM \
   --from-literal="D365_API_ENDPOINT=$D365_API_ENDPOINT" \
   --from-literal="D365_API_KEY_HEADER=$D365_API_KEY_HEADER" \
   --from-literal="D365_API_KEY_VALUE=$D365_API_KEY_VALUE" \
-  --from-literal="SOAM_PUBLIC_KEY=$FORMATTED_PUBLIC_KEY" \
-  --from-literal="SOAM_DISCOVERY=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/.well-known/openid-configuration" \
-  --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
-  --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$SITE_MINDER_LOGOUT_URL" \
   --from-literal="LOG_LEVEL=$LOG_LEVEL" \
   --from-literal="NODE_ENV=$NODE_ENV" \
+  --from-literal="REDIS_ENABLE=true" \
+  --from-literal="REDIS_CLUSTERED=true" \
+  --from-literal="REDIS_HOST=redis" \
+  --from-literal="REDIS_PORT=6379" \
+  --from-literal="SERVER_FRONTEND=$SERVER_FRONTEND" \
+  --from-literal="SITEMINDER_LOGOUT_ENDPOINT=$SITE_MINDER_LOGOUT_URL" \
+  --from-literal="SOAM_CLIENT_ID=$SOAM_CLIENT_ID" \
+  --from-literal="SOAM_CLIENT_SECRET=$SOAM_CLIENT_SECRET" \
+  --from-literal="SOAM_DISCOVERY=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/.well-known/openid-configuration" \
+  --from-literal="SOAM_IDP_HINT_BCEID=$SOAM_IDP_HINT_BCEID" \
+  --from-literal="SOAM_IDP_HINT_IDIR=$SOAM_IDP_HINT_IDIR" \
+  --from-literal="SOAM_PUBLIC_KEY=$FORMATTED_PUBLIC_KEY" \
+  --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
+  --from-literal="UI_PRIVATE_KEY=$UI_PRIVATE_KEY_VAL" \
+  --from-literal="UI_PUBLIC_KEY=$UI_PUBLIC_KEY_VAL" \
+  --from-literal=CLAMAV_PORT=3310 \
+  --from-literal=ISSUER=ECC_OFM \
+  --from-literal=SERVER_PORT=8080 \
   --dry-run -o yaml | oc apply -f -
 
 echo
