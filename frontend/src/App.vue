@@ -15,14 +15,13 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia'
+import { mapActions } from 'pinia'
 import TheEnvBar from '@/components/TheEnvBar.vue'
 import TheFooter from '@/components/TheFooter.vue'
 import TheHeader from '@/components/TheHeader.vue'
 import TheSnackBar from '@/components/TheSnackBar.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import HttpStatus from 'http-status-codes'
 
 export default {
   name: 'App',

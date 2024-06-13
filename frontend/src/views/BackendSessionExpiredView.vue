@@ -1,28 +1,17 @@
-<template>
-  <div style="display: none">
-    <a id="logout_href" :href="link" />
-  </div>
-</template>
-
 <script>
-import { AuthRoutes } from '@/utils/constants'
+import { mapState } from 'pinia'
+
 import { useAuthStore } from '@/stores/auth'
-import { mapActions } from 'pinia'
+import { AuthRoutes } from '@/utils/constants'
+
 export default {
   name: 'BackendSessionExpiredView',
-  data() {
-    return {
-      link: AuthRoutes.SESSION_EXPIRED,
-    }
+  computed: {
+    ...mapState(useAuthStore, ['isMinistryUser']),
   },
   mounted() {
-    window.location = document.getElementById('logout_href').href
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['setJwtToken']),
-    logout() {
-      this.setJwtToken()
-    },
+    const logoutPath = this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT
+    window.location = `${logoutPath}?sessionExpired=true`
   },
 }
 </script>

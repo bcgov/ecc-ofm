@@ -5,7 +5,7 @@
       <template #text>
         You have Logged out.
         <br />
-        <a id="login-button" :href="authRoutes.LOGIN" @click="clearStorage">Log In</a>
+        <a id="login-button" :href="loginPath" @click="clearStorage">Log In</a>
         again if you wish to continue.
       </template>
     </AppSimpleCard>
@@ -21,13 +21,13 @@ import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 export default {
   name: 'LogoutView',
   components: { AppSimpleCard },
-  data() {
-    return {
-      authRoutes: AuthRoutes,
-    }
-  },
   created() {
     this.setJwtToken()
+  },
+  computed: {
+    loginPath() {
+      return this.$route.query.internal ? AuthRoutes.LOGIN_IDIR : AuthRoutes.LOGIN
+    },
   },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
