@@ -37,6 +37,7 @@ export const useNotificationsStore = defineStore('notifications', {
       }
       if (notificationId && !isEmpty(payload)) {
         try {
+          // TODO Make this a service function
           await ApiService.apiAxios.put(ApiRoutes.NOTIFICATIONS + '/' + notificationId, payload)
         } catch (error) {
           console.log(`Failed to update existing Notice - ${error}`)

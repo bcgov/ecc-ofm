@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility, updateFacilityPrimaryContact } = require('../components/facilities')
+const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility } = require('../components/facilities')
 const { param, validationResult } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
@@ -47,13 +47,4 @@ router.put(
 router.get('/:facilityId/licences', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
   validationResult(req).throw()
   return getFacilityLicences(req, res)
-})
-
-/**
- * Update an Facilities Primary Contact
- * TODO (jgstorey) This doesn't appear to be used anymore
- */
-router.put('/:facilityId/contacts', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return updateFacilityPrimaryContact(req, res)
 })

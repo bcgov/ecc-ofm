@@ -52,6 +52,17 @@ export default {
     }
   },
 
+  async updateFacilityContact(facilityId, contact) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.patch(`${ApiRoutes.USER_PERMISSIONS_FACILITIES}/${contact.bceidFacilityId}`, contact)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to update facility contact by facility/account id - ${error}`)
+      throw error
+    }
+  },
+
   async updateFacility(facilityId, facility) {
     try {
       if (!facilityId) return
