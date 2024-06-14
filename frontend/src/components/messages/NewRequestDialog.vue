@@ -241,7 +241,7 @@
               :loading="isLoading"
               @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
-          <template v-if="!isAnAccountMaintenanceRequest">
+          <template v-if="showContactMethods">
             <v-row no-gutters class="mt-4">
               <v-col class="v-col-12 pb-0">
                 <AppLabel variant="modal">Preferred method of contact:</AppLabel>
@@ -327,6 +327,10 @@ export default {
       type: Object,
       default: null,
     },
+    defaultSubject: {
+      type: String,
+      default: null,
+    },
   },
   emits: ['close'],
   data() {
@@ -374,6 +378,9 @@ export default {
     isAnAccountMaintenanceRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
     },
+    isReportingRequest() {
+      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)
+    },
     isAnySubCategoryChecked() {
       return this.newRequestModel.subCategories.length > 0
     },
@@ -413,7 +420,10 @@ export default {
       return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
     },
     showSupportingDocuments() {
-      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
+      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || (!this.isAnAccountMaintenanceRequest && !this.isReportingRequest)
+    },
+    showContactMethods() {
+      return !this.isAnAccountMaintenanceRequest && !this.isReportingRequest
     },
     isLoadingOrDisabled() {
       return this.isLoading || this.isDisabled
@@ -458,7 +468,12 @@ export default {
     },
     defaultFacility: {
       handler(value) {
-        this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value.facilityId)]
+        this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value?.facilityId)]
+      },
+    },
+    defaultSubject: {
+      handler(value) {
+        this.newRequestModel.subject = value
       },
     },
     'newRequestModel.facilities': {
@@ -540,6 +555,7 @@ export default {
       this.newRequestModel = {
         requestCategoryId: this.defaultRequestCategoryId,
         subCategories: [],
+        subject: this.defaultSubject,
         contactId: this.userInfo?.contactId,
         facilities: [this.facilities?.find((facility) => facility.facilityId === facilityId)],
         contactMethod: '1',

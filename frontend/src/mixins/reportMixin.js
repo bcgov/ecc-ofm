@@ -18,7 +18,7 @@ export default {
   methods: {
     isEmpty,
 
-    isActiveReport(surveyResponse) {
+    isActiveReportResponse(surveyResponse) {
       return surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
     },
 

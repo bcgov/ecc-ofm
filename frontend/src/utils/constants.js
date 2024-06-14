@@ -125,6 +125,7 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
 
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
+  REPORTING: 'Reporting',
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
@@ -200,6 +201,7 @@ export const SURVEY_RESPONSE_STATUSES = Object.freeze({
   DRAFT: 'Draft',
   COMPLETED: 'Completed',
   COMPLETED_LATE: 'Completed - Late',
+  COMPLETED_CLOSED: 'Completed - Closed',
 })
 
 export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({

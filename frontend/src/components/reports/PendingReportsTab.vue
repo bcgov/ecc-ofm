@@ -28,10 +28,10 @@
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
             <AppButton :primary="false" btn-size="small" class="mr-2" @click="openSurveyResponse(item)">
-              <template v-if="isActiveReport(item)">Update</template>
+              <template v-if="isActiveReportResponse(item)">Update</template>
               <template v-else>View</template>
             </AppButton>
-            <AppButton v-if="!isActiveReport(item)" :primary="false" btn-size="small" @click="openSurveyResponse(item)">Unlock</AppButton>
+            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" btn-size="small" @click="toggleAssistanceRequestDialog(item)">Unlock</AppButton>
             <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
               <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
             </v-btn>
@@ -39,26 +39,38 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
+    <NewRequestDialog
+      :show="showAssistanceRequestDialog"
+      :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)"
+      :default-subject="defaultAssistanceRequestSubject"
+      :default-facility="defaultAssistanceRequestFacility"
+      @close="toggleAssistanceRequestDialog" />
     <CancelSurveyResponseDialog :show="showCancelDialog" :survey-response-id="surveyResponseIdToCancel" @close="toggleCancelDialog" @cancel="cancel" />
   </v-container>
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
 import moment from 'moment'
+import { isEmpty } from 'lodash'
+import { mapState } from 'pinia'
+
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 
 export default {
-  components: { AppAlertBanner, AppButton, FacilityFilter, CancelSurveyResponseDialog },
+  components: { AppAlertBanner, AppButton, FacilityFilter, CancelSurveyResponseDialog, NewRequestDialog },
   mixins: [alertMixin, reportMixin, permissionsMixin],
+  emits: ['cancel'],
   data() {
     return {
       headers: [
@@ -70,7 +82,9 @@ export default {
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       loading: false,
+      showAssistanceRequestDialog: false,
       showCancelDialog: false,
+      surveyResponseToUnlock: undefined,
       surveyResponseIdToCancel: undefined,
       facilityNameFilter: undefined,
       pendingReports: [],
@@ -78,20 +92,27 @@ export default {
   },
 
   computed: {
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapState(useAuthStore, ['userInfo']),
     filteredPendingReports() {
       return isEmpty(this.facilityNameFilter) ? this.pendingReports : this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
-
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
+    defaultAssistanceRequestSubject() {
+      return `Unlock ${this.surveyResponseToUnlock?.surveyResponseReferenceNumber} ${this.surveyResponseToUnlock?.title}`
+    },
+    defaultAssistanceRequestFacility() {
+      return this.userInfo?.facilities?.find((facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId)
+    },
   },
 
   async created() {
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
     this.SURVEY_RESPONSE_STATUS_CODES = SURVEY_RESPONSE_STATUS_CODES
     await this.loadPendingReports()
-    console.log(this.pendingReports)
   },
 
   methods: {
@@ -150,11 +171,16 @@ export default {
     },
 
     showTrash(surveyResponse) {
-      return this.isActiveReport(surveyResponse) && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
+      return this.isActiveReportResponse(surveyResponse) && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
 
     isOverdue(report) {
       return moment(report.dueDate).isBefore(moment())
+    },
+
+    toggleAssistanceRequestDialog(surveyResponse) {
+      this.surveyResponseToUnlock = surveyResponse ?? this.surveyResponseToUnlock
+      this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
     },
   },
 }
