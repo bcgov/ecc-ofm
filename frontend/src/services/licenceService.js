@@ -22,7 +22,7 @@ export default {
   async getLicenceDetails(licenceId) {
     try {
       if (!licenceId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.LICENCES}/${licenceId}/licence-details`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.LICENCES}/${licenceId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get licence detail(s) by licenceId - ${error}`)
