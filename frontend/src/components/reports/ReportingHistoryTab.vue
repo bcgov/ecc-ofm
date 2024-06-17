@@ -135,7 +135,7 @@ export default {
       })
     },
 
-    async openSurveyResponse(surveyResponse) {
+    openSurveyResponse(surveyResponse) {
       if (!surveyResponse?.surveyResponseId) return
       this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: surveyResponse?.surveyResponseId } })
     },
