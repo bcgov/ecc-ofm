@@ -38,6 +38,7 @@
       :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)"
       :default-subject="defaultAssistanceRequestSubject"
       :default-facility="defaultAssistanceRequestFacility"
+      return-to="reporting"
       @close="toggleAssistanceRequestDialog" />
   </v-container>
 </template>

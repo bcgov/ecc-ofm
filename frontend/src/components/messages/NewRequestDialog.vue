@@ -280,6 +280,7 @@
       :referenceNumber="referenceNumber"
       :show="showNewRequestConfirmationDialog"
       :isInvokedFromMessages="isInvokedFromMessages"
+      :return-to="returnTo"
       @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
@@ -330,6 +331,10 @@ export default {
     defaultSubject: {
       type: String,
       default: null,
+    },
+    returnTo: {
+      type: String,
+      default: 'home',
     },
   },
   emits: ['close'],
