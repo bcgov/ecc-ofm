@@ -5,6 +5,12 @@
 
 :2015
 
+# ZAP scan: Block OPTIONS/TRACE/TRACK requests
+@options_trace_track method OPTIONS TRACE TRACK
+handle @options_trace_track {
+	respond 405
+}
+
 root * /srv
 
 file_server
