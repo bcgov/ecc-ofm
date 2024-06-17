@@ -75,7 +75,6 @@ const logStream = {
 const dbSession = String(config.get('redis:enable')) === 'true' ? getRedisDbSession(session) : undefined
 
 const cookie = {
-  sameSite: true, // Default value of 'none' triggers a Low alert in the ZAP scan
   secure: true,
   httpOnly: true,
   maxAge: 1800000, //30 minutes in ms. this is same as session time. DO NOT MODIFY, IF MODIFIED, MAKE SURE SAME AS SESSION TIME OUT VALUE.
