@@ -40,6 +40,10 @@ handle @unspecified_path {
 	try_files {path} {path}/ /?_url={uri}
 }
 
+handle_errors {
+	header -server
+}
+
 encode {
 	gzip 7
 }
