@@ -24,7 +24,9 @@
               <template v-if="isActiveReportResponse(item)">Update</template>
               <template v-else>View</template>
             </AppButton>
-            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" btn-size="small" @click="toggleAssistanceRequestDialog(item)">Unlock</AppButton>
+            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" btn-size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+              Unlock
+            </AppButton>
             <v-btn variant="text" @click="false">
               <v-icon aria-label="Download" size="large">mdi-tray-arrow-down</v-icon>
             </v-btn>
@@ -43,10 +45,7 @@
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
 
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
@@ -81,9 +80,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    ...mapState(useAuthStore, ['userInfo']),
-
     filteredSubmittedReports() {
       return isEmpty(this.facilityNameFilter) ? this.submittedReports : this.submittedReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },

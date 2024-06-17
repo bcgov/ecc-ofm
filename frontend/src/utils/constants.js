@@ -35,11 +35,12 @@ export const ApiRoutes = Object.freeze({
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
+  SUBMITTED: 1,
   ASSIGNED: 2,
   WITH_PROVIDER: 3,
   READY_TO_RESOLVE: 4,
-  CLOSED_COMPLETE: 5,
-  CLOSED_CANCELLED: 6,
+  CLOSED_COMPLETE: 5, // INACTIVE state
+  CLOSED_CANCELLED: 6, // INACTIVE state
 })
 
 export const CRM_STATE_CODES = Object.freeze({

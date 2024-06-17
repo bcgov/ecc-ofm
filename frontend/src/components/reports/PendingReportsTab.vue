@@ -23,7 +23,7 @@
           </template>
         </template>
         <template #[`item.statusName`]="{ item }">
-          <span class="status-gray">{{ item.statusCode === SURVEY_RESPONSE_STATUS_CODES.ACTIVE ? 'Draft' : item.statusName }}</span>
+          <span class="status-gray">{{ item.statusCode === SURVEY_RESPONSE_STATUS_CODES.ACTIVE ? SURVEY_RESPONSE_STATUSES.DRAFT : item.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
@@ -31,7 +31,9 @@
               <template v-if="isActiveReportResponse(item)">Update</template>
               <template v-else>View</template>
             </AppButton>
-            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" btn-size="small" @click="toggleAssistanceRequestDialog(item)">Unlock</AppButton>
+            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" btn-size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+              Unlock
+            </AppButton>
             <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
               <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
             </v-btn>
@@ -52,10 +54,7 @@
 <script>
 import moment from 'moment'
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
 
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
@@ -65,7 +64,7 @@ import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 
 export default {
   components: { AppAlertBanner, AppButton, FacilityFilter, CancelSurveyResponseDialog, NewRequestDialog },
@@ -92,8 +91,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    ...mapState(useAuthStore, ['userInfo']),
     filteredPendingReports() {
       return isEmpty(this.facilityNameFilter) ? this.pendingReports : this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
@@ -111,6 +108,7 @@ export default {
 
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
+    this.SURVEY_RESPONSE_STATUSES = SURVEY_RESPONSE_STATUSES
     this.SURVEY_RESPONSE_STATUS_CODES = SURVEY_RESPONSE_STATUS_CODES
     await this.loadPendingReports()
   },

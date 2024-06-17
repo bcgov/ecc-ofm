@@ -1,13 +1,17 @@
 import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { BLANK_FIELD, CRM_STATE_CODES, SURVEY_QUESTION_TYPES } from '@/utils/constants'
+import { useMessagesStore } from '@/stores/messages'
+import { ASSISTANCE_REQUEST_STATUS_CODES, BLANK_FIELD, CRM_STATE_CODES, SURVEY_QUESTION_TYPES } from '@/utils/constants'
 import format from '@/utils/format'
 
 export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapState(useMessagesStore, ['assistanceRequests']),
   },
 
   created() {
@@ -20,6 +24,16 @@ export default {
 
     isActiveReportResponse(surveyResponse) {
       return surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
+    },
+
+    hasInProgressAssistanceRequest(surveyResponse) {
+      return this.assistanceRequests?.some(
+        (request) =>
+          request.stateCode === CRM_STATE_CODES.ACTIVE &&
+          request.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE &&
+          request.subject?.includes(surveyResponse?.title) &&
+          request.requestFacilities?.some((facility) => facility.facilityId === surveyResponse?.facilityId),
+      )
     },
 
     getReportTitle(surveyResponse) {
