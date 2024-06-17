@@ -26,13 +26,17 @@ export default {
       return surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE
     },
 
+    // if assistance requests is still loading, then return True
     hasInProgressAssistanceRequest(surveyResponse) {
-      return this.assistanceRequests?.some(
-        (request) =>
-          request.stateCode === CRM_STATE_CODES.ACTIVE &&
-          request.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE &&
-          request.subject?.includes(surveyResponse?.title) &&
-          request.requestFacilities?.some((facility) => facility.facilityId === surveyResponse?.facilityId),
+      return (
+        this.assistanceRequests == null ||
+        this.assistanceRequests?.some(
+          (request) =>
+            request.stateCode === CRM_STATE_CODES.ACTIVE &&
+            request.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE &&
+            request.subject?.includes(surveyResponse?.title) &&
+            request.requestFacilities?.some((facility) => facility.facilityId === surveyResponse?.facilityId),
+        )
       )
     },
 
