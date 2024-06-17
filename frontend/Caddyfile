@@ -5,11 +5,11 @@
 
 :2015
 
-# ZAP scan: Block OPTIONS/TRACE/TRACK requests
-#@options_trace_track method OPTIONS TRACE TRACK
-#handle @options_trace_track {
-#	respond 405
-#}
+# ZAP Scan Proxy Disclosure Alert fix
+@options_trace_track method OPTIONS TRACE TRACK
+handle @options_trace_track {
+	respond 405
+}
 
 root * /srv
 
@@ -21,6 +21,7 @@ file_server
 redir @www_host http://{$HOST_ROUTE}{path}
 
 header {
+	 # ZAP Scan Proxy Disclosure Alert fix
 	-server
 	X-Frame-Options "SAMEORIGIN"
 	X-XSS-Protection "1;mode=block"
@@ -41,6 +42,7 @@ handle @unspecified_path {
 }
 
 handle_errors {
+	# ZAP Scan Proxy Disclosure Alert fix
 	header -server
 }
 
