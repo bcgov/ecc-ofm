@@ -77,10 +77,10 @@ export default {
     },
 
     returnPage() {
-      if (this.$route.path?.includes(this.returnTo)) {
-        this.closeDialog()
+      this.closeDialog()
+      if (!this.$route.path?.includes(this.returnTo)) {
+        this.$router.push({ name: this.returnTo })
       }
-      this.$router.push({ name: this.returnTo })
     },
   },
 }
