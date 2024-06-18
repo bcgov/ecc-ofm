@@ -30,7 +30,7 @@ header {
 	Strict-Transport-Security "max-age=31536000"
 	Content-Security-Policy "default-src 'self' https://spt.apps.gov.bc.ca https://spm.apps.gov.bc.ca; script-src 'self' https://www2.gov.bc.ca data:; style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dM5rzXYgE7oJM4ItEsJrV6XiSt6jCeNFoK6VcuPxR+g='; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://fonts.googleapis.com http://www.w3.org; worker-src blob:; form-action 'self'; frame-ancestors 'self';"
 	Referrer-Policy "same-origin"
-	Permissions-Policy "fullscreen 'self'; camera 'none'; microphone 'none'"
+	Permissions-Policy "fullscreen=(self), camera=(), microphone=()"
 }
 
 @unspecified_path {
