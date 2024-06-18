@@ -331,10 +331,9 @@ export default {
         contactsToAdd.forEach((obj) => (obj[property] = true))
         contactsToRemove?.forEach((obj) => (obj[property] = false))
         const contactsToUpdate = contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
-        let updateContactsTasks = contactsToUpdate.map(async (contact) => {
+        const updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
-            // TODO (jgstorey) Make this a service function
-            await ApiService.apiAxios.patch(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + contact.bceidFacilityId, contact)
+            await FacilityService.updateFacilityContact(contact.bceidFacilityId, contact)
           } catch (error) {
             this.setFailureAlert(`Failed to update ${property} for contactId = ` + contact.contactId, error)
             throw error

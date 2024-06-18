@@ -19,30 +19,45 @@
           {{ format.formatDate(item?.submittedDate) }}
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn variant="text" @click="viewSurveyResponse(item)">
-            <v-icon aria-label="View" size="large">mdi-eye-outline</v-icon>
-          </v-btn>
-          <v-btn variant="text" @click="false">
-            <v-icon aria-label="Download" size="large">mdi-tray-arrow-down</v-icon>
-          </v-btn>
+          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
+            <AppButton :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">
+              {{ isActiveReportResponse(item) ? 'Update' : 'View' }}
+            </AppButton>
+            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+              Unlock
+            </AppButton>
+            <v-btn variant="text" @click="false">
+              <v-icon aria-label="Download" size="large">mdi-tray-arrow-down</v-icon>
+            </v-btn>
+          </v-row>
         </template>
       </v-data-table>
     </v-skeleton-loader>
+    <NewRequestDialog
+      :show="showAssistanceRequestDialog"
+      :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)"
+      :default-subject="defaultAssistanceRequestSubject"
+      :default-facility="defaultAssistanceRequestFacility"
+      return-to="reporting"
+      @close="toggleAssistanceRequestDialog" />
   </v-container>
 </template>
 
 <script>
 import { isEmpty } from 'lodash'
+
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import ReportingSearchCard from '@/components/reports/ReportingSearchCard.vue'
-import { SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import ReportsService from '@/services/reportsService'
 
 export default {
-  components: { AppAlertBanner, FacilityFilter, ReportingSearchCard },
+  components: { AppAlertBanner, AppButton, FacilityFilter, NewRequestDialog, ReportingSearchCard },
   mixins: [alertMixin, reportMixin],
   data() {
     return {
@@ -55,6 +70,8 @@ export default {
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       loading: false,
+      showAssistanceRequestDialog: false,
+      surveyResponseToUnlock: undefined,
       facilities: [],
       submittedReports: [],
       facilityNameFilter: undefined,
@@ -66,11 +83,20 @@ export default {
     filteredSubmittedReports() {
       return isEmpty(this.facilityNameFilter) ? this.submittedReports : this.submittedReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
-
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
+    defaultAssistanceRequestSubject() {
+      return `Unlock ${this.surveyResponseToUnlock?.surveyResponseReferenceNumber} ${this.surveyResponseToUnlock?.title}`
+    },
+    defaultAssistanceRequestFacility() {
+      return this.userInfo?.facilities?.find((facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId)
+    },
+  },
+
+  created() {
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
   },
 
   methods: {
@@ -109,7 +135,7 @@ export default {
       })
     },
 
-    async viewSurveyResponse(surveyResponse) {
+    openSurveyResponse(surveyResponse) {
       if (!surveyResponse?.surveyResponseId) return
       this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: surveyResponse?.surveyResponseId } })
     },
@@ -118,13 +144,11 @@ export default {
       if (surveyResponse?.isSubmittedLate) {
         return SURVEY_RESPONSE_STATUSES.COMPLETED_LATE
       }
-      return SURVEY_RESPONSE_STATUSES.COMPLETED
-      // TODO (vietle-cgi) - Add "Re-Submitted" status - pending on CRM team to add it.
+      return this.isActiveReportResponse(surveyResponse) ? SURVEY_RESPONSE_STATUSES.COMPLETED : SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED
     },
 
     getStatusClass(surveyResponse) {
       return surveyResponse?.isSubmittedLate ? 'status-red' : 'status-green'
-      // TODO (vietle-cgi) - Add "Re-Submitted" status - pending on CRM team to add it.
     },
 
     /**
@@ -132,6 +156,11 @@ export default {
      */
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
+    },
+
+    toggleAssistanceRequestDialog(surveyResponse) {
+      this.surveyResponseToUnlock = surveyResponse ?? this.surveyResponseToUnlock
+      this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
     },
   },
 }

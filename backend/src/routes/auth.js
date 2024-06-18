@@ -140,14 +140,5 @@ async function generateTokens(req, res) {
     res.status(401).json(UnauthorizedRsp)
   }
 }
-router.get('/user-session-remaining-time', passport.authenticate('jwt', { session: false }), (req, res) => {
-  if (req?.session?.cookie && req?.session?.passport?.user) {
-    const remainingTime = req.session.cookie.maxAge
-    log.info(`session remaining time is :: ${remainingTime} for user`, req.session?.passport?.user?.displayName)
-    return res.status(200).json(req.session.cookie.maxAge)
-  } else {
-    return res.sendStatus(401)
-  }
-})
 
 module.exports = router
