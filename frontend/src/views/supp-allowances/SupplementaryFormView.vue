@@ -499,7 +499,10 @@ export default {
       const termOneEndDate = new Date(termTwoEndDate.setFullYear(termTwoEndDate.getFullYear() - 1))
 
       switch (true) {
-        case today < termOneEndDate:
+        //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
+        //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
+        //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
+        case today < termOneEndDate || !this.fundingAgreement?.endDate:
           this.fundingExpiryDate = termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
