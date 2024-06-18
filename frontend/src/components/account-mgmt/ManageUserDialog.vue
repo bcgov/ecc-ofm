@@ -237,6 +237,7 @@ export default {
      * Close the dialog.
      */
     closeManageUserDialog() {
+      this.errorMessages = []
       this.$refs.userForm?.reset()
       if (this.wasNewUserAdded) {
         this.wasNewUserAdded = false
@@ -250,13 +251,13 @@ export default {
      * Create or update user.
      */
     async saveUser() {
-      await this.checkBCeIDExists(this.user?.userName)
-      this.$refs.userForm?.validate()
-      if (!this.isFormComplete) {
-        return
-      }
       try {
         this.isLoading = true
+        await this.checkBCeIDExists(this.user?.userName)
+        this.$refs.userForm?.validate()
+        if (!this.isFormComplete) {
+          return
+        }
         if (this.isAddingUser) {
           await this.createUser()
         } else if (this.isUpdatingUser) {
