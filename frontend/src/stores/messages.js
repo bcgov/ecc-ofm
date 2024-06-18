@@ -23,6 +23,7 @@ export const useMessagesStore = defineStore('messages', {
   actions: {
     async createAssistanceRequest(payload) {
       try {
+        // TODO Make this a service function
         const response = await ApiService.apiAxios.post(ApiRoutes.MESSAGES + '/newAssistanceRequest', payload)
         return response?.data
       } catch (error) {
@@ -32,6 +33,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async getAssistanceRequests(contactId) {
       try {
+        // TODO Make this a service function
         const response = await ApiService.apiAxios.get(ApiRoutes.MESSAGES + '/' + contactId)
         this.assistanceRequests = response.data
         sortAssistanceRequests(this.assistanceRequests)
@@ -42,6 +44,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async getAssistanceRequest(assistanceRequestId) {
       try {
+        // TODO Make this a service function
         const response = await ApiService.apiAxios.get(ApiRoutes.MESSAGES + '/assistanceRequests/' + assistanceRequestId)
         return response.data
       } catch (error) {
@@ -52,6 +55,7 @@ export const useMessagesStore = defineStore('messages', {
     async updateAssistanceRequest(assistanceRequestId, payload) {
       try {
         if (assistanceRequestId && !isEmpty(payload)) {
+          // TODO Make this a service function
           await ApiService.apiAxios.put(ApiRoutes.MESSAGES + '/' + assistanceRequestId, payload)
         }
       } catch (error) {
@@ -77,6 +81,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async getAssistanceRequestConversation(assistanceRequestId) {
       try {
+        // TODO Make this a service function
         const response = await ApiService.apiAxios.get(ApiRoutes.MESSAGES + '/conversations' + '/' + assistanceRequestId)
         this.assistanceRequestConversation = response.data
       } catch (error) {
@@ -86,6 +91,7 @@ export const useMessagesStore = defineStore('messages', {
     },
     async replyToAssistanceRequest(payload) {
       try {
+        // TODO Make this a service function
         const response = await ApiService.apiAxios.post(ApiRoutes.MESSAGES + '/replyToAssistanceRequest', payload)
         return response?.data
       } catch (error) {

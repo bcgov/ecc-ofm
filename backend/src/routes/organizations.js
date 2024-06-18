@@ -17,6 +17,7 @@ router.get(
   '/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
@@ -32,6 +33,7 @@ router.get(
   '/:organizationId/facilities',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {

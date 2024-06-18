@@ -1,5 +1,5 @@
-let baseRoot = '/api'
-const authRoot = baseRoot + '/auth'
+const baseRoot = '/api'
+const authRoot = `${baseRoot}/auth`
 
 export const AuthRoutes = Object.freeze({
   LOGIN: authRoot + '/login',
@@ -8,7 +8,6 @@ export const AuthRoutes = Object.freeze({
   LOGOUT_IDIR: authRoot + '/logout-idir',
   REFRESH: authRoot + '/refresh',
   TOKEN: authRoot + '/token',
-  SESSION_REMAINING_TIME: authRoot + '/user-session-remaining-time',
 })
 
 export const ApiRoutes = Object.freeze({
