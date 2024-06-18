@@ -22,38 +22,54 @@
             Due
           </template>
         </template>
-        <template #[`item.status`]>
-          <span class="status-gray">Draft</span>
+        <template #[`item.statusName`]="{ item }">
+          <span class="status-gray">{{ item.statusCode === SURVEY_RESPONSE_STATUS_CODES.ACTIVE ? SURVEY_RESPONSE_STATUSES.DRAFT : item.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn variant="text" @click="openSurveyResponse(item)">
-            <v-icon aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
-          </v-btn>
-          <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
-            <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
-          </v-btn>
+          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
+            <AppButton :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">
+              {{ isActiveReportResponse(item) ? 'Update' : 'View' }}
+            </AppButton>
+            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+              Unlock
+            </AppButton>
+            <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
+              <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
+            </v-btn>
+          </v-row>
         </template>
       </v-data-table>
     </v-skeleton-loader>
+    <NewRequestDialog
+      :show="showAssistanceRequestDialog"
+      :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)"
+      :default-subject="defaultAssistanceRequestSubject"
+      :default-facility="defaultAssistanceRequestFacility"
+      return-to="reporting"
+      @close="toggleAssistanceRequestDialog" />
     <CancelSurveyResponseDialog :show="showCancelDialog" :survey-response-id="surveyResponseIdToCancel" @close="toggleCancelDialog" @cancel="cancel" />
   </v-container>
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
 import moment from 'moment'
+import { isEmpty } from 'lodash'
+
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
-import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 
 export default {
-  components: { AppAlertBanner, FacilityFilter, CancelSurveyResponseDialog },
+  components: { AppAlertBanner, AppButton, FacilityFilter, CancelSurveyResponseDialog, NewRequestDialog },
   mixins: [alertMixin, reportMixin, permissionsMixin],
+  emits: ['cancel'],
   data() {
     return {
       headers: [
@@ -61,11 +77,13 @@ export default {
         { title: 'Report ID', key: 'surveyResponseReferenceNumber' },
         { title: 'Title', key: 'title' },
         { title: 'Facility', key: 'facilityName' },
-        { title: 'Status', key: 'status' },
+        { title: 'Status', key: 'statusName' },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
       loading: false,
+      showAssistanceRequestDialog: false,
       showCancelDialog: false,
+      surveyResponseToUnlock: undefined,
       surveyResponseIdToCancel: undefined,
       facilityNameFilter: undefined,
       pendingReports: [],
@@ -76,15 +94,22 @@ export default {
     filteredPendingReports() {
       return isEmpty(this.facilityNameFilter) ? this.pendingReports : this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
-
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
+    defaultAssistanceRequestSubject() {
+      return `Unlock ${this.surveyResponseToUnlock?.surveyResponseReferenceNumber} ${this.surveyResponseToUnlock?.title}`
+    },
+    defaultAssistanceRequestFacility() {
+      return this.userInfo?.facilities?.find((facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId)
+    },
   },
 
   async created() {
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
     this.SURVEY_RESPONSE_STATUSES = SURVEY_RESPONSE_STATUSES
+    this.SURVEY_RESPONSE_STATUS_CODES = SURVEY_RESPONSE_STATUS_CODES
     await this.loadPendingReports()
   },
 
@@ -119,7 +144,10 @@ export default {
       this.pendingReports?.sort((a, b) => {
         const isOverdueA = this.isOverdue(a) ? -1 : 1
         const isOverdueB = this.isOverdue(b) ? -1 : 1
-        return isOverdueA - isOverdueB
+        const overDueComparison = isOverdueA - isOverdueB
+        const facilityNameComparison = a.facilityName?.localeCompare(b.facilityName)
+        const surveyResponseNumberComparison = a.surveyResponseReferenceNumber?.localeCompare(b.surveyResponseReferenceNumber)
+        return overDueComparison || facilityNameComparison || surveyResponseNumberComparison
       })
     },
 
@@ -144,11 +172,16 @@ export default {
     },
 
     showTrash(surveyResponse) {
-      return surveyResponse?.stateCode === CRM_STATE_CODES.ACTIVE && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
+      return this.isActiveReportResponse(surveyResponse) && this.hasPermission(this.PERMISSIONS.DELETE_DRAFT_REPORTS)
     },
 
     isOverdue(report) {
       return moment(report.dueDate).isBefore(moment())
+    },
+
+    toggleAssistanceRequestDialog(surveyResponse) {
+      this.surveyResponseToUnlock = surveyResponse ?? this.surveyResponseToUnlock
+      this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
     },
   },
 }

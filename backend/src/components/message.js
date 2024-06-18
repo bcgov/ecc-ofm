@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId, postOperation } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { AssistanceRequestMappings, AssistanceRequestFacilityMappings, AssistanceRequestConversationMappings } = require('../util/mapping/Mappings')
+const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 const { ASSISTANCE_REQUEST_STATUS_CODES } = require('../util/constants')
 
@@ -73,6 +74,7 @@ async function createAssistanceRequest(req, res) {
     response = new MappableObjectForFront(response, AssistanceRequestMappings).toJSON()
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -86,6 +88,7 @@ async function replyToAssistanceRequest(req, res) {
     const response = await postOperation('ofm_conversations', payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -98,6 +101,7 @@ async function getAssistanceRequests(req, res) {
     response?.value?.forEach((item) => assistanceRequests.push(mapAssistanceRequestObjectForFront(item)))
     return res.status(HttpStatus.OK).json(assistanceRequests)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -108,6 +112,7 @@ async function getAssistanceRequest(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapAssistanceRequestObjectForFront(response))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -118,6 +123,7 @@ async function updateAssistanceRequest(req, res) {
     const response = await patchOperationWithObjectId('ofm_assistance_requests', req.params.assistanceRequestId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -133,6 +139,7 @@ async function getAssistanceRequestConversation(req, res) {
     }
     return res.status(HttpStatus.OK).json(messages)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

@@ -19,6 +19,7 @@ async function getDocuments(req, res) {
     response?.value?.forEach((document) => documents.push(new MappableObjectForFront(document, DocumentMappings).toJSON()))
     return res.status(HttpStatus.OK).json(documents)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -42,6 +43,7 @@ async function createDocuments(req, res) {
     const response = await postDocuments(formFile, getPostDocumentsHeaders(formFile))
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -51,6 +53,7 @@ async function deleteDocument(req, res) {
     await deleteOperationWithObjectId('ofm_documents', req.params.documentId)
     return res.status(HttpStatus.OK).json()
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
