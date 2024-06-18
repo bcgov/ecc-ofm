@@ -6,8 +6,6 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
-
 export default {
   inheritAttrs: true,
   props: {
@@ -15,22 +13,14 @@ export default {
       type: Boolean,
       default: true,
     },
-    btnSize: {
-      type: String,
-      default: '',
-    },
   },
   computed: {
     buttonClass() {
       return {
-        'BC-Gov-PrimaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && isEmpty(this.btnSize),
-        'BC-Gov-PrimaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && isEmpty(this.btnSize),
-        'BC-Gov-PrimaryButton-small': !this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && this.btnSize === 'small',
-        'BC-Gov-PrimaryButton-small-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && this.btnSize === 'small',
+        'BC-Gov-PrimaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && this.primary,
+        'BC-Gov-PrimaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && this.primary,
         'BC-Gov-SecondaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'BC-Gov-SecondaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
-        'BC-Gov-SecondaryButton-small': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary && this.btnSize === 'small',
-        'BC-Gov-SecondaryButton-small-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary && this.btnSize === 'small',
         'text-app-button': this.$attrs.variant !== '',
         small: this.$attrs.size === 'small',
       }
@@ -50,9 +40,7 @@ export default {
 }
 
 .BC-Gov-PrimaryButton,
-.BC-Gov-PrimaryButton-small,
-.BC-Gov-PrimaryButton-disabled,
-.BC-Gov-PrimaryButton-small-disabled {
+.BC-Gov-PrimaryButton-disabled {
   background-color: #003366;
   border: none;
   border-radius: 4px;
@@ -71,9 +59,7 @@ export default {
 }
 
 .BC-Gov-SecondaryButton,
-.BC-Gov-SecondaryButton-small,
-.BC-Gov-SecondaryButton-disabled,
-.BC-Gov-SecondaryButton-small-disabled {
+.BC-Gov-SecondaryButton-disabled {
   background-color: #ffffff;
   border: 2px solid #003366;
   border-radius: 4px;
@@ -99,38 +85,24 @@ export default {
   font-size: 18px;
 }
 
-/* .BC-Gov-PrimaryButton-small,
-.BC-Gov-PrimaryButton-small-disabled,
-.BC-Gov-SecondaryButton-small,
-.BC-Gov-SecondaryButton-small-disabled {
-  font-size: 14px;
-} */
-
 .BC-Gov-PrimaryButton-disabled,
-.BC-Gov-PrimaryButton-small-disabled,
-.BC-Gov-SecondaryButton-disabled,
-.BC-Gov-SecondaryButton-small-disabled {
+.BC-Gov-SecondaryButton-disabled {
   opacity: 0.3;
 }
 
 .BC-Gov-PrimaryButton:hover,
-.BC-Gov-PrimaryButton-small:hover,
-.BC-Gov-SecondaryButton:hover,
-.BC-Gov-SecondaryButton-small:hover {
+.BC-Gov-SecondaryButton:hover {
   opacity: 0.8;
   text-decoration: underline;
 }
 
-.BC-Gov-SecondaryButton:hover,
-.BC-Gov-SecondaryButton-small:hover {
+.BC-Gov-SecondaryButton:hover {
   background-color: #003366;
   color: #ffffff;
 }
 
 .BC-Gov-PrimaryButton:focus,
-.BC-Gov-PrimaryButton-small:focus,
-.BC-Gov-SecondaryButton:focus,
-.BC-Gov-SecondaryButton-small:focus {
+.BC-Gov-SecondaryButton:focus {
   outline: 4px solid #3b99fc;
   outline-offset: 1px;
 }

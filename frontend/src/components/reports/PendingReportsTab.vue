@@ -27,10 +27,10 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton :primary="false" btn-size="small" class="mr-2" @click="openSurveyResponse(item)">
+            <AppButton :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">
               {{ isActiveReportResponse(item) ? 'Update' : 'View' }}
             </AppButton>
-            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" btn-size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
               Unlock
             </AppButton>
             <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
@@ -144,7 +144,10 @@ export default {
       this.pendingReports?.sort((a, b) => {
         const isOverdueA = this.isOverdue(a) ? -1 : 1
         const isOverdueB = this.isOverdue(b) ? -1 : 1
-        return isOverdueA - isOverdueB
+        const overDueComparison = isOverdueA - isOverdueB
+        const facilityNameComparison = a.facilityName?.localeCompare(b.facilityName)
+        const surveyResponseNumberComparison = a.surveyResponseReferenceNumber?.localeCompare(b.surveyResponseReferenceNumber)
+        return overDueComparison || facilityNameComparison || surveyResponseNumberComparison
       })
     },
 
