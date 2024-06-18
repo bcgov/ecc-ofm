@@ -3,6 +3,7 @@ const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const { getMappingString } = require('../util/common')
+const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 
 //these numbers are specified in Dynamics. There is no 1 or 2 because that
@@ -45,6 +46,7 @@ async function getFacility(req, res) {
     resp.additionalAddresses = formatPayload(response)
     return res.status(HttpStatus.OK).json(resp)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -67,6 +69,7 @@ async function getFacilityContacts(req, res) {
     })
     return res.status(HttpStatus.OK).json(contacts)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -79,6 +82,7 @@ async function getFacilityLicences(req, res) {
     response?.value?.forEach((item) => licences.push(new MappableObjectForFront(item, LicenceMappings).toJSON()))
     return res.status(HttpStatus.OK).json(licences)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -89,6 +93,7 @@ async function updateFacility(req, res) {
     const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FacilityMappings))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { NotificationMappings } = require('../util/mapping/Mappings')
+const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 
 async function getNotifications(req, res) {
@@ -17,6 +18,7 @@ async function getNotifications(req, res) {
     response?.value?.forEach((item) => notifications.push(new MappableObjectForFront(item, NotificationMappings).toJSON()))
     return res.status(HttpStatus.OK).json(notifications)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -27,6 +29,7 @@ async function updateNotification(req, res) {
     const response = await patchOperationWithObjectId('emails', req.params.notificationId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

@@ -224,6 +224,7 @@ async function getUsersPermissionsFacilities(req, res) {
     })
     return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -244,6 +245,7 @@ async function getUserFacilities(req, res) {
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
     return res.status(HttpStatus.OK).json(userFacilities)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -265,6 +267,7 @@ async function createUser(req, res) {
     returnVal.role = { roleId: response._ofm_portal_role_id_value }
     return res.status(HttpStatus.OK).json(returnVal)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -314,6 +317,7 @@ async function updateUser(req, res) {
     const response = await postBatches(payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -325,8 +329,7 @@ async function userExists(req, res) {
     return res.status(HttpStatus.OK).json({ exists: !isEmpty(response.value) })
   } catch (e) {
     log.error('Error in getUserByBCeID:', e)
-    const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
@@ -338,6 +341,7 @@ async function updateUserFacilityPermission(req, res) {
     const response = await patchOperationWithObjectId('ofm_bceid_facilities', req.params.bceidFacilityId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }

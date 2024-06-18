@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { OrganizationMappings, FacilityMappings, UserProfileMappings } = require('../util/mapping/Mappings')
+const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 
 async function getOrganization(req, res) {
@@ -10,6 +11,7 @@ async function getOrganization(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, OrganizationMappings).toJSON())
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -22,6 +24,7 @@ async function getOrganizationFacilities(req, res) {
     response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))
     return res.status(HttpStatus.OK).json(orgFacilities)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -33,6 +36,7 @@ async function updateOrganization(req, res) {
     const response = await patchOperationWithObjectId('accounts', req.params.organizationId, organization)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, OrganizationMappings))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -55,9 +59,8 @@ async function getOrganizationUsers(req, res) {
     const orgUsers = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
     return res.status(HttpStatus.OK).json(orgUsers)
   } catch (e) {
-    log.info('Error in getOrganizationUsers:', e)
-    const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
