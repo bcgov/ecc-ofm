@@ -1,5 +1,5 @@
-let baseRoot = '/api'
-const authRoot = baseRoot + '/auth'
+const baseRoot = '/api'
+const authRoot = `${baseRoot}/auth`
 
 export const AuthRoutes = Object.freeze({
   LOGIN: authRoot + '/login',
@@ -8,7 +8,6 @@ export const AuthRoutes = Object.freeze({
   LOGOUT_IDIR: authRoot + '/logout-idir',
   REFRESH: authRoot + '/refresh',
   TOKEN: authRoot + '/token',
-  SESSION_REMAINING_TIME: authRoot + '/user-session-remaining-time',
 })
 
 export const ApiRoutes = Object.freeze({
@@ -35,11 +34,12 @@ export const ApiRoutes = Object.freeze({
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
+  SUBMITTED: 1,
   ASSIGNED: 2,
   WITH_PROVIDER: 3,
   READY_TO_RESOLVE: 4,
-  CLOSED_COMPLETE: 5,
-  CLOSED_CANCELLED: 6,
+  CLOSED_COMPLETE: 5, // INACTIVE state
+  CLOSED_CANCELLED: 6, // INACTIVE state
 })
 
 export const CRM_STATE_CODES = Object.freeze({
@@ -125,6 +125,7 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
 
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
+  REPORTING: 'Reporting',
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
@@ -200,6 +201,7 @@ export const SURVEY_RESPONSE_STATUSES = Object.freeze({
   DRAFT: 'Draft',
   COMPLETED: 'Completed',
   COMPLETED_LATE: 'Completed - Late',
+  COMPLETED_CLOSED: 'Completed - Closed',
 })
 
 export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({

@@ -28,6 +28,7 @@ const authRouter = require('./routes/auth')
 const userRouter = require('./routes/user')
 const configRouter = require('./routes/config')
 const documentsRouter = require('./routes/documents')
+const healthCheckRouter = require('./routes/healthCheck')
 const messageRouter = require('./routes/message')
 const notificationRouter = require('./routes/notification')
 const applicationsRouter = require('./routes/applications')
@@ -104,8 +105,6 @@ app.use(
     store: dbSession,
   }),
 )
-
-app.use(require('./routes/health-check').router)
 
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize())
@@ -232,19 +231,20 @@ app.use(morgan(config.get('server:morganFormat'), { stream: logStream }))
 //set up routing to auth and main API
 app.use(/(\/api)?/, apiRouter)
 
+apiRouter.use('/applications', applicationsRouter)
 apiRouter.use('/auth', authRouter)
-apiRouter.use('/user', userRouter)
 apiRouter.use('/config', configRouter)
 apiRouter.use('/documents', documentsRouter)
-apiRouter.use('/messages', messageRouter)
-apiRouter.use('/notifications', notificationRouter)
-apiRouter.use('/applications', applicationsRouter)
-apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
 apiRouter.use('/funding-agreements', fundingAgreementsRouter)
+apiRouter.use('/health', healthCheckRouter)
 apiRouter.use('/licences', licencesRouter)
+apiRouter.use('/messages', messageRouter)
+apiRouter.use('/notifications', notificationRouter)
+apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/payments', paymentsRouter)
 apiRouter.use('/reports', reportsRouter)
+apiRouter.use('/user', userRouter)
 
 //Handle 500 error
 app.use((err, _req, res, next) => {

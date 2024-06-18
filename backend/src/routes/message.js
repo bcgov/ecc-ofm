@@ -5,6 +5,8 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { updateAssistanceRequest, createAssistanceRequest, getAssistanceRequests, getAssistanceRequest, getAssistanceRequestConversation, replyToAssistanceRequest } = require('../components/message')
 const { param, validationResult, checkSchema } = require('express-validator')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
@@ -53,6 +55,7 @@ router.put(
   '/:assistanceRequestId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
   [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -63,18 +66,32 @@ router.put(
 /**
  * Create a new Assistance Request
  */
-router.post('/newAssistanceRequest', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(newAssistanceRequestSchema)], (req, res) => {
-  validationResult(req).throw()
-  return createAssistanceRequest(req, res)
-})
+router.post(
+  '/newAssistanceRequest',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  [checkSchema(newAssistanceRequestSchema)],
+  (req, res) => {
+    validationResult(req).throw()
+    return createAssistanceRequest(req, res)
+  },
+)
 
 /**
  * Get the list of assistance requests filtered by contactid
  */
-router.get('/:contactId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getAssistanceRequests(req, res)
-})
+router.get(
+  '/:contactId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  [param('contactId', 'URL param: [contactId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getAssistanceRequests(req, res)
+  },
+)
 
 /**
  * Get the details of an assistance requests with the provided assistance request ID
@@ -83,6 +100,7 @@ router.get(
   '/assistanceRequests/:assistanceRequestId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
   [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -97,6 +115,7 @@ router.get(
   '/conversations/:assistanceRequestId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
   [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -107,8 +126,15 @@ router.get(
 /**
  * Create a reply to a Assistance Request
  */
-router.post('/replyToAssistanceRequest', passport.authenticate('jwt', { session: false }), isValidBackendToken, [checkSchema(replyAssistanceRequestSchema)], (req, res) => {
-  validationResult(req).throw()
-  return replyToAssistanceRequest(req, res)
-})
+router.post(
+  '/replyToAssistanceRequest',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  [checkSchema(replyAssistanceRequestSchema)],
+  (req, res) => {
+    validationResult(req).throw()
+    return replyToAssistanceRequest(req, res)
+  },
+)
 module.exports = router

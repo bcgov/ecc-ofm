@@ -404,6 +404,7 @@ const SurveyResponseMappings = [
   { back: 'ofm_duedate', front: 'dueDate' },
   { back: 'ofm_late_flag', front: 'isSubmittedLate' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
   { back: 'statecode', front: 'stateCode' },
 ]
 
