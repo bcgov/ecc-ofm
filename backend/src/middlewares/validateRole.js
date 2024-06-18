@@ -5,6 +5,6 @@ module.exports = function (role) {
     log.verbose(`validating role ${role}`)
     const userRole = req.session?.passport?.user?.role
     if (!userRole) return res.sendStatus(403)
-    !role || userRole.roleName === role ? next() : res.sendStatus(403)
+    !role || userRole.ofm_name === role ? next() : res.sendStatus(403)
   }
 }
