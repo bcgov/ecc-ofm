@@ -38,7 +38,6 @@ async function loadLookupInfo() {
     await auth.getJwtToken()
     await app.getLookupInfo()
   } catch (e) {
-    console.log(e)
     // Flag errors that aren't 401 UNAUTHORIZED (expected before the user is logged in)
     // or 403 FORBIDDEN (expected if the user doesn't have access to the lookup endpoint)
     if (!e.response || ![HttpStatus.FORBIDDEN, HttpStatus.UNAUTHORIZED].includes(e.response.status)) {
