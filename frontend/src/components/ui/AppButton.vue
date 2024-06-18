@@ -27,11 +27,12 @@ export default {
         'BC-Gov-PrimaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && isEmpty(this.btnSize),
         'BC-Gov-PrimaryButton-small': !this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && this.btnSize === 'small',
         'BC-Gov-PrimaryButton-small-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && this.primary && this.btnSize === 'small',
-        'BC-Gov-SecondaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary && isEmpty(this.btnSize),
-        'BC-Gov-SecondaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary && isEmpty(this.btnSize),
+        'BC-Gov-SecondaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
+        'BC-Gov-SecondaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'BC-Gov-SecondaryButton-small': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary && this.btnSize === 'small',
         'BC-Gov-SecondaryButton-small-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary && this.btnSize === 'small',
         'text-app-button': this.$attrs.variant !== '',
+        small: this.$attrs.size === 'small',
       }
     },
   },
@@ -98,12 +99,12 @@ export default {
   font-size: 18px;
 }
 
-.BC-Gov-PrimaryButton-small,
+/* .BC-Gov-PrimaryButton-small,
 .BC-Gov-PrimaryButton-small-disabled,
 .BC-Gov-SecondaryButton-small,
 .BC-Gov-SecondaryButton-small-disabled {
   font-size: 14px;
-}
+} */
 
 .BC-Gov-PrimaryButton-disabled,
 .BC-Gov-PrimaryButton-small-disabled,
@@ -132,5 +133,10 @@ export default {
 .BC-Gov-SecondaryButton-small:focus {
   outline: 4px solid #3b99fc;
   outline-offset: 1px;
+}
+
+.small {
+  font-size: 14px;
+  padding: 0px;
 }
 </style>
