@@ -43,12 +43,16 @@ const { RoleMappings } = require('./util/mapping/Mappings')
 const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
+const HttpStatus = require('http-status-codes')
 
 //initialize app
 const app = express()
 app.set('trust proxy', 1)
+// ZAP Scan Proxy Disclosure Alert fix
+app.disable('x-powered-by')
+
 //sets security measures (headers, etc)
-app.use(cors())
+app.use(cors({ origin: config.get('server:frontend') }))
 app.use(helmet())
 app.use(noCache())
 app.use(
@@ -66,6 +70,13 @@ app.use(
     limit: '50mb',
   }),
 )
+
+// ZAP Scan Proxy Disclosure Alert fix
+const blockedMethods = ['TRACE', 'TRACK']
+app.use((req, res, next) => {
+  if (blockedMethods.includes(req.method)) return res.sendStatus(HttpStatus.METHOD_NOT_ALLOWED)
+  return next()
+})
 
 const logStream = {
   write: (message) => {
