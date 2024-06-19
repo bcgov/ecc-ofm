@@ -18,9 +18,6 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import alertMixin from '@/mixins/alertMixin'
 import AppButton from '@/components/ui/AppButton.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
@@ -34,7 +31,6 @@ import 'vue-pdf-embed/dist/style/index.css'
 export default {
   name: 'ViewPdf',
   components: { AppBackButton, AppButton, OrganizationHeader, VuePdfEmbed },
-  mixins: [alertMixin],
   data() {
     return {
       pdfFile: undefined,
@@ -42,11 +38,6 @@ export default {
       loading: false,
     }
   },
-
-  computed: {
-    ...mapState(useAuthStore, ['userInfo']),
-  },
-
   async created() {
     await this.loadData()
   },

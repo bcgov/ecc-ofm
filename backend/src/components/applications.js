@@ -69,9 +69,7 @@ async function getApplication(req, res) {
 
 async function getApplicationPDF(req, res) {
   try {
-    log.info('called')
     const operation = `ofm_applications(${req.params.applicationId})/ofm_application_pdf`
-    log.info(operation)
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
