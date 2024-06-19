@@ -15,6 +15,7 @@ const {
   createEmployeeCertificate,
   updateEmployeeCertificate,
   deleteEmployeeCertificate,
+  getApplicationPDF,
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
@@ -94,6 +95,14 @@ router.get(
     return getApplication(req, res)
   },
 )
+
+/**
+ * Get Funding Agreement PDF by ID
+ */
+router.get('/:applicationId/pdf', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_APPLICATIONS), (req, res) => {
+  validationResult(req).throw()
+  return getApplicationPDF(req, res)
+})
 
 /**
  * Update an existing Application using applicationId

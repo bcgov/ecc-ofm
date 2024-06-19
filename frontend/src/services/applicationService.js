@@ -54,6 +54,17 @@ export default {
     }
   },
 
+  async getApplicationPDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}/${applicationId}/pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the application by application id - ${error}`)
+      throw error
+    }
+  },
+
   isApplicationUpdated(updatedApplication) {
     const applicationsStore = useApplicationsStore()
     const currentApplication = applicationsStore?.currentApplication

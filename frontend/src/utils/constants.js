@@ -159,6 +159,7 @@ export const APPLICATION_ROUTES = Object.freeze({
   REVIEW: 'review-application',
   SUBMIT: 'declare-submit',
   CONFIRMATION: 'application-confirmation',
+  VIEW_PDF: 'view-pdf',
 })
 
 export const APPLICATION_INTAKE_TYPES = Object.freeze({

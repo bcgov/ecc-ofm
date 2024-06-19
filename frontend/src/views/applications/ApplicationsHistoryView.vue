@@ -88,7 +88,7 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="false">
+          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="getPDFLink(item.applicationId)">
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
@@ -216,7 +216,11 @@ export default {
     },
 
     isApplicationDownloadable(application) {
-      return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      //TODO-- JB: add in the link to Supp App PDF - but they don't generate yet in Dyamics, so leaving it off for now
+      if (application.applicationType === 'OFM') {
+        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      }
+      return false
     },
 
     toggleCancelDialog(item) {
@@ -359,6 +363,11 @@ export default {
         return dateA - dateB // For ascending order
       })
       return applicationItems
+    },
+
+    getPDFLink(applicationId) {
+      this.$router.push({ name: APPLICATION_ROUTES.VIEW_PDF, params: { applicationGuid: applicationId } })
+      //return
     },
   },
 }

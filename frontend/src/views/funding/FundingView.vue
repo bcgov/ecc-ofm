@@ -152,12 +152,12 @@ export default {
       try {
         this.loading = true
         this.fundingAgreement = await FundingAgreementService.getFundingAgreementById(this.$route.params.fundingGuid)
+        await this.getLicences()
         const resp = await FundingAgreementService.getFundingPDFById(this.$route.params.fundingGuid)
         this.pdfFile = {
           data: atob(resp),
         }
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
-        await this.getLicences()
       } finally {
         this.loading = false
       }
