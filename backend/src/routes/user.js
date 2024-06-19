@@ -6,6 +6,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, userExists, updateUserFacilityPermission } = require('../components/user')
 const { param, validationResult, checkSchema } = require('express-validator')
+const validateRole = require('../middlewares/validateRole')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -42,12 +43,12 @@ const updateUserSchema = {
 /**
  * Get profile information for the logged in user
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, getUserInfo)
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validateRole(), getUserInfo)
 
 /**
  * Get profile information for a given user name
  */
-router.get('/:userName', passport.authenticate('jwt', { session: false }), isValidBackendToken, (req, res) => {
+router.get('/:userName', passport.authenticate('jwt', { session: false }), isValidBackendToken, validateRole('Impersonate'), (req, res) => {
   getUserInfo(req, res)
 })
 
@@ -65,6 +66,7 @@ router.get(
   '/permissions-facilities/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -87,10 +89,17 @@ router.patch(
 /**
  * Get all facilities for a user.
  */
-router.get('/:contactId/facilities', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('contactId', 'URL param: [contactId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getUserFacilities(req, res)
-})
+router.get(
+  '/:contactId/facilities',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_USERS_EDIT),
+  [param('contactId', 'URL param: [contactId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getUserFacilities(req, res)
+  },
+)
 
 /**
  * Create a new user/contact

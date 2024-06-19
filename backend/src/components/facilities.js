@@ -87,22 +87,13 @@ async function getFacilityLicences(req, res) {
   }
 }
 
-async function updateFacilityPrimaryContact(req, res) {
-  try {
-    const payload = {}
-    const primaryContactId = Object.keys(req.body)[0]
-    payload['ofm_primarycontact@odata.bind'] = `/contacts(${primaryContactId})`
-    const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
-    return res.status(HttpStatus.OK).json(response)
-  } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
 async function updateFacility(req, res) {
-  const payload = new MappableObjectForBack(req.body, FacilityMappings).toJSON()
   try {
+    const payload = new MappableObjectForBack(req.body, FacilityMappings).toJSON()
+    if ('_ofm_primarycontact_value' in payload) {
+      payload['ofm_primarycontact@odata.bind'] = payload['_ofm_primarycontact_value'] ? `/contacts(${payload['_ofm_primarycontact_value']})` : null
+      delete payload['_ofm_primarycontact_value']
+    }
     const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FacilityMappings))
   } catch (e) {
@@ -115,6 +106,5 @@ module.exports = {
   getFacility,
   getFacilityContacts,
   getFacilityLicences,
-  updateFacilityPrimaryContact,
   updateFacility,
 }

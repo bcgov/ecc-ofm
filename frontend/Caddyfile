@@ -5,6 +5,12 @@
 
 :2015
 
+# ZAP Scan Proxy Disclosure Alert fix
+@options_trace_track method OPTIONS TRACE TRACK
+handle @options_trace_track {
+	respond 405
+}
+
 root * /srv
 
 file_server
@@ -15,14 +21,16 @@ file_server
 redir @www_host http://{$HOST_ROUTE}{path}
 
 header {
+	 # ZAP Scan Proxy Disclosure Alert fix
+	-server
 	X-Frame-Options "SAMEORIGIN"
 	X-XSS-Protection "1;mode=block"
 	Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
 	X-Content-Type-Options "nosniff"
 	Strict-Transport-Security "max-age=31536000"
-	Content-Security-Policy "default-src 'self' https://spt.apps.gov.bc.ca https://spm.apps.gov.bc.ca; script-src 'self' https://www2.gov.bc.ca data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://fonts.googleapis.com http://www.w3.org; worker-src blob:"
+	Content-Security-Policy "default-src 'self' https://spt.apps.gov.bc.ca https://spm.apps.gov.bc.ca; script-src 'self' https://www2.gov.bc.ca data:; style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dM5rzXYgE7oJM4ItEsJrV6XiSt6jCeNFoK6VcuPxR+g='; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://fonts.googleapis.com http://www.w3.org; worker-src blob:; form-action 'self'; frame-ancestors 'self';"
 	Referrer-Policy "same-origin"
-	Feature-Policy "fullscreen 'self'; camera 'none'; microphone 'none'"
+	Permissions-Policy "fullscreen=(self), camera=(), microphone=()"
 }
 
 @unspecified_path {
@@ -31,6 +39,11 @@ header {
 }
 handle @unspecified_path {
 	try_files {path} {path}/ /?_url={uri}
+}
+
+handle_errors {
+	# ZAP Scan Proxy Disclosure Alert fix
+	header -server
 }
 
 encode {
