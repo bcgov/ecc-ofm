@@ -33,7 +33,7 @@
             <AppButton v-if="!isActiveReportResponse(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
               Unlock
             </AppButton>
-            <v-btn v-if="showTrash(item)" variant="text" @click="toggleCancelDialog(item)">
+            <v-btn v-if="showTrash(item)" variant="text" @click="toggleDeleteDialog(item)">
               <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
             </v-btn>
           </v-row>
@@ -47,7 +47,7 @@
       :default-facility="defaultAssistanceRequestFacility"
       return-to="reporting"
       @close="toggleAssistanceRequestDialog" />
-    <CancelSurveyResponseDialog :show="showCancelDialog" :survey-response-id="surveyResponseIdToCancel" @close="toggleCancelDialog" @cancel="cancel" />
+    <DeleteSurveyResponseDialog :show="showDeleteResponseDialog" :survey-response-id="surveyResponseIdToDelete" @close="toggleDeleteDialog" />
   </v-container>
 </template>
 
@@ -58,7 +58,7 @@ import { isEmpty } from 'lodash'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import CancelSurveyResponseDialog from '@/components/reports/CancelSurveyResponseDialog.vue'
+import DeleteSurveyResponseDialog from '@/components/reports/DeleteSurveyResponseDialog.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
@@ -67,9 +67,8 @@ import ReportsService from '@/services/reportsService'
 import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 
 export default {
-  components: { AppAlertBanner, AppButton, FacilityFilter, CancelSurveyResponseDialog, NewRequestDialog },
+  components: { AppAlertBanner, AppButton, FacilityFilter, DeleteSurveyResponseDialog, NewRequestDialog },
   mixins: [alertMixin, reportMixin, permissionsMixin],
-  emits: ['cancel'],
   data() {
     return {
       headers: [
@@ -82,9 +81,9 @@ export default {
       ],
       loading: false,
       showAssistanceRequestDialog: false,
-      showCancelDialog: false,
+      showDeleteResponseDialog: false,
       surveyResponseToUnlock: undefined,
-      surveyResponseIdToCancel: undefined,
+      surveyResponseIdToDelete: undefined,
       facilityNameFilter: undefined,
       pendingReports: [],
     }
@@ -155,13 +154,9 @@ export default {
       this.$router.push({ name: 'survey-form', params: { surveyResponseGuid: surveyResponse?.surveyResponseId } })
     },
 
-    cancel(surveyResponseId) {
-      this.$emit('cancel', surveyResponseId)
-    },
-
-    toggleCancelDialog(surveyResponse) {
-      this.surveyResponseIdToCancel = surveyResponse?.surveyResponseId
-      this.showCancelDialog = !this.showCancelDialog
+    toggleDeleteDialog(surveyResponse) {
+      this.surveyResponseIdToDelete = surveyResponse?.surveyResponseId
+      this.showDeleteResponseDialog = !this.showDeleteResponseDialog
     },
 
     /**

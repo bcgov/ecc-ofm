@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, postOperation, patchOperationWithObjectId, deleteOperationWithObjectId } = require('./utils')
+const { getOperation, postBatches, postOperation, patchOperationWithObjectId, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, QuestionResponseMappings, SurveyQuestionBusinessRulesMappings } = require('../util/mapping/Mappings')
 const log = require('../components/logger')
@@ -156,6 +156,30 @@ async function updateSurveyResponse(req, res) {
   }
 }
 
+async function deleteSurveyResponse(req, res) {
+  try {
+    const payload = {
+      batchTypeId: 102,
+      feature: 'ReportManagement',
+      function: 'ReportEdit',
+      actionMode: 'Delete',
+      scope: 'Parent-Child',
+      data: {
+        ofm_survey_response: {
+          entityNameSet: 'ofm_survey_responses',
+          entityID: req.params?.surveyResponseId,
+          actionMode: 'Delete',
+        },
+      },
+    }
+    const response = await postBatches(payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function getQuestionResponses(req, res) {
   try {
     if (isEmpty(req?.query)) {
@@ -224,6 +248,7 @@ module.exports = {
   getSurveyResponse,
   getSurveyResponses,
   updateSurveyResponse,
+  deleteSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,

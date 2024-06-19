@@ -85,6 +85,17 @@ export default {
     }
   },
 
+  async deleteSurveyResponse(surveyResponseId) {
+    try {
+      if (!surveyResponseId) return
+      const response = await ApiService.apiAxios.delete(`${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to delete survey response - ${error}`)
+      throw error
+    }
+  },
+
   async getQuestionResponses(surveyResponseId) {
     try {
       if (!surveyResponseId) return []

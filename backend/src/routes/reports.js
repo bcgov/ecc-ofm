@@ -10,6 +10,7 @@ const {
   getSurveyResponse,
   getSurveyResponses,
   updateSurveyResponse,
+  deleteSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,
@@ -106,6 +107,21 @@ router.patch(
 )
 
 /**
+ * Remove all question responses associated with a survey response
+ */
+router.delete(
+  '/survey-responses/:surveyResponseId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.DELETE_DRAFT_REPORTS),
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return deleteSurveyResponse(req, res)
+  },
+)
+
+/**
  * Create a question response
  */
 router.post(
@@ -149,19 +165,3 @@ router.delete(
     return deleteQuestionResponse(req, res)
   },
 )
-
-/**
- * Delete a survey response
- * TODO (vietle-cgi) Remove this method if reports are cancelled, not delete
- */
-// router.delete(
-//   '/survey-responses/:surveyResponseId',
-//   passport.authenticate('jwt', { session: false }),
-//   isValidBackendToken,
-//   validatePermission(PERMISSIONS.DELETE_DRAFT_REPORTS_DRAFT_REPORTS),
-//   [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
-//   (req, res) => {
-//     validationResult(req).throw()
-//     return deleteSurveyResponse(req, res)
-//   },
-// )
