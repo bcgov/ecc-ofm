@@ -27,12 +27,9 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">
-              {{ isActiveReportResponse(item) ? 'Update' : 'View' }}
-            </AppButton>
-            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
-              Unlock
-            </AppButton>
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">Update</AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton v-if="showUnlock(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">Unlock</AppButton>
             <v-btn v-if="showTrash(item)" variant="text" @click="toggleDeleteDialog(item)">
               <v-icon aria-label="Delete" size="large">mdi-trash-can-outline</v-icon>
             </v-btn>
@@ -62,13 +59,12 @@ import DeleteSurveyResponseDialog from '@/components/reports/DeleteSurveyRespons
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import reportMixin from '@/mixins/reportMixin'
-import permissionsMixin from '@/mixins/permissionsMixin'
 import ReportsService from '@/services/reportsService'
 import { REQUEST_CATEGORY_NAMES, SURVEY_RESPONSE_STATUSES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 
 export default {
   components: { AppAlertBanner, AppButton, FacilityFilter, DeleteSurveyResponseDialog, NewRequestDialog },
-  mixins: [alertMixin, reportMixin, permissionsMixin],
+  mixins: [alertMixin, reportMixin],
   data() {
     return {
       headers: [

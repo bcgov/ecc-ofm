@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useMessagesStore } from '@/stores/messages'
@@ -8,6 +9,7 @@ import { ASSISTANCE_REQUEST_STATUS_CODES, BLANK_FIELD, CRM_STATE_CODES, SURVEY_Q
 import format from '@/utils/format'
 
 export default {
+  mixins: [permissionsMixin],
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
@@ -38,6 +40,18 @@ export default {
             request.requestFacilities?.some((facility) => facility.facilityId === surveyResponse?.facilityId),
         )
       )
+    },
+
+    showView() {
+      return this.hasPermission(this.PERMISSIONS.SEARCH_VIEW_REPORTS)
+    },
+
+    showUpdate(surveyResponse) {
+      return this.isActiveReportResponse(surveyResponse) && this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)
+    },
+
+    showUnlock(surveyResponse) {
+      return !this.isActiveReportResponse(surveyResponse) && this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)
     },
 
     getReportTitle(surveyResponse) {
