@@ -20,10 +20,9 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton :primary="false" size="small" class="mr-2" @click="openSurveyResponse(item)">
-              {{ isActiveReportResponse(item) ? 'Update' : 'View' }}
-            </AppButton>
-            <AppButton v-if="!isActiveReportResponse(item)" :primary="false" size="small" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton v-if="showUnlock(item)" :primary="false" size="small" class="ml-2" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
               Unlock
             </AppButton>
             <v-btn variant="text" @click="false">

@@ -14,12 +14,10 @@
           <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
-          <v-btn v-if="showSign(item)" variant="text" @click="goToFundingAgreement(item)">
-            <v-icon aria-label="Sign" size="large">mdi-signature-freehand</v-icon>
-          </v-btn>
-          <v-btn v-else-if="showOpen(item)" variant="text" @click="goToFundingAgreement(item)">
-            <v-icon aria-label="Open" size="large">mdi-folder-open-outline</v-icon>
-          </v-btn>
+          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
+            <AppButton v-if="showSign(item)" :primary="false" size="small" @click="goToFundingAgreement(item)">Sign</AppButton>
+            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" @click="goToFundingAgreement(item)">Open</AppButton>
+          </v-row>
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -28,6 +26,7 @@
 
 <script>
 import { mapState } from 'pinia'
+import AppButton from '@/components/ui/AppButton.vue'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
@@ -37,7 +36,7 @@ import format from '@/utils/format'
 
 export default {
   name: 'FundingAgreementsTab',
-  components: { FundingSearchCard },
+  components: { AppButton, FundingSearchCard },
   mixins: [alertMixin],
   data() {
     return {
@@ -111,9 +110,9 @@ export default {
 
     getStatusClass(statusCode) {
       return {
-        'status-gray': [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
+        'status-gray': [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW].includes(statusCode),
         'status-yellow': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
-        'status-green': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
+        'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
       }
