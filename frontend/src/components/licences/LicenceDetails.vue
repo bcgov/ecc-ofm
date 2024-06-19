@@ -131,7 +131,10 @@
                       <v-col cols="12" sm="auto" lg="auto" xl="auto">
                         <AppLabel>
                           Requires split classrooms
-                          <v-tooltip content-class="tooltip" text="This is a placeholder message" top>
+                          <v-tooltip
+                            content-class="tooltip"
+                            text="A situation where children are divided into different rooms due to physical limitations of the building and child-to-staff ratio requirements. This can affect the staffing ratio compared to keeping the group together in one room."
+                            top>
                             <template v-slot:activator="{ props }">
                               <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                             </template>
