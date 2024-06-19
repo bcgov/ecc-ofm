@@ -495,8 +495,9 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const termTwoEndDate = new Date(formattedEndDate.setFullYear(formattedEndDate.getFullYear() - 1))
-      const termOneEndDate = new Date(termTwoEndDate.setFullYear(termTwoEndDate.getFullYear() - 1))
+
+      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
+      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
