@@ -200,23 +200,24 @@ export default {
       }
     },
 
-    async saveOrganization(updatedOrganization) {
+    async saveInclusionPolicyData(hasInclusionPolicy, documentsToUpload, documentsToDelete, onSaveCompleteCallBack) {
       try {
-        delete updatedOrganization.goodStandingStatus
-        await OrganizationService.updateOrganization(this.organization.organizationId, updatedOrganization)
-        this.organization = updatedOrganization
+        await this.processDocuments(documentsToUpload, documentsToDelete)
+        await this.getInclusionPolicyDocuments()
+        // hasInclusionPolicy should always be false if there is no uploaded document in CRM
+        const updatedHasInclusionPolicy = this.uploadedDocuments?.length > 0 ? hasInclusionPolicy : false
+        if (updatedHasInclusionPolicy !== this.organization.hasInclusionPolicy) {
+          const payload = {
+            hasInclusionPolicy: updatedHasInclusionPolicy,
+          }
+          await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
+          this.organization.hasInclusionPolicy = updatedHasInclusionPolicy
+        }
+        onSaveCompleteCallBack()
+        this.setSuccessAlert('Inclusion Policy updated successfully')
       } catch (error) {
-        this.setFailureAlert('Failed update Inclusion Policy on Organization: ' + this.organization.organizationId, error)
-        return
+        this.setFailureAlert('Failed update Inclusion Policy on Organization: ', error)
       }
-    },
-
-    async saveInclusionPolicyData(updatedOrganization, documentsToUpload, documentsToDelete, onSaveCompleteCallBack) {
-      await this.saveOrganization(updatedOrganization)
-      await this.processDocuments(documentsToUpload, documentsToDelete)
-      await this.getInclusionPolicyDocuments()
-      onSaveCompleteCallBack()
-      this.setSuccessAlert('Inclusion Policy updated successfully')
     },
 
     async processDocuments(documentsToUpload, documentsToDelete) {
