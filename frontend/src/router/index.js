@@ -22,7 +22,6 @@ import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
 import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
 import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import ApplicationConfirmationView from '@/views/applications/ApplicationConfirmationView.vue'
-import ApplicationPDFView from '@/views/applications/ApplicationPDFView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import DeclareSubmitView from '@/views/applications/DeclareSubmitView.vue'
@@ -168,15 +167,6 @@ const router = createRouter({
       path: '/applications/applications-history',
       name: 'applications-history',
       component: ApplicationsHistoryView,
-      meta: {
-        requiresAuth: true,
-        permission: PERMISSIONS.VIEW_APPLICATIONS,
-      },
-    },
-    {
-      path: '/applications/:applicationGuid/view-pdf',
-      name: APPLICATION_ROUTES.VIEW_PDF,
-      component: ApplicationPDFView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_APPLICATIONS,

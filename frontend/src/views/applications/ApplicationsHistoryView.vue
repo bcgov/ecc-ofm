@@ -88,8 +88,10 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="getPDFLink(item.applicationId)">
-            <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
+          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="getPDFLink(item)">
+            <a style="text-decoration: none" :download="'OFM_APPLICATION'">
+              <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
+            </a>
           </v-btn>
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
@@ -216,11 +218,7 @@ export default {
     },
 
     isApplicationDownloadable(application) {
-      //TODO-- JB: add in the link to Supp App PDF - but they don't generate yet in Dyamics, so leaving it off for now
-      if (application.applicationType === 'OFM') {
-        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
-      }
-      return false
+      return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
     },
 
     toggleCancelDialog(item) {
@@ -365,9 +363,22 @@ export default {
       return applicationItems
     },
 
-    getPDFLink(applicationId) {
-      this.$router.push({ name: APPLICATION_ROUTES.VIEW_PDF, params: { applicationGuid: applicationId } })
-      //return
+    //TODO - Add Supp App PDF function will look very similar, but it will hit a seperate endpoint
+    //the supp app PDF's do not generate yet in Dynamics, so holding off on including that code
+    async getPDFLink(application) {
+      if (application.applicationType === 'OFM') {
+        const resp = await ApplicationService.getApplicationPDF(application.applicationId)
+
+        const link = document.createElement('a')
+        link.href = `data:application/pdf;base64,${resp}`
+        link.target = '_blank'
+        link.download = application.referenceNumber
+
+        // Simulate a click on the element <a>
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
     },
   },
 }
