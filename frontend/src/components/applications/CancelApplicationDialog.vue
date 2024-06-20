@@ -20,10 +20,10 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, CRM_STATE_CODES, APPLICATION_TYPES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 
-const APPLICATION_TYPES = {
+const APPLICATION_LABELS = {
   APPLICATION: 'Application',
   SUPP_APPLICATION: 'Supplementary Application',
 }
@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     sourceApplicationType() {
-      return this.applicationType === 'OFM' ? APPLICATION_TYPES.APPLICATION : APPLICATION_TYPES.SUPP_APPLICATION
+      return this.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_LABELS.APPLICATION : APPLICATION_LABELS.SUPP_APPLICATION
     },
   },
   watch: {
@@ -73,10 +73,10 @@ export default {
       try {
         this.isLoading = true
         const payload = {
-          statusCode: this.sourceApplicationType === APPLICATION_TYPES.APPLICATION ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
+          statusCode: this.sourceApplicationType === APPLICATION_LABELS.APPLICATION ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        if (this.sourceApplicationType === APPLICATION_TYPES.APPLICATION) {
+        if (this.sourceApplicationType === APPLICATION_LABELS.APPLICATION) {
           await ApplicationService.updateApplication(this.applicationId, payload)
         } else {
           await ApplicationService.updateSupplementaryApplication(this.applicationId, payload)

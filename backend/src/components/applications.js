@@ -67,6 +67,17 @@ async function getApplication(req, res) {
   }
 }
 
+async function getApplicationPDF(req, res) {
+  try {
+    const operation = `ofm_applications(${req.params.applicationId})/ofm_application_pdf`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function updateApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, ApplicationMappings).toJSON()
@@ -228,4 +239,5 @@ module.exports = {
   createEmployeeCertificate,
   updateEmployeeCertificate,
   deleteEmployeeCertificate,
+  getApplicationPDF,
 }
