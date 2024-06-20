@@ -188,6 +188,7 @@ export default {
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
+      this.APPLICATION_TYPE_OFM = 'OFM'
       await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
@@ -220,7 +221,7 @@ export default {
     },
 
     toggleCancelDialog(item) {
-      this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
+      this.cancelledApplicationId = item?.applicationType === this.APPLICATION_TYPE_OFM ? item?.applicationId : item?.supplementaryApplicationId
       this.showCancelDialog = !this.showCancelDialog
       if (item) {
         this.applicationTypeToCancel = item.applicationType
@@ -229,7 +230,7 @@ export default {
 
     cancelApplication() {
       let index = undefined
-      const key = this.applicationTypeToCancel === 'OFM' ? 'applicationId' : 'supplementaryApplicationId'
+      const key = this.applicationTypeToCancel === this.APPLICATION_TYPE_OFM ? 'applicationId' : 'supplementaryApplicationId'
       index = this.applicationItems?.findIndex((item) => item[key] === this.cancelledApplicationId)
       if (index > -1) {
         this.applicationItems.splice(index, 1)
@@ -275,7 +276,7 @@ export default {
         }, {})
         return {
           ...item,
-          applicationType: 'OFM',
+          applicationType: this.APPLICATION_TYPE_OFM,
           statusCode: application.statusCode,
         }
       })
@@ -343,7 +344,7 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === 'OFM' ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      const routeName = item.applicationType === this.APPLICATION_TYPE_OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 
@@ -364,18 +365,24 @@ export default {
     //TODO - Add Supp App PDF function will look very similar, but it will hit a seperate endpoint
     //the supp app PDF's do not generate yet in Dynamics, so holding off on including that code
     async downloadPDF(application) {
-      if (application.applicationType === 'OFM') {
-        const resp = await ApplicationService.getApplicationPDF(application.applicationId)
+      if (application.applicationType === this.APPLICATION_TYPE_OFM) {
+        try {
+          const resp = await ApplicationService.getApplicationPDF(application.applicationId)
+          const link = document.createElement('a')
 
-        const link = document.createElement('a')
-        link.href = `data:application/pdf;base64,${resp}`
-        link.target = '_blank'
-        link.download = application.referenceNumber
-
-        // Simulate a click on the element <a>
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+          link.href = `data:application/pdf;base64,${resp}`
+          link.target = '_blank'
+          link.download = application.referenceNumber
+          // Simulate a click on the element <a>
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        } catch (error) {
+          this.setFailureAlert('Failed to download OFM PDF', error)
+        }
+      } else {
+        //it's a supp app
+        this.setSuccessAlert(`COMING SOON! A supplementary PDF will be downloaded here.`)
       }
     },
   },

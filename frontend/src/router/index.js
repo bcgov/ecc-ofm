@@ -262,7 +262,6 @@ const router = createRouter({
         permission: PERMISSIONS.APPLY_FOR_FUNDING,
       },
     },
-
     {
       path: '/resources',
       name: 'resources',
