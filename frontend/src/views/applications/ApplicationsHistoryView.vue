@@ -114,7 +114,14 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, APPLICATION_ROUTES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
+import {
+  APPLICATION_STATUS_CODES,
+  APPLICATION_ROUTES,
+  GOOD_STANDING_STATUS_CODES,
+  SUPPLEMENTARY_APPLICATION_STATUS_CODES,
+  NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
+  APPLICATION_TYPES,
+} from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
@@ -188,7 +195,6 @@ export default {
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
-      this.APPLICATION_TYPE_OFM = 'OFM'
       await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
       this.mergeRegularAndSupplementaryApplications()
@@ -221,7 +227,7 @@ export default {
     },
 
     toggleCancelDialog(item) {
-      this.cancelledApplicationId = item?.applicationType === this.APPLICATION_TYPE_OFM ? item?.applicationId : item?.supplementaryApplicationId
+      this.cancelledApplicationId = item?.applicationType === APPLICATION_TYPES.OFM ? item?.applicationId : item?.supplementaryApplicationId
       this.showCancelDialog = !this.showCancelDialog
       if (item) {
         this.applicationTypeToCancel = item.applicationType
@@ -230,7 +236,7 @@ export default {
 
     cancelApplication() {
       let index = undefined
-      const key = this.applicationTypeToCancel === this.APPLICATION_TYPE_OFM ? 'applicationId' : 'supplementaryApplicationId'
+      const key = this.applicationTypeToCancel === APPLICATION_TYPES.OFM ? 'applicationId' : 'supplementaryApplicationId'
       index = this.applicationItems?.findIndex((item) => item[key] === this.cancelledApplicationId)
       if (index > -1) {
         this.applicationItems.splice(index, 1)
@@ -276,7 +282,7 @@ export default {
         }, {})
         return {
           ...item,
-          applicationType: this.APPLICATION_TYPE_OFM,
+          applicationType: APPLICATION_TYPES.OFM,
           statusCode: application.statusCode,
         }
       })
@@ -344,7 +350,7 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === this.APPLICATION_TYPE_OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 
@@ -365,7 +371,7 @@ export default {
     //TODO - Add Supp App PDF function will look very similar, but it will hit a seperate endpoint
     //the supp app PDF's do not generate yet in Dynamics, so holding off on including that code
     async downloadPDF(application) {
-      if (application.applicationType === this.APPLICATION_TYPE_OFM) {
+      if (application.applicationType === APPLICATION_TYPES.OFM) {
         try {
           const resp = await ApplicationService.getApplicationPDF(application.applicationId)
           const link = document.createElement('a')

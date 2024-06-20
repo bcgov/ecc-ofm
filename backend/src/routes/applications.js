@@ -99,10 +99,17 @@ router.get(
 /**
  * Get Funding Agreement PDF by ID
  */
-router.get('/:applicationId/pdf', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_APPLICATIONS), (req, res) => {
-  validationResult(req).throw()
-  return getApplicationPDF(req, res)
-})
+router.get(
+  '/:applicationId/pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getApplicationPDF(req, res)
+  },
+)
 
 /**
  * Update an existing Application using applicationId
