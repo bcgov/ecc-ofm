@@ -60,7 +60,7 @@ export default {
       const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}/${applicationId}/pdf`)
       return response?.data
     } catch (error) {
-      console.log(`Failed to get the application by application id - ${error}`)
+      console.log(`Failed to get the application PDF by application id - ${error}`)
       throw error
     }
   },
