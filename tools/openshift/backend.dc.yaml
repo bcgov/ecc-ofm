@@ -79,7 +79,7 @@ objects:
                 - name: log-storage
                   mountPath: /logs
             - image: artifacts.developer.gov.bc.ca/docker-remote/fluent/fluent-bit:1.5.7
-              name: "${APP_NAME}-${JOB_NAME}-fluent-bit-sidecar"
+              name: "${APP_NAME}-${BRANCH}-fluent-bit-sidecar"
               imagePullPolicy: Always
               imagePullSecrets:
                 - name: artifactory-creds
