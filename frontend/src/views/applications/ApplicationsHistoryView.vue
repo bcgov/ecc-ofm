@@ -88,10 +88,8 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="getPDFLink(item)">
-            <a style="text-decoration: none" :download="'OFM_APPLICATION'">
-              <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
-            </a>
+          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="downloadPDF(item)">
+            <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
@@ -365,7 +363,7 @@ export default {
 
     //TODO - Add Supp App PDF function will look very similar, but it will hit a seperate endpoint
     //the supp app PDF's do not generate yet in Dynamics, so holding off on including that code
-    async getPDFLink(application) {
+    async downloadPDF(application) {
       if (application.applicationType === 'OFM') {
         const resp = await ApplicationService.getApplicationPDF(application.applicationId)
 
