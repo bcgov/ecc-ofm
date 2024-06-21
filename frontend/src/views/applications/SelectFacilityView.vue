@@ -8,7 +8,7 @@
         <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
       </div>
       <OrganizationInfo :loading="loading" :organization="organization" />
-      <v-checkbox :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
+      <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
     <div class="mb-6">
       <h4>To start your application, select a facility</h4>
