@@ -165,6 +165,17 @@ export default {
     }
   },
 
+  async getSupplementaryApplicationPDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
   isValidApplication(application) {
     return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreement)
   },

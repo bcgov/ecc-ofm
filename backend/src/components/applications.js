@@ -190,6 +190,17 @@ async function deleteSupplementaryApplication(req, res) {
   }
 }
 
+async function getSupplementaryApplicationPDF(req, res) {
+  try {
+    const operation = `ofm_allowances(${req.params.applicationId})/ofm_supplementaryapplicationpdf`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function createEmployeeCertificate(req, res) {
   try {
     const payload = {
@@ -240,4 +251,5 @@ module.exports = {
   updateEmployeeCertificate,
   deleteEmployeeCertificate,
   getApplicationPDF,
+  getSupplementaryApplicationPDF,
 }
