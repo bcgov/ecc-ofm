@@ -390,7 +390,7 @@ export default {
         link.click()
         document.body.removeChild(link)
       } catch (error) {
-        this.setWarningAlert('Task is still in progress. Please wait a few minutes before you try again.')
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
     },
   },
