@@ -216,7 +216,7 @@ export default {
         onSaveCompleteCallBack()
         this.setSuccessAlert('Inclusion Policy updated successfully')
       } catch (error) {
-        this.setFailureAlert('Failed update Inclusion Policy on Organization: ', error)
+        this.setFailureAlert('Failed update Inclusion Policy on Organization', error)
       }
     },
 
