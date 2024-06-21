@@ -681,7 +681,7 @@ export default {
         await this.updateAssistanceRequest(assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(assistanceRequestId)
       } catch (error) {
-        this.setFailureAlert(`Failed to close Assistance Request - ${error}`)
+        this.setFailureAlert('Failed to close Assistance Request', error)
         throw error
       }
     },
@@ -694,7 +694,7 @@ export default {
         }
         await this.replyToAssistanceRequest(payload)
       } catch (error) {
-        this.setFailureAlert(`Failed to create auto reply for Assistance Request - ${error}`)
+        this.setFailureAlert('Failed to create auto reply for Assistance Request', error)
         throw error
       }
     },

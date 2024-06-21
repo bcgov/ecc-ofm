@@ -174,7 +174,7 @@
                         :readonly="!editMode"
                         :uploadedDocuments="uploadedDocumentsEdit"
                         @deleteUploadedDocument="deleteUploadedDocument" />
-                      <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
+                      <v-alert v-if="showUploadDocumentsAlert" density="compact" type="error" class="w-76 mt-1">
                         Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
                       </v-alert>
                     </v-col>
@@ -184,8 +184,8 @@
                     </v-col>
                   </template>
                   <v-col v-if="editMode" class="d-flex justify-end pt-0">
-                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" @click="toggleEditMode()" class="mr-6">Cancel</AppButton>
-                    <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" @click="save()">Save</AppButton>
+                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" class="mr-6" @click="toggleEditMode()">Cancel</AppButton>
+                    <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" :disabled="invalidInclusionPolicy" @click="save()">Save</AppButton>
                   </v-col>
                 </v-col>
               </v-row>
@@ -198,7 +198,6 @@
 </template>
 
 <script>
-import alertMixin from '@/mixins/alertMixin'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
@@ -206,7 +205,6 @@ import { isEmpty } from 'lodash'
 
 export default {
   components: { AppButton, AppLabel, AppDocumentUpload },
-  mixins: [alertMixin],
   props: {
     editable: {
       type: Boolean,
@@ -242,45 +240,50 @@ export default {
       uploadedDocumentsEdit: [],
       documentsToUpload: [],
       documentsToDelete: [],
-      showUploadDocumentsAlert: false,
       loadingInclusionPolicy: false,
     }
   },
-  async updated() {
-    this.initializeData()
-  },
-  methods: {
-    async initializeData() {
-      this.organizationEdit = { ...this.organization, hasInclusionPolicy: this.organization.hasInclusionPolicy || false }
-      this.uploadedDocumentsEdit = JSON.parse(JSON.stringify(this.uploadedDocuments))
-    },
 
+  computed: {
     documentsExistOrBeingAdded() {
       return !isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocumentsEdit)
     },
+    invalidInclusionPolicy() {
+      return this.organizationEdit?.hasInclusionPolicy && !this.documentsExistOrBeingAdded
+    },
+    showUploadDocumentsAlert() {
+      return this.editMode && this.invalidInclusionPolicy
+    },
+  },
 
-    async save() {
-      if (this.organizationEdit?.hasInclusionPolicy && !this.documentsExistOrBeingAdded()) {
-        this.showUploadDocumentsAlert = true
-        return
-      }
-      if (!this.organizationEdit.hasInclusionPolicy && this.organization.hasInclusionPolicy) {
+  updated() {
+    this.initializeData()
+  },
+
+  methods: {
+    initializeData() {
+      this.organizationEdit.hasInclusionPolicy = this.organization.hasInclusionPolicy ?? false
+      this.uploadedDocumentsEdit = JSON.parse(JSON.stringify(this.uploadedDocuments))
+    },
+
+    save() {
+      if (!this.organizationEdit.hasInclusionPolicy) {
+        this.documentsToUpload = []
         this.documentsToDelete = this.uploadedDocuments.map((document) => document.documentId)
       }
       this.loadingInclusionPolicy = true
-      await this.$emit('saveInclusionPolicyData', this.organizationEdit, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
+      this.$emit('saveInclusionPolicyData', this.organizationEdit?.hasInclusionPolicy, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
     },
 
     onSaveCompleteCallBack() {
+      this.initializeData()
       this.resetDocuments()
       this.editMode = false
-      this.showUploadDocumentsAlert = false
       this.loadingInclusionPolicy = false
     },
 
     toggleEditMode() {
       this.editMode = !this.editMode
-      this.showUploadDocumentsAlert = false
       if (!this.editMode) {
         this.initializeData()
         this.resetDocuments()
