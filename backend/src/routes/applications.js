@@ -16,6 +16,7 @@ const {
   updateEmployeeCertificate,
   deleteEmployeeCertificate,
   getApplicationPDF,
+  getSupplementaryApplicationPDF,
 } = require('../components/applications')
 const { param, validationResult, checkSchema } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
@@ -97,7 +98,7 @@ router.get(
 )
 
 /**
- * Get Funding Agreement PDF by ID
+ * Get OFM Application PDF by ID
  */
 router.get(
   '/:applicationId/pdf',
@@ -176,6 +177,21 @@ router.delete(
   (req, res) => {
     validationResult(req).throw()
     return deleteSupplementaryApplication(req, res)
+  },
+)
+
+/**
+ * Get Supplementary Application PDF by ID
+ */
+router.get(
+  '/supplementary/:applicationId/pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getSupplementaryApplicationPDF(req, res)
   },
 )
 
