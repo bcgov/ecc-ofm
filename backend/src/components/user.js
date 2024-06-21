@@ -186,7 +186,7 @@ function parseFacilityPermissions(userResponse) {
         ...new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data,
       }
     })
-    .sort((a, b) => a.facilityName?.localeCompare(b.facilityName))
+    .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
 }
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
