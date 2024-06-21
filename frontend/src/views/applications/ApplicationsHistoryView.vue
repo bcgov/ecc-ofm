@@ -88,7 +88,7 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="false">
+          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="downloadPDF(item)">
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
@@ -114,7 +114,14 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, APPLICATION_ROUTES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
+import {
+  APPLICATION_STATUS_CODES,
+  APPLICATION_ROUTES,
+  GOOD_STANDING_STATUS_CODES,
+  SUPPLEMENTARY_APPLICATION_STATUS_CODES,
+  NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
+  APPLICATION_TYPES,
+} from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
@@ -220,7 +227,7 @@ export default {
     },
 
     toggleCancelDialog(item) {
-      this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
+      this.cancelledApplicationId = item?.applicationType === APPLICATION_TYPES.OFM ? item?.applicationId : item?.supplementaryApplicationId
       this.showCancelDialog = !this.showCancelDialog
       if (item) {
         this.applicationTypeToCancel = item.applicationType
@@ -229,7 +236,7 @@ export default {
 
     cancelApplication() {
       let index = undefined
-      const key = this.applicationTypeToCancel === 'OFM' ? 'applicationId' : 'supplementaryApplicationId'
+      const key = this.applicationTypeToCancel === APPLICATION_TYPES.OFM ? 'applicationId' : 'supplementaryApplicationId'
       index = this.applicationItems?.findIndex((item) => item[key] === this.cancelledApplicationId)
       if (index > -1) {
         this.applicationItems.splice(index, 1)
@@ -275,7 +282,7 @@ export default {
         }, {})
         return {
           ...item,
-          applicationType: 'OFM',
+          applicationType: APPLICATION_TYPES.OFM,
           statusCode: application.statusCode,
         }
       })
@@ -343,7 +350,7 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === 'OFM' ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 
@@ -359,6 +366,30 @@ export default {
         return dateA - dateB // For ascending order
       })
       return applicationItems
+    },
+
+    //TODO - Add Supp App PDF function will look very similar, but it will hit a seperate endpoint
+    //the supp app PDF's do not generate yet in Dynamics, so holding off on including that code
+    async downloadPDF(application) {
+      if (application.applicationType === APPLICATION_TYPES.OFM) {
+        try {
+          const resp = await ApplicationService.getApplicationPDF(application.applicationId)
+          const link = document.createElement('a')
+
+          link.href = `data:application/pdf;base64,${resp}`
+          link.target = '_blank'
+          link.download = application.referenceNumber
+          // Simulate a click on the element <a>
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        } catch (error) {
+          this.setFailureAlert('Failed to download OFM PDF', error)
+        }
+      } else {
+        //it's a supp app
+        this.setSuccessAlert(`COMING SOON! A supplementary PDF will be downloaded here.`)
+      }
     },
   },
 }
