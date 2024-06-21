@@ -37,6 +37,9 @@
       :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)"
       :default-subject="defaultAssistanceRequestSubject"
       :default-facility="defaultAssistanceRequestFacility"
+      :lock-request-category="true"
+      :lock-subject="true"
+      :lock-facility="true"
       return-to="reporting"
       @close="toggleAssistanceRequestDialog" />
   </v-container>

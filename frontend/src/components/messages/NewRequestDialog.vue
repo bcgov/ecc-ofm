@@ -17,7 +17,7 @@
                 item-value="categoryId"
                 :rules="rules.required"
                 density="compact"
-                :disabled="isLoading"></v-select>
+                :disabled="isLoading || lockRequestCategory"></v-select>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -33,7 +33,7 @@
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
-                :disabled="isLoadingOrDisabled"></v-text-field>
+                :disabled="isLoadingOrDisabled || lockSubject"></v-text-field>
             </v-col>
           </v-row>
           <template v-if="isAnAccountMaintenanceRequest">
@@ -73,7 +73,7 @@
                 density="compact"
                 :items="facilities"
                 item-title="facilityName"
-                :disabled="isLoading"
+                :disabled="isLoading || lockFacility"
                 return-object
                 hide-details></v-select>
               <v-select
@@ -88,7 +88,7 @@
                 :rules="rules.listIsNotEmpty"
                 :items="facilities"
                 item-title="facilityName"
-                :disabled="isLoading"
+                :disabled="isLoading || lockFacility"
                 return-object>
                 <template v-slot:prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilities">
@@ -331,6 +331,18 @@ export default {
     defaultSubject: {
       type: String,
       default: null,
+    },
+    lockRequestCategory: {
+      type: Boolean,
+      default: false,
+    },
+    lockFacility: {
+      type: Boolean,
+      default: false,
+    },
+    lockSubject: {
+      type: Boolean,
+      default: false,
     },
     returnTo: {
       type: String,
