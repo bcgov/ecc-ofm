@@ -95,7 +95,7 @@
               </v-btn>
             </template>
           </v-tooltip>
-          <v-btn v-else :disabled="!isApplicationDownloadable(item)" variant="text" @click="downloadPDF(item)">
+          <v-btn v-else variant="text" @click="downloadPDF(item)">
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
 
