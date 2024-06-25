@@ -88,9 +88,17 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="downloadPDF(item)">
+          <v-tooltip v-if="!isApplicationDownloadable(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" variant="text">
+                <v-icon :disabled="true" icon="fa:fa-regular fa-file-pdf"></v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
+          <v-btn v-else variant="text" @click="downloadPDF(item)">
             <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
           </v-btn>
+
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
@@ -223,7 +231,11 @@ export default {
     },
 
     isApplicationDownloadable(application) {
-      return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      //OFM core generates PDF upon submit - Supp App generates PDF only once approved
+      if (application.applicationType === APPLICATION_TYPES.OFM) {
+        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      }
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
     },
 
     toggleCancelDialog(item) {
@@ -367,28 +379,26 @@ export default {
       })
       return applicationItems
     },
-
-    //TODO - Add Supp App PDF function will look very similar, but it will hit a seperate endpoint
-    //the supp app PDF's do not generate yet in Dynamics, so holding off on including that code
     async downloadPDF(application) {
-      if (application.applicationType === APPLICATION_TYPES.OFM) {
-        try {
-          const resp = await ApplicationService.getApplicationPDF(application.applicationId)
-          const link = document.createElement('a')
-
-          link.href = `data:application/pdf;base64,${resp}`
-          link.target = '_blank'
-          link.download = application.referenceNumber
-          // Simulate a click on the element <a>
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        } catch (error) {
-          this.setFailureAlert('Failed to download OFM PDF', error)
+      try {
+        let resp
+        if (application.applicationType === APPLICATION_TYPES.OFM) {
+          resp = await ApplicationService.getApplicationPDF(application.applicationId)
+        } else {
+          resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
         }
-      } else {
-        //it's a supp app
-        this.setSuccessAlert(`COMING SOON! A supplementary PDF will be downloaded here.`)
+
+        const link = document.createElement('a')
+        link.href = `data:application/pdf;base64,${resp}`
+        link.target = '_blank'
+        link.download = application.referenceNumber
+
+        // Simulate a click on the element <a>
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (error) {
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
     },
   },

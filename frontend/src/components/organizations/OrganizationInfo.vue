@@ -144,7 +144,7 @@
                 </v-col>
                 <v-col class="mt-2">
                   <v-row v-if="editable && !editMode" justify="end">
-                    <AppButton variant="text" :disabled="loading" @click="toggleEditMode()">
+                    <AppButton id="edit-button" variant="text" :disabled="loading" @click="toggleEditMode()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>
                   </v-row>
