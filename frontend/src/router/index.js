@@ -13,7 +13,7 @@ import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import ResourcesView from '@/views/ResourcesView.vue'
+import HelpView from '@/views/HelpView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
@@ -263,9 +263,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/resources',
-      name: 'resources',
-      component: ResourcesView,
+      path: '/help',
+      name: 'help',
+      component: HelpView,
       meta: {
         requiresAuth: true,
       },

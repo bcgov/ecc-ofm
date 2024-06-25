@@ -11,7 +11,7 @@ import OrganizationHeader from '@/components/organizations/OrganizationHeader.vu
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
-  name: 'ResourcesView',
+  name: 'HelpView',
   components: { AppBackButton, OrganizationHeader },
 }
 </script>

@@ -45,7 +45,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card class="home-card" id="resources-card" prepend-icon="mdi-help" title="Resources" @click="$router.push({ name: 'resources' })">
+        <v-card class="home-card" id="help-card" prepend-icon="mdi-help" title="Resources" @click="$router.push({ name: 'help' })">
           <v-card-text>
             Curabitur molestie pulvinar sapien. Aenean aliquet dolor at mollis laoreet. Duis vel placerat lectus, eu rutrum turpis. Morbi consequat, purus et tempus iaculis, sapien massa rhoncus ex,
             sed consectetur leo odio in magna.
