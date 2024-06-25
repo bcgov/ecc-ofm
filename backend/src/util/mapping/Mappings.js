@@ -168,6 +168,7 @@ const ApplicationMappings = [
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
   { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
+  { back: 'ofm_armslengthlease', front: 'armsLength' },
 ]
 
 const ApplicationProviderEmployeeMappings = [

@@ -180,6 +180,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
   FACILITY_TYPE: 'Facility type required',
+  ARM_LENGTH: "Arm's Length agreement checkbox required",
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
   MISMATCH_NUMBER_STAFF_CERTIFICATE: 'The total of staff and total of certificates must match',
@@ -227,6 +228,12 @@ export const DOCUMENT_TYPES = Object.freeze({
   INCOME_STATEMENT: 'Income Statement',
   BALANCE_SHEET: 'Balance Sheet',
   SUPPORTING_DOCS: 'Supporting Documents',
+})
+
+export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
+  YES: 1,
+  NO: 2,
+  NA: 3,
 })
 
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
