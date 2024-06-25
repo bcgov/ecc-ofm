@@ -2,11 +2,16 @@ import ApiService from '@/common/apiService'
 import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 export default {
-  async getActiveFundingAgreementByApplicationId(applicationId) {
+  async getActiveFundingAgreementByApplicationId(applicationId, ignoreMODAgreements = false) {
     try {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
-      //CRM confirmed that there will only ever be one Funding Agreement per ApplicationID. However response returns an array. If index 0 contains data, return it
+
+      //Node.js will order FA's so newest one (newest MOD agreement) will always be first
+      //in the case of Supp Apps - we will need the start date of the ORIGINAL funding agreement - so take the last FA in the list
+      if (ignoreMODAgreements) {
+        return response?.data[response.data.length - 1]
+      }
       return response?.data[0]
     } catch (error) {
       console.log(`Failed to get the active funding agreement by application id - ${error}`)
@@ -47,19 +52,7 @@ export default {
     }
   },
 
-  // A facility can have only 1 Active funding agreement
-  async getActiveFundingAgreementByFacilityId(facilityId) {
-    try {
-      if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
-      return response?.data[0]
-    } catch (error) {
-      console.log(`Failed to get the active funding agreement by facility id - ${error}`)
-      throw error
-    }
-  },
-
-  // A facility can have only 1 Active funding agreement
+  //Node.js will order FA's so newest one (newest MOD agreement) will always be first
   async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
       if (!facilityId && !statusCode) return

@@ -10,12 +10,13 @@ const { isEmpty } = require('lodash')
 async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []
-    let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
+    let operation =
+      'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number'
     if (req.query?.includeEA) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
-    operation += `&$filter=(${filter})`
+    operation += `&$filter=(${filter})&$orderby=ofm_version_number desc`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
       const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
