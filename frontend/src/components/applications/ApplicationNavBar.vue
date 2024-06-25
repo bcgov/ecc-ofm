@@ -1,15 +1,9 @@
 <template>
   <v-container fluid class="sticky-top">
     <div v-for="item in navBarItems" :key="item.id">
-      <v-row no-gutters>
-        <v-col cols="2" :class="getNavIconClass(item)">
-          <v-icon>{{ getNavIcon(item) }}</v-icon>
-        </v-col>
-        <v-col cols="10">
-          <router-link :to="getRouterLink(item)" :class="getNavTextClass(item)">
-            {{ item.title }}
-          </router-link>
-        </v-col>
+      <v-row no-gutters @click="navigateToPage(item)">
+        <v-icon :class="getNavIconClass(item)" class="mr-3">{{ getNavIcon(item) }}</v-icon>
+        <span :class="getNavTextClass(item)">{{ item.title }}</span>
       </v-row>
       <v-row v-if="item.id < Object.keys(navBarItems).length" no-gutters>
         <v-col cols="2">
@@ -88,37 +82,35 @@ export default {
   },
 
   methods: {
-    getRouterLink(item) {
+    isDisabled(item) {
+      return this.loading || (this.isSelectFacilityPage && item.routeName !== APPLICATION_ROUTES.FACILITY_DETAILS) || (item.routeName === APPLICATION_ROUTES.SUBMIT && !this.isApplicationComplete)
+    },
+
+    isCurrent(item) {
+      return item.routeName === this.$route.name || (this.isSelectFacilityPage && item.routeName === APPLICATION_ROUTES.FACILITY_DETAILS)
+    },
+
+    navigateToPage(item) {
+      if (this.isDisabled(item)) return
       if (this.isSelectFacilityPage) {
-        return { name: APPLICATION_ROUTES.SELECT_FACILITY }
+        this.$router.push({ name: APPLICATION_ROUTES.SELECT_FACILITY })
+      } else {
+        this.$router.push({ name: item.routeName, params: { applicationGuid: this.$route.params.applicationGuid } })
       }
-      return { name: item.routeName, params: { applicationGuid: this.$route.params.applicationGuid } }
     },
 
     getNavIconClass(item) {
-      if (this.loading) {
+      if (this.isDisabled(item)) {
         return 'disabled'
       }
-      if (this.isSelectFacilityPage) {
-        return item.routeName === APPLICATION_ROUTES.FACILITY_DETAILS ? 'current-icon' : 'disabled'
-      }
-      if (item.routeName === APPLICATION_ROUTES.SUBMIT && this.$route.name != APPLICATION_ROUTES.SUBMIT) {
-        return this.isApplicationComplete ? 'active' : 'disabled'
-      }
-      return item.routeName === this.$route.name ? 'current-icon' : 'active'
+      return this.isCurrent(item) ? 'current-icon' : 'active'
     },
 
     getNavTextClass(item) {
-      if (this.loading) {
+      if (this.isDisabled(item)) {
         return 'disabled'
       }
-      if (this.isSelectFacilityPage) {
-        return item.routeName === APPLICATION_ROUTES.FACILITY_DETAILS ? 'current-text' : 'disabled'
-      }
-      if (item.routeName === APPLICATION_ROUTES.SUBMIT && this.$route.name != APPLICATION_ROUTES.SUBMIT) {
-        return this.isApplicationComplete ? 'active' : 'disabled'
-      }
-      return item.routeName === this.$route.name ? 'current-text' : 'active'
+      return this.isCurrent(item) ? 'current-text' : 'active active-text'
     },
 
     getVerticalLineClass(item) {
@@ -167,9 +159,10 @@ export default {
 .active {
   color: #003366;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.active:hover {
+.active-text:hover {
   text-decoration: underline;
 }
 
