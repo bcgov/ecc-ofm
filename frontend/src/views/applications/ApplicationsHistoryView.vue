@@ -88,20 +88,22 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-tooltip v-if="!isApplicationDownloadable(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
-            <template #activator="{ props }">
-              <v-btn v-bind="props" variant="text">
-                <v-icon :disabled="true" icon="fa:fa-regular fa-file-pdf"></v-icon>
-              </v-btn>
-            </template>
-          </v-tooltip>
-          <v-btn v-else variant="text" @click="downloadPDF(item)">
-            <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
-          </v-btn>
-
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
+
+          <div v-else>
+            <v-tooltip v-if="!isApplicationDownloadable(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text">
+                  <v-icon :disabled="true" icon="fa:fa-regular fa-file-pdf"></v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-btn v-else variant="text" @click="downloadPDF(item)">
+              <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
+            </v-btn>
+          </div>
         </template>
       </v-data-table>
     </v-skeleton-loader>
