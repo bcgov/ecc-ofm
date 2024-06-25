@@ -92,7 +92,7 @@
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
 
-          <div v-else>
+          <div v-else-if="showPDFDownloadButton">
             <v-tooltip v-if="!isApplicationDownloadable(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
               <template #activator="{ props }">
                 <v-btn v-bind="props" variant="text">
@@ -230,6 +230,10 @@ export default {
 
     isApplicationCancellable(application) {
       return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+    },
+
+    showPDFDownloadButton() {
+      return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
 
     isApplicationDownloadable(application) {
