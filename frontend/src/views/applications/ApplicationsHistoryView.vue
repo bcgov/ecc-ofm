@@ -92,8 +92,8 @@
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
 
-          <div v-else-if="showPDFDownloadButton">
-            <v-tooltip v-if="!isApplicationDownloadable(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
+          <div v-if="showPDFDownloadButton(item)">
+            <v-tooltip v-if="showPDFTooltip(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
               <template #activator="{ props }">
                 <v-btn v-bind="props" variant="text">
                   <v-icon :disabled="true" icon="fa:fa-regular fa-file-pdf"></v-icon>
@@ -232,8 +232,16 @@ export default {
       return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
 
-    showPDFDownloadButton() {
-      return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+    showPDFDownloadButton(application) {
+      //OFM core generates PDF upon submit - Supp App generates PDF only once approved
+      if (application.applicationType === APPLICATION_TYPES.OFM) {
+        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      }
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
+    },
+
+    showPDFTooltip(application) {
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED && application.applicationType !== APPLICATION_TYPES.OFM
     },
 
     isApplicationDownloadable(application) {
