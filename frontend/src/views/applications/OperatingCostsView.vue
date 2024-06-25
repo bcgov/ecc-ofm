@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form">
-    <v-row no-gutters class="mt-4"><strong>Please provide operating costs for the selected facility:</strong></v-row>
+    <div class="mt-4"><strong>Please provide operating costs for the selected facility:</strong></div>
+    <!-- SELECT FACILITY TYPE -->
     <v-row id="facility-types" no-gutters class="mt-4">
       <v-col cols="12" md="3" lg="2" class="mt-4">
         <AppLabel>Facility Type:</AppLabel>
@@ -26,63 +27,80 @@
         </v-tooltip>
       </v-col>
     </v-row>
-    <div v-if="model.facilityType">
-      <AppMissingInfoError v-if="showErrorMessage && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
-      <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
-      <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
-    </div>
-    <v-row>
-      <v-col>
+
+    <div v-if="model.facilityType" id="arm-length">
+      <!-- ARM LENGTH -->
+      <v-checkbox v-if="isRentLease" v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
+        <template #label>
+          I attest that the rent/lease agreement is at Arm's Length.
+          <!-- TODO (vietle-cgi) - pending on the tooltips text from the business -->
+          <!-- <v-tooltip content-class="tooltip" :text="FACILITY_TYPE_INFO_TXT">
+            <template #activator="{ props }">
+              <v-icon size="large" v-bind="props" color="black" class="ml-2">mdi-information-slab-circle-outline</v-icon>
+            </template>
+          </v-tooltip> -->
+        </template>
+      </v-checkbox>
+
+      <!-- OPERATING COST / FACILITY COST -->
+      <v-card class="my-4 px-6 py-4">
+        <AppMissingInfoError v-if="showErrorMessage && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
+        <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
+        <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
+      </v-card>
+
+      <!-- UPLOAD DOCUMENTS -->
+      <v-card class="my-6 px-6 py-4">
         <h4>Upload Documents</h4>
         <div>{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
         <AppMissingInfoError v-if="showErrorMessage && !isFinancialDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}</AppMissingInfoError>
         <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
-      </v-col>
-    </v-row>
-    <v-card class="mt-2 pa-4" variant="outlined">
-      <h5>Financial Documents</h5>
-      <div class="greyCards py-2 px-4 mt-2">
-        <v-card class="mt-2 mb-4 pa-4">
-          <AppDocumentUpload
-            id="financial-document-upload"
-            v-model="financialStatement.documentsToUpload"
-            entityName="ofm_applications"
-            :documentType="DOCUMENT_TYPES.INCOME_STATEMENT"
-            :loading="processing"
-            :readonly="readonly"
-            :uploadedDocuments="financialStatement.uploadedDocuments"
-            @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-        </v-card>
-        <v-card class="mt-2 mb-4 pa-4">
-          <AppDocumentUpload
-            id="balance-sheet-document-upload"
-            v-model="balanceSheet.documentsToUpload"
-            entityName="ofm_applications"
-            :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
-            :loading="processing"
-            :readonly="readonly"
-            :uploadedDocuments="balanceSheet.uploadedDocuments"
-            @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
-        </v-card>
-      </div>
-      <div class="greyCards py-2 px-4 mt-8">
-        <v-card class="mt-2 pt-4 mb-4 pa-4">
-          <AppDocumentUpload
-            id="supporting-document-upload"
-            v-model="supporting.documentsToUpload"
-            entityName="ofm_applications"
-            :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
-            :loading="processing"
-            :readonly="readonly"
-            :uploadedDocuments="supporting.uploadedDocuments"
-            @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+        <v-card class="mt-2 pa-4" variant="outlined">
+          <h5>Financial Documents</h5>
+          <div class="greyCards py-2 px-4 mt-2">
+            <v-card class="mt-2 mb-4 pa-4">
+              <AppDocumentUpload
+                id="financial-document-upload"
+                v-model="financialStatement.documentsToUpload"
+                entityName="ofm_applications"
+                :documentType="DOCUMENT_TYPES.INCOME_STATEMENT"
+                :loading="processing"
+                :readonly="readonly"
+                :uploadedDocuments="financialStatement.uploadedDocuments"
+                @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+            </v-card>
+            <v-card class="mt-2 mb-4 pa-4">
+              <AppDocumentUpload
+                id="balance-sheet-document-upload"
+                v-model="balanceSheet.documentsToUpload"
+                entityName="ofm_applications"
+                :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
+                :loading="processing"
+                :readonly="readonly"
+                :uploadedDocuments="balanceSheet.uploadedDocuments"
+                @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+            </v-card>
+          </div>
+          <div class="greyCards py-2 px-4 mt-8">
+            <v-card class="mt-2 pt-4 mb-4 pa-4">
+              <AppDocumentUpload
+                id="supporting-document-upload"
+                v-model="supporting.documentsToUpload"
+                entityName="ofm_applications"
+                :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
+                :loading="processing"
+                :readonly="readonly"
+                :uploadedDocuments="supporting.uploadedDocuments"
+                @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
 
-          <ul class="ml-7 mt-4">
-            <li>Your yearly operating cost Rent/Lease payment schedule</li>
-          </ul>
+              <ul class="ml-7 mt-4">
+                <li>Your yearly operating cost Rent/Lease payment schedule</li>
+              </ul>
+            </v-card>
+          </div>
         </v-card>
-      </div>
-    </v-card>
+      </v-card>
+    </div>
   </v-form>
 </template>
 
@@ -100,7 +118,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
@@ -169,14 +187,24 @@ export default {
           sanitizedModel[key] = this.model[key]
         }
       })
+      if (this.isRentLease && !this.model?.armsLength) {
+        sanitizedModel.armsLength = null
+      }
       return sanitizedModel
     },
     isFormComplete() {
-      return this.model.facilityType && this.totalOperationalCost > 0 && this.isFinancialDocsUploaded
+      return (
+        this.model.facilityType &&
+        (!this.isRentLease || this.model?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES) &&
+        this.totalOperationalCost > 0 &&
+        this.isFinancialDocsUploaded &&
+        (!this.isRentLease || this.isSupportingDocsUploaded)
+      )
     },
     totalOperationalCost() {
       const costsModel = Object.assign({}, this.model)
       delete costsModel?.facilityType
+      delete costsModel?.armsLength
       return Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
     },
     isRentLease() {
@@ -228,10 +256,12 @@ export default {
   created() {
     this.$emit('process', false)
     this.model.facilityType = this.currentApplication?.facilityType
+    this.model.armsLength = this.currentApplication?.armsLength
     this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
+    this.YES_NO_CHOICE_CRM_MAPPING = YES_NO_CHOICE_CRM_MAPPING
     this.getUploadedDocuments(this.currentApplication?.uploadedDocuments)
   },
 

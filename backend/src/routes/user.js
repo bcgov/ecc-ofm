@@ -66,7 +66,7 @@ router.get(
   '/permissions-facilities/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
+  validatePermission(PERMISSIONS.MANAGE_USERS_VIEW),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()

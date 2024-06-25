@@ -2,10 +2,10 @@
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
       <v-row>
-        <v-col v-if="documentType" cols="3" class="pb-0">
+        <v-col v-if="documentType" cols="12" sm="5" class="pb-0">
           <AppLabel>{{ documentType }}</AppLabel>
         </v-col>
-        <v-col :cols="documentType ? '8' : '12'" :class="documentType ? 'd-flex flex-column align-end ml-8' : ''">
+        <v-col cols="12" :sm="documentType ? '7' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
           <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
           <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
         </v-col>
@@ -62,12 +62,12 @@ export default {
     entityName: {
       type: String,
       required: false,
-      default: undefined
+      default: undefined,
     },
     documentType: {
       type: String,
       required: false,
-      default: undefined
+      default: undefined,
     },
     loading: {
       type: Boolean,
@@ -168,7 +168,6 @@ export default {
 </script>
 <style scoped>
 .addFileButton {
-  margin-top: 8px;
   font-size: 16px;
 }
 </style>

@@ -333,7 +333,7 @@ export default {
     sortFacilities(facilities) {
       try {
         return facilities?.sort((a, b) => {
-          const nameComparison = a.facilityName.localeCompare(b.facilityName)
+          const nameComparison = a.facilityName?.localeCompare(b.facilityName)
           if (nameComparison !== 0) {
             return nameComparison
           }

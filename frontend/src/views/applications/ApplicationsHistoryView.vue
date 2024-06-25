@@ -88,12 +88,22 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="downloadPDF(item)">
-            <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
-          </v-btn>
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
+
+          <div v-if="showPDFDownloadButton(item)">
+            <v-tooltip v-if="showPDFTooltip(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text">
+                  <v-icon :disabled="true" icon="fa:fa-regular fa-file-pdf"></v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-btn v-else variant="text" @click="downloadPDF(item)">
+              <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
+            </v-btn>
+          </div>
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -167,7 +177,7 @@ export default {
     },
     filteredApplicationItems() {
       return this.sortApplicationItems(
-        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
+        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
     },
     ofmApplicationCardText() {
@@ -222,12 +232,16 @@ export default {
       return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
 
-    isApplicationDownloadable(application) {
+    showPDFDownloadButton(application) {
       //OFM core generates PDF upon submit - Supp App generates PDF only once approved
       if (application.applicationType === APPLICATION_TYPES.OFM) {
         return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
       }
-      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
+    },
+
+    showPDFTooltip(application) {
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED && application.applicationType !== APPLICATION_TYPES.OFM
     },
 
     toggleCancelDialog(item) {

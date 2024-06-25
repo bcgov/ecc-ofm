@@ -8,6 +8,11 @@
     <div v-else>
       <h4 class="mb-4 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
       <AppMissingInfoError
+        v-if="!readonly && isRentLease && currentApplication.armsLength !== YES_NO_CHOICE_CRM_MAPPING.YES"
+        :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
+      </AppMissingInfoError>
+      <AppMissingInfoError
         v-if="!readonly && totalOperationalCost === 0"
         :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
@@ -60,7 +65,7 @@ import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFa
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES } from '@/utils/constants'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 export default {
   components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
@@ -100,6 +105,7 @@ export default {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
+    this.YES_NO_CHOICE_CRM_MAPPING = YES_NO_CHOICE_CRM_MAPPING
   },
 }
 </script>
