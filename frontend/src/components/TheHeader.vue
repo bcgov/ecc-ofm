@@ -15,16 +15,18 @@
             </v-row>
           </v-row>
         </v-col>
-        <v-col cols="12" sm="6" md="5" lg="4" class="d-flex justify-center justify-sm-end py-2 py-sm-3 align-center px-2" :class="iconsClass">
+        <v-col cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
           <div v-if="isAuthenticated && userInfo">
-            <v-row>
+            <v-row class="align-center">
               <v-col v-if="showMessagingIcon" style="width: 70px">
-                <v-btn @click="$router.push({ name: 'messaging' })" aria-label="Messages/Notifications" id="mail_box_button" rounded class="mr-5 elevation-0 m" v-if="!isNaN(messageNotificationCount)">
-                  <v-badge color="error" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
-                    <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
-                  </v-badge>
-                </v-btn>
-                <v-skeleton-loader type="chip" style="margin-top: -10px; background-color: #003366; width: 80px" v-else></v-skeleton-loader>
+                <div>
+                  <v-btn @click="$router.push({ name: 'messaging' })" aria-label="Messages/Notifications" id="mail_box_button" rounded v-if="!isNaN(messageNotificationCount)">
+                    <v-badge color="error" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
+                      <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
+                    </v-badge>
+                  </v-btn>
+                  <v-skeleton-loader type="chip" class="chip-loader" v-else />
+                </div>
               </v-col>
               <v-col class="px-0" style="width: 50px">
                 <v-btn @click="$router.push({ name: 'help' })" aria-label="Help" id="help_button" rounded>
@@ -32,7 +34,7 @@
                 </v-btn>
               </v-col>
               <v-col class="px-0" style="width: 50px">
-                <v-btn @click="$router.push({ name: 'home' })" aria-label="Home" id="home_button" rounded style="width: 40px">
+                <v-btn @click="$router.push({ name: 'home' })" aria-label="Home" id="home_button" rounded>
                   <v-icon aria-hidden="false" icon="mdi-home-outline" size="40" color="white" />
                 </v-btn>
               </v-col>
@@ -44,7 +46,7 @@
                       <span class="display-name pl-1 pt-0 mt-0">{{ userInfo.displayName }}</span>
                     </v-chip>
                   </template>
-                  <v-list dark style="background-color: #003366; color: white">
+                  <v-list style="background-color: #003366; color: white">
                     <v-list-item class="user-link" id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
                     <v-list-item class="user-link" id="logout_button" :href="logoutPath" title="Log Out" />
                   </v-list>
@@ -129,6 +131,10 @@ export default {
 </script>
 
 <style scoped>
+.chip-loader {
+  background-color: #003366;
+  width: 80px;
+}
 .v-chip:hover {
   background-color: rgb(255, 255, 255, 0.05);
 }
