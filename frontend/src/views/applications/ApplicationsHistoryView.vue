@@ -175,7 +175,7 @@ export default {
     },
     filteredApplicationItems() {
       return this.sortApplicationItems(
-        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
+        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
     },
     ofmApplicationCardText() {

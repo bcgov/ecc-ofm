@@ -141,7 +141,7 @@ export default {
       this.loading = true
       try {
         if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
-        return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
+        return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
       } catch (error) {
         this.setFailureAlert('Failed to filter users by facility name', error)
       } finally {
