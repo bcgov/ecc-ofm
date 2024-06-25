@@ -30,22 +30,15 @@
 
     <div v-if="model.facilityType" id="arm-length">
       <!-- ARM LENGTH -->
-      <v-checkbox
-        v-if="isRentLease"
-        v-model="model.armsLength"
-        color="primary"
-        :true-value="YES_NO_CHOICE_CRM_MAPPING.YES"
-        :false-value="null"
-        :rules="rules.required"
-        :disabled="readonly"
-        :hide-details="readonly">
+      <v-checkbox v-if="isRentLease" v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
         <template #label>
           I attest that the rent/lease agreement is at Arm's Length.
-          <v-tooltip content-class="tooltip" :text="FACILITY_TYPE_INFO_TXT">
+          <!-- TODO (vietle-cgi) - pending on the tooltips text from the business -->
+          <!-- <v-tooltip content-class="tooltip" :text="FACILITY_TYPE_INFO_TXT">
             <template #activator="{ props }">
               <v-icon size="large" v-bind="props" color="black" class="ml-2">mdi-information-slab-circle-outline</v-icon>
             </template>
-          </v-tooltip>
+          </v-tooltip> -->
         </template>
       </v-checkbox>
 
@@ -194,10 +187,19 @@ export default {
           sanitizedModel[key] = this.model[key]
         }
       })
+      if (this.isRentLease && !this.model?.armsLength) {
+        sanitizedModel.armsLength = null
+      }
       return sanitizedModel
     },
     isFormComplete() {
-      return this.model.facilityType && (!this.isRentLease || this.model?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES) && this.totalOperationalCost > 0 && this.isFinancialDocsUploaded
+      return (
+        this.model.facilityType &&
+        (!this.isRentLease || this.model?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES) &&
+        this.totalOperationalCost > 0 &&
+        this.isFinancialDocsUploaded &&
+        (!this.isRentLease || this.isSupportingDocsUploaded)
+      )
     },
     totalOperationalCost() {
       const costsModel = Object.assign({}, this.model)
