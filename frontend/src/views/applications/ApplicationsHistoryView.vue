@@ -244,14 +244,6 @@ export default {
       return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED && application.applicationType !== APPLICATION_TYPES.OFM
     },
 
-    isApplicationDownloadable(application) {
-      //OFM core generates PDF upon submit - Supp App generates PDF only once approved
-      if (application.applicationType === APPLICATION_TYPES.OFM) {
-        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
-      }
-      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
-    },
-
     toggleCancelDialog(item) {
       this.cancelledApplicationId = item?.applicationType === APPLICATION_TYPES.OFM ? item?.applicationId : item?.supplementaryApplicationId
       this.showCancelDialog = !this.showCancelDialog
