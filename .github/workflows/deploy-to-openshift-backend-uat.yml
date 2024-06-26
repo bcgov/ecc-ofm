@@ -46,7 +46,6 @@ jobs:
   openshift-ci-cd:
     name: Deploy Backend to UAT
     runs-on: ubuntu-24.04
-    
     environment: uat
 
     outputs:
