@@ -53,7 +53,7 @@ on:
 jobs:
   openshift-ci-cd:
     name: Deploy Frontend to UAT
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: uat
 
     outputs:
