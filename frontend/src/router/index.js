@@ -1,3 +1,4 @@
+import HttpStatus from 'http-status-codes'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
@@ -360,8 +361,7 @@ router.beforeEach((to, _from, next) => {
       .getJwtToken()
       .then(() => {
         if (!authStore.isAuthenticated) {
-          next('/token-expired')
-          return
+          return next('/token-expired')
         }
         authStore
           .getUserInfo()
@@ -387,18 +387,15 @@ router.beforeEach((to, _from, next) => {
             next()
           })
           .catch((error) => {
-            console.log('error', error)
-            if (error.response?.status == '401') {
-              next('unauthorized')
-              return
+            if ([HttpStatus.FORBIDDEN, HttpStatus.UNAUTHORIZED].includes(error.response?.status)) {
+              return next('unauthorized')
             }
             next('error')
           })
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!authStore.userInfo) {
-          next('/login')
-          return
+          return next('/login')
         }
         next('/token-expired')
       })
