@@ -1,47 +1,60 @@
 <template>
-  <v-app-bar color="rgb(0, 51, 102)" class="pl-10 pr-10 sys-bar" style="z-index: 1002">
+  <v-app-bar color="#003366" class="px-5 px-md-10 sys-bar" :height="height">
     <!-- Navbar content -->
-    <v-container :class="{ sizingForIconXLScreen: xl }" :fluid="true">
-      <v-row class="justify-space-between">
-        <router-link tabindex="-1" :to="{ name: 'home' }">
-          <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
-        </router-link>
-        <v-row class="vertical-line my-auto">
-          <v-row class="my-auto">
-            <v-toolbar-title fill-height style="font-size: 14px">
-              <h5 class="main-title" v-if="xs"><span v-html="appTitleXs" /></h5>
-              <h2 class="main-title" v-else>{{ appTitle }}</h2>
-            </v-toolbar-title>
+    <v-container :fluid="true">
+      <v-row>
+        <v-col cols="12" sm="6" md="7" lg="8" class="d-flex pl-0 py-0 py-sm-3">
+          <router-link tabindex="-1" :to="{ name: 'home' }">
+            <img tabindex="-1" src="@/assets/images/bc-gov-logo.svg" class="logo" alt="B.C. Government Logo" />
+          </router-link>
+          <v-row class="vertical-line my-auto">
+            <v-row class="my-auto">
+              <v-toolbar-title fill-height class="toolbar-title">
+                <h2 class="main-title">{{ appTitle }}</h2>
+              </v-toolbar-title>
+            </v-row>
           </v-row>
-        </v-row>
-        <v-spacer></v-spacer>
-        <div v-if="isAuthenticated && userInfo" class="mt-5">
-          <v-row>
-            <v-col v-if="showMessagingIcon" style="width: 70px">
-              <v-btn @click="$router.push({ name: 'messaging' })" id="mail_box_button" rounded class="mr-5 elevation-0" dark v-if="!isNaN(messageNotificationCount)">
-                <v-badge color="error" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
-                  <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
-                </v-badge>
-              </v-btn>
-              <!-- Skeleton loader layout is off so render with custom style in if/else -->
-              <v-skeleton-loader type="chip" style="margin-top: -10px; background-color: #003366; width: 80px" v-else></v-skeleton-loader>
-            </v-col>
-            <v-col>
-              <v-menu name="user_options" offset-y>
-                <template #activator="{ props }">
-                  <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1">
-                    <v-icon aria-hidden="false" icon="mdi-account-circle" size="30" color="white" />
-                    <span class="display-name pl-1">{{ userInfo.displayName }}</span>
-                  </v-chip>
-                </template>
-                <v-list dark style="background-color: #003366; color: white">
-                  <v-list-item class="user-link" id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
-                  <v-list-item class="user-link" id="logout_button" :href="logoutPath" title="Log Out" />
-                </v-list>
-              </v-menu>
-            </v-col>
-          </v-row>
-        </div>
+        </v-col>
+        <v-col cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
+          <div v-if="isAuthenticated && userInfo">
+            <v-row class="align-center">
+              <v-col v-if="showMessagingIcon" style="width: 70px">
+                <div>
+                  <v-btn @click="$router.push({ name: 'messaging' })" aria-label="Messages/Notifications" id="mail_box_button" rounded v-if="!isNaN(messageNotificationCount)">
+                    <v-badge color="error" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
+                      <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
+                    </v-badge>
+                  </v-btn>
+                  <v-skeleton-loader type="chip" class="chip-loader" v-else />
+                </div>
+              </v-col>
+              <v-col class="px-0" style="width: 50px">
+                <v-btn @click="$router.push({ name: 'help' })" aria-label="Help" id="help_button" rounded>
+                  <v-icon aria-hidden="false" icon="mdi-help-circle-outline" size="38" color="white" />
+                </v-btn>
+              </v-col>
+              <v-col class="px-0" style="width: 50px">
+                <v-btn @click="$router.push({ name: 'home' })" aria-label="Home" id="home_button" rounded>
+                  <v-icon aria-hidden="false" icon="mdi-home-outline" size="40" color="white" />
+                </v-btn>
+              </v-col>
+              <v-col class="px-0">
+                <v-menu name="user_options" offset-y>
+                  <template #activator="{ props }">
+                    <v-chip v-bind="props" tabindex="0" pill color="#003366" dark class="mt-1" aria-label="User Menu">
+                      <v-icon aria-hidden="false" icon="mdi-account-circle" size="35" color="white" />
+                      <span class="display-name pl-1 pt-0 mt-0">{{ userInfo.displayName }}</span>
+                    </v-chip>
+                  </template>
+                  <v-list style="background-color: #003366; color: white">
+                    <v-list-item class="user-link" id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
+                    <v-list-item class="user-link" id="logout_button" :href="logoutPath" title="Log Out" />
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
+          </div>
+        </v-col>
       </v-row>
     </v-container>
   </v-app-bar>
@@ -65,15 +78,13 @@ export default {
     appTitle() {
       return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
     },
-    appTitleXs() {
-      const index = this.appTitle.indexOf(' ')
-      return `${this.appTitle.substring(0, index)}<br/>${this.appTitle.substring(index + 1)}`
-    },
-    xl() {
-      return this.$vuetify.display.xl
-    },
-    xs() {
-      return this.$vuetify.display.xs
+    height() {
+      switch (this.$vuetify.display.name) {
+        case 'xs':
+          return 140
+        default:
+          return 64
+      }
     },
     messageNotificationCount() {
       return this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount
@@ -88,6 +99,9 @@ export default {
     },
     logoutPath() {
       return this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT
+    },
+    iconsClass() {
+      return this.$vuetify.display.xs ? 'icons-border' : ''
     },
   },
   watch: {
@@ -116,6 +130,10 @@ export default {
 </script>
 
 <style scoped>
+.chip-loader {
+  background-color: #003366;
+  width: 80px;
+}
 .v-chip:hover {
   background-color: rgb(255, 255, 255, 0.05);
 }
@@ -160,7 +178,7 @@ export default {
 
 .sys-bar {
   border-bottom: 2px solid rgb(252, 186, 25) !important;
-  z-index: 8;
+  z-index: 1002;
 }
 
 .display-name {
@@ -169,6 +187,14 @@ export default {
 
 .main-title {
   color: #ffffff;
+}
+
+.icons-border {
+  border-top: 1px solid #ffffff;
+}
+
+.toolbar-title {
+  font-size: 14px;
 }
 
 @media screen and (max-width: 959px) {
