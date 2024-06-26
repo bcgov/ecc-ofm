@@ -57,7 +57,7 @@ on:
 jobs:
   openshift-ci-cd:
     name: Build and deploy Frontend to DEV
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     environment: dev
 
     outputs:
