@@ -104,6 +104,7 @@ jobs:
         uses: redhat-actions/openshift-tools-installer@v1
         with:
           oc: 4.16
+
       - name: Deploy
         run: |
           set -eux
