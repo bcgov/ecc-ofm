@@ -78,7 +78,6 @@ export default {
     appTitle() {
       return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
     },
-    xs() {},
     height() {
       switch (this.$vuetify.display.name) {
         case 'xs':
