@@ -65,7 +65,7 @@
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
               <v-select
-                v-if="isAnAccountMaintenanceRequest"
+                v-if="isAnAccountMaintenanceRequest || isAnIrregularExpenseRequest"
                 id="selectFacility"
                 v-model="newRequestModel.facilities"
                 placeholder="[select facility]"
@@ -394,6 +394,9 @@ export default {
     },
     isAnAccountMaintenanceRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+    },
+    isAnIrregularExpenseRequest() {
+      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
     },
     isReportingRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)

@@ -56,6 +56,25 @@
             </v-card-actions>
           </v-card>
         </v-col>
+
+        <v-col cols="12" md="6">
+          <v-card class="home-card justify-center">
+            <v-card-title class="text-center">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              Irregular Expenses Application
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              To apply for Irregular Expenses, you must have an active Funding Agreement in place.
+              <br />
+              Funding requires approval before your centers incurred expenses, and you must demonstrate need for the funding.
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="irregular-expense-button" :loading="loading" size="large" width="450px" :disabled="!hasAValidApplication" @click="toggleChangeRequestDialog" class="mt-8">
+                Add Irregular Expenses Application
+              </AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
     </template>
     <v-row class="mt-6">
@@ -109,6 +128,12 @@
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+
+    <NewRequestDialog
+      class="pa-0"
+      :show="showChangeRequestDialog"
+      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)"
+      @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 
@@ -124,6 +149,7 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
@@ -131,13 +157,15 @@ import {
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
   APPLICATION_TYPES,
+  REQUEST_CATEGORY_NAMES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
+import { useAppStore } from '@/stores/app'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner, NewRequestDialog },
   mixins: [alertMixin, permissionsMixin],
 
   data() {
@@ -163,12 +191,14 @@ export default {
       facilityNameFilter: undefined,
       applicationTypeToCancel: undefined,
       orgInfo: undefined,
+      showChangeRequestDialog: false,
     }
   },
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
     hasAValidApplication() {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
@@ -200,6 +230,7 @@ export default {
   async created() {
     try {
       this.loading = true
+      this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
@@ -406,6 +437,13 @@ export default {
       } catch (error) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
+    },
+
+    /**
+     * Open the Change Request dialog
+     */
+    toggleChangeRequestDialog() {
+      this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
   },
 }
