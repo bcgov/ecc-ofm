@@ -55,7 +55,7 @@ async function getSurveySections(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const sections = []
-    const operation = `ofm_sections?$filter=ofm_is_published eq true and _ofm_survey_value eq '${req?.query?.surveyTemplateId}'&$orderby=ofm_section_order`
+    const operation = `ofm_sections?$filter=_ofm_survey_value eq '${req?.query?.surveyTemplateId}'&$orderby=ofm_section_order`
     const response = await getOperation(operation)
     response?.value?.forEach((section) => sections.push(new MappableObjectForFront(section, SurveySectionMappings).toJSON()))
     return res.status(HttpStatus.OK).json(sections)
@@ -72,7 +72,7 @@ async function getSurveyQuestions(req, res) {
     }
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_response_required,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows&$expand=ofm_ofm_question_ofm_question_business_rule_parentquestionid($select=_ofm_child_question_value,ofm_condition,_ofm_false_child_question_value,ofm_parent_has_response,_ofm_parentquestionid_value,ofm_question_business_ruleid,_ofm_true_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_response_required,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows&$expand=ofm_ofm_question_ofm_question_business_rule_parentquestionid($select=_ofm_child_question_value,ofm_condition,_ofm_false_child_question_value,ofm_parent_has_response,_ofm_parentquestionid_value,ofm_question_business_ruleid,_ofm_true_child_question_value)&$filter=_ofm_section_value eq '${req?.query?.sectionId}'`
     }
     const response = await getOperation(operation)
     let questions = []

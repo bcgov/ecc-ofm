@@ -293,7 +293,7 @@
       :show="showNewRequestConfirmationDialog"
       :isInvokedFromMessages="isInvokedFromMessages"
       :return-to="returnTo"
-      @close="toggleNewRequestConfirmationDialog" />
+      @close="handleCloseConfirmationDialog" />
   </v-container>
 </template>
 
@@ -367,7 +367,7 @@ export default {
       },
     },
   },
-  emits: ['close'],
+  emits: ['close', 'close-confirmation'],
   data() {
     return {
       isFormComplete: false,
@@ -682,6 +682,11 @@ export default {
           this.isLoading = false
         }
       }
+    },
+
+    handleCloseConfirmationDialog() {
+      this.toggleNewRequestConfirmationDialog()
+      this.$emit('close-confirmation')
     },
 
     toggleNewRequestConfirmationDialog() {
