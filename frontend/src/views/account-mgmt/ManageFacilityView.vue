@@ -139,36 +139,35 @@
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       :defaultFacility="facility"
-      @close="toggleChangeRequestDialog" />
+      @close="toggleChangeRequestDialog"
+      @close-confirmation="handleCloseConfirmation" />
     <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
+import { isEmpty } from 'lodash'
+import { mapState } from 'pinia'
+
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import rules from '@/utils/rules'
-import { ApiRoutes } from '@/utils/constants'
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import ApiService from '@/common/apiService'
+import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
+import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import ContactInfo from '@/components/applications/ContactInfo.vue'
+import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
+import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import LicenceHeader from '@/components/licences/LicenceHeader.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import ApplicationService from '@/services/applicationService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
-import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
-import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
-import ContactInfo from '@/components/applications/ContactInfo.vue'
-import LicenceHeader from '@/components/licences/LicenceHeader.vue'
-import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
-import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-
-import { isEmpty } from 'lodash'
+import rules from '@/utils/rules'
 
 export default {
   name: 'ManageFacilityView',
@@ -389,6 +388,10 @@ export default {
      */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+
+    handleCloseConfirmation() {
+      this.loadData()
     },
 
     async validateOfmProgram() {

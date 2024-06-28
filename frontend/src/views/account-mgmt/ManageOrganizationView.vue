@@ -71,7 +71,8 @@
       class="pa-0"
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
-      @close="toggleChangeRequestDialog" />
+      @close="toggleChangeRequestDialog"
+      @close-confirmation="handleCloseConfirmation" />
     <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
@@ -183,6 +184,10 @@ export default {
      */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+
+    handleCloseConfirmation() {
+      this.loadData()
     },
 
     async validateOfmProgram() {
