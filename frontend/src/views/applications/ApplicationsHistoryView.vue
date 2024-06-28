@@ -37,7 +37,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
-          <div v-if="!hasAValidApplication && !loading">
+          <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
               {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
             </AppAlertBanner>
@@ -50,7 +50,7 @@
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">
+              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="mt-8">
                 Add Supplementary Application
               </AppButton>
             </v-card-actions>
@@ -128,10 +128,10 @@
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
-
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
+      :applications="applications.filter((app) => app.fundingAgreement)"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)"
       @close="toggleChangeRequestDialog" />
   </v-container>
@@ -200,10 +200,13 @@ export default {
     ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
     hasAValidApplication() {
-      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
+      return this.applications?.some((application) => ApplicationService.isValidApplication(application))
     },
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
+    },
+    hasAValidApplicationAndGoodStanding() {
+      return this.hasAValidApplication && this.hasGoodStanding
     },
     filteredApplicationItems() {
       return this.sortApplicationItems(

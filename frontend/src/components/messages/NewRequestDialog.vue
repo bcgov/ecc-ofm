@@ -71,7 +71,7 @@
                 placeholder="[select facility]"
                 variant="outlined"
                 density="compact"
-                :items="facilities"
+                :items="isAnIrregularExpenseRequest ? filterFacilitiesWithoutFA : facilities"
                 item-title="facilityName"
                 :disabled="isLoading || lockFacility"
                 return-object
@@ -230,6 +230,18 @@
                 :disabled="isLoadingOrDisabled"></v-textarea>
             </v-col>
           </v-row>
+
+          <v-row v-if="isAnIrregularExpenseRequest" class="my-3">
+            <v-col cols="12">
+              <h5>Download a Irregular Expense Form then fill it out!</h5>
+            </v-col>
+            <v-row>
+              <v-col cols="12" class="ml-3">
+                <AppButton id="download-irregular-expense-form" size="large" width="200px" :disabled="isDisabled" :loading="isLoading">Download Form</AppButton>
+              </v-col>
+            </v-row>
+          </v-row>
+
           <v-row v-if="showSupportingDocuments" no-gutters align="center">
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
@@ -347,6 +359,12 @@ export default {
     returnTo: {
       type: String,
       default: 'home',
+    },
+    applications: {
+      type: Object,
+      default: () => {
+        return {}
+      },
     },
   },
   emits: ['close'],
@@ -469,6 +487,10 @@ export default {
           !!this.facilityModel.email ||
           'A phone/cell or email is required when Facility phone/email checked',
       ]
+    },
+
+    filterFacilitiesWithoutFA() {
+      return this.facilities.filter((fac) => this.applications.find((app) => app.facilityId == fac.facilityId))
     },
   },
   watch: {
