@@ -18,7 +18,7 @@
             <NotificationsTab />
           </v-window-item>
           <v-window-item value="messages">
-            <MessagesTab />
+            <MessagesTab :applications="applications" />
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -28,24 +28,49 @@
 </template>
 <script>
 import { mapState } from 'pinia'
+import alertMixin from '@/mixins/alertMixin'
 import MessagesTab from '@/components/messages/MessagesTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import { useMessagesStore } from '@/stores/messages'
 import { useNotificationsStore } from '@/stores/notifications'
+import ApplicationService from '@/services/applicationService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 
 export default {
   name: 'MessagingView',
   components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
+  mixins: [alertMixin],
   data() {
     return {
       tab: null,
+      applications: undefined,
     }
   },
   computed: {
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
     ...mapState(useMessagesStore, ['unreadMessageCount']),
+  },
+  async created() {
+    try {
+      await this.getApplicationsAndFundingAgreement()
+    } catch (error) {
+      this.setFailureAlert('Failed to get the list of applications', error)
+    }
+  },
+  methods: {
+    async getApplicationsAndFundingAgreement() {
+      this.applications = await ApplicationService.getActiveApplications()
+      // Applications' funding agreements are used to start an Irregular Expense Request
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+        }),
+      )
+
+      this.applications = this.applications.filter((app) => app.fundingAgreement)
+    },
   },
 }
 </script>
