@@ -315,6 +315,7 @@ import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import OrganizationService from '@/services/organizationService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 
@@ -360,12 +361,6 @@ export default {
       type: String,
       default: 'home',
     },
-    applications: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
   },
   emits: ['close', 'close-confirmation'],
   data() {
@@ -387,16 +382,26 @@ export default {
       showFacilityNotInOFMMessage: false,
       preventChangeRequestType: undefined,
       isInitialLoad: false,
+      fundingAgreements: undefined,
     }
   },
   computed: {
     ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     permittedRequestCategories() {
-      // Prevent users without 'Submit Change Request from AM' from selecting the Account Maintenance option
-      return this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)
-        ? this.requestCategories
-        : this.requestCategories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      //Account Mangager should have all the categories of CR's
+      if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
+        console.log('am')
+        return this.requestCategories
+      }
+
+      //only show Irregular Expense category if the user has permission to apply for funding
+      if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+        return this.requestCategories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      }
+
+      //hide irregular expense and AM categories for everyone else
+      return this.requestCategories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES).filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
     },
     facilities() {
       return this.userInfo?.facilities
@@ -490,7 +495,7 @@ export default {
     },
 
     filterFacilitiesWithoutFA() {
-      return this.facilities.filter((fac) => this.applications.find((app) => app.facilityId == fac.facilityId))
+      return this.facilities.filter((fac) => this.fundingAgreements.find((app) => app.facilityId == fac.facilityId))
     },
   },
   watch: {
@@ -533,7 +538,16 @@ export default {
       deep: true,
     },
     'newRequestModel.requestCategoryId': {
-      handler(value) {
+      async handler(value) {
+        const isAnIrregularExpense = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
+        if (isAnIrregularExpense) {
+          console.log('irregular expense clicked')
+
+          if (!this.fundingAgreements) {
+            await this.getFundingAgreements()
+          }
+        }
+
         const isAccountMaintenance = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
         this.resetModelData(isAccountMaintenance)
       },
@@ -557,6 +571,7 @@ export default {
     ]),
 
     async validateOfmProgram() {
+      console.log('validating oFM')
       const programCodeMapping = {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
@@ -564,7 +579,6 @@ export default {
       const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
       if (this.requestFacilities[0]?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
         this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
-        this.showFacilityNotInOFMMessage = true
         return false
       }
       return true
@@ -778,6 +792,19 @@ export default {
         this.facilityModel = {}
       }
       this.disabled = false
+    },
+    async getFundingAgreements() {
+      this.fundingAgreements = []
+      try {
+        await Promise.all(
+          this.newRequestModel.facilities?.map(async (facility) => {
+            this.fundingAgreements.push(await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId))
+          }),
+        )
+      } catch (error) {
+        this.setFailureAlert('Failed to load Funding Agreements', error)
+        throw error
+      }
     },
   },
 }

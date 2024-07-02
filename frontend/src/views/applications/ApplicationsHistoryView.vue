@@ -131,7 +131,6 @@
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
-      :applications="applications.filter((app) => app.fundingAgreement)"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)"
       @close="toggleChangeRequestDialog" />
   </v-container>

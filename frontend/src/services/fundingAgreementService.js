@@ -64,6 +64,18 @@ export default {
     }
   },
 
+  //Node.js will order FA's so newest one (newest MOD agreement) will always be first
+  async getActiveFundingAgreementByFacilityId(facilityId) {
+    try {
+      if (!facilityId && !statusCode) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      throw error
+    }
+  },
+
   async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
     try {
       if (!facilityId && !startDateFrom) return
