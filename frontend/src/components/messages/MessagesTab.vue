@@ -31,7 +31,7 @@
       <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
     </v-col>
   </v-row>
-  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" :isInvokedFromMessages="true" :applications="applications" @close="toggleNewRequestDialog" />
+  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" :isInvokedFromMessages="true" @close="toggleNewRequestDialog" />
 </template>
 
 <script>
@@ -45,15 +45,6 @@ import AppButton from '@/components/ui/AppButton.vue'
 export default {
   name: 'MessagesTab',
   components: { AppButton, NewRequestDialog, AssistanceRequestTable, RequestConversations },
-
-  props: {
-    applications: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
-  },
   data() {
     return {
       showNewRequestDialog: false,
