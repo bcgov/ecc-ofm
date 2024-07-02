@@ -541,8 +541,6 @@ export default {
       async handler(value) {
         const isAnIrregularExpense = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
         if (isAnIrregularExpense) {
-          console.log('irregular expense clicked')
-
           if (!this.fundingAgreements) {
             await this.getFundingAgreements()
           }
@@ -571,7 +569,6 @@ export default {
     ]),
 
     async validateOfmProgram() {
-      console.log('validating oFM')
       const programCodeMapping = {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,

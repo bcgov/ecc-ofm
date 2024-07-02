@@ -39,11 +39,9 @@ import { useNotificationsStore } from '@/stores/notifications'
 export default {
   name: 'MessagingView',
   components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
-  mixins: [alertMixin],
   data() {
     return {
       tab: null,
-      applications: undefined,
     }
   },
   computed: {
