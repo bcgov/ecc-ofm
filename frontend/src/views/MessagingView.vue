@@ -28,7 +28,6 @@
 </template>
 <script>
 import { mapState } from 'pinia'
-import alertMixin from '@/mixins/alertMixin'
 import MessagesTab from '@/components/messages/MessagesTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'

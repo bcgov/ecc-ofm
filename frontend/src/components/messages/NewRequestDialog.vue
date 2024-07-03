@@ -59,7 +59,6 @@
               </v-col>
             </v-row>
           </template>
-
           <v-row v-if="showFacility" no-gutters>
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
               <AppLabel variant="modal">Facility{{ !isAnAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
