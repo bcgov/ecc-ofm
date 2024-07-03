@@ -59,6 +59,7 @@
               </v-col>
             </v-row>
           </template>
+
           <v-row v-if="showFacility" no-gutters>
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
               <AppLabel variant="modal">Facility{{ !isAnAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
@@ -381,8 +382,8 @@ export default {
       changeTypeClass: '',
       showFacilityNotInOFMMessage: false,
       preventChangeRequestType: undefined,
-      isInitialLoad: false,
       fundingAgreements: undefined,
+      isOFMValid: false,
     }
   },
   computed: {
@@ -391,7 +392,6 @@ export default {
     permittedRequestCategories() {
       //Account Mangager should have all the categories of CR's
       if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-        console.log('am')
         return this.requestCategories
       }
 
@@ -505,11 +505,11 @@ export default {
       },
     },
     'newRequestModel.subCategories': {
-      async handler(value) {
+      handler(value) {
         if (this.changeTypeClass === 'change-type-required' && this.isAnySubCategoryChecked) {
           this.changeTypeClass = ''
         }
-        await this.validateSubCategories(value)
+        this.validateSubCategories(value)
       },
       deep: true,
     },
@@ -522,20 +522,6 @@ export default {
       handler(value) {
         this.newRequestModel.subject = value
       },
-    },
-    'newRequestModel.facilities': {
-      async handler() {
-        const isValid = await this.validateOfmProgram()
-        if (isValid) {
-          this.showFacilityNotInOFMMessage = false
-          this.isDisabled = false
-        } else if (this.isInitialLoad && this.isAnAccountMaintenanceRequest) {
-          // Only disable if this is not the initial call on watch. This is to prevent disabling the submit button when the dialog is opened for the first time.
-          this.isDisabled = true
-        }
-        this.isInitialLoad = true
-      },
-      deep: true,
     },
     'newRequestModel.requestCategoryId': {
       async handler(value) {
@@ -551,11 +537,15 @@ export default {
       },
     },
   },
-  created() {
+  async created() {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
     this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
     this.setUpDefaultNewRequestModel()
+
+    if (this.PERMISSIONS.SUBMIT_CHANGE_REQUEST) {
+      this.isOFMValid = await this.validateOfmProgram()
+    }
   },
   methods: {
     ...mapActions(useMessagesStore, [
@@ -581,11 +571,12 @@ export default {
       return true
     },
 
-    async validateSubCategories(subCategories) {
-      const isAccountMaintenance = this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
-      if (isAccountMaintenance && this.facilityChangeTypesChecked(subCategories)) {
-        const isValid = await this.validateOfmProgram()
-        this.isDisabled = !isValid
+    validateSubCategories(subCategories) {
+      if (this.facilityChangeTypesChecked(subCategories)) {
+        if (!this.isOFMValid) {
+          this.showFacilityNotInOFMMessage = true
+          this.isDisabled = true
+        }
       } else {
         this.isDisabled = false
       }
