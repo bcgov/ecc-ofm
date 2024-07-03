@@ -71,7 +71,7 @@ export default {
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       return response?.data[0]
     } catch (error) {
-      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      console.log(`Failed to get the active funding agreement by facility id - ${error}`)
       throw error
     }
   },
