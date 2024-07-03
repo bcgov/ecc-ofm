@@ -1,11 +1,10 @@
 <template>
-  <!-- <AppHeroImage /> -->
-  <AppHeroImage2 />
+  <AppHeroImage />
   <OrganizationHeader />
   <v-container v-bind="$attrs">
     <v-row>
       <v-col class="pa-1">
-        <p class="home-overview">Welcome to your Centre Management Portal - Connect with the program, view and manage accounts, applications, and reports.</p>
+        <p class="home-overview page-overview">Welcome to your Centre Management Portal - Connect with the program, view and manage accounts, applications, and reports</p>
       </v-col>
     </v-row>
     <v-row v-if="loading">
@@ -26,7 +25,7 @@
       </v-col>
       <v-col v-if="hasPermission([PERMISSIONS.MANAGE_NOTIFICATIONS])" cols="12" md="6" lg="4">
         <v-card class="home-card" id="assistance-card" prepend-icon="mdi-message-text-outline" title="Assistance Request" @click="toggleAssistanceRequestDialog">
-          <v-card-text>Have Questions? Connect with the program by sending a message.</v-card-text>
+          <v-card-text>Have Questions? Send us a message.</v-card-text>
         </v-card>
       </v-col>
       <v-col v-if="hasPermission(PERMISSIONS.VIEW_APPLICATIONS)" cols="12" md="6" lg="4">
@@ -36,12 +35,12 @@
       </v-col>
       <v-col v-if="hasPermission(PERMISSIONS.VIEW_ORG_FACILITY, PERMISSIONS.MANAGE_USERS_VIEW)" cols="12" md="6" lg="4">
         <v-card class="home-card" id="account-mgmt-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
-          <v-card-text>Maintain or edit organization of facility information and request a change.</v-card-text>
+          <v-card-text>Maintain or edit organization or facility information and request a change.</v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
         <v-card class="home-card" id="help-card" prepend-icon="mdi-help-circle-outline" title="Help and Resources" @click="$router.push({ name: 'help' })">
-          <v-card-text>Need support? Find training tools, program resources, help for technical issues or give us a call.</v-card-text>
+          <v-card-text>Need support? Find program training tools and resources, technical help, or call us.</v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -84,5 +83,9 @@ export default {
 .home-card {
   border-top: 5px solid #003366 !important;
   min-height: 225px;
+}
+
+.home-overview {
+  text-align: center;
 }
 </style>

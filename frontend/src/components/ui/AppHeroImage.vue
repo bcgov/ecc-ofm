@@ -1,11 +1,42 @@
 <template>
   <v-container fluid class="ma-0 pa-0">
-    <v-col cols="12" align="center" class="pa-0">
-      <v-img src="@/assets/images/home-header-img.jpg" class="align-end">
-        <v-col align="center" style="background-color: rgb(28, 115, 158, 0.85)" class="hidden-sm-and-down">
-          <span class="text-h4 text-white font-weight-bold">Early Childhood Care - Operating Funding Model</span>
-        </v-col>
-      </v-img>
-    </v-col>
+    <v-row>
+      <v-col class="hero-image pa-0" />
+    </v-row>
+    <v-row>
+      <v-col class="hero-text hidden-xs-and-down px-2 py-0 mb-2">$10 a Day ChildCareBC Centres</v-col>
+    </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.hero-text {
+  background-color: rgb(56, 89, 138, 1);
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.hero-image {
+  background-image: url('@/assets/images/hero-xl.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 250px;
+  width: 100%;
+}
+
+@media only screen and (max-width: 1279px) {
+  .hero-image {
+    background-image: url('@/assets/images/hero-md.jpg');
+    height: 200px;
+  }
+}
+
+@media only screen and (max-width: 959px) {
+  .hero-image {
+    background-image: url('@/assets/images/hero-sm.jpg');
+    height: 150px;
+  }
+}
+</style>
