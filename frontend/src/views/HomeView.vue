@@ -54,12 +54,11 @@ import SignFundingPopup from '@/components/funding/SignFundingPopup.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
-import AppHeroImage2 from '@/components/ui/AppHeroImage2.vue'
 import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 export default {
   name: 'HomeView',
-  components: { AppHeroImage, AppHeroImage2, NewRequestDialog, OrganizationHeader, SignFundingPopup },
+  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, SignFundingPopup },
   mixins: [permissionsMixin],
   emits: ['setLoading'],
   data() {
