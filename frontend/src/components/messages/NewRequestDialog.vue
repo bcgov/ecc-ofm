@@ -281,7 +281,7 @@
       :show="showNewRequestConfirmationDialog"
       :isInvokedFromMessages="isInvokedFromMessages"
       :return-to="returnTo"
-      @close="handleCloseConfirmationDialog" />
+      @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -349,7 +349,7 @@ export default {
       default: 'home',
     },
   },
-  emits: ['close', 'close-confirmation'],
+  emits: ['close', 'submitPhoneEmail'],
   data() {
     return {
       isFormComplete: false,
@@ -650,6 +650,11 @@ export default {
             await this.createReplyAssistanceRequest(assistanceRequest.assistanceRequestId)
           }
           this.toggleNewRequestConfirmationDialog()
+
+          // Emit an event so the parent can refresh its data
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+            this.$emit('submitPhoneEmail')
+          }
         } catch (error) {
           this.setFailureAlert('Failed to submit change request', error)
         } finally {
@@ -657,11 +662,6 @@ export default {
           this.isLoading = false
         }
       }
-    },
-
-    handleCloseConfirmationDialog() {
-      this.toggleNewRequestConfirmationDialog()
-      this.$emit('close-confirmation')
     },
 
     toggleNewRequestConfirmationDialog() {

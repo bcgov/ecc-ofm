@@ -140,7 +140,7 @@
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       :defaultFacility="facility"
       @close="toggleChangeRequestDialog"
-      @close-confirmation="handleCloseConfirmation" />
+      @submit-phone-email="handleCRSubmit" />
     <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
@@ -390,7 +390,7 @@ export default {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
 
-    handleCloseConfirmation() {
+    handleCRSubmit() {
       this.loadData()
     },
 
