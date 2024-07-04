@@ -15,8 +15,8 @@
             </v-row>
           </v-row>
         </v-col>
-        <v-col cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
-          <div v-if="showMenu">
+        <v-col v-if="showMenu" cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
+          <div>
             <v-row class="align-center">
               <v-col v-if="showMessagingIcon" style="width: 70px">
                 <div>

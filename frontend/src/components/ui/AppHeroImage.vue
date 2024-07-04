@@ -4,7 +4,7 @@
       <v-col class="hero-image pa-0" />
     </v-row>
     <v-row>
-      <v-col class="hero-text hidden-xs-and-down px-2 py-0 mb-2">$10 a Day ChildCareBC Centres</v-col>
+      <v-col class="hero-text px-2 py-0 mb-2">$10 a Day ChildCareBC Centres</v-col>
     </v-row>
   </v-container>
 </template>
