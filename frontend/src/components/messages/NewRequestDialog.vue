@@ -61,23 +61,11 @@
           </template>
           <v-row v-if="showFacility" no-gutters>
             <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-2">
-              <AppLabel variant="modal">Facility{{ !isAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
+              <AppLabel variant="modal">{{ facilityLabel }}</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
               <v-select
-                v-if="isAccountMaintenanceRequest || isIrregularExpenseRequest"
-                id="selectFacility"
-                v-model="newRequestModel.facilities"
-                placeholder="[select facility]"
-                variant="outlined"
-                density="compact"
-                :items="filteredFacilties"
-                item-title="facilityName"
-                :disabled="isLoading || lockFacility"
-                return-object
-                hide-details></v-select>
-              <v-select
-                v-else
+                v-if="isMultipleFacilities"
                 id="selectFacility"
                 v-model="newRequestModel.facilities"
                 placeholder="[selected facility] (add more)"
@@ -102,6 +90,18 @@
                   <v-divider class="mt-2"></v-divider>
                 </template>
               </v-select>
+              <v-select
+                v-else
+                id="selectFacility"
+                v-model="newRequestModel.facilities"
+                placeholder="[select facility]"
+                variant="outlined"
+                density="compact"
+                :items="filteredFacilties"
+                item-title="facilityName"
+                :disabled="isLoading || lockFacility"
+                return-object
+                hide-details></v-select>
             </v-col>
           </v-row>
           <v-row v-if="isAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
@@ -401,6 +401,10 @@ export default {
         categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
       }
 
+      if (!this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)) {
+        categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.REPORTING)
+      }
+
       return categories
     },
     facilities() {
@@ -495,9 +499,15 @@ export default {
     },
     filteredFacilties() {
       if (this.isIrregularExpenseRequest) {
-        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app.facilityId === fac.facilityId))
+        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId))
       }
       return this.facilities
+    },
+    isMultipleFacilities() {
+      return !(this.isAccountMaintenanceRequest || this.isIrregularExpenseRequest || this.isReportingRequest)
+    },
+    facilityLabel() {
+      return `Facility${this.isMultipleFacilities ? '(s)' : ''}:`
     },
   },
   watch: {
@@ -540,7 +550,6 @@ export default {
   async created() {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
-    this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
     this.setUpDefaultNewRequestModel()
 
     if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
@@ -734,7 +743,7 @@ export default {
       try {
         const payload = {
           assistanceRequestId: assistanceRequestId,
-          message: this.AUTO_REPLY_MESSAGE,
+          message: 'Your change request is complete.',
         }
         await this.replyToAssistanceRequest(payload)
       } catch (error) {
