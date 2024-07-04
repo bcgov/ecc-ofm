@@ -4,13 +4,11 @@
     <v-container class="containerWidth1450 pa-0">
       <p class="pt-4">
         <strong>NOTE:</strong>
-        The information collected through Early Childhood Care - Operating Funding Model is collected under the authority of the
-        <i>Freedom of Information and Protection of Privacy Act</i>
-        (FOIPPA) and the
-        <i>Child Care BC Act</i>
-        (SBC 2001, c. 4) and will be used for the purpose of administering the $10 a Day ChildCareBC program for succesfully enrolled applicants.. Personal information is protected from unauthorized
-        use and disclosure in accordance with FOIPPA. Any questions or concerns about the collection of this information can be directed to the Director, Child Care Operating Funding Program, PO Box
-        9965 Stn Prov Govt, Victoria BC V8W 9R4, Phone: in Greater Victoria: 250 356-6501, outside of Greater Victoria, Toll Free: 1 888 338-6622 (option 2).
+        The information collected through $10 a Day ChildCareBC Centres is collected under the authority of the
+        <i>Freedom of Information and Protection of Privacy Act (FOIPPA) and the Child Care BC Act</i>
+        (SBC 2001, c. 4) and will be used for the purpose of administering the $10 a Day ChildCareBC program for successfully enrolled applicants. Personal information is protected from unauthorized
+        use and disclosure in accordance with FOIPPA. Any questions or concerns about the collection of this information can be directed to the Director, $10 a Day ChildCareBC program, PO Box 9788 Stn
+        Prov Govt, Victoria BC V8W 9S5, Phone: in Greater Victoria: 250 356-6501, outside of Greater Victoria, Toll Free: 1 888 338-6622 (option 7).
       </p>
       <br />
       <v-row>

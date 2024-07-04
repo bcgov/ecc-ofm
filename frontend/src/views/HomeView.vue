@@ -15,7 +15,7 @@
     <v-row v-else>
       <v-col v-if="hasPermission(PERMISSIONS.SEARCH_VIEW_REPORTS)" cols="12" md="6" lg="4">
         <v-card class="home-card" id="reporting-card" prepend-icon="mdi-file-chart-outline" title="Reporting" @click="$router.push({ name: 'reporting' })">
-          <v-card-text>Complete or view current or past Monthly Reporits and submit financial reports.</v-card-text>
+          <v-card-text>Complete or view current or past Monthly Reports and submit financial reports.</v-card-text>
         </v-card>
       </v-col>
       <v-col v-if="hasPermission([PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS])" cols="12" md="6" lg="4">
