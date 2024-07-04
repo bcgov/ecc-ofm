@@ -1,3 +1,4 @@
+import HttpStatus from 'http-status-codes'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
@@ -13,7 +14,7 @@ import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import ResourcesView from '@/views/ResourcesView.vue'
+import HelpView from '@/views/HelpView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
@@ -263,9 +264,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/resources',
-      name: 'resources',
-      component: ResourcesView,
+      path: '/help',
+      name: 'help',
+      component: HelpView,
       meta: {
         requiresAuth: true,
       },
@@ -360,8 +361,7 @@ router.beforeEach((to, _from, next) => {
       .getJwtToken()
       .then(() => {
         if (!authStore.isAuthenticated) {
-          next('/token-expired')
-          return
+          return next('/token-expired')
         }
         authStore
           .getUserInfo()
@@ -387,18 +387,15 @@ router.beforeEach((to, _from, next) => {
             next()
           })
           .catch((error) => {
-            console.log('error', error)
-            if (error.response?.status == '401') {
-              next('unauthorized')
-              return
+            if ([HttpStatus.FORBIDDEN, HttpStatus.UNAUTHORIZED].includes(error.response?.status)) {
+              return next('unauthorized')
             }
             next('error')
           })
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!authStore.userInfo) {
-          next('/login')
-          return
+          return next('/login')
         }
         next('/token-expired')
       })
