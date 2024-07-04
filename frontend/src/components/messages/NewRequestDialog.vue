@@ -237,7 +237,7 @@
             </v-col>
             <v-row>
               <v-col cols="12" class="ml-3">
-                <AppButton id="download-irregular-expense-form" size="large" width="200px" :disabled="isDisabled" :loading="isLoading">Download Form</AppButton>
+                <AppButton id="download-irregular-expense-form" :href="expenseFormURL" target="_blank" size="large" width="200px" :disabled="isDisabled" :loading="isLoading">Download Form</AppButton>
               </v-col>
             </v-row>
           </v-row>
@@ -306,6 +306,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import StaticConfig from '@/common/staticConfig'
 import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
@@ -383,24 +384,26 @@ export default {
       preventChangeRequestType: undefined,
       fundingAgreements: undefined,
       isOFMValid: false,
+      expenseFormURL: StaticConfig.IRREGULAR_EXPENSE_FORM_URL,
     }
   },
   computed: {
     ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     permittedRequestCategories() {
-      //Account Mangager should have all the categories of CR's
-      if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-        return this.requestCategories
+      let categories = [...this.requestCategories]
+
+      if (!this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
+        console.log('AM')
+        categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
       }
 
-      //only show Irregular Expense category if the user has permission to apply for funding
-      if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
-        return this.requestCategories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      if (!this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+        console.log('funding')
+        categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
       }
 
-      //hide irregular expense and AM categories for everyone else
-      return this.requestCategories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES).filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      return categories
     },
     facilities() {
       return this.userInfo?.facilities
