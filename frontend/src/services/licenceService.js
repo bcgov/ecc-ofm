@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash'
+
 import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 
@@ -37,5 +39,19 @@ export default {
       console.log(`Failed to update licence detail - ${error}`)
       throw error
     }
+  },
+
+  // Helpers to validate licence details
+  isOperationalSpacesValid(value) {
+    return value != null && value >= 0 && value < 1000
+  },
+  isEnrolledSpacesValid(value) {
+    return value != null && value >= 0 && value < 1000
+  },
+  isWeeksInOperationValid(value) {
+    return value != null && value > 0 && value < 53
+  },
+  isSplitClassRoomInfoValid(licenceDetail) {
+    return !licenceDetail.applyRoomSplitCondition || !isEmpty(licenceDetail.roomSplitDetails)
   },
 }

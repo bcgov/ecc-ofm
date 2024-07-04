@@ -37,9 +37,17 @@ function checkOperatingCostsComplete(application) {
 */
 function checkServiceDeliveryComplete(application) {
   const allDetailsComplete = application.licences.every((licence) => {
-    return licence.licenceDetails.every((detail) => (detail.applyRoomSplitCondition ? !isEmpty(detail.roomSplitDetails) : true))
+    return licence.licenceDetails?.every(
+      (detail) =>
+        LicenceService.isOperationalSpacesValid(detail.operationalSpaces) &&
+        LicenceService.isEnrolledSpacesValid(detail.enrolledSpaces) &&
+        LicenceService.isWeeksInOperationValid(detail.weeksInOperation) &&
+        !isEmpty(detail.weekDays) &&
+        !isEmpty(detail.operationFromTime) &&
+        !isEmpty(detail.operationToTime) &&
+        LicenceService.isSplitClassRoomInfoValid(detail),
+    )
   })
-
   return application?.licenceDeclaration && !isEmpty(application?.licences) && allDetailsComplete
 }
 

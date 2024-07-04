@@ -8,6 +8,7 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import { createMetaManager } from 'vue-meta'
 import { VDateInput } from 'vuetify/labs/VDateInput'
+import { VTimePicker } from 'vuetify/labs/VTimePicker'
 
 import vuetify from '@/plugins/vuetify'
 import { useAppStore } from '@/stores/app'
@@ -23,6 +24,7 @@ const pinia = createPinia()
 app.provide('$moment', moment)
 app.use(createMetaManager()).use(pinia).use(vuetify)
 app.component('VDateInput', VDateInput)
+app.component('VTimePicker', VTimePicker)
 
 // Load lookinfo (with valid jwt) before App is mounted
 // so that the lookupInfo is available in the router

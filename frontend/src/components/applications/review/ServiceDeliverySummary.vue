@@ -13,7 +13,7 @@
     <AppMissingInfoError
       v-else-if="!readonly && !isServiceDeliveryComplete"
       :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#top', params: { applicationGuid: $route.params.applicationGuid } }">
-      {{ APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
+      {{ !allCCOFMissingDetailComplete ? APPLICATION_ERROR_MESSAGES.LICENCE_INFO : APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
     </AppMissingInfoError>
     <v-expansion-panels v-else v-model="panel" multiple>
       <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
@@ -29,13 +29,15 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
+import { mapState } from 'pinia'
+
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState } from 'pinia'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import LicenceService from '@/services/licenceService'
 import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
-import { isEmpty } from 'lodash'
 
 export default {
   components: { AppMissingInfoError, LicenceHeader, LicenceDetails },
@@ -59,6 +61,19 @@ export default {
     ...mapState(useApplicationsStore, ['isServiceDeliveryComplete']),
     allLicenceIDs() {
       return this.licences?.map((licence) => licence.licenceId)
+    },
+    allCCOFMissingDetailComplete() {
+      return this.currentApplication?.licences.every((licence) => {
+        return licence.licenceDetails?.every(
+          (detail) =>
+            LicenceService.isOperationalSpacesValid(detail.operationalSpaces) &&
+            LicenceService.isEnrolledSpacesValid(detail.enrolledSpaces) &&
+            LicenceService.isWeeksInOperationValid(detail.weeksInOperation) &&
+            !isEmpty(detail.operationFromTime) &&
+            !isEmpty(detail.operationToTime) &&
+            !isEmpty(detail.weekDays),
+        )
+      })
     },
   },
   async created() {

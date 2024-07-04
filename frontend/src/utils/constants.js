@@ -253,3 +253,34 @@ export const BLANK_FIELD = '- - - -'
 export const APPLICATION_TYPES = Object.freeze({
   OFM: 'OFM',
 })
+
+export const DAYS_OF_WEEK = Object.freeze([
+  {
+    title: 'Monday',
+    value: 1,
+  },
+  {
+    title: 'Tuesday',
+    value: 2,
+  },
+  {
+    title: 'Wednesday',
+    value: 3,
+  },
+  {
+    title: 'Thursday',
+    value: 4,
+  },
+  {
+    title: 'Friday',
+    value: 5,
+  },
+  {
+    title: 'Saturday',
+    value: 6,
+  },
+  {
+    title: 'Sunday',
+    value: 7,
+  },
+])
