@@ -36,7 +36,7 @@
                 :disabled="isLoadingOrDisabled || lockSubject"></v-text-field>
             </v-col>
           </v-row>
-          <template v-if="isAnAccountMaintenanceRequest">
+          <template v-if="isAccountMaintenanceRequest">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-2">
                 <AppLabel variant="modal">Change type:</AppLabel>
@@ -60,18 +60,18 @@
             </v-row>
           </template>
           <v-row v-if="showFacility" no-gutters>
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
-              <AppLabel variant="modal">Facility{{ !isAnAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
+            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-2">
+              <AppLabel variant="modal">Facility{{ !isAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
               <v-select
-                v-if="isAnAccountMaintenanceRequest || isAnIrregularExpenseRequest"
+                v-if="isAccountMaintenanceRequest || isIrregularExpenseRequest"
                 id="selectFacility"
                 v-model="newRequestModel.facilities"
                 placeholder="[select facility]"
                 variant="outlined"
                 density="compact"
-                :items="isAnIrregularExpenseRequest ? filterFacilitiesWithoutFA : facilities"
+                :items="filteredFacilties"
                 item-title="facilityName"
                 :disabled="isLoading || lockFacility"
                 return-object
@@ -104,7 +104,7 @@
               </v-select>
             </v-col>
           </v-row>
-          <v-row v-if="isAnAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
+          <v-row v-if="isAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-3 mt-0" />
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11 mt-0">
               <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center pt-1">
@@ -231,7 +231,7 @@
             </v-col>
           </v-row>
 
-          <v-row v-if="isAnIrregularExpenseRequest" class="my-3">
+          <v-row v-if="isIrregularExpenseRequest" class="my-3">
             <v-col cols="12">
               <h5>Download a Irregular Expense Form then fill it out!</h5>
             </v-col>
@@ -414,10 +414,10 @@ export default {
     someFacilitiesSelected() {
       return this.newRequestModel.facilities.length > 0
     },
-    isAnAccountMaintenanceRequest() {
+    isAccountMaintenanceRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
     },
-    isAnIrregularExpenseRequest() {
+    isIrregularExpenseRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
     },
     isReportingRequest() {
@@ -451,21 +451,21 @@ export default {
     },
     showFacility() {
       return (
-        (this.isAnAccountMaintenanceRequest &&
+        (this.isAccountMaintenanceRequest &&
           (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
             this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
             this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE))) ||
-        !this.isAnAccountMaintenanceRequest
+        !this.isAccountMaintenanceRequest
       )
     },
     showRequestDescription() {
-      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
+      return (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAccountMaintenanceRequest
     },
     showSupportingDocuments() {
-      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || (!this.isAnAccountMaintenanceRequest && !this.isReportingRequest)
+      return (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || (!this.isAccountMaintenanceRequest && !this.isReportingRequest)
     },
     showContactMethods() {
-      return !this.isAnAccountMaintenanceRequest && !this.isReportingRequest
+      return !this.isAccountMaintenanceRequest && !this.isReportingRequest
     },
     isLoadingOrDisabled() {
       return this.isLoading || this.isDisabled
@@ -492,9 +492,11 @@ export default {
           'A phone/cell or email is required when Facility phone/email checked',
       ]
     },
-
-    filterFacilitiesWithoutFA() {
-      return this.facilities.filter((fac) => this.fundingAgreements.find((app) => app.facilityId == fac.facilityId))
+    filteredFacilties() {
+      if (this.isIrregularExpenseRequest) {
+        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app.facilityId === fac.facilityId))
+      }
+      return this.facilities
     },
   },
   watch: {
@@ -525,10 +527,8 @@ export default {
     'newRequestModel.requestCategoryId': {
       async handler(value) {
         const isAnIrregularExpense = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
-        if (isAnIrregularExpense) {
-          if (!this.fundingAgreements) {
-            await this.getFundingAgreements()
-          }
+        if (isAnIrregularExpense && !this.fundingAgreements) {
+          await this.getFundingAgreements()
         }
 
         const isAccountMaintenance = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
@@ -542,8 +542,10 @@ export default {
     this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
     this.setUpDefaultNewRequestModel()
 
-    if (this.PERMISSIONS.SUBMIT_CHANGE_REQUEST) {
+    if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
+      console.log('validating')
       this.isOFMValid = await this.validateOfmProgram()
+      console.log(this.isOFMValid)
     }
   },
   methods: {
@@ -562,6 +564,7 @@ export default {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
+      console.log(this.requestFacilities)
       const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
       if (this.requestFacilities[0]?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
         this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
@@ -638,7 +641,7 @@ export default {
 
     async createRequestAndDocuments() {
       try {
-        if (this.isAnAccountMaintenanceRequest && !Array.isArray(this.newRequestModel.facilities)) {
+        if (this.isAccountMaintenanceRequest && !Array.isArray(this.newRequestModel.facilities)) {
           this.newRequestModel.facilities = [this.newRequestModel.facilities]
         }
         const response = await this.createAssistanceRequest(this.newRequestModel)
@@ -708,7 +711,7 @@ export default {
     },
 
     validateChangeTypeSelection() {
-      const shouldValidate = this.isAnAccountMaintenanceRequest && !this.isAnySubCategoryChecked
+      const shouldValidate = this.isAccountMaintenanceRequest && !this.isAnySubCategoryChecked
       if (shouldValidate) {
         this.changeTypeClass = 'change-type-required'
       }
@@ -772,8 +775,8 @@ export default {
       return this.newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
 
-    resetModelData(isAnAccountMaintenanceRequest) {
-      if (!isAnAccountMaintenanceRequest) {
+    resetModelData(isAccountMaintenanceRequest) {
+      if (!isAccountMaintenanceRequest) {
         this.newRequestModel.subCategories = []
         this.organizationModel = {}
         this.facilityModel = {}

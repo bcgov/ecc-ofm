@@ -66,7 +66,7 @@
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
               To apply for Irregular Expenses, you must have an active Funding Agreement in place.
               <br />
-              Funding requires approval before your centers incurred expenses, and you must demonstrate need for the funding.
+              Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
               <AppButton id="irregular-expense-button" :loading="loading" size="large" width="450px" :disabled="!hasAValidApplication" @click="toggleChangeRequestDialog" class="mt-8">
@@ -128,11 +128,7 @@
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
-    <NewRequestDialog
-      class="pa-0"
-      :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)"
-      @close="toggleChangeRequestDialog" />
+    <NewRequestDialog :show="showChangeRequestDialog" :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)" @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 

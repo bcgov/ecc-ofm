@@ -52,7 +52,7 @@ export default {
     }
   },
 
-  //Node.js will order FA's so newest one (newest MOD agreement) will always be first
+  //Backend will order FA's so newest one (newest MOD agreement) will always be first
   async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
       if (!facilityId && !statusCode) return
@@ -64,7 +64,7 @@ export default {
     }
   },
 
-  //Node.js will order FA's so newest one (newest MOD agreement) will always be first
+  //Backend will order FA's so newest one (newest MOD agreement) will always be first
   async getActiveFundingAgreementByFacilityId(facilityId) {
     try {
       if (!facilityId && !statusCode) return
