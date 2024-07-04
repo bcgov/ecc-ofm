@@ -4,7 +4,7 @@
   <v-container v-bind="$attrs">
     <v-row>
       <v-col class="pa-1">
-        <p class="home-overview page-overview">Welcome to your Centre Management Portal - Connect with the program, view and manage accounts, applications, and reports</p>
+        <p class="home-overview page-overview">Welcome to your Management Portal - Connect with the program, view and manage accounts, applications, and reports</p>
       </v-col>
     </v-row>
     <v-row v-if="loading">
@@ -81,7 +81,13 @@ export default {
 <style>
 .home-card {
   border-top: 5px solid #003366 !important;
-  min-height: 225px;
+  min-height: 150px;
+}
+
+@media only screen and (max-width: 959px) {
+  .home-card {
+    min-height: 100px;
+  }
 }
 
 .home-overview {
