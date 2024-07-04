@@ -394,12 +394,10 @@ export default {
       let categories = [...this.requestCategories]
 
       if (!this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-        console.log('AM')
         categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
       }
 
       if (!this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
-        console.log('funding')
         categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
       }
 
@@ -546,9 +544,7 @@ export default {
     this.setUpDefaultNewRequestModel()
 
     if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-      console.log('validating')
       this.isOFMValid = await this.validateOfmProgram()
-      console.log(this.isOFMValid)
     }
   },
   methods: {
@@ -567,7 +563,6 @@ export default {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
-      console.log(this.requestFacilities)
       const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
       if (this.requestFacilities[0]?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
         this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
