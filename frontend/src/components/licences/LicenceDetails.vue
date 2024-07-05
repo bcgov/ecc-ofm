@@ -175,6 +175,8 @@
                             <AppTimeInput
                               v-model="licenceDetail.operationFromTime"
                               :rules="rules.required"
+                              :disabled="readOnly"
+                              :hide-details="readOnly"
                               label="From"
                               min-width="150px"
                               max-width="150px"
@@ -183,6 +185,8 @@
                             <AppTimeInput
                               v-model="licenceDetail.operationToTime"
                               :rules="[...rules.required, rules.greaterThan(licenceDetail.operationFromTime)]"
+                              :disabled="readOnly"
+                              :hide-details="readOnly"
                               label="To"
                               min-width="150px"
                               max-width="150px"
@@ -360,7 +364,6 @@ export default {
     },
 
     async update(licenceDetail) {
-      console.log(licenceDetail)
       this.$emit('update', licenceDetail)
 
       //XXX this code needs to be validated twice in order to work properly. It's a mystery as to why that is required but it works for now

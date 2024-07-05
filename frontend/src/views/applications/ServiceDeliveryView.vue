@@ -216,7 +216,7 @@ export default {
       const clonedModel = cloneDeep(updatedModel)
       clonedModel.updatableOperationFromTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationFromTime)
       clonedModel.updatableOperationToTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationToTime)
-      clonedModel.weekDays = clonedModel?.weekDays.toString()
+      clonedModel.weekDays = clonedModel?.weekDays?.toString()
       const index = this.changedLicences.findIndex((el) => el.licenceDetailId == clonedModel.licenceDetailId)
       if (index === -1) {
         this.changedLicences.push(clonedModel)
