@@ -271,6 +271,7 @@ import { useAppStore } from '@/stores/app'
 import { BLANK_FIELD, DAYS_OF_WEEK } from '@/utils/constants'
 
 export default {
+  name: 'LicenceDetails',
   components: { AppLabel, AppNumberInput, AppTimeInput, AppYesNoInput },
   props: {
     loading: {
