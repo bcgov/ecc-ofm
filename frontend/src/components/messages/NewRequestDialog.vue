@@ -4,7 +4,7 @@
       <template #content>
         <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-5 mx-lg-1">
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
+            <v-col cols="12" md="3" xl="1" class="pt-2">
               <AppLabel variant="modal">Topic:</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
@@ -233,7 +233,8 @@
 
           <v-row v-if="isIrregularExpenseRequest" class="my-3">
             <v-col cols="12">
-              <h5>Download a Irregular Expense Form then fill it out!</h5>
+              <h5>You must complete and attach an Irregular Expense application form with your request.</h5>
+              <p>Download the application below, and attach the completed form to this request using the Add File button.</p>
             </v-col>
             <v-row>
               <v-col cols="12" class="ml-3">
@@ -244,7 +245,8 @@
 
           <v-row v-if="showSupportingDocuments" no-gutters align="center">
             <div class="mr-8">
-              <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
+              <AppLabel v-if="isIrregularExpenseRequest" variant="modal">Supporting documents (required):</AppLabel>
+              <AppLabel v-else variant="modal">Supporting documents (optional):</AppLabel>
             </div>
             <AppDocumentUpload
               v-model="documentsToUpload"
@@ -252,6 +254,7 @@
               :disabled="isDisabled"
               :loading="isLoading"
               @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
+            <AppMissingInfoError v-if="isIrregularExpenseRequest && !documentsToUpload.length">Document upload required</AppMissingInfoError>
           </v-row>
           <template v-if="showContactMethods">
             <v-row no-gutters class="mt-4">
@@ -306,6 +309,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import StaticConfig from '@/common/staticConfig'
 import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
@@ -322,7 +326,7 @@ import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL
 
 export default {
   name: 'NewRequestDialog',
-  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog },
+  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog, AppMissingInfoError },
   mixins: [alertMixin, permissionsMixin],
   props: {
     show: {
@@ -383,7 +387,7 @@ export default {
       showFacilityNotInOFMMessage: false,
       preventChangeRequestType: undefined,
       fundingAgreements: undefined,
-      isOFMValid: false,
+      facilityValidInOFM: new Map(),
       expenseFormURL: StaticConfig.IRREGULAR_EXPENSE_FORM_URL,
     }
   },
@@ -499,6 +503,12 @@ export default {
       }
       return this.facilities
     },
+    documentsComplete() {
+      if (!this.isIrregularExpenseRequest) {
+        return true
+      }
+      return this.documentsToUpload.length
+    },
   },
   watch: {
     show: {
@@ -525,27 +535,38 @@ export default {
         this.newRequestModel.subject = value
       },
     },
+
     'newRequestModel.requestCategoryId': {
-      async handler(value) {
-        const isAnIrregularExpense = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
-        if (isAnIrregularExpense && !this.fundingAgreements) {
+      async handler() {
+        if (this.isIrregularExpenseRequest && !this.fundingAgreements) {
           await this.getFundingAgreements()
         }
-
-        const isAccountMaintenance = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
-        this.resetModelData(isAccountMaintenance)
+        this.resetModelData(this.isAccountMaintenanceRequest)
       },
     },
+    'newRequestModel.facilities': {
+      async handler() {
+        if (this.isAccountMaintenanceRequest) {
+          this.isLoading = true
+          const isValid = await this.validateOfmProgram()
+          this.isLoading = false
+          if (isValid) {
+            this.showFacilityNotInOFMMessage = false
+            this.isDisabled = false
+          } else {
+            this.showFacilityNotInOFMMessage = true
+            this.isDisabled = true
+          }
+        }
+      },
+      deep: true,
+    },
   },
-  async created() {
+  created() {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
     this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
     this.setUpDefaultNewRequestModel()
-
-    if (this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
-      this.isOFMValid = await this.validateOfmProgram()
-    }
   },
   methods: {
     ...mapActions(useMessagesStore, [
@@ -558,25 +579,41 @@ export default {
       'getAssistanceRequests',
     ]),
 
+    //this function runs to check if the selected facility is able to submit certain kinds of assitance requests.
+    //it is only available to Account Managers and should only be called if the correct checkbox(es) are selected
+    //these requests can only be done one facility at a time, so requestFacilities will always be an array with 1 item
     async validateOfmProgram() {
+      const selectedFacility = this.requestFacilities[0]
+
+      if (this.facilityValidInOFM.has(selectedFacility.facilityId)) {
+        return this.facilityValidInOFM.get(selectedFacility.facilityId)
+      }
+
       const programCodeMapping = {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
+
       const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
-      if (this.requestFacilities[0]?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
-        this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
+
+      if (selectedFacility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
+        this.facilityValidInOFM.set(selectedFacility.facilityId, false)
+        this.preventChangeRequestType = programCodeMapping[selectedFacility.programCode]
+        this.showFacilityNotInOFMMessage = true
+        this.disabled = true
         return false
       }
+      this.facilityValidInOFM.set(selectedFacility.facilityId, true)
       return true
     },
 
-    validateSubCategories(subCategories) {
+    //the only change type that has sub categories are Account Maint requests
+    async validateSubCategories(subCategories) {
       if (this.facilityChangeTypesChecked(subCategories)) {
-        if (!this.isOFMValid) {
-          this.showFacilityNotInOFMMessage = true
-          this.isDisabled = true
-        }
+        this.isLoading = true
+        const isValid = await this.validateOfmProgram()
+        this.isLoading = false
+        this.isDisabled = !isValid
       } else {
         this.isDisabled = false
       }
@@ -586,7 +623,8 @@ export default {
       return subCategories.some(
         (subCategory) =>
           subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
-          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL),
+          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
+          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE),
       )
     },
 
@@ -659,7 +697,8 @@ export default {
 
     async submit() {
       const isFormValid = await this.$refs.newRequestForm?.validate()
-      if (isFormValid && this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded) {
+
+      if (isFormValid && this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded && this.documentsComplete) {
         try {
           this.isLoading = true
           this.setAssistanceRequestDescription()

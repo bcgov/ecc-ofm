@@ -126,7 +126,7 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
   REPORTING: 'Reporting',
-  IRREGULAR_EXPENSES: 'Unexpected Expense', //TODO: change once the lookup value changes in CRM
+  IRREGULAR_EXPENSES: 'Irregular Expense',
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
