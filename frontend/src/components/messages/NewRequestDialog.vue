@@ -301,6 +301,7 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
@@ -552,6 +553,10 @@ export default {
           await this.getFundingAgreements()
         }
         this.resetModelData(this.isAccountMaintenanceRequest)
+        // Reset the Selected Facility if not allowed
+        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties.some((fac) => fac.facilityId === this.newRequestModel.facilities[0].facId)) {
+          this.newRequestModel.facilities = []
+        }
       },
     },
     'newRequestModel.facilities': {
