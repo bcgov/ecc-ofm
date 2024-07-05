@@ -1,11 +1,7 @@
 <template>
   <v-container fluid class="ma-0 pa-0">
-    <v-row>
-      <v-col class="hero-image pa-0" />
-    </v-row>
-    <v-row>
-      <v-col class="hero-text px-2 py-0 mb-2">$10 a Day ChildCareBC Centres</v-col>
-    </v-row>
+    <div class="hero-image" />
+    <div class="hero-text">$10 a Day ChildCareBC Centres</div>
   </v-container>
 </template>
 
