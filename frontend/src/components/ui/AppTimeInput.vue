@@ -27,3 +27,12 @@ export default {
   },
 }
 </script>
+
+<style>
+input[type='time']::-webkit-datetime-edit-hour-field:focus,
+input[type='time']::-webkit-datetime-edit-minute-field:focus,
+input[type='time']::-webkit-datetime-edit-second-field:focus,
+input[type='time']::-webkit-datetime-edit-ampm-field:focus {
+  background-color: #3367d1;
+}
+</style>
