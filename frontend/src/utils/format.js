@@ -18,8 +18,7 @@ function formatDateToUTC(date) {
 }
 
 function formatTime12to24(time12h) {
-  if (isEmpty(time12h)) return null
-  if (!time12h?.toUpperCase().includes('AM') && !time12h?.toUpperCase().includes('PM')) return time12h
+  if (isEmpty(time12h) || !is12hFormat(time12h)) return time12h
   const [time, modifier] = time12h.split(' ')
   let [hours, minutes] = time.split(':')
   if (hours === '12') {
@@ -32,14 +31,17 @@ function formatTime12to24(time12h) {
 }
 
 function formatTime24to12(time24h) {
-  if (isEmpty(time24h)) return null
-  if (time24h?.toUpperCase().includes('AM') || time24h?.toUpperCase().includes('PM')) return
+  if (isEmpty(time24h) || is12hFormat(time24h)) return time24h
   let hours = Number(time24h?.split(':')[0])
   const minutes = time24h?.split(':')[1]
   const ampm = hours >= 12 ? 'pm' : 'am'
   hours = hours % 12
   hours = hours ? hours : 12 // the hour '0' should be '12'
   return `${hours}:${minutes} ${ampm}`
+}
+
+function is12hFormat(time) {
+  return time?.toUpperCase().includes('AM') || time?.toUpperCase().includes('PM')
 }
 
 /**
