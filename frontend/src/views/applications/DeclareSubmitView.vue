@@ -140,6 +140,7 @@ export default {
     },
 
     async submitApplication() {
+      this.model.applicationReviewComplete = true
       this.model.submittedBy = this.userInfo?.contactId
       this.model.statusCode = APPLICATION_STATUS_CODES.SUBMITTED
       await this.saveApplication()
