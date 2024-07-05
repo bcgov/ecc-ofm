@@ -27,11 +27,12 @@
 <script>
 import { mapState } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
+import ApplicationService from '@/services/applicationService'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
 export default {
@@ -42,6 +43,7 @@ export default {
     return {
       loading: false,
       fundingAgreements: [],
+
       headers: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
@@ -59,12 +61,43 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
   },
 
-  created() {
+  async created() {
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
+    await this.loadData()
   },
 
   methods: {
+    async loadData() {
+      try {
+        this.loading = true
+        const applications = await ApplicationService.getActiveApplications()
+
+        this.supplementaryApplications = (
+          await Promise.all(
+            applications.map((application) => ApplicationService.getSupplementaryApplications(application.applicationId, `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`)),
+          )
+        ).flat()
+        console.log(this.supplementaryApplications)
+        console.log(this.fundingAgreements)
+        this.supplementaryApplications.forEach((app) => {
+          this.fundingAgreements.push({
+            startDate: app.startDate,
+            endDate: app.endDate,
+            fundingAgreementNumber: app.supplementaryReferenceNumber,
+            fundingAgreementType: app.supplementaryTypeDescription,
+            expenseAuthority: '- - - -',
+
+            statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
+            statusName: app.supplementaryApplicationStatus,
+          })
+        })
+      } catch (error) {
+        this.setFailureAlert('Failed to load applications', error)
+      } finally {
+        this.loading = false
+      }
+    },
     async loadFundingAgreements(searchQueries) {
       try {
         this.loading = true

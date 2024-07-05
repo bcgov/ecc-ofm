@@ -101,6 +101,7 @@ export default {
       if (filterQuery) {
         url += `?${filterQuery}`
       }
+      console.log(url)
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
