@@ -343,11 +343,11 @@ export default {
 
   methods: {
     getDayNames(days) {
-      const DAY_NAMES = DAYS_OF_WEEK.map((day) => day.title)
+      const dayNames = DAYS_OF_WEEK.map((day) => day.title)
       return typeof days === 'string'
         ? days
             ?.split(',')
-            ?.map((day) => DAY_NAMES[Number(day) - 1])
+            ?.map((day) => dayNames[Number(day) - 1])
             ?.join(', ')
         : days
     },

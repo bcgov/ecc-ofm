@@ -1,20 +1,20 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
-    <AppMissingInfoError
-      v-if="!readonly && isEmpty(currentApplication?.licences)"
-      :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
-      {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
-    </AppMissingInfoError>
-    <AppMissingInfoError
-      v-else-if="!readonly && !currentApplication?.licenceDeclaration"
-      :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
-      {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
-    </AppMissingInfoError>
-    <AppMissingInfoError
-      v-else-if="!readonly && !isServiceDeliveryComplete"
-      :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#top', params: { applicationGuid: $route.params.applicationGuid } }">
-      {{ !allCCOFMissingDetailComplete ? APPLICATION_ERROR_MESSAGES.LICENCE_INFO : APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
-    </AppMissingInfoError>
+    <template v-if="!readonly">
+      <AppMissingInfoError
+        v-if="isEmpty(currentApplication?.licences)"
+        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
+      </AppMissingInfoError>
+      <AppMissingInfoError
+        v-else-if="!currentApplication?.licenceDeclaration"
+        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
+      </AppMissingInfoError>
+      <AppMissingInfoError v-else-if="!isServiceDeliveryComplete" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#top', params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ !allCCOFMissingDetailComplete ? APPLICATION_ERROR_MESSAGES.LICENCE_INFO : APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
+      </AppMissingInfoError>
+    </template>
     <v-expansion-panels v-else v-model="panel" multiple>
       <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
         <v-expansion-panel-title>
