@@ -54,4 +54,11 @@ export default {
   isSplitClassRoomInfoValid(licenceDetail) {
     return !licenceDetail.applyRoomSplitCondition || !isEmpty(licenceDetail.roomSplitDetails)
   },
+  convertToCRMOperationDateTimeFormat(time) {
+    const hours = time?.split(':')[0]
+    const minutes = time?.split(':')[1]
+    const convertedTime = new Date()
+    convertedTime.setHours(hours, minutes, 0, 0)
+    return convertedTime
+  },
 }
