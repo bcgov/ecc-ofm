@@ -171,29 +171,24 @@
                           <AppLabel>Hours:</AppLabel>
                         </v-col>
                         <v-col cols="12" sm="7" lg="8" xl="9">
-                          <v-row v-if="editable">
-                            <v-col cols="12" sm="6" lg="12" xl="6" class="pb-0">
-                              <AppTimeInput
-                                v-model="licenceDetail.operationFromTime"
-                                :rules="rules.required"
-                                :max="licenceDetail.operationToTime"
-                                :allowed-minutes="ALLOWED_MINUTES"
-                                clearable
-                                min-width="140px"
-                                label="From"
-                                @update:modelValue="update(licenceDetail)" />
-                            </v-col>
-                            <v-col cols="12" sm="6" lg="12" xl="6" class="pb-0">
-                              <AppTimeInput
-                                v-model="licenceDetail.operationToTime"
-                                :rules="rules.required"
-                                :min="licenceDetail.operationFromTime"
-                                :allowed-minutes="ALLOWED_MINUTES"
-                                clearable
-                                min-width="140px"
-                                label="To"
-                                @update:modelValue="update(licenceDetail)" />
-                            </v-col>
+                          <v-row no-gutters v-if="editable">
+                            <AppTimeInput
+                              v-model="licenceDetail.operationFromTime"
+                              :rules="rules.required"
+                              label="From"
+                              min-width="150px"
+                              max-width="150px"
+                              class="pr-2"
+                              @update:modelValue="update(licenceDetail)" />
+                            <AppTimeInput
+                              v-model="licenceDetail.operationToTime"
+                              :rules="[...rules.required, rules.greaterThan(licenceDetail.operationFromTime)]"
+                              label="To"
+                              min-width="150px"
+                              max-width="150px"
+                              :error-messages="getErrorMessagesForOperationTime(licenceDetail)"
+                              class="pr-2"
+                              @update:modelValue="update(licenceDetail)" />
                           </v-row>
                           <span v-else>{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</span>
                         </v-col>
@@ -266,6 +261,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppTimeInput from '@/components/ui/AppTimeInput.vue'
 import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
+import LicenceService from '@/services/licenceService'
 import rules from '@/utils/rules'
 import { useAppStore } from '@/stores/app'
 import { BLANK_FIELD, DAYS_OF_WEEK } from '@/utils/constants'
@@ -328,7 +324,6 @@ export default {
       separator: ',',
       precision: 0,
     }
-    this.ALLOWED_MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
   },
 
   async mounted() {
@@ -380,6 +375,12 @@ export default {
       } else {
         licenceDetail.weekDays = DAYS_OF_WEEK.map((day) => day.value)
       }
+    },
+
+    getErrorMessagesForOperationTime(licenceDetail) {
+      const from = LicenceService.convertToCRMOperationDateTimeFormat(licenceDetail?.operationFromTime)
+      const to = LicenceService.convertToCRMOperationDateTimeFormat(licenceDetail?.operationToTime)
+      return from >= to ? 'Hours To must be after Hours From' : ''
     },
   },
 }

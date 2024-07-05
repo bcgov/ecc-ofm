@@ -68,7 +68,6 @@ import LicenceService from '@/services/licenceService'
 import { useApplicationsStore } from '@/stores/applications'
 import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, OFM_PROGRAM_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
-import format from '@/utils/format'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
@@ -215,8 +214,8 @@ export default {
 
     updateLicenceDetails(updatedModel) {
       const clonedModel = cloneDeep(updatedModel)
-      clonedModel.updatableOperationFromTime = this.convertCRMDateTimeFormat(clonedModel.operationFromTime)
-      clonedModel.updatableOperationToTime = this.convertCRMDateTimeFormat(clonedModel.operationToTime)
+      clonedModel.updatableOperationFromTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationFromTime)
+      clonedModel.updatableOperationToTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationToTime)
       clonedModel.weekDays = clonedModel?.weekDays.toString()
       const index = this.changedLicences.findIndex((el) => el.licenceDetailId == clonedModel.licenceDetailId)
       if (index === -1) {
@@ -224,15 +223,6 @@ export default {
       } else {
         this.changedLicences[index] = clonedModel
       }
-    },
-
-    convertCRMDateTimeFormat(time) {
-      const time24 = format.formatTime12to24(time)
-      const hours = time24?.split(':')[0]
-      const minutes = time24?.split(':')[1]
-      const convertedTime = new Date()
-      convertedTime.setHours(hours, minutes, 0, 0)
-      return convertedTime
     },
 
     sanitizeLicenceDetailBeforeSave(detail) {
@@ -249,13 +239,17 @@ export default {
         delete detail.weekDays
       }
       if (isEmpty(detail.operationFromTime)) {
-        delete detail.operationFromTime
         delete detail.updatableOperationFromTime
       }
       if (isEmpty(detail.operationToTime)) {
-        delete detail.operationToTime
         delete detail.updatableOperationToTime
       }
+      if (detail.updatableOperationFromTime >= detail.updatableOperationToTime) {
+        delete detail.updatableOperationFromTime
+        delete detail.updatableOperationToTime
+      }
+      delete detail.operationFromTime
+      delete detail.operationToTime
     },
 
     setDetailsComplete(licenceId, value) {
