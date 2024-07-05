@@ -161,6 +161,10 @@ input[type='number'] {
   border-top: 5px solid #003366 !important;
 }
 
+.page-overview {
+  font-size: 1.1em;
+}
+
 /** Vuetify overrides */
 .v-data-table__th {
   font-weight: 600 !important;
