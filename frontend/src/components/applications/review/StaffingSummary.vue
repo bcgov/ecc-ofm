@@ -28,7 +28,7 @@
           <AppLabel class="mr-2">Is your facility unionized?</AppLabel>
           <div>{{ currentApplication?.isUnionized ? 'Yes' : 'No' }}</div>
         </v-row>
-        <v-row no-gutters>
+        <v-row v-if="currentApplication?.isUnionized" no-gutters>
           <AppLabel class="mr-2">Which Union(s) do your staff belong to?</AppLabel>
           <div>{{ unionsNames }}</div>
         </v-row>
