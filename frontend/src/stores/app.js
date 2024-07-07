@@ -61,6 +61,12 @@ export const useAppStore = defineStore('app', {
         return requestSubCategory?.subCategoryId
       }
     },
+    getUnionNameById: (state) => {
+      return (id) => {
+        const union = state.unions?.find((item) => item.id === id)
+        return union?.description
+      }
+    },
   },
   actions: {
     async getLookupInfo() {

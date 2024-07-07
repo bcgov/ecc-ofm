@@ -79,7 +79,10 @@ export const useApplicationsStore = defineStore('applications', {
       this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
       this.isServiceDeliveryComplete = checkServiceDeliveryComplete(this.currentApplication)
       this.isOperatingCostsComplete = checkOperatingCostsComplete(this.currentApplication)
-      this.isStaffingComplete = this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
+      this.isStaffingComplete =
+        this.isThereAtLeastOneEmployee(this.currentApplication) &&
+        this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication) &&
+        this.isUnionSectionComplete(this.currentApplication)
       this.isDeclareSubmitComplete = checkDeclareSubmitComplete(this.currentApplication)
     },
 
@@ -134,6 +137,10 @@ export const useApplicationsStore = defineStore('applications', {
       const allCertificateNumbers = certificates?.map((certificate) => certificate.certificateNumber)?.filter((certificateNumber) => certificateNumber)
       const uniqueCertificateNumbers = [...new Set(allCertificateNumbers)]
       return allCertificateNumbers?.length === uniqueCertificateNumbers?.length
+    },
+
+    isUnionSectionComplete(application) {
+      return application?.isUnionized === 0 || !isEmpty(application?.unions)
     },
   },
 })

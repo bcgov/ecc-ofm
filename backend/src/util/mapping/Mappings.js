@@ -170,6 +170,8 @@ const ApplicationMappings = [
   { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
   { back: 'ofm_armslengthlease', front: 'armsLength' },
   { back: 'ofm_application_review_complete', front: 'applicationReviewComplete' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
+  { back: 'ofm_union_list', front: 'unions' },
 ]
 
 const ApplicationProviderEmployeeMappings = [
