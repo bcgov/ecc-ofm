@@ -172,6 +172,7 @@ export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({
 })
 
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
+  FISCAL_YEAR_END_DATE: 'Fiscal year end date required',
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
   LICENCE_INFO: 'Licence information required',

@@ -10,7 +10,7 @@ import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE
   Facility Details page - Helper functions
 */
 function checkFacilityDetailsComplete(application) {
-  return application?.primaryContactId && application?.expenseAuthorityId
+  return application?.primaryContactId && application?.expenseAuthorityId && application?.fiscalYearEndDate
 }
 
 /*

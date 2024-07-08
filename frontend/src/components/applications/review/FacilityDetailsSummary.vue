@@ -4,6 +4,15 @@
     <div class="mt-4">
       <h4 class="text-decoration-underline">Locations</h4>
       <FacilityInfo :facility="facility" />
+      <div>
+        <v-row v-if="currentApplication?.fiscalYearEndDate" no-gutters class="mt-6">
+          <AppLabel class="mr-2">What is the end date of your fiscal year?</AppLabel>
+          <span>{{ format.formatDate(currentApplication?.fiscalYearEndDate) }}</span>
+        </v-row>
+        <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#fiscal-year-end-date', params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.FISCAL_YEAR_END_DATE }}
+        </AppMissingInfoError>
+      </div>
     </div>
     <div class="mt-4 mb-0">
       <h4 class="text-decoration-underline">Primary Contact</h4>
@@ -30,15 +39,17 @@
 </template>
 
 <script>
-import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
-import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
+import AppLabel from '@/components/ui/AppLabel.vue'
+import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
+import { useApplicationsStore } from '@/stores/applications'
 import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
+import format from '@/utils/format'
 
 export default {
-  components: { AppMissingInfoError, FacilityInfo, ContactInfo },
+  components: { AppLabel, AppMissingInfoError, FacilityInfo, ContactInfo },
 
   props: {
     readonly: {
@@ -71,6 +82,7 @@ export default {
   },
 
   created() {
+    this.format = format
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
   },
