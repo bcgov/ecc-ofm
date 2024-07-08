@@ -40,7 +40,7 @@ function formatQueryString() {
 async function getFacility(req, res) {
   try {
     const facilityMappingString = getMappingString(FacilityMappings)
-    const operation = `accounts(${req.params.accountId})?$select=${facilityMappingString},${formatQueryString()}`
+    const operation = `accounts(${req.params.facilityId})?$select=${facilityMappingString},${formatQueryString()}`
     const response = await getOperation(operation)
     const resp = new MappableObjectForFront(response, FacilityMappings).toJSON()
     resp.additionalAddresses = formatPayload(response)

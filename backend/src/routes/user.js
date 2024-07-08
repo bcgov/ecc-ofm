@@ -6,8 +6,10 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { createUser, updateUser, getUserFacilities, getUserInfo, getUsersPermissionsFacilities, userExists, updateUserFacilityPermission } = require('../components/user')
 const { param, validationResult, checkSchema } = require('express-validator')
+
+const validateOrganization = require('../middlewares/validateOrganization')
+const validatePermission = require('../middlewares/validatePermission')
 const validateRole = require('../middlewares/validateRole')
-const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
 const createUserSchema = {
@@ -68,6 +70,7 @@ router.get(
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_USERS_VIEW),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
     return getUsersPermissionsFacilities(req, res)

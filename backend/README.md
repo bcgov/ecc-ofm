@@ -1,8 +1,7 @@
 ## OFM Backend
 
-The Node.js backend for the OFN application that handles authentication, authorization, and session management.
-This project was built using the EDUC-CCOF project as a template.  
-You may see references to the EDUC-CCOF project until we get this properly cleaned up.
+The Node.js backend for the OFM application that handles authentication, authorization, and session management.
+This project was built using the EDUC-CCOF project as a template.
 
 ### Local Setup
 

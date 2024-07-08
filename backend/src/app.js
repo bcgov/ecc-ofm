@@ -155,12 +155,13 @@ async function populateUserInfo(profile) {
     const user = await getUserProfile(username.guid, profile._json.bceid_username)
 
     profile.role = user?.role
-    profile.org = user?.organization?.accountid
+    profile.organizationId = user?.organization?.accountid
     profile.contactId = user?.contactid
 
     profile.facilities = user?.facility_permission.map((fp) => {
       return {
         facilityId: fp.facility.accountid,
+        ofmPortalAccess: fp.ofm_portal_access,
         isExpenseAuthority: fp.ofm_is_expense_authority,
       }
     })
