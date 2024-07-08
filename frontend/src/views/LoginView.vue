@@ -23,7 +23,6 @@
             <h4>Childcare Provider</h4>
           </v-card-title>
           <v-card-text>Log in with your primary Business BCeID</v-card-text>
-          <!-- <v-spacer></v-spacer> -->
           <v-card-actions class="mt-auto">
             <AppButton icon="mdi-login" :href="authRoutes.LOGIN" @click="clearStorage" width="250px" id="bceid-login">BCeID Log In</AppButton>
           </v-card-actions>
@@ -51,7 +50,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- </v-container> -->
   </v-container>
 </template>
 
