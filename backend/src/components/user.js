@@ -152,10 +152,11 @@ async function getUserProfile(userGuid, userName) {
     const userProfile = response.data
     log.verbose('getUserProfile response:', userProfile)
 
-    // If querying by userGuid and userName validate that the returned profile matches the userGuid since
-    // the userName alone can result in a match
+    // If querying by userGuid and userName validate that the returned profile matches both the userGuid and userName
     // BCeID usernames can change but the guid won't so check for a mismatch to prevent unauthorized access
-    if (userGuid && userProfile.ccof_userid !== userGuid) {
+    // A mismatch could occur because an existing account (guid) gets a new username (username mismatch) or
+    // because an existing username is given to a new guid (guid mismatch)
+    if (userGuid && (userProfile.ccof_userid !== userGuid || userProfile.ccof_username !== userName)) {
       return null
     }
 
