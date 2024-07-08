@@ -15,11 +15,12 @@ export function hasDuplicateVIN(model, transportModels) {
   return transportModels.filter((m) => m.VIN === model.VIN).length > 1
 }
 
-/**
- * This function will convert a String to an Array.
- */
 export function convertStringToArray(item, separator = ',') {
   return typeof item === 'string' ? item?.split(separator) : item
+}
+
+export function convertArrayToString(item, separator = ', ') {
+  return Array.isArray(item) ? item?.join(separator) : item
 }
 
 export function sanitizeWholeNumberInput(input) {
