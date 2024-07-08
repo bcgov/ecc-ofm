@@ -7,7 +7,7 @@ export default {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
 
-      //Node.js will order FA's so newest one (newest MOD agreement) will always be first
+      //Backend will order FA's so newest one (newest MOD agreement) will always be first
       //in the case of Supp Apps - we will need the start date of the ORIGINAL funding agreement - so take the last FA in the list
       if (ignoreMODAgreements) {
         return response?.data[response.data.length - 1]
@@ -52,7 +52,7 @@ export default {
     }
   },
 
-  //Node.js will order FA's so newest one (newest MOD agreement) will always be first
+  //Backend will order FA's so newest one (newest MOD agreement) will always be first
   async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
       if (!facilityId && !statusCode) return

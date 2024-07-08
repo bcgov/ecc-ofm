@@ -15,7 +15,7 @@
         {{ !allCCOFMissingDetailComplete ? APPLICATION_ERROR_MESSAGES.LICENCE_INFO : APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
       </AppMissingInfoError>
     </template>
-    <v-expansion-panels v-else v-model="panel" multiple>
+    <v-expansion-panels v-if="showSummary" v-model="panel" multiple>
       <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
         <v-expansion-panel-title>
           <LicenceHeader :licence="licence" />
@@ -74,6 +74,9 @@ export default {
             !isEmpty(detail.weekDays),
         )
       })
+    },
+    showSummary() {
+      return !isEmpty(this.currentApplication?.licences) && (this.readonly || this.isServiceDeliveryComplete)
     },
   },
   async created() {

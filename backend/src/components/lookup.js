@@ -128,12 +128,16 @@ async function getPaymentTypes() {
   return fetchAndCacheData('paymentTypes', 'ecc_payment_type')
 }
 
+async function getUnions() {
+  return fetchAndCacheData('unions', 'ecc_unions')
+}
+
 /**
  * Look ups from Dynamics365.
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, paymentTypes] = await Promise.all([
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, paymentTypes, unions] = await Promise.all([
       getApplicationIntakes(),
       getRequestCategories(),
       getRequestSubCategories(),
@@ -143,6 +147,7 @@ async function getLookupInfo(_req, res) {
       getLicenceTypes(),
       // getReportTemplates(),
       getPaymentTypes(),
+      getUnions(),
     ])
     const resData = {
       applicationIntakes: applicationIntakes,
@@ -154,6 +159,7 @@ async function getLookupInfo(_req, res) {
       licenceTypes: licenceTypes,
       // reportTemplates: reportTemplates,
       paymentTypes: paymentTypes,
+      unions: unions,
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {

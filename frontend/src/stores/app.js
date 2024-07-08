@@ -22,6 +22,7 @@ export const useAppStore = defineStore('app', {
     // reportTemplates: {},
     applicationIntakes: {},
     paymentTypes: {},
+    unions: {},
   }),
   getters: {
     getRoleNameById: (state) => {
@@ -60,6 +61,12 @@ export const useAppStore = defineStore('app', {
         return requestSubCategory?.subCategoryId
       }
     },
+    getUnionNameById: (state) => {
+      return (id) => {
+        const union = state.unions?.find((item) => item.id === id)
+        return union?.description
+      }
+    },
   },
   actions: {
     async getLookupInfo() {
@@ -75,6 +82,7 @@ export const useAppStore = defineStore('app', {
         // this.reportTemplates = lookupInfo?.data?.reportTemplates
         this.applicationIntakes = lookupInfo?.data?.applicationIntakes
         this.paymentTypes = lookupInfo?.data?.paymentTypes
+        this.unions = lookupInfo?.data?.unions
       }
     },
     async setAlertNotificationText(alertNotificationText) {

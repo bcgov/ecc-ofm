@@ -126,6 +126,7 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
   REPORTING: 'Reporting',
+  IRREGULAR_EXPENSES: 'Irregular Expense',
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
@@ -172,6 +173,7 @@ export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({
 })
 
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
+  FISCAL_YEAR_END_DATE: 'Fiscal year end date required',
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
   LICENCE_INFO: 'Licence information required',
@@ -183,6 +185,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   ARM_LENGTH: "Arm's Length agreement checkbox required",
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  UNION: 'Union information required',
   MISMATCH_NUMBER_STAFF_CERTIFICATE: 'The total of staff and total of certificates must match',
   DUPLICATE_CERTIFICATE_NUMBERS: 'Certificate number already exists, duplicate certificates are not permitted',
   DUPLICATE_CERTIFICATE_INITIALS: 'Initials already exists, please ensure staff are entered only once on this page.',
