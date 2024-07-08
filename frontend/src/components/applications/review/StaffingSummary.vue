@@ -1,29 +1,10 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
-    <div v-if="!readonly && !isStaffingComplete">
-      <AppMissingInfoError
-        v-if="!isThereAtLeastOneEmployee(currentApplication) || !isUnionSectionComplete(currentApplication)"
-        :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
+    <v-card class="mb-4 pa-4">
+      <AppMissingInfoError v-if="!readonly && !isUnionSectionComplete(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.UNION }}
       </AppMissingInfoError>
-      <AppMissingInfoError
-        v-if="!areAllEmployeeCertificatesEntered(currentApplication?.providerEmployees, currentApplication)"
-        :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
-      </AppMissingInfoError>
-      <AppMissingInfoError
-        v-if="!areAllCertificateInitialsUnique(currentApplication?.providerEmployees)"
-        :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
-      </AppMissingInfoError>
-      <AppMissingInfoError
-        v-if="!areAllCertificateNumbersUnique(currentApplication?.providerEmployees)"
-        :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
-      </AppMissingInfoError>
-    </div>
-    <div v-else>
-      <v-card class="mb-4 pa-4">
+      <div v-else>
         <v-row no-gutters class="mb-2">
           <AppLabel class="mr-2">Is your facility unionized?</AppLabel>
           <div>{{ currentApplication?.isUnionized ? 'Yes' : 'No' }}</div>
@@ -32,8 +13,30 @@
           <AppLabel class="mr-2">Which Union(s) do your staff belong to?</AppLabel>
           <div>{{ unionsNames }}</div>
         </v-row>
-      </v-card>
-      <v-card class="px-4 py-2">
+      </div>
+    </v-card>
+    <v-card class="pa-4">
+      <div v-if="!readonly && !isEmployeeInformationComplete">
+        <AppMissingInfoError v-if="!isThereAtLeastOneEmployee(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
+        </AppMissingInfoError>
+        <AppMissingInfoError
+          v-if="!areAllEmployeeCertificatesEntered(currentApplication?.providerEmployees, currentApplication)"
+          :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
+        </AppMissingInfoError>
+        <AppMissingInfoError
+          v-if="!areAllCertificateInitialsUnique(currentApplication?.providerEmployees)"
+          :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
+        </AppMissingInfoError>
+        <AppMissingInfoError
+          v-if="!areAllCertificateNumbersUnique(currentApplication?.providerEmployees)"
+          :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
+        </AppMissingInfoError>
+      </div>
+      <div v-else>
         <div class="border-bottom px-1 py-2">
           <v-row no-gutters>
             <v-col cols="6">
@@ -136,8 +139,8 @@
             </p>
           </v-col>
         </v-row>
-      </v-card>
-    </div>
+      </div>
+    </v-card>
   </v-container>
 </template>
 
@@ -162,7 +165,7 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['getUnionNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isStaffingComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication']),
     totalFullTimePosition() {
       return (
         this.currentApplication?.staffingInfantECEducatorFullTime +
@@ -192,6 +195,9 @@ export default {
       const names = convertStringToArray(this.currentApplication?.unions)?.map((item) => this.getUnionNameById(Number(item)))
       return convertArrayToString(names)
     },
+    isEmployeeInformationComplete() {
+      return this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
+    },
   },
 
   created() {
@@ -206,6 +212,7 @@ export default {
       'areAllEmployeeCertificatesEntered',
       'areAllCertificateInitialsUnique',
       'areAllCertificateNumbersUnique',
+      'areEmployeeCertificatesComplete',
     ]),
   },
 }
