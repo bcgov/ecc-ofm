@@ -324,7 +324,7 @@ import FacilityService from '@/services/facilityService'
 import OrganizationService from '@/services/organizationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE, FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
@@ -836,7 +836,7 @@ export default {
       try {
         await Promise.all(
           this.facilities?.map(async (facility) => {
-            const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId)
+            const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
             if (fa) {
               this.fundingAgreements.push(fa)
             }

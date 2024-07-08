@@ -153,6 +153,7 @@ import {
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
   APPLICATION_TYPES,
   REQUEST_CATEGORY_NAMES,
+  FUNDING_AGREEMENT_STATUS_CODES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -194,18 +195,15 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    hasAValidApplication() {
-      return this.applications?.some((application) => ApplicationService.isValidApplication(application))
-    },
-    //should we perhaps check the status as well?
+
     hasAValidFundingAgreement() {
-      return this.applications?.some((application) => application.fundingAgreement)
+      return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
     },
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
     },
     hasAValidApplicationAndGoodStanding() {
-      return this.hasAValidApplication && this.hasGoodStanding
+      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
     filteredApplicationItems() {
       return this.sortApplicationItems(
