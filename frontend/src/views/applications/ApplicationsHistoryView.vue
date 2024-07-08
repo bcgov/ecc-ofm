@@ -69,7 +69,7 @@
               Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="irregular-expense-button" :loading="loading" size="large" width="450px" :disabled="!hasAValidApplication" @click="toggleChangeRequestDialog" class="mt-8">
+              <AppButton id="irregular-expense-button" :loading="loading" size="large" width="450px" :disabled="!hasAValidFundingAgreement" @click="toggleChangeRequestDialog" class="mt-8">
                 Add Irregular Expenses Application
               </AppButton>
             </v-card-actions>
@@ -196,6 +196,10 @@ export default {
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
     hasAValidApplication() {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application))
+    },
+    //should we perhaps check the status as well?
+    hasAValidFundingAgreement() {
+      return this.applications?.some((application) => application.fundingAgreement)
     },
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD

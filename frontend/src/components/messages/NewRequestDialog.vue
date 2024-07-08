@@ -98,6 +98,7 @@
                 variant="outlined"
                 density="compact"
                 :items="filteredFacilties"
+                :rules="rules.required"
                 item-title="facilityName"
                 :disabled="isLoading || lockFacility"
                 return-object
@@ -415,9 +416,6 @@ export default {
     facilities() {
       return this.userInfo?.facilities
     },
-    requestFacilities() {
-      return [].concat(this.newRequestModel?.facilities || [])
-    },
     allFacilitiesSelected() {
       return this.newRequestModel.facilities.length == this.facilities.length
     },
@@ -554,7 +552,7 @@ export default {
         }
         this.resetModelData(this.isAccountMaintenanceRequest)
         // Reset the Selected Facility if not allowed
-        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties.some((fac) => fac.facilityId === this.newRequestModel.facilities[0].facId)) {
+        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facId)) {
           this.newRequestModel.facilities = []
         }
       },
@@ -595,9 +593,9 @@ export default {
 
     //this function runs to check if the selected facility is able to submit certain kinds of assitance requests.
     //it is only available to Account Managers and should only be called if the correct checkbox(es) are selected
-    //these requests can only be done one facility at a time, so requestFacilities will always be an array with 1 item
     async validateOfmProgram() {
-      const selectedFacility = this.requestFacilities[0]
+      //on load newRequestModel.facilites is sometimes an array because of multi-select. however AM requests will only have one item selected.
+      const selectedFacility = this.newRequestModel?.facilities.length > 0 ? this.newRequestModel?.facilities[0] : this.newRequestModel?.facilities
 
       if (this.facilityValidInOFM.has(selectedFacility.facilityId)) {
         return this.facilityValidInOFM.get(selectedFacility.facilityId)
@@ -607,8 +605,7 @@ export default {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
-
-      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
+      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([selectedFacility])
 
       if (selectedFacility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
         this.facilityValidInOFM.set(selectedFacility.facilityId, false)
@@ -645,7 +642,6 @@ export default {
     toggleUnableToSubmitCrDialog() {
       this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
     },
-
     setUpDefaultNewRequestModel() {
       const facilityId = this.defaultFacility?.facilityId || this.currentFacility?.facilityId
       this.newRequestModel = {
@@ -653,7 +649,7 @@ export default {
         subCategories: [],
         subject: this.defaultSubject,
         contactId: this.userInfo?.contactId,
-        facilities: [this.facilities?.find((facility) => facility.facilityId === facilityId)],
+        facilities: [this.filteredFacilties?.find((facility) => facility.facilityId === facilityId)],
         contactMethod: '1',
         phone: this.userInfo?.phone,
       }
@@ -691,7 +687,8 @@ export default {
 
     async createRequestAndDocuments() {
       try {
-        if (this.isAccountMaintenanceRequest && !Array.isArray(this.newRequestModel.facilities)) {
+        //facilities must be saved as an array or the backend will be unable to handle the request
+        if (!Array.isArray(this.newRequestModel.facilities)) {
           this.newRequestModel.facilities = [this.newRequestModel.facilities]
         }
         const response = await this.createAssistanceRequest(this.newRequestModel)
@@ -838,8 +835,11 @@ export default {
       this.fundingAgreements = []
       try {
         await Promise.all(
-          this.newRequestModel.facilities?.map(async (facility) => {
-            this.fundingAgreements.push(await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId))
+          this.facilities?.map(async (facility) => {
+            const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityId(facility.facilityId)
+            if (fa) {
+              this.fundingAgreements.push(fa)
+            }
           }),
         )
       } catch (error) {
