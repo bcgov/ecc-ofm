@@ -15,8 +15,8 @@
             </v-row>
           </v-row>
         </v-col>
-        <v-col cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
-          <div v-if="isAuthenticated && userInfo">
+        <v-col v-if="showMenu" cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
+          <div>
             <v-row class="align-center">
               <v-col v-if="showMessagingIcon" style="width: 70px">
                 <div>
@@ -79,12 +79,7 @@ export default {
       return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
     },
     height() {
-      switch (this.$vuetify.display.name) {
-        case 'xs':
-          return 140
-        default:
-          return 64
-      }
+      return this.$vuetify.display.xs && this.showMenu ? 140 : 64
     },
     messageNotificationCount() {
       return this.actionRequiredAndUnreadMessageCount + this.unreadNotificationCount
@@ -93,6 +88,9 @@ export default {
     actionRequiredAndUnreadMessageCount() {
       const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
+    },
+    showMenu() {
+      return this.isAuthenticated && this.userInfo
     },
     showMessagingIcon() {
       return this.isAuthenticated && this.userInfo && this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)

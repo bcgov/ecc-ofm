@@ -169,6 +169,7 @@ const ApplicationMappings = [
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
   { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
   { back: 'ofm_armslengthlease', front: 'armsLength' },
+  { back: 'ofm_application_review_complete', front: 'applicationReviewComplete' },
 ]
 
 const ApplicationProviderEmployeeMappings = [
@@ -230,6 +231,7 @@ const FacilityMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
+  { back: 'ofm_facility_review_complete', front: 'facilityReviewComplete' },
 ]
 
 const ContactMappings = [
@@ -262,6 +264,8 @@ const LicenceDetailsMappings = [
   { back: 'ofm_enrolled_spaces', front: 'enrolledSpaces' },
   { back: 'ofm_operation_from_time', front: 'operationFromTime' },
   { back: 'ofm_operations_to_time', front: 'operationToTime' },
+  { back: 'ofm_operation_hours_from', front: 'updatableOperationFromTime' },
+  { back: 'ofm_operation_hours_to', front: 'updatableOperationToTime' },
   { back: 'ofm_week_days', front: 'weekDays' },
   { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
   { back: 'ofm_care_type', front: 'careType' },

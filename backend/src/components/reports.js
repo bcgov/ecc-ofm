@@ -79,7 +79,7 @@ async function getSurveyQuestions(req, res) {
     await Promise.all(
       response?.value?.map(async (item) => {
         const question = mapQuestionObjectForFront(item)
-        if (!isEmpty(item['ofm_fixed_response'])) {
+        if (!isEmpty(item['ofm_fixed_response']) && item['ofm_fixed_response'] !== 'N/A') {
           question.fixedResponse = await getQuestionFixedResponse(item['ofm_fixed_response'], req?.query?.facilityId)
         }
         questions.push(question)
