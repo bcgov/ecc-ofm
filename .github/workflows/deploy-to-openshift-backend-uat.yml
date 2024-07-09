@@ -141,7 +141,7 @@ jobs:
           # Process update-configmap
           curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \
             | bash /dev/stdin \
-                uat \
+                prod \
                 ${{ env.APP_NAME }} \
                 ${{ env.NAMESPACE }} \
                 ${{ env.COMMON_NAMESPACE }} \
