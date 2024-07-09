@@ -61,12 +61,12 @@ export default {
   },
 
   async created() {
+    this.BASE_FUNDING = 'Base Funding'
     this.loading = true
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
     await this.loadApprovedSuppApps()
     this.loading = false
-    this.BASE_FUNDING = 'Base Funding'
   },
 
   methods: {
@@ -106,7 +106,7 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = this.BASE_FUNDING // Base Funding is the only Funding Agreement type. This field/column can be removed in the future.
+                fa.fundingAgreementType = this.BASE_FUNDING
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
               })
               this.fundingAgreements.push(...facilityFas)
