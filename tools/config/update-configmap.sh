@@ -24,14 +24,12 @@ elif [ "$ENV_VAL" = "prod" ]; then
 fi
 readonly NAMESPACE_SUFFIX
 
-SOAM_KC=""
+# TODO Update when Prod realm available
+# SOAM_KC="loginproxy.gov.bc.ca"
+SOAM_KC="test.loginproxy.gov.bc.ca"
 if [ "$ENV_VAL" != "prod" ]
 then
   SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
-else
-# TODO Update when Prod realm available
-# SOAM_KC="loginproxy.gov.bc.ca"
-  SOAM_KC="test.loginproxy.gov.bc.ca"
 fi
 readonly SOAM_KC
 
