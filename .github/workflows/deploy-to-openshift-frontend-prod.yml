@@ -46,7 +46,7 @@ env:
   BANNER_COLOR: ''
   TDAD_CONTACT_EMAIL: '10aDayCentres@gov.bc.ca'
   CCOF_URL: 'https://mychildcareservices.gov.bc.ca'
-  IRREGULAR_EXPENSE_FORM_URL: 'https://www2.gov.bc.ca/assets/gov/family-and-social-supports/child-care/cf1345_cc_operating_program_funding_agreement_change_notification.pdf'
+  IRREGULAR_EXPENSE_FORM_URL: 'https://www2.gov.bc.ca/assets/download/80DAA65E3FA44EFCA61F4557C6FAEE59'
 
 on:
   workflow_dispatch:
