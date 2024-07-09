@@ -23,7 +23,17 @@ elif [ "$ENV_VAL" = "prod" ]; then
   NAMESPACE_SUFFIX="prod"
 fi
 readonly NAMESPACE_SUFFIX
-readonly SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
+
+SOAM_KC = ""
+if [ "$ENV_VAL" != "prod" ]
+then
+  SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
+else
+# TODO Update when Prod realm available
+# SOAM_KC="loginproxy.gov.bc.ca"
+  SOAM_KC="test.loginproxy.gov.bc.ca"
+fi
+readonly SOAM_KC
 
 NODE_ENV="prod"
 if [ "$ENV_VAL" != "prod" ]; then
@@ -39,6 +49,7 @@ if [ "$ENV_VAL" != "prod" ]
 then
   SITE_MINDER_LOGOUT_URL="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
 else
+# TODO Update when Prod URL available
 # SERVER_FRONTEND="https://ofm.mychildcareservices.gov.bc.ca"
   SITE_MINDER_LOGOUT_URL="https://logon7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
 fi
