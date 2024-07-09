@@ -24,7 +24,7 @@ elif [ "$ENV_VAL" = "prod" ]; then
 fi
 readonly NAMESPACE_SUFFIX
 
-SOAM_KC = ""
+SOAM_KC=""
 if [ "$ENV_VAL" != "prod" ]
 then
   SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
