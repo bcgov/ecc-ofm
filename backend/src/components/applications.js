@@ -133,7 +133,6 @@ function buildGetSupplementaryApplicationsFilterQuery(query) {
 async function getSupplementaryApplications(req, res) {
   try {
     const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req.query)} )`
-    log.info(operation)
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {

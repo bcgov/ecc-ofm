@@ -43,7 +43,6 @@ export default {
     return {
       loading: false,
       fundingAgreements: [],
-
       headers: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
@@ -62,13 +61,16 @@ export default {
   },
 
   async created() {
+    this.loading = true
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
-    await this.loadData()
+    await this.loadApprovedSuppApps()
+    this.loading = false
+    this.BASE_FUNDING = 'Base Funding'
   },
 
   methods: {
-    async loadData() {
+    async loadApprovedSuppApps() {
       try {
         this.loading = true
         const applications = await ApplicationService.getActiveApplications()
@@ -78,8 +80,7 @@ export default {
             applications.map((application) => ApplicationService.getSupplementaryApplications(application.applicationId, `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`)),
           )
         ).flat()
-        console.log(this.supplementaryApplications)
-        console.log(this.fundingAgreements)
+
         this.supplementaryApplications.forEach((app) => {
           this.fundingAgreements.push({
             startDate: app.startDate,
@@ -88,14 +89,12 @@ export default {
             fundingAgreementType: app.supplementaryTypeDescription,
             expenseAuthority: '- - - -',
             facilityName: applications.find((el) => app.applicationId === el.applicationId).facilityName,
-            statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
+            statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
           })
         })
       } catch (error) {
         this.setFailureAlert('Failed to load applications', error)
-      } finally {
-        this.loading = false
       }
     },
     async loadFundingAgreements(searchQueries) {
@@ -107,7 +106,7 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = 'Base Funding' // Base Funding is the only Funding Agreement type. This field/column can be removed in the future.
+                fa.fundingAgreementType = this.BASE_FUNDING // Base Funding is the only Funding Agreement type. This field/column can be removed in the future.
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
               })
               this.fundingAgreements.push(...facilityFas)
@@ -117,8 +116,6 @@ export default {
         this.fundingAgreements?.sort((a, b) => b.priority - a.priority) // FA Signature Pending status at the top
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
-      } finally {
-        this.loading = false
       }
     },
 
@@ -126,10 +123,14 @@ export default {
       return fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && this.isExpenseAuthority(fundingAgreement)
     },
 
-    showOpen(fundingAgreement) {
+    showOpen(item) {
+      //TODO : add in link for PDF -- we don't have a PDF to pull for supp apps yet
+      if (item.fundingAgreementType !== this.BASE_FUNDING) {
+        return false
+      }
       return (
-        [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(fundingAgreement?.statusCode) ||
-        (fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(fundingAgreement))
+        [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
+        (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
       )
     },
 
