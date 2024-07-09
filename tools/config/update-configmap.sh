@@ -17,8 +17,10 @@ readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 NAMESPACE_SUFFIX="$ENV_VAL"
 if [ "$ENV_VAL" = "dev" ] || [ "$ENV_VAL" = "test" ]; then
   NAMESPACE_SUFFIX="dev"
-elif [ "$ENV_VAL" = "uat" ]; then
+elif [ "$ENV_VAL" = "uat" ] || [ "$ENV_VAL" = "efx" ]; then
   NAMESPACE_SUFFIX="test"
+elif [ "$ENV_VAL" = "prod" ]; then
+  NAMESPACE_SUFFIX="prod"
 fi
 readonly NAMESPACE_SUFFIX
 readonly SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
@@ -37,7 +39,7 @@ if [ "$ENV_VAL" != "prod" ]
 then
   SITE_MINDER_LOGOUT_URL="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
 else
-  SERVER_FRONTEND="https://ofm.gov.bc.ca" # TODO: Set this to whatever our prod domain will be
+# SERVER_FRONTEND="https://ofm.mychildcareservices.gov.bc.ca"
   SITE_MINDER_LOGOUT_URL="https://logon7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
 fi
 readonly SITE_MINDER_LOGOUT_URL
