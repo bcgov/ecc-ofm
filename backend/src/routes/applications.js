@@ -77,7 +77,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()

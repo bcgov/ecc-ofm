@@ -16,6 +16,7 @@ const {
   updateQuestionResponse,
   deleteQuestionResponse,
 } = require('../components/reports')
+const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -76,7 +77,7 @@ router.get(
  * Accepted queries:
  * - surveyResponseId: to find all question responses in a survey response
  */
-router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
+router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), validateFacility(), (req, res) => {
   validationResult(req).throw()
   return getQuestionResponses(req, res)
 })
@@ -86,7 +87,7 @@ router.get('/question-responses', passport.authenticate('jwt', { session: false 
  * Accepted queries:
  * - facilityId and fiscalYearId: to find all survey responses for a facility in a fiscal year
  */
-router.get('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
+router.get('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), validateFacility(), (req, res) => {
   validationResult(req).throw()
   return getSurveyResponses(req, res)
 })
