@@ -4,7 +4,7 @@ const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility } = require('../components/facilities')
-const { param, query, validationResult } = require('express-validator')
+const { param, validationResult } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
@@ -19,7 +19,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()

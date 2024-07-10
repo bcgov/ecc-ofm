@@ -7,8 +7,8 @@ const log = require('../components/logger')
  */
 module.exports = function () {
   return async function (req, res, next) {
-    log.info(`validating organization`)
-    const organizationId = req.params.organizationId ?? req.body.organizationId
+    log.verbose(`validating organization`)
+    const organizationId = req.params.organizationId ?? req.query.organizationId ?? req.body.organizationId
     if (!organizationId) return next()
     const valid = organizationId === req.session?.passport?.user?.organizationId
 

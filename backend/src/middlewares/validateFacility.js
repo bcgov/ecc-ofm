@@ -7,7 +7,7 @@ const log = require('../components/logger')
  */
 module.exports = function (portalAccess = true) {
   return async function (req, res, next) {
-    log.info(`validating facility`)
+    log.verbose(`validating facility`)
     const facilityId = req.params.facilityId ?? req.query.facilityId ?? req.body.facilityId
 
     if (!facilityId) return next()
