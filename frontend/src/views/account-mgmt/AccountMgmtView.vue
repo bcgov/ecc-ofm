@@ -46,7 +46,7 @@ export default {
 <style scoped>
 .account-card {
   border-top: 5px solid #003366 !important;
-  min-height: 250px;
+  min-height: 225px;
 }
 
 ul {
