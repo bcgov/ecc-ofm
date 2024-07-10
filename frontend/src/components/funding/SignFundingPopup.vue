@@ -35,13 +35,14 @@ import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import FundingAgreementService from '@/services/fundingAgreementService'
+import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin.js'
 
 const MAX_FACILITIES_DISPLAYED = 3
 export default {
   name: 'HomeView',
   components: { AppButton, AppDialog },
-  mixins: [permissionsMixin],
+  mixins: [alertMixin, permissionsMixin],
   emits: ['loading'],
   data() {
     return {
@@ -90,12 +91,12 @@ export default {
         if (this.fundingAgreements.length > 0) {
           this.isDisplayed = true
         }
-        this.loading = false
       } catch (error) {
-        console.log(`Failed to load Funding Agreements - ${error}`)
-        throw error
+        this.setFailureAlert('Failed to load Funding Agreements', error)
+      } finally {
+        this.loading = false
+        this.$emit('loading', this.loading)
       }
-      this.$emit('loading', this.loading)
     },
   },
 }

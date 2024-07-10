@@ -5,6 +5,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getOrganization, getOrganizationFacilities, getOrganizationUsers, updateOrganization } = require('../components/organizations')
 const { param, validationResult } = require('express-validator')
+const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -18,8 +19,8 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
     return getOrganization(req, res)
@@ -34,8 +35,8 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
     return getOrganizationFacilities(req, res)
@@ -50,7 +51,7 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
-  // TODO Validate User Organization ID
+  validateOrganization(),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -66,8 +67,8 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_USERS_EDIT),
-  // TODO Validate User Organization ID
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
     return getOrganizationUsers(req, res)

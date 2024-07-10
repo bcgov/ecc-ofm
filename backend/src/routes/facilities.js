@@ -5,6 +5,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility } = require('../components/facilities')
 const { param, validationResult } = require('express-validator')
+const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -14,11 +15,12 @@ module.exports = router
  * Get facility's details using accountId/facilityId
  */
 router.get(
-  '/:accountId',
+  '/:facilityId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('accountId', 'URL param: [accountId] is required').not().isEmpty()],
+  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
     return getFacility(req, res)
@@ -34,6 +36,7 @@ router.get(
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
     return getFacilityContacts(req, res)
@@ -49,6 +52,7 @@ router.put(
   isValidBackendToken,
   validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
   [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  validateFacility(true),
   (req, res) => {
     validationResult(req).throw()
     return updateFacility(req, res)
@@ -64,6 +68,7 @@ router.get(
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
     return getFacilityLicences(req, res)
