@@ -45,8 +45,9 @@
       </v-col>
     </v-row>
   </v-container>
+
   <SignFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setLoading" />
-  <NewRequestDialog :show="showAssistanceRequestDialog" @close="toggleAssistanceRequestDialog" />
+  <NewRequestDialog v-if="hasPermission(PERMISSIONS.MANAGE_NOTIFICATIONS)" :show="showAssistanceRequestDialog" @close="toggleAssistanceRequestDialog" />
 </template>
 
 <script>
