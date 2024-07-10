@@ -79,7 +79,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .home-card {
   border-top: 5px solid #003366 !important;
   min-height: 150px;
