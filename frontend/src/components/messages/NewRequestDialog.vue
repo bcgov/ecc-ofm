@@ -556,7 +556,7 @@ export default {
         if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties?.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)) {
           this.newRequestModel.facilities = []
           //then shorten the facility model to 1 item if going from multi-select to single select
-        } else if (this.newRequestModel.facilities?.length > 1 && (this.isAccountMaintenanceRequest || this.isIrregularExpenseRequest || this.isReportingRequest)) {
+        } else if (this.newRequestModel.facilities?.length > 1 && !this.isMultipleFacilities) {
           this.newRequestModel.facilities = this.newRequestModel.facilities[0]
         }
       },
