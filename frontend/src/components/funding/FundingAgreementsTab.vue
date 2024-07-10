@@ -87,7 +87,7 @@ export default {
             endDate: app.endDate,
             fundingAgreementNumber: app.supplementaryReferenceNumber,
             fundingAgreementType: app.supplementaryTypeDescription,
-            expenseAuthority: this.BLANK_FIELD,
+            expenseAuthority: BLANK_FIELD,
             facilityName: applications.find((el) => app.applicationId === el.applicationId).facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
