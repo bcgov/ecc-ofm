@@ -32,9 +32,10 @@ import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD } from '@/utils/constants'
 import format from '@/utils/format'
 
+const BASE_FUNDING = 'Base Funding'
 export default {
   name: 'FundingAgreementsTab',
   components: { AppButton, FundingSearchCard },
@@ -61,7 +62,6 @@ export default {
   },
 
   async created() {
-    this.BASE_FUNDING = 'Base Funding'
     this.loading = true
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
@@ -87,7 +87,7 @@ export default {
             endDate: app.endDate,
             fundingAgreementNumber: app.supplementaryReferenceNumber,
             fundingAgreementType: app.supplementaryTypeDescription,
-            expenseAuthority: '- - - -',
+            expenseAuthority: this.BLANK_FIELD,
             facilityName: applications.find((el) => app.applicationId === el.applicationId).facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
@@ -106,7 +106,7 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = this.BASE_FUNDING
+                fa.fundingAgreementType = BASE_FUNDING
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
               })
               this.fundingAgreements.push(...facilityFas)
@@ -125,7 +125,7 @@ export default {
 
     showOpen(item) {
       //TODO : add in link for PDF -- we don't have a PDF to pull for supp apps yet
-      if (item.fundingAgreementType !== this.BASE_FUNDING) {
+      if (item.fundingAgreementType !== BASE_FUNDING) {
         return false
       }
       return (
