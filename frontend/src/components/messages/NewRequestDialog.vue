@@ -551,7 +551,7 @@ export default {
         }
         this.resetModelData(this.isAccountMaintenanceRequest)
         // Reset the Selected Facility if not allowed
-        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)) {
+        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties?.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)) {
           this.newRequestModel.facilities = []
         }
       },
