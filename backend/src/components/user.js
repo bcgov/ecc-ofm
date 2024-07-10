@@ -156,7 +156,7 @@ async function getUserProfile(userGuid, userName) {
     // BCeID usernames can change but the guid won't so check for a mismatch to prevent unauthorized access
     // A mismatch could occur because an existing account (guid) gets a new username (username mismatch) or
     // because an existing username is given to a new guid (guid mismatch)
-    if (userGuid && (userProfile.ccof_userid !== userGuid || userProfile.ccof_username !== userName)) {
+    if (userGuid && (userProfile.ccof_userid !== userGuid || userProfile.ccof_username?.toLowerCase() !== userName?.toLowerCase())) {
       return null
     }
 

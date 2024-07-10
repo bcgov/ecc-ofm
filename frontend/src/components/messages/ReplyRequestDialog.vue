@@ -4,10 +4,10 @@
       <template #content>
         <v-form ref="replyRequestForm" v-model="isFormComplete" class="px-4">
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12">
+            <v-col cols="12">
               <AppLabel variant="modal">Reply to request:</AppLabel>
             </v-col>
-            <v-col class="v-col-12">
+            <v-col cols="12">
               <v-textarea v-model="message" placeholder="Enter message text" counter maxlength="1000" variant="outlined" :rules="rules.required" :rows="6" :disabled="isLoading"></v-textarea>
             </v-col>
           </v-row>

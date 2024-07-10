@@ -25,9 +25,6 @@
             <AppButton v-if="showUnlock(item)" :primary="false" size="small" class="ml-2 ml-md-0 ml-lg-2" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
               Unlock
             </AppButton>
-            <v-btn variant="text" @click="false">
-              <v-icon aria-label="Download" size="large">mdi-tray-arrow-down</v-icon>
-            </v-btn>
           </v-row>
         </template>
       </v-data-table>

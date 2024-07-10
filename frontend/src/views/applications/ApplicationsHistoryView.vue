@@ -37,7 +37,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
-          <div v-if="!hasAValidApplication && !loading">
+          <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
               {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
             </AppAlertBanner>
@@ -50,8 +50,27 @@
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">
+              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="mt-8">
                 Add Supplementary Application
+              </AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-card class="home-card justify-center">
+            <v-card-title class="text-center">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              Irregular Expenses Application
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              To apply for Irregular Expenses, you must have an active Funding Agreement in place.
+              <br />
+              Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="irregular-expense-button" :loading="loading" size="large" width="450px" :disabled="!hasAValidFundingAgreement" @click="toggleChangeRequestDialog" class="mt-8">
+                Add Irregular Expenses Application
               </AppButton>
             </v-card-actions>
           </v-card>
@@ -109,6 +128,7 @@
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+    <NewRequestDialog :show="showChangeRequestDialog" :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)" @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 
@@ -124,6 +144,7 @@ import CancelApplicationDialog from '@/components/applications/CancelApplication
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
@@ -131,13 +152,16 @@ import {
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
   APPLICATION_TYPES,
+  REQUEST_CATEGORY_NAMES,
+  FUNDING_AGREEMENT_STATUS_CODES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
+import { useAppStore } from '@/stores/app'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner, NewRequestDialog },
   mixins: [alertMixin, permissionsMixin],
 
   data() {
@@ -163,17 +187,23 @@ export default {
       facilityNameFilter: undefined,
       applicationTypeToCancel: undefined,
       orgInfo: undefined,
+      showChangeRequestDialog: false,
     }
   },
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
-    hasAValidApplication() {
-      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+
+    hasAValidFundingAgreement() {
+      return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
     },
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
+    },
+    hasAValidApplicationAndGoodStanding() {
+      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
     filteredApplicationItems() {
       return this.sortApplicationItems(
@@ -200,6 +230,7 @@ export default {
   async created() {
     try {
       this.loading = true
+      this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
@@ -406,6 +437,13 @@ export default {
       } catch (error) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
+    },
+
+    /**
+     * Open the Change Request dialog
+     */
+    toggleChangeRequestDialog() {
+      this.showChangeRequestDialog = !this.showChangeRequestDialog
     },
   },
 }

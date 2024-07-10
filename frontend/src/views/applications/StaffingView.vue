@@ -1,13 +1,53 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mt-4"><strong>Please provide staffing information for the selected facility:</strong></v-row>
+    <v-card class="my-6 pa-4">
+      <v-row no-gutters class="mt-4">
+        <v-col cols="12">
+          <AppLabel>Is your facility unionized?</AppLabel>
+        </v-col>
+        <v-col cols="12">
+          <v-radio-group v-model="model.isUnionized" :rules="rules.required" :hide-details="readonly" :disabled="readonly" inline color="primary">
+            <v-radio label="Yes" :value="1" />
+            <v-radio label="No" :value="0" />
+          </v-radio-group>
+        </v-col>
+      </v-row>
+      <v-row v-if="model.isUnionized === 1" no-gutters>
+        <v-col cols="12">
+          <AppLabel>Which Union(s) do your staff belong to?</AppLabel>
+        </v-col>
+        <v-col cols="12" lg="8" xl="6">
+          <v-select
+            v-model.lazy="model.unions"
+            :rules="rules.required"
+            :hide-details="readonly"
+            :disabled="readonly"
+            variant="outlined"
+            chips
+            multiple
+            :items="unions"
+            item-title="description"
+            item-value="id">
+            <template v-slot:prepend-item>
+              <v-list-item title="Select All" @click="toggleAllUnions">
+                <template v-slot:prepend>
+                  <v-checkbox-btn :color="someUnionsSelected ? '#003366' : undefined" :indeterminate="someUnionsSelected && !allUnionsSelected" :model-value="someUnionsSelected"></v-checkbox-btn>
+                </template>
+              </v-list-item>
+              <v-divider class="mt-2"></v-divider>
+            </template>
+          </v-select>
+        </v-col>
+      </v-row>
+    </v-card>
     <div v-if="!readonly && validation && !isStaffingComplete">
       <AppMissingInfoError v-if="!isThereAtLeastOneEmployee(model)">{{ APPLICATION_ERROR_MESSAGES.STAFFING }}</AppMissingInfoError>
       <AppMissingInfoError v-if="!areAllEmployeeCertificatesEntered(allUpdatedCertificates, model)">{{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}</AppMissingInfoError>
       <AppMissingInfoError v-if="!areAllCertificateInitialsUnique(allUpdatedCertificates)">{{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}</AppMissingInfoError>
       <AppMissingInfoError v-if="!areAllCertificateNumbersUnique(allUpdatedCertificates)">{{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}</AppMissingInfoError>
     </div>
-    <v-card class="my-6 pa-4" variant="outlined">
+    <v-card class="my-6 pa-4">
       <v-row no-gutters>
         <v-col cols="4">
           <h4>Employee Category</h4>
@@ -174,17 +214,19 @@
 
 <script>
 import { cloneDeep } from 'lodash'
+import { mapState, mapWritableState, mapActions } from 'pinia'
 
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import StaffingCertificateInput from '@/components/applications/StaffingCertificateInput.vue'
 
+import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapWritableState, mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
 import { APPLICATION_ROUTES, APPLICATION_PROVIDER_EMPLOYEE_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
-import { sanitizeWholeNumberInput } from '@/utils/common'
+import { convertArrayToString, convertStringToArray, sanitizeWholeNumberInput } from '@/utils/common'
+import rules from '@/utils/rules'
 
 export default {
   name: 'StaffingView',
@@ -230,6 +272,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useAppStore, ['unions']),
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
 
@@ -265,8 +308,15 @@ export default {
       })
     },
 
+    allUnionsSelected() {
+      return this.model.unions?.length === this.unions?.length
+    },
+    someUnionsSelected() {
+      return this.model.unions?.length > 0
+    },
+
     isFormComplete() {
-      return this.isThereAtLeastOneEmployee(this.model) && this.areEmployeeCertificatesComplete(this.allUpdatedCertificates, this.model)
+      return this.isThereAtLeastOneEmployee(this.model) && this.areEmployeeCertificatesComplete(this.allUpdatedCertificates, this.model) && this.isUnionSectionComplete(this.model)
     },
   },
 
@@ -297,22 +347,21 @@ export default {
     this.$emit('process', false)
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.APPLICATION_PROVIDER_EMPLOYEE_TYPES = APPLICATION_PROVIDER_EMPLOYEE_TYPES
-    this.model = {
-      staffingInfantECEducatorFullTime: this.currentApplication?.staffingInfantECEducatorFullTime ?? 0,
-      staffingInfantECEducatorPartTime: this.currentApplication?.staffingInfantECEducatorPartTime ?? 0,
-      staffingECEducatorFullTime: this.currentApplication?.staffingECEducatorFullTime ?? 0,
-      staffingECEducatorPartTime: this.currentApplication?.staffingECEducatorPartTime ?? 0,
-      staffingECEducatorAssistantFullTime: this.currentApplication?.staffingECEducatorAssistantFullTime ?? 0,
-      staffingECEducatorAssistantPartTime: this.currentApplication?.staffingECEducatorAssistantPartTime ?? 0,
-      staffingResponsibleAdultFullTime: this.currentApplication?.staffingResponsibleAdultFullTime ?? 0,
-      staffingResponsibleAdultPartTime: this.currentApplication?.staffingResponsibleAdultPartTime ?? 0,
-    }
+    this.rules = rules
+    this.initializeApplicationModel()
     this.cloneSavedCertificates()
+  },
+
+  async mounted() {
+    if (this.validation) {
+      await this.$refs.form?.validate()
+    }
   },
 
   methods: {
     ...mapActions(useApplicationsStore, [
       'getApplication',
+      'isUnionSectionComplete',
       'isThereAtLeastOneEmployee',
       'areEmployeeCertificatesComplete',
       'areAllEmployeeCertificatesEntered',
@@ -320,20 +369,38 @@ export default {
       'areAllCertificateNumbersUnique',
     ]),
 
+    initializeApplicationModel() {
+      this.model = {
+        staffingInfantECEducatorFullTime: this.currentApplication?.staffingInfantECEducatorFullTime ?? 0,
+        staffingInfantECEducatorPartTime: this.currentApplication?.staffingInfantECEducatorPartTime ?? 0,
+        staffingECEducatorFullTime: this.currentApplication?.staffingECEducatorFullTime ?? 0,
+        staffingECEducatorPartTime: this.currentApplication?.staffingECEducatorPartTime ?? 0,
+        staffingECEducatorAssistantFullTime: this.currentApplication?.staffingECEducatorAssistantFullTime ?? 0,
+        staffingECEducatorAssistantPartTime: this.currentApplication?.staffingECEducatorAssistantPartTime ?? 0,
+        staffingResponsibleAdultFullTime: this.currentApplication?.staffingResponsibleAdultFullTime ?? 0,
+        staffingResponsibleAdultPartTime: this.currentApplication?.staffingResponsibleAdultPartTime ?? 0,
+        isUnionized: this.currentApplication?.isUnionized,
+        unions: convertStringToArray(this.currentApplication?.unions)?.map((item) => Number(item)),
+      }
+    },
+
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)
         this.processing = true
-        const isApplicationUpdated = ApplicationService.isApplicationUpdated(this.model)
+        const applicationPayload = cloneDeep(this.model)
+        applicationPayload.unions = applicationPayload?.isUnionized === 1 && this.model.unions?.length > 0 ? convertArrayToString(this.model.unions) : null
+        const isApplicationUpdated = ApplicationService.isApplicationUpdated(applicationPayload)
         const isCertificatesUpdated = this.certificatesToCreate?.length > 0 || this.certificatesToUpdate?.length > 0 || this.certificatesToDelete?.length > 0
         if (isApplicationUpdated || isCertificatesUpdated) {
           if (isApplicationUpdated) {
-            await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.model)
+            await ApplicationService.updateApplication(this.$route.params.applicationGuid, applicationPayload)
           }
           if (isCertificatesUpdated) {
             await this.saveEmployeeCertificates()
           }
           await this.getApplication(this.$route.params.applicationGuid)
+          this.initializeApplicationModel()
           this.cloneSavedCertificates()
         }
         if (showAlert) {
@@ -396,6 +463,14 @@ export default {
 
     updateECEACertificates(certificates) {
       this.updatedECEACertificates = certificates
+    },
+
+    toggleAllUnions() {
+      if (this.allUnionsSelected) {
+        this.model.unions = []
+      } else {
+        this.model.unions = this.unions?.map((item) => item.id)
+      }
     },
   },
 }
