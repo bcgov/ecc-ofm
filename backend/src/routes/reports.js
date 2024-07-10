@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { param, validationResult, checkSchema } = require('express-validator')
+const { query, param, validationResult, checkSchema } = require('express-validator')
 const {
   getSurveySections,
   getSurveyQuestions,
@@ -52,7 +52,7 @@ router.get('/survey-sections', passport.authenticate('jwt', { session: false }),
  * Accepted queries:
  * - sectionId: to find all questions in a survey section
  */
-router.get('/survey-questions', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
+router.get('/survey-questions', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), validateFacility(), (req, res) => {
   validationResult(req).throw()
   return getSurveyQuestions(req, res)
 })
@@ -77,7 +77,7 @@ router.get(
  * Accepted queries:
  * - surveyResponseId: to find all question responses in a survey response
  */
-router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), validateFacility(), (req, res) => {
+router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
   validationResult(req).throw()
   return getQuestionResponses(req, res)
 })
@@ -87,10 +87,18 @@ router.get('/question-responses', passport.authenticate('jwt', { session: false 
  * Accepted queries:
  * - facilityId and fiscalYearId: to find all survey responses for a facility in a fiscal year
  */
-router.get('/survey-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), validateFacility(), (req, res) => {
-  validationResult(req).throw()
-  return getSurveyResponses(req, res)
-})
+router.get(
+  '/survey-responses',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
+  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  validateFacility(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getSurveyResponses(req, res)
+  },
+)
 
 /**
  * Update a survey response
