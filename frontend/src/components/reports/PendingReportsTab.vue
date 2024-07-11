@@ -1,5 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
+    <div class="mt-2">Complete, manage or submit current reports for your facilities. Request to unlock or view overdue reports and past submissions.</div>
     <v-row class="mt-1 mb-4">
       <v-col cols="12" md="5">
         <h2>Report Details</h2>

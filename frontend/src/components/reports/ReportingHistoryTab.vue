@@ -1,6 +1,7 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <ReportingSearchCard :loading="loading" class="mb-6" @search="loadSubmittedReports" />
+    <div class="mt-2 ml-2">Access previously completed or submitted reports and surveys.</div>
+    <ReportingSearchCard :loading="loading" class="my-6" @search="loadSubmittedReports" />
     <v-row no-gutters class="my-4">
       <v-col cols="12" md="5">
         <h2>Report Details</h2>
