@@ -1,7 +1,8 @@
 <template>
   <v-container fluid class="pa-0">
-    <FundingSearchCard :loading="loading" @search="loadFundingAgreements" />
-    <h2 class="mt-8 mb-2">Funding Details</h2>
+    <div class="mt-2 ml-2">Manage your facility's current funding requests.</div>
+    <FundingSearchCard :loading="loading" class="my-6" @search="loadFundingAgreements" />
+    <h2 class="mb-2">Funding Details</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
         <template #[`item.startDate`]="{ item }">
