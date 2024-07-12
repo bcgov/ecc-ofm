@@ -65,19 +65,21 @@ export default {
     this.loading = true
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
-    await this.loadApprovedSuppApps()
+
     this.loading = false
   },
 
   methods: {
-    async loadApprovedSuppApps() {
+    async loadApprovedSuppApps(startDateFrom, startDateTo) {
       try {
         this.loading = true
         const applications = await ApplicationService.getActiveApplications()
 
         this.supplementaryApplications = (
           await Promise.all(
-            applications.map((application) => ApplicationService.getSupplementaryApplications(application.applicationId, `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`)),
+            applications.map((application) =>
+              ApplicationService.getSupplementaryApplicationsByDate(application.applicationId, `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`, startDateFrom, startDateTo),
+            ),
           )
         ).flat()
 
@@ -88,7 +90,7 @@ export default {
             fundingAgreementNumber: app.supplementaryReferenceNumber,
             fundingAgreementType: app.supplementaryTypeDescription,
             expenseAuthority: BLANK_FIELD,
-            facilityName: applications.find((el) => app.applicationId === el.applicationId).facilityName,
+            facilityName: applications.find((el) => app?.applicationId === el?.applicationId).facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
           })
@@ -113,9 +115,12 @@ export default {
             }
           }),
         )
+        await this.loadApprovedSuppApps(searchQueries?.dateFrom, searchQueries?.dateTo)
         this.fundingAgreements?.sort((a, b) => b.priority - a.priority) // FA Signature Pending status at the top
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
+      } finally {
+        this.loading = false
       }
     },
 
