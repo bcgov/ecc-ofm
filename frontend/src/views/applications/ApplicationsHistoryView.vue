@@ -14,7 +14,7 @@
       <h3 class="mt-6 mb-2">Add New Application</h3>
       <v-row class="align-end">
         <v-col cols="12" md="6">
-          <v-card class="home-card justify-center">
+          <v-card class="basic-card justify-center">
             <v-card-title class="text-center">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               OFM Application
@@ -43,7 +43,7 @@
             </AppAlertBanner>
             <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
           </div>
-          <v-card class="home-card justify-center">
+          <v-card class="basic-card justify-center">
             <v-card-title class="text-center">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               Supplementary Allowance Application
@@ -58,7 +58,7 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <v-card class="home-card justify-center">
+          <v-card class="basic-card justify-center">
             <v-card-title class="text-center">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               Irregular Expenses Application
