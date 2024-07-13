@@ -21,9 +21,16 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
-            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
-            <AppButton v-if="showUnlock(item)" :primary="false" size="small" class="ml-2 ml-md-0 ml-lg-2" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">Update</AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton
+              v-if="showUnlock(item)"
+              :primary="false"
+              size="small"
+              height="30px"
+              class="ml-2 ml-md-0 ml-lg-2"
+              :disabled="hasInProgressAssistanceRequest(item)"
+              @click="toggleAssistanceRequestDialog(item)">
               Unlock
             </AppButton>
           </v-row>

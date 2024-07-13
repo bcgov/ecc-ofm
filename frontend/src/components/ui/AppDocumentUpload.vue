@@ -7,7 +7,7 @@
         </v-col>
         <v-col cols="12" :sm="documentType ? '7' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
           <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-          <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+          <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" class="addFileButton" @click="addFile">Add File</AppButton>
         </v-col>
       </v-row>
       <div v-if="documents.length > 0" class="mt-6">

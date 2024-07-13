@@ -1,17 +1,17 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col class="ml-6 mt-10 pb-0">
+    <v-row class="pb-0">
+      <v-col cols="12" lg="6" class="pb-0">
         <h4>Organization Details</h4>
       </v-col>
-      <v-col v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" class="ml-6 mt-6 pb-0">
+      <v-col cols="12" lg="6" v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" class="pb-0">
         <v-row no-gutters justify="end">
-          <AppButton size="large" width="300px" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
+          <AppButton :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="ml-6 pt-0">
+      <v-col>
         <OrganizationInfo
           :loading="loading"
           :editable="hasPermission(PERMISSIONS.UPDATE_ORG_FACILITY)"
@@ -23,12 +23,12 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="ml-6 pt-0 pb-1">
+      <v-col class="py-0">
         <h4>Facilities</h4>
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-6 pr-9 pt-0">
+      <v-col cols="12">
         <v-card class="pa-6" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-row>
@@ -62,11 +62,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <AppBackButton width="400px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
-      </v-col>
-    </v-row>
+    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading" class="mt-4">Account Management</AppBackButton>
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"

@@ -16,8 +16,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showSign(item)" :primary="false" size="small" @click="goToFundingAgreement(item)">Sign</AppButton>
-            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" @click="goToFundingAgreement(item)">Open</AppButton>
+            <AppButton v-if="showSign(item)" :primary="false" size="small" height="30px" @click="goToFundingAgreement(item)">Sign</AppButton>
+            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" height="30px" @click="goToFundingAgreement(item)">Open</AppButton>
           </v-row>
         </template>
       </v-data-table>
