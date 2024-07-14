@@ -47,7 +47,7 @@
               </v-row>
             </v-card>
           </v-col>
-          <v-col cols="12" md="6" lg="6" class="mt-3 mt-lg-0 pl-md-3">
+          <v-col cols="12" md="6" lg="6" class="mt-3 mt-md-0 pl-md-3">
             <v-card variant="outlined" class="card-outline fill-height">
               <v-row no-gutters>
                 <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">

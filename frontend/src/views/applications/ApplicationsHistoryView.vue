@@ -32,7 +32,7 @@
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              Allowances (Core or Discretionary Services) Request
+              Allowances (Core and Discretionary Services) Request
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for funding Allowances, you must have an active OFM application for the facility.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">

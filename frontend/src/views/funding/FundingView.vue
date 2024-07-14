@@ -84,7 +84,7 @@
       <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="readonly" color="primary" label="I agree, consent and certify" />
     </v-row>
 
-    <v-row v-if="!loading" class="justify-center justify-md-space-between mx-md-7 my-3">
+    <v-row v-if="!loading" class="justify-center justify-sm-space-between mx-md-7 my-3">
       <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
       <AppButton id="submit-funding-agreement" size="large" width="240px" class="mt-2" :disabled="submitDisabled" :loading="loading" @click="submit()">Submit</AppButton>
     </v-row>
