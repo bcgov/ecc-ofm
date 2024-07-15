@@ -5,7 +5,7 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="3" class="d-flex flex-column align-end pa-0">
-        <AppButton variant="text" width="150px" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
+        <AppButton variant="text" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>

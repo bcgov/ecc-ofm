@@ -3,10 +3,10 @@
     <div class="mt-4"><strong>Please provide operating costs for the selected facility:</strong></div>
     <!-- SELECT FACILITY TYPE -->
     <v-row id="facility-types" no-gutters class="mt-4">
-      <v-col cols="12" md="3" lg="2" class="mt-4">
+      <v-col cols="12" md="3" lg="2" xxl="1" class="mt-4">
         <AppLabel>Facility Type:</AppLabel>
       </v-col>
-      <v-col cols="10" md="7" lg="5" class="mt-3">
+      <v-col cols="10" md="7" lg="5" xxl="3" class="mt-3">
         <v-select
           id="select-facility-types"
           v-model="model.facilityType"
@@ -19,8 +19,8 @@
           density="compact"
           variant="outlined"></v-select>
       </v-col>
-      <v-col cols="2" md="2" lg="1" class="mt-4" align="center">
-        <v-tooltip content-class="tooltip" :text="FACILITY_TYPE_INFO_TXT">
+      <v-col v-if="facilityTypeTooltip" cols="2" md="2" lg="1" class="mt-4" align="center">
+        <v-tooltip content-class="tooltip" :text="facilityTypeTooltip" max-width="300px">
           <template v-slot:activator="{ props }">
             <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
           </template>
@@ -31,15 +31,7 @@
     <div v-if="model.facilityType" id="arm-length">
       <!-- ARM LENGTH -->
       <v-checkbox v-if="isRentLease" v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
-        <template #label>
-          I attest that the rent/lease agreement is at Arm's Length.
-          <!-- TODO (vietle-cgi) - pending on the tooltips text from the business -->
-          <!-- <v-tooltip content-class="tooltip" :text="FACILITY_TYPE_INFO_TXT">
-            <template #activator="{ props }">
-              <v-icon size="large" v-bind="props" color="black" class="ml-2">mdi-information-slab-circle-outline</v-icon>
-            </template>
-          </v-tooltip> -->
-        </template>
+        <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
       </v-checkbox>
 
       <!-- OPERATING COST / FACILITY COST -->
@@ -227,6 +219,20 @@ export default {
     showErrorMessage() {
       return !this.readonly && !this.processing && this.validation
     },
+    facilityTypeTooltip() {
+      switch (this.model.facilityType) {
+        case FACILITY_TYPES.RENT_LEASE:
+          return 'If you rent or lease the child care facility, please enter the payment details.'
+        case FACILITY_TYPES.OWNED_WITH_MORTGAGE:
+          return 'If you own the building and have a monthly mortgage payment for child care facility, please enter the payment details. Corporations, partnerships, sole proprietor participants (excluding home-based providers) are not eligible for this expense.'
+        case FACILITY_TYPES.OWNED_WITHOUT_MORTGAGE:
+          return 'If you own the building and do not have a monthly mortgage payment for child care facility, cost details are not needed. Corporations, partnerships, sole proprietor participants (excluding home-based providers) are not eligible for this expense.'
+        case FACILITY_TYPES.PROVIDED_FREE_OF_CHARGE:
+          return 'If you use the child care facility for free, the cost details are not needed.'
+        default:
+          return null
+      }
+    },
   },
 
   watch: {
@@ -257,7 +263,6 @@ export default {
     this.$emit('process', false)
     this.model.facilityType = this.currentApplication?.facilityType
     this.model.armsLength = this.currentApplication?.armsLength
-    this.FACILITY_TYPE_INFO_TXT = 'This is a placeholder message'
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE

@@ -1,5 +1,5 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Unable to submit your request" class="text-wrap" persistent max-width="40%" @close="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Unable to submit your request" class="text-wrap" persistent :max-width="$vuetify.display.mdAndDown ? '80%' : '50%'" @close="closeDialog">
     <template #content>
       <div align="center" class="confirm-dialog-text">
         <template v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM">
@@ -12,27 +12,22 @@
         </template>
         <template v-else-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM">
           <h3 class="mb-3">Your organization does not have any facility in OFM</h3>
-          {{ MSG_TEXT_CCOF }}<br>{{ MSG_TEXT_TDAD }}{{ TDAD_CONTACT_EMAIL }}
+          {{ MSG_TEXT_CCOF }}
+          <br />
+          {{ MSG_TEXT_TDAD }}{{ TDAD_CONTACT_EMAIL }}
         </template>
       </div>
     </template>
     <template #button>
-      <v-row justify="space-around" class="pt-3">
-        <v-col cols="12" sm="1" md="5" class="d-flex justify-center">
-          <AppButton id="dialog-cancel" :primary="false" class="mr-10" size="large" width="175px" @click="closeDialog">Cancel</AppButton>
-          <AppButton v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM"
-            id="dialog-continue"
-            size="large"
-            width="250px"
-            :href="CCOF_URL"
-            target="_blank"
-            @click="closeDialog">MyCCS Change Form</AppButton>
-          <AppButton v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM"
-            id="dialog-continue"
-            size="large"
-            width="175px"
-            :href="`mailto:${TDAD_CONTACT_EMAIL}`"
-            @click="closeDialog">Send Email</AppButton>
+      <v-row>
+        <v-col class="d-flex justify-center">
+          <AppButton id="dialog-cancel" :primary="false" size="large" width="250px" @click="closeDialog">Cancel</AppButton>
+        </v-col>
+        <v-col v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM" class="d-flex justify-center">
+          <AppButton id="change-form-button" size="large" width="250px" :href="CCOF_URL" target="_blank" @click="closeDialog">MyCCS Change Form</AppButton>
+        </v-col>
+        <v-col v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM || displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM" class="d-flex justify-center">
+          <AppButton id="send-email-button" size="large" width="250px" :href="`mailto:${TDAD_CONTACT_EMAIL}`" @click="closeDialog">Send Email</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -56,9 +51,7 @@ export default {
     displayType: {
       type: String,
       validator: function (value) {
-        return [PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
-        PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
-        PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM].includes(value)
+        return [PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM, PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM, PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM].includes(value)
       },
       default: null,
     },

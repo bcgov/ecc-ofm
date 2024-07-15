@@ -254,7 +254,7 @@ export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
 export const BLANK_FIELD = '- - - -'
 
 export const APPLICATION_TYPES = Object.freeze({
-  OFM: 'OFM',
+  OFM: 'Base Funding',
 })
 
 export const DAYS_OF_WEEK = Object.freeze([
