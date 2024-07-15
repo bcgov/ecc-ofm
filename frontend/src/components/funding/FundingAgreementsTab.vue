@@ -82,7 +82,7 @@ export default {
                 application.applicationId,
                 `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`,
                 searchQueries?.dateFrom,
-                searchQueries?.dateToartDateTo,
+                searchQueries?.dateTo,
               ),
             ),
           )
@@ -95,7 +95,7 @@ export default {
             fundingAgreementNumber: app.supplementaryReferenceNumber,
             fundingAgreementType: app.supplementaryTypeDescription,
             expenseAuthority: BLANK_FIELD,
-            facilityName: applications?.find((el) => app?.applicationId === el?.applicationId).facilityName,
+            facilityName: applications?.find((el) => app?.applicationId === el?.applicationId)?.facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
           })
