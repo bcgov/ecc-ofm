@@ -73,11 +73,11 @@ export default {
     //JB TODO: show expired (but approved) supp apps... that functionality does not exist in CRM yet. to come after MVP?
     async loadApprovedSuppApps(searchQueries) {
       try {
-        const applications = this.applications.filter((application) => searchQueries?.facilities.some((facility) => facility?.facilityId === application.facilityId))
+        const applications = this.applications?.filter((application) => searchQueries?.facilities?.some((facility) => facility?.facilityId === application?.facilityId))
 
         this.supplementaryApplications = (
           await Promise.all(
-            applications.map((application) =>
+            applications?.map((application) =>
               ApplicationService.getSupplementaryApplicationsByDate(
                 application.applicationId,
                 `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`,
