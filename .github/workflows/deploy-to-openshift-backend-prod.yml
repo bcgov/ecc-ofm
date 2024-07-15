@@ -36,8 +36,6 @@ env:
   MAX_CPU: '250m'
   MIN_MEM: '200Mi'
   MAX_MEM: '700Mi'
-  # SITE_URL should have no scheme or port. It will be prepended with https://
-  HOST_ROUTE: ${{ secrets.SITE_URL }}
 
 on:
   workflow_dispatch:
@@ -134,7 +132,7 @@ jobs:
             -p MAX_CPU=${{ env.MAX_CPU }} \
             -p MIN_MEM=${{ env.MIN_MEM }} \
             -p MAX_MEM=${{ env.MAX_MEM }} \
-            -p HOST_ROUTE=${{ env.HOST_ROUTE }} \
+            -p HOST_ROUTE=${{ secrets.HOST_ROUTE }} \
             -p ENVIRONMENT=${{ env.APP_ENVIRONMENT }} \
             | oc apply -f -
 

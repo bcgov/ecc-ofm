@@ -35,11 +35,6 @@ env:
   MAX_CPU: '100m'
   MIN_MEM: '200Mi'
   MAX_MEM: '250Mi'
-  # SITE_URL should have no scheme or port. It will be prepended with https://
-  HOST_ROUTE: ${{ secrets.SITE_URL }}
-  CA_CERT: ${{ secrets.CA_CERT }}
-  CERTIFICATE: ${{ secrets.CERTIFICATE }}
-  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
   # Frontend configuration
   BANNER_ENVIRONMENT: ''
@@ -150,7 +145,7 @@ jobs:
             -p TDAD_CONTACT_EMAIL=${{ env.TDAD_CONTACT_EMAIL }} \
             -p CCOF_URL=${{ env.CCOF_URL }} \
             -p IRREGULAR_EXPENSE_FORM_URL=${{ env.IRREGULAR_EXPENSE_FORM_URL }} \
-            -p HOST_ROUTE=${{ env.HOST_ROUTE }} \
+            -p HOST_ROUTE=${{ secrets.HOST_ROUTE }} \
             -p CA_CERT='${{ secrets.CA_CERT }}' \
             -p CERTIFICATE='${{ secrets.CERTIFICATE }}' \
             -p PRIVATE_KEY='${{ secrets.PRIVATE_KEY }}' \
