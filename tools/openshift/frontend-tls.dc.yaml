@@ -109,6 +109,7 @@ objects:
       annotations:
         openshift.io/host.generated: 'true'
     spec:
+      host: "${HOST_ROUTE}"
       to:
         kind: Service
         name: '${APP_NAME}-frontend-${ENVIRONMENT}'
@@ -173,7 +174,7 @@ parameters:
     required: true
   - name: HOST_ROUTE
     description: The host the route will use to expose service outside cluster
-    required: false
+    required: true
   - name: TAG
     description: The identifying tag for this specific deployment
     required: true
