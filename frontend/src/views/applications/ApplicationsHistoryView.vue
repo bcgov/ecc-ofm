@@ -27,17 +27,17 @@
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
               {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
             </AppAlertBanner>
-            <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
+            <AppAlertBanner v-else type="info">If there is no active OFM application, you will not be able to submit Allowances applications.</AppAlertBanner>
           </div>
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              Allowances (Core and Discretionary Services) Request
+              Allowances (Core and Discretionary Services) Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for funding Allowances, you must have an active OFM application for the facility.</v-card-text>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
               <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-8">
-                Add Allowances Request
+                Add Allowances Application
               </AppButton>
             </v-card-actions>
           </v-card>
