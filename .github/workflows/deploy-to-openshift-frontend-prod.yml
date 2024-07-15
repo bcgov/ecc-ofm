@@ -132,7 +132,7 @@ jobs:
 
           # Process and apply deployment template
           oc process \
-            -f tools/openshift/frontend.dc.yaml \
+            -f tools/openshift/frontend-tls.dc.yaml \
             -p APP_NAME=${{ env.APP_NAME }} \
             -p REPO_NAME=${{ env.REPO_NAME }} \
             -p BRANCH=${{ env.BRANCH }} \
@@ -150,6 +150,9 @@ jobs:
             -p TDAD_CONTACT_EMAIL=${{ env.TDAD_CONTACT_EMAIL }} \
             -p CCOF_URL=${{ env.CCOF_URL }} \
             -p IRREGULAR_EXPENSE_FORM_URL=${{ env.IRREGULAR_EXPENSE_FORM_URL }} \
+            -p CA_CERT=${{ secrets.CA_CERT }} \
+            -p CERTIFICATE=${{ secrets.CERTIFICATE }} \
+            -p PRIVATE_KEY=${{ secrets.PRIVATE_KEY }} \
             | oc apply -f -
 
           # Start rollout (if necessary) and follow it
