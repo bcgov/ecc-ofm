@@ -35,6 +35,13 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
+const IN_PROGRESS_STATUSES = [
+  FUNDING_AGREEMENT_STATUS_CODES.DRAFT,
+  FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW,
+  FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
+  FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
+]
+
 export default {
   name: 'FundingAgreementsTab',
   components: { AppButton, FundingSearchCard },
@@ -77,6 +84,7 @@ export default {
               facilityFas.forEach((fa) => {
                 fa.fundingAgreementType = 'Base Funding' // Base Funding is the only Funding Agreement type. This field/column can be removed in the future.
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
+                fa.statusName = this.getStatusName(fa)
               })
               this.fundingAgreements.push(...facilityFas)
             }
@@ -109,11 +117,15 @@ export default {
       this.$router.push({ name: 'funding', params: { fundingGuid: fundingAgreement.fundingId } })
     },
 
+    getStatusName(item) {
+      return IN_PROGRESS_STATUSES.includes(item?.statusCode) ? 'In Progress' : item?.statusName
+    },
+
     getStatusClass(statusCode) {
       return {
-        'status-gray': [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW].includes(statusCode),
+        'status-gray': IN_PROGRESS_STATUSES.includes(statusCode),
         'status-yellow': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
-        'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED].includes(statusCode),
+        'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
       }
