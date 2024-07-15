@@ -68,7 +68,7 @@
         <h3>Applications Summary</h3>
       </v-col>
       <v-col cols="12" md="7" class="d-flex align-end">
-        <FacilityFilter v-if="!loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
