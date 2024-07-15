@@ -110,9 +110,9 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
   --from-literal="UI_PRIVATE_KEY=$UI_PRIVATE_KEY_VAL" \
   --from-literal="UI_PUBLIC_KEY=$UI_PUBLIC_KEY_VAL" \
-  --from-literal=CLAMAV_PORT=3310 \
-  --from-literal=ISSUER=ECC_OFM \
-  --from-literal=SERVER_PORT=8080 \
+  --from-literal="CLAMAV_PORT=3310" \
+  --from-literal="ISSUER=ECC_OFM" \
+  --from-literal="SERVER_PORT=8080" \
   --dry-run -o yaml | oc apply -f -
 
 echo

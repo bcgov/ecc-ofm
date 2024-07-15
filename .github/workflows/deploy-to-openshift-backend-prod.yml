@@ -1,5 +1,5 @@
 # OFM Backend PROD workflow
-name: 5 PROD - Deploy Backend
+name: 4 PROD - Deploy Backend
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
@@ -30,8 +30,8 @@ env:
 
   NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}
 
-  MIN_REPLICAS: '2'
-  MAX_REPLICAS: '3'
+  MIN_REPLICAS: '3'
+  MAX_REPLICAS: '5'
   MIN_CPU: '50m'
   MAX_CPU: '250m'
   MIN_MEM: '200Mi'
