@@ -120,7 +120,7 @@ jobs:
           oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }}
 
           # Process and apply deployment template
-          oc process -f tools/openshift/backend.dc.yaml \
+          oc process -f tools/openshift/backend-tls.dc.yaml \
             -p APP_NAME=${{ env.APP_NAME }} \
             -p REPO_NAME=${{ env.REPO_NAME }} \
             -p BRANCH=${{ env.BRANCH }} \
@@ -133,6 +133,9 @@ jobs:
             -p MIN_MEM=${{ env.MIN_MEM }} \
             -p MAX_MEM=${{ env.MAX_MEM }} \
             -p HOST_ROUTE=${{ secrets.HOST_ROUTE }} \
+            -p CA_CERT='${{ secrets.CA_CERT }}' \
+            -p CERTIFICATE='${{ secrets.CERTIFICATE }}' \
+            -p PRIVATE_KEY='${{ secrets.PRIVATE_KEY }}' \
             -p ENVIRONMENT=${{ env.APP_ENVIRONMENT }} \
             | oc apply -f -
 
