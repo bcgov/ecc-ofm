@@ -44,6 +44,7 @@ export default {
     return {
       loading: false,
       fundingAgreements: [],
+      applications: undefined,
       headers: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
@@ -65,20 +66,24 @@ export default {
     this.loading = true
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
-
-    this.loading = false
+    this.applications = await ApplicationService.getActiveApplications()
   },
 
   methods: {
-    async loadApprovedSuppApps(startDateFrom, startDateTo) {
+    //JB TODO: show expired (but approved) supp apps... that functionality does not exist in CRM yet. to come after MVP?
+    async loadApprovedSuppApps(searchQueries) {
       try {
-        this.loading = true
-        const applications = await ApplicationService.getActiveApplications()
+        const applications = this.applications.filter((application) => searchQueries?.facilities.some((facility) => facility?.facilityId === application.facilityId))
 
         this.supplementaryApplications = (
           await Promise.all(
             applications.map((application) =>
-              ApplicationService.getSupplementaryApplicationsByDate(application.applicationId, `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`, startDateFrom, startDateTo),
+              ApplicationService.getSupplementaryApplicationsByDate(
+                application.applicationId,
+                `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`,
+                searchQueries?.dateFrom,
+                searchQueries?.dateToartDateTo,
+              ),
             ),
           )
         ).flat()
@@ -90,7 +95,7 @@ export default {
             fundingAgreementNumber: app.supplementaryReferenceNumber,
             fundingAgreementType: app.supplementaryTypeDescription,
             expenseAuthority: BLANK_FIELD,
-            facilityName: applications.find((el) => app?.applicationId === el?.applicationId).facilityName,
+            facilityName: applications?.find((el) => app?.applicationId === el?.applicationId).facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
           })
@@ -115,7 +120,7 @@ export default {
             }
           }),
         )
-        await this.loadApprovedSuppApps(searchQueries?.dateFrom, searchQueries?.dateTo)
+        await this.loadApprovedSuppApps(searchQueries)
         this.fundingAgreements?.sort((a, b) => b.priority - a.priority) // FA Signature Pending status at the top
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
