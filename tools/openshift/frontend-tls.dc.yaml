@@ -195,15 +195,6 @@ parameters:
   - name: MAX_MEM
     description: The maximum amount of memory
     required: true
-  - name: CA_CERT
-    description: The CA Certificate
-    required: false
-  - name: CERTIFICATE
-    description: The Certificate
-    required: false
-  - name: PRIVATE_KEY
-    description: The private key
-    required: false
   - name: BANNER_ENVIRONMENT
     description: The title for the application banner. It which indicates what environment is running
     required: false
