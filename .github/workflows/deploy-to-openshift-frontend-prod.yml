@@ -151,7 +151,7 @@ jobs:
             -p CCOF_URL=${{ env.CCOF_URL }} \
             -p IRREGULAR_EXPENSE_FORM_URL=${{ env.IRREGULAR_EXPENSE_FORM_URL }} \
             -p HOST_ROUTE=${{ env.HOST_ROUTE }} \
-            -P CA_CERT='${{ secrets.CA_CERT }}' \
+            -p CA_CERT='${{ secrets.CA_CERT }}' \
             -p CERTIFICATE='${{ secrets.CERTIFICATE }}' \
             -p PRIVATE_KEY='${{ secrets.PRIVATE_KEY }}' \
             | oc apply -f -
