@@ -5,6 +5,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getNotifications, updateNotification } = require('../components/notification')
 const { param, validationResult } = require('express-validator')
+const validateContact = require('../middlewares/validateContact.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -19,6 +20,7 @@ router.get(
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
   [param('contactId', 'URL param: [contactId] is required').not().isEmpty()],
+  validateContact(),
   (req, res) => {
     validationResult(req).throw()
     return getNotifications(req, res)

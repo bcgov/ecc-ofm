@@ -5,8 +5,8 @@
         <h3>Manage users</h3>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" sm="9" md="6" lg="6" xl="6" class="pb-1 mt-2 ml-6">
+    <v-row class="mb-2">
+      <v-col cols="12" md="9" xl="8">
         <FacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
       <v-col class="d-flex justify-end align-end pb-0">
@@ -81,7 +81,7 @@
     </v-row>
     <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
+    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
   </v-container>
 </template>
 

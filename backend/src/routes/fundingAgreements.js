@@ -6,6 +6,7 @@ const isValidBackendToken = auth.isValidBackendToken()
 const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById } = require('../components/fundingAgreements')
 const { param, validationResult } = require('express-validator')
 const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
+const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -14,7 +15,7 @@ module.exports = router
 /**
  * Get the list of Funding Agreements
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), validateFacility(), (req, res) => {
   validationResult(req).throw()
   return getFundingAgreements(req, res)
 })

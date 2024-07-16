@@ -1,21 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col class="pb-0">
-        <h1>Applications</h1>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti.
-      </v-col>
-    </v-row>
+    <h1>Applications</h1>
+    <div class="mt-4 mb-8">Submit an application or view the status for Base Funding, Allowances, or Irregular Expenses Funding.</div>
     <template v-if="hasPermission(PERMISSIONS.APPLY_FOR_FUNDING)">
-      <h3 class="mt-6 mb-2">Add New Application</h3>
+      <h3 class="my-2">Add New Application</h3>
       <v-row class="align-end">
         <v-col cols="12" md="6">
-          <v-card class="home-card justify-center">
-            <v-card-title class="text-center">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               OFM Application
             </v-card-title>
@@ -23,19 +15,13 @@
               {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton
-                id="core-application-button"
-                :loading="loading"
-                size="large"
-                width="250px"
-                :disabled="!isAddCoreApplicationAllowed"
-                :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }"
-                class="mt-8 mb-0">
+              <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
                 Add OFM Application
               </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
+
         <v-col cols="12" md="6">
           <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
@@ -43,25 +29,25 @@
             </AppAlertBanner>
             <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
           </div>
-          <v-card class="home-card justify-center">
-            <v-card-title class="text-center">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              Supplementary Allowance Application
+              Allowances (Core and Discretionary Services) Request
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for funding Allowances, you must have an active OFM application for the facility.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="mt-8">
-                Add Supplementary Application
+              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-8">
+                Add Allowances Request
               </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
 
         <v-col cols="12" md="6">
-          <v-card class="home-card justify-center">
-            <v-card-title class="text-center">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              Irregular Expenses Application
+              Irregular Expenses Funding Application
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
               To apply for Irregular Expenses, you must have an active Funding Agreement in place.
@@ -69,25 +55,25 @@
               Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="irregular-expense-button" :loading="loading" size="large" width="450px" :disabled="!hasAValidFundingAgreement" @click="toggleChangeRequestDialog" class="mt-8">
-                Add Irregular Expenses Application
+              <AppButton id="irregular-expense-button" :loading="loading" :disabled="!hasAValidFundingAgreement" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">
+                Add Irregular Expenses Funding Application
               </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
     </template>
-    <v-row class="mt-6">
-      <v-col cols="12" md="5" lg="5" xl="5" class="mt-2">
+    <v-row class="mt-8 mb-2">
+      <v-col cols="12" md="5">
         <h3>Applications Summary</h3>
       </v-col>
-      <v-col cols="12" md="7" lg="7" xl="7" class="d-flex align-end mb-3">
-        <FacilityFilter v-if="!loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+      <v-col cols="12" md="7" class="d-flex align-end">
+        <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
-      <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" class="soft-outline" density="compact">
+      <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" :mobile="null" mobile-breakpoint="md" class="soft-outline" density="compact">
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)">{{ item.status }}</span>
         </template>
@@ -127,7 +113,7 @@
       </v-data-table>
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
-    <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+    <AppBackButton id="back-home-button" max-width="300px" :to="{ name: 'home' }">Home</AppBackButton>
     <NewRequestDialog :show="showChangeRequestDialog" :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)" @close="toggleChangeRequestDialog" />
   </v-container>
 </template>

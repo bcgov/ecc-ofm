@@ -2,7 +2,7 @@
   <v-row :justify="justify">
     <v-col cols="12" sm="5" md="5" lg="3" xl="3" class="d-flex flex-column align-end">
       <AppButton id="facility-filter-button" variant="text" :disabled="loading" @click="toggleShowFilter()">
-        Filter by facility
+        Filter by Facility
         <v-icon right>mdi-filter</v-icon>
       </AppButton>
     </v-col>
@@ -10,7 +10,7 @@
       <v-text-field
         v-show="showFilterInput"
         v-model.trim="facilityNameFilter"
-        placeholder="Filter by facility name"
+        placeholder="Filter by Facility Name"
         variant="outlined"
         density="compact"
         :disabled="loading"

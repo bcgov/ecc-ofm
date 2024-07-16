@@ -37,9 +37,6 @@ function mapSupplementaryApplicationObjectForFront(data) {
 
 async function getApplications(req, res) {
   try {
-    if (isEmpty(req?.query)) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
-    }
     const applications = []
     const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(${buildFilterQuery(
       req?.query,
