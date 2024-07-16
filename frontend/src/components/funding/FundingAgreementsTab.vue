@@ -28,11 +28,12 @@
 <script>
 import { mapState } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
+import ApplicationService from '@/services/applicationService'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES } from '@/utils/constants'
 import format from '@/utils/format'
 
 const IN_PROGRESS_STATUSES = [
@@ -50,6 +51,7 @@ export default {
     return {
       loading: false,
       fundingAgreements: [],
+      applications: undefined,
       headers: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Funding Agreement Type', key: 'fundingAgreementType' },
@@ -67,12 +69,48 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
   },
 
-  created() {
+  async created() {
+    this.loading = true
     this.format = format
     this.FUNDING_AGREEMENT_STATUS_CODES = FUNDING_AGREEMENT_STATUS_CODES
+    this.applications = await ApplicationService.getActiveApplications()
   },
 
   methods: {
+    //JB TODO: show expired (but approved) supp apps... that functionality does not exist in CRM yet. to come after MVP?
+    async loadApprovedSuppApps(searchQueries) {
+      try {
+        const applications = this.applications?.filter((application) => searchQueries?.facilities?.some((facility) => facility?.facilityId === application?.facilityId))
+
+        this.supplementaryApplications = (
+          await Promise.all(
+            applications?.map((application) =>
+              ApplicationService.getSupplementaryApplicationsByDate(
+                application.applicationId,
+                `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`,
+                searchQueries?.dateFrom,
+                searchQueries?.dateTo,
+              ),
+            ),
+          )
+        ).flat()
+
+        this.supplementaryApplications.forEach((app) => {
+          this.fundingAgreements.push({
+            startDate: app.startDate,
+            endDate: app.endDate,
+            fundingAgreementNumber: app.supplementaryReferenceNumber,
+            fundingAgreementType: app.supplementaryTypeDescription,
+            expenseAuthority: BLANK_FIELD,
+            facilityName: applications?.find((el) => app?.applicationId === el?.applicationId)?.facilityName,
+            statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
+            statusName: app.supplementaryApplicationStatus,
+          })
+        })
+      } catch (error) {
+        this.setFailureAlert('Failed to load applications', error)
+      }
+    },
     async loadFundingAgreements(searchQueries) {
       try {
         this.loading = true
@@ -82,7 +120,7 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = 'Base Funding' // Base Funding is the only Funding Agreement type. This field/column can be removed in the future.
+                fa.fundingAgreementType = APPLICATION_TYPES.OFM
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
                 fa.statusName = this.getStatusName(fa)
               })
@@ -90,6 +128,7 @@ export default {
             }
           }),
         )
+        await this.loadApprovedSuppApps(searchQueries)
         this.fundingAgreements?.sort((a, b) => b.priority - a.priority) // FA Signature Pending status at the top
       } catch (error) {
         this.setFailureAlert('Failed to load funding agreements', error)
@@ -102,10 +141,14 @@ export default {
       return fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && this.isExpenseAuthority(fundingAgreement)
     },
 
-    showOpen(fundingAgreement) {
+    showOpen(item) {
+      //TODO : add in link for PDF -- we don't have a PDF to pull for supp apps yet
+      if (item.fundingAgreementType !== APPLICATION_TYPES.OFM) {
+        return false
+      }
       return (
-        [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(fundingAgreement?.statusCode) ||
-        (fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(fundingAgreement))
+        [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
+        (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
       )
     },
 

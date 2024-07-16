@@ -346,6 +346,7 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'ofm_renewal_term', front: 'renewalTerm' },
+  { back: 'ofm_retroactive_date', front: 'retroactiveDate' },
 ]
 
 const RoleMappings = [

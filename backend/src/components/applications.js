@@ -2,7 +2,7 @@
 const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
-const { buildFilterQuery } = require('../util/common')
+const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
@@ -127,9 +127,16 @@ function buildGetSupplementaryApplicationsFilterQuery(query) {
   return filterQuery
 }
 
+function buildSupplementaryApplicationsDateQuery(query) {
+  if (isEmpty(query)) return ''
+  const dateQuery = buildDateFilterQuery(query, 'ofm_start_date')
+  return dateQuery
+}
+
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req.query)} )`
+    const operation = `ofm_allowances?$filter=(${buildSupplementaryApplicationsDateQuery(req?.query)} _ofm_application_value eq ${req?.params.applicationId}
+    ${buildGetSupplementaryApplicationsFilterQuery(req?.query)} )`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
