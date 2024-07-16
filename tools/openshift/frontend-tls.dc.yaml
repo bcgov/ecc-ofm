@@ -204,13 +204,13 @@ parameters:
     required: false
   - name: TDAD_CONTACT_EMAIL
     description: The contact email for 10 dollar a day daycare centers
-    required: false
+    required: true
   - name: CCOF_URL
     description: The URL for the CCOF portal that belongs to the same application environment.
-    required: false
+    required: true
   - name: IRREGULAR_EXPENSE_FORM_URL
     description: The URL to download the Irregular Expense application form.
-    required: false
+    required: true
   - name: CA_CERT
     description: The CA Certificate
     required: true
