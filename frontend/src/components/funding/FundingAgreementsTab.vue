@@ -36,12 +36,7 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES } from '@/utils/constants'
 import format from '@/utils/format'
 
-const IN_PROGRESS_STATUSES = [
-  FUNDING_AGREEMENT_STATUS_CODES.DRAFT,
-  FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW,
-  FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
-  FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
-]
+const IN_PROGRESS_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA]
 
 export default {
   name: 'FundingAgreementsTab',
@@ -168,6 +163,7 @@ export default {
       return {
         'status-gray': IN_PROGRESS_STATUSES.includes(statusCode),
         'status-yellow': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
+        'status-blue': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
