@@ -3,12 +3,10 @@ const rules = {
   email: (v) => !v || /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required', // https://emailregex.com/
   required: [
     function (v) {
-      if (v === 0) {
+      if (v === 0 || typeof v === 'boolean') {
         return true
       } else if (Array.isArray(v)) {
         return v.length > 0 || REQUIRED_MSG
-      } else if (typeof v === 'boolean') {
-        return v != null
       } else if (!v) {
         return REQUIRED_MSG
       }
