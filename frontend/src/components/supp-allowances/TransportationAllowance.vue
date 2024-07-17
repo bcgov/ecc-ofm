@@ -146,6 +146,15 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-row class="pa-7 pt-4">
+        <v-col cols="2">
+          <AppLabel>Backdate Transport App:</AppLabel>
+          <p>this is some info to tell users about why they might want to backdate their apps.</p>
+        </v-col>
+        <v-col cols="12" sm="6" lg="5">
+          <v-date-input v-model="model.retroactiveDate" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="readOnly(model)" hide-actions label="From" variant="outlined" />
+        </v-col>
+      </v-row>
     </v-card>
   </div>
 
@@ -229,6 +238,7 @@ export default {
         documentsToUpload: [],
         id: uuid.v1(),
         renewalTerm: this.renewalTerm,
+        retroactiveDate: undefined,
       }
 
       this.models.push(transportModel)
