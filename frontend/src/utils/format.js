@@ -17,6 +17,12 @@ function formatDateToUTC(date) {
   return new Date(date).toLocaleString('en-CA', { timeZone: 'UTC', dateStyle: 'full' })
 }
 
+function formatDateInputToCRMFormat(date) {
+  let formattedDate = new Date(date)
+  formattedDate.setHours(0, 0, 0, 0)
+  return formattedDate.toISOString().split('.')[0] + 'Z'
+}
+
 function formatTime12to24(time12h) {
   if (isEmpty(time12h) || !is12hFormat(time12h)) return time12h
   const [time, modifier] = time12h.split(' ')
@@ -59,6 +65,7 @@ export default {
   formatDateTime,
   formatDecimalNumber,
   formatDateToUTC,
+  formatDateInputToCRMFormat,
   formatTime12to24,
   formatTime24to12,
 }

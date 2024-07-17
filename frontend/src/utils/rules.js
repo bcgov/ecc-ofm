@@ -7,6 +7,8 @@ const rules = {
         return true
       } else if (Array.isArray(v)) {
         return v.length > 0 || REQUIRED_MSG
+      } else if (typeof v === 'boolean') {
+        return v != null
       } else if (!v) {
         return REQUIRED_MSG
       }

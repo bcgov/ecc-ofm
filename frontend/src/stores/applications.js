@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
+import { useAppStore } from '@/stores/app'
 import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 /*
@@ -82,7 +83,8 @@ export const useApplicationsStore = defineStore('applications', {
       this.isStaffingComplete =
         this.isThereAtLeastOneEmployee(this.currentApplication) &&
         this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication) &&
-        this.isUnionSectionComplete(this.currentApplication)
+        this.isUnionSectionComplete(this.currentApplication) &&
+        this.isCSSEASectionComplete(this.currentApplication)
       this.isDeclareSubmitComplete = checkDeclareSubmitComplete(this.currentApplication)
     },
 
@@ -139,8 +141,17 @@ export const useApplicationsStore = defineStore('applications', {
       return allCertificateNumbers?.length === uniqueCertificateNumbers?.length
     },
 
+    isOtherUnionSelected(application) {
+      const appStore = useAppStore()
+      return application?.unions?.includes(appStore.getUnionIdByName('Other'))
+    },
+
     isUnionSectionComplete(application) {
-      return application?.isUnionized === 0 || !isEmpty(application?.unions)
+      return application?.isUnionized === 0 || (!isEmpty(application?.unions) && (!this.isOtherUnionSelected(application) || !isEmpty(application?.unionDescription)))
+    },
+
+    isCSSEASectionComplete(application) {
+      return application?.cssea != null
     },
   },
 })
