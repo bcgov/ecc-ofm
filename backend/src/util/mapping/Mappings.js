@@ -172,6 +172,8 @@ const ApplicationMappings = [
   { back: 'ofm_application_review_complete', front: 'applicationReviewComplete' },
   { back: 'ofm_unionized', front: 'isUnionized' },
   { back: 'ofm_union_list', front: 'unions' },
+  { back: 'ofm_union_description', front: 'unionDescription' },
+  { back: 'ofm_union_cssea', front: 'cssea' },
   { back: 'ofm_fiscal_year_end', front: 'fiscalYearEndDate' },
 ]
 
