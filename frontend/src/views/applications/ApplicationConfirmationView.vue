@@ -15,7 +15,7 @@
         <v-card-text class="px-8" py-6>
           <v-row no-gutters class="align-center">
             <v-col cols="12" md="8">
-              <p>You may be eligible for supplementary funding. Would you like to apply?</p>
+              <p>You may be eligible for additional Allowances. Would you like to apply?</p>
               <p class="mt-4">Available allowances:</p>
               <ul class="pl-6">
                 <li>Indigenous programming</li>

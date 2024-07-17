@@ -14,7 +14,7 @@
       </v-row>
       <v-divider class="mt-3"></v-divider>
 
-      <AppAlertBanner v-if="model.isNextTerm" type="info">This Supplementary Application is for Next Year</AppAlertBanner>
+      <AppAlertBanner v-if="model.isNextTerm" type="info">This Allowance application is for next year</AppAlertBanner>
 
       <v-row v-if="isModelComplete(model)" no-gutters class="mt-2 py-2">
         <v-col cols="12" lg="7" class="px-4">
