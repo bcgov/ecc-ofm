@@ -146,13 +146,14 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row class="pa-7 pt-4">
-        <v-col cols="2">
+
+      <v-row class="pa-7 pt-4" v-if="showBackDatePicker">
+        <v-col cols="6">
           <AppLabel>Backdate Transport App:</AppLabel>
           <p>this is some info to tell users about why they might want to backdate their apps.</p>
         </v-col>
         <v-col cols="12" sm="6" lg="5">
-          <v-date-input v-model="model.retroactiveDate" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="readOnly(model)" hide-actions label="From" variant="outlined" />
+          <v-date-input v-model="model.retroactiveDate" :min="startDate" :max="endDate" :rules="[rules.MMDDYYYY]" :disabled="readOnly(model)" hide-actions label="From" variant="outlined" />
         </v-col>
       </v-row>
     </v-card>
@@ -193,6 +194,14 @@ export default {
       type: Number,
       required: true,
     },
+    startDate: {
+      type: String,
+      required: true,
+    },
+    endDate: {
+      type: String,
+      required: true,
+    },
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
@@ -214,6 +223,10 @@ export default {
     },
     isWarningDisplayed() {
       return this.models?.some((el) => isApplicationLocked(el?.statusCode))
+    },
+    showBackDatePicker() {
+      const today = new Date()
+      return today > new Date(this.startDate)
     },
   },
   async created() {

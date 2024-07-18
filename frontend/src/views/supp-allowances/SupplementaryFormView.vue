@@ -88,6 +88,8 @@
               :transportModels="getTransportModels(renewalTerm)"
               :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="renewalTerm"
+              :startDate="getStartDate(renewalTerm)"
+              :endDate="getEndDate(renewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -206,6 +208,8 @@ export default {
       currentTermDisabled: false,
       nextTermActive: false,
       fundingExpiryDate: undefined,
+      termOneEndDate: undefined,
+      termTwoEndDate: undefined,
     }
   },
   computed: {
@@ -496,27 +500,27 @@ export default {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
 
-      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
-      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
+      this.termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
+      this.termOneEndDate = new Date(new Date(this.termTwoEndDate).setFullYear(new Date(this.termTwoEndDate).getFullYear() - 1))
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
         //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
         //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
-        case today < termOneEndDate || !this.fundingAgreement?.endDate:
-          this.fundingExpiryDate = termOneEndDate
+        case today < this.termOneEndDate || !this.fundingAgreement?.endDate:
+          this.fundingExpiryDate = this.termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
-          this.setIsCurrentTermDisabled(termOneEndDate, today)
-          this.setIsNextTermEnabled(termOneEndDate, today)
+          this.setIsCurrentTermDisabled(this.termOneEndDate, today)
+          this.setIsNextTermEnabled(this.termOneEndDate, today)
           break
 
-        case today < termTwoEndDate:
-          this.fundingExpiryDate = termTwoEndDate
+        case today < this.termTwoEndDate:
+          this.fundingExpiryDate = this.termTwoEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
-          this.setIsCurrentTermDisabled(termTwoEndDate, today)
-          this.setIsNextTermEnabled(termTwoEndDate, today)
+          this.setIsCurrentTermDisabled(this.termTwoEndDate, today)
+          this.setIsNextTermEnabled(this.termTwoEndDate, today)
           break
 
         case today < formattedEndDate:
@@ -552,6 +556,35 @@ export default {
           return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
         case this.INDIGENOUS:
           return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      }
+    },
+    getStartDate(term) {
+      const termTwoStartDate = new Date(new Date(this.fundingAgreement.startDate).setFullYear(new Date(this.fundingAgreement.startDate).getFullYear() + 1))
+      const termThreeStartDate = new Date(new Date(termTwoStartDate).setFullYear(new Date(termTwoStartDate).getFullYear() + 1))
+
+      switch (true) {
+        case term === SUPP_TERM_CODES.TERM_ONE:
+          return this.format.formatDateToUTC(this.fundingAgreement.startDate)
+
+        case term === SUPP_TERM_CODES.TERM_TWO:
+          return this.format.formatDateToUTC(termTwoStartDate)
+
+        case term === SUPP_TERM_CODES.TERM_THREE:
+          return this.format.formatDateToUTC(termThreeStartDate)
+      }
+    },
+    getEndDate(term) {
+      //I realize it's a bit confusing because this function uses this, while the fn above uses a scoped const
+      //but I need the end dates in a different spot also and I didn't want to recalculate. open to suggestions to make it better
+      switch (true) {
+        case term === SUPP_TERM_CODES.TERM_ONE:
+          return this.format.formatDateToUTC(this.termOneEndDate)
+
+        case term === SUPP_TERM_CODES.TERM_TWO:
+          return this.format.formatDateToUTC(this.termTwoEndDate)
+
+        case term === SUPP_TERM_CODES.TERM_THREE:
+          return this.format.formatDateToUTC(this.fundingAgreement.endDate)
       }
     },
   },
