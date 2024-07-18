@@ -203,9 +203,13 @@ export default {
 
   checkApplicationStatus(application) {
     const isActive = application?.stateCode === CRM_STATE_CODES.ACTIVE
-    const hasCorrectStatus = [APPLICATION_STATUS_CODES.SUBMITTED, APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.APPROVED, APPLICATION_STATUS_CODES.AWAITING_PROVIDER].includes(
-      application?.statusCode,
-    )
+    const hasCorrectStatus = [
+      APPLICATION_STATUS_CODES.SUBMITTED,
+      APPLICATION_STATUS_CODES.IN_REVIEW,
+      APPLICATION_STATUS_CODES.APPROVED,
+      APPLICATION_STATUS_CODES.AWAITING_PROVIDER,
+      APPLICATION_STATUS_CODES.VERIFIED,
+    ].includes(application?.statusCode)
     return isActive && hasCorrectStatus
   },
 

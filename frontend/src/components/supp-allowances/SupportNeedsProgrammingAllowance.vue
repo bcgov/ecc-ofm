@@ -99,7 +99,7 @@
     </v-row>
   </div>
   <AppAlertBanner v-else type="warning">
-    You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+    You must have an inclusion policy to apply for Support Needs Allowance. Your organization account manager can update inclusion policy details in
     <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
   </AppAlertBanner>
 </template>

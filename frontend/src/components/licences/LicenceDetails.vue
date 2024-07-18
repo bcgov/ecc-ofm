@@ -217,11 +217,12 @@
                       </v-row>
                     </v-col>
                   </v-row>
-                  <v-row no-gutters :class="editable ? 'mt-2' : 'mt-lg-6 mt-xl-0'">
+                  <v-row no-gutters :class="editable ? 'mt-2' : 'mt-0'">
                     <div>
                       <AppLabel class="mr-1">Requires split classrooms</AppLabel>
                       <v-tooltip
                         content-class="tooltip"
+                        max-width="300px"
                         text="A situation where children are divided into different rooms due to physical limitations of the building and child-to-staff ratio requirements. This can affect the staffing ratio compared to keeping the group together in one room."
                         top>
                         <template v-slot:activator="{ props }">

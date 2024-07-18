@@ -8,13 +8,13 @@ import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
 import ErrorView from '@/views/ErrorView.vue'
+import HelpView from '@/views/HelpView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import HelpView from '@/views/HelpView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
@@ -45,7 +45,7 @@ import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmit
 const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
-  scrollBehavior: function (to, from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     if (to.hash) {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -56,7 +56,7 @@ const router = createRouter({
         }, 700)
       })
     } else {
-      return { x: 0, y: 0 }
+      return { left: 0, top: 0 }
     }
   },
   routes: [

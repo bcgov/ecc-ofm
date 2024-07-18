@@ -111,7 +111,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 
 import AppLabel from '@/components/ui/AppLabel.vue'
@@ -120,6 +119,7 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import { useApplicationsStore } from '@/stores/applications'
 import { APPLICATION_ROUTES } from '@/utils/constants'
+import format from '@/utils/format'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
 
@@ -221,7 +221,7 @@ export default {
 
   async mounted() {
     this.$emit('process', false)
-    this.fiscalYearEndDate = this.currentApplication?.fiscalYearEndDate ? moment(this.currentApplication?.fiscalYearEndDate).toDate() : null
+    this.fiscalYearEndDate = this.currentApplication?.fiscalYearEndDate ? new Date(this.currentApplication?.fiscalYearEndDate) : null
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
     this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
@@ -241,7 +241,7 @@ export default {
           primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
           expenseAuthorityId: this.expenseAuthority?.contactId ? this.expenseAuthority?.contactId : null,
-          fiscalYearEndDate: this.fiscalYearEndDate ? moment(this.fiscalYearEndDate).startOf('day') : null,
+          fiscalYearEndDate: this.fiscalYearEndDate ? format.formatDateInputToCRMFormat(this.fiscalYearEndDate) : null,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)

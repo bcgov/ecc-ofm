@@ -15,9 +15,11 @@
           </li>
         </ul>
         <p class="my-5">
-          Intentionally supplying information that is false or misleading with respect to a material fact in order to obtain a child care grant may lead to action being taken under Section 9 of the
-          Child Care BC Act. If you are convicted of an offence under section 9, a court may order you imprisoned for up to six months, fine you not more than $2,000.00, or order you to pay the
-          government all or part of any amount received under the child care grant.
+          Intentionally supplying information that is false or misleading with respect to a material fact in order to obtain a child care grant may lead to action being taken under Section 24(2) of
+          the
+          <i>Early Learning and Child Care Act</i>
+          (ELCCA). If you are convicted of an offence under Section 24(2), a court may order you imprisoned for up to six months, fine you not more than $2,000.00, or order you to pay the government
+          all or part of any amount received under the child care grant.
         </p>
         <p>I consent to the Ministry contacting other branches within the Ministry and other Province ministries to validate the accuracy of any information that I have provided.</p>
       </div>

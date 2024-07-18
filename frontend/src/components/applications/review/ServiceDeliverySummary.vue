@@ -11,7 +11,7 @@
         :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
       </AppMissingInfoError>
-      <AppMissingInfoError v-else-if="!isServiceDeliveryComplete" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#top', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-else-if="!isServiceDeliveryComplete" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ !allCCOFMissingDetailComplete ? APPLICATION_ERROR_MESSAGES.LICENCE_INFO : APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
       </AppMissingInfoError>
     </template>
