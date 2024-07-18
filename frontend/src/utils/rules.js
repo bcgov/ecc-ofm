@@ -3,7 +3,7 @@ const rules = {
   email: (v) => !v || /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required', // https://emailregex.com/
   required: [
     function (v) {
-      if (v === 0 || typeof v === 'boolean') {
+      if (v === 0) {
         return true
       } else if (Array.isArray(v)) {
         return v.length > 0 || REQUIRED_MSG
@@ -13,6 +13,7 @@ const rules = {
       return true
     },
   ],
+  notNullRequired: [(v) => v != null || REQUIRED_MSG], // value must be not null and not undefined
   postalCode: [(v) => !v || /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(v) || 'A valid postal code is required'],
   MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Date must be in MM/DD/YYYY format',
   validEndDate(startDate) {
@@ -31,7 +32,7 @@ const rules = {
     return (v) => !v || v.length <= number || 'Max length exceeded'
   },
   phone: (v) => !v || /^\(?([0-9]{3})\)?-([0-9]{3})-([0-9]{4})$/.test(v) || 'Must be a valid phone number in the format ###-###-####',
-  listIsNotEmpty: [(v) => v.length > 0 || 'This field is required'],
+  listIsNotEmpty: [(v) => v.length > 0 || REQUIRED_MSG],
 }
 
 export default rules
