@@ -58,7 +58,7 @@
           <AppLabel>Does your facility belong to CSSEA?</AppLabel>
         </v-col>
         <v-col cols="12">
-          <v-radio-group id="belong-cssea" v-model="model.cssea" :rules="rules.required" :hide-details="readonly" :disabled="readonly" inline color="primary">
+          <v-radio-group id="belong-cssea" v-model="model.cssea" :rules="rules.notNullRequired" :hide-details="readonly" :disabled="readonly" inline color="primary">
             <v-radio label="Yes" :value="true" />
             <v-radio label="No" :value="false" />
           </v-radio-group>
