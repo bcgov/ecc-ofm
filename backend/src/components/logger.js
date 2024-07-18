@@ -65,7 +65,7 @@ function getDomainWinstonLoggerJsonFormat() {
   const ignoreHealthChecks = format((info, _opts) => {
     if (info.level !== 'info' || !info.message) return info;
     const re = /GET.+\/api\/health.+200/;
-    if (info.message && re.test(info.message)) return false;
+    if (re.test(info.message)) return false;
     return info;
   })
 
