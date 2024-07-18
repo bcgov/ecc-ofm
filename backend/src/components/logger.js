@@ -62,7 +62,15 @@ function getDomainWinstonLoggerFormat(colors = true) {
  * Handles JSON formats
  */
 function getDomainWinstonLoggerJsonFormat() {
+  const ignoreHealthChecks = format((info, _opts) => {
+    if (info.level !== 'info' || !info.message) return info;
+    const re = /GET.+\/api\/health.+200/;
+    if (info.message && re.test(info.message)) return false;
+    return info;
+  })
+
   const loggingFormats = [
+    ignoreHealthChecks(),
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss.SSS'
     }),
@@ -91,6 +99,7 @@ function getDomainWinstonLoggerJsonFormat() {
       }));
     }),
   ];
+
   return format.combine(...loggingFormats);
 }
 
