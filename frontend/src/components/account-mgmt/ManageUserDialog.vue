@@ -65,7 +65,7 @@
                 :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
-          <v-row no-gutters>
+          <v-row no-gutters class="mt-2">
             <v-col cols="12" md="3">
               <AppLabel for="role">Role:</AppLabel>
             </v-col>

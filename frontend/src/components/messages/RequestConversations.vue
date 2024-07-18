@@ -210,7 +210,7 @@ export default {
      * Returns the sent by value for the conversation depending on the source system.
      */
     deriveFromDisplay(item) {
-      return item.ofmSourceSystem ? `${this.userInfo?.firstName} ${this.userInfo?.lastName}` : OFM_PROGRAM
+      return item.ofmSourceSystem ? `${this.userInfo?.firstName ?? ''} ${this.userInfo?.lastName}` : OFM_PROGRAM
     },
   },
 }
