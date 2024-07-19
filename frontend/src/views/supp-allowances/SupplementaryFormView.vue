@@ -89,7 +89,6 @@
               :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="renewalTerm"
               :startDate="getStartDate(renewalTerm)"
-              :endDate="getEndDate(renewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -123,6 +122,7 @@
               :transportModels="getTransportModels(nextRenewalTerm)"
               :formDisabled="formDisabled"
               :renewalTerm="nextRenewalTerm"
+              :startDate="getStartDate(nextRenewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -445,6 +445,7 @@ export default {
           documentsToUpload: [],
           id: uuid.v4(),
           renewalTerm: term,
+          retroactiveDate: null,
         })
       }
     },
@@ -460,6 +461,9 @@ export default {
       delete modelData.startDate
       delete modelData.endDate
       delete modelData.renewalTerm
+
+      //the first time a user selects a date - it will be a Date obj, which always returns true with .isEmpty
+      modelData.retroactiveDate = modelData?.retroactiveDate ? String(modelData.retroactiveDate) : null
 
       //we delete the fields above because they will always have a value - so when running our isEmpty check below- those fields would fail the isEmpty check-
       //and then our application would be trying to save empty models.
@@ -571,20 +575,6 @@ export default {
 
         case term === SUPP_TERM_CODES.TERM_THREE:
           return this.format.formatDateToUTC(termThreeStartDate)
-      }
-    },
-    getEndDate(term) {
-      //I realize it's a bit confusing because this function uses this, while the fn above uses a scoped const
-      //but I need the end dates in a different spot also and I didn't want to recalculate. open to suggestions to make it better
-      switch (true) {
-        case term === SUPP_TERM_CODES.TERM_ONE:
-          return this.format.formatDateToUTC(this.termOneEndDate)
-
-        case term === SUPP_TERM_CODES.TERM_TWO:
-          return this.format.formatDateToUTC(this.termTwoEndDate)
-
-        case term === SUPP_TERM_CODES.TERM_THREE:
-          return this.format.formatDateToUTC(this.fundingAgreement.endDate)
       }
     },
   },

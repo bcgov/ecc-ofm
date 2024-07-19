@@ -147,13 +147,26 @@
         </v-col>
       </v-row>
 
-      <v-row class="pa-7 pt-4" v-if="showBackDatePicker">
+      <v-row v-if="showBackDatePicker" class="pa-7 pt-4">
         <v-col cols="6">
-          <AppLabel>Backdate Transport App:</AppLabel>
-          <p>this is some info to tell users about why they might want to backdate their apps.</p>
+          <AppLabel>Transportation Allowance Start Date</AppLabel>
+          <p>
+            Please provide the date your centre began to safely transport children between your centre and school (or a collective point of access) to support regular ongoing child care. Please note,
+            the start date cannot be before the start of the Funding Agreement.
+          </p>
         </v-col>
-        <v-col cols="12" sm="6" lg="5">
-          <v-date-input v-model="model.retroactiveDate" :min="startDate" :max="endDate" :rules="[rules.MMDDYYYY]" :disabled="readOnly(model)" hide-actions label="From" variant="outlined" />
+        <v-col cols="12" sm="6" lg="5" class="ml-0">
+          <v-date-input
+            v-model="model.retroactiveDate"
+            @update:modelValue="update(model)"
+            :min="startDate"
+            :max="new Date()"
+            :rules="[rules.MMDDYYYY]"
+            locale="en"
+            :disabled="readOnly(model)"
+            hide-actions
+            label="From"
+            variant="outlined" />
         </v-col>
       </v-row>
     </v-card>
@@ -198,10 +211,6 @@ export default {
       type: String,
       required: true,
     },
-    endDate: {
-      type: String,
-      required: true,
-    },
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
@@ -234,6 +243,10 @@ export default {
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
+
+    this.models.forEach((model) => {
+      model.retroactiveDate = model.retroactiveDate ? new Date(model.retroactiveDate) : null
+    })
   },
   methods: {
     update(model) {
@@ -251,7 +264,6 @@ export default {
         documentsToUpload: [],
         id: uuid.v1(),
         renewalTerm: this.renewalTerm,
-        retroactiveDate: undefined,
       }
 
       this.models.push(transportModel)
