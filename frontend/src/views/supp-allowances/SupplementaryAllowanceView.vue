@@ -119,6 +119,7 @@ export default {
   watch: {
     facilityId: {
       handler(facilityId) {
+        console.log('ha')
         this.application = this.getValidApplication(facilityId)
       },
     },
