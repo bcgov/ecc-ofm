@@ -62,7 +62,6 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
 import SignFundingPopup from '@/components/funding/SignFundingPopup.vue'
@@ -83,7 +82,7 @@ export default {
       loading: false,
       loadingFA: false,
       showAssistanceRequestDialog: false,
-      pendingReports: [],
+      pendingReportsCount: 0,
     }
   },
   computed: {
@@ -92,11 +91,11 @@ export default {
       return this.loading || this.loadingFA
     },
     showReportsAlertBanner() {
-      return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS) && !isEmpty(this.pendingReports)
+      return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS) && this.pendingReportsCount > 0
     },
   },
   async created() {
-    await this.loadPendingReports()
+    await this.loadPendingReportsCount()
   },
   methods: {
     setLoadingFA(value) {
@@ -105,21 +104,19 @@ export default {
     toggleAssistanceRequestDialog() {
       this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
     },
-    async loadPendingReports() {
+    async loadPendingReportsCount() {
       try {
         if (!this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)) return
         this.loading = true
-        this.pendingReports = []
+        this.pendingReportsCount = 0
         await Promise.all(
           this.userInfo?.facilities?.map(async (facility) => {
-            const response = await ReportsService.getDraftSurveyResponsesByFacility(facility.facilityId)
-            if (!isEmpty(response)) {
-              this.pendingReports = this.pendingReports?.concat(response)
-            }
+            const count = await ReportsService.getDraftSurveyResponsesCountByFacility(facility.facilityId)
+            this.pendingReportsCount += count
           }),
         )
       } catch (error) {
-        this.setFailureAlert('Failed to get pending reports for facilities ', error)
+        this.setFailureAlert('Failed to get pending reports count for facilities ', error)
       } finally {
         this.loading = false
       }
