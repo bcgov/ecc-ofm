@@ -102,6 +102,7 @@ objects:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
         openshift.io/host.generated: 'true'
+        router.openshift.io/cookie-same-site: 'Strict'
     spec:
       to:
         kind: Service
