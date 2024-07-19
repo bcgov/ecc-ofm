@@ -208,8 +208,6 @@ export default {
       currentTermDisabled: false,
       nextTermActive: false,
       fundingExpiryDate: undefined,
-      termOneEndDate: undefined,
-      termTwoEndDate: undefined,
     }
   },
   computed: {
@@ -504,27 +502,27 @@ export default {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
 
-      this.termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
-      this.termOneEndDate = new Date(new Date(this.termTwoEndDate).setFullYear(new Date(this.termTwoEndDate).getFullYear() - 1))
+      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
+      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
         //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
         //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
-        case today < this.termOneEndDate || !this.fundingAgreement?.endDate:
-          this.fundingExpiryDate = this.termOneEndDate
+        case today < termOneEndDate || !this.fundingAgreement?.endDate:
+          this.fundingExpiryDate = termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
-          this.setIsCurrentTermDisabled(this.termOneEndDate, today)
-          this.setIsNextTermEnabled(this.termOneEndDate, today)
+          this.setIsCurrentTermDisabled(termOneEndDate, today)
+          this.setIsNextTermEnabled(termOneEndDate, today)
           break
 
-        case today < this.termTwoEndDate:
-          this.fundingExpiryDate = this.termTwoEndDate
+        case today < termTwoEndDate:
+          this.fundingExpiryDate = termTwoEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
-          this.setIsCurrentTermDisabled(this.termTwoEndDate, today)
-          this.setIsNextTermEnabled(this.termTwoEndDate, today)
+          this.setIsCurrentTermDisabled(termTwoEndDate, today)
+          this.setIsNextTermEnabled(termTwoEndDate, today)
           break
 
         case today < formattedEndDate:
