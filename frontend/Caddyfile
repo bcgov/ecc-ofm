@@ -25,6 +25,7 @@ header {
 	-server
 	-Date
   -Last-Modified
+	Set-Cookie "SameSite=Strict"
 	X-Frame-Options "SAMEORIGIN"
 	X-XSS-Protection "1;mode=block"
 	Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
