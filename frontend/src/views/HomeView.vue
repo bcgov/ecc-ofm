@@ -3,7 +3,7 @@
     <v-banner bg-color="#f9f1c6" :lines="$vuetify.display.smAndUp ? 'one' : 'two'" max-width="700px" rounded class="alert-banner">
       <template #text>
         <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
-        <strong>You have One or more monthly reports that are due or overdue!</strong>
+        <strong>You have one or more monthly reports that are due or overdue.</strong>
       </template>
       <template #actions>
         <router-link :to="{ name: 'reporting' }"><strong>Take Action</strong></router-link>
