@@ -24,7 +24,7 @@ async function getFundingAgreements(req, res) {
       const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
       if (req.query?.includeEA) {
         const ea = funding.ofm_application?.ofm_expense_authority
-        fa.expenseAuthority = ea ? `${ea.ofm_first_name} ${ea.ofm_last_name}` : ''
+        fa.expenseAuthority = ea ? `${ea.ofm_first_name ?? ''} ${ea.ofm_last_name}` : ''
       }
 
       fundingAgreements.push(fa)
