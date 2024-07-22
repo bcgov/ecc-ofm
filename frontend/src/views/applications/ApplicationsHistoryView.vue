@@ -251,13 +251,15 @@ export default {
     },
 
     isApplicationCancellable(application) {
-      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE
     },
 
     showPDFDownloadButton(application) {
       //OFM core generates PDF upon submit - Supp App generates PDF only once approved
       if (application.applicationType === APPLICATION_TYPES.OFM) {
         return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      } else if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+        return false
       }
       return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
     },
