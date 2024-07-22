@@ -4,7 +4,7 @@ const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getDocuments, createDocuments, deleteDocument } = require('../components/documents')
-const { param, validationResult } = require('express-validator')
+const { param, query, validationResult } = require('express-validator')
 const multer = require('multer')
 const upload = multer()
 const { scanFilePayload } = require('../components/fileUtils')
@@ -15,7 +15,7 @@ module.exports = router
 /**
  * Get the list of documents
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validateRole(), (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, query('regardingId').notEmpty().isUUID(), validateRole(), (req, res) => {
   validationResult(req).throw()
   return getDocuments(req, res)
 })
@@ -36,7 +36,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validateRole(),
-  [param('documentId', 'URL param: [documentId] is required').not().isEmpty()],
+  [param('documentId', 'URL param: [documentId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return deleteDocument(req, res)
