@@ -33,7 +33,7 @@ import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
 const IN_PROGRESS_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA]
@@ -119,6 +119,12 @@ export default {
                 fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
                 fa.statusName = this.getStatusName(fa)
               })
+
+              const activeFA = facilityFas.find((el) => el.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
+
+              if (activeFA) {
+                await this.loadIrregularExpenses(activeFA)
+              }
               this.fundingAgreements.push(...facilityFas)
             }
           }),
@@ -129,7 +135,26 @@ export default {
         this.setFailureAlert('Failed to load funding agreements', error)
       } finally {
         this.loading = false
+        console.log(this.fundingAgreements)
       }
+    },
+    async loadIrregularExpenses(activeFA) {
+      const expenseApplications = await ApplicationService.getIrregularExpenseApplication(activeFA.applicationId, `statusCode=${IRREGULAR_EXPENSE_STATUS_CODES.APPROVED}`)
+
+      expenseApplications.forEach((app) => {
+        this.fundingAgreements.push({
+          startDate: app.startDate,
+          endDate: app.endDate,
+          fundingAgreementNumber: app.referenceNumber,
+          fundingAgreementType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
+          expenseAuthority: BLANK_FIELD,
+          facilityName: activeFA.facilityName,
+          statusCode: app.statusCode, //TODO add status code mapping
+          statusName: app.statusName,
+        })
+      })
+
+      console.log('expense? ', expenseApplications)
     },
 
     showSign(fundingAgreement) {

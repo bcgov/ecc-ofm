@@ -42,6 +42,10 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   CLOSED_CANCELLED: 6, // INACTIVE state
 })
 
+export const IRREGULAR_EXPENSE_STATUS_CODES = Object.freeze({
+  APPROVED: 6,
+})
+
 export const CRM_STATE_CODES = Object.freeze({
   ACTIVE: 0,
   INACTIVE: 1,

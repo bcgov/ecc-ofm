@@ -42,6 +42,7 @@ async function getApplications(req, res) {
       req?.query,
       ApplicationMappings,
     )})`
+    log.info(operation)
     const response = await getOperation(operation)
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)
@@ -127,6 +128,16 @@ function buildGetSupplementaryApplicationsFilterQuery(query) {
   return filterQuery
 }
 
+function buildIrregularExpenseFilterQuery(query) {
+  let filterQuery = ''
+  if (isEmpty(query)) return filterQuery
+  const mappedQuery = new MappableObjectForBack(query, IrregularExpenseMappings).toJSON()
+  Object.entries(mappedQuery)?.forEach(([key, value]) => {
+    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
+  })
+  return filterQuery
+}
+
 function buildSupplementaryApplicationsDateQuery(query) {
   if (isEmpty(query)) return ''
   const dateQuery = buildDateFilterQuery(query, 'ofm_start_date')
@@ -159,6 +170,23 @@ async function createSupplementaryApplication(req, res) {
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
     const response = await postOperation('ofm_allowances', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getIrregularExpenseApplication(req, res) {
+  try {
+    const applications = []
+    //const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req?.query, IrregularExpenseMappings)} )`
+    const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildIrregularExpenseFilterQuery(req?.query)})`
+    log.info('oper ', operation)
+    const response = await getOperation(operation) //add mapping
+
+    response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))
+
+    return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -199,21 +227,6 @@ async function getSupplementaryApplicationPDF(req, res) {
     const operation = `ofm_allowances(${req.params.applicationId})/ofm_supplementaryapplicationpdf`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
-  } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
-async function getIrregularExpenseApplication(req, res) {
-  try {
-    const applications = []
-    const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode ne 2 )`
-    const response = await getOperation(operation) //add mapping
-
-    response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))
-
-    return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)

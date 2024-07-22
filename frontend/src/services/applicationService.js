@@ -54,10 +54,16 @@ export default {
     }
   },
 
-  async getIrregularExpenseApplication(applicationId) {
+  async getIrregularExpenseApplication(applicationId, filterQuery = undefined) {
     try {
       if (!applicationId) return
-      const response = await ApiService.apiAxios.get(ApiRoutes.APPLICATIONS + '/irregularExpense/' + applicationId)
+      let url = `${ApiRoutes.APPLICATIONS}/irregularExpense/${applicationId}`
+      if (filterQuery) {
+        url += `?${filterQuery}`
+      }
+
+      console.log(url)
+      const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the Irregular Expense by application id - ${error}`)
