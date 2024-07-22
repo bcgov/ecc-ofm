@@ -234,8 +234,8 @@ export default {
       return this.models?.some((el) => isApplicationLocked(el?.statusCode))
     },
     showBackDatePicker() {
-      const today = new Date()
-      return today > new Date(this.startDate)
+      const today = new Date().setHours(0, 0, 0, 0)
+      return today > new Date(this.startDate).setHours(0, 0, 0, 0)
     },
   },
   async created() {
