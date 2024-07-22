@@ -23,7 +23,6 @@ const validateFacility = require('../middlewares/validateFacility.js')
 const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
-const log = require('../components/logger')
 
 module.exports = router
 
@@ -77,7 +76,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('stateCode').optional().isInt({ min: 0, max: 1 })],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()

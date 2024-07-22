@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, getOperationWithObjectId } = require('./utils')
+const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { FundingAgreementMappings } = require('../util/mapping/Mappings')
@@ -8,6 +8,8 @@ const log = require('./logger')
 const { isEmpty } = require('lodash')
 
 async function getFundingAgreements(req, res) {
+  // TODO (jenbeckett) We shoud validate that either facilityId or applicationId are required
+  // You should be able to do this in the route with oneOf() and then this can be removed
   if (isEmpty(req?.query)) {
     return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
   }
@@ -34,8 +36,7 @@ async function getFundingAgreements(req, res) {
     }
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 

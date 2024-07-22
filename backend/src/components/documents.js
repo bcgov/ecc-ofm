@@ -1,5 +1,5 @@
 'use strict'
-const { postDocuments, getOperation, deleteOperationWithObjectId } = require('./utils')
+const { postDocuments, getOperation, deleteOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const { DocumentMappings } = require('../util/mapping/Mappings')
 const FormData = require('form-data')
@@ -19,8 +19,7 @@ async function getDocuments(req, res) {
     response?.value?.forEach((document) => documents.push(new MappableObjectForFront(document, DocumentMappings).toJSON()))
     return res.status(HttpStatus.OK).json(documents)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
