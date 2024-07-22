@@ -6,10 +6,17 @@ const express = require('express')
 const auth = require('../components/auth')
 const log = require('../components/logger')
 const { v4: uuidv4 } = require('uuid')
-const { getUserGuid, isIdirUser } = require('../components/utils')
+const { getUserGuid } = require('../components/utils')
 
-const { body, validationResult } = require('express-validator')
+const { checkExact, checkSchema, validationResult } = require('express-validator')
 const router = express.Router()
+
+const refreshSchema = {
+  refreshToken: {
+    in: ['body'],
+    exists: { errorMessage: '[refreshToken] is required' },
+  },
+}
 
 router.get('/', (_req, res) => {
   res.status(200).json({
@@ -80,7 +87,7 @@ const UnauthorizedRsp = {
 }
 
 //refreshes jwt on refresh if refreshToken is valid
-router.post('/refresh', [body('refreshToken').exists()], async (req, res) => {
+router.post('/refresh', checkExact(checkSchema(refreshSchema)), async (req, res) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
