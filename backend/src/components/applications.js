@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
+const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings, IrregularExpenseMappings } = require('../util/mapping/Mappings')
 const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
@@ -205,6 +205,21 @@ async function getSupplementaryApplicationPDF(req, res) {
   }
 }
 
+async function getIrregularExpenseApplication(req, res) {
+  try {
+    const applications = []
+    const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} and statuscode ne 2 )`
+    const response = await getOperation(operation) //add mapping
+
+    response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))
+
+    return res.status(HttpStatus.OK).json(applications)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function createEmployeeCertificate(req, res) {
   try {
     const payload = {
@@ -256,4 +271,5 @@ module.exports = {
   deleteEmployeeCertificate,
   getApplicationPDF,
   getSupplementaryApplicationPDF,
+  getIrregularExpenseApplication,
 }

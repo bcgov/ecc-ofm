@@ -54,6 +54,17 @@ export default {
     }
   },
 
+  async getIrregularExpenseApplication(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(ApiRoutes.APPLICATIONS + '/irregularExpense/' + applicationId)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the Irregular Expense by application id - ${error}`)
+      throw error
+    }
+  },
+
   async getApplicationPDF(applicationId) {
     try {
       if (!applicationId) return

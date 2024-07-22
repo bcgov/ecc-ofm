@@ -140,6 +140,7 @@ import {
   APPLICATION_TYPES,
   REQUEST_CATEGORY_NAMES,
   FUNDING_AGREEMENT_STATUS_CODES,
+  BLANK_FIELD,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -156,6 +157,7 @@ export default {
       applications: [],
       supplementaryApplications: [],
       applicationItems: [],
+      irregExpenses: [],
       headers: [
         { title: 'Application ID', key: 'referenceNumber', width: '6%' },
         { title: 'Application Type', key: 'applicationType', width: '12%' },
@@ -216,6 +218,7 @@ export default {
   async created() {
     try {
       this.loading = true
+      this.APPLICATION_TYPES = APPLICATION_TYPES
       this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
@@ -224,7 +227,9 @@ export default {
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
       await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
+      await this.getIrregularExpenseApplications()
       this.mergeRegularAndSupplementaryApplications()
+
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
       }
@@ -361,7 +366,7 @@ export default {
       this.applicationItems = this.transformApplicationsToItems(this.applications)
       const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
-      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems]
+      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregExpenses]
     },
 
     getStatusClass(statusCode) {
@@ -430,6 +435,30 @@ export default {
      */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+    async getIrregularExpenseApplications() {
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          //you can only apply for Irreg Expesne if you have an active FA
+          if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
+            const expenses = await ApplicationService.getIrregularExpenseApplication(application?.applicationId)
+            expenses?.forEach((expense) => {
+              this.irregExpenses.push({
+                applicationId: application?.applicationId,
+                referenceNumber: expense?.referenceNumber,
+                status: expense?.statusName, //todo add codes to constants file
+                applicationType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
+                facilityName: application.facilityName ? application.facilityName : '',
+                submittedDate: null,
+                latestActivityDate: expense?.lastUpdatedTime, //todo: format
+                statusCode: expense?.statusCode,
+              })
+            })
+          }
+        }),
+      )
+
+      //application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
     },
   },
 }

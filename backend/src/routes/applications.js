@@ -17,6 +17,7 @@ const {
   deleteEmployeeCertificate,
   getApplicationPDF,
   getSupplementaryApplicationPDF,
+  getIrregularExpenseApplication,
 } = require('../components/applications')
 const { query, param, validationResult, checkSchema } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
@@ -257,5 +258,20 @@ router.delete(
   (req, res) => {
     validationResult(req).throw()
     return deleteEmployeeCertificate(req, res)
+  },
+)
+
+/**
+ * Get an Irregular Expense application  using applicationId
+ */
+router.get(
+  '/irregularExpense/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getIrregularExpenseApplication(req, res)
   },
 )
