@@ -34,10 +34,10 @@
             </v-col>
           </v-row> -->
           <v-row>
-            <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
+            <v-col cols="12" sm="6" lg="3" xl="2" class="pb-0">
               <AppLabel>Status(es):</AppLabel>
             </v-col>
-            <v-col cols="12" sm="9" lg="8" xl="7">
+            <v-col cols="12" sm="9" lg="8">
               <v-select v-model.lazy="selectedStatuses" :items="STATUS_FILTER_OPTIONS" :disabled="loading" :rules="rules.required" variant="outlined" label="Select Status(es)" chips multiple>
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllStatuses">
@@ -64,18 +64,18 @@
             <v-col cols="12" sm="12" lg="2" class="pb-0">
               <AppLabel>Date Range:</AppLabel>
             </v-col>
-            <v-col cols="12" sm="6" lg="5">
-              <v-date-input id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" hide-actions label="From" variant="outlined" />
-            </v-col>
-            <v-col cols="12" sm="6" lg="5">
-              <v-date-input
-                id="date-to"
-                v-model="selectedDateTo"
-                :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(selectedDateFrom)]"
-                :disabled="loading"
-                hide-actions
-                label="To"
-                variant="outlined" />
+            <v-col cols="12" sm="12" lg="10">
+              <v-row class="mt-2">
+                <AppDateInput id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" :hide-details="loading" label="From" class="mx-3" />
+                <AppDateInput
+                  id="date-to"
+                  v-model="selectedDateTo"
+                  :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(selectedDateFrom)]"
+                  :disabled="loading"
+                  :hide-details="loading"
+                  label="To"
+                  class="mx-3" />
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
@@ -93,6 +93,7 @@ import moment from 'moment'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
+import AppDateInput from '@/components/ui/AppDateInput.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { DATE_FILTER_TYPES, SURVEY_RESPONSE_STATUSES } from '@/utils/constants'
 import reportMixin from '@/mixins/reportMixin'
@@ -100,7 +101,7 @@ import rules from '@/utils/rules'
 
 export default {
   name: 'ReportingSearchCard',
-  components: { AppButton, AppLabel, AppButtonRadioGroup },
+  components: { AppButton, AppButtonRadioGroup, AppDateInput, AppLabel },
   mixins: [reportMixin],
   props: {
     loading: {

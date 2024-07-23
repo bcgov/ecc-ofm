@@ -58,6 +58,20 @@
               </v-col>
             </v-row>
           </v-col>
+
+          <v-col class="px-4">
+            <v-row no-gutters>
+              <v-col cols="6" xl="5" class="pt-2">
+                <p>Retroactive Date Selected:</p>
+              </v-col>
+              <v-col v-if="model.retroactiveDate" cols="6" xl="7" class="pt-2 text-center">
+                <p>{{ format.formatDateToUTC(model.retroactiveDate) }}</p>
+              </v-col>
+              <v-col v-else cols="6" xl="7" class="pt-2 text-center">
+                <p>No date selected</p>
+              </v-col>
+            </v-row>
+          </v-col>
         </v-col>
 
         <v-col cols="12" lg="5" class="pt-0 w-75">
@@ -103,6 +117,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
 import { hasDuplicateVIN } from '@/utils/common'
+import format from '@/utils/format'
 
 export default {
   components: { AppAlertBanner, AppMissingInfoError, AppLabel },
@@ -124,6 +139,7 @@ export default {
   },
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
+    this.format = format
     this.hasDuplicateVIN = hasDuplicateVIN
   },
   methods: {
