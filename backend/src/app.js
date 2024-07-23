@@ -89,6 +89,7 @@ const dbSession = String(config.get('redis:enable')) === 'true' ? getRedisDbSess
 const cookie = {
   secure: true,
   httpOnly: true,
+  sameSite: 'Lax',
   maxAge: 1800000, //30 minutes in ms. this is same as session time. DO NOT MODIFY, IF MODIFIED, MAKE SURE SAME AS SESSION TIME OUT VALUE.
 }
 if ('local' === config.get('environment')) {
@@ -155,12 +156,13 @@ async function populateUserInfo(profile) {
     const user = await getUserProfile(username.guid, profile._json.bceid_username)
 
     profile.role = user?.role
-    profile.org = user?.organization?.accountid
+    profile.organizationId = user?.organization?.accountid
     profile.contactId = user?.contactid
 
     profile.facilities = user?.facility_permission.map((fp) => {
       return {
         facilityId: fp.facility.accountid,
+        ofmPortalAccess: fp.ofm_portal_access,
         isExpenseAuthority: fp.ofm_is_expense_authority,
       }
     })

@@ -1,5 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
+    <div class="mt-2">Complete, manage or submit current reports for your facilities. Request to unlock or view overdue reports and past submissions.</div>
     <v-row class="mt-1 mb-4">
       <v-col cols="12" md="5">
         <h2>Report Details</h2>
@@ -27,9 +28,16 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
-            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
-            <AppButton v-if="showUnlock(item)" :primary="false" size="small" class="ml-2 ml-md-0 ml-lg-2" :disabled="hasInProgressAssistanceRequest(item)" @click="toggleAssistanceRequestDialog(item)">
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">Update</AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton
+              v-if="showUnlock(item)"
+              :primary="false"
+              size="small"
+              height="30px"
+              class="ml-2 ml-md-0 ml-lg-2"
+              :disabled="hasInProgressAssistanceRequest(item)"
+              @click="toggleAssistanceRequestDialog(item)">
               Unlock
             </AppButton>
             <v-btn v-if="showTrash(item)" variant="text" @click="toggleDeleteDialog(item)">

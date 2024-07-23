@@ -9,30 +9,47 @@
           <AppLabel class="mr-2">Is your facility unionized?</AppLabel>
           <div>{{ currentApplication?.isUnionized ? 'Yes' : 'No' }}</div>
         </v-row>
-        <v-row v-if="currentApplication?.isUnionized" no-gutters>
+        <v-row v-if="currentApplication?.isUnionized" no-gutters class="mb-2">
           <AppLabel class="mr-2">Which Union(s) do your staff belong to?</AppLabel>
           <div>{{ unionsNames }}</div>
+        </v-row>
+        <v-row v-if="isOtherUnionSelected(currentApplication)" no-gutters class="mb-2">
+          <AppLabel class="mr-2">Please specify your other union(s):</AppLabel>
+          <div>{{ currentApplication?.unionDescription }}</div>
+        </v-row>
+      </div>
+    </v-card>
+    <v-card class="my-4 pa-4">
+      <AppMissingInfoError v-if="!readonly && !isCSSEASectionComplete(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.CSSEA }}
+      </AppMissingInfoError>
+      <div v-else>
+        <v-row no-gutters>
+          <AppLabel class="mr-2">Does your facility belong to CSSEA?</AppLabel>
+          <div>{{ currentApplication?.cssea ? 'Yes' : 'No' }}</div>
         </v-row>
       </div>
     </v-card>
     <v-card class="pa-4">
       <div v-if="!readonly && !isEmployeeInformationComplete">
-        <AppMissingInfoError v-if="!isThereAtLeastOneEmployee(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+        <AppMissingInfoError
+          v-if="!isThereAtLeastOneEmployee(currentApplication)"
+          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllEmployeeCertificatesEntered(currentApplication?.providerEmployees, currentApplication)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllCertificateInitialsUnique(currentApplication?.providerEmployees)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllCertificateNumbersUnique(currentApplication?.providerEmployees)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
         </AppMissingInfoError>
       </div>
@@ -208,6 +225,8 @@ export default {
   methods: {
     ...mapActions(useApplicationsStore, [
       'isUnionSectionComplete',
+      'isOtherUnionSelected',
+      'isCSSEASectionComplete',
       'isThereAtLeastOneEmployee',
       'areAllEmployeeCertificatesEntered',
       'areAllCertificateInitialsUnique',

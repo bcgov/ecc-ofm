@@ -1,6 +1,6 @@
 <template>
-  <v-btn class="px-2" :class="buttonClass" v-bind="$attrs">
-    <span class="overflow-hidden"><slot /></span>
+  <v-btn class="px-2" :class="buttonClass" height="auto" v-bind="$attrs">
+    <span class="text-wrap"><slot /></span>
     <v-icon v-if="$attrs.icon" class="button-icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
 </template>

@@ -19,8 +19,8 @@
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      An Inclusion Policy is a requirement to apply for Support Needs Supplementary Funding. Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can
-      upload your policy in
+      An Inclusion Policy is a requirement to apply for Support Needs Allowance. Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can upload your
+      policy in
       <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
     </v-col>
   </v-row>
@@ -74,20 +74,18 @@
       <v-col cols="12">Please describe how you intend to use this funding:</v-col>
     </v-row>
     <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
-      <v-col cols="11" lg="6">
-        <v-checkbox v-model="model.supportFundingModel" :disabled="readOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
-          <template v-slot:label>
-            <p>
-              {{ item.label }}
-              <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
-                <template #activator="{ props }">
-                  <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
-                </template>
-              </v-tooltip>
-            </p>
-          </template>
-        </v-checkbox>
-      </v-col>
+      <v-checkbox v-model="model.supportFundingModel" :disabled="readOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
+        <template v-slot:label>
+          <p>
+            {{ item.label }}
+            <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">
+              <template #activator="{ props }">
+                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+              </template>
+            </v-tooltip>
+          </p>
+        </template>
+      </v-checkbox>
     </v-row>
     <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
       <v-textarea
@@ -101,7 +99,7 @@
     </v-row>
   </div>
   <AppAlertBanner v-else type="warning">
-    You must have an inclusion policy to apply for Support Needs Funding. Your organization account manager can update inclusion policy details in
+    You must have an inclusion policy to apply for Support Needs Allowance. Your organization account manager can update inclusion policy details in
     <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
   </AppAlertBanner>
 </template>

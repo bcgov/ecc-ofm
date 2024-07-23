@@ -1,8 +1,8 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
-const { buildFilterQuery } = require('../util/common')
+const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
@@ -37,9 +37,6 @@ function mapSupplementaryApplicationObjectForFront(data) {
 
 async function getApplications(req, res) {
   try {
-    if (isEmpty(req?.query)) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
-    }
     const applications = []
     const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(${buildFilterQuery(
       req?.query,
@@ -49,8 +46,7 @@ async function getApplications(req, res) {
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -130,9 +126,16 @@ function buildGetSupplementaryApplicationsFilterQuery(query) {
   return filterQuery
 }
 
+function buildSupplementaryApplicationsDateQuery(query) {
+  if (isEmpty(query)) return ''
+  const dateQuery = buildDateFilterQuery(query, 'ofm_start_date')
+  return dateQuery
+}
+
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req.query)} )`
+    const operation = `ofm_allowances?$filter=(${buildSupplementaryApplicationsDateQuery(req?.query)} _ofm_application_value eq ${req?.params.applicationId}
+    ${buildGetSupplementaryApplicationsFilterQuery(req?.query)} )`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {

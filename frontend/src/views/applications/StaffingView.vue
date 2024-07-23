@@ -1,43 +1,67 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mt-4"><strong>Please provide staffing information for the selected facility:</strong></v-row>
-    <v-card class="my-6 pa-4">
+    <v-card id="union-section" class="my-6 pa-4">
       <v-row no-gutters class="mt-4">
         <v-col cols="12">
           <AppLabel>Is your facility unionized?</AppLabel>
         </v-col>
         <v-col cols="12">
-          <v-radio-group v-model="model.isUnionized" :rules="rules.required" :hide-details="readonly" :disabled="readonly" inline color="primary">
+          <v-radio-group id="is-unionized" v-model="model.isUnionized" :rules="rules.required" :hide-details="readonly" :disabled="readonly" inline color="primary">
             <v-radio label="Yes" :value="1" />
             <v-radio label="No" :value="0" />
           </v-radio-group>
         </v-col>
       </v-row>
-      <v-row v-if="model.isUnionized === 1" no-gutters>
+      <div v-if="model.isUnionized === 1">
+        <v-row no-gutters>
+          <v-col cols="12">
+            <AppLabel>Which Union(s) do your staff belong to?</AppLabel>
+          </v-col>
+          <v-col cols="12" lg="8" xl="6">
+            <v-select
+              id="select-unions"
+              v-model.lazy="model.unions"
+              :rules="rules.required"
+              :hide-details="readonly"
+              :disabled="readonly"
+              variant="outlined"
+              chips
+              multiple
+              :items="unions"
+              item-title="description"
+              item-value="id">
+              <template v-slot:prepend-item>
+                <v-list-item title="Select All" @click="toggleAllUnions">
+                  <template v-slot:prepend>
+                    <v-checkbox-btn :color="someUnionsSelected ? '#003366' : undefined" :indeterminate="someUnionsSelected && !allUnionsSelected" :model-value="someUnionsSelected"></v-checkbox-btn>
+                  </template>
+                </v-list-item>
+                <v-divider class="mt-2"></v-divider>
+              </template>
+            </v-select>
+          </v-col>
+        </v-row>
+        <v-row v-if="isOtherUnionSelected(model)" no-gutters class="mt-2">
+          <v-col cols="12">
+            <AppLabel>Please specify your other union(s):</AppLabel>
+          </v-col>
+          <v-col cols="12" lg="8" xl="6">
+            <v-text-field id="other-union-desc" v-model.trim="model.unionDescription" :rules="rules.required" variant="outlined" density="compact" :disabled="readonly" :hide-details="readonly" />
+          </v-col>
+        </v-row>
+      </div>
+    </v-card>
+    <v-card id="cssea-section" class="my-6 pa-4">
+      <v-row no-gutters class="mt-2">
         <v-col cols="12">
-          <AppLabel>Which Union(s) do your staff belong to?</AppLabel>
+          <AppLabel>Does your facility belong to CSSEA?</AppLabel>
         </v-col>
-        <v-col cols="12" lg="8" xl="6">
-          <v-select
-            v-model.lazy="model.unions"
-            :rules="rules.required"
-            :hide-details="readonly"
-            :disabled="readonly"
-            variant="outlined"
-            chips
-            multiple
-            :items="unions"
-            item-title="description"
-            item-value="id">
-            <template v-slot:prepend-item>
-              <v-list-item title="Select All" @click="toggleAllUnions">
-                <template v-slot:prepend>
-                  <v-checkbox-btn :color="someUnionsSelected ? '#003366' : undefined" :indeterminate="someUnionsSelected && !allUnionsSelected" :model-value="someUnionsSelected"></v-checkbox-btn>
-                </template>
-              </v-list-item>
-              <v-divider class="mt-2"></v-divider>
-            </template>
-          </v-select>
+        <v-col cols="12">
+          <v-radio-group id="belong-cssea" v-model="model.cssea" :rules="rules.notNullRequired" :hide-details="readonly" :disabled="readonly" inline color="primary">
+            <v-radio label="Yes" :value="true" />
+            <v-radio label="No" :value="false" />
+          </v-radio-group>
         </v-col>
       </v-row>
     </v-card>
@@ -47,7 +71,7 @@
       <AppMissingInfoError v-if="!areAllCertificateInitialsUnique(allUpdatedCertificates)">{{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}</AppMissingInfoError>
       <AppMissingInfoError v-if="!areAllCertificateNumbersUnique(allUpdatedCertificates)">{{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}</AppMissingInfoError>
     </div>
-    <v-card class="my-6 pa-4">
+    <v-card id="employee-section" class="my-6 pa-4">
       <v-row no-gutters>
         <v-col cols="4">
           <h4>Employee Category</h4>
@@ -73,6 +97,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingInfantECEducatorFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -83,6 +108,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingInfantECEducatorPartTime')" />
           </v-col>
         </v-row>
@@ -108,6 +134,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingECEducatorFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -118,6 +145,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingECEducatorPartTime')" />
           </v-col>
         </v-row>
@@ -143,6 +171,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingECEducatorAssistantFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -153,6 +182,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingECEducatorAssistantPartTime')" />
           </v-col>
         </v-row>
@@ -178,6 +208,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingResponsibleAdultFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -188,6 +219,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
+              class="number-input"
               @input="sanitizeInput('staffingResponsibleAdultPartTime')" />
           </v-col>
         </v-row>
@@ -316,7 +348,12 @@ export default {
     },
 
     isFormComplete() {
-      return this.isThereAtLeastOneEmployee(this.model) && this.areEmployeeCertificatesComplete(this.allUpdatedCertificates, this.model) && this.isUnionSectionComplete(this.model)
+      return (
+        this.isThereAtLeastOneEmployee(this.model) &&
+        this.areEmployeeCertificatesComplete(this.allUpdatedCertificates, this.model) &&
+        this.isUnionSectionComplete(this.model) &&
+        this.isCSSEASectionComplete(this.model)
+      )
     },
   },
 
@@ -362,6 +399,8 @@ export default {
     ...mapActions(useApplicationsStore, [
       'getApplication',
       'isUnionSectionComplete',
+      'isOtherUnionSelected',
+      'isCSSEASectionComplete',
       'isThereAtLeastOneEmployee',
       'areEmployeeCertificatesComplete',
       'areAllEmployeeCertificatesEntered',
@@ -381,6 +420,8 @@ export default {
         staffingResponsibleAdultPartTime: this.currentApplication?.staffingResponsibleAdultPartTime ?? 0,
         isUnionized: this.currentApplication?.isUnionized,
         unions: convertStringToArray(this.currentApplication?.unions)?.map((item) => Number(item)),
+        unionDescription: this.currentApplication?.unionDescription,
+        cssea: this.currentApplication?.cssea,
       }
     },
 
@@ -389,7 +430,8 @@ export default {
         this.$emit('process', true)
         this.processing = true
         const applicationPayload = cloneDeep(this.model)
-        applicationPayload.unions = applicationPayload?.isUnionized === 1 && this.model.unions?.length > 0 ? convertArrayToString(this.model.unions) : null
+        applicationPayload.unions = applicationPayload?.isUnionized === 1 && this.model.unions?.length > 0 ? convertArrayToString(this.model.unions, ',') : null
+        applicationPayload.unionDescription = this.isOtherUnionSelected(applicationPayload) ? applicationPayload.unionDescription : null
         const isApplicationUpdated = ApplicationService.isApplicationUpdated(applicationPayload)
         const isCertificatesUpdated = this.certificatesToCreate?.length > 0 || this.certificatesToUpdate?.length > 0 || this.certificatesToDelete?.length > 0
         if (isApplicationUpdated || isCertificatesUpdated) {
@@ -477,7 +519,7 @@ export default {
 </script>
 
 <style scoped>
-:deep(input) {
+.number-input >>> input {
   text-align: center;
 }
 </style>

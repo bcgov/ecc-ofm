@@ -292,7 +292,7 @@ export default {
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
-        this.setFailureAlert('Failed to load supplementary applications')
+        this.setFailureAlert('Failed to load Allowances applications')
       }
     },
     async saveApplication(showAlert = false) {
@@ -345,10 +345,10 @@ export default {
         await this.loadData()
         this.clonedModels = cloneDeep(this.models)
         if (showAlert) {
-          this.setSuccessAlert(`Application Saved`)
+          this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
-        this.setFailureAlert('Failed to save supplementary applications')
+        this.setFailureAlert('Failed to save Allowances application')
         this.loading = false
         this.$emit('process', false)
       }

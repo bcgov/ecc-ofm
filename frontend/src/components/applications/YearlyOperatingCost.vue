@@ -6,7 +6,14 @@
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Insurance</p>
+              <p>
+                Insurance
+                <v-tooltip content-class="tooltip" text="Costs directly related to labour costs, property insurance, utilities and garbage disposal." max-width="300px">
+                  <template v-slot:activator="{ props }">
+                    <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
               <AppNumberInput v-model.lazy="model.insuranceCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
@@ -18,7 +25,7 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>
                 Upkeep and Labour
-                <v-tooltip content-class="tooltip" :text="UPKEEP_INFO_TXT">
+                <v-tooltip content-class="tooltip" text="Costs may include garbage removal, recycling charges, applicable supplies." max-width="300px">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -37,7 +44,7 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>
                 Utilities
-                <v-tooltip content-class="tooltip" :text="UTILITIES_INFO_TXT">
+                <v-tooltip content-class="tooltip" text="Costs may include gas, electricity, water, phone, internet." max-width="300px">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -54,7 +61,7 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>
                 Maintenance and Repairs
-                <v-tooltip content-class="tooltip" :text="MAINTENANCE_INFO_TXT">
+                <v-tooltip content-class="tooltip" text="Costs may include repairs, appliance/furniture replacement, snow removal." max-width="300px">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -73,7 +80,7 @@
             <v-col cols="6" xl="5" class="pt-2">
               <p>
                 Furniture and Equipment
-                <v-tooltip content-class="tooltip" :text="FURNITURE_INFO_TXT">
+                <v-tooltip content-class="tooltip" text="Costs may include laptops, tablets, cell phones used for the operation of the business, desks, chairs, tables." max-width="300px">
                   <template v-slot:activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -88,7 +95,14 @@
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
             <v-col cols="6" xl="5" class="pt-2">
-              <p>Supplies</p>
+              <p>
+                Supplies
+                <v-tooltip content-class="tooltip" text="Provided by arm’s length third party." max-width="300px">
+                  <template v-slot:activator="{ props }">
+                    <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+                  </template>
+                </v-tooltip>
+              </p>
             </v-col>
             <v-col cols="6" xl="7" align="center" class="px-2">
               <AppNumberInput v-model.lazy="model.suppliesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
@@ -170,10 +184,6 @@ export default {
       maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost ? this.currentApplication?.maintenanceRepairsCost?.toFixed(2) : '0.00',
       furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost ? this.currentApplication?.furnitureEquipmentsCost?.toFixed(2) : '0.00',
     }
-    this.UTILITIES_INFO_TXT = 'This is a placeholder message'
-    this.FURNITURE_INFO_TXT = 'This is a placeholder message'
-    this.UPKEEP_INFO_TXT = 'This is a placeholder message'
-    this.MAINTENANCE_INFO_TXT = 'This is a placeholder message'
   },
 }
 </script>

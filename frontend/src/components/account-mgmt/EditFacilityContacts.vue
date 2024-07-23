@@ -1,12 +1,10 @@
 <template>
-  <v-row>
-    <v-col class="ml-6 pr-9 pb-0 d-flex flex-row align-center">
-      <h4 class="mr-2">{{ title }}</h4>
-      <h5>&nbsp;{{ titleInfo }}</h5>
-    </v-col>
+  <v-row no-gutters class="mt-6">
+    <h4 class="mr-2">{{ title }}</h4>
+    <h5>{{ titleInfo }}</h5>
   </v-row>
   <v-row>
-    <v-col cols="12" class="ml-6 pr-9 pt-0">
+    <v-col cols="12" class="pt-0">
       <v-card elevation="0" variant="outlined">
         <v-expansion-panels variant="accordion" v-model="isPanelOpen">
           <v-expansion-panel elevation="0">
@@ -22,7 +20,7 @@
                     <v-col cols="auto" class="pb-0">
                       <AppLabel>Add {{ title }}:</AppLabel>
                     </v-col>
-                    <v-col cols="3" class="pb-0">
+                    <v-col cols="12" sm="6" md="4" xl="3" class="pb-0">
                       <v-autocomplete
                         id="additional-contact"
                         ref="autoComplete"

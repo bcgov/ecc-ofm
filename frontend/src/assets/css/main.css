@@ -157,8 +157,18 @@ input[type='number'] {
 }
 
 .basic-card {
-  margin-top: 5rem;
   border-top: 5px solid #003366 !important;
+  min-height: 150px;
+}
+
+.blue-background {
+  background-color: #003366;
+}
+
+@media only screen and (max-width: 959px) {
+  .basic-card {
+    min-height: 100px;
+  }
 }
 
 .page-overview {

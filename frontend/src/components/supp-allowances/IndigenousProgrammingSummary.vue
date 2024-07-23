@@ -1,6 +1,6 @@
 <template>
   <v-card v-for="model in indigenousProgrammingModels" :key="model.indigenousProgrammingModels ? model.indigenousProgrammingModels : model.id" fluid class="pb-0 my-5">
-    <AppAlertBanner v-if="model.isNextTerm" type="info">This Supplementary Application is for Next Year</AppAlertBanner>
+    <AppAlertBanner v-if="model.isNextTerm" type="info">This Allowance application is for next year</AppAlertBanner>
     <div class="px-5">
       <div class="mt-2">
         <h4 class="text-decoration-underline">Funding Selected</h4>

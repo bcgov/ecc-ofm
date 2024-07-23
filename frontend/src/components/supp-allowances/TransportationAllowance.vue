@@ -38,7 +38,7 @@
   <v-divider class="my-5"></v-divider>
 
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
-    <v-card class="my-10" :class="{ greyTop: readOnly(model), 'home-card': !readOnly(model) }" :disabled="readOnly(model)">
+    <v-card class="my-10" :class="{ greyTop: readOnly(model), 'basic-card': !readOnly(model) }" :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
         <v-col cols="1">
           <AppLabel>Vehicle</AppLabel>

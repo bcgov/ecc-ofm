@@ -18,7 +18,9 @@ const {
   getApplicationPDF,
   getSupplementaryApplicationPDF,
 } = require('../components/applications')
-const { param, validationResult, checkSchema } = require('express-validator')
+const { query, param, validationResult, checkSchema } = require('express-validator')
+const validateFacility = require('../middlewares/validateFacility.js')
+const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
@@ -69,18 +71,35 @@ const createEmployeeCertificateSchema = {
 /**
  * Get the list of applications
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_APPLICATIONS), (req, res) => {
-  validationResult(req).throw()
-  return getApplications(req, res)
-})
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('stateCode').optional().isInt({ min: 0, max: 1 })],
+  validateFacility(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getApplications(req, res)
+  },
+)
 
 /**
  * Create a new Application
  */
-router.post('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.APPLY_FOR_FUNDING), [checkSchema(createApplicationSchema)], (req, res) => {
-  validationResult(req).throw()
-  return createApplication(req, res)
-})
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  [checkSchema(createApplicationSchema)],
+  validateFacility(),
+  validateOrganization(),
+  (req, res) => {
+    validationResult(req).throw()
+    return createApplication(req, res)
+  },
+)
 
 /**
  * Get an existing Application details using applicationId

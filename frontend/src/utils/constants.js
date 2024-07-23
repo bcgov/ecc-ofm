@@ -186,6 +186,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
   UNION: 'Union information required',
+  CSSEA: 'CSSEA information required',
   MISMATCH_NUMBER_STAFF_CERTIFICATE: 'The total of staff and total of certificates must match',
   DUPLICATE_CERTIFICATE_NUMBERS: 'Certificate number already exists, duplicate certificates are not permitted',
   DUPLICATE_CERTIFICATE_INITIALS: 'Initials already exists, please ensure staff are entered only once on this page.',
@@ -254,7 +255,7 @@ export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
 export const BLANK_FIELD = '- - - -'
 
 export const APPLICATION_TYPES = Object.freeze({
-  OFM: 'OFM',
+  OFM: 'Base Funding',
 })
 
 export const DAYS_OF_WEEK = Object.freeze([

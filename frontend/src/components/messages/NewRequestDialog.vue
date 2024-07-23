@@ -101,8 +101,7 @@
                 :rules="rules.required"
                 item-title="facilityName"
                 :disabled="isLoading || lockFacility"
-                return-object
-                hide-details></v-select>
+                return-object></v-select>
             </v-col>
           </v-row>
           <v-row v-if="isAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
@@ -548,12 +547,17 @@ export default {
     'newRequestModel.requestCategoryId': {
       async handler() {
         if (this.isIrregularExpenseRequest && !this.fundingAgreements) {
+          this.isLoading = true
           await this.getFundingAgreements()
+          this.isLoading = false
         }
         this.resetModelData(this.isAccountMaintenanceRequest)
         // Reset the Selected Facility if not allowed
-        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facId)) {
+        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties?.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)) {
           this.newRequestModel.facilities = []
+          //then shorten the facility model to 1 item if going from multi-select to single select
+        } else if (this.newRequestModel.facilities?.length > 1 && !this.isMultipleFacilities) {
+          this.newRequestModel.facilities = this.newRequestModel.facilities[0]
         }
       },
     },
