@@ -158,6 +158,7 @@
         <v-col cols="12" sm="6" lg="5" class="ml-0">
           <v-date-input
             v-model="model.retroactiveDate"
+            readonly
             @update:modelValue="update(model)"
             :min="startDate"
             :max="new Date()"
