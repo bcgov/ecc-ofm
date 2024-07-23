@@ -19,6 +19,16 @@ const rules = {
   validEndDate(startDate) {
     return (v) => new Date(v) > new Date(startDate) || 'End date must be after start date'
   },
+  dateInRange: (v, startDate, endDate) => {
+    if (!v) return true
+    const date = new Date(v)
+    const minDate = new Date(startDate)
+    const maxDate = new Date(endDate)
+    if (date < minDate || date > maxDate) {
+      return `Date must be between ${startDate} and ${endDate}`
+    }
+    return true
+  },
   max(number) {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
   },

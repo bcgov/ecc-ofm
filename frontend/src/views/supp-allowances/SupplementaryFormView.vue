@@ -88,6 +88,7 @@
               :transportModels="getTransportModels(renewalTerm)"
               :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="renewalTerm"
+              :startDate="getStartDate(renewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -121,6 +122,7 @@
               :transportModels="getTransportModels(nextRenewalTerm)"
               :formDisabled="formDisabled"
               :renewalTerm="nextRenewalTerm"
+              :startDate="getStartDate(nextRenewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -308,6 +310,10 @@ export default {
             continue
           }
 
+          if (applicationModel.invalidDate) {
+            applicationModel.retroactiveDate = null
+          }
+
           const payload = {
             ...applicationModel,
             applicationId: this.applicationId,
@@ -386,6 +392,7 @@ export default {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
           application.documentsToUpload = []
+          application.retroactiveDate = application.retroactiveDate ? this.format.formatTwoMonthDate(application.retroactiveDate) : null
         }
         this.models = [...this.models, ...transportApplications]
       }
@@ -441,6 +448,7 @@ export default {
           documentsToUpload: [],
           id: uuid.v4(),
           renewalTerm: term,
+          retroactiveDate: null,
         })
       }
     },
@@ -456,6 +464,9 @@ export default {
       delete modelData.startDate
       delete modelData.endDate
       delete modelData.renewalTerm
+
+      //the first time a user selects a date - it will be a Date obj, which always returns true with .isEmpty
+      modelData.retroactiveDate = modelData?.retroactiveDate ? String(modelData.retroactiveDate) : null
 
       //we delete the fields above because they will always have a value - so when running our isEmpty check below- those fields would fail the isEmpty check-
       //and then our application would be trying to save empty models.
@@ -552,6 +563,21 @@ export default {
           return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
         case this.INDIGENOUS:
           return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      }
+    },
+    getStartDate(term) {
+      const termTwoStartDate = new Date(new Date(this.fundingAgreement.startDate).setFullYear(new Date(this.fundingAgreement.startDate).getFullYear() + 1))
+      const termThreeStartDate = new Date(new Date(termTwoStartDate).setFullYear(new Date(termTwoStartDate).getFullYear() + 1))
+
+      switch (true) {
+        case term === SUPP_TERM_CODES.TERM_ONE:
+          return this.format.formatTwoMonthDate(this.fundingAgreement.startDate)
+
+        case term === SUPP_TERM_CODES.TERM_TWO:
+          return this.format.formatTwoMonthDate(termTwoStartDate)
+
+        case term === SUPP_TERM_CODES.TERM_THREE:
+          return this.format.formatTwoMonthDate(termThreeStartDate)
       }
     },
   },

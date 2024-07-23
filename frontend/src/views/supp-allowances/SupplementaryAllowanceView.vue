@@ -31,6 +31,7 @@
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
+            :key="application?.applicationId"
             :applicationId="application?.applicationId"
             :fundingAgreement="application?.fundingAgreement"
             :cancel="cancel"
