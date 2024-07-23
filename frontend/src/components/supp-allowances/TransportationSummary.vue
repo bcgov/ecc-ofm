@@ -59,13 +59,16 @@
             </v-row>
           </v-col>
 
-          <v-col v-if="model.retroactiveDate" class="px-4">
+          <v-col class="px-4">
             <v-row no-gutters>
               <v-col cols="6" xl="5" class="pt-2">
                 <p>Retroactive Date Selected:</p>
               </v-col>
-              <v-col cols="6" xl="7" class="pt-2 text-center">
+              <v-col v-if="model.retroactiveDate" cols="6" xl="7" class="pt-2 text-center">
                 <p>{{ format.formatDateToUTC(model.retroactiveDate) }}</p>
+              </v-col>
+              <v-col v-else cols="6" xl="7" class="pt-2 text-center">
+                <p>No date selected</p>
               </v-col>
             </v-row>
           </v-col>

@@ -310,6 +310,10 @@ export default {
             continue
           }
 
+          if (applicationModel.invalidDate) {
+            applicationModel.retroactiveDate = null
+          }
+
           const payload = {
             ...applicationModel,
             applicationId: this.applicationId,

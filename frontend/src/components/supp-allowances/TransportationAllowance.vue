@@ -168,7 +168,7 @@
             label="From"
             variant="outlined"
             clearable
-            @update:modelValue="update(model)" />
+            @update:modelValue="updateDate(model)" />
         </v-col>
       </v-row>
     </v-card>
@@ -253,6 +253,15 @@ export default {
     this.MAX_TRANSPORT_APPLICATIONS = 10
   },
   methods: {
+    //set the flag so the parent component can remove the date data before save
+    updateDate(model) {
+      const dateValid = rules.dateInRange(model.retroactiveDate, this.startDate, this.formattedEndDate)
+
+      if (dateValid !== true) {
+        model.invalidDate = true
+      }
+      this.update(model)
+    },
     update(model) {
       this.$emit('update', model)
     },
@@ -268,6 +277,7 @@ export default {
         documentsToUpload: [],
         id: uuid.v1(),
         renewalTerm: this.renewalTerm,
+        retroactiveDate: null,
       }
 
       this.models.push(transportModel)
