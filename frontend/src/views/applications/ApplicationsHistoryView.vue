@@ -294,7 +294,8 @@ export default {
       await Promise.all(
         this.applications?.map(async (application) => {
           application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+          //we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user from applying for Irreg Expense funding
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
         }),
       )
     },
