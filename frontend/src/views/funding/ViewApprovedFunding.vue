@@ -12,11 +12,11 @@
     </section>
 
     <a style="text-decoration: none" :download="'Approval_Notification_' + application?.supplementaryReferenceNumber" :href="pdfDownloadLink">
-      <AppButton size="medium" width="240px" class="mt-2 justify-end" :loading="loading">Download PDF</AppButton>
+      <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
     </a>
 
-    <v-row v-if="!loading" class="justify-end my-3">
-      <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
+    <v-row v-if="!loading" class="justify-end mx-5 my-3">
+      <AppButton size="medium" width="240px" class="mt-2 justify-end" :loading="loading">Download PDF</AppButton>
     </v-row>
   </v-container>
 </template>
