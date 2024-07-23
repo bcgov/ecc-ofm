@@ -29,11 +29,7 @@
       </v-col>
     </v-row>
 
-    <section class="my-5 py-10 grey-div-with-border">
-      <v-card class="mt-5 py-10 pdf-reader">
-        <VuePdfEmbed :source="pdfFile" />
-      </v-card>
-    </section>
+    <AppPDFViewer :pdfFile="pdfFile"></AppPDFViewer>
 
     <a style="text-decoration: none" :download="'Funding_Agreement_' + fundingAgreement?.fundingAgreementNumber" :href="pdfDownloadLink">
       <AppButton size="medium" width="240px" class="mt-2" :loading="loading">Download PDF</AppButton>
@@ -105,10 +101,7 @@ import LicenceService from '@/services/licenceService'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
 import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
-import VuePdfEmbed from 'vue-pdf-embed'
-
-// essential styles
-import 'vue-pdf-embed/dist/style/index.css'
+import AppPDFViewer from '@/components/ui/AppPDFViewer.vue'
 
 const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
@@ -119,7 +112,7 @@ const LOCKED_STATUSES = [
 
 export default {
   name: 'FundingView',
-  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, VuePdfEmbed },
+  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, AppPDFViewer },
   mixins: [alertMixin],
   data() {
     return {
@@ -201,18 +194,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.grey-div-with-border {
-  background-color: #eeeeee;
-  border: 1px solid #333333;
-  border-radius: 4px;
-}
-.pdf-reader {
-  margin: auto;
-  border: solid 1px black;
-  max-height: 80vh;
-  max-width: 830px;
-  overflow-y: scroll;
-}
-</style>

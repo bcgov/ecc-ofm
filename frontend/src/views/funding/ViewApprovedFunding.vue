@@ -5,11 +5,7 @@
 
     <h4 class="my-10">Approval Notification For {{ application?.supplementaryTypeDescription }} Allowance</h4>
 
-    <section class="my-5 py-10 grey-div-with-border">
-      <v-card class="mt-5 py-10 pdf-reader">
-        <VuePdfEmbed :source="pdfFile" />
-      </v-card>
-    </section>
+    <AppPDFViewer :pdfFile="pdfFile"></AppPDFViewer>
 
     <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
 
@@ -26,15 +22,12 @@ import alertMixin from '@/mixins/alertMixin'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
-import VuePdfEmbed from 'vue-pdf-embed'
 import ApplicationService from '@/services/applicationService'
-
-// essential styles
-import 'vue-pdf-embed/dist/style/index.css'
+import AppPDFViewer from '@/components/ui/AppPDFViewer.vue'
 
 export default {
   name: 'ApprovedFundingView',
-  components: { AppBackButton, AppButton, OrganizationHeader, VuePdfEmbed },
+  components: { AppBackButton, AppButton, OrganizationHeader, AppPDFViewer },
   mixins: [alertMixin],
   data() {
     return {
@@ -68,18 +61,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.grey-div-with-border {
-  background-color: #eeeeee;
-  border: 1px solid #333333;
-  border-radius: 4px;
-}
-.pdf-reader {
-  margin: auto;
-  border: solid 1px black;
-  max-height: 80vh;
-  max-width: 830px;
-  overflow-y: scroll;
-}
-</style>
