@@ -19,7 +19,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS),
-  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty(), query('stateCode').optional().isInt({ min: 0, max: 1 }), query('statusCode').optional().isInt({ min: 0, max: 8 })],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
