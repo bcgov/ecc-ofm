@@ -4,10 +4,10 @@
       <v-row no-gutters>
         <v-col cols="12" lg="6" class="mb-6 mb-lg-0">
           <v-row>
-            <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
+            <v-col cols="12" sm="6" lg="3" xl="2" class="pb-0">
               <AppLabel>Facility(s):</AppLabel>
             </v-col>
-            <v-col cols="12" sm="9" lg="8" xl="7">
+            <v-col cols="12" sm="9" lg="8">
               <v-select
                 v-model="selectedFacilities"
                 :items="userInfo.facilities"
@@ -37,10 +37,10 @@
             </v-col>
           </v-row>
           <v-row v-if="showPaymentTypesFilter">
-            <v-col cols="12" sm="6" lg="2" xl="3" class="pb-0">
+            <v-col cols="12" sm="6" lg="3" xl="2" class="pb-0">
               <AppLabel>Payment Type(s):</AppLabel>
             </v-col>
-            <v-col cols="12" sm="9" lg="8" xl="7">
+            <v-col cols="12" sm="9" lg="8">
               <v-select
                 v-model.lazy="selectedPaymentFilterTypes"
                 :items="paymentTypes"
@@ -80,18 +80,18 @@
             <v-col cols="12" sm="12" lg="2" class="pb-0">
               <AppLabel>Date Range:</AppLabel>
             </v-col>
-            <v-col cols="12" sm="6" lg="5">
-              <v-date-input id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" hide-actions label="From" variant="outlined" />
-            </v-col>
-            <v-col cols="12" sm="6" lg="5">
-              <v-date-input
-                id="date-to"
-                v-model="selectedDateTo"
-                :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(selectedDateFrom)]"
-                :disabled="loading"
-                hide-actions
-                label="To"
-                variant="outlined" />
+            <v-col cols="12" sm="12" lg="10">
+              <v-row class="mt-2">
+                <AppDateInput id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" :hide-details="loading" label="From" class="mx-3" />
+                <AppDateInput
+                  id="date-to"
+                  v-model="selectedDateTo"
+                  :rules="[...rules.required, rules.MMDDYYYY, rules.validEndDate(selectedDateFrom)]"
+                  :disabled="loading"
+                  :hide-details="loading"
+                  label="To"
+                  class="mx-3" />
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
@@ -110,6 +110,7 @@ import { mapState } from 'pinia'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import AppButtonRadioGroup from '@/components/ui/AppButtonRadioGroup.vue'
+import AppDateInput from '@/components/ui/AppDateInput.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
@@ -118,7 +119,7 @@ import rules from '@/utils/rules'
 
 export default {
   name: 'FundingSearchCard',
-  components: { AppButton, AppLabel, AppButtonRadioGroup },
+  components: { AppButton, AppButtonRadioGroup, AppDateInput, AppLabel },
   props: {
     loading: {
       type: Boolean,
