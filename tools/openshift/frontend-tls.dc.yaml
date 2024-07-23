@@ -38,7 +38,7 @@ objects:
               imagePullPolicy: Always
               volumeMounts:
                 - name: tls-certs
-                  mountPath: "/etc/tls-certs"
+                  mountPath: '/etc/tls-certs'
                   readOnly: true
                 - name: js-runtime-config
                   mountPath: '/srv/js/config'
@@ -108,8 +108,9 @@ objects:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
         openshift.io/host.generated: 'true'
+        router.openshift.io/cookie-same-site: 'Strict'
     spec:
-      host: "${HOST_ROUTE}"
+      host: '${HOST_ROUTE}'
       to:
         kind: Service
         name: '${APP_NAME}-frontend-${ENVIRONMENT}'
@@ -117,9 +118,9 @@ objects:
       port:
         targetPort: 2015-tcp
       tls:
-        caCertificate: "${CA_CERT}"
-        certificate: "${CERTIFICATE}"
-        key: "${PRIVATE_KEY}"
+        caCertificate: '${CA_CERT}'
+        certificate: '${CERTIFICATE}'
+        key: '${PRIVATE_KEY}'
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
       wildcardPolicy: None

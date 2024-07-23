@@ -118,17 +118,18 @@ objects:
         app: '${APP_NAME}-${BRANCH}'
       annotations:
         openshift.io/host.generated: 'true'
+        router.openshift.io/cookie-same-site: 'Strict'
     spec:
       host: '${HOST_ROUTE}'
       path: /api
       port:
         targetPort: 8080-tcp
       tls:
-        caCertificate: "${CA_CERT}"
-        certificate: "${CERTIFICATE}"
-        key: "${PRIVATE_KEY}"
+        caCertificate: '${CA_CERT}'
+        certificate: '${CERTIFICATE}'
+        key: '${PRIVATE_KEY}'
         insecureEdgeTerminationPolicy: Redirect
-        termination: edge      
+        termination: edge
       to:
         kind: Service
         name: '${APP_NAME}-backend-${ENVIRONMENT}'
