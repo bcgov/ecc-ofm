@@ -233,6 +233,29 @@ export default {
     }
   },
 
+  async getIrregularExpensePDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const url = `${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/pdf`
+      console.log(url)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the approved  PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async getIrregularExpenseById(applicationId) {
+    try {
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by supplementary id  - ${error}`)
+      throw error
+    }
+  },
+
   isValidApplication(application) {
     return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreement)
   },

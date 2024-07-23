@@ -35,6 +35,7 @@ import StaffingView from '@/views/applications/StaffingView.vue'
 import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
 import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
 import FundingView from '@/views/funding/FundingView.vue'
+import ApprovedIrregularExpenseView from '@/views/funding/IrregularExpenseFunding.vue'
 import ApprovedFundingView from '@/views/funding/ViewApprovedFunding.vue'
 import ReportingView from '@/views/reports/ReportingView.vue'
 import SurveyView from '@/views/reports/SurveyView.vue'
@@ -150,6 +151,15 @@ const router = createRouter({
       path: '/approved-funding/:fundingGuid',
       name: 'approved-funding',
       component: ApprovedFundingView,
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
+      },
+    },
+    {
+      path: '/approved-irregular-funding/:fundingGuid',
+      name: 'approved-irregular-funding',
+      component: ApprovedIrregularExpenseView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,

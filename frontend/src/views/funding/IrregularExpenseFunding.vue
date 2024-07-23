@@ -3,7 +3,7 @@
   <v-container fluid v-bind="$attrs" class="px-md-16">
     <p>Carefully review your funding</p>
 
-    <h4 class="my-10">Approval Notification For {{ application?.supplementaryTypeDescription }} Allowance</h4>
+    <h4 class="my-10">Approval Notification For Allowance</h4>
 
     <section class="my-5 py-10 grey-div-with-border">
       <v-card class="mt-5 py-10 pdf-reader">
@@ -53,8 +53,8 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.application = await ApplicationService.getSupplementaryApplicationById(this.$route.params.fundingGuid)
-        const resp = await ApplicationService.getApprovedSupplementaryPDF(this.$route.params.fundingGuid)
+        this.application = await ApplicationService.getIrregularExpenseById(this.$route.params.fundingGuid)
+        const resp = await ApplicationService.getIrregularExpensePDF(this.$route.params.fundingGuid)
         this.pdfFile = {
           data: atob(resp),
         }

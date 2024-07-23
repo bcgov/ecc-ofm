@@ -20,6 +20,8 @@ const {
   getIrregularExpenseApplication,
   getSupplementaryApprovalPDF,
   getSupplementaryApplicationById,
+  getIrregularExpensePDF,
+  getIrregularExpenseByID,
 } = require('../components/applications')
 const { query, param, validationResult, checkSchema } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
@@ -131,6 +133,36 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getApplicationPDF(req, res)
+  },
+)
+
+/**
+ * Get Irregular Expense Application PDF by ID
+ */
+router.get(
+  '/irregular/:applicationId/pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getIrregularExpensePDF(req, res)
+  },
+)
+
+/**
+ * Get Irregular Expense Application by ID
+ */
+router.get(
+  '/irregular/:applicationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getIrregularExpenseByID(req, res)
   },
 )
 

@@ -232,6 +232,30 @@ async function getSupplementaryApplicationPDF(req, res) {
   }
 }
 
+async function getIrregularExpensePDF(req, res) {
+  log.info('called')
+  try {
+    const operation = `ofm_expenses(${req.params.applicationId})/ofm_file`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getIrregularExpenseByID(req, res) {
+  log.info('called')
+  try {
+    const operation = `ofm_expenses(${req.params.applicationId})`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, IrregularExpenseMappings).toJSON())
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function getSupplementaryApprovalPDF(req, res) {
   try {
     const operation = `ofm_allowances(${req.params.applicationId})/ofm_approval_pdf`
@@ -297,4 +321,6 @@ module.exports = {
   getIrregularExpenseApplication,
   getSupplementaryApprovalPDF,
   getSupplementaryApplicationById,
+  getIrregularExpensePDF,
+  getIrregularExpenseByID,
 }

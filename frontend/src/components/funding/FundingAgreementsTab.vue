@@ -140,7 +140,6 @@ export default {
     },
     async loadIrregularExpenses(activeFA) {
       const expenseApplications = await ApplicationService.getIrregularExpenseApplication(activeFA.applicationId, `statusCode=${IRREGULAR_EXPENSE_STATUS_CODES.APPROVED}`)
-
       expenseApplications.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,
@@ -151,6 +150,7 @@ export default {
           facilityName: activeFA.facilityName,
           statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //Use FA code to match with styling since we only show approved
           statusName: app.statusName,
+          irregularExpenseId: app.irregularExpenseId,
         })
       })
     },
@@ -160,10 +160,7 @@ export default {
     },
 
     showOpen(item) {
-      //TODO : add in link for PDF -- we don't have a PDF to pull for irreg yet
-      if (item.fundingAgreementType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
-        return false
-      } else if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
+      if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
         return (
           [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
           (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
@@ -177,9 +174,10 @@ export default {
     },
 
     goToPDFViewer(item) {
-      //TODO: route for Irreg Expense
       if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
         this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })
+      } else if (item.fundingAgreementType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+        this.$router.push({ name: 'approved-irregular-funding', params: { fundingGuid: item.irregularExpenseId } })
       } else {
         this.$router.push({ name: 'approved-funding', params: { fundingGuid: item.supplementaryApplicationId } })
       }
