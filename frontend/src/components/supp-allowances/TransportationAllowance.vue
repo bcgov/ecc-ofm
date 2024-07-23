@@ -132,9 +132,9 @@
               id="application-document-upload"
               :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
               v-model="model.documentsToUpload"
-              entity-name="ofm_allowances"
+              entityName="ofm_allowances"
               :loading="readOnly(model)"
-              :uploaded-documents="model.uploadedDocuments"
+              :uploadedDocuments="model.uploadedDocuments"
               @deleteUploadedDocument="deleteUploadedDocument" />
 
             <div v-if="areDocumentsMissing(model) && !readOnly">
