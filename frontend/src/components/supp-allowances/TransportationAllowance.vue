@@ -160,7 +160,6 @@
             v-model="model.retroactiveDate"
             min-width="250px"
             max-width="250px"
-            type="date"
             :disabled="readOnly(model)"
             :rules="[rules.dateInRange(model.retroactiveDate, startDate, formattedEndDate)]"
             :min="startDate"
