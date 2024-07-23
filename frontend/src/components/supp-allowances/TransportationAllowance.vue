@@ -148,7 +148,7 @@
       </v-row>
 
       <v-row v-if="showBackDatePicker" class="pa-7 pt-4">
-        <v-col cols="6">
+        <v-col cols="12" md="6">
           <AppLabel>Transportation Allowance Start Date</AppLabel>
           <p>
             Please provide the date your centre began to safely transport children between your centre and school (or a collective point of access) to support regular ongoing child care. Please note,
