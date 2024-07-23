@@ -16,8 +16,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showSign(item)" :primary="false" size="small" height="30px" @click="goToFundingAgreement(item)">Sign</AppButton>
-            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" height="30px" @click="goToFundingAgreement(item)">Open</AppButton>
+            <AppButton v-if="showSign(item)" :primary="false" size="small" height="30px" @click="goToPDFViewer(item)">Sign</AppButton>
+            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" height="30px" @click="goToPDFViewer(item)">Open</AppButton>
           </v-row>
         </template>
       </v-data-table>
@@ -91,6 +91,7 @@ export default {
         ).flat()
 
         this.supplementaryApplications.forEach((app) => {
+          console.log('apppppp', app)
           this.fundingAgreements.push({
             startDate: app.startDate,
             endDate: app.endDate,
@@ -100,6 +101,7 @@ export default {
             facilityName: applications?.find((el) => app?.applicationId === el?.applicationId)?.facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
+            supplementaryApplicationId: app.supplementaryApplicationId,
           })
         })
       } catch (error) {
@@ -135,7 +137,6 @@ export default {
         this.setFailureAlert('Failed to load funding agreements', error)
       } finally {
         this.loading = false
-        console.log(this.fundingAgreements)
       }
     },
     async loadIrregularExpenses(activeFA) {
@@ -149,12 +150,10 @@ export default {
           fundingAgreementType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
           expenseAuthority: BLANK_FIELD,
           facilityName: activeFA.facilityName,
-          statusCode: app.statusCode, //TODO add status code mapping
+          statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //Use FA code to match with styling since we only show approved
           statusName: app.statusName,
         })
       })
-
-      console.log('expense? ', expenseApplications)
     },
 
     showSign(fundingAgreement) {
@@ -162,22 +161,29 @@ export default {
     },
 
     showOpen(item) {
-      //TODO : add in link for PDF -- we don't have a PDF to pull for supp apps yet
-      if (item.fundingAgreementType !== APPLICATION_TYPES.OFM) {
+      //TODO : add in link for PDF -- we don't have a PDF to pull for irreg yet
+      if (item.fundingAgreementType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
         return false
+      } else if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
+        return (
+          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
+          (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
+        )
       }
-      return (
-        [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
-        (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
-      )
+      return true
     },
 
     isExpenseAuthority(fundingAgreement) {
       return this.userInfo?.facilities?.some((facility) => facility.facilityId === fundingAgreement?.facilityId && facility.isExpenseAuthority)
     },
 
-    goToFundingAgreement(fundingAgreement) {
-      this.$router.push({ name: 'funding', params: { fundingGuid: fundingAgreement.fundingId } })
+    goToPDFViewer(item) {
+      //TODO: route for Irreg Expense
+      if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
+        this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })
+      } else {
+        this.$router.push({ name: 'approved-funding', params: { fundingGuid: item.supplementaryApplicationId } })
+      }
     },
 
     getStatusName(item) {

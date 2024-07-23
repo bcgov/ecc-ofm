@@ -42,7 +42,6 @@ async function getApplications(req, res) {
       req?.query,
       ApplicationMappings,
     )})`
-    log.info(operation)
     const response = await getOperation(operation)
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)
@@ -156,6 +155,17 @@ async function getSupplementaryApplications(req, res) {
   }
 }
 
+async function getSupplementaryApplicationById(req, res) {
+  try {
+    const operation = `ofm_allowances(${req?.params.applicationId})`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function createSupplementaryApplication(req, res) {
   try {
     const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
@@ -179,9 +189,7 @@ async function createSupplementaryApplication(req, res) {
 async function getIrregularExpenseApplication(req, res) {
   try {
     const applications = []
-    //const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req?.query, IrregularExpenseMappings)} )`
     const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildIrregularExpenseFilterQuery(req?.query)})`
-    log.info('oper ', operation)
     const response = await getOperation(operation) //add mapping
 
     response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))
@@ -225,6 +233,17 @@ async function deleteSupplementaryApplication(req, res) {
 async function getSupplementaryApplicationPDF(req, res) {
   try {
     const operation = `ofm_allowances(${req.params.applicationId})/ofm_supplementaryapplicationpdf`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getSupplementaryApprovalPDF(req, res) {
+  try {
+    const operation = `ofm_allowances(${req.params.applicationId})/ofm_approval_pdf`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
@@ -285,4 +304,6 @@ module.exports = {
   getApplicationPDF,
   getSupplementaryApplicationPDF,
   getIrregularExpenseApplication,
+  getSupplementaryApprovalPDF,
+  getSupplementaryApplicationById,
 }

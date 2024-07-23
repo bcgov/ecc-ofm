@@ -18,6 +18,8 @@ const {
   getApplicationPDF,
   getSupplementaryApplicationPDF,
   getIrregularExpenseApplication,
+  getSupplementaryApprovalPDF,
+  getSupplementaryApplicationById,
 } = require('../components/applications')
 const { query, param, validationResult, checkSchema } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
@@ -162,6 +164,20 @@ router.get(
     return getSupplementaryApplications(req, res)
   },
 )
+/**
+ * Get an existing Supplementary Application details
+ */
+router.get(
+  '/supplementary/:applicationId/supp',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getSupplementaryApplicationById(req, res)
+  },
+)
 
 /**
  * Create a new Supplementary Application
@@ -213,6 +229,21 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplicationPDF(req, res)
+  },
+)
+
+/**
+ * Get Approved Supplementary Application PDF by ID
+ */
+router.get(
+  '/supplementary/:applicationId/approved-pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getSupplementaryApprovalPDF(req, res)
   },
 )
 

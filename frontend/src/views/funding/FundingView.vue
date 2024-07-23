@@ -158,6 +158,8 @@ export default {
           data: atob(resp),
         }
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
+      } catch (error) {
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       } finally {
         this.loading = false
       }

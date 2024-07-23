@@ -126,6 +126,16 @@ export default {
     }
   },
 
+  async getSupplementaryApplicationById(supplementaryApplicationId) {
+    try {
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/supp')
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by supplementary id  - ${error}`)
+      throw error
+    }
+  },
+
   async getSupplementaryApplicationsByDate(applicationId, filterQuery, startDateFrom, startDateTo) {
     try {
       if (!applicationId) return
@@ -210,6 +220,17 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async getApprovedSupplementaryPDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/approved-pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the approved supp application PDF by application id - ${error}`)
       throw error
     }
   },

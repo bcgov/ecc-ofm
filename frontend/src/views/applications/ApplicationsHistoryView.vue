@@ -140,7 +140,6 @@ import {
   APPLICATION_TYPES,
   REQUEST_CATEGORY_NAMES,
   FUNDING_AGREEMENT_STATUS_CODES,
-  BLANK_FIELD,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
