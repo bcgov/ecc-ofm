@@ -22,10 +22,12 @@ function formatDateToUTC(date) {
   return new Date(date).toLocaleString('en-CA', { timeZone: 'UTC', dateStyle: 'full' })
 }
 
-function formatDateInputToCRMFormat(date) {
-  let formattedDate = new Date(date)
-  formattedDate.setHours(0, 0, 0, 0)
-  return formattedDate.toISOString().split('.')[0] + 'Z'
+function convertUTCDatetoPSTDate(date) {
+  const dateObject = new Date(date)
+  const pstOffset = 8 * 60 // PST offset in minutes
+  // Adjust the date by the difference in offsets
+  const pstDate = new Date(dateObject.getTime() + pstOffset * 60000)
+  return pstDate.toISOString().split('.')[0] + 'Z'
 }
 
 function formatTime12to24(time12h) {
@@ -66,11 +68,11 @@ function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
 }
 
 export default {
+  convertUTCDatetoPSTDate,
   formatDate,
   formatDateTime,
   formatDecimalNumber,
   formatDateToUTC,
-  formatDateInputToCRMFormat,
   formatTime12to24,
   formatTime24to12,
   formatTwoMonthDate,
