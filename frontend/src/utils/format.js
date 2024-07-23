@@ -8,6 +8,11 @@ function formatDate(date) {
   return moment.utc(date).format('YYYY-MMM-DD')
 }
 
+function formatTwoMonthDate(date) {
+  if (!date) return BLANK_FIELD
+  return moment.utc(date).format('YYYY-MM-DD')
+}
+
 function formatDateTime(date) {
   if (!date) return BLANK_FIELD
   return moment(date).format('YYYY-MMM-DD hh:mm A')
@@ -68,4 +73,5 @@ export default {
   formatDateInputToCRMFormat,
   formatTime12to24,
   formatTime24to12,
+  formatTwoMonthDate,
 }

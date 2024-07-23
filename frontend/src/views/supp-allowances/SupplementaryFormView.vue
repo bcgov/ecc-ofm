@@ -388,6 +388,7 @@ export default {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
           application.documentsToUpload = []
+          application.retroactiveDate = application.retroactiveDate ? this.format.formatTwoMonthDate(application.retroactiveDate) : null
         }
         this.models = [...this.models, ...transportApplications]
       }
@@ -566,13 +567,13 @@ export default {
 
       switch (true) {
         case term === SUPP_TERM_CODES.TERM_ONE:
-          return this.format.formatDateToUTC(this.fundingAgreement.startDate)
+          return this.format.formatTwoMonthDate(this.fundingAgreement.startDate)
 
         case term === SUPP_TERM_CODES.TERM_TWO:
-          return this.format.formatDateToUTC(termTwoStartDate)
+          return this.format.formatTwoMonthDate(termTwoStartDate)
 
         case term === SUPP_TERM_CODES.TERM_THREE:
-          return this.format.formatDateToUTC(termThreeStartDate)
+          return this.format.formatTwoMonthDate(termThreeStartDate)
       }
     },
   },

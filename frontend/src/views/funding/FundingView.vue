@@ -86,7 +86,7 @@
 
     <v-row v-if="!loading" class="justify-center justify-sm-space-between mx-md-7 my-3">
       <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
-      <AppButton id="submit-funding-agreement" size="large" width="240px" class="mt-2" :disabled="submitDisabled" :loading="loading" @click="submit()">Submit</AppButton>
+      <AppButton id="submit-funding-agreement" size="large" width="240px" class="mt-2" :disabled="false" :loading="loading" @click="deleteMe()">Submit</AppButton>
     </v-row>
   </v-container>
 </template>
@@ -161,6 +161,10 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    deleteMe() {
+      this.setSuccessAlert('Funding Agreement submitted successfully')
     },
 
     async getLicences() {

@@ -132,9 +132,9 @@
               id="application-document-upload"
               :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
               v-model="model.documentsToUpload"
-              entityName="ofm_allowances"
+              entity-name="ofm_allowances"
               :loading="readOnly(model)"
-              :uploadedDocuments="model.uploadedDocuments"
+              :uploaded-documents="model.uploadedDocuments"
               @deleteUploadedDocument="deleteUploadedDocument" />
 
             <div v-if="areDocumentsMissing(model) && !readOnly">
@@ -156,18 +156,19 @@
           </p>
         </v-col>
         <v-col cols="12" sm="6" lg="5" class="ml-0">
-          <v-date-input
+          <v-text-field
             v-model="model.retroactiveDate"
-            readonly
-            @update:modelValue="update(model)"
-            :min="startDate"
-            :max="new Date()"
-            :rules="[rules.MMDDYYYY]"
-            locale="en"
+            type="date"
             :disabled="readOnly(model)"
+            :rules="[rules.dateInRange(model.retroactiveDate, startDate, formattedEndDate)]"
+            :min="startDate"
+            :max="formattedEndDate"
+            locale="en"
             hide-actions
             label="From"
-            variant="outlined" />
+            variant="outlined"
+            clearable
+            @update:modelValue="update(model)" />
         </v-col>
       </v-row>
     </v-card>
@@ -189,6 +190,7 @@ import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
+import format from '@/utils/format'
 
 export default {
   components: { AppAlertBanner, AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
@@ -216,6 +218,7 @@ export default {
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
     return {
+      date: undefined,
       models: [],
       rules,
       monthlyLeaseFormat: {
@@ -238,16 +241,16 @@ export default {
       const today = new Date().setHours(0, 0, 0, 0)
       return today > new Date(this.startDate).setHours(0, 0, 0, 0)
     },
+    formattedEndDate() {
+      return format.formatTwoMonthDate(new Date())
+    },
   },
   async created() {
     this.hasDuplicateVIN = hasDuplicateVIN
+    this.format = format
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
-
-    this.models.forEach((model) => {
-      model.retroactiveDate = model.retroactiveDate ? new Date(model.retroactiveDate) : null
-    })
   },
   methods: {
     update(model) {
