@@ -190,7 +190,7 @@ async function getIrregularExpenseApplication(req, res) {
   try {
     const applications = []
     const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildIrregularExpenseFilterQuery(req?.query)})`
-    const response = await getOperation(operation) //add mapping
+    const response = await getOperation(operation)
 
     response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))
 

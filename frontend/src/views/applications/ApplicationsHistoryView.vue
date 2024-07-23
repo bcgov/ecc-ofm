@@ -447,19 +447,17 @@ export default {
               this.irregExpenses.push({
                 applicationId: application?.applicationId,
                 referenceNumber: expense?.referenceNumber,
-                status: expense?.statusName, //todo add codes to constants file
+                status: expense?.statusName,
                 applicationType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
                 facilityName: application.facilityName ? application.facilityName : '',
                 submittedDate: null,
-                latestActivityDate: expense?.lastUpdatedTime, //todo: format
+                latestActivityDate: expense?.lastUpdatedTime,
                 statusCode: expense?.statusCode,
               })
             })
           }
         }),
       )
-
-      //application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
     },
   },
 }

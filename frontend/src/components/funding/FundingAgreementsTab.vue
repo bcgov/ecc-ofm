@@ -91,7 +91,6 @@ export default {
         ).flat()
 
         this.supplementaryApplications.forEach((app) => {
-          console.log('apppppp', app)
           this.fundingAgreements.push({
             startDate: app.startDate,
             endDate: app.endDate,
@@ -122,8 +121,8 @@ export default {
                 fa.statusName = this.getStatusName(fa)
               })
 
+              //by adding irregular expense here it will also search within the user entered date params
               const activeFA = facilityFas.find((el) => el.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-
               if (activeFA) {
                 await this.loadIrregularExpenses(activeFA)
               }
