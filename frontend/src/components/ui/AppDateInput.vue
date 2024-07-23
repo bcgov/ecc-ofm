@@ -21,7 +21,7 @@ export default {
     },
   },
   created() {
-    this.updatedDate = new Date(this.modelValue)?.toISOString()?.split('T')[0]
+    this.updatedDate = this.modelValue ? new Date(this.modelValue)?.toISOString()?.split('T')[0] : null
   },
 }
 </script>

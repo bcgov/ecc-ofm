@@ -156,7 +156,9 @@
           </p>
         </v-col>
         <v-col cols="12" sm="6" lg="5" class="ml-0">
-          <v-text-field
+          <AppDateInput
+            min-width="250px"
+            max-width="250px"
             v-model="model.retroactiveDate"
             type="date"
             :disabled="readOnly(model)"
@@ -191,9 +193,10 @@ import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
 import format from '@/utils/format'
+import AppDateInput from '@/components/ui/AppDateInput.vue'
 
 export default {
-  components: { AppAlertBanner, AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
+  components: { AppAlertBanner, AppLabel, AppNumberInput, AppButton, AppDocumentUpload, AppDateInput },
   props: {
     transportModels: {
       type: Array,
