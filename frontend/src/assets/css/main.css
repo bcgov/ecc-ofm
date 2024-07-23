@@ -161,6 +161,10 @@ input[type='number'] {
   min-height: 150px;
 }
 
+.blue-background {
+  background-color: #003366;
+}
+
 @media only screen and (max-width: 959px) {
   .basic-card {
     min-height: 100px;

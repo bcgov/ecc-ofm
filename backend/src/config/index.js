@@ -62,7 +62,7 @@ nconf.defaults({
     enable: process.env.REDIS_ENABLE,
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
-    clustered: process.env.REDIS_CLUSTERED
+    clustered: process.env.REDIS_CLUSTERED,
   },
   clamav: {
     host: process.env.CLAMAV_HOST,

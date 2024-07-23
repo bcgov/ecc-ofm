@@ -9,6 +9,7 @@ const {
   getSurveyQuestions,
   getSurveyResponse,
   getSurveyResponses,
+  getSurveyResponsesCount,
   updateSurveyResponse,
   deleteSurveyResponse,
   getQuestionResponses,
@@ -73,19 +74,22 @@ router.get(
 )
 
 /**
- * Get questions' responses using query
- * Accepted queries:
- * - surveyResponseId: to find all question responses in a survey response
+ * Get questions' responses of a survey response using surveyResponseId
  */
-router.get('/question-responses', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
-  validationResult(req).throw()
-  return getQuestionResponses(req, res)
-})
+router.get(
+  '/question-responses',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
+  [query('surveyResponseId', 'URL query: [surveyResponseId] is required').not().isEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getQuestionResponses(req, res)
+  },
+)
 
 /**
- * Get questions' responses using query
- * Accepted queries:
- * - facilityId and fiscalYearId: to find all survey responses for a facility in a fiscal year
+ * Get survey responses using query
  */
 router.get(
   '/survey-responses',
@@ -97,6 +101,22 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getSurveyResponses(req, res)
+  },
+)
+
+/**
+ * Get survey responses count using query
+ */
+router.get(
+  '/survey-responses-count',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
+  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  validateFacility(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getSurveyResponsesCount(req, res)
   },
 )
 

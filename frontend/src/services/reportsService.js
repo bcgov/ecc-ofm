@@ -59,6 +59,17 @@ export default {
     }
   },
 
+  async getDraftSurveyResponsesCountByFacility(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses-count?facilityId=${facilityId}&isSubmitted=false`)
+      return response?.data[0]?.count
+    } catch (error) {
+      console.log(`Failed to get the draft survey responses count by Facility - ${error}`)
+      throw error
+    }
+  },
+
   async getSubmittedSurveyResponsesByFacilityAndSubmittedDate(facilityId, dateFrom, dateTo) {
     try {
       if (!facilityId) return
