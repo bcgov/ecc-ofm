@@ -157,18 +157,15 @@
         </v-col>
         <v-col cols="12" sm="6" lg="5" class="ml-0">
           <AppDateInput
+            v-model="model.retroactiveDate"
             min-width="250px"
             max-width="250px"
-            v-model="model.retroactiveDate"
             type="date"
             :disabled="readOnly(model)"
             :rules="[rules.dateInRange(model.retroactiveDate, startDate, formattedEndDate)]"
             :min="startDate"
             :max="formattedEndDate"
-            locale="en"
-            hide-actions
             label="From"
-            variant="outlined"
             clearable
             @update:modelValue="updateDate(model)" />
         </v-col>
