@@ -17,11 +17,19 @@ readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 NAMESPACE_SUFFIX="$ENV_VAL"
 if [ "$ENV_VAL" = "dev" ] || [ "$ENV_VAL" = "test" ]; then
   NAMESPACE_SUFFIX="dev"
-elif [ "$ENV_VAL" = "uat" ]; then
+elif [ "$ENV_VAL" = "uat" ] || [ "$ENV_VAL" = "efx" ]; then
   NAMESPACE_SUFFIX="test"
+elif [ "$ENV_VAL" = "prod" ]; then
+  NAMESPACE_SUFFIX="prod"
 fi
 readonly NAMESPACE_SUFFIX
-readonly SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
+
+SOAM_KC="loginproxy.gov.bc.ca"
+if [ "$ENV_VAL" != "prod" ]
+then
+  SOAM_KC="$NAMESPACE_SUFFIX.loginproxy.gov.bc.ca"
+fi
+readonly SOAM_KC
 
 NODE_ENV="prod"
 if [ "$ENV_VAL" != "prod" ]; then
@@ -37,7 +45,7 @@ if [ "$ENV_VAL" != "prod" ]
 then
   SITE_MINDER_LOGOUT_URL="https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
 else
-  SERVER_FRONTEND="https://ofm.gov.bc.ca" # TODO: Set this to whatever our prod domain will be
+  SERVER_FRONTEND="https://ofm.mychildcareservices.gov.bc.ca"
   SITE_MINDER_LOGOUT_URL="https://logon7.gov.bc.ca/clp-cgi/logoff.cgi?retnow=1&returl="
 fi
 readonly SITE_MINDER_LOGOUT_URL
@@ -99,9 +107,9 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="SOAM_URL=https://$SOAM_KC/auth/realms/$SOAM_KC_REALM_ID/protocol/openid-connect/logout" \
   --from-literal="UI_PRIVATE_KEY=$UI_PRIVATE_KEY_VAL" \
   --from-literal="UI_PUBLIC_KEY=$UI_PUBLIC_KEY_VAL" \
-  --from-literal=CLAMAV_PORT=3310 \
-  --from-literal=ISSUER=ECC_OFM \
-  --from-literal=SERVER_PORT=8080 \
+  --from-literal="CLAMAV_PORT=3310" \
+  --from-literal="ISSUER=ECC_OFM" \
+  --from-literal="SERVER_PORT=8080" \
   --dry-run -o yaml | oc apply -f -
 
 echo

@@ -20,21 +20,21 @@
             <v-row class="align-center">
               <v-col v-if="showMessagingIcon" style="width: 70px">
                 <div>
-                  <v-btn @click="$router.push({ name: 'messaging' })" aria-label="Messages/Notifications" id="mail_box_button" rounded v-if="!isNaN(messageNotificationCount)">
+                  <v-btn v-if="!isNaN(messageNotificationCount)" id="mail_box_button" aria-label="Messages/Notifications" rounded @click="$router.push({ name: 'messaging' })">
                     <v-badge color="error" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
                       <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
                     </v-badge>
                   </v-btn>
-                  <v-skeleton-loader type="chip" class="chip-loader" v-else />
+                  <v-skeleton-loader v-else type="chip" class="chip-loader" />
                 </div>
               </v-col>
-              <v-col class="px-0" style="width: 50px">
-                <v-btn @click="$router.push({ name: 'help' })" aria-label="Help" id="help_button" rounded>
+              <v-col v-if="false" class="px-0" style="width: 50px">
+                <v-btn id="help_button" aria-label="Help" rounded @click="$router.push({ name: 'help' })">
                   <v-icon aria-hidden="false" icon="mdi-help-circle-outline" size="38" color="white" />
                 </v-btn>
               </v-col>
               <v-col class="px-0" style="width: 50px">
-                <v-btn @click="$router.push({ name: 'home' })" aria-label="Home" id="home_button" rounded>
+                <v-btn id="home_button" aria-label="Home" rounded @click="$router.push({ name: 'home' })">
                   <v-icon aria-hidden="false" icon="mdi-home-outline" size="40" color="white" />
                 </v-btn>
               </v-col>
@@ -47,8 +47,8 @@
                     </v-chip>
                   </template>
                   <v-list style="background-color: #003366; color: white">
-                    <v-list-item class="user-link" id="impersonate_button" v-if="isMinistryUser" :to="{ name: 'impersonate' }" title="Impersonate" />
-                    <v-list-item class="user-link" id="logout_button" :href="logoutPath" title="Log Out" />
+                    <v-list-item v-if="isMinistryUser" id="impersonate_button" class="user-link" :to="{ name: 'impersonate' }" title="Impersonate" />
+                    <v-list-item id="logout_button" class="user-link" :href="logoutPath" title="Log Out" />
                   </v-list>
                 </v-menu>
               </v-col>
