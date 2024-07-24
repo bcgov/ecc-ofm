@@ -244,7 +244,7 @@ export default {
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
           expenseAuthorityId: this.expenseAuthority?.contactId ? this.expenseAuthority?.contactId : null,
           // XXX - CRM date object uses PST timezone, so we need to convert our date to PST before sending it to CRM
-          fiscalYearEndDate: format.convertUTCDatetoPSTDate(this.fiscalYearEndDate),
+          fiscalYearEndDate: this.fiscalYearEndDate ? format.convertUTCDatetoPSTDate(this.fiscalYearEndDate) : null,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
