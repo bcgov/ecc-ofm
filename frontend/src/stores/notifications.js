@@ -20,6 +20,7 @@ export const useNotificationsStore = defineStore('notifications', {
       }
       if (contactId) {
         try {
+          // TODO Make this a service function
           const response = await ApiService.apiAxios.get(ApiRoutes.NOTIFICATIONS + '/contact/' + contactId)
           this.notifications = orderBy(response.data, 'dateReceived', 'desc')
         } catch (error) {
