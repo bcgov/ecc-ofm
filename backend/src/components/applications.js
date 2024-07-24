@@ -114,18 +114,6 @@ async function createApplication(req, res) {
   }
 }
 
-function buildAppsFilterQuery(query, mappings, initialFilterQuery = '') {
-  let filterQuery = initialFilterQuery
-  if (isEmpty(query)) return filterQuery
-
-  const mappedQuery = new MappableObjectForBack(query, mappings).toJSON()
-  Object.entries(mappedQuery)?.forEach(([key, value]) => {
-    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
-  })
-
-  return filterQuery
-}
-
 function buildSupplementaryApplicationsDateQuery(query) {
   if (isEmpty(query)) return ''
   const dateQuery = buildDateFilterQuery(query, 'ofm_start_date')
@@ -134,8 +122,8 @@ function buildSupplementaryApplicationsDateQuery(query) {
 
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(${buildSupplementaryApplicationsDateQuery(req?.query)} _ofm_application_value eq ${req?.params.applicationId}
-    ${buildAppsFilterQuery(req?.query, SupplementaryApplicationMappings, 'and statuscode ne 2')} )`
+    const filterObj = { applicationId: req.params.applicationId, ...req?.query }
+    const operation = `ofm_allowances?$filter=(${buildSupplementaryApplicationsDateQuery(req?.query)} ${buildFilterQuery(filterObj, SupplementaryApplicationMappings)} and statuscode ne 2)`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
@@ -176,7 +164,8 @@ async function createSupplementaryApplication(req, res) {
 async function getIrregularExpenseApplications(req, res) {
   try {
     const applications = []
-    const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildAppsFilterQuery(req?.query, IrregularExpenseMappings)})`
+    const filterObj = { applicationId: req.params.applicationId, ...req?.query }
+    const operation = `ofm_expenses?$filter=(${buildFilterQuery(filterObj, IrregularExpenseMappings)})`
     const response = await getOperation(operation)
 
     response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))

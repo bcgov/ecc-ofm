@@ -159,7 +159,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplications(req, res)
@@ -173,7 +173,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplicationById(req, res)
@@ -241,7 +241,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApprovalPDF(req, res)
@@ -301,7 +301,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty(), query('statusCode').optional().isInt({ min: 0, max: 6 })],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID(), query('statusCode').optional().isInt({ min: 0, max: 6 })],
   (req, res) => {
     validationResult(req).throw()
     return getIrregularExpenseApplications(req, res)
@@ -316,7 +316,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getIrregularExpensePDF(req, res)
@@ -331,7 +331,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getIrregularExpenseByID(req, res)

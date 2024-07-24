@@ -79,7 +79,7 @@
         </template>
 
         <template #item.actions="{ item }">
-          <router-link :to="getActionsRoute(item)">
+          <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
         </template>
@@ -243,7 +243,7 @@ export default {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     getApplicationAction(application) {
-      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
+      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE) {
         return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ? 'Continue Application' : 'View Application'
       }
       return 'View Application'
@@ -392,6 +392,7 @@ export default {
     },
 
     getActionsRoute(item) {
+      //JB TODO: link for irregular expense will download the application they previously uploaded
       const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },

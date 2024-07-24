@@ -437,6 +437,7 @@ const IrregularExpenseMappings = [
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'ofm_expenseid', front: 'irregularExpenseId' },
+  { back: '_ofm_application_value', front: 'applicationId' },
 ]
 
 module.exports = {
