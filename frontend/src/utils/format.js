@@ -23,6 +23,7 @@ function formatDateToUTC(date) {
 }
 
 function convertUTCDatetoPSTDate(date) {
+  if (!date) return null
   const dateObject = new Date(date)
   const pstOffset = 8 * 60 // PST offset in minutes
   // Adjust the date by the difference in offsets
