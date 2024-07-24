@@ -32,11 +32,11 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
+import FundingView from '@/views/funding/BaseFundingView.vue'
 import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
 import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
-import FundingView from '@/views/funding/FundingView.vue'
-import ApprovedIrregularExpenseView from '@/views/funding/IrregularExpenseFunding.vue'
-import ApprovedFundingView from '@/views/funding/ViewApprovedFunding.vue'
+import IrregularExpenseView from '@/views/funding/IrregularFundingView.vue'
+import SupplementaryFundingView from '@/views/funding/SupplementaryFundingView.vue'
 import ReportingView from '@/views/reports/ReportingView.vue'
 import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
@@ -148,18 +148,18 @@ const router = createRouter({
       },
     },
     {
-      path: '/approved-funding/:fundingGuid',
+      path: '/funding/allowances/:fundingGuid',
       name: 'approved-funding',
-      component: ApprovedFundingView,
+      component: SupplementaryFundingView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
     },
     {
-      path: '/approved-irregular-funding/:fundingGuid',
+      path: '/funding/irregular/:fundingGuid',
       name: 'approved-irregular-funding',
-      component: ApprovedIrregularExpenseView,
+      component: IrregularExpenseView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,

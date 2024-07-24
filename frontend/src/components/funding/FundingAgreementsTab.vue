@@ -139,7 +139,7 @@ export default {
       }
     },
     async loadIrregularExpenses(activeFA) {
-      const expenseApplications = await ApplicationService.getIrregularExpenseApplication(activeFA.applicationId, `statusCode=${IRREGULAR_EXPENSE_STATUS_CODES.APPROVED}`)
+      const expenseApplications = await ApplicationService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED)
       expenseApplications.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,

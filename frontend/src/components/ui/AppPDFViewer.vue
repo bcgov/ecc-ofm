@@ -28,7 +28,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .grey-div-with-border {
   background-color: #eeeeee;
   border: 1px solid #333333;

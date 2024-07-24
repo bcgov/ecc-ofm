@@ -5,12 +5,12 @@
 
     <h4 class="my-10">Approval Notification For Irregular Expense</h4>
 
-    <AppPDFViewer :pdfFile="pdfFile"></AppPDFViewer>
+    <AppPDFViewer :pdf-file="pdfFile" />
 
     <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
 
     <v-row v-if="!loading" class="justify-end mx-5 my-3">
-      <a style="text-decoration: none" :download="'Approval_Notification_' + application?.supplementaryReferenceNumber" :href="pdfDownloadLink">
+      <a style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
         <AppButton size="medium" width="240px" class="mt-2 justify-end" :loading="loading">Download PDF</AppButton>
       </a>
     </v-row>
@@ -37,6 +37,11 @@ export default {
       loading: false,
     }
   },
+  computed: {
+    downloadFileName() {
+      return `Approval_Notification_${this.application?.referenceNumber}`
+    },
+  },
 
   async created() {
     await this.loadData()
@@ -61,18 +66,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.grey-div-with-border {
-  background-color: #eeeeee;
-  border: 1px solid #333333;
-  border-radius: 4px;
-}
-.pdf-reader {
-  margin: auto;
-  border: solid 1px black;
-  max-height: 80vh;
-  max-width: 830px;
-  overflow-y: scroll;
-}
-</style>

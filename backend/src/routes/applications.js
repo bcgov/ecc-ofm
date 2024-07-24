@@ -17,7 +17,7 @@ const {
   deleteEmployeeCertificate,
   getApplicationPDF,
   getSupplementaryApplicationPDF,
-  getIrregularExpenseApplication,
+  getIrregularExpenseApplications,
   getSupplementaryApprovalPDF,
   getSupplementaryApplicationById,
   getIrregularExpensePDF,
@@ -114,7 +114,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getApplication(req, res)
@@ -129,40 +129,10 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getApplicationPDF(req, res)
-  },
-)
-
-/**
- * Get Irregular Expense Application PDF by ID
- */
-router.get(
-  '/irregular/:applicationId/pdf',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
-  (req, res) => {
-    validationResult(req).throw()
-    return getIrregularExpensePDF(req, res)
-  },
-)
-
-/**
- * Get Irregular Expense Application by ID
- */
-router.get(
-  '/irregular/:applicationId',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
-  (req, res) => {
-    validationResult(req).throw()
-    return getIrregularExpenseByID(req, res)
   },
 )
 
@@ -174,7 +144,7 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return updateApplication(req, res)
@@ -189,7 +159,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplications(req, res)
@@ -199,11 +169,11 @@ router.get(
  * Get an existing Supplementary Application details
  */
 router.get(
-  '/supplementary/:applicationId/supp',
+  '/supplementary/:applicationId/details',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplicationById(req, res)
@@ -226,7 +196,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return updateSupplementaryApplication(req, res)
@@ -241,7 +211,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return deleteSupplementaryApplication(req, res)
@@ -256,7 +226,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplicationPDF(req, res)
@@ -271,7 +241,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApprovalPDF(req, res)
@@ -301,7 +271,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').not().isEmpty()],
+  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return updateEmployeeCertificate(req, res)
@@ -316,7 +286,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').not().isEmpty()],
+  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return deleteEmployeeCertificate(req, res)
@@ -327,13 +297,43 @@ router.delete(
  * Get an Irregular Expense application  using applicationId
  */
 router.get(
-  '/irregularExpense/:applicationId',
+  '/irregular/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty(), query('statusCode').optional().isInt({ min: 0, max: 6 })],
   (req, res) => {
     validationResult(req).throw()
-    return getIrregularExpenseApplication(req, res)
+    return getIrregularExpenseApplications(req, res)
+  },
+)
+
+/**
+ * Get Irregular Expense Application PDF by Expense ID
+ */
+router.get(
+  '/irregular/:applicationId/pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getIrregularExpensePDF(req, res)
+  },
+)
+
+/**
+ * Get Irregular Expense Application by Expense ID
+ */
+router.get(
+  '/irregular/:applicationId/details',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getIrregularExpenseByID(req, res)
   },
 )

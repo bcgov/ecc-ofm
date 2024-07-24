@@ -29,9 +29,9 @@
       </v-col>
     </v-row>
 
-    <AppPDFViewer :pdfFile="pdfFile"></AppPDFViewer>
+    <AppPDFViewer :pdf-file="pdfFile" />
 
-    <a style="text-decoration: none" :download="'Funding_Agreement_' + fundingAgreement?.fundingAgreementNumber" :href="pdfDownloadLink">
+    <a style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
       <AppButton size="medium" width="240px" class="mt-2" :loading="loading">Download PDF</AppButton>
     </a>
 
@@ -133,6 +133,9 @@ export default {
     },
     submitDisabled() {
       return this.readonly || !this.fundingAgreement.agreeConsentCertify
+    },
+    downloadFileName() {
+      return `Funding_Agreement_${this.fundingAgreement?.fundingAgreementNumber}`
     },
   },
 

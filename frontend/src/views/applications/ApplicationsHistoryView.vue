@@ -156,7 +156,7 @@ export default {
       applications: [],
       supplementaryApplications: [],
       applicationItems: [],
-      irregExpenses: [],
+      irregularExpenses: [],
       headers: [
         { title: 'Application ID', key: 'referenceNumber', width: '6%' },
         { title: 'Application Type', key: 'applicationType', width: '12%' },
@@ -368,7 +368,7 @@ export default {
       this.applicationItems = this.transformApplicationsToItems(this.applications)
       const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
-      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregExpenses]
+      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregularExpenses]
     },
 
     getStatusClass(statusCode) {
@@ -443,9 +443,9 @@ export default {
         this.applications?.map(async (application) => {
           //you can only apply for Irreg Expesne if you have an active FA
           if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
-            const expenses = await ApplicationService.getIrregularExpenseApplication(application?.applicationId)
+            const expenses = await ApplicationService.getIrregularExpenseApplications(application?.applicationId)
             expenses?.forEach((expense) => {
-              this.irregExpenses.push({
+              this.irregularExpenses.push({
                 applicationId: application?.applicationId,
                 referenceNumber: expense?.referenceNumber,
                 status: expense?.statusName,

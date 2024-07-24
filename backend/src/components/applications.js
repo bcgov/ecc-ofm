@@ -58,8 +58,7 @@ async function getApplication(req, res) {
     application.providerEmployees = response?.ofm_application_provideremployee?.map((employee) => new MappableObjectForFront(employee, ApplicationProviderEmployeeMappings).toJSON())
     return res.status(HttpStatus.OK).json(application)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -69,8 +68,7 @@ async function getApplicationPDF(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -141,8 +139,7 @@ async function getSupplementaryApplications(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -152,8 +149,7 @@ async function getSupplementaryApplicationById(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -177,7 +173,7 @@ async function createSupplementaryApplication(req, res) {
   }
 }
 
-async function getIrregularExpenseApplication(req, res) {
+async function getIrregularExpenseApplications(req, res) {
   try {
     const applications = []
     const operation = `ofm_expenses?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildAppsFilterQuery(req?.query, IrregularExpenseMappings)})`
@@ -187,8 +183,7 @@ async function getIrregularExpenseApplication(req, res) {
 
     return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -227,32 +222,27 @@ async function getSupplementaryApplicationPDF(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
 async function getIrregularExpensePDF(req, res) {
-  log.info('called')
   try {
     const operation = `ofm_expenses(${req.params.applicationId})/ofm_file`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
 async function getIrregularExpenseByID(req, res) {
-  log.info('called')
   try {
     const operation = `ofm_expenses(${req.params.applicationId})`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, IrregularExpenseMappings).toJSON())
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -262,8 +252,7 @@ async function getSupplementaryApprovalPDF(req, res) {
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -318,7 +307,7 @@ module.exports = {
   deleteEmployeeCertificate,
   getApplicationPDF,
   getSupplementaryApplicationPDF,
-  getIrregularExpenseApplication,
+  getIrregularExpenseApplications,
   getSupplementaryApprovalPDF,
   getSupplementaryApplicationById,
   getIrregularExpensePDF,

@@ -5,12 +5,12 @@
 
     <h4 class="my-10">Approval Notification For {{ application?.supplementaryTypeDescription }} Allowance</h4>
 
-    <AppPDFViewer :pdfFile="pdfFile"></AppPDFViewer>
+    <AppPDFViewer :pdf-file="pdfFile" />
 
     <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
 
     <v-row v-if="!loading" class="justify-end mx-5 my-3">
-      <a style="text-decoration: none" :download="'Approval_Notification_' + application?.supplementaryReferenceNumber" :href="pdfDownloadLink">
+      <a style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
         <AppButton size="medium" width="240px" class="mt-2 justify-end" :loading="loading">Download PDF</AppButton>
       </a>
     </v-row>
@@ -36,6 +36,11 @@ export default {
       application: undefined,
       loading: false,
     }
+  },
+  computed: {
+    downloadFileName() {
+      return `Approval_Notification_${this.application?.supplementaryReferenceNumber}`
+    },
   },
 
   async created() {

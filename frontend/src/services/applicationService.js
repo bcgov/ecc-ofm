@@ -54,12 +54,12 @@ export default {
     }
   },
 
-  async getIrregularExpenseApplication(applicationId, filterQuery = undefined) {
+  async getIrregularExpenseApplications(applicationId, statusCode = undefined) {
     try {
       if (!applicationId) return
-      let url = `${ApiRoutes.APPLICATIONS}/irregularExpense/${applicationId}`
-      if (filterQuery) {
-        url += `?${filterQuery}`
+      let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}`
+      if (statusCode) {
+        url += `?statusCode=${statusCode}`
       }
       const response = await ApiService.apiAxios.get(url)
       return response?.data
@@ -126,7 +126,7 @@ export default {
 
   async getSupplementaryApplicationById(supplementaryApplicationId) {
     try {
-      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/supp')
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/details')
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application by supplementary id  - ${error}`)
@@ -236,8 +236,6 @@ export default {
   async getIrregularExpensePDF(applicationId) {
     try {
       if (!applicationId) return
-      const url = `${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/pdf`
-      console.log(url)
       const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/pdf`)
       return response?.data
     } catch (error) {
@@ -248,7 +246,7 @@ export default {
 
   async getIrregularExpenseById(applicationId) {
     try {
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/details`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application by supplementary id  - ${error}`)
