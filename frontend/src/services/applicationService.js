@@ -16,6 +16,8 @@ export default {
   async getActiveApplicationsByFacilityId(facilityId) {
     try {
       if (!facilityId) return
+      const url = `${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`
+      console.log(url)
       const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       return response?.data
     } catch (error) {
@@ -57,10 +59,12 @@ export default {
   async getIrregularExpenseApplications(applicationId, statusCode = undefined) {
     try {
       if (!applicationId) return
-      let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}`
+      //this works >>>> let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}/expense?applicationId=${applicationId}`
+      let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}?applicationId=${applicationId}`
       if (statusCode) {
-        url += `?statusCode=${statusCode}`
+        url += `&statusCode=${statusCode}`
       }
+      console.log(url)
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
@@ -233,10 +237,10 @@ export default {
     }
   },
 
-  async getIrregularExpensePDF(applicationId) {
+  async getIrregularExpensePDF(expenseApplicationId) {
     try {
-      if (!applicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/pdf`)
+      if (!expenseApplicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${expenseApplicationId}/pdf`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the approved  PDF by application id - ${error}`)
@@ -244,9 +248,9 @@ export default {
     }
   },
 
-  async getIrregularExpenseById(applicationId) {
+  async getIrregularExpenseById(expenseApplicationId) {
     try {
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${applicationId}/details`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${expenseApplicationId}/details`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application by supplementary id  - ${error}`)

@@ -28,6 +28,7 @@ const validateFacility = require('../middlewares/validateFacility.js')
 const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
+const log = require('../components/logger')
 
 module.exports = router
 
@@ -294,15 +295,17 @@ router.delete(
 )
 
 /**
- * Get an Irregular Expense application  using applicationId
+ * Get all Irregular Expenses related to an application
  */
 router.get(
-  '/irregular/:applicationId',
+  '/irregular',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID(), query('statusCode').optional().isInt({ min: 0, max: 6 })],
+  [query('applicationId', 'URL query: [applicationId] is required').notEmpty().isUUID(), query('statusCode').optional().isInt({ min: 0, max: 6 })],
   (req, res) => {
+    log.info('the route')
+    //log.info(req)
     validationResult(req).throw()
     return getIrregularExpenseApplications(req, res)
   },
@@ -312,12 +315,13 @@ router.get(
  * Get Irregular Expense Application PDF by Expense ID
  */
 router.get(
-  '/irregular/:applicationId/pdf',
+  '/irregular/:expenseApplicationId/pdf',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  [param('expenseApplicationId', 'URL param: [expenseApplicationId] is required').notEmpty().isUUID()],
   (req, res) => {
+    log.info('BAD')
     validationResult(req).throw()
     return getIrregularExpensePDF(req, res)
   },
@@ -327,12 +331,13 @@ router.get(
  * Get Irregular Expense Application by Expense ID
  */
 router.get(
-  '/irregular/:applicationId/details',
+  '/irregular/:expenseApplicationId/details',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  [param('expenseApplicationId', 'URL param: [expenseApplicationId] is required').notEmpty().isUUID()],
   (req, res) => {
+    log.info('BAD')
     validationResult(req).throw()
     return getIrregularExpenseByID(req, res)
   },

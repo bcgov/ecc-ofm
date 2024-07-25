@@ -163,9 +163,11 @@ async function createSupplementaryApplication(req, res) {
 
 async function getIrregularExpenseApplications(req, res) {
   try {
+    console.log('called!!')
     const applications = []
-    const filterObj = { applicationId: req.params.applicationId, ...req?.query }
-    const operation = `ofm_expenses?$filter=(${buildFilterQuery(filterObj, IrregularExpenseMappings)})`
+    //const filterObj = { applicationId: req.params.applicationId, ...req?.query }
+    const operation = `ofm_expenses?$filter=(${buildFilterQuery(req?.query, IrregularExpenseMappings)})`
+    console.log(operation)
     const response = await getOperation(operation)
 
     response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))
@@ -217,7 +219,7 @@ async function getSupplementaryApplicationPDF(req, res) {
 
 async function getIrregularExpensePDF(req, res) {
   try {
-    const operation = `ofm_expenses(${req.params.applicationId})/ofm_file`
+    const operation = `ofm_expenses(${req.params.expenseApplicationId})/ofm_file`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
@@ -227,7 +229,7 @@ async function getIrregularExpensePDF(req, res) {
 
 async function getIrregularExpenseByID(req, res) {
   try {
-    const operation = `ofm_expenses(${req.params.applicationId})`
+    const operation = `ofm_expenses(${req.params.expenseApplicationId})`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, IrregularExpenseMappings).toJSON())
   } catch (e) {

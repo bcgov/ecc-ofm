@@ -175,11 +175,11 @@ export default {
 
     goToPDFViewer(item) {
       if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
-        this.$router.push({ name: 'funding', params: { fundingGuid: item.fundingId } })
+        this.$router.push({ name: 'approved-base-funding', params: { fundingGuid: item.fundingId } })
       } else if (item.fundingAgreementType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
         this.$router.push({ name: 'approved-irregular-funding', params: { fundingGuid: item.irregularExpenseId } })
       } else {
-        this.$router.push({ name: 'approved-funding', params: { fundingGuid: item.supplementaryApplicationId } })
+        this.$router.push({ name: 'approved-supp-funding', params: { fundingGuid: item.supplementaryApplicationId } })
       }
     },
 
