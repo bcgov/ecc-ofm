@@ -29,6 +29,7 @@
 import { mapState } from 'pinia'
 import AppButton from '@/components/ui/AppButton.vue'
 import ApplicationService from '@/services/applicationService'
+import IrregularExpenseService from '@/services/irregularExpenseService'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
@@ -139,7 +140,7 @@ export default {
       }
     },
     async loadIrregularExpenses(activeFA) {
-      const expenseApplications = await ApplicationService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED)
+      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED)
       expenseApplications.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,

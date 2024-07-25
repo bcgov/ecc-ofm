@@ -17,11 +17,8 @@ const {
   deleteEmployeeCertificate,
   getApplicationPDF,
   getSupplementaryApplicationPDF,
-  getIrregularExpenseApplications,
   getSupplementaryApprovalPDF,
   getSupplementaryApplicationById,
-  getIrregularExpensePDF,
-  getIrregularExpenseByID,
 } = require('../components/applications')
 const { query, param, validationResult, checkSchema } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
@@ -152,6 +149,7 @@ router.put(
   },
 )
 
+//TODO - JB: move supp apps to their own route
 /**
  * Get an existing Supplementary Application details using applicationId
  */
@@ -291,54 +289,5 @@ router.delete(
   (req, res) => {
     validationResult(req).throw()
     return deleteEmployeeCertificate(req, res)
-  },
-)
-
-/**
- * Get all Irregular Expenses related to an application
- */
-router.get(
-  '/irregular',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [query('applicationId', 'URL query: [applicationId] is required').notEmpty().isUUID(), query('statusCode').optional().isInt({ min: 0, max: 6 })],
-  (req, res) => {
-    log.info('the route')
-    //log.info(req)
-    validationResult(req).throw()
-    return getIrregularExpenseApplications(req, res)
-  },
-)
-
-/**
- * Get Irregular Expense Application PDF by Expense ID
- */
-router.get(
-  '/irregular/:expenseApplicationId/pdf',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('expenseApplicationId', 'URL param: [expenseApplicationId] is required').notEmpty().isUUID()],
-  (req, res) => {
-    log.info('BAD')
-    validationResult(req).throw()
-    return getIrregularExpensePDF(req, res)
-  },
-)
-
-/**
- * Get Irregular Expense Application by Expense ID
- */
-router.get(
-  '/irregular/:expenseApplicationId/details',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('expenseApplicationId', 'URL param: [expenseApplicationId] is required').notEmpty().isUUID()],
-  (req, res) => {
-    log.info('BAD')
-    validationResult(req).throw()
-    return getIrregularExpenseByID(req, res)
   },
 )

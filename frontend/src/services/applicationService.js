@@ -16,8 +16,6 @@ export default {
   async getActiveApplicationsByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const url = `${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`
-      console.log(url)
       const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
       return response?.data
     } catch (error) {
@@ -52,23 +50,6 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the application by application id - ${error}`)
-      throw error
-    }
-  },
-
-  async getIrregularExpenseApplications(applicationId, statusCode = undefined) {
-    try {
-      if (!applicationId) return
-      //this works >>>> let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}/expense?applicationId=${applicationId}`
-      let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}?applicationId=${applicationId}`
-      if (statusCode) {
-        url += `&statusCode=${statusCode}`
-      }
-      console.log(url)
-      const response = await ApiService.apiAxios.get(url)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the Irregular Expense by application id - ${error}`)
       throw error
     }
   },
@@ -233,27 +214,6 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the approved supp application PDF by application id - ${error}`)
-      throw error
-    }
-  },
-
-  async getIrregularExpensePDF(expenseApplicationId) {
-    try {
-      if (!expenseApplicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${expenseApplicationId}/pdf`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the approved  PDF by application id - ${error}`)
-      throw error
-    }
-  },
-
-  async getIrregularExpenseById(expenseApplicationId) {
-    try {
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.IRREGULAR_APPLICATIONS}/${expenseApplicationId}/details`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the supp application by supplementary id  - ${error}`)
       throw error
     }
   },

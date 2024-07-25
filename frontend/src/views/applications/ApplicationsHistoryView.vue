@@ -128,6 +128,7 @@ import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
+import IrregularExpenseService from '@/services/irregularExpenseService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -444,7 +445,7 @@ export default {
         this.applications?.map(async (application) => {
           //you can only apply for Irreg Expesne if you have an active FA
           if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
-            const expenses = await ApplicationService.getIrregularExpenseApplications(application?.applicationId)
+            const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
             expenses?.forEach((expense) => {
               this.irregularExpenses.push({
                 applicationId: application?.applicationId,
