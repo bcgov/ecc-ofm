@@ -28,7 +28,7 @@ header {
 	Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
 	X-Content-Type-Options "nosniff"
 	Strict-Transport-Security "max-age=31536000"
-	Content-Security-Policy "default-src 'self' https://spt.apps.gov.bc.ca https://spm.apps.gov.bc.ca; object-src 'none'; script-src 'self' https://www2.gov.bc.ca data:; style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dM5rzXYgE7oJM4ItEsJrV6XiSt6jCeNFoK6VcuPxR+g='; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://fonts.googleapis.com; worker-src blob:; form-action 'self'; frame-ancestors 'self';"
+	Content-Security-Policy "default-src 'self' https://spt.apps.gov.bc.ca https://spm.apps.gov.bc.ca; object-src 'none'; script-src 'self' https://www2.gov.bc.ca data:; style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dM5rzXYgE7oJM4ItEsJrV6XiSt6jCeNFoK6VcuPxR+g=' 'sha256-FK7TC98y3Gej4hhWn6+GmMYoRtZiZhKM1gCVvM4M2BQ=' 'sha256-/HD/285mZqHFWQDwT8UBXYbz8pVmIKoN9V+9zKabAUs=' 'sha256-UPhsNKnJI3WtwuNQD8jJ3pxV05MglI21ZZeJ5S2DtFI=' 'sha256-zRhj+O4tvzNBImsIu4CPWbg09j6xzRWK5iVcymlzBRs=' 'sha256-79L7ZbF6q7bFJ8wJIdZDPO6Dvr+Gf5WIHYnbtBr5Vyo=' 'sha256-FAqAbxrEDDJCGvJ4Gl5mxeJDcstOgkZyI0DYnxBAqxc='; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://fonts.googleapis.com; worker-src blob:; form-action 'self'; frame-ancestors 'self';"
 	Referrer-Policy "same-origin"
 	Permissions-Policy "fullscreen=(self), camera=(), microphone=()"
 }
