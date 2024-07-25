@@ -61,7 +61,7 @@ export default {
 
   async createAssistanceRequestConversation(payload) {
     try {
-      const response = await ApiService.apiAxios.post(`${ApiRoutes.MESSAGES}/conversations/`, payload)
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.MESSAGES}/conversations`, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to create Assistance Request's conversations - ${error}`)

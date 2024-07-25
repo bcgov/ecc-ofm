@@ -129,7 +129,7 @@ router.get(
  * Create an Assistance Request's conversation
  */
 router.post(
-  '/conversations/',
+  '/conversations',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
