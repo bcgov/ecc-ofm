@@ -35,6 +35,7 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
 import { useMessagesStore } from '@/stores/messages'
 import alertMixin from '@/mixins/alertMixin'
+import MessageService from '@/services/messageService'
 
 export default {
   components: { AppButton, AppDialog },
@@ -53,7 +54,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useMessagesStore, ['updateAssistanceRequest', 'updateAssistanceRequestInStore']),
+    ...mapActions(useMessagesStore, ['updateAssistanceRequestInStore']),
 
     toggleConfirmDialog() {
       this.showConfirmDialog = !this.showConfirmDialog
@@ -65,7 +66,7 @@ export default {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        await this.updateAssistanceRequest(this.assistanceRequestId, payload)
+        await MessageService.updateAssistanceRequest(this.assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(this.assistanceRequestId)
         this.setSuccessAlert('Request closed successfully')
       } catch (error) {
