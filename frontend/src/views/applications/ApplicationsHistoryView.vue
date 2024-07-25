@@ -79,7 +79,7 @@
         </template>
 
         <template #item.actions="{ item }">
-          <router-link :to="getActionsRoute(item)">
+          <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
         </template>
@@ -128,6 +128,7 @@ import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
+import IrregularExpenseService from '@/services/irregularExpenseService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -156,6 +157,7 @@ export default {
       applications: [],
       supplementaryApplications: [],
       applicationItems: [],
+      irregularExpenses: [],
       headers: [
         { title: 'Application ID', key: 'referenceNumber', width: '6%' },
         { title: 'Application Type', key: 'applicationType', width: '12%' },
@@ -216,6 +218,7 @@ export default {
   async created() {
     try {
       this.loading = true
+      this.APPLICATION_TYPES = APPLICATION_TYPES
       this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
@@ -224,7 +227,9 @@ export default {
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
       await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
+      await this.getIrregularExpenseApplications()
       this.mergeRegularAndSupplementaryApplications()
+
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
       }
@@ -239,20 +244,22 @@ export default {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     getApplicationAction(application) {
-      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
+      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE) {
         return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ? 'Continue Application' : 'View Application'
       }
       return 'View Application'
     },
 
     isApplicationCancellable(application) {
-      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE
     },
 
     showPDFDownloadButton(application) {
       //OFM core generates PDF upon submit - Supp App generates PDF only once approved
       if (application.applicationType === APPLICATION_TYPES.OFM) {
         return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      } else if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+        return false
       }
       return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
     },
@@ -288,7 +295,8 @@ export default {
       await Promise.all(
         this.applications?.map(async (application) => {
           application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+          //we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user from applying for Irreg Expense funding
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
         }),
       )
     },
@@ -361,7 +369,7 @@ export default {
       this.applicationItems = this.transformApplicationsToItems(this.applications)
       const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
-      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems]
+      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregularExpenses]
     },
 
     getStatusClass(statusCode) {
@@ -385,6 +393,7 @@ export default {
     },
 
     getActionsRoute(item) {
+      //JB TODO: link for irregular expense will download the application they previously uploaded
       const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
@@ -430,6 +439,28 @@ export default {
      */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+    async getIrregularExpenseApplications() {
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          //you can only apply for Irreg Expesne if you have an active FA
+          if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
+            const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
+            expenses?.forEach((expense) => {
+              this.irregularExpenses.push({
+                applicationId: application?.applicationId,
+                referenceNumber: expense?.referenceNumber,
+                status: expense?.statusName,
+                applicationType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
+                facilityName: application.facilityName ? application.facilityName : '',
+                submittedDate: null,
+                latestActivityDate: expense?.lastUpdatedTime,
+                statusCode: expense?.statusCode,
+              })
+            })
+          }
+        }),
+      )
     },
   },
 }

@@ -32,9 +32,11 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
+import BaseFundingView from '@/views/funding/BaseFundingView.vue'
 import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
 import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
-import FundingView from '@/views/funding/FundingView.vue'
+import IrregularFundingView from '@/views/funding/IrregularFundingView.vue'
+import SupplementaryFundingView from '@/views/funding/SupplementaryFundingView.vue'
 import ReportingView from '@/views/reports/ReportingView.vue'
 import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
@@ -137,9 +139,27 @@ const router = createRouter({
       },
     },
     {
-      path: '/funding/:fundingGuid',
-      name: 'funding',
-      component: FundingView,
+      path: '/funding/base/:fundingGuid',
+      name: 'approved-base-funding',
+      component: BaseFundingView,
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
+      },
+    },
+    {
+      path: '/funding/supp-allowances/:fundingGuid',
+      name: 'approved-supp-funding',
+      component: SupplementaryFundingView,
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
+      },
+    },
+    {
+      path: '/funding/irregular/:fundingGuid',
+      name: 'approved-irregular-funding',
+      component: IrregularFundingView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
