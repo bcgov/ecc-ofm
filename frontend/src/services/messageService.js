@@ -40,7 +40,7 @@ export default {
   async updateAssistanceRequest(assistanceRequestId, payload) {
     try {
       if (!assistanceRequestId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.put(`${ApiRoutes.MESSAGES}/${assistanceRequestId}`, payload)
+      const response = await ApiService.apiAxios.patch(`${ApiRoutes.MESSAGES}/${assistanceRequestId}`, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to update existing assistance request - ${error}`)

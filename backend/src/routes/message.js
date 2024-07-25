@@ -59,7 +59,7 @@ const assistanceRequestConversationSchema = {
 /**
  * Update an existing Assistance Request
  */
-router.put(
+router.patch(
   '/:assistanceRequestId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
