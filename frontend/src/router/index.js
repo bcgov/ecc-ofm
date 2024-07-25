@@ -45,9 +45,9 @@ import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmit
 const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(to, _from, _savedPosition) {
     if (to.hash) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, _reject) => {
         setTimeout(() => {
           resolve({
             el: to.hash,
@@ -269,6 +269,7 @@ const router = createRouter({
       component: HelpView,
       meta: {
         requiresAuth: true,
+        hidden: true,
       },
     },
     {
