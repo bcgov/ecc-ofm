@@ -92,8 +92,6 @@ export default {
       try {
         this.loading = true
         this.systemMessages = await PublicService.getSystemMessages()
-        const currentTime = new Date()
-        this.systemMessages = this.systemMessages?.filter((message) => currentTime >= new Date(message.startDate) && currentTime <= new Date(message.endDate))
       } catch (error) {
         this.setFailureAlert('Failed to load system messages', error)
       } finally {

@@ -428,12 +428,7 @@ const QuestionResponseMappings = [
   { back: 'ofm_response_text', front: 'value' },
 ]
 
-const SystemMessageMappings = [
-  { back: 'ofm_system_messageid', front: 'systemMessageId' },
-  { back: 'ofm_message', front: 'content' },
-  { back: 'ofm_start_date', front: 'startDate' },
-  { back: 'ofm_end_date', front: 'endDate' },
-]
+const SystemMessageMappings = [{ back: 'ofm_message', front: 'content' }]
 
 module.exports = {
   ApplicationIntakeMappings,

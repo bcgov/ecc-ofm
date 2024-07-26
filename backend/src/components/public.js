@@ -14,7 +14,10 @@ async function getSystemMessages(_req, res) {
     let systemMessages = publicCache.get('systemMessages')
     if (!systemMessages) {
       systemMessages = []
-      const response = await getOperation('ofm_system_messages?$select=ofm_system_messageid,ofm_message,ofm_start_date,ofm_end_date&$filter=(statecode eq 0)')
+      const currentTime = new Date().toISOString()
+      const response = await getOperation(
+        `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
+      )
       response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
       publicCache.put('systemMessages', systemMessages, ONE_HOUR_MS)
     }
