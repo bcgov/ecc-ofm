@@ -17,6 +17,8 @@ const {
   deleteEmployeeCertificate,
   getApplicationPDF,
   getSupplementaryApplicationPDF,
+  getSupplementaryApprovalPDF,
+  getSupplementaryApplicationById,
 } = require('../components/applications')
 const { query, param, validationResult, checkSchema } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
@@ -109,7 +111,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getApplication(req, res)
@@ -124,7 +126,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getApplicationPDF(req, res)
@@ -139,13 +141,14 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return updateApplication(req, res)
   },
 )
 
+//TODO - JB: move supp apps to their own route
 /**
  * Get an existing Supplementary Application details using applicationId
  */
@@ -154,10 +157,24 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplications(req, res)
+  },
+)
+/**
+ * Get an existing Supplementary Application details
+ */
+router.get(
+  '/supplementary/:applicationId/details',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getSupplementaryApplicationById(req, res)
   },
 )
 
@@ -177,7 +194,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return updateSupplementaryApplication(req, res)
@@ -192,7 +209,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return deleteSupplementaryApplication(req, res)
@@ -207,10 +224,25 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').not().isEmpty()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplicationPDF(req, res)
+  },
+)
+
+/**
+ * Get Approved Supplementary Application PDF by ID
+ */
+router.get(
+  '/supplementary/:applicationId/approved-pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getSupplementaryApprovalPDF(req, res)
   },
 )
 
@@ -237,7 +269,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').not().isEmpty()],
+  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return updateEmployeeCertificate(req, res)
@@ -252,7 +284,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').not().isEmpty()],
+  [param('providerEmployeeId', 'URL param: [providerEmployeeId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
     return deleteEmployeeCertificate(req, res)

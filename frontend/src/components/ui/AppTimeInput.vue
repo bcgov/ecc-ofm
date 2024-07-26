@@ -23,7 +23,7 @@ export default {
     },
   },
   created() {
-    this.updatedTime = format.formatTime12to24(this.modelValue)
+    this.updatedTime = this.modelValue ? format.formatTime12to24(this.modelValue) : null
   },
 }
 </script>
