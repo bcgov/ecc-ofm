@@ -1,6 +1,7 @@
 <template>
   <AppHeroImage />
   <v-container class="login-container" fluid v-bind="$attrs">
+    <AppAlertBanner v-for="message in systemMessages" type="info">{{ message.content }}</AppAlertBanner>
     <v-row>
       <v-col cols="12" class="pt-5">
         <p>
@@ -24,7 +25,7 @@
           </v-card-title>
           <v-card-text>Log in with your primary Business BCeID</v-card-text>
           <v-card-actions class="mt-auto">
-            <AppButton icon="mdi-login" :href="authRoutes.LOGIN" @click="clearStorage" width="250px" id="bceid-login">BCeID Log In</AppButton>
+            <AppButton id="bceid-login" icon="mdi-login" :href="authRoutes.LOGIN" :loading="loading" width="250px" @click="clearStorage">BCeID Log In</AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -45,7 +46,9 @@
             You must register for a Business BCeID before you can log in - it only takes a few minutes.
           </v-card-text>
           <v-card-actions>
-            <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" @click="clearStorage" width="300px">Register for a BCeID</AppButton>
+            <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" :loading="loading" width="300px" @click="clearStorage">
+              Register for a BCeID
+            </AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -57,24 +60,45 @@
 import { mapActions, mapState } from 'pinia'
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
+import PublicService from '@/services/publicService'
+import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'LoginView',
-  components: { AppButton, AppHeroImage },
+  components: { AppAlertBanner, AppButton, AppHeroImage },
+  mixins: [alertMixin],
   data() {
     return {
       authRoutes: AuthRoutes,
+      loading: false,
+      systemMessages: [],
     }
   },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated']),
   },
+  async created() {
+    await this.loadSystemMessages()
+  },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
       this.setJwtToken()
+    },
+    async loadSystemMessages() {
+      try {
+        this.loading = true
+        this.systemMessages = await PublicService.getSystemMessages()
+        const currentTime = new Date()
+        this.systemMessages = this.systemMessages?.filter((message) => currentTime >= new Date(message.startDate) && currentTime <= new Date(message.endDate))
+      } catch (error) {
+        this.setFailureAlert('Failed to load system messages', error)
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

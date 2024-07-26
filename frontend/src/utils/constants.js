@@ -28,6 +28,7 @@ export const ApiRoutes = Object.freeze({
   REPORTS: baseRoot + '/reports',
   SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
   SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
+  SYSTEM_MESSAGES: baseRoot + '/public/system-messages',
   USER: baseRoot + '/user',
   USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
