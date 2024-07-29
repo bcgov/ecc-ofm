@@ -145,7 +145,6 @@ import {
   APPLICATION_TYPES,
   REQUEST_CATEGORY_NAMES,
   FUNDING_AGREEMENT_STATUS_CODES,
-  IRREGULAR_EXPENSE_STATUS_CODES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -406,10 +405,10 @@ export default {
       const doc = await DocumentService.getDocuments(item?.assistanceRequestId)
       //this will return an array - we are assuming the user uploads their PDF first.
       //we could add in to search for a file of type PDF - but we don't have requirements for this
-      const file = await DocumentService.getDocumentFileByID(doc[0].documentId)
+      const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
 
       try {
-        createPDFDownloadLink(file, item.referenceNumber)
+        createPDFDownloadLink(file, doc[0]?.fileName)
       } catch (error) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
