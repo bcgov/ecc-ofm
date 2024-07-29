@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation } = require('./utils')
+const { getOperation, handleError } = require('./utils')
 const HttpStatus = require('http-status-codes')
 const cache = require('memory-cache')
 const { SystemMessageMappings } = require('../util/mapping/Mappings')
@@ -23,8 +23,7 @@ async function getSystemMessages(_req, res) {
     }
     return res.status(HttpStatus.OK).json(systemMessages)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
