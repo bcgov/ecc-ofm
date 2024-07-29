@@ -461,7 +461,7 @@ export default {
           //you can only apply for Irreg Expesne if you have an active FA
           if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
             const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
-            expenses?.forEach(async (expense) => {
+            expenses?.forEach((expense) => {
               this.irregularExpenses.push({
                 applicationId: application?.applicationId,
                 referenceNumber: expense?.referenceNumber,
