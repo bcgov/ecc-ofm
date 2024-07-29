@@ -5,13 +5,10 @@ const { IrregularExpenseMappings } = require('../util/mapping/Mappings')
 const { buildFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 
-const log = require('./logger')
-
 async function getIrregularExpenseApplications(req, res) {
   try {
     const applications = []
     const operation = `ofm_expenses?$filter=(${buildFilterQuery(req?.query, IrregularExpenseMappings)})`
-    console.log(operation)
     const response = await getOperation(operation)
 
     response?.value?.forEach((application) => applications.push(new MappableObjectForFront(application, IrregularExpenseMappings).toJSON()))

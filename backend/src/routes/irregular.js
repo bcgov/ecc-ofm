@@ -4,7 +4,7 @@ const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getIrregularExpenseApplications, getIrregularExpensePDF, getIrregularExpenseByID } = require('../components/irregular')
-const { query, param, validationResult, checkSchema } = require('express-validator')
+const { query, param, validationResult } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 

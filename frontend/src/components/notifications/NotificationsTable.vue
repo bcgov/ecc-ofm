@@ -31,8 +31,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { useNotificationsStore } from '@/stores/notifications'
+import NotificationService from '@/services/notificationService'
 import format from '@/utils/format'
 
 export default {
@@ -104,8 +105,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useNotificationsStore, ['updateNotification']),
-
     resetAllCheckboxes() {
       this.bodyCheckboxesSelected = []
     },
@@ -144,7 +143,7 @@ export default {
         selectedNotification.isRead = isRead
         payload.isRead = isRead
       }
-      await this.updateNotification(notificationId, payload)
+      await NotificationService.updateNotification(notificationId, payload)
     },
     getItemClass(item) {
       return {

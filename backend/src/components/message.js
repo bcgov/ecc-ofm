@@ -79,7 +79,7 @@ async function createAssistanceRequest(req, res) {
   }
 }
 
-async function replyToAssistanceRequest(req, res) {
+async function createAssistanceRequestConversation(req, res) {
   try {
     const payload = `{
       "ofm_message": "${req.body?.message}",
@@ -96,7 +96,7 @@ async function replyToAssistanceRequest(req, res) {
 async function getAssistanceRequests(req, res) {
   try {
     let assistanceRequests = []
-    const operation = `ofm_assistance_requests?$select=modifiedon,ofm_assistance_requestid,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)&$filter=(_ofm_contact_value eq ${req.params.contactId}) and (ofm_facility_request_request/any(o1:(o1/ofm_facility_requestid ne null))) and (ofm_conversation_request/any(o2:(o2/ofm_conversationid ne null)))&pageSize=500`
+    const operation = `ofm_assistance_requests?$select=modifiedon,ofm_assistance_requestid,ofm_name,_ofm_request_category_value,ofm_subject,statecode,statuscode,ofm_is_read&$expand=ofm_facility_request_request($select=_ofm_facility_value),ofm_conversation_request($select=modifiedon)&$filter=(_ofm_contact_value eq ${req?.query?.contactId}) and (ofm_facility_request_request/any(o1:(o1/ofm_facility_requestid ne null))) and (ofm_conversation_request/any(o2:(o2/ofm_conversationid ne null)))&pageSize=500`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => assistanceRequests.push(mapAssistanceRequestObjectForFront(item)))
     return res.status(HttpStatus.OK).json(assistanceRequests)
@@ -149,6 +149,6 @@ module.exports = {
   getAssistanceRequests,
   getAssistanceRequest,
   updateAssistanceRequest,
+  createAssistanceRequestConversation,
   getAssistanceRequestConversation,
-  replyToAssistanceRequest,
 }
