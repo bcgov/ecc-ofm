@@ -82,7 +82,7 @@
           <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
-          <a v-else @click="getPDF(item)" href="#table">{{ getIrregularExpenseText(item) }}</a>
+          <a v-else @click="getPDF(item)" href="#table">View Application</a>
         </template>
 
         <template #item.submittedDate="{ item }">
@@ -255,10 +255,6 @@ export default {
       }
       return 'View Application'
     },
-    getIrregularExpenseText(item) {
-      return item?.statusCode === IRREGULAR_EXPENSE_STATUS_CODES.APPROVED ? 'View Application' : ''
-    },
-
     isApplicationCancellable(application) {
       return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE
     },
@@ -407,8 +403,6 @@ export default {
     },
 
     async getPDF(item) {
-      //the link to download a PDF for irregular expense will be hidden unless the application is approved.
-
       const doc = await DocumentService.getDocuments(item?.assistanceRequestId)
       //this will return an array - we are assuming the user uploads their PDF first.
       //we could add in to search for a file of type PDF - but we don't have requirements for this
