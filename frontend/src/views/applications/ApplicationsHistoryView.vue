@@ -403,7 +403,7 @@ export default {
 
     async getPDF(item) {
       const doc = await DocumentService.getDocuments(item?.assistanceRequestId)
-      //XXX- to fix post MVP - add a document Category / type to assistance request to find their application document
+      //TODO- post MVP - add a document Category / type to assistance request to find their application document
       //this will return an array - we are assuming the user uploads their PDF first.
       //we could add in to search for a file of type PDF - but we don't have requirements for this
       const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
