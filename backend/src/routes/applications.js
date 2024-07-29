@@ -25,7 +25,6 @@ const validateFacility = require('../middlewares/validateFacility.js')
 const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
-const log = require('../components/logger')
 
 module.exports = router
 
