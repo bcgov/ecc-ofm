@@ -1,7 +1,7 @@
 <template>
   <AppHeroImage />
   <v-container class="login-container" fluid v-bind="$attrs">
-    <AppAlertBanner v-for="message in systemMessages" type="info">{{ message.content }}</AppAlertBanner>
+    <AppAlertBanner v-for="message in systemMessages" :key="message.id" type="info">{{ message.content }}</AppAlertBanner>
     <v-row>
       <v-col cols="12" class="pt-5">
         <p>
@@ -58,12 +58,14 @@
 
 <script>
 import { mapActions, mapState } from 'pinia'
+import { uuid } from 'vue-uuid'
+
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
-import PublicService from '@/services/publicService'
+import LookupService from '@/services/lookupService'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
@@ -91,7 +93,8 @@ export default {
     async loadSystemMessages() {
       try {
         this.loading = true
-        this.systemMessages = await PublicService.getSystemMessages()
+        this.systemMessages = await LookupService.getSystemMessages()
+        this.systemMessages?.forEach((message) => (message.id = uuid.v4()))
       } catch (error) {
         this.setFailureAlert('Failed to load system messages', error)
       } finally {
