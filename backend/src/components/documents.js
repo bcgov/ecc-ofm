@@ -23,6 +23,17 @@ async function getDocuments(req, res) {
   }
 }
 
+//returns a base64 encoded version of a document to download or display on the portal
+async function getDocumentFile(req, res) {
+  try {
+    const operation = `ofm_documents(${req.params.documentId})/ofm_file`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    handleError(res, e)
+  }
+}
+
 async function createDocuments(req, res) {
   try {
     const { body, files } = req
@@ -61,4 +72,5 @@ module.exports = {
   getDocuments,
   createDocuments,
   deleteDocument,
+  getDocumentFile,
 }

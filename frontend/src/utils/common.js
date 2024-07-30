@@ -26,3 +26,15 @@ export function convertArrayToString(item, separator = ', ') {
 export function sanitizeWholeNumberInput(input) {
   return input?.replace(/[^0-9]/g, '')
 }
+
+export function createPDFDownloadLink(file, fileName) {
+  const link = document.createElement('a')
+  link.href = `data:application/pdf;base64,${file}`
+  link.target = '_blank'
+  link.download = fileName
+
+  // Simulate a click on the element <a>
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}

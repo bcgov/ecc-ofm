@@ -435,7 +435,7 @@ const IrregularExpenseMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_caption', front: 'referenceNumber' },
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
-  { back: 'ofm_assistance_requestid', front: 'assistanceRequestId' },
+  { back: '_ofm_assistance_request_value', front: 'assistanceRequestId' },
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'ofm_expenseid', front: 'irregularExpenseId' },
