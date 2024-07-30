@@ -45,6 +45,8 @@ const { RoleMappings } = require('./util/mapping/Mappings')
 const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
+const rateLimit = require('express-rate-limit')
+const RedisStore = require('rate-limit-redis')
 const HttpStatus = require('http-status-codes')
 
 //initialize app
@@ -232,6 +234,25 @@ passport.serializeUser((user, next) => next(null, user))
 passport.deserializeUser((obj, next) => next(null, obj))
 
 app.use(morgan(config.get('server:morganFormat'), { stream: logStream }))
+
+// Setup Rate limit for the number of frontend requests allowed per windowMs to avoid DDOS attack
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+
+  // Redis store configuration
+  store: dbSession
+    ? new RedisStore({
+        // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
+        sendCommand: (...args) => dbSession.call(...args),
+      })
+    : undefined,
+})
+
+app.use('/api/public', limiter)
+
 //set up routing to auth and main API
 app.use(/(\/api)?/, apiRouter)
 
