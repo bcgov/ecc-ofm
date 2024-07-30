@@ -42,6 +42,12 @@ With NPM:
 npm run lint
 ```
 
+To fix issues:
+
+```sh
+npm run lint:fix
+```
+
 ### Docker
 
 #### Build

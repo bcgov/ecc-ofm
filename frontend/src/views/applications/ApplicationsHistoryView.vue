@@ -420,7 +420,7 @@ export default {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-      } catch (error) {
+      } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
     },

@@ -189,7 +189,7 @@ export default {
         this.setSuccessAlert('Funding Agreement submitted')
         this.$router.push({ name: 'funding-confirmation' })
       } catch (error) {
-        this.setFailureAlert('Failed to submit funding agreement')
+        this.setFailureAlert('Failed to submit funding agreement', error)
       }
     },
     goToDeclaration() {

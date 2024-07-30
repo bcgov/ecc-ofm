@@ -1,5 +1,4 @@
-import { describe, test } from 'vitest'
-import { createRouter, createWebHistory } from 'vue-router'
+import { describe, expect, test } from 'vitest'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
