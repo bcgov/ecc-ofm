@@ -18,32 +18,33 @@ on:
       - 'backend/src/**'
       - 'backend/tests/unit/**'
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'backend/src/**'
 
 jobs:
   test:
+    name: Run ESLint
     runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: backend
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '20.16.x'
-    - run: npm ci
-    - run: npm run lint
-      env:
-        NODE_ENV: 'test'
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.x'
+      - run: npm ci
+      - run: npm run lint
+        env:
+          NODE_ENV: 'test'
 
   # TODO: Uncomment after project is set up in sonar
   # sonarcloud:
   #   name: Build (Sonar Cloud)
   #   runs-on: ubuntu-24.04
   #   steps:
-  #     - uses: actions/checkout@v3
+  #     - uses: actions/checkout@v4
   #       with:
   #         # Disabling shallow clone is recommended for improving relevancy of reporting
   #         fetch-depth: 0
@@ -55,12 +56,12 @@ jobs:
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        #with:
-          #args: >
-            #-Dsonar.exclusions=**/test/**,.github/**/*,*.md
-            #-Dsonar.organization=bcgov-sonarcloud
-            #-Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
-            #-Dsonar.project.monorepo.enabled=true
-            #-Dsonar.projectKey=${{ github.event.repository.name }}
-            #-Dsonar.sources=backend
-            #-Dsonar.tests=backend/tests
+  #with:
+  #args: >
+  #-Dsonar.exclusions=**/test/**,.github/**/*,*.md
+  #-Dsonar.organization=bcgov-sonarcloud
+  #-Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
+  #-Dsonar.project.monorepo.enabled=true
+  #-Dsonar.projectKey=${{ github.event.repository.name }}
+  #-Dsonar.sources=backend
+  #-Dsonar.tests=backend/tests
