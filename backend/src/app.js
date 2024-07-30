@@ -182,6 +182,7 @@ const parseJwt = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]))
   } catch (e) {
+    log.error(e)
     return null
   }
 }

@@ -83,8 +83,8 @@ const auth = {
 
             // Get new JWT and Refresh Tokens and update the request
             const result = await auth.renew(req.user.refreshToken)
-            req.user.jwt = result.jwt // eslint-disable-line require-atomic-updates
-            req.user.refreshToken = result.refreshToken // eslint-disable-line require-atomic-updates
+            req.user.jwt = result.jwt
+            req.user.refreshToken = result.refreshToken
           } else {
             log.verbose('refreshJWT', 'Cannot refresh JWT token')
             delete req.user

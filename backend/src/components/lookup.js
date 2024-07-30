@@ -1,7 +1,6 @@
 'use strict'
 const { getOperation } = require('./utils')
 const HttpStatus = require('http-status-codes')
-const _ = require('lodash')
 const cache = require('memory-cache')
 const {
   ApplicationIntakeMappings,

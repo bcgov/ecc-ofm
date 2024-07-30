@@ -8,7 +8,7 @@ const { isIdirUser } = require('../components/utils')
  */
 module.exports = function () {
   return async function (req, res, next) {
-    log.verbose(`validating contact`)
+    log.verbose('validating contact')
 
     if (isIdirUser(req)) return next()
 
