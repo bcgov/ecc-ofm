@@ -7,7 +7,6 @@ export default [
   js.configs.recommended,
   eslintPluginPrettier,
   {
-    // ignores: ['dist/', 'test/'],
     ignores: ['dist/'],
   },
   {
