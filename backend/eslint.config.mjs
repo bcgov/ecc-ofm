@@ -7,7 +7,6 @@ export default [
   js.configs.recommended,
   eslintPluginPrettier,
   {
-    name: 'CD/CI',
     files: ['**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',

@@ -16,7 +16,6 @@ on:
       - 'ofmcc-*'
     paths:
       - 'backend/src/**'
-      - 'backend/tests/unit/**'
   pull_request:
     branches: [main]
     paths:
