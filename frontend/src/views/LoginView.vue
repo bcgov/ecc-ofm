@@ -1,6 +1,7 @@
 <template>
   <AppHeroImage />
   <v-container class="login-container" fluid v-bind="$attrs">
+    <AppAlertBanner v-for="message in systemMessages" :key="message.id" type="info">{{ message.content }}</AppAlertBanner>
     <v-row>
       <v-col cols="12" class="pt-5">
         <p>
@@ -24,7 +25,7 @@
           </v-card-title>
           <v-card-text>Log in with your primary Business BCeID</v-card-text>
           <v-card-actions class="mt-auto">
-            <AppButton icon="mdi-login" :href="authRoutes.LOGIN" @click="clearStorage" width="250px" id="bceid-login">BCeID Log In</AppButton>
+            <AppButton id="bceid-login" icon="mdi-login" :href="authRoutes.LOGIN" :loading="loading" width="250px" @click="clearStorage">BCeID Log In</AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -45,7 +46,9 @@
             You must register for a Business BCeID before you can log in - it only takes a few minutes.
           </v-card-text>
           <v-card-actions>
-            <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" @click="clearStorage" width="300px">Register for a BCeID</AppButton>
+            <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" :loading="loading" width="300px" @click="clearStorage">
+              Register for a BCeID
+            </AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -55,26 +58,48 @@
 
 <script>
 import { mapActions, mapState } from 'pinia'
+import { uuid } from 'vue-uuid'
+
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
+import LookupService from '@/services/lookupService'
+import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'LoginView',
-  components: { AppButton, AppHeroImage },
+  components: { AppAlertBanner, AppButton, AppHeroImage },
+  mixins: [alertMixin],
   data() {
     return {
       authRoutes: AuthRoutes,
+      loading: false,
+      systemMessages: [],
     }
   },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated']),
   },
+  async created() {
+    await this.loadSystemMessages()
+  },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
       this.setJwtToken()
+    },
+    async loadSystemMessages() {
+      try {
+        this.loading = true
+        this.systemMessages = await LookupService.getSystemMessages()
+        this.systemMessages?.forEach((message) => (message.id = uuid.v4()))
+      } catch (error) {
+        this.setFailureAlert('Failed to load system messages', error)
+      } finally {
+        this.loading = false
+      }
     },
   },
 }

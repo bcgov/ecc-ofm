@@ -1,7 +1,6 @@
 'use strict'
-const { getOperation } = require('./utils')
+const { getOperation, handleError } = require('./utils')
 const HttpStatus = require('http-status-codes')
-const _ = require('lodash')
 const cache = require('memory-cache')
 const {
   ApplicationIntakeMappings,
@@ -11,6 +10,7 @@ const {
   RequestSubCategoryMappings,
   RoleMappings,
   // ReportTemplateMappings,
+  SystemMessageMappings,
 } = require('../util/mapping/Mappings')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('./logger')
@@ -163,12 +163,30 @@ async function getLookupInfo(_req, res) {
     }
     return res.status(HttpStatus.OK).json(resData)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
+  }
+}
+
+async function getSystemMessages(_req, res) {
+  try {
+    let systemMessages = lookupCache.get('systemMessages')
+    if (!systemMessages) {
+      systemMessages = []
+      const currentTime = new Date().toISOString()
+      const response = await getOperation(
+        `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
+      )
+      response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
+      lookupCache.put('systemMessages', systemMessages, ONE_HOUR_MS)
+    }
+    return res.status(HttpStatus.OK).json(systemMessages)
+  } catch (e) {
+    handleError(res, e)
   }
 }
 
 module.exports = {
   getLookupInfo,
   getRoles,
+  getSystemMessages,
 }

@@ -1,4 +1,3 @@
-const jsonwebtoken = require('jsonwebtoken')
 const log = require('../components/logger')
 const { getRoles } = require('../components/lookup')
 

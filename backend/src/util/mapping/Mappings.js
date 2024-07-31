@@ -428,6 +428,8 @@ const QuestionResponseMappings = [
   { back: 'ofm_response_text', front: 'value' },
 ]
 
+const SystemMessageMappings = [{ back: 'ofm_message', front: 'content' }]
+
 const IrregularExpenseMappings = [
   { back: 'modifiedon', front: 'lastUpdatedTime' },
   { back: 'statuscode', front: 'statusCode' },
@@ -468,6 +470,7 @@ module.exports = {
   SurveyQuestionBusinessRulesMappings,
   SurveyResponseMappings,
   // ReportTemplateMappings,
+  SystemMessageMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,

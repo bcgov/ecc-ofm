@@ -17,6 +17,20 @@ This project was built using the EDUC-CCOF project as a template.
 
 **`Step 6`** Open http://localhost:8080/api/health to verify that the app is running.
 
+### Lint with [ESLint](https://eslint.org/)
+
+With NPM:
+
+```sh
+npm run lint
+```
+
+To fix issues:
+
+```sh
+npm run lint:fix
+```
+
 ### Unit Tests
 
 Run `npm run test` in command line from backend folder, to execute unit tests.

@@ -38,12 +38,15 @@ const fundingAgreementsRouter = require('./routes/fundingAgreements')
 const facilitiesRouter = require('./routes/facilities')
 const licencesRouter = require('./routes/licences')
 const paymentsRouter = require('./routes/payments')
+const publicRouter = require('./routes/public')
 const reportsRouter = require('./routes/reports')
 const { MappableObjectForBack } = require('./util/mapping/MappableObject')
 const { RoleMappings } = require('./util/mapping/Mappings')
 const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
+const rateLimit = require('express-rate-limit')
+const { RedisStore } = require('rate-limit-redis')
 const HttpStatus = require('http-status-codes')
 
 //initialize app
@@ -183,6 +186,7 @@ const parseJwt = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]))
   } catch (e) {
+    log.error(e)
     return null
   }
 }
@@ -231,22 +235,43 @@ passport.serializeUser((user, next) => next(null, user))
 passport.deserializeUser((obj, next) => next(null, obj))
 
 app.use(morgan(config.get('server:morganFormat'), { stream: logStream }))
+
+// Setup Rate limit for the number of frontend requests allowed per windowMs to avoid DDOS attack
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+
+  // Redis store configuration
+  /* eslint-disable indent */
+  store: dbSession
+    ? new RedisStore({
+        sendCommand: (...args) => dbSession.client.call(...args),
+      })
+    : undefined,
+  /* eslint-enable indent */
+})
+
+app.use('/api/public', limiter)
+
 //set up routing to auth and main API
 app.use(/(\/api)?/, apiRouter)
 
 apiRouter.use('/applications', applicationsRouter)
-apiRouter.use('/irregular', irregularApplicationsRouter)
 apiRouter.use('/auth', authRouter)
 apiRouter.use('/config', configRouter)
 apiRouter.use('/documents', documentsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
 apiRouter.use('/funding-agreements', fundingAgreementsRouter)
 apiRouter.use('/health', healthCheckRouter)
+apiRouter.use('/irregular', irregularApplicationsRouter)
 apiRouter.use('/licences', licencesRouter)
 apiRouter.use('/messages', messageRouter)
 apiRouter.use('/notifications', notificationRouter)
 apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/payments', paymentsRouter)
+apiRouter.use('/public', publicRouter)
 apiRouter.use('/reports', reportsRouter)
 apiRouter.use('/user', userRouter)
 

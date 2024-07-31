@@ -91,7 +91,7 @@ export default {
           )
         ).flat()
 
-        this.supplementaryApplications.forEach((app) => {
+        this.supplementaryApplications?.forEach((app) => {
           this.fundingAgreements.push({
             startDate: app.startDate,
             endDate: app.endDate,
@@ -141,7 +141,7 @@ export default {
     },
     async loadIrregularExpenses(activeFA) {
       const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED)
-      expenseApplications.forEach((app) => {
+      expenseApplications?.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,
           endDate: app.endDate,
