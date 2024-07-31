@@ -3,7 +3,7 @@
     <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
       <template v-slot:item="{ item }">
         <tr>
-          <td v-for="question in questions" :key="question?.questionId" class="" :class="readonly ? 'py-4' : 'pt-4'">
+          <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
             <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
           </td>
           <td v-if="!readonly && !hasValueInheritanceChildQuestions && updatedResponses?.length > 1">
