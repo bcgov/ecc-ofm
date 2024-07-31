@@ -97,7 +97,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingInfantECEducatorFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -108,7 +108,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingInfantECEducatorPartTime')" />
           </v-col>
         </v-row>
@@ -134,7 +134,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingECEducatorFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -145,7 +145,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingECEducatorPartTime')" />
           </v-col>
         </v-row>
@@ -171,7 +171,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingECEducatorAssistantFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -182,7 +182,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingECEducatorAssistantPartTime')" />
           </v-col>
         </v-row>
@@ -208,7 +208,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingResponsibleAdultFullTime')" />
           </v-col>
           <v-col cols="4" align="center" class="px-4">
@@ -219,7 +219,7 @@
               :disabled="readonly"
               maxlength="2"
               hide-details
-              class="number-input"
+              class="centered-input"
               @input="sanitizeInput('staffingResponsibleAdultPartTime')" />
           </v-col>
         </v-row>
@@ -234,7 +234,7 @@
             <strong>{{ totalFullTimePosition }}</strong>
           </p>
         </v-col>
-        <v-col cols="4" class="px-2">
+        <v-col cols="4" class="px-2 pr-8">
           <p align="center">
             <strong>{{ totalPartTimePosition }}</strong>
           </p>
@@ -519,7 +519,7 @@ export default {
 </script>
 
 <style scoped>
-.number-input >>> input {
+:deep(.centered-input input) {
   text-align: center;
 }
 </style>
