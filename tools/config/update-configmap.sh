@@ -11,6 +11,7 @@ readonly SOAM_CLIENT_ID=$8
 readonly SOAM_CLIENT_SECRET=$9
 readonly SOAM_IDP_HINT_BCEID=${10}
 readonly SOAM_IDP_HINT_IDIR=${11}
+readonly SPLUNK_TOKEN=${12}
 readonly SOAM_KC_REALM_ID="childcare-applications"
 readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
 

@@ -122,9 +122,6 @@ objects:
             - name: flb-sc-config-volume
               configMap:
                 name: ${APP_NAME}-flb-sc-config-map
-            # - name: tls-certs
-            #   secret:
-            #     secretName: ofm-backend-cert
       test: false
       triggers:
         - type: ConfigChange
