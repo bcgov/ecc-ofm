@@ -46,7 +46,7 @@ const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
 const rateLimit = require('express-rate-limit')
-const RedisStore = require('rate-limit-redis')
+const {RedisStore} = require('rate-limit-redis')
 const HttpStatus = require('http-status-codes')
 
 //initialize app
@@ -246,7 +246,7 @@ const limiter = rateLimit({
   store: dbSession
     ? new RedisStore({
         // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
-        sendCommand: (...args) => dbSession.call(...args),
+        sendCommand: (...args) => dbSession.client.call(...args),
       })
     : undefined,
 })
@@ -257,13 +257,13 @@ app.use('/api/public', limiter)
 app.use(/(\/api)?/, apiRouter)
 
 apiRouter.use('/applications', applicationsRouter)
-apiRouter.use('/irregular', irregularApplicationsRouter)
 apiRouter.use('/auth', authRouter)
 apiRouter.use('/config', configRouter)
 apiRouter.use('/documents', documentsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
 apiRouter.use('/funding-agreements', fundingAgreementsRouter)
 apiRouter.use('/health', healthCheckRouter)
+apiRouter.use('/irregular', irregularApplicationsRouter)
 apiRouter.use('/licences', licencesRouter)
 apiRouter.use('/messages', messageRouter)
 apiRouter.use('/notifications', notificationRouter)
