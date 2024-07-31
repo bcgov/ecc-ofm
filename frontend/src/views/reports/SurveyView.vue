@@ -257,12 +257,14 @@ export default {
     },
 
     updateClonedResponses(updatedResponse) {
+      /* eslint-disable indent */
       const index = this.isTableQuestionResponse(updatedResponse)
         ? this.clonedResponses.findIndex(
             (item) =>
               !this.isHiddenOrDeleted(item) && item.questionId === updatedResponse?.questionId && item.tableQuestionId === updatedResponse?.tableQuestionId && item.rowId === updatedResponse?.rowId,
           )
         : this.clonedResponses.findIndex((item) => item.questionId === updatedResponse?.questionId)
+      /* eslint-enable indent */
       if (index > -1) {
         this.clonedResponses[index].value = updatedResponse?.value
       } else {

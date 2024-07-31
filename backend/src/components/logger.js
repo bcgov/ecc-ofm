@@ -1,28 +1,27 @@
-'use strict';
+'use strict'
 
-const config = require('../config/index');
-const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
-const { inspect } = require('util');
-const { omit, pickBy } = require('lodash');
-const hasAnsi = require('has-ansi');
-const stripAnsi = require('strip-ansi');
-const safeStringify = require('fast-safe-stringify');
-
+const config = require('../config/index')
+const { createLogger, format, transports } = require('winston')
+require('winston-daily-rotate-file')
+const { inspect } = require('util')
+const { omit, pickBy } = require('lodash')
+const hasAnsi = require('has-ansi')
+const stripAnsi = require('strip-ansi')
+const safeStringify = require('fast-safe-stringify')
 
 function isPrimitive(val) {
-  return val === null || (typeof val !== 'object' && typeof val !== 'function');
+  return val === null || (typeof val !== 'object' && typeof val !== 'function')
 }
 
 function formatWithInspect(val, colors = true) {
   if (val instanceof Error) {
-    return '';
+    return ''
   }
 
-  const shouldFormat = typeof val !== 'string' && !hasAnsi(val);
-  const formattedVal = shouldFormat ? inspect(val, { depth: null, colors }) : (colors ? val : stripAnsi(val));
+  const shouldFormat = typeof val !== 'string' && !hasAnsi(val)
+  const formattedVal = shouldFormat ? inspect(val, { depth: null, colors }) : colors ? val : stripAnsi(val)
 
-  return isPrimitive(val) ? formattedVal : `\n${formattedVal}`;
+  return isPrimitive(val) ? formattedVal : `\n${formattedVal}`
 }
 
 /**
@@ -32,30 +31,30 @@ function formatWithInspect(val, colors = true) {
  * @param {*} colors
  */
 function getDomainWinstonLoggerFormat(colors = true) {
-  const colorize = colors ? format.colorize() : null;
+  const colorize = colors ? format.colorize() : null
   const loggingFormats = [
     format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss.SSS'
+      format: 'YYYY-MM-DD HH:mm:ss.SSS',
     }),
     format.errors({ stack: true }),
     colorize,
     format.printf((info) => {
-      const stackTrace = info.stack ? `\n${info.stack}` : '';
+      const stackTrace = info.stack ? `\n${info.stack}` : ''
 
       // handle single object
       if (!info.message) {
-        const obj = omit(info, ['level', 'timestamp', Symbol.for('level')]);
-        return `${info.timestamp} - ${info.level}: ${formatWithInspect(obj, colors)}${stackTrace}`;
+        const obj = omit(info, ['level', 'timestamp', Symbol.for('level')])
+        return `${info.timestamp} - ${info.level}: ${formatWithInspect(obj, colors)}${stackTrace}`
       }
 
-      const splatArgs = info[Symbol.for('splat')] || [];
-      const rest = splatArgs.map(data => formatWithInspect(data, colors)).join(' ');
-      const msg = formatWithInspect(info.message, colors);
+      const splatArgs = info[Symbol.for('splat')] || []
+      const rest = splatArgs.map((data) => formatWithInspect(data, colors)).join(' ')
+      const msg = formatWithInspect(info.message, colors)
 
-      return `${info.timestamp} - ${info.level}: ${msg} ${rest}${stackTrace}`;
+      return `${info.timestamp} - ${info.level}: ${msg} ${rest}${stackTrace}`
     }),
-  ].filter(Boolean);
-  return format.combine(...loggingFormats);
+  ].filter(Boolean)
+  return format.combine(...loggingFormats)
 }
 
 /**
@@ -63,44 +62,46 @@ function getDomainWinstonLoggerFormat(colors = true) {
  */
 function getDomainWinstonLoggerJsonFormat() {
   const ignoreHealthChecks = format((info, _opts) => {
-    if (info.level !== 'info' || !info.message) return info;
-    const re = /GET.+\/api\/health.+200/;
-    if (re.test(info.message)) return false;
-    return info;
+    if (info.level !== 'info' || !info.message) return info
+    const re = /GET.+\/api\/health.+200/
+    if (re.test(info.message)) return false
+    return info
   })
 
   const loggingFormats = [
     ignoreHealthChecks(),
     format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss.SSS'
+      format: 'YYYY-MM-DD HH:mm:ss.SSS',
     }),
     format.errors({ stack: true }),
     format.printf((info) => {
-      const stackTrace = info.stack || '';
+      const stackTrace = info.stack || ''
 
-      let message;
+      let message
       // handle single object
       if (!info.message) {
-        const obj = omit(info, ['level', 'timestamp', Symbol.for('level')]);
-        message = obj;
+        const obj = omit(info, ['level', 'timestamp', Symbol.for('level')])
+        message = obj
       } else {
-        message = stripAnsi(info.message);
+        message = stripAnsi(info.message)
       }
 
-      const splatArgs = info[Symbol.for('splat')] || [];
-      const detail = splatArgs.map(data => typeof data === 'string' ? stripAnsi(data) : data);
+      const splatArgs = info[Symbol.for('splat')] || []
+      const detail = splatArgs.map((data) => (typeof data === 'string' ? stripAnsi(data) : data))
 
-      return safeStringify(pickBy({
-        timestamp: info.timestamp,
-        level: info.level,
-        message,
-        detail: detail.length > 0 ? detail : null,
-        stackTrace
-      }));
+      return safeStringify(
+        pickBy({
+          timestamp: info.timestamp,
+          level: info.level,
+          message,
+          detail: detail.length > 0 ? detail : null,
+          stackTrace,
+        }),
+      )
     }),
-  ];
+  ]
 
-  return format.combine(...loggingFormats);
+  return format.combine(...loggingFormats)
 }
 
 const logger = createLogger({
@@ -114,12 +115,14 @@ const logger = createLogger({
       maxSize: '5m',
       maxFiles: 1,
       zippedArchive: true,
-    })
-  ]
-});
+    }),
+  ],
+})
 
-logger.add(new transports.Console({
-  format: getDomainWinstonLoggerFormat(true)
-}));
+logger.add(
+  new transports.Console({
+    format: getDomainWinstonLoggerFormat(true),
+  }),
+)
 
-module.exports = logger;
+module.exports = logger

@@ -20,7 +20,7 @@
       <v-col class="pt-0 pb-0">
         <!-- Users Table -->
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
+          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
               <AppButton @click.stop="toggleExpand(item)" variant="text">
@@ -47,7 +47,7 @@
 
             <!-- Slot to customize expand row content -->
 
-            <template v-slot:expanded-row="{ columns, item }">
+            <template v-slot:expanded-row="{ item }">
               <tr>
                 <td></td>
                 <td colspan="6" class="pl-0">
@@ -138,14 +138,12 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      this.loading = true
       try {
         if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
         return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
       } catch (error) {
         this.setFailureAlert('Failed to filter users by facility name', error)
-      } finally {
-        this.loading = false
+        return []
       }
     },
   },

@@ -1,23 +1,10 @@
 <template>
   <div @mouseover="pause = true" @mouseleave="pause = false">
-    <v-snackbar
-      v-model="showSnackBar"
-      :timeout="timeout"
-      elevation="24"
-      location="top"
-      centered
-      :color="colour"
-      transition="slide-y-transition"
-      class="snackbar"
-    >
+    <v-snackbar v-model="showSnackBar" :timeout="timeout" elevation="24" location="top" centered :color="colour" transition="slide-y-transition" class="snackbar">
       <div v-html="alertNotificationText" />
       <template #action="{ attrs }">
         <v-btn text color="white" v-bind="attrs" @click="showSnackBar = false">
-          {{
-            alertNotificationQueue.length > 0
-              ? 'Next (' + alertNotificationQueue.length + ')'
-              : 'Close'
-          }}
+          {{ alertNotificationQueue.length > 0 ? 'Next (' + alertNotificationQueue.length + ')' : 'Close' }}
         </v-btn>
       </template>
     </v-snackbar>
@@ -40,11 +27,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, [
-      'alertNotificationText',
-      'alertNotificationQueue',
-      'alertNotification',
-    ]),
+    ...mapState(useAppStore, ['alertNotificationText', 'alertNotificationQueue', 'alertNotification']),
     hasNotificationsPending() {
       return this.alertNotificationQueue.length > 0
     },

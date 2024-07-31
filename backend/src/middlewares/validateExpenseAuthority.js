@@ -8,7 +8,7 @@ const log = require('../components/logger')
  */
 module.exports = function () {
   return async function (req, res, next) {
-    log.verbose(`validating expense authority`)
+    log.verbose('validating expense authority')
 
     const contactId = req?.body.contactId
     // Only validate a signing update (which will include contactId)

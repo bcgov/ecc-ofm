@@ -154,7 +154,7 @@ export default {
           data: atob(resp),
         }
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
-      } catch (error) {
+      } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       } finally {
         this.loading = false
@@ -187,7 +187,7 @@ export default {
         this.setSuccessAlert('Funding Agreement submitted')
         this.$router.push({ name: 'funding-confirmation' })
       } catch (error) {
-        this.setFailureAlert('Failed to submit funding agreement')
+        this.setFailureAlert('Failed to submit funding agreement', error)
       }
     },
     goToDeclaration() {

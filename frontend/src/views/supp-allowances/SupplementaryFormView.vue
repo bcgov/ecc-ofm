@@ -294,7 +294,7 @@ export default {
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
-        this.setFailureAlert('Failed to load Allowances applications')
+        this.setFailureAlert('Failed to load Allowances applications', error)
       }
     },
     async saveApplication(showAlert = false) {
@@ -354,7 +354,7 @@ export default {
           this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
-        this.setFailureAlert('Failed to save Allowances application')
+        this.setFailureAlert('Failed to save Allowances application', error)
         this.loading = false
         this.$emit('process', false)
       }

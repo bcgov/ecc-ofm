@@ -77,9 +77,9 @@ export default {
           await ApplicationService.updateSupplementaryApplication(this.applicationId, payload)
         }
         this.$emit('cancel')
-        this.setSuccessAlert(`Application cancelled successfully`)
+        this.setSuccessAlert('Application cancelled successfully')
       } catch (error) {
-        this.setFailureAlert(`Failed to cancel your application`, error)
+        this.setFailureAlert('Failed to cancel your application', error)
       } finally {
         this.isLoading = false
         this.closeDialog()
