@@ -9,6 +9,7 @@ const { isEmpty } = require('lodash')
 
 async function getPayments(req, res) {
   try {
+    // TODO (vietle-cgi) Can we validate the specific parameters at the route level? .oneOf is handy for this
     if (isEmpty(req?.query)) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }

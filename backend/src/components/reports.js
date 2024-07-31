@@ -51,6 +51,7 @@ function mapFixedResponseObjectForFront(fixedResponseQuery, data) {
 
 async function getSurveySections(req, res) {
   try {
+    // TODO (vietle-cgi) Can we validate the specific parameters at the route level? .oneOf is handy for this
     if (isEmpty(req?.query)) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
@@ -67,6 +68,7 @@ async function getSurveySections(req, res) {
 
 async function getSurveyQuestions(req, res) {
   try {
+    // TODO (vietle-cgi) Can we validate the specific parameters at the route level? .oneOf is handy for this
     if (isEmpty(req?.query)) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
