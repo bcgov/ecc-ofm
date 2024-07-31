@@ -71,7 +71,7 @@
         <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
-    <v-skeleton-loader :loading="loading" type="table-tbody">
+    <v-skeleton-loader id="table" :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
       <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" :mobile="null" mobile-breakpoint="md" class="soft-outline" density="compact">
         <template #item.status="{ item }">
@@ -82,6 +82,7 @@
           <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
+          <a v-else @click="getPDF(item)" href="#table">View Application</a>
         </template>
 
         <template #item.submittedDate="{ item }">
@@ -132,6 +133,9 @@ import IrregularExpenseService from '@/services/irregularExpenseService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import DocumentService from '@/services/documentService'
+import { createPDFDownloadLink } from '@/utils/common'
+
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
@@ -187,6 +191,7 @@ export default {
     hasAValidFundingAgreement() {
       return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
     },
+
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
     },
@@ -244,12 +249,11 @@ export default {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     getApplicationAction(application) {
-      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
         return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ? 'Continue Application' : 'View Application'
       }
       return 'View Application'
     },
-
     isApplicationCancellable(application) {
       return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE
     },
@@ -393,9 +397,22 @@ export default {
     },
 
     getActionsRoute(item) {
-      //JB TODO: link for irregular expense will download the application they previously uploaded
       const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
+    },
+
+    async getPDF(item) {
+      const doc = await DocumentService.getDocuments(item?.assistanceRequestId)
+      //TODO- post MVP - add a document Category / type to assistance request to find their application document
+      //this will return an array - we are assuming the user uploads their PDF first.
+      //we could add in to search for a file of type PDF - but we don't have requirements for this
+      const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
+
+      try {
+        createPDFDownloadLink(file, doc[0]?.fileName)
+      } catch (error) {
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
+      }
     },
 
     sortApplicationItems(applicationItems) {
@@ -420,15 +437,7 @@ export default {
           resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
         }
 
-        const link = document.createElement('a')
-        link.href = `data:application/pdf;base64,${resp}`
-        link.target = '_blank'
-        link.download = application.referenceNumber
-
-        // Simulate a click on the element <a>
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        createPDFDownloadLink(resp, application.referenceNumber)
       } catch (error) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
@@ -456,6 +465,8 @@ export default {
                 submittedDate: null,
                 latestActivityDate: expense?.lastUpdatedTime,
                 statusCode: expense?.statusCode,
+                irregularExpenseId: expense?.irregularExpenseId,
+                assistanceRequestId: expense?.assistanceRequestId,
               })
             })
           }
