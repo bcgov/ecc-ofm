@@ -410,7 +410,7 @@ export default {
 
       try {
         createPDFDownloadLink(file, doc[0]?.fileName)
-      } catch (error) {
+      } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
     },
@@ -438,7 +438,7 @@ export default {
         }
 
         createPDFDownloadLink(resp, application.referenceNumber)
-      } catch (error) {
+      } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
     },

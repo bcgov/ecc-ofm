@@ -62,9 +62,9 @@ export default {
       try {
         this.loading = true
         await ReportsService.deleteSurveyResponse(this.surveyResponseId)
-        this.setSuccessAlert(`Report response deleted successfully`)
+        this.setSuccessAlert('Report response deleted successfully')
       } catch (error) {
-        this.setFailureAlert(`Failed to delete your report response`, error)
+        this.setFailureAlert('Failed to delete your report response', error)
       } finally {
         this.loading = false
         this.closeDialog()
