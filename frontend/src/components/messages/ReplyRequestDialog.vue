@@ -4,10 +4,10 @@
       <template #content>
         <v-form ref="replyRequestForm" v-model="isFormComplete" class="px-4">
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12">
+            <v-col cols="12">
               <AppLabel variant="modal">Reply to request:</AppLabel>
             </v-col>
-            <v-col class="v-col-12">
+            <v-col cols="12">
               <v-textarea v-model="message" placeholder="Enter message text" counter maxlength="1000" variant="outlined" :rules="rules.required" :rows="6" :disabled="isLoading"></v-textarea>
             </v-col>
           </v-row>
@@ -44,6 +44,7 @@ import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
 import { ASSISTANCE_REQUEST_STATUS_CODES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import DocumentService from '@/services/documentService'
+import MessageService from '@/services/messageService'
 
 export default {
   name: 'ReplyRequestDialog',
@@ -86,7 +87,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['replyToAssistanceRequest', 'updateAssistanceRequest', 'updateAssistanceRequestInStore']),
+    ...mapActions(useMessagesStore, ['updateAssistanceRequestInStore']),
 
     /**
      * Reset the form and initialize the reply request model.
@@ -138,7 +139,7 @@ export default {
           assistanceRequestId: assistanceRequestId,
           message: this.message,
         }
-        await this.replyToAssistanceRequest(payload)
+        await MessageService.createAssistanceRequestConversation(payload)
       } catch (error) {
         console.log(`Failed to create a reply for Assistance Request - ${error}`)
         throw error
@@ -153,7 +154,7 @@ export default {
         const payload = {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.ASSIGNED,
         }
-        await this.updateAssistanceRequest(assistanceRequestId, payload)
+        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
       } catch (error) {
         console.log(`Failed to update status to assigned for Assistance Request - ${error}`)
         throw error

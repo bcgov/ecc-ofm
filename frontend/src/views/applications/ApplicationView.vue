@@ -9,10 +9,10 @@
         <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-screen-height"></v-progress-circular>
       </v-row>
       <v-row v-else no-gutters>
-        <v-col cols="12" md="3" lg="2">
-          <ApplicationNavBar class="navBar" />
+        <v-col cols="12" md="3" lg="2" xxl="1">
+          <ApplicationNavBar />
         </v-col>
-        <v-col cols="12" md="9" lg="10">
+        <v-col cols="12" md="9" lg="10" xxl="11">
           <router-view
             class="min-screen-height"
             :readonly="readonly"
@@ -244,12 +244,6 @@ export default {
 </script>
 
 <style scoped>
-.navBar {
-  margin-left: 0px;
-  min-width: 300px;
-  max-width: 400px;
-}
-
 .min-screen-height {
   min-height: 45vh;
 }

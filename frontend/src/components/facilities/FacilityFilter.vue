@@ -1,13 +1,20 @@
 <template>
   <v-row :justify="justify">
     <v-col cols="12" sm="5" md="5" lg="3" xl="3" class="d-flex flex-column align-end">
-      <AppButton variant="text" :disabled="loading" @click="toggleShowFilter()">
-        Filter by facility
+      <AppButton id="facility-filter-button" variant="text" :disabled="loading" @click="toggleShowFilter()">
+        Filter by Facility
         <v-icon right>mdi-filter</v-icon>
       </AppButton>
     </v-col>
     <v-col cols="12" sm="6" md="6" lg="4" xl="4" class="pb-0">
-      <v-text-field v-show="showFilterInput" v-model.trim="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="loading" hide-details></v-text-field>
+      <v-text-field
+        v-show="showFilterInput"
+        v-model.trim="facilityNameFilter"
+        placeholder="Filter by Facility Name"
+        variant="outlined"
+        density="compact"
+        :disabled="loading"
+        hide-details></v-text-field>
     </v-col>
   </v-row>
 </template>
@@ -29,19 +36,19 @@ export default {
     },
     justify: {
       type: String,
-      default: 'start'
-    }
+      default: 'start',
+    },
   },
   emits: ['facility-filter-changed'],
   data() {
     return {
       showFilterInput: this.defaultShowInput,
       facilityNameFilter: '',
-    };
+    }
   },
   watch: {
     facilityNameFilter(newVal) {
-      this.$emit('facility-filter-changed', newVal);
+      this.$emit('facility-filter-changed', newVal)
     },
   },
   methods: {
@@ -52,5 +59,5 @@ export default {
       }
     },
   },
-};
+}
 </script>

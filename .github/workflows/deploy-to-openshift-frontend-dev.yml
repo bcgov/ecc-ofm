@@ -50,6 +50,7 @@ env:
   BANNER_COLOR: '#8d28d7'
   TDAD_CONTACT_EMAIL: '10aDayCentres@gov.bc.ca'
   CCOF_URL: 'https://dev.mychildcareservices.gov.bc.ca'
+  IRREGULAR_EXPENSE_FORM_URL: 'https://www2.gov.bc.ca/assets/download/80DAA65E3FA44EFCA61F4557C6FAEE59'
 
 on:
   workflow_dispatch:
@@ -57,7 +58,7 @@ on:
 jobs:
   openshift-ci-cd:
     name: Build and deploy Frontend to DEV
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     environment: dev
 
     outputs:
@@ -145,7 +146,7 @@ jobs:
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
         with:
-          oc: 4
+          oc: 4.16
 
         # https://github.com/redhat-actions/oc-login#readme
       #    - uses: actions/checkout@v3
@@ -182,6 +183,7 @@ jobs:
             -p BANNER_COLOR=${{ env.BANNER_COLOR }} \
             -p TDAD_CONTACT_EMAIL=${{ env.TDAD_CONTACT_EMAIL }} \
             -p CCOF_URL=${{ env.CCOF_URL }} \
+            -p IRREGULAR_EXPENSE_FORM_URL=${{ env.IRREGULAR_EXPENSE_FORM_URL }} \
             | oc apply -f -
 
           # Start rollout (if necessary) and follow it

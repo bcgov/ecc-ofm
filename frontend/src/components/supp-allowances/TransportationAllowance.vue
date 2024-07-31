@@ -38,7 +38,7 @@
   <v-divider class="my-5"></v-divider>
 
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
-    <v-card class="my-10" :class="{ greyTop: readOnly(model), 'home-card': !readOnly(model) }" :disabled="readOnly(model)">
+    <v-card class="my-10" :class="{ greyTop: readOnly(model), 'basic-card': !readOnly(model) }" :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
         <v-col cols="1">
           <AppLabel>Vehicle</AppLabel>
@@ -146,6 +146,29 @@
           </v-card>
         </v-col>
       </v-row>
+
+      <v-row v-if="showBackDatePicker" class="pa-7 pt-4">
+        <v-col cols="12" md="6">
+          <AppLabel>Transportation Allowance Start Date</AppLabel>
+          <p>
+            Please provide the date your centre began to safely transport children between your centre and school (or a collective point of access) to support regular ongoing child care. Please note,
+            the start date cannot be before the start of the Funding Agreement.
+          </p>
+        </v-col>
+        <v-col cols="12" sm="6" lg="5" class="ml-0">
+          <AppDateInput
+            v-model="model.retroactiveDate"
+            min-width="250px"
+            max-width="250px"
+            :disabled="readOnly(model)"
+            :rules="[rules.dateInRange(model.retroactiveDate, startDate, formattedEndDate)]"
+            :min="startDate"
+            :max="formattedEndDate"
+            label="From"
+            clearable
+            @update:modelValue="updateDate(model)" />
+        </v-col>
+      </v-row>
     </v-card>
   </div>
 
@@ -165,9 +188,11 @@ import { cloneDeep } from 'lodash'
 import { uuid } from 'vue-uuid'
 import { SUPPLEMENTARY_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
+import format from '@/utils/format'
+import AppDateInput from '@/components/ui/AppDateInput.vue'
 
 export default {
-  components: { AppAlertBanner, AppLabel, AppNumberInput, AppButton, AppDocumentUpload },
+  components: { AppAlertBanner, AppLabel, AppNumberInput, AppButton, AppDocumentUpload, AppDateInput },
   props: {
     transportModels: {
       type: Array,
@@ -184,10 +209,15 @@ export default {
       type: Number,
       required: true,
     },
+    startDate: {
+      type: String,
+      required: true,
+    },
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
     return {
+      date: undefined,
       models: [],
       rules,
       monthlyLeaseFormat: {
@@ -206,14 +236,31 @@ export default {
     isWarningDisplayed() {
       return this.models?.some((el) => isApplicationLocked(el?.statusCode))
     },
+    showBackDatePicker() {
+      const today = new Date().setHours(0, 0, 0, 0)
+      return today > new Date(this.startDate).setHours(0, 0, 0, 0)
+    },
+    formattedEndDate() {
+      return format.formatTwoMonthDate(new Date())
+    },
   },
   async created() {
     this.hasDuplicateVIN = hasDuplicateVIN
+    this.format = format
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.models = cloneDeep(this.transportModels)
     this.MAX_TRANSPORT_APPLICATIONS = 10
   },
   methods: {
+    //set the flag so the parent component can remove the date data before save
+    updateDate(model) {
+      const dateValid = rules.dateInRange(model.retroactiveDate, this.startDate, this.formattedEndDate)
+
+      if (dateValid !== true) {
+        model.invalidDate = true
+      }
+      this.update(model)
+    },
     update(model) {
       this.$emit('update', model)
     },
@@ -229,6 +276,7 @@ export default {
         documentsToUpload: [],
         id: uuid.v1(),
         renewalTerm: this.renewalTerm,
+        retroactiveDate: null,
       }
 
       this.models.push(transportModel)

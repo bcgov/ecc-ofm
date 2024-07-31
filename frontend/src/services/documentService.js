@@ -56,6 +56,17 @@ export default {
     }
   },
 
+  async getDocumentFileByID(documentId) {
+    try {
+      if (!documentId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.DOCUMENTS}/${documentId}/file`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the approved  PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
   async createDocuments(documents, entityId) {
     const updatedDocuments = addEntityIdToDocument(documents, entityId)
     const payload = mapDocumentFileObjectForBack(updatedDocuments)

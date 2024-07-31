@@ -6,10 +6,17 @@ const express = require('express')
 const auth = require('../components/auth')
 const log = require('../components/logger')
 const { v4: uuidv4 } = require('uuid')
-const { getUserGuid, isIdirUser } = require('../components/utils')
+const { getUserGuid } = require('../components/utils')
 
-const { body, validationResult } = require('express-validator')
+const { checkExact, checkSchema, validationResult } = require('express-validator')
 const router = express.Router()
+
+const refreshSchema = {
+  refreshToken: {
+    in: ['body'],
+    exists: { errorMessage: '[refreshToken] is required' },
+  },
+}
 
 router.get('/', (_req, res) => {
   res.status(200).json({
@@ -34,11 +41,18 @@ router.get('/error', (_req, res) => {
 router.get('/login', passport.authenticate('oidcBceid', { failureRedirect: 'error' }))
 router.get('/login-idir', passport.authenticate('oidcIdir', { failureRedirect: 'error' }))
 
-//removes tokens and destroys session
+//removes tokens and destroys session for BCeID users
 router.get('/logout', async (req, res, next) => {
-  try {
-    const idirUser = isIdirUser(req)
+  logout(req, res, next, false)
+})
 
+//removes tokens and destroys session for IDIR users
+router.get('/logout-idir', async (req, res, next) => {
+  logout(req, res, next, true)
+})
+
+function logout(req, res, next, isIdir) {
+  try {
     const idToken = req.session?.passport?.user?.idToken
 
     req.logout(function (err) {
@@ -48,15 +62,12 @@ router.get('/logout', async (req, res, next) => {
 
       req.session.destroy()
 
-      // Build the chained logout URL
-      let endpoint = ''
+      // If the session has expired just return as SSO logout isn't required
       if (req.query?.sessionExpired) {
-        endpoint = '/session-expired'
-      } else if (idirUser) {
-        endpoint = '/internal-logout'
-      } else {
-        endpoint = '/logout'
+        return res.redirect(`/session-expired${isIdir ? '?internal=true' : ''}`)
       }
+
+      const endpoint = `/logout${isIdir ? '?internal=true' : ''}`
       const redirectUri = `${config.get('server:frontend')}${endpoint}`
       const retUrl = encodeURIComponent(`${config.get('logoutEndpoint')}?post_logout_redirect_uri=${redirectUri}&id_token_hint=${idToken}`)
       const logoutUrl = config.get('siteMinder_logout_endpoint') + retUrl
@@ -68,7 +79,7 @@ router.get('/logout', async (req, res, next) => {
     log.error(e)
     next()
   }
-})
+}
 
 const UnauthorizedRsp = {
   error: 'Unauthorized',
@@ -76,7 +87,7 @@ const UnauthorizedRsp = {
 }
 
 //refreshes jwt on refresh if refreshToken is valid
-router.post('/refresh', [body('refreshToken').exists()], async (req, res) => {
+router.post('/refresh', checkExact(checkSchema(refreshSchema)), async (req, res) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
@@ -136,14 +147,5 @@ async function generateTokens(req, res) {
     res.status(401).json(UnauthorizedRsp)
   }
 }
-router.get('/user-session-remaining-time', passport.authenticate('jwt', { session: false }), (req, res) => {
-  if (req?.session?.cookie && req?.session?.passport?.user) {
-    const remainingTime = req.session.cookie.maxAge
-    log.info(`session remaining time is :: ${remainingTime} for user`, req.session?.passport?.user?.displayName)
-    return res.status(200).json(req.session.cookie.maxAge)
-  } else {
-    return res.sendStatus(401)
-  }
-})
 
 module.exports = router

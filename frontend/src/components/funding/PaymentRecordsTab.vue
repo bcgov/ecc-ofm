@@ -1,8 +1,8 @@
 <template>
   <v-container fluid class="pa-0">
-    <FundingSearchCard :loading="loading" :show-payment-types-filter="true" :default-date-filter="DATE_FILTER_TYPES.YTD" @search="loadPayments" />
-
-    <h2 class="mt-8 mb-2">Payment History</h2>
+    <div class="mt-2 ml-2">View upcoming and past payments for all funding types.</div>
+    <FundingSearchCard :loading="loading" :show-payment-types-filter="true" :default-date-filter="DATE_FILTER_TYPES.YTD" class="my-6" @search="loadPayments" />
+    <h2 class="mb-2">Payment History</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-data-table
         :headers="paymentHistoryHeaders"

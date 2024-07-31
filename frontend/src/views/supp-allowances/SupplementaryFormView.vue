@@ -88,6 +88,7 @@
               :transportModels="getTransportModels(renewalTerm)"
               :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="renewalTerm"
+              :startDate="getStartDate(renewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -121,6 +122,7 @@
               :transportModels="getTransportModels(nextRenewalTerm)"
               :formDisabled="formDisabled"
               :renewalTerm="nextRenewalTerm"
+              :startDate="getStartDate(nextRenewalTerm)"
               @update="updateModel"
               @addModel="addBlankTransportModel"
               @deleteModel="deleteTransportModel"
@@ -292,7 +294,7 @@ export default {
         }
         this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
       } catch (error) {
-        this.setFailureAlert('Failed to load supplementary applications')
+        this.setFailureAlert('Failed to load Allowances applications')
       }
     },
     async saveApplication(showAlert = false) {
@@ -306,6 +308,10 @@ export default {
             await ApplicationService.deleteSupplementaryApplication(applicationModel.supplementaryApplicationId)
             delete applicationModel.supplementaryApplicationId
             continue
+          }
+
+          if (applicationModel.invalidDate) {
+            applicationModel.retroactiveDate = null
           }
 
           const payload = {
@@ -345,10 +351,10 @@ export default {
         await this.loadData()
         this.clonedModels = cloneDeep(this.models)
         if (showAlert) {
-          this.setSuccessAlert(`Application Saved`)
+          this.setSuccessAlert('Application saved successfully')
         }
       } catch (error) {
-        this.setFailureAlert('Failed to save supplementary applications')
+        this.setFailureAlert('Failed to save Allowances application')
         this.loading = false
         this.$emit('process', false)
       }
@@ -386,6 +392,7 @@ export default {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
           application.documentsToUpload = []
+          application.retroactiveDate = application.retroactiveDate ? this.format.formatTwoMonthDate(application.retroactiveDate) : null
         }
         this.models = [...this.models, ...transportApplications]
       }
@@ -441,6 +448,7 @@ export default {
           documentsToUpload: [],
           id: uuid.v4(),
           renewalTerm: term,
+          retroactiveDate: null,
         })
       }
     },
@@ -456,6 +464,9 @@ export default {
       delete modelData.startDate
       delete modelData.endDate
       delete modelData.renewalTerm
+
+      //the first time a user selects a date - it will be a Date obj, which always returns true with .isEmpty
+      modelData.retroactiveDate = modelData?.retroactiveDate ? String(modelData.retroactiveDate) : null
 
       //we delete the fields above because they will always have a value - so when running our isEmpty check below- those fields would fail the isEmpty check-
       //and then our application would be trying to save empty models.
@@ -495,11 +506,15 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const termTwoEndDate = new Date(formattedEndDate.setFullYear(formattedEndDate.getFullYear() - 1))
-      const termOneEndDate = new Date(termTwoEndDate.setFullYear(termTwoEndDate.getFullYear() - 1))
+
+      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
+      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
 
       switch (true) {
-        case today < termOneEndDate:
+        //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
+        //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
+        //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
+        case today < termOneEndDate || !this.fundingAgreement?.endDate:
           this.fundingExpiryDate = termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
@@ -548,6 +563,21 @@ export default {
           return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
         case this.INDIGENOUS:
           return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+      }
+    },
+    getStartDate(term) {
+      const termTwoStartDate = new Date(new Date(this.fundingAgreement.startDate).setFullYear(new Date(this.fundingAgreement.startDate).getFullYear() + 1))
+      const termThreeStartDate = new Date(new Date(termTwoStartDate).setFullYear(new Date(termTwoStartDate).getFullYear() + 1))
+
+      switch (true) {
+        case term === SUPP_TERM_CODES.TERM_ONE:
+          return this.format.formatTwoMonthDate(this.fundingAgreement.startDate)
+
+        case term === SUPP_TERM_CODES.TERM_TWO:
+          return this.format.formatTwoMonthDate(termTwoStartDate)
+
+        case term === SUPP_TERM_CODES.TERM_THREE:
+          return this.format.formatTwoMonthDate(termThreeStartDate)
       }
     },
   },

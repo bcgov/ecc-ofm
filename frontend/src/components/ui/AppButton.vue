@@ -1,12 +1,19 @@
 <template>
-  <v-btn class="px-2" :class="buttonClass" v-bind="$attrs">
-    <span class="button-text overflow-hidden"><slot /></span>
-    <v-icon class="button-icon" v-if="$attrs.icon">{{ $attrs.icon }}</v-icon>
+  <v-btn class="px-2" :class="buttonClass" height="auto" v-bind="$attrs">
+    <span class="text-wrap"><slot /></span>
+    <v-icon v-if="$attrs.icon" class="button-icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
 </template>
+
 <script>
 export default {
   inheritAttrs: true,
+  props: {
+    primary: {
+      type: Boolean,
+      default: true,
+    },
+  },
   computed: {
     buttonClass() {
       return {
@@ -15,17 +22,13 @@ export default {
         'BC-Gov-SecondaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'BC-Gov-SecondaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'text-app-button': this.$attrs.variant !== '',
+        small: this.$attrs.size === 'small',
       }
-    },
-  },
-  props: {
-    primary: {
-      type: Boolean,
-      default: true,
     },
   },
 }
 </script>
+
 <style scoped>
 .button-icon {
   font-size: 24px;
@@ -36,16 +39,15 @@ export default {
   font-size: 1rem;
 }
 
-.BC-Gov-PrimaryButton {
+.BC-Gov-PrimaryButton,
+.BC-Gov-PrimaryButton-disabled {
   background-color: #003366;
   border: none;
   border-radius: 4px;
   color: white;
-  padding: 10px 32px;
   text-align: center;
   text-decoration: none;
   display: block;
-  font-size: 18px;
   font-family:
     ‘BCSans’,
     ‘Noto Sans’,
@@ -54,35 +56,17 @@ export default {
     sans-serif;
   font-weight: 700;
   letter-spacing: 1px;
-  cursor: pointer;
 }
 
-.BC-Gov-PrimaryButton:hover {
-  opacity: 0.8;
-}
-
-.BC-Gov-PrimaryButton:hover .button-text {
-  text-decoration: underline;
-}
-
-.BC-Gov-PrimaryButton:focus {
-  outline: 4px solid #3b99fc;
-  outline-offset: 1px;
-}
-
-.BC-Gov-PrimaryButton:active {
-  opacity: 1;
-}
-
-.BC-Gov-SecondaryButton {
+.BC-Gov-SecondaryButton,
+.BC-Gov-SecondaryButton-disabled {
   background-color: #ffffff;
-  border-radius: 4px;
   border: 2px solid #003366;
-  padding: 10px 32px;
+  border-radius: 4px;
+  color: #003366;
   text-align: center;
   text-decoration: none;
   display: block;
-  font-size: 18px;
   font-family:
     ‘BCSans’,
     ‘Noto Sans’,
@@ -91,68 +75,40 @@ export default {
     sans-serif;
   font-weight: 700;
   letter-spacing: 1px;
-  cursor: pointer;
-  color: #003366;
 }
+
+.BC-Gov-PrimaryButton,
+.BC-Gov-PrimaryButton-disabled,
+.BC-Gov-SecondaryButton,
+.BC-Gov-SecondaryButton-disabled {
+  padding: 10px 32px;
+  font-size: 18px;
+}
+
+.BC-Gov-PrimaryButton-disabled,
+.BC-Gov-SecondaryButton-disabled {
+  opacity: 0.3;
+}
+
+.BC-Gov-PrimaryButton:hover,
 .BC-Gov-SecondaryButton:hover {
   opacity: 0.8;
   text-decoration: underline;
+}
+
+.BC-Gov-SecondaryButton:hover {
   background-color: #003366;
   color: #ffffff;
 }
 
-.BC-Gov-SecondaryButton:hover .button-text {
-  text-decoration: underline;
-}
-
+.BC-Gov-PrimaryButton:focus,
 .BC-Gov-SecondaryButton:focus {
   outline: 4px solid #3b99fc;
   outline-offset: 1px;
 }
-.BC-Gov-SecondaryButton:active {
-  opacity: 1;
-}
 
-.BC-Gov-PrimaryButton-disabled {
-  background-color: #003366;
-  opacity: 0.3;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  padding: 12px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: block;
-  font-size: 18px;
-  font-family:
-    ‘BCSans’,
-    ‘Noto Sans’,
-    Verdana,
-    Arial,
-    sans-serif;
-  font-weight: 700;
-  letter-spacing: 1px;
-  /* cursor: not-allowed; */
-}
-
-.BC-Gov-SecondaryButton-disabled {
-  background-color: white;
-  opacity: 0.3;
-  border: 2px solid #003366;
-  border-radius: 4px;
-  color: #003366;
-  padding: 10px 30px;
-  text-align: center;
-  text-decoration: none;
-  display: block;
-  font-size: 18px;
-  font-family:
-    ‘Noto Sans’,
-    Verdana,
-    Arial,
-    sans-serif;
-  font-weight: 700;
-  letter-spacing: 1px;
-  cursor: not-allowed;
+.small {
+  font-size: 14px;
+  padding: 0px;
 }
 </style>

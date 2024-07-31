@@ -3,70 +3,70 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row no-gutters class="mb-4">
-          <v-col cols="11" md="6" lg="6">
-            <v-card variant="outlined" class="card-outline mr-3 fill-height">
+          <v-col cols="12" md="6" lg="6">
+            <v-card variant="outlined" class="card-outline fill-height">
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Organization legal name:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.name }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Doing business as:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.doingBusinessAsName }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Email address:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.email }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Phone (landline):</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.phoneLandline }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Phone (cell):</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.phoneCell }}
                 </v-col>
               </v-row>
             </v-card>
           </v-col>
-          <v-col cols="11" md="6" lg="6">
+          <v-col cols="12" md="6" lg="6" class="mt-3 mt-md-0 pl-md-3">
             <v-card variant="outlined" class="card-outline fill-height">
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Mailing Address:</AppLabel>
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Street Address 1:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.isMailingAddressDifferent ? organization?.mailingStreetAddress1 : organization?.streetAddress1 }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Street Address 2:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.isMailingAddressDifferent ? organization?.mailingStreetAddress2 : organization?.streetAddress2 }}
                 </v-col>
               </v-row>
@@ -92,23 +92,23 @@
               </v-row>
               <v-row><v-col></v-col></v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" class="ma-2">
+                <v-col cols="12" sm="3" class="ma-2">
                   <AppLabel>Physical Address:</AppLabel>
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="3" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Street Address 1:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.streetAddress1 }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="11" sm="3" md="2" lg="3" class="ma-2">
+                <v-col cols="12" sm="3" md="2" lg="3" class="ma-2">
                   <AppLabel>Street Address 2:</AppLabel>
                 </v-col>
-                <v-col cols="11" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
                   {{ organization?.streetAddress2 }}
                 </v-col>
               </v-row>
@@ -144,7 +144,7 @@
                 </v-col>
                 <v-col class="mt-2">
                   <v-row v-if="editable && !editMode" justify="end">
-                    <AppButton variant="text" :disabled="loading" @click="toggleEditMode()">
+                    <AppButton id="edit-button" variant="text" :disabled="loading" @click="toggleEditMode()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>
                   </v-row>
@@ -163,7 +163,7 @@
                     </v-row>
                   </v-radio-group>
                   <template v-if="showDocuments">
-                    <v-col v-if="organizationEdit.hasInclusionPolicy" class="pt-0 w-75">
+                    <v-col cols="12" lg="10" xl="8" xxl="6" v-if="organizationEdit.hasInclusionPolicy" class="pt-0">
                       <AppLabel>Inclusion Policy Document:</AppLabel>
                       <AppDocumentUpload
                         id="inclusion-policy-upload"
@@ -174,18 +174,18 @@
                         :readonly="!editMode"
                         :uploadedDocuments="uploadedDocumentsEdit"
                         @deleteUploadedDocument="deleteUploadedDocument" />
-                      <v-alert density="compact" v-if="showUploadDocumentsAlert" type="error" class="w-76 mt-1">
+                      <v-alert v-if="showUploadDocumentsAlert" density="compact" type="error" class="mt-1">
                         Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
                       </v-alert>
                     </v-col>
                     <v-col v-else class="pt-0">
                       <v-icon size="30" color="amber">mdi-alert</v-icon>
-                      This is a requirement to apply for Support Needs Supplementary Funding
+                      This is a requirement to apply for Support Needs Allowance.
                     </v-col>
                   </template>
                   <v-col v-if="editMode" class="d-flex justify-end pt-0">
-                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" @click="toggleEditMode()" class="mr-6">Cancel</AppButton>
-                    <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" @click="save()">Save</AppButton>
+                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" class="mr-6" @click="toggleEditMode()">Cancel</AppButton>
+                    <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" :disabled="invalidInclusionPolicy" @click="save()">Save</AppButton>
                   </v-col>
                 </v-col>
               </v-row>
@@ -198,7 +198,6 @@
 </template>
 
 <script>
-import alertMixin from '@/mixins/alertMixin'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
@@ -206,7 +205,6 @@ import { isEmpty } from 'lodash'
 
 export default {
   components: { AppButton, AppLabel, AppDocumentUpload },
-  mixins: [alertMixin],
   props: {
     editable: {
       type: Boolean,
@@ -242,45 +240,50 @@ export default {
       uploadedDocumentsEdit: [],
       documentsToUpload: [],
       documentsToDelete: [],
-      showUploadDocumentsAlert: false,
       loadingInclusionPolicy: false,
     }
   },
-  async updated() {
-    this.initializeData()
-  },
-  methods: {
-    async initializeData() {
-      this.organizationEdit = { ...this.organization, hasInclusionPolicy: this.organization.hasInclusionPolicy || false }
-      this.uploadedDocumentsEdit = JSON.parse(JSON.stringify(this.uploadedDocuments))
-    },
 
+  computed: {
     documentsExistOrBeingAdded() {
       return !isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocumentsEdit)
     },
+    invalidInclusionPolicy() {
+      return this.organizationEdit?.hasInclusionPolicy && !this.documentsExistOrBeingAdded
+    },
+    showUploadDocumentsAlert() {
+      return this.editMode && this.invalidInclusionPolicy
+    },
+  },
 
-    async save() {
-      if (this.organizationEdit?.hasInclusionPolicy && !this.documentsExistOrBeingAdded()) {
-        this.showUploadDocumentsAlert = true
-        return
-      }
-      if (!this.organizationEdit.hasInclusionPolicy && this.organization.hasInclusionPolicy) {
+  updated() {
+    this.initializeData()
+  },
+
+  methods: {
+    initializeData() {
+      this.organizationEdit.hasInclusionPolicy = this.organization.hasInclusionPolicy ?? false
+      this.uploadedDocumentsEdit = JSON.parse(JSON.stringify(this.uploadedDocuments))
+    },
+
+    save() {
+      if (!this.organizationEdit.hasInclusionPolicy) {
+        this.documentsToUpload = []
         this.documentsToDelete = this.uploadedDocuments.map((document) => document.documentId)
       }
       this.loadingInclusionPolicy = true
-      await this.$emit('saveInclusionPolicyData', this.organizationEdit, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
+      this.$emit('saveInclusionPolicyData', this.organizationEdit?.hasInclusionPolicy, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
     },
 
     onSaveCompleteCallBack() {
+      this.initializeData()
       this.resetDocuments()
       this.editMode = false
-      this.showUploadDocumentsAlert = false
       this.loadingInclusionPolicy = false
     },
 
     toggleEditMode() {
       this.editMode = !this.editMode
-      this.showUploadDocumentsAlert = false
       if (!this.editMode) {
         this.initializeData()
         this.resetDocuments()

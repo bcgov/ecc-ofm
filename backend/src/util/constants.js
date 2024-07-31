@@ -33,7 +33,6 @@ const PERMISSIONS = Object.freeze({
   VIEW_ORG_FACILITY: 'View Org/Facility Information',
   UPDATE_ORG_FACILITY: 'Update Org/ facility information',
   SUBMIT_CHANGE_REQUEST: 'Submit Change Request from AM',
-  MANAGE_USERS: 'Manage Users',
   MANAGE_USERS_EDIT: 'Manage Users Edit',
   MANAGE_USERS_VIEW: 'Manage Users View',
 

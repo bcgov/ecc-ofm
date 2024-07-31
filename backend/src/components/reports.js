@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, postOperation, patchOperationWithObjectId, deleteOperationWithObjectId } = require('./utils')
+const { getOperation, postBatches, postOperation, patchOperationWithObjectId, deleteOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { SurveySectionMappings, SurveyQuestionMappings, SurveyResponseMappings, QuestionResponseMappings, SurveyQuestionBusinessRulesMappings } = require('../util/mapping/Mappings')
 const log = require('../components/logger')
@@ -55,7 +55,7 @@ async function getSurveySections(req, res) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
     }
     const sections = []
-    const operation = `ofm_sections?$filter=ofm_is_published eq true and _ofm_survey_value eq '${req?.query?.surveyTemplateId}'&$orderby=ofm_section_order`
+    const operation = `ofm_sections?$filter=_ofm_survey_value eq '${req?.query?.surveyTemplateId}'&$orderby=ofm_section_order`
     const response = await getOperation(operation)
     response?.value?.forEach((section) => sections.push(new MappableObjectForFront(section, SurveySectionMappings).toJSON()))
     return res.status(HttpStatus.OK).json(sections)
@@ -72,14 +72,14 @@ async function getSurveyQuestions(req, res) {
     }
     let operation
     if (req?.query?.sectionId) {
-      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_response_required,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows&$expand=ofm_ofm_question_ofm_question_business_rule_parentquestionid($select=_ofm_child_question_value,ofm_condition,_ofm_false_child_question_value,ofm_parent_has_response,_ofm_parentquestionid_value,ofm_question_business_ruleid,_ofm_true_child_question_value)&$filter=ofm_is_published eq true and _ofm_section_value eq '${req?.query?.sectionId}'`
+      operation = `ofm_questions?$select=ofm_question_choice,ofm_question_id,ofm_question_text,ofm_question_type,ofm_response_required,ofm_sequence,ofm_fixed_response,_ofm_header_value,ofm_maximum_rows&$expand=ofm_ofm_question_ofm_question_business_rule_parentquestionid($select=_ofm_child_question_value,ofm_condition,_ofm_false_child_question_value,ofm_parent_has_response,_ofm_parentquestionid_value,ofm_question_business_ruleid,_ofm_true_child_question_value)&$filter=_ofm_section_value eq '${req?.query?.sectionId}'`
     }
     const response = await getOperation(operation)
     let questions = []
     await Promise.all(
       response?.value?.map(async (item) => {
         const question = mapQuestionObjectForFront(item)
-        if (!isEmpty(item['ofm_fixed_response'])) {
+        if (!isEmpty(item['ofm_fixed_response']) && item['ofm_fixed_response'] !== 'N/A') {
           question.fixedResponse = await getQuestionFixedResponse(item['ofm_fixed_response'], req?.query?.facilityId)
         }
         questions.push(question)
@@ -108,13 +108,10 @@ async function getQuestionFixedResponse(fixedResponseQuery, entityId) {
 
 async function getSurveyResponses(req, res) {
   try {
-    if (isEmpty(req?.query)) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
-    }
     const surveyResponses = []
     let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE}`
     if (req.query?.isSubmitted != null) {
-      filter += req.query?.isSubmitted === 'true' ? ` and ofm_submitted_on ne null` : ` and ofm_submitted_on eq null`
+      filter += req.query?.isSubmitted === 'true' ? ` and _ofm_contact_value ne null` : ` and _ofm_contact_value eq null`
     }
     const operation = `ofm_survey_responses?$filter=(${filter})`
     const response = await getOperation(operation)
@@ -123,6 +120,21 @@ async function getSurveyResponses(req, res) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
     return res.status(HttpStatus.OK).json(surveyResponses)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getSurveyResponsesCount(req, res) {
+  try {
+    let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE}`
+    if (req.query?.isSubmitted != null) {
+      filter += req.query?.isSubmitted === 'true' ? ` and _ofm_contact_value ne null` : ` and _ofm_contact_value eq null`
+    }
+    const operation = `ofm_survey_responses?$filter=(${filter})&$apply=aggregate($count as count)`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -156,17 +168,36 @@ async function updateSurveyResponse(req, res) {
   }
 }
 
+async function deleteSurveyResponse(req, res) {
+  try {
+    const payload = {
+      batchTypeId: 102,
+      feature: 'ReportManagement',
+      function: 'ReportEdit',
+      actionMode: 'Delete',
+      scope: 'Parent-Child',
+      data: {
+        ofm_survey_response: {
+          entityNameSet: 'ofm_survey_responses',
+          entityID: req.params?.surveyResponseId,
+          actionMode: 'Delete',
+        },
+      },
+    }
+    const response = await postBatches(payload)
+    return res.status(HttpStatus.OK).json(response)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function getQuestionResponses(req, res) {
   try {
-    if (isEmpty(req?.query)) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
-    }
     const questionResponses = []
-    let operation
-    if (req?.query?.surveyResponseId) {
-      operation = `ofm_question_responses?$select=ofm_question_responseid,_ofm_survey_response_value,_ofm_question_value,_ofm_header_value,ofm_row_id,ofm_response_text&$filter=_ofm_survey_response_value eq '${req?.query?.surveyResponseId}'&pageSize=5000`
-    }
-    const response = await getOperation(operation)
+    const response = await getOperation(
+      `ofm_question_responses?$select=ofm_question_responseid,_ofm_survey_response_value,_ofm_question_value,_ofm_header_value,ofm_row_id,ofm_response_text&$filter=_ofm_survey_response_value eq '${req?.query?.surveyResponseId}'&pageSize=5000`,
+    )
     response?.value?.forEach((questionResponse) => questionResponses.push(new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON()))
     return res.status(HttpStatus.OK).json(questionResponses)
   } catch (e) {
@@ -223,7 +254,9 @@ module.exports = {
   getSurveyQuestions,
   getSurveyResponse,
   getSurveyResponses,
+  getSurveyResponsesCount,
   updateSurveyResponse,
+  deleteSurveyResponse,
   getQuestionResponses,
   createQuestionResponse,
   updateQuestionResponse,

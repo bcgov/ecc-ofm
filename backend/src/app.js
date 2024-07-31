@@ -28,9 +28,11 @@ const authRouter = require('./routes/auth')
 const userRouter = require('./routes/user')
 const configRouter = require('./routes/config')
 const documentsRouter = require('./routes/documents')
+const healthCheckRouter = require('./routes/healthCheck')
 const messageRouter = require('./routes/message')
 const notificationRouter = require('./routes/notification')
 const applicationsRouter = require('./routes/applications')
+const irregularApplicationsRouter = require('./routes/irregular')
 const organizationsRouter = require('./routes/organizations')
 const fundingAgreementsRouter = require('./routes/fundingAgreements')
 const facilitiesRouter = require('./routes/facilities')
@@ -42,12 +44,16 @@ const { RoleMappings } = require('./util/mapping/Mappings')
 const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
+const HttpStatus = require('http-status-codes')
 
 //initialize app
 const app = express()
 app.set('trust proxy', 1)
+// ZAP Scan Proxy Disclosure Alert fix
+app.disable('x-powered-by')
+
 //sets security measures (headers, etc)
-app.use(cors())
+app.use(cors({ origin: config.get('server:frontend') }))
 app.use(helmet())
 app.use(noCache())
 app.use(
@@ -66,6 +72,13 @@ app.use(
   }),
 )
 
+// ZAP Scan Proxy Disclosure Alert fix
+const blockedMethods = ['TRACE', 'TRACK']
+app.use((req, res, next) => {
+  if (blockedMethods.includes(req.method)) return res.sendStatus(HttpStatus.METHOD_NOT_ALLOWED)
+  return next()
+})
+
 const logStream = {
   write: (message) => {
     log.info(message)
@@ -77,6 +90,7 @@ const dbSession = String(config.get('redis:enable')) === 'true' ? getRedisDbSess
 const cookie = {
   secure: true,
   httpOnly: true,
+  sameSite: 'Lax',
   maxAge: 1800000, //30 minutes in ms. this is same as session time. DO NOT MODIFY, IF MODIFIED, MAKE SURE SAME AS SESSION TIME OUT VALUE.
 }
 if ('local' === config.get('environment')) {
@@ -93,8 +107,6 @@ app.use(
     store: dbSession,
   }),
 )
-
-app.use(require('./routes/health-check').router)
 
 //initialize routing and session. Cookies are now only reachable via requests (not js)
 app.use(passport.initialize())
@@ -120,15 +132,16 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
           return verified('No access token', null)
         }
 
-        // Set additional user info for validation
-        await populateUserInfo(profile)
-
         //set access and refresh tokens
         profile.jwtFrontend = await auth.generateUiToken(profile)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
         profile.idToken = idToken
+
+        // Set additional user info for validation
+        await populateUserInfo(profile)
+
         return verified(null, profile)
       },
     ),
@@ -139,14 +152,18 @@ async function populateUserInfo(profile) {
   const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
   if (username.idp === config.get('oidc:idpHintBceid')) {
-    const user = await getUserProfile(username.guid)
+    // If the userGuid cannot be found in Dynamics, then Dynamics will check if the userName exists,
+    // If userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
+    const user = await getUserProfile(username.guid, profile._json.bceid_username)
+
     profile.role = user?.role
-    profile.org = user?.organization?.accountid
+    profile.organizationId = user?.organization?.accountid
     profile.contactId = user?.contactid
 
     profile.facilities = user?.facility_permission.map((fp) => {
       return {
         facilityId: fp.facility.accountid,
+        ofmPortalAccess: fp.ofm_portal_access,
         isExpenseAuthority: fp.ofm_is_expense_authority,
       }
     })
@@ -217,19 +234,21 @@ app.use(morgan(config.get('server:morganFormat'), { stream: logStream }))
 //set up routing to auth and main API
 app.use(/(\/api)?/, apiRouter)
 
+apiRouter.use('/applications', applicationsRouter)
+apiRouter.use('/irregular', irregularApplicationsRouter)
 apiRouter.use('/auth', authRouter)
-apiRouter.use('/user', userRouter)
 apiRouter.use('/config', configRouter)
 apiRouter.use('/documents', documentsRouter)
-apiRouter.use('/messages', messageRouter)
-apiRouter.use('/notifications', notificationRouter)
-apiRouter.use('/applications', applicationsRouter)
-apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/facilities', facilitiesRouter)
 apiRouter.use('/funding-agreements', fundingAgreementsRouter)
+apiRouter.use('/health', healthCheckRouter)
 apiRouter.use('/licences', licencesRouter)
+apiRouter.use('/messages', messageRouter)
+apiRouter.use('/notifications', notificationRouter)
+apiRouter.use('/organizations', organizationsRouter)
 apiRouter.use('/payments', paymentsRouter)
 apiRouter.use('/reports', reportsRouter)
+apiRouter.use('/user', userRouter)
 
 //Handle 500 error
 app.use((err, _req, res, next) => {

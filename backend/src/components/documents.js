@@ -1,5 +1,5 @@
 'use strict'
-const { postDocuments, getOperation, deleteOperationWithObjectId } = require('./utils')
+const { postDocuments, getOperation, deleteOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const { DocumentMappings } = require('../util/mapping/Mappings')
 const FormData = require('form-data')
@@ -19,7 +19,18 @@ async function getDocuments(req, res) {
     response?.value?.forEach((document) => documents.push(new MappableObjectForFront(document, DocumentMappings).toJSON()))
     return res.status(HttpStatus.OK).json(documents)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
+  }
+}
+
+//returns a base64 encoded version of a document to download or display on the portal
+async function getDocumentFile(req, res) {
+  try {
+    const operation = `ofm_documents(${req.params.documentId})/ofm_file`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    handleError(res, e)
   }
 }
 
@@ -42,6 +53,7 @@ async function createDocuments(req, res) {
     const response = await postDocuments(formFile, getPostDocumentsHeaders(formFile))
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -51,6 +63,7 @@ async function deleteDocument(req, res) {
     await deleteOperationWithObjectId('ofm_documents', req.params.documentId)
     return res.status(HttpStatus.OK).json()
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -59,4 +72,5 @@ module.exports = {
   getDocuments,
   createDocuments,
   deleteDocument,
+  getDocumentFile,
 }

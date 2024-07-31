@@ -93,15 +93,7 @@ function isIdirUser(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  const isIdir = req.session?.passport?.user?._json?.idir_username
-
-  //For local development only.
-  //generally set isIdirUser to false, so that developers can log in using their
-  //IDIRS as a normal, non-ministry user.
-  /*   if ('local' === config.get('environment') && !config.get('server:useImpersonate')) {
-    return false
-  } */
-  return isIdir
+  return !!req.session?.passport?.user?._json?.idir_username
 }
 
 function getUserName(req) {
@@ -155,12 +147,11 @@ async function getOperation(operation) {
     const url = config.get('dynamicsApi:apiEndpoint') + '/api/Operations?statement=' + operation
     log.verbose('get Data Url', url)
     const response = await axios.get(url, getHttpHeader())
-    //logResponse('getOperation', response);
+    logResponse('getOperation', response)
     return response.data
   } catch (e) {
-    log.info(e)
     log.error('getOperation Error', e.response ? e.response.status : e.message)
-    throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, { message: 'API Get error' }, e)
+    handleDynamicsError(e, 'API Get error')
   }
 }
 
@@ -280,6 +271,23 @@ async function postBatches(payload) {
   }
 }
 
+function handleDynamicsError(e, message) {
+  let status
+  if (e.response?.status.toString().startsWith('4')) {
+    // Send 400 errors back to the client
+    status = e.response?.status
+  } else {
+    // Default to 500
+    status = HttpStatus.INTERNAL_SERVER_ERROR
+  }
+  throw new ApiError(status, { message }, e)
+}
+
+function handleError(res, e) {
+  log.error(e)
+  return res.status(e?.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+}
+
 const utils = {
   getOidcDiscovery,
   prettyStringify: (obj, indent = 2) => JSON.stringify(obj, null, indent),
@@ -306,6 +314,7 @@ const utils = {
   sleep,
   postDocuments,
   splitUsername,
+  handleError,
 }
 
 module.exports = utils

@@ -1,21 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col class="pb-0">
-        <h1>Applications</h1>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        Suspendisse tristique fringilla nibh, et vehicula tortor hendrerit a. Etiam nisi erat, dictum finibus arcu feugiat, dictum vestibulum augue. In et auctor urna. Suspendisse potenti.
-      </v-col>
-    </v-row>
+    <h1>Applications</h1>
+    <div class="mt-4 mb-8">Submit an application or view the status for Base Funding, Allowances, or Irregular Expenses Funding.</div>
     <template v-if="hasPermission(PERMISSIONS.APPLY_FOR_FUNDING)">
-      <h3 class="mt-6 mb-2">Add New Application</h3>
+      <h3 class="my-2">Add New Application</h3>
       <v-row class="align-end">
         <v-col cols="12" md="6">
-          <v-card class="home-card justify-center">
-            <v-card-title class="text-center">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               OFM Application
             </v-card-title>
@@ -23,60 +15,74 @@
               {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton
-                id="core-application-button"
-                :loading="loading"
-                size="large"
-                width="250px"
-                :disabled="!isAddCoreApplicationAllowed"
-                :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }"
-                class="mt-8 mb-0">
+              <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
                 Add OFM Application
               </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
+
         <v-col cols="12" md="6">
-          <div v-if="!hasAValidApplication && !loading">
+          <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
               {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
             </AppAlertBanner>
-            <AppAlertBanner v-else type="info">If there is no active OFM application, you won't be able to submit a Supplementary Allowance Application.</AppAlertBanner>
+            <AppAlertBanner v-else type="info">If there is no active OFM application, you will not be able to submit Allowances applications.</AppAlertBanner>
           </div>
-          <v-card class="home-card justify-center">
-            <v-card-title class="text-center">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              Supplementary Allowance Application
+              Allowances (Core and Discretionary Services) Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">To apply for Supplementary Funding, you must have an active OFM application for the facility.</v-card-text>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" size="large" width="375px" :disabled="!hasAValidApplication" :to="{ name: 'supp-allowances' }" class="mt-8">
-                Add Supplementary Application
+              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-8">
+                Add Allowances Application
+              </AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              Irregular Expenses Funding Application
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              To apply for Irregular Expenses, you must have an active Funding Agreement in place.
+              <br />
+              Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="irregular-expense-button" :loading="loading" :disabled="!hasAValidFundingAgreement" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">
+                Add Irregular Expenses Funding Application
               </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
     </template>
-    <v-row class="mt-6">
-      <v-col cols="12" md="5" lg="5" xl="5" class="mt-2">
+    <v-row class="mt-8 mb-2">
+      <v-col cols="12" md="5">
         <h3>Applications Summary</h3>
       </v-col>
-      <v-col cols="12" md="7" lg="7" xl="7" class="d-flex align-end mb-3">
-        <FacilityFilter v-if="!loading" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+      <v-col cols="12" md="7" class="d-flex align-end">
+        <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
-    <v-skeleton-loader :loading="loading" type="table-tbody">
+    <v-skeleton-loader id="table" :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
-      <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" class="soft-outline" density="compact">
+      <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" :mobile="null" mobile-breakpoint="md" class="soft-outline" density="compact">
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)">{{ item.status }}</span>
         </template>
 
         <template #item.actions="{ item }">
-          <router-link :to="getActionsRoute(item)">
+          <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
+          <a v-else @click="getPDF(item)" href="#table">View Application</a>
         </template>
 
         <template #item.submittedDate="{ item }">
@@ -88,17 +94,28 @@
         </template>
 
         <template #item.actionButtons="{ item }">
-          <v-btn v-if="isApplicationDownloadable(item)" variant="text" @click="false">
-            <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
-          </v-btn>
           <v-btn v-if="isApplicationCancellable(item)" variant="text" @click="toggleCancelDialog(item)">
             <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
           </v-btn>
+
+          <div v-if="showPDFDownloadButton(item)">
+            <v-tooltip v-if="showPDFTooltip(item)" content-class="tooltip" text="This PDF will be generated when the application is approved">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" variant="text">
+                  <v-icon :disabled="true" icon="fa:fa-regular fa-file-pdf"></v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-btn v-else variant="text" @click="downloadPDF(item)">
+              <v-icon icon="fa:fa-regular fa-file-pdf"></v-icon>
+            </v-btn>
+          </div>
         </template>
       </v-data-table>
     </v-skeleton-loader>
     <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
-    <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+    <AppBackButton id="back-home-button" max-width="300px" :to="{ name: 'home' }">Home</AppBackButton>
+    <NewRequestDialog :show="showChangeRequestDialog" :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)" @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 
@@ -112,15 +129,30 @@ import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
+import IrregularExpenseService from '@/services/irregularExpenseService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
-import { APPLICATION_STATUS_CODES, APPLICATION_ROUTES, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import DocumentService from '@/services/documentService'
+import { createPDFDownloadLink } from '@/utils/common'
+
+import {
+  APPLICATION_STATUS_CODES,
+  APPLICATION_ROUTES,
+  GOOD_STANDING_STATUS_CODES,
+  SUPPLEMENTARY_APPLICATION_STATUS_CODES,
+  NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
+  APPLICATION_TYPES,
+  REQUEST_CATEGORY_NAMES,
+  FUNDING_AGREEMENT_STATUS_CODES,
+} from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
+import { useAppStore } from '@/stores/app'
 
 export default {
-  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner },
+  components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner, NewRequestDialog },
   mixins: [alertMixin, permissionsMixin],
 
   data() {
@@ -129,6 +161,7 @@ export default {
       applications: [],
       supplementaryApplications: [],
       applicationItems: [],
+      irregularExpenses: [],
       headers: [
         { title: 'Application ID', key: 'referenceNumber', width: '6%' },
         { title: 'Application Type', key: 'applicationType', width: '12%' },
@@ -146,21 +179,28 @@ export default {
       facilityNameFilter: undefined,
       applicationTypeToCancel: undefined,
       orgInfo: undefined,
+      showChangeRequestDialog: false,
     }
   },
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
-    hasAValidApplication() {
-      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+
+    hasAValidFundingAgreement() {
+      return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
     },
+
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
     },
+    hasAValidApplicationAndGoodStanding() {
+      return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
+    },
     filteredApplicationItems() {
       return this.sortApplicationItems(
-        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
+        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
       )
     },
     ofmApplicationCardText() {
@@ -183,6 +223,8 @@ export default {
   async created() {
     try {
       this.loading = true
+      this.APPLICATION_TYPES = APPLICATION_TYPES
+      this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
@@ -190,7 +232,9 @@ export default {
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
       await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
+      await this.getIrregularExpenseApplications()
       this.mergeRegularAndSupplementaryApplications()
+
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
       }
@@ -210,17 +254,26 @@ export default {
       }
       return 'View Application'
     },
-
     isApplicationCancellable(application) {
-      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE
     },
 
-    isApplicationDownloadable(application) {
-      return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+    showPDFDownloadButton(application) {
+      //OFM core generates PDF upon submit - Supp App generates PDF only once approved
+      if (application.applicationType === APPLICATION_TYPES.OFM) {
+        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      } else if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+        return false
+      }
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
+    },
+
+    showPDFTooltip(application) {
+      return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED && application.applicationType !== APPLICATION_TYPES.OFM
     },
 
     toggleCancelDialog(item) {
-      this.cancelledApplicationId = item?.applicationType === 'OFM' ? item?.applicationId : item?.supplementaryApplicationId
+      this.cancelledApplicationId = item?.applicationType === APPLICATION_TYPES.OFM ? item?.applicationId : item?.supplementaryApplicationId
       this.showCancelDialog = !this.showCancelDialog
       if (item) {
         this.applicationTypeToCancel = item.applicationType
@@ -229,7 +282,7 @@ export default {
 
     cancelApplication() {
       let index = undefined
-      const key = this.applicationTypeToCancel === 'OFM' ? 'applicationId' : 'supplementaryApplicationId'
+      const key = this.applicationTypeToCancel === APPLICATION_TYPES.OFM ? 'applicationId' : 'supplementaryApplicationId'
       index = this.applicationItems?.findIndex((item) => item[key] === this.cancelledApplicationId)
       if (index > -1) {
         this.applicationItems.splice(index, 1)
@@ -246,7 +299,8 @@ export default {
       await Promise.all(
         this.applications?.map(async (application) => {
           application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+          //we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user from applying for Irreg Expense funding
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
         }),
       )
     },
@@ -275,7 +329,7 @@ export default {
         }, {})
         return {
           ...item,
-          applicationType: 'OFM',
+          applicationType: APPLICATION_TYPES.OFM,
           statusCode: application.statusCode,
         }
       })
@@ -319,7 +373,7 @@ export default {
       this.applicationItems = this.transformApplicationsToItems(this.applications)
       const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
-      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems]
+      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregularExpenses]
     },
 
     getStatusClass(statusCode) {
@@ -343,8 +397,22 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === 'OFM' ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
+    },
+
+    async getPDF(item) {
+      const doc = await DocumentService.getDocuments(item?.assistanceRequestId)
+      //TODO- post MVP - add a document Category / type to assistance request to find their application document
+      //this will return an array - we are assuming the user uploads their PDF first.
+      //we could add in to search for a file of type PDF - but we don't have requirements for this
+      const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
+
+      try {
+        createPDFDownloadLink(file, doc[0]?.fileName)
+      } catch (error) {
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
+      }
     },
 
     sortApplicationItems(applicationItems) {
@@ -359,6 +427,51 @@ export default {
         return dateA - dateB // For ascending order
       })
       return applicationItems
+    },
+    async downloadPDF(application) {
+      try {
+        let resp
+        if (application.applicationType === APPLICATION_TYPES.OFM) {
+          resp = await ApplicationService.getApplicationPDF(application.applicationId)
+        } else {
+          resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
+        }
+
+        createPDFDownloadLink(resp, application.referenceNumber)
+      } catch (error) {
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
+      }
+    },
+
+    /**
+     * Open the Change Request dialog
+     */
+    toggleChangeRequestDialog() {
+      this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+    async getIrregularExpenseApplications() {
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          //you can only apply for Irreg Expesne if you have an active FA
+          if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
+            const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
+            expenses?.forEach((expense) => {
+              this.irregularExpenses.push({
+                applicationId: application?.applicationId,
+                referenceNumber: expense?.referenceNumber,
+                status: expense?.statusName,
+                applicationType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
+                facilityName: application.facilityName ? application.facilityName : '',
+                submittedDate: null,
+                latestActivityDate: expense?.lastUpdatedTime,
+                statusCode: expense?.statusCode,
+                irregularExpenseId: expense?.irregularExpenseId,
+                assistanceRequestId: expense?.assistanceRequestId,
+              })
+            })
+          }
+        }),
+      )
     },
   },
 }

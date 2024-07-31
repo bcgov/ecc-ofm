@@ -168,6 +168,13 @@ const ApplicationMappings = [
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
   { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
+  { back: 'ofm_armslengthlease', front: 'armsLength' },
+  { back: 'ofm_application_review_complete', front: 'applicationReviewComplete' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
+  { back: 'ofm_union_list', front: 'unions' },
+  { back: 'ofm_union_description', front: 'unionDescription' },
+  { back: 'ofm_union_cssea', front: 'cssea' },
+  { back: 'ofm_fiscal_year_end', front: 'fiscalYearEndDate' },
 ]
 
 const ApplicationProviderEmployeeMappings = [
@@ -229,6 +236,7 @@ const FacilityMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
+  { back: 'ofm_facility_review_complete', front: 'facilityReviewComplete' },
 ]
 
 const ContactMappings = [
@@ -261,6 +269,8 @@ const LicenceDetailsMappings = [
   { back: 'ofm_enrolled_spaces', front: 'enrolledSpaces' },
   { back: 'ofm_operation_from_time', front: 'operationFromTime' },
   { back: 'ofm_operations_to_time', front: 'operationToTime' },
+  { back: 'ofm_operation_hours_from', front: 'updatableOperationFromTime' },
+  { back: 'ofm_operation_hours_to', front: 'updatableOperationToTime' },
   { back: 'ofm_week_days', front: 'weekDays' },
   { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
   { back: 'ofm_care_type', front: 'careType' },
@@ -338,6 +348,7 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_start_date', front: 'startDate' },
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'ofm_renewal_term', front: 'renewalTerm' },
+  { back: 'ofm_retroactive_date', front: 'retroactiveDate' },
 ]
 
 const RoleMappings = [
@@ -404,6 +415,7 @@ const SurveyResponseMappings = [
   { back: 'ofm_duedate', front: 'dueDate' },
   { back: 'ofm_late_flag', front: 'isSubmittedLate' },
   { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
   { back: 'statecode', front: 'stateCode' },
 ]
 
@@ -414,6 +426,18 @@ const QuestionResponseMappings = [
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_row_id', front: 'rowId' },
   { back: 'ofm_response_text', front: 'value' },
+]
+
+const IrregularExpenseMappings = [
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'ofm_caption', front: 'referenceNumber' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+  { back: '_ofm_assistance_request_value', front: 'assistanceRequestId' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_expenseid', front: 'irregularExpenseId' },
+  { back: '_ofm_application_value', front: 'applicationId' },
 ]
 
 module.exports = {
@@ -451,4 +475,5 @@ module.exports = {
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
+  IrregularExpenseMappings,
 }

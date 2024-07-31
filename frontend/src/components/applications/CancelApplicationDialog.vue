@@ -1,15 +1,15 @@
 <template>
   <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to cancel this {{ sourceApplicationType }}?</div>
+      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to cancel this application?</div>
     </template>
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go Back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="cancel">Cancel {{ sourceApplicationType }}</AppButton>
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="cancel">Cancel Application</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -20,13 +20,8 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, CRM_STATE_CODES, APPLICATION_TYPES } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
-
-const APPLICATION_TYPES = {
-  APPLICATION: 'Application',
-  SUPP_APPLICATION: 'Supplementary Application',
-}
 
 export default {
   name: 'CancelApplicationDialog',
@@ -43,7 +38,7 @@ export default {
     },
     applicationType: {
       type: String,
-      default: 'OFM', // Default to OFM application type (as opposed to supplementary application types)
+      default: APPLICATION_TYPES.OFM, // Default to OFM application type (as opposed to Supplementary/Allowances application types)
     },
   },
   emits: ['close', 'cancel'],
@@ -54,8 +49,8 @@ export default {
     }
   },
   computed: {
-    sourceApplicationType() {
-      return this.applicationType === 'OFM' ? APPLICATION_TYPES.APPLICATION : APPLICATION_TYPES.SUPP_APPLICATION
+    isBaseFundingApplication() {
+      return this.applicationType === APPLICATION_TYPES.OFM
     },
   },
   watch: {
@@ -73,18 +68,18 @@ export default {
       try {
         this.isLoading = true
         const payload = {
-          statusCode: this.sourceApplicationType === APPLICATION_TYPES.APPLICATION ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
+          statusCode: this.isBaseFundingApplication ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        if (this.sourceApplicationType === APPLICATION_TYPES.APPLICATION) {
+        if (this.isBaseFundingApplication) {
           await ApplicationService.updateApplication(this.applicationId, payload)
         } else {
           await ApplicationService.updateSupplementaryApplication(this.applicationId, payload)
         }
         this.$emit('cancel')
-        this.setSuccessAlert(`${this.sourceApplicationType} cancelled successfully`)
+        this.setSuccessAlert(`Application cancelled successfully`)
       } catch (error) {
-        this.setFailureAlert(`Failed to cancel your ${this.sourceApplicationType}`, error)
+        this.setFailureAlert(`Failed to cancel your application`, error)
       } finally {
         this.isLoading = false
         this.closeDialog()

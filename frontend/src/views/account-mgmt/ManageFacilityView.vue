@@ -1,23 +1,23 @@
 <template>
   <v-container fluid>
     <h1>Update Facility Information</h1>
-    <v-row>
-      <v-col class="pl-9 pt-10 pb-0">
+    <v-row class="mt-4">
+      <v-col cols="12" lg="6">
         <h4>Facility Details</h4>
       </v-col>
-      <v-col v-if="editable" class="pb-1 pt-7">
+      <v-col v-if="editable" cols="12" lg="6">
         <v-row no-gutters justify="end" class="">
-          <AppButton size="large" width="300px" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
+          <AppButton size="large" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="ml-6 pt-0 pb-0">
+      <v-col class="py-0">
         <FacilityInfo :loading="loading" :facility="facility" />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col class="ml-6 pb-1 pt-6">
+    <v-row class="mt-6">
+      <v-col class="pb-1 pt-6">
         <h4>Licences</h4>
       </v-col>
       <v-col class="d-flex justify-end align-end pb-1 pt-0">
@@ -32,7 +32,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-6 pr-9 pt-0">
+      <v-col cols="12" class="pt-0">
         <v-card elevation="0" variant="outlined" class="w-100">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
@@ -50,14 +50,12 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col class="ml-6 pr-9 pb-0 d-flex flex-row align-center">
-        <h4 class="mr-2">Primary Contact</h4>
-        <h5>&nbsp;(You can only have one primary contact)</h5>
-      </v-col>
+    <v-row no-gutters class="mt-6">
+      <h4 class="mr-2">Primary Contact</h4>
+      <h5>(You can only have one primary contact)</h5>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-6 pr-9 pt-0 pb-0">
+      <v-col cols="12" class="py-0">
         <v-card class="pa-6 mb-3" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <div class="w-100">
@@ -66,7 +64,7 @@
                 <v-col cols="auto">
                   <AppLabel>Change primary contact:</AppLabel>
                 </v-col>
-                <v-col cols="4" class="pb-0">
+                <v-col cols="12" sm="6" md="4" xl="3" class="pb-0">
                   <v-select
                     id="primary-contact"
                     v-model="primaryContact"
@@ -81,10 +79,10 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="11">
+                <v-col cols="10" sm="11">
                   <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
                 </v-col>
-                <v-col cols="1">
+                <v-col cols="2" sm="1">
                   <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
                     <AppButton variant="text" :disabled="editMode || loading" @click="toggleEditPrimaryContact()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
@@ -126,49 +124,42 @@
       :editable="editable"
       @save-contact-updates="saveAdditionalContactUpdates"
       @edit-mode-changed="contactEditModeChange" />
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-row justify="center" justify-md="start" class="pb-2">
-          <AppBackButton id="back-to-manage-organization" width="450px" :to="{ name: 'manage-organization' }" :loading="loading">Organization Information</AppBackButton>
-        </v-row>
-      </v-col>
-    </v-row>
+    <AppBackButton id="back-to-manage-organization" max-width="500px" :to="{ name: 'manage-organization' }" :loading="loading">Organization Information</AppBackButton>
     <NewRequestDialog
       v-if="editable"
       class="pa-0"
       :show="showChangeRequestDialog"
       :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       :defaultFacility="facility"
-      @close="toggleChangeRequestDialog" />
+      @close="toggleChangeRequestDialog"
+      @submit-phone-email="handleCRSubmit" />
     <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
+import { isEmpty } from 'lodash'
+import { mapState } from 'pinia'
+
 import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import rules from '@/utils/rules'
-import { ApiRoutes } from '@/utils/constants'
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import ApiService from '@/common/apiService'
+import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
+import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import ContactInfo from '@/components/applications/ContactInfo.vue'
+import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
+import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import LicenceHeader from '@/components/licences/LicenceHeader.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import ApplicationService from '@/services/applicationService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
-import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
-import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
-import ContactInfo from '@/components/applications/ContactInfo.vue'
-import LicenceHeader from '@/components/licences/LicenceHeader.vue'
-import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
-import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-
-import { isEmpty } from 'lodash'
+import rules from '@/utils/rules'
 
 export default {
   name: 'ManageFacilityView',
@@ -331,10 +322,9 @@ export default {
         contactsToAdd.forEach((obj) => (obj[property] = true))
         contactsToRemove?.forEach((obj) => (obj[property] = false))
         const contactsToUpdate = contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
-        let updateContactsTasks = contactsToUpdate.map(async (contact) => {
+        const updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
-            // TODO (jgstorey) Make this a service function
-            await ApiService.apiAxios.patch(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + contact.bceidFacilityId, contact)
+            await FacilityService.updateFacilityContact(contact.bceidFacilityId, contact)
           } catch (error) {
             this.setFailureAlert(`Failed to update ${property} for contactId = ` + contact.contactId, error)
             throw error
@@ -390,6 +380,10 @@ export default {
      */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+
+    handleCRSubmit() {
+      this.loadData()
     },
 
     async validateOfmProgram() {

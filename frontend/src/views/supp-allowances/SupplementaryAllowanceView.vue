@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <h1 class="my-2">Supplementary Allowance</h1>
+    <h1 class="my-2">Allowances (Core and Discretionary Services)</h1>
     <div v-if="loading" align="center">
       <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-height-screen"></v-progress-circular>
     </div>
@@ -31,6 +31,7 @@
           <span>You are applying this program for the Application&ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
+            :key="application?.applicationId"
             :applicationId="application?.applicationId"
             :fundingAgreement="application?.fundingAgreement"
             :cancel="cancel"
@@ -140,7 +141,7 @@ export default {
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
-          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid)
+          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid, true)
         }
         // navigate from the Application History page
         else {
@@ -148,7 +149,7 @@ export default {
           this.applications = this.applications?.filter((application) => ApplicationService.checkApplicationStatus(application))
           await Promise.all(
             this.applications?.map(async (application) => {
-              application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+              application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
             }),
           )
           this.facilities = this.userInfo?.facilities?.filter((facility) => this.getValidApplication(facility.facilityId))

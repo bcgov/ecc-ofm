@@ -7,7 +7,6 @@ import moment from 'moment'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import { createMetaManager } from 'vue-meta'
-import { VDateInput } from 'vuetify/labs/VDateInput'
 
 import vuetify from '@/plugins/vuetify'
 import { useAppStore } from '@/stores/app'
@@ -22,7 +21,6 @@ const pinia = createPinia()
 
 app.provide('$moment', moment)
 app.use(createMetaManager()).use(pinia).use(vuetify)
-app.component('VDateInput', VDateInput)
 
 // Load lookinfo (with valid jwt) before App is mounted
 // so that the lookupInfo is available in the router
@@ -38,8 +36,9 @@ async function loadLookupInfo() {
     await auth.getJwtToken()
     await app.getLookupInfo()
   } catch (e) {
-    // Flag errors that aren't 401 UNAUTHORIZED which is expected before the user is logged in
-    if (!e.response || e.response.status !== HttpStatus.UNAUTHORIZED) {
+    // Flag errors that aren't 401 UNAUTHORIZED (expected before the user is logged in)
+    // or 403 FORBIDDEN (expected if the user doesn't have access to the lookup endpoint)
+    if (!e.response || ![HttpStatus.FORBIDDEN, HttpStatus.UNAUTHORIZED].includes(e.response.status)) {
       app.backendError = true
     }
   }

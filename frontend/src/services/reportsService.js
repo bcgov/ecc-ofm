@@ -59,6 +59,17 @@ export default {
     }
   },
 
+  async getDraftSurveyResponsesCountByFacility(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses-count?facilityId=${facilityId}&isSubmitted=false`)
+      return response?.data[0]?.count
+    } catch (error) {
+      console.log(`Failed to get the draft survey responses count by Facility - ${error}`)
+      throw error
+    }
+  },
+
   async getSubmittedSurveyResponsesByFacilityAndSubmittedDate(facilityId, dateFrom, dateTo) {
     try {
       if (!facilityId) return
@@ -81,6 +92,17 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to update survey response - ${error}`)
+      throw error
+    }
+  },
+
+  async deleteSurveyResponse(surveyResponseId) {
+    try {
+      if (!surveyResponseId) return
+      const response = await ApiService.apiAxios.delete(`${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to delete survey response - ${error}`)
       throw error
     }
   },

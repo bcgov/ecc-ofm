@@ -1,3 +1,4 @@
+import HttpStatus from 'http-status-codes'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
@@ -7,14 +8,13 @@ import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
 import ErrorView from '@/views/ErrorView.vue'
+import HelpView from '@/views/HelpView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ImpersonateView from '@/views/ImpersonateView.vue'
 import LoginView from '@/views/LoginView.vue'
 import LogoutView from '@/views/LogoutView.vue'
-import MinistryLogoutView from '@/views/MinistryLogoutView.vue'
 import MessagingView from '@/views/MessagingView.vue'
 import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import ResourcesView from '@/views/ResourcesView.vue'
 import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
@@ -32,9 +32,11 @@ import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vu
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
+import BaseFundingView from '@/views/funding/BaseFundingView.vue'
 import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
 import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
-import FundingView from '@/views/funding/FundingView.vue'
+import IrregularFundingView from '@/views/funding/IrregularFundingView.vue'
+import SupplementaryFundingView from '@/views/funding/SupplementaryFundingView.vue'
 import ReportingView from '@/views/reports/ReportingView.vue'
 import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
@@ -45,9 +47,9 @@ import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmit
 const router = createRouter({
   history: createWebHistory(),
   base: import.meta.env.BASE_URL,
-  scrollBehavior: function (to, from, savedPosition) {
+  scrollBehavior(to, _from, _savedPosition) {
     if (to.hash) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, _reject) => {
         setTimeout(() => {
           resolve({
             el: to.hash,
@@ -56,7 +58,7 @@ const router = createRouter({
         }, 700)
       })
     } else {
-      return { x: 0, y: 0 }
+      return { left: 0, top: 0 }
     }
   },
   routes: [
@@ -88,14 +90,6 @@ const router = createRouter({
       path: '/logout',
       name: 'logout',
       component: LogoutView,
-      meta: {
-        requiresAuth: false,
-      },
-    },
-    {
-      path: '/internal-logout',
-      name: 'ministry-logout',
-      component: MinistryLogoutView,
       meta: {
         requiresAuth: false,
       },
@@ -145,9 +139,27 @@ const router = createRouter({
       },
     },
     {
-      path: '/funding/:fundingGuid',
-      name: 'funding',
-      component: FundingView,
+      path: '/funding/base/:fundingGuid',
+      name: 'approved-base-funding',
+      component: BaseFundingView,
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
+      },
+    },
+    {
+      path: '/funding/supp-allowances/:fundingGuid',
+      name: 'approved-supp-funding',
+      component: SupplementaryFundingView,
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
+      },
+    },
+    {
+      path: '/funding/irregular/:fundingGuid',
+      name: 'approved-irregular-funding',
+      component: IrregularFundingView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
@@ -272,11 +284,12 @@ const router = createRouter({
       },
     },
     {
-      path: '/resources',
-      name: 'resources',
-      component: ResourcesView,
+      path: '/help',
+      name: 'help',
+      component: HelpView,
       meta: {
         requiresAuth: true,
+        hidden: true,
       },
     },
     {
@@ -369,8 +382,7 @@ router.beforeEach((to, _from, next) => {
       .getJwtToken()
       .then(() => {
         if (!authStore.isAuthenticated) {
-          next('/token-expired')
-          return
+          return next('/token-expired')
         }
         authStore
           .getUserInfo()
@@ -396,24 +408,21 @@ router.beforeEach((to, _from, next) => {
             next()
           })
           .catch((error) => {
-            console.log('error', error)
-            if (error.response?.status == '401') {
-              next('unauthorized')
-              return
+            if ([HttpStatus.FORBIDDEN, HttpStatus.UNAUTHORIZED].includes(error.response?.status)) {
+              return next('unauthorized')
             }
             next('error')
           })
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!authStore.userInfo) {
-          next('/login')
-          return
+          return next('/login')
         }
         next('/token-expired')
       })
   } else {
     // Block access to Login/Internal/Logout when authenticated
-    if ((to.name.endsWith('login') || to.name.endsWith('logout')) && authStore.isAuthenticated) {
+    if ((to.name.endsWith('login') || to.name === 'logout') && authStore.isAuthenticated) {
       return next('home')
     }
     next()

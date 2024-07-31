@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash'
+
 import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 
@@ -22,7 +24,7 @@ export default {
   async getLicenceDetails(licenceId) {
     try {
       if (!licenceId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.LICENCES}/${licenceId}/licence-details`)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.LICENCES}/${licenceId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get licence detail(s) by licenceId - ${error}`)
@@ -37,5 +39,26 @@ export default {
       console.log(`Failed to update licence detail - ${error}`)
       throw error
     }
+  },
+
+  // Helpers to validate licence details
+  isOperationalSpacesValid(value) {
+    return value != null && value >= 0 && value < 1000
+  },
+  isEnrolledSpacesValid(value) {
+    return value != null && value >= 0 && value < 1000
+  },
+  isWeeksInOperationValid(value) {
+    return value != null && value > 0 && value < 53
+  },
+  isSplitClassRoomInfoValid(licenceDetail) {
+    return !licenceDetail.applyRoomSplitCondition || !isEmpty(licenceDetail.roomSplitDetails)
+  },
+  convertToCRMOperationDateTimeFormat(time) {
+    const hours = time?.split(':')[0]
+    const minutes = time?.split(':')[1]
+    const convertedTime = new Date()
+    convertedTime.setHours(hours, minutes, 0, 0)
+    return convertedTime
   },
 }

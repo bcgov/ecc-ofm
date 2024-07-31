@@ -9,6 +9,17 @@
     <div>
       <h4>Facility Information</h4>
       <FacilityInfo :facility="facility" />
+      <v-row no-gutters class="mt-8">
+        <AppLabel class="pt-4 mr-4">What is the end date of your fiscal year?</AppLabel>
+        <AppDateInput
+          id="fiscal-year-end-date"
+          v-model="fiscalYearEndDate"
+          :rules="[...rules.required, rules.MMDDYYYY]"
+          :disabled="readonly"
+          :hide-details="readonly"
+          label="Fiscal Year End Date"
+          class="mt-3" />
+      </v-row>
     </div>
     <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
@@ -98,19 +109,22 @@
 </template>
 
 <script>
-import AppLabel from '@/components/ui/AppLabel.vue'
-import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_ROUTES } from '@/utils/constants'
-import rules from '@/utils/rules'
+
+import AppDateInput from '@/components/ui/AppDateInput.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
+import { useApplicationsStore } from '@/stores/applications'
+import { APPLICATION_ROUTES } from '@/utils/constants'
+import format from '@/utils/format'
+import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'FacilityDetailsView',
-  components: { AppLabel, FacilityInfo, ContactInfo },
+  components: { AppDateInput, AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
 
   async beforeRouteLeave(_to, _from, next) {
@@ -159,6 +173,7 @@ export default {
       primaryContact: undefined,
       secondaryContact: undefined,
       expenseAuthority: undefined,
+      fiscalYearEndDate: null,
     }
   },
 
@@ -203,11 +218,15 @@ export default {
     },
   },
 
-  async mounted() {
+  created() {
     this.$emit('process', false)
+    this.fiscalYearEndDate = this.currentApplication?.fiscalYearEndDate
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
     this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
+  },
+
+  async mounted() {
     if (this.validation) {
       await this.$refs.form?.validate()
     }
@@ -224,6 +243,8 @@ export default {
           primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
           expenseAuthorityId: this.expenseAuthority?.contactId ? this.expenseAuthority?.contactId : null,
+          // XXX - CRM date object uses PST timezone, so we need to convert our date to PST before sending it to CRM
+          fiscalYearEndDate: this.fiscalYearEndDate ? format.convertUTCDatetoPSTDate(this.fiscalYearEndDate) : null,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)

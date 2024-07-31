@@ -54,6 +54,17 @@ export default {
     }
   },
 
+  async getApplicationPDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}/${applicationId}/pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the application PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
   isApplicationUpdated(updatedApplication) {
     const applicationsStore = useApplicationsStore()
     const currentApplication = applicationsStore?.currentApplication
@@ -94,6 +105,37 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async getSupplementaryApplicationById(supplementaryApplicationId) {
+    try {
+      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/details')
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by supplementary id  - ${error}`)
+      throw error
+    }
+  },
+
+  async getSupplementaryApplicationsByDate(applicationId, filterQuery, startDateFrom, startDateTo) {
+    try {
+      if (!applicationId) return
+      let url = `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}`
+      if (filterQuery) {
+        url += `?${filterQuery}`
+      }
+      if (startDateFrom) {
+        url += `&dateFrom=${startDateFrom}`
+      }
+      if (startDateTo) {
+        url += `&dateTo=${startDateTo}`
+      }
+      const response = await ApiService.apiAxios.get(url)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application by application id and date - ${error}`)
       throw error
     }
   },
@@ -154,15 +196,41 @@ export default {
     }
   },
 
+  async getSupplementaryApplicationPDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the supp application PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
+  async getApprovedSupplementaryPDF(applicationId) {
+    try {
+      if (!applicationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/approved-pdf`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the approved supp application PDF by application id - ${error}`)
+      throw error
+    }
+  },
+
   isValidApplication(application) {
     return this.checkApplicationStatus(application) && this.checkFundingAgreement(application?.fundingAgreement)
   },
 
   checkApplicationStatus(application) {
     const isActive = application?.stateCode === CRM_STATE_CODES.ACTIVE
-    const hasCorrectStatus = [APPLICATION_STATUS_CODES.SUBMITTED, APPLICATION_STATUS_CODES.IN_REVIEW, APPLICATION_STATUS_CODES.APPROVED, APPLICATION_STATUS_CODES.AWAITING_PROVIDER].includes(
-      application?.statusCode,
-    )
+    const hasCorrectStatus = [
+      APPLICATION_STATUS_CODES.SUBMITTED,
+      APPLICATION_STATUS_CODES.IN_REVIEW,
+      APPLICATION_STATUS_CODES.APPROVED,
+      APPLICATION_STATUS_CODES.AWAITING_PROVIDER,
+      APPLICATION_STATUS_CODES.VERIFIED,
+    ].includes(application?.statusCode)
     return isActive && hasCorrectStatus
   },
 

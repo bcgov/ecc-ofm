@@ -25,7 +25,13 @@
             <LicenceHeader :licence="licence" />
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <LicenceDetails :licence="licence" :readOnly="readonly" @update="updateModel" @setDetailsComplete="setDetailsComplete" />
+            <LicenceDetails
+              :loading="processing"
+              :licence="licence"
+              :editable="isLicenceDetailsEditable"
+              :read-only="readonly"
+              @update="updateLicenceDetails"
+              @set-details-complete="setDetailsComplete" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -50,19 +56,19 @@
 </template>
 
 <script>
+import { isEmpty, cloneDeep } from 'lodash'
+import { mapState, mapWritableState, mapActions } from 'pinia'
+
 import AppButton from '@/components/ui/AppButton.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
-
-import { useApplicationsStore } from '@/stores/applications'
-import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import LicenceService from '@/services/licenceService'
-import rules from '@/utils/rules'
 import ApplicationService from '@/services/applicationService'
+import LicenceService from '@/services/licenceService'
+import { useApplicationsStore } from '@/stores/applications'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, OFM_PROGRAM_CODES } from '@/utils/constants'
+import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
-import { isEmpty } from 'lodash'
 
 export default {
   name: 'ServiceDeliveryView',
@@ -93,6 +99,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    facility: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
   },
 
   emits: ['process'],
@@ -113,6 +125,10 @@ export default {
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
     allLicenceIDs() {
       return this.currentApplication?.licences?.map((licence) => licence.licenceId)
+    },
+
+    isLicenceDetailsEditable() {
+      return !this.readonly && this.facility?.programCode === OFM_PROGRAM_CODES.CCOF && !this.facility?.facilityReviewComplete && !this.currentApplication?.applicationReviewComplete
     },
   },
 
@@ -159,19 +175,25 @@ export default {
       try {
         this.$emit('process', true)
         this.processing = true
+        let reloadApplication = this.changedLicences?.length > 0
         const payload = {
           licenceDeclaration: this.licenceDeclaration,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
-          await this.getApplication(this.$route.params.applicationGuid)
+          reloadApplication = true
         }
 
         await Promise.all(
           this.changedLicences.map(async (licence) => {
+            this.sanitizeLicenceDetailBeforeSave(licence)
             await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
           }),
         )
+
+        if (reloadApplication) {
+          await this.getApplication(this.$route.params.applicationGuid)
+        }
 
         this.changedLicences = []
 
@@ -189,21 +211,53 @@ export default {
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allLicenceIDs : []
     },
-    updateModel(updatedModel) {
-      const found = this.changedLicences.find((el) => el.licenceDetailId == updatedModel.licenceDetailId)
 
-      if (!found) {
-        this.changedLicences.push(updatedModel)
+    updateLicenceDetails(updatedModel) {
+      const clonedModel = cloneDeep(updatedModel)
+      clonedModel.updatableOperationFromTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationFromTime)
+      clonedModel.updatableOperationToTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationToTime)
+      clonedModel.weekDays = clonedModel?.weekDays?.toString()
+      const index = this.changedLicences.findIndex((el) => el.licenceDetailId == clonedModel.licenceDetailId)
+      if (index === -1) {
+        this.changedLicences.push(clonedModel)
       } else {
-        found.roomSplitDetails = updatedModel.roomSplitDetails
-        found.applyRoomSplitCondition = updatedModel.applyRoomSplitCondition
+        this.changedLicences[index] = clonedModel
       }
     },
+
+    sanitizeLicenceDetailBeforeSave(detail) {
+      if (!LicenceService.isOperationalSpacesValid(detail.operationalSpaces)) {
+        delete detail.operationalSpaces
+      }
+      if (!LicenceService.isEnrolledSpacesValid(detail.enrolledSpaces)) {
+        delete detail.enrolledSpaces
+      }
+      if (!LicenceService.isWeeksInOperationValid(detail.weeksInOperation)) {
+        delete detail.weeksInOperation
+      }
+      if (isEmpty(detail.weekDays)) {
+        delete detail.weekDays
+      }
+      if (isEmpty(detail.operationFromTime)) {
+        delete detail.updatableOperationFromTime
+      }
+      if (isEmpty(detail.operationToTime)) {
+        delete detail.updatableOperationToTime
+      }
+      if (detail.updatableOperationFromTime >= detail.updatableOperationToTime) {
+        delete detail.updatableOperationFromTime
+        delete detail.updatableOperationToTime
+      }
+      delete detail.operationFromTime
+      delete detail.operationToTime
+    },
+
     setDetailsComplete(licenceId, value) {
       const currentLicence = this.currentApplication?.licences.find((el) => el.licenceId === licenceId)
       currentLicence.isLicenceComplete = value.valid
       this.setFormComplete()
     },
+
     setFormComplete() {
       this.isServiceDeliveryComplete = this.currentApplication.licences.every((el) => el.isLicenceComplete) && this.licenceDeclaration
     },

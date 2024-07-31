@@ -4,7 +4,7 @@
       <template #content>
         <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-5 mx-lg-1">
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
+            <v-col cols="12" md="3" xl="1" class="pt-2">
               <AppLabel variant="modal">Topic:</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
@@ -17,7 +17,7 @@
                 item-value="categoryId"
                 :rules="rules.required"
                 density="compact"
-                :disabled="isLoading"></v-select>
+                :disabled="isLoading || lockRequestCategory"></v-select>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -33,10 +33,10 @@
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
-                :disabled="isLoadingOrDisabled"></v-text-field>
+                :disabled="isLoadingOrDisabled || lockSubject"></v-text-field>
             </v-col>
           </v-row>
-          <template v-if="isAnAccountMaintenanceRequest">
+          <template v-if="isAccountMaintenanceRequest">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-2">
                 <AppLabel variant="modal">Change type:</AppLabel>
@@ -60,24 +60,12 @@
             </v-row>
           </template>
           <v-row v-if="showFacility" no-gutters>
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-2">
-              <AppLabel variant="modal">Facility{{ !isAnAccountMaintenanceRequest ? '(s):' : ':' }}</AppLabel>
+            <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-2">
+              <AppLabel variant="modal">{{ facilityLabel }}</AppLabel>
             </v-col>
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11">
               <v-select
-                v-if="isAnAccountMaintenanceRequest"
-                id="selectFacility"
-                v-model="newRequestModel.facilities"
-                placeholder="[select facility]"
-                variant="outlined"
-                density="compact"
-                :items="facilities"
-                item-title="facilityName"
-                :disabled="isLoading"
-                return-object
-                hide-details></v-select>
-              <v-select
-                v-else
+                v-if="isMultipleFacilities"
                 id="selectFacility"
                 v-model="newRequestModel.facilities"
                 placeholder="[selected facility] (add more)"
@@ -88,7 +76,7 @@
                 :rules="rules.listIsNotEmpty"
                 :items="facilities"
                 item-title="facilityName"
-                :disabled="isLoading"
+                :disabled="isLoading || lockFacility"
                 return-object>
                 <template v-slot:prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilities">
@@ -102,9 +90,21 @@
                   <v-divider class="mt-2"></v-divider>
                 </template>
               </v-select>
+              <v-select
+                v-else
+                id="selectFacility"
+                v-model="newRequestModel.facilities"
+                placeholder="[select facility]"
+                variant="outlined"
+                density="compact"
+                :items="filteredFacilties"
+                :rules="rules.required"
+                item-title="facilityName"
+                :disabled="isLoading || lockFacility"
+                return-object></v-select>
             </v-col>
           </v-row>
-          <v-row v-if="isAnAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
+          <v-row v-if="isAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
             <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-3 mt-0" />
             <v-col class="v-col-12 v-col-md-9 v-col-xl-11 mt-0">
               <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center pt-1">
@@ -230,9 +230,23 @@
                 :disabled="isLoadingOrDisabled"></v-textarea>
             </v-col>
           </v-row>
+
+          <v-row v-if="isIrregularExpenseRequest" class="my-3">
+            <v-col cols="12">
+              <h5>You must complete and attach an Irregular Expense application form with your request.</h5>
+              <p>Download the application below, and attach the completed form to this request using the Add File button.</p>
+            </v-col>
+            <v-row>
+              <v-col cols="12" class="ml-3">
+                <AppButton id="download-irregular-expense-form" :href="expenseFormURL" target="_blank" size="large" width="200px" :disabled="isDisabled" :loading="isLoading">Download Form</AppButton>
+              </v-col>
+            </v-row>
+          </v-row>
+
           <v-row v-if="showSupportingDocuments" no-gutters align="center">
             <div class="mr-8">
-              <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
+              <AppLabel v-if="isIrregularExpenseRequest" variant="modal">Supporting documents (required):</AppLabel>
+              <AppLabel v-else variant="modal">Supporting documents (optional):</AppLabel>
             </div>
             <AppDocumentUpload
               v-model="documentsToUpload"
@@ -240,8 +254,9 @@
               :disabled="isDisabled"
               :loading="isLoading"
               @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
+            <AppMissingInfoError v-if="isIrregularExpenseRequest && !documentsToUpload.length">Document upload required</AppMissingInfoError>
           </v-row>
-          <template v-if="!isAnAccountMaintenanceRequest">
+          <template v-if="showContactMethods">
             <v-row no-gutters class="mt-4">
               <v-col class="v-col-12 pb-0">
                 <AppLabel variant="modal">Preferred method of contact:</AppLabel>
@@ -280,11 +295,13 @@
       :referenceNumber="referenceNumber"
       :show="showNewRequestConfirmationDialog"
       :isInvokedFromMessages="isInvokedFromMessages"
+      :return-to="returnTo"
       @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
@@ -293,6 +310,8 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
+import StaticConfig from '@/common/staticConfig'
 import rules from '@/utils/rules'
 import NewRequestConfirmationDialog from '@/components/messages/NewRequestConfirmationDialog.vue'
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
@@ -301,13 +320,15 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
+import MessageService from '@/services/messageService'
 import OrganizationService from '@/services/organizationService'
+import FundingAgreementService from '@/services/fundingAgreementService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE, FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
-  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog },
+  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog, AppMissingInfoError },
   mixins: [alertMixin, permissionsMixin],
   props: {
     show: {
@@ -327,8 +348,28 @@ export default {
       type: Object,
       default: null,
     },
+    defaultSubject: {
+      type: String,
+      default: null,
+    },
+    lockRequestCategory: {
+      type: Boolean,
+      default: false,
+    },
+    lockFacility: {
+      type: Boolean,
+      default: false,
+    },
+    lockSubject: {
+      type: Boolean,
+      default: false,
+    },
+    returnTo: {
+      type: String,
+      default: 'home',
+    },
   },
-  emits: ['close'],
+  emits: ['close', 'submitPhoneEmail'],
   data() {
     return {
       isFormComplete: false,
@@ -347,23 +388,33 @@ export default {
       changeTypeClass: '',
       showFacilityNotInOFMMessage: false,
       preventChangeRequestType: undefined,
-      isInitialLoad: false,
+      fundingAgreements: undefined,
+      facilityValidInOFM: new Map(),
+      expenseFormURL: StaticConfig.IRREGULAR_EXPENSE_FORM_URL,
     }
   },
   computed: {
     ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     permittedRequestCategories() {
-      // Prevent users without 'Submit Change Request from AM' from selecting the Account Maintenance option
-      return this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)
-        ? this.requestCategories
-        : this.requestCategories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      let categories = [...this.requestCategories]
+
+      if (!this.hasPermission(this.PERMISSIONS.SUBMIT_CHANGE_REQUEST)) {
+        categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      }
+
+      if (!this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+        categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
+      }
+
+      if (!this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS)) {
+        categories = categories.filter((cat) => cat.categoryName !== REQUEST_CATEGORY_NAMES.REPORTING)
+      }
+
+      return categories
     },
     facilities() {
       return this.userInfo?.facilities
-    },
-    requestFacilities() {
-      return [].concat(this.newRequestModel?.facilities || [])
     },
     allFacilitiesSelected() {
       return this.newRequestModel.facilities.length == this.facilities.length
@@ -371,8 +422,14 @@ export default {
     someFacilitiesSelected() {
       return this.newRequestModel.facilities.length > 0
     },
-    isAnAccountMaintenanceRequest() {
+    isAccountMaintenanceRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+    },
+    isIrregularExpenseRequest() {
+      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
+    },
+    isReportingRequest() {
+      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)
     },
     isAnySubCategoryChecked() {
       return this.newRequestModel.subCategories.length > 0
@@ -402,18 +459,21 @@ export default {
     },
     showFacility() {
       return (
-        (this.isAnAccountMaintenanceRequest &&
+        (this.isAccountMaintenanceRequest &&
           (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
             this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
             this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE))) ||
-        !this.isAnAccountMaintenanceRequest
+        !this.isAccountMaintenanceRequest
       )
     },
     showRequestDescription() {
-      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
+      return (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAccountMaintenanceRequest
     },
     showSupportingDocuments() {
-      return (this.isAnAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAnAccountMaintenanceRequest
+      return (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || (!this.isAccountMaintenanceRequest && !this.isReportingRequest)
+    },
+    showContactMethods() {
+      return !this.isAccountMaintenanceRequest && !this.isReportingRequest
     },
     isLoadingOrDisabled() {
       return this.isLoading || this.isDisabled
@@ -440,6 +500,24 @@ export default {
           'A phone/cell or email is required when Facility phone/email checked',
       ]
     },
+    filteredFacilties() {
+      if (this.isIrregularExpenseRequest) {
+        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId))
+      }
+      return this.facilities
+    },
+    documentsComplete() {
+      if (!this.isIrregularExpenseRequest) {
+        return true
+      }
+      return this.documentsToUpload.length
+    },
+    isMultipleFacilities() {
+      return !(this.isAccountMaintenanceRequest || this.isIrregularExpenseRequest || this.isReportingRequest)
+    },
+    facilityLabel() {
+      return `Facility${this.isMultipleFacilities ? '(s)' : ''}:`
+    },
   },
   watch: {
     show: {
@@ -448,75 +526,101 @@ export default {
       },
     },
     'newRequestModel.subCategories': {
-      async handler(value) {
+      handler(value) {
         if (this.changeTypeClass === 'change-type-required' && this.isAnySubCategoryChecked) {
           this.changeTypeClass = ''
         }
-        await this.validateSubCategories(value)
+        this.validateSubCategories(value)
       },
       deep: true,
     },
     defaultFacility: {
       handler(value) {
-        this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value.facilityId)]
+        this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value?.facilityId)]
+      },
+    },
+    defaultSubject: {
+      handler(value) {
+        this.newRequestModel.subject = value
+      },
+    },
+
+    'newRequestModel.requestCategoryId': {
+      async handler() {
+        if (this.isIrregularExpenseRequest && !this.fundingAgreements) {
+          this.isLoading = true
+          await this.getFundingAgreements()
+          this.isLoading = false
+        }
+        this.resetModelData(this.isAccountMaintenanceRequest)
+        // Reset the Selected Facility if not allowed
+        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties?.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)) {
+          this.newRequestModel.facilities = []
+          //then shorten the facility model to 1 item if going from multi-select to single select
+        } else if (this.newRequestModel.facilities?.length > 1 && !this.isMultipleFacilities) {
+          this.newRequestModel.facilities = this.newRequestModel.facilities[0]
+        }
       },
     },
     'newRequestModel.facilities': {
       async handler() {
-        const isValid = await this.validateOfmProgram()
-        if (isValid) {
-          this.showFacilityNotInOFMMessage = false
-          this.isDisabled = false
-        } else if (this.isInitialLoad && this.isAnAccountMaintenanceRequest) {
-          // Only disable if this is not the initial call on watch. This is to prevent disabling the submit button when the dialog is opened for the first time.
-          this.isDisabled = true
+        if (this.isAccountMaintenanceRequest) {
+          this.isLoading = true
+          const isValid = await this.validateOfmProgram()
+          this.isLoading = false
+          if (isValid) {
+            this.showFacilityNotInOFMMessage = false
+            this.isDisabled = false
+          } else {
+            this.showFacilityNotInOFMMessage = true
+            this.isDisabled = true
+          }
         }
-        this.isInitialLoad = true
       },
       deep: true,
-    },
-    'newRequestModel.requestCategoryId': {
-      handler(value) {
-        const isAccountMaintenance = value === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
-        this.resetModelData(isAccountMaintenance)
-      },
     },
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
-    this.AUTO_REPLY_MESSAGE = 'Your change request is complete.'
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, [
-      'createAssistanceRequest',
-      'addNewAssistanceRequestToStore',
-      'updateAssistanceRequest',
-      'updateAssistanceRequestInStore',
-      'replyToAssistanceRequest',
-      'getAssistanceRequest',
-      'getAssistanceRequests',
-    ]),
+    ...mapActions(useMessagesStore, ['addNewAssistanceRequestToStore', 'updateAssistanceRequestInStore']),
 
+    //this function runs to check if the selected facility is able to submit certain kinds of assitance requests.
+    //it is only available to Account Managers and should only be called if the correct checkbox(es) are selected
     async validateOfmProgram() {
+      //on load newRequestModel.facilites is sometimes an array because of multi-select. however AM requests will only have one item selected.
+      const selectedFacility = this.newRequestModel?.facilities.length > 0 ? this.newRequestModel?.facilities[0] : this.newRequestModel?.facilities
+
+      if (this.facilityValidInOFM.has(selectedFacility.facilityId)) {
+        return this.facilityValidInOFM.get(selectedFacility.facilityId)
+      }
+
       const programCodeMapping = {
         [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
         [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
       }
-      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.requestFacilities)
-      if (this.requestFacilities[0]?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
-        this.preventChangeRequestType = programCodeMapping[this.requestFacilities[0].programCode]
+      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([selectedFacility])
+
+      if (selectedFacility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
+        this.facilityValidInOFM.set(selectedFacility.facilityId, false)
+        this.preventChangeRequestType = programCodeMapping[selectedFacility.programCode]
         this.showFacilityNotInOFMMessage = true
+        this.disabled = true
         return false
       }
+      this.facilityValidInOFM.set(selectedFacility.facilityId, true)
       return true
     },
 
+    //the only change type that has sub categories are Account Maint requests
     async validateSubCategories(subCategories) {
-      const isAccountMaintenance = this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
-      if (isAccountMaintenance && this.facilityChangeTypesChecked(subCategories)) {
+      if (this.facilityChangeTypesChecked(subCategories)) {
+        this.isLoading = true
         const isValid = await this.validateOfmProgram()
+        this.isLoading = false
         this.isDisabled = !isValid
       } else {
         this.isDisabled = false
@@ -527,21 +631,22 @@ export default {
       return subCategories.some(
         (subCategory) =>
           subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
-          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL),
+          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
+          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE),
       )
     },
 
     toggleUnableToSubmitCrDialog() {
       this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
     },
-
     setUpDefaultNewRequestModel() {
       const facilityId = this.defaultFacility?.facilityId || this.currentFacility?.facilityId
       this.newRequestModel = {
         requestCategoryId: this.defaultRequestCategoryId,
         subCategories: [],
+        subject: this.defaultSubject,
         contactId: this.userInfo?.contactId,
-        facilities: [this.facilities?.find((facility) => facility.facilityId === facilityId)],
+        facilities: [this.filteredFacilties?.find((facility) => facility.facilityId === facilityId)],
         contactMethod: '1',
         phone: this.userInfo?.phone,
       }
@@ -579,10 +684,11 @@ export default {
 
     async createRequestAndDocuments() {
       try {
-        if (this.isAnAccountMaintenanceRequest && !Array.isArray(this.newRequestModel.facilities)) {
+        //facilities must be saved as an array or the backend will be unable to handle the request
+        if (!Array.isArray(this.newRequestModel.facilities)) {
           this.newRequestModel.facilities = [this.newRequestModel.facilities]
         }
-        const response = await this.createAssistanceRequest(this.newRequestModel)
+        const response = await MessageService.createAssistanceRequest(this.newRequestModel)
         this.referenceNumber = response?.referenceNumber
         await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
         await DocumentService.createDocuments(this.documentsToUpload, response?.assistanceRequestId)
@@ -599,7 +705,8 @@ export default {
 
     async submit() {
       const isFormValid = await this.$refs.newRequestForm?.validate()
-      if (isFormValid && this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded) {
+
+      if (isFormValid && this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded && this.documentsComplete) {
         try {
           this.isLoading = true
           this.setAssistanceRequestDescription()
@@ -617,6 +724,11 @@ export default {
             await this.createReplyAssistanceRequest(assistanceRequest.assistanceRequestId)
           }
           this.toggleNewRequestConfirmationDialog()
+
+          // Emit an event so the parent can refresh its data
+          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+            this.$emit('submitPhoneEmail')
+          }
         } catch (error) {
           this.setFailureAlert('Failed to submit change request', error)
         } finally {
@@ -644,7 +756,7 @@ export default {
     },
 
     validateChangeTypeSelection() {
-      const shouldValidate = this.isAnAccountMaintenanceRequest && !this.isAnySubCategoryChecked
+      const shouldValidate = this.isAccountMaintenanceRequest && !this.isAnySubCategoryChecked
       if (shouldValidate) {
         this.changeTypeClass = 'change-type-required'
       }
@@ -657,10 +769,10 @@ export default {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        await this.updateAssistanceRequest(assistanceRequestId, payload)
+        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(assistanceRequestId)
       } catch (error) {
-        this.setFailureAlert(`Failed to close Assistance Request - ${error}`)
+        this.setFailureAlert('Failed to close Assistance Request', error)
         throw error
       }
     },
@@ -669,11 +781,11 @@ export default {
       try {
         const payload = {
           assistanceRequestId: assistanceRequestId,
-          message: this.AUTO_REPLY_MESSAGE,
+          message: 'Your change request is complete.',
         }
-        await this.replyToAssistanceRequest(payload)
+        await MessageService.createAssistanceRequestConversation(payload)
       } catch (error) {
-        this.setFailureAlert(`Failed to create auto reply for Assistance Request - ${error}`)
+        this.setFailureAlert('Failed to create auto reply for Assistance Request', error)
         throw error
       }
     },
@@ -708,13 +820,29 @@ export default {
       return this.newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
     },
 
-    resetModelData(isAnAccountMaintenanceRequest) {
-      if (!isAnAccountMaintenanceRequest) {
+    resetModelData(isAccountMaintenanceRequest) {
+      if (!isAccountMaintenanceRequest) {
         this.newRequestModel.subCategories = []
         this.organizationModel = {}
         this.facilityModel = {}
       }
       this.disabled = false
+    },
+    async getFundingAgreements() {
+      this.fundingAgreements = []
+      try {
+        await Promise.all(
+          this.facilities?.map(async (facility) => {
+            const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
+            if (fa) {
+              this.fundingAgreements.push(fa)
+            }
+          }),
+        )
+      } catch (error) {
+        this.setFailureAlert('Failed to load Funding Agreements', error)
+        throw error
+      }
     },
   },
 }

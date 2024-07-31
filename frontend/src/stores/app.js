@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-import ApiService from '@/common/apiService'
+import LookupService from '@/services/lookupService'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -22,6 +22,7 @@ export const useAppStore = defineStore('app', {
     // reportTemplates: {},
     applicationIntakes: {},
     paymentTypes: {},
+    unions: {},
   }),
   getters: {
     getRoleNameById: (state) => {
@@ -60,12 +61,24 @@ export const useAppStore = defineStore('app', {
         return requestSubCategory?.subCategoryId
       }
     },
+    getUnionNameById: (state) => {
+      return (id) => {
+        const union = state.unions?.find((item) => item.id === id)
+        return union?.description
+      }
+    },
+    getUnionIdByName: (state) => {
+      return (name) => {
+        const union = state.unions?.find((item) => item.description === name)
+        return union?.id
+      }
+    },
   },
   actions: {
     async getLookupInfo() {
       if (localStorage.getItem('jwtToken')) {
         // DONT Call api if there is no token.
-        const lookupInfo = await ApiService.getLookupInfo()
+        const lookupInfo = await LookupService.getLookupInfo()
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.requestSubCategories = lookupInfo?.data?.requestSubCategories
         this.roles = lookupInfo?.data?.roles
@@ -75,6 +88,7 @@ export const useAppStore = defineStore('app', {
         // this.reportTemplates = lookupInfo?.data?.reportTemplates
         this.applicationIntakes = lookupInfo?.data?.applicationIntakes
         this.paymentTypes = lookupInfo?.data?.paymentTypes
+        this.unions = lookupInfo?.data?.unions
       }
     },
     async setAlertNotificationText(alertNotificationText) {

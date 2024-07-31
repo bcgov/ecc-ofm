@@ -4,13 +4,14 @@ import { defineStore } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES } from '@/utils/constants'
+import { useAppStore } from '@/stores/app'
+import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 /*
   Facility Details page - Helper functions
 */
 function checkFacilityDetailsComplete(application) {
-  return application?.primaryContactId && application?.expenseAuthorityId
+  return application?.primaryContactId && application?.expenseAuthorityId && application?.fiscalYearEndDate
 }
 
 /*
@@ -20,19 +21,16 @@ function checkRequiredDocsExist(application, requiredDocumentTypes) {
   return requiredDocumentTypes.every((type) => application.uploadedDocuments.some((doc) => doc.documentType === type))
 }
 
-function checkFacilityTypeRequiredDocs(application, requiredDocumentTypes) {
-  if (application?.facilityType === FACILITY_TYPES.RENT_LEASE) {
-    return checkRequiredDocsExist(application, requiredDocumentTypes)
-  }
-  return application?.facilityType !== FACILITY_TYPES.RENT_LEASE
+function isRentLease(application) {
+  return application?.facilityType === FACILITY_TYPES.RENT_LEASE
 }
 
 function checkOperatingCostsComplete(application) {
-  const requiredFinancialDocTypes = [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET]
-  const isRequiredFinancialDocsUploaded = checkRequiredDocsExist(application, requiredFinancialDocTypes)
-  const isFacilityTypeRequiredDocsUploaded = checkFacilityTypeRequiredDocs(application, [DOCUMENT_TYPES.SUPPORTING_DOCS])
+  const isRequiredFinancialDocsUploaded = checkRequiredDocsExist(application, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
+  const isFacilityTypeRequiredDocsUploaded = !isRentLease(application) || checkRequiredDocsExist(application, [DOCUMENT_TYPES.SUPPORTING_DOCS])
   const areCostsPositive = application?.totalYearlyOperatingCosts + application?.totalYearlyFacilityCosts > 0
-  return application?.facilityType && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
+  const isArmsLengthConfirmed = !isRentLease(application) || application?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES
+  return application?.facilityType && isArmsLengthConfirmed && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
 }
 
 /*
@@ -40,9 +38,17 @@ function checkOperatingCostsComplete(application) {
 */
 function checkServiceDeliveryComplete(application) {
   const allDetailsComplete = application.licences.every((licence) => {
-    return licence.licenceDetails.every((detail) => (detail.applyRoomSplitCondition ? !isEmpty(detail.roomSplitDetails) : true))
+    return licence.licenceDetails?.every(
+      (detail) =>
+        LicenceService.isOperationalSpacesValid(detail.operationalSpaces) &&
+        LicenceService.isEnrolledSpacesValid(detail.enrolledSpaces) &&
+        LicenceService.isWeeksInOperationValid(detail.weeksInOperation) &&
+        !isEmpty(detail.weekDays) &&
+        !isEmpty(detail.operationFromTime) &&
+        !isEmpty(detail.operationToTime) &&
+        LicenceService.isSplitClassRoomInfoValid(detail),
+    )
   })
-
   return application?.licenceDeclaration && !isEmpty(application?.licences) && allDetailsComplete
 }
 
@@ -74,7 +80,11 @@ export const useApplicationsStore = defineStore('applications', {
       this.isFacilityDetailsComplete = checkFacilityDetailsComplete(this.currentApplication)
       this.isServiceDeliveryComplete = checkServiceDeliveryComplete(this.currentApplication)
       this.isOperatingCostsComplete = checkOperatingCostsComplete(this.currentApplication)
-      this.isStaffingComplete = this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
+      this.isStaffingComplete =
+        this.isThereAtLeastOneEmployee(this.currentApplication) &&
+        this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication) &&
+        this.isUnionSectionComplete(this.currentApplication) &&
+        this.isCSSEASectionComplete(this.currentApplication)
       this.isDeclareSubmitComplete = checkDeclareSubmitComplete(this.currentApplication)
     },
 
@@ -129,6 +139,19 @@ export const useApplicationsStore = defineStore('applications', {
       const allCertificateNumbers = certificates?.map((certificate) => certificate.certificateNumber)?.filter((certificateNumber) => certificateNumber)
       const uniqueCertificateNumbers = [...new Set(allCertificateNumbers)]
       return allCertificateNumbers?.length === uniqueCertificateNumbers?.length
+    },
+
+    isOtherUnionSelected(application) {
+      const appStore = useAppStore()
+      return application?.unions?.includes(appStore.getUnionIdByName('Other'))
+    },
+
+    isUnionSectionComplete(application) {
+      return application?.isUnionized === 0 || (!isEmpty(application?.unions) && (!this.isOtherUnionSelected(application) || !isEmpty(application?.unionDescription)))
+    },
+
+    isCSSEASectionComplete(application) {
+      return application?.cssea != null
     },
   },
 })

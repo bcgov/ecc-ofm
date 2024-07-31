@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, getOperationWithObjectId } = require('./utils')
+const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { FundingAgreementMappings } = require('../util/mapping/Mappings')
@@ -8,6 +8,11 @@ const log = require('./logger')
 const { isEmpty } = require('lodash')
 
 async function getFundingAgreements(req, res) {
+  // TODO (jenbeckett) We shoud validate that either facilityId or applicationId are required
+  // You should be able to do this in the route with oneOf() and then this can be removed
+  if (isEmpty(req?.query)) {
+    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
+  }
   try {
     const fundingAgreements = []
     let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
@@ -15,13 +20,13 @@ async function getFundingAgreements(req, res) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
-    operation += `&$filter=(${filter})`
+    operation += `&$filter=(${filter})&$orderby=ofm_version_number desc`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
       const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
       if (req.query?.includeEA) {
         const ea = funding.ofm_application?.ofm_expense_authority
-        fa.expenseAuthority = ea ? `${ea.ofm_first_name} ${ea.ofm_last_name}` : ''
+        fa.expenseAuthority = ea ? `${ea.ofm_first_name ?? ''} ${ea.ofm_last_name}` : ''
       }
 
       fundingAgreements.push(fa)
@@ -31,8 +36,7 @@ async function getFundingAgreements(req, res) {
     }
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 

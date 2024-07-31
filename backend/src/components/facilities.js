@@ -3,6 +3,7 @@ const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
 const { getMappingString } = require('../util/common')
+const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 
 //these numbers are specified in Dynamics. There is no 1 or 2 because that
@@ -39,12 +40,13 @@ function formatQueryString() {
 async function getFacility(req, res) {
   try {
     const facilityMappingString = getMappingString(FacilityMappings)
-    const operation = `accounts(${req.params.accountId})?$select=${facilityMappingString},${formatQueryString()}`
+    const operation = `accounts(${req.params.facilityId})?$select=${facilityMappingString},${formatQueryString()}`
     const response = await getOperation(operation)
     const resp = new MappableObjectForFront(response, FacilityMappings).toJSON()
     resp.additionalAddresses = formatPayload(response)
     return res.status(HttpStatus.OK).json(resp)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -67,6 +69,7 @@ async function getFacilityContacts(req, res) {
     })
     return res.status(HttpStatus.OK).json(contacts)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -79,28 +82,22 @@ async function getFacilityLicences(req, res) {
     response?.value?.forEach((item) => licences.push(new MappableObjectForFront(item, LicenceMappings).toJSON()))
     return res.status(HttpStatus.OK).json(licences)
   } catch (e) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
-
-async function updateFacilityPrimaryContact(req, res) {
-  try {
-    const payload = {}
-    const primaryContactId = Object.keys(req.body)[0]
-    payload['ofm_primarycontact@odata.bind'] = `/contacts(${primaryContactId})`
-    const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
-    return res.status(HttpStatus.OK).json(response)
-  } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 async function updateFacility(req, res) {
-  const payload = new MappableObjectForBack(req.body, FacilityMappings).toJSON()
   try {
+    const payload = new MappableObjectForBack(req.body, FacilityMappings).toJSON()
+    if ('_ofm_primarycontact_value' in payload) {
+      payload['ofm_primarycontact@odata.bind'] = payload['_ofm_primarycontact_value'] ? `/contacts(${payload['_ofm_primarycontact_value']})` : null
+      delete payload['_ofm_primarycontact_value']
+    }
     const response = await patchOperationWithObjectId('accounts', req.params.facilityId, payload)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, FacilityMappings))
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -109,6 +106,5 @@ module.exports = {
   getFacility,
   getFacilityContacts,
   getFacilityLicences,
-  updateFacilityPrimaryContact,
   updateFacility,
 }

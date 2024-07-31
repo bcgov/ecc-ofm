@@ -1,14 +1,13 @@
-let baseRoot = '/api'
-const authRoot = baseRoot + '/auth'
+const baseRoot = '/api'
+const authRoot = `${baseRoot}/auth`
 
 export const AuthRoutes = Object.freeze({
   LOGIN: authRoot + '/login',
   LOGIN_IDIR: authRoot + '/login-idir',
   LOGOUT: authRoot + '/logout',
-  SESSION_EXPIRED: authRoot + '/logout?sessionExpired=true',
+  LOGOUT_IDIR: authRoot + '/logout-idir',
   REFRESH: authRoot + '/refresh',
   TOKEN: authRoot + '/token',
-  SESSION_REMAINING_TIME: authRoot + '/user-session-remaining-time',
 })
 
 export const ApiRoutes = Object.freeze({
@@ -24,22 +23,28 @@ export const ApiRoutes = Object.freeze({
   NOTIFICATIONS: baseRoot + '/notifications',
   ORGANIZATIONS: baseRoot + '/organizations',
   ORGANIZATIONS_FACILITIES: baseRoot + '/organizations/:organizationId/facilities',
-  ORGANIZATIONS_USERS: '/:organizationId/users',
+  ORGANIZATIONS_USERS: baseRoot + '/organizations/:organizationId/users',
   PAYMENTS: baseRoot + '/payments',
   REPORTS: baseRoot + '/reports',
   SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
   SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
+  IRREGULAR_APPLICATIONS: baseRoot + '/irregular',
   USER: baseRoot + '/user',
-  USER_FACILITIES: '/:contactId/facilities',
+  USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
+  SUBMITTED: 1,
   ASSIGNED: 2,
   WITH_PROVIDER: 3,
   READY_TO_RESOLVE: 4,
-  CLOSED_COMPLETE: 5,
-  CLOSED_CANCELLED: 6,
+  CLOSED_COMPLETE: 5, // INACTIVE state
+  CLOSED_CANCELLED: 6, // INACTIVE state
+})
+
+export const IRREGULAR_EXPENSE_STATUS_CODES = Object.freeze({
+  APPROVED: 6,
 })
 
 export const CRM_STATE_CODES = Object.freeze({
@@ -125,6 +130,8 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
 
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
+  REPORTING: 'Reporting',
+  IRREGULAR_EXPENSES: 'Irregular Expense',
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
@@ -171,6 +178,7 @@ export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({
 })
 
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
+  FISCAL_YEAR_END_DATE: 'Fiscal year end date required',
   PRIMARY_CONTACT: 'Primary contact required',
   EXPENSE_AUTHORITY: 'Expense authority required',
   LICENCE_INFO: 'Licence information required',
@@ -179,8 +187,11 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
   FACILITY_TYPE: 'Facility type required',
+  ARM_LENGTH: "Arm's Length agreement checkbox required",
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
+  UNION: 'Union information required',
+  CSSEA: 'CSSEA information required',
   MISMATCH_NUMBER_STAFF_CERTIFICATE: 'The total of staff and total of certificates must match',
   DUPLICATE_CERTIFICATE_NUMBERS: 'Certificate number already exists, duplicate certificates are not permitted',
   DUPLICATE_CERTIFICATE_INITIALS: 'Initials already exists, please ensure staff are entered only once on this page.',
@@ -200,6 +211,7 @@ export const SURVEY_RESPONSE_STATUSES = Object.freeze({
   DRAFT: 'Draft',
   COMPLETED: 'Completed',
   COMPLETED_LATE: 'Completed - Late',
+  COMPLETED_CLOSED: 'Completed - Closed',
 })
 
 export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
@@ -227,6 +239,12 @@ export const DOCUMENT_TYPES = Object.freeze({
   SUPPORTING_DOCS: 'Supporting Documents',
 })
 
+export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
+  YES: 1,
+  NO: 2,
+  NA: 3,
+})
+
 export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
 export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
 export const OFM_PROGRAM = 'OFM Program'
@@ -240,3 +258,39 @@ export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
   'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.'
 
 export const BLANK_FIELD = '- - - -'
+
+export const APPLICATION_TYPES = Object.freeze({
+  OFM: 'Base Funding',
+  IRREGULAR_EXPENSE: 'Irregular Expense',
+})
+
+export const DAYS_OF_WEEK = Object.freeze([
+  {
+    title: 'Monday',
+    value: 1,
+  },
+  {
+    title: 'Tuesday',
+    value: 2,
+  },
+  {
+    title: 'Wednesday',
+    value: 3,
+  },
+  {
+    title: 'Thursday',
+    value: 4,
+  },
+  {
+    title: 'Friday',
+    value: 5,
+  },
+  {
+    title: 'Saturday',
+    value: 6,
+  },
+  {
+    title: 'Sunday',
+    value: 7,
+  },
+])

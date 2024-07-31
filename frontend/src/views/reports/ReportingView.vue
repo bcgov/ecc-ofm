@@ -24,12 +24,7 @@
         </v-window>
       </v-card-text>
     </v-card>
-
-    <v-row class="my-2">
-      <v-col cols="5">
-        <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
-      </v-col>
-    </v-row>
+    <AppBackButton id="back-home-button" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
   </v-container>
 </template>
 

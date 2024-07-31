@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 
 import { BLANK_FIELD } from '@/utils/constants'
@@ -7,6 +8,11 @@ function formatDate(date) {
   return moment.utc(date).format('YYYY-MMM-DD')
 }
 
+function formatTwoMonthDate(date) {
+  if (!date) return BLANK_FIELD
+  return moment.utc(date).format('YYYY-MM-DD')
+}
+
 function formatDateTime(date) {
   if (!date) return BLANK_FIELD
   return moment(date).format('YYYY-MMM-DD hh:mm A')
@@ -14,6 +20,42 @@ function formatDateTime(date) {
 
 function formatDateToUTC(date) {
   return new Date(date).toLocaleString('en-CA', { timeZone: 'UTC', dateStyle: 'full' })
+}
+
+function convertUTCDatetoPSTDate(date) {
+  if (!date) return null
+  const dateObject = new Date(date)
+  const pstOffset = 8 * 60 // PST offset in minutes
+  // Adjust the date by the difference in offsets
+  const pstDate = new Date(dateObject.getTime() + pstOffset * 60000)
+  return pstDate.toISOString().split('.')[0] + 'Z'
+}
+
+function formatTime12to24(time12h) {
+  if (isEmpty(time12h) || !is12hFormat(time12h)) return time12h
+  const [time, modifier] = time12h.split(' ')
+  let [hours, minutes] = time.split(':')
+  if (hours === '12') {
+    hours = '00'
+  }
+  if (modifier?.toUpperCase() === 'PM') {
+    hours = parseInt(hours, 10) + 12
+  }
+  return `${hours}:${minutes}`
+}
+
+function formatTime24to12(time24h) {
+  if (isEmpty(time24h) || is12hFormat(time24h)) return time24h
+  let hours = Number(time24h?.split(':')[0])
+  const minutes = time24h?.split(':')[1]
+  const ampm = hours >= 12 ? 'pm' : 'am'
+  hours = hours % 12
+  hours = hours ? hours : 12 // the hour '0' should be '12'
+  return `${hours}:${minutes} ${ampm}`
+}
+
+function is12hFormat(time) {
+  return time?.toUpperCase().includes('AM') || time?.toUpperCase().includes('PM')
 }
 
 /**
@@ -27,8 +69,12 @@ function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
 }
 
 export default {
+  convertUTCDatetoPSTDate,
   formatDate,
   formatDateTime,
   formatDecimalNumber,
   formatDateToUTC,
+  formatTime12to24,
+  formatTime24to12,
+  formatTwoMonthDate,
 }

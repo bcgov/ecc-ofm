@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" class="mt-10">
-    <h2>Supplementary Application Submit</h2>
+    <h2>Allowances (Core and Discretionary Services)</h2>
     <v-row v-if="!loading" no-gutters class="mb-2">
       <v-col cols="12" align="right">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
@@ -238,7 +238,7 @@ export default {
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
-        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid)
+        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid, true)
 
         this.setSuppTermDates()
         //we need submitted transport applications to verify that all VINs are unique, even in past applications

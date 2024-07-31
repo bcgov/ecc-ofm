@@ -14,9 +14,10 @@ module.exports = router
  * Get licence's licence details by licenceId.
  */
 router.get(
-  '/:licenceId/licence-details',
+  '/:licenceId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   [param('licenceId', 'URL param: [licenceId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()

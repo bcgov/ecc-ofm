@@ -1,8 +1,8 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
-const { buildFilterQuery } = require('../util/common')
+const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
@@ -37,9 +37,6 @@ function mapSupplementaryApplicationObjectForFront(data) {
 
 async function getApplications(req, res) {
   try {
-    if (isEmpty(req?.query)) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
-    }
     const applications = []
     const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(${buildFilterQuery(
       req?.query,
@@ -49,8 +46,7 @@ async function getApplications(req, res) {
     response?.value?.forEach((application) => applications.push(mapApplicationObjectForFront(application)))
     return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
   }
 }
 
@@ -62,8 +58,17 @@ async function getApplication(req, res) {
     application.providerEmployees = response?.ofm_application_provideremployee?.map((employee) => new MappableObjectForFront(employee, ApplicationProviderEmployeeMappings).toJSON())
     return res.status(HttpStatus.OK).json(application)
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
+  }
+}
+
+async function getApplicationPDF(req, res) {
+  try {
+    const operation = `ofm_applications(${req.params.applicationId})/ofm_application_pdf`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    handleError(res, e)
   }
 }
 
@@ -109,24 +114,30 @@ async function createApplication(req, res) {
   }
 }
 
-function buildGetSupplementaryApplicationsFilterQuery(query) {
-  let filterQuery = 'and statuscode ne 2'
-  if (isEmpty(query)) return filterQuery
-  const mappedQuery = new MappableObjectForBack(query, SupplementaryApplicationMappings).toJSON()
-  Object.entries(mappedQuery)?.forEach(([key, value]) => {
-    filterQuery = filterQuery.concat(` and ${key} eq ${value}`)
-  })
-  return filterQuery
+function buildSupplementaryApplicationsDateQuery(query) {
+  if (isEmpty(query)) return ''
+  const dateQuery = buildDateFilterQuery(query, 'ofm_start_date')
+  return dateQuery
 }
 
 async function getSupplementaryApplications(req, res) {
   try {
-    const operation = `ofm_allowances?$filter=(_ofm_application_value eq ${req.params.applicationId} ${buildGetSupplementaryApplicationsFilterQuery(req.query)} )`
+    const filterObj = { applicationId: req.params.applicationId, ...req?.query }
+    const operation = `ofm_allowances?$filter=(${buildSupplementaryApplicationsDateQuery(req?.query)} ${buildFilterQuery(filterObj, SupplementaryApplicationMappings)} and statuscode ne 2)`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(mapSupplementaryApplicationObjectForFront(response.value))
   } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    handleError(res, e)
+  }
+}
+
+async function getSupplementaryApplicationById(req, res) {
+  try {
+    const operation = `ofm_allowances(${req?.params.applicationId})`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, SupplementaryApplicationMappings).toJSON())
+  } catch (e) {
+    handleError(res, e)
   }
 }
 
@@ -179,6 +190,26 @@ async function deleteSupplementaryApplication(req, res) {
   }
 }
 
+async function getSupplementaryApplicationPDF(req, res) {
+  try {
+    const operation = `ofm_allowances(${req.params.applicationId})/ofm_supplementary_application_pdf`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    handleError(res, e)
+  }
+}
+
+async function getSupplementaryApprovalPDF(req, res) {
+  try {
+    const operation = `ofm_allowances(${req.params.applicationId})/ofm_approval_pdf`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    handleError(res, e)
+  }
+}
+
 async function createEmployeeCertificate(req, res) {
   try {
     const payload = {
@@ -228,4 +259,8 @@ module.exports = {
   createEmployeeCertificate,
   updateEmployeeCertificate,
   deleteEmployeeCertificate,
+  getApplicationPDF,
+  getSupplementaryApplicationPDF,
+  getSupplementaryApprovalPDF,
+  getSupplementaryApplicationById,
 }
