@@ -428,6 +428,20 @@ const QuestionResponseMappings = [
   { back: 'ofm_response_text', front: 'value' },
 ]
 
+const SystemMessageMappings = [{ back: 'ofm_message', front: 'content' }]
+
+const IrregularExpenseMappings = [
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'ofm_caption', front: 'referenceNumber' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+  { back: '_ofm_assistance_request_value', front: 'assistanceRequestId' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_expenseid', front: 'irregularExpenseId' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+]
+
 module.exports = {
   ApplicationIntakeMappings,
   ApplicationMappings,
@@ -456,6 +470,7 @@ module.exports = {
   SurveyQuestionBusinessRulesMappings,
   SurveyResponseMappings,
   // ReportTemplateMappings,
+  SystemMessageMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,
@@ -463,4 +478,5 @@ module.exports = {
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
+  IrregularExpenseMappings,
 }

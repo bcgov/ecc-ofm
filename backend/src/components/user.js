@@ -77,7 +77,7 @@ async function getUserInfo(req, res) {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(resData)
       }
     } else {
-      // TODO: Get info for ministry user from session header for now... until we get an endpiont for ministry
+      // XXX Get info for ministry user from session header for now... until we get an endpiont for ministry
       // user from dynamics
       resData.userId = userGuid
       resData.firstName = req.session.passport.user._json.given_name

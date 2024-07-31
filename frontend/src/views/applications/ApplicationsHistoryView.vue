@@ -71,7 +71,7 @@
         <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
-    <v-skeleton-loader :loading="loading" type="table-tbody">
+    <v-skeleton-loader id="table" :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
       <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" :mobile="null" mobile-breakpoint="md" class="soft-outline" density="compact">
         <template #item.status="{ item }">
@@ -79,9 +79,10 @@
         </template>
 
         <template #item.actions="{ item }">
-          <router-link :to="getActionsRoute(item)">
+          <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
+          <a v-else @click="getPDF(item)" href="#table">View Application</a>
         </template>
 
         <template #item.submittedDate="{ item }">
@@ -128,9 +129,13 @@ import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
+import IrregularExpenseService from '@/services/irregularExpenseService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import DocumentService from '@/services/documentService'
+import { createPDFDownloadLink } from '@/utils/common'
+
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
@@ -156,6 +161,7 @@ export default {
       applications: [],
       supplementaryApplications: [],
       applicationItems: [],
+      irregularExpenses: [],
       headers: [
         { title: 'Application ID', key: 'referenceNumber', width: '6%' },
         { title: 'Application Type', key: 'applicationType', width: '12%' },
@@ -185,6 +191,7 @@ export default {
     hasAValidFundingAgreement() {
       return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
     },
+
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
     },
@@ -216,6 +223,7 @@ export default {
   async created() {
     try {
       this.loading = true
+      this.APPLICATION_TYPES = APPLICATION_TYPES
       this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
@@ -224,7 +232,9 @@ export default {
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
       await this.getApplicationsAndFundingAgreement()
       await this.getSupplementaryApplications()
+      await this.getIrregularExpenseApplications()
       this.mergeRegularAndSupplementaryApplications()
+
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
       }
@@ -244,15 +254,16 @@ export default {
       }
       return 'View Application'
     },
-
     isApplicationCancellable(application) {
-      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.DRAFT_STATUS_CODES.includes(application?.statusCode) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && application.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE
     },
 
     showPDFDownloadButton(application) {
       //OFM core generates PDF upon submit - Supp App generates PDF only once approved
       if (application.applicationType === APPLICATION_TYPES.OFM) {
         return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+      } else if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+        return false
       }
       return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
     },
@@ -288,7 +299,8 @@ export default {
       await Promise.all(
         this.applications?.map(async (application) => {
           application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
+          //we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user from applying for Irreg Expense funding
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
         }),
       )
     },
@@ -361,7 +373,7 @@ export default {
       this.applicationItems = this.transformApplicationsToItems(this.applications)
       const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
-      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems]
+      this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregularExpenses]
     },
 
     getStatusClass(statusCode) {
@@ -389,6 +401,20 @@ export default {
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 
+    async getPDF(item) {
+      const doc = await DocumentService.getDocuments(item?.assistanceRequestId)
+      //TODO- post MVP - add a document Category / type to assistance request to find their application document
+      //this will return an array - we are assuming the user uploads their PDF first.
+      //we could add in to search for a file of type PDF - but we don't have requirements for this
+      const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
+
+      try {
+        createPDFDownloadLink(file, doc[0]?.fileName)
+      } catch (error) {
+        this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
+      }
+    },
+
     sortApplicationItems(applicationItems) {
       if (!applicationItems) return []
       applicationItems.sort((a, b) => {
@@ -411,16 +437,8 @@ export default {
           resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
         }
 
-        const link = document.createElement('a')
-        link.href = `data:application/pdf;base64,${resp}`
-        link.target = '_blank'
-        link.download = application.referenceNumber
-
-        // Simulate a click on the element <a>
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      } catch (ignoreError) {
+        createPDFDownloadLink(resp, application.referenceNumber)
+      } catch (error) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
     },
@@ -430,6 +448,30 @@ export default {
      */
     toggleChangeRequestDialog() {
       this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+    async getIrregularExpenseApplications() {
+      await Promise.all(
+        this.applications?.map(async (application) => {
+          //you can only apply for Irreg Expesne if you have an active FA
+          if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
+            const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
+            expenses?.forEach((expense) => {
+              this.irregularExpenses.push({
+                applicationId: application?.applicationId,
+                referenceNumber: expense?.referenceNumber,
+                status: expense?.statusName,
+                applicationType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
+                facilityName: application.facilityName ? application.facilityName : '',
+                submittedDate: null,
+                latestActivityDate: expense?.lastUpdatedTime,
+                statusCode: expense?.statusCode,
+                irregularExpenseId: expense?.irregularExpenseId,
+                assistanceRequestId: expense?.assistanceRequestId,
+              })
+            })
+          }
+        }),
+      )
     },
   },
 }

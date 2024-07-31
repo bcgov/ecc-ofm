@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getDocuments, createDocuments, deleteDocument } = require('../components/documents')
+const { getDocuments, createDocuments, deleteDocument, getDocumentFile } = require('../components/documents')
 const { param, query, validationResult } = require('express-validator')
 const multer = require('multer')
 const upload = multer()
@@ -19,6 +19,21 @@ router.get('/', passport.authenticate('jwt', { session: false }), isValidBackend
   validationResult(req).throw()
   return getDocuments(req, res)
 })
+
+/**
+ * Get a base 64 encoded file by documentID
+ */
+router.get(
+  '/:documentId/file',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  [param('documentId', 'URL param: [documentId] is required').notEmpty().isUUID()],
+  validateRole(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getDocumentFile(req, res)
+  },
+)
 
 /**
  * Create new documents

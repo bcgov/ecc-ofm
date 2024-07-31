@@ -28,6 +28,8 @@ export const ApiRoutes = Object.freeze({
   REPORTS: baseRoot + '/reports',
   SUPPLEMENTARY_ALLOWANCES: baseRoot + '/supp-allowances',
   SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
+  SYSTEM_MESSAGES: baseRoot + '/public/system-messages',
+  IRREGULAR_APPLICATIONS: baseRoot + '/irregular',
   USER: baseRoot + '/user',
   USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
@@ -40,6 +42,10 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   READY_TO_RESOLVE: 4,
   CLOSED_COMPLETE: 5, // INACTIVE state
   CLOSED_CANCELLED: 6, // INACTIVE state
+})
+
+export const IRREGULAR_EXPENSE_STATUS_CODES = Object.freeze({
+  APPROVED: 6,
 })
 
 export const CRM_STATE_CODES = Object.freeze({
@@ -256,6 +262,7 @@ export const BLANK_FIELD = '- - - -'
 
 export const APPLICATION_TYPES = Object.freeze({
   OFM: 'Base Funding',
+  IRREGULAR_EXPENSE: 'Irregular Expense',
 })
 
 export const DAYS_OF_WEEK = Object.freeze([

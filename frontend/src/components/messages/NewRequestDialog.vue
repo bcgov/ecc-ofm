@@ -320,6 +320,7 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
+import MessageService from '@/services/messageService'
 import OrganizationService from '@/services/organizationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
@@ -585,15 +586,7 @@ export default {
     this.setUpDefaultNewRequestModel()
   },
   methods: {
-    ...mapActions(useMessagesStore, [
-      'createAssistanceRequest',
-      'addNewAssistanceRequestToStore',
-      'updateAssistanceRequest',
-      'updateAssistanceRequestInStore',
-      'replyToAssistanceRequest',
-      'getAssistanceRequest',
-      'getAssistanceRequests',
-    ]),
+    ...mapActions(useMessagesStore, ['addNewAssistanceRequestToStore', 'updateAssistanceRequestInStore']),
 
     //this function runs to check if the selected facility is able to submit certain kinds of assitance requests.
     //it is only available to Account Managers and should only be called if the correct checkbox(es) are selected
@@ -695,7 +688,7 @@ export default {
         if (!Array.isArray(this.newRequestModel.facilities)) {
           this.newRequestModel.facilities = [this.newRequestModel.facilities]
         }
-        const response = await this.createAssistanceRequest(this.newRequestModel)
+        const response = await MessageService.createAssistanceRequest(this.newRequestModel)
         this.referenceNumber = response?.referenceNumber
         await this.addNewAssistanceRequestToStore(response?.assistanceRequestId)
         await DocumentService.createDocuments(this.documentsToUpload, response?.assistanceRequestId)
@@ -776,7 +769,7 @@ export default {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
           stateCode: CRM_STATE_CODES.INACTIVE,
         }
-        await this.updateAssistanceRequest(assistanceRequestId, payload)
+        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(assistanceRequestId)
       } catch (error) {
         this.setFailureAlert('Failed to close Assistance Request', error)
@@ -790,7 +783,7 @@ export default {
           assistanceRequestId: assistanceRequestId,
           message: 'Your change request is complete.',
         }
-        await this.replyToAssistanceRequest(payload)
+        await MessageService.createAssistanceRequestConversation(payload)
       } catch (error) {
         this.setFailureAlert('Failed to create auto reply for Assistance Request', error)
         throw error

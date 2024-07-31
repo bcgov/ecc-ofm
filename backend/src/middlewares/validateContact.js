@@ -12,7 +12,7 @@ module.exports = function () {
 
     if (isIdirUser(req)) return next()
 
-    const contactId = req?.params.contactId
+    const contactId = req?.params.contactId ?? req?.query.contactId
     if (!contactId) return next()
     const valid = contactId === req.session?.passport?.user.contactId
 
