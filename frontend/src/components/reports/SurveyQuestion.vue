@@ -184,7 +184,8 @@ export default {
     this.NUMBER_FORMAT = {
       nullValue: '0',
       separator: ',',
-      precision: 0,
+      decimal: '.',
+      precision: 2,
     }
   },
 
