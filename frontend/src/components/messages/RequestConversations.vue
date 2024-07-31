@@ -96,7 +96,6 @@ import AppButton from '@/components/ui/AppButton.vue'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
 import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
-import MessageService from '@/services/messageService'
 
 export default {
   components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
