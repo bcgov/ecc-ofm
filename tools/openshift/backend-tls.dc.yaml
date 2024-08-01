@@ -36,12 +36,6 @@ objects:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-backend:${TAG}
               imagePullPolicy: Always
-              volumeMounts:
-                - name: tls-certs
-                  mountPath: '/etc/tls-certs'
-                  readOnly: true
-                - name: log-storage
-                  mountPath: /logs
               livenessProbe:
                 initialDelaySeconds: 20
                 failureThreshold: 5
@@ -78,16 +72,17 @@ objects:
                 limits:
                   cpu: '${MAX_CPU}'
                   memory: '${MAX_MEM}'
+              volumeMounts:
+                - name: tls-certs
+                  mountPath: '/etc/tls-certs'
+                  readOnly: true
+                - name: log-storage
+                  mountPath: /logs
             - image: artifacts.developer.gov.bc.ca/docker-remote/fluent/fluent-bit:1.5.7
               name: "${APP_NAME}-${BRANCH}-fluent-bit-sidecar"
               imagePullPolicy: Always
               imagePullSecrets:
                 - name: artifactory-creds
-              volumeMounts:
-                - name: log-storage
-                  mountPath: /mnt/log
-                - name: flb-sc-config-volume
-                  mountPath: /fluent-bit/etc/
               readinessProbe:
                 tcpSocket:
                   port: 2020
@@ -116,6 +111,11 @@ objects:
                 limits:
                   cpu: "10m"
                   memory: "50Mi"
+              volumeMounts:
+                - name: log-storage
+                  mountPath: /mnt/log
+                - name: flb-sc-config-volume
+                  mountPath: /fluent-bit/etc/
           volumes:
             - name: log-storage
               emptyDir: {}
