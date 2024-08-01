@@ -14,6 +14,7 @@ readonly SOAM_IDP_HINT_IDIR=${11}
 readonly SPLUNK_TOKEN=${12}
 readonly SOAM_KC_REALM_ID="childcare-applications"
 readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
+readonly TIMEZONE="America/Vancouver"
 
 NAMESPACE_SUFFIX="$ENV_VAL"
 if [ "$ENV_VAL" = "dev" ] || [ "$ENV_VAL" = "test" ]; then
@@ -92,6 +93,7 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="D365_API_KEY_HEADER=$D365_API_KEY_HEADER" \
   --from-literal="D365_API_KEY_VALUE=$D365_API_KEY_VALUE" \
   --from-literal="LOG_LEVEL=$LOG_LEVEL" \
+  --from-literal="TZ=$TIMEZONE" \
   --from-literal="NODE_ENV=$NODE_ENV" \
   --from-literal="REDIS_ENABLE=true" \
   --from-literal="REDIS_CLUSTERED=true" \
