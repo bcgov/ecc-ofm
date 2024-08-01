@@ -345,12 +345,14 @@ export default {
   methods: {
     getDayNames(days) {
       const dayNames = DAYS_OF_WEEK.map((day) => day.title)
+      /* eslint-disable indent */
       return typeof days === 'string'
         ? days
             ?.split(',')
             ?.map((day) => dayNames[Number(day) - 1])
             ?.join(', ')
         : days
+      /* eslint-enable indent */
     },
 
     convertStringDaysToArray(days) {
@@ -369,7 +371,7 @@ export default {
       this.$emit('update', licenceDetail)
 
       //XXX this code needs to be validated twice in order to work properly. It's a mystery as to why that is required but it works for now
-      const done = await this.$refs.form?.validate()
+      await this.$refs.form?.validate()
 
       this.$emit('setDetailsComplete', this.licence?.licenceId, await this.$refs.form?.validate())
     },

@@ -262,7 +262,7 @@ export default {
         this.supplementaryDeclaration = this.models.every((el) => el.supplementaryDeclaration)
         this.setSubmit()
       } catch (error) {
-        this.setFailureAlert('Failed to load supplementary applications')
+        this.setFailureAlert('Failed to load supplementary applications', error)
       } finally {
         this.loading = false
         this.$emit('process', false)
@@ -327,10 +327,10 @@ export default {
         }
 
         if (showAlert) {
-          this.setSuccessAlert(`Application Saved`)
+          this.setSuccessAlert('Application Saved')
         }
       } catch (error) {
-        this.setFailureAlert('Failed to save supplementary applications')
+        this.setFailureAlert('Failed to save supplementary applications', error)
       } finally {
         this.$emit('process', false)
         this.loading = false

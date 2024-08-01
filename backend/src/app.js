@@ -46,7 +46,7 @@ const { getRedisDbSession } = require('./util/redis/redis-client')
 
 const promMid = require('express-prometheus-middleware')
 const rateLimit = require('express-rate-limit')
-const {RedisStore} = require('rate-limit-redis')
+const { RedisStore } = require('rate-limit-redis')
 const HttpStatus = require('http-status-codes')
 
 //initialize app
@@ -186,6 +186,7 @@ const parseJwt = (token) => {
   try {
     return JSON.parse(atob(token.split('.')[1]))
   } catch (e) {
+    log.error(e)
     return null
   }
 }
@@ -243,12 +244,13 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 
   // Redis store configuration
+  /* eslint-disable indent */
   store: dbSession
     ? new RedisStore({
-        // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
         sendCommand: (...args) => dbSession.client.call(...args),
       })
     : undefined,
+  /* eslint-enable indent */
 })
 
 app.use('/api/public', limiter)

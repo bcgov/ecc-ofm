@@ -105,7 +105,7 @@ async function getSurveyResponses(req, res) {
     const surveyResponses = []
     let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE}`
     if (req.query?.isSubmitted != null) {
-      filter += req.query?.isSubmitted === 'true' ? ` and _ofm_contact_value ne null` : ` and _ofm_contact_value eq null`
+      filter += req.query?.isSubmitted === 'true' ? ' and _ofm_contact_value ne null' : ' and _ofm_contact_value eq null'
     }
     const operation = `ofm_survey_responses?$filter=(${filter})`
     const response = await getOperation(operation)
@@ -124,7 +124,7 @@ async function getSurveyResponsesCount(req, res) {
   try {
     let filter = `${buildDateFilterQuery(req?.query, 'ofm_submitted_on')}${buildFilterQuery(req?.query, SurveyResponseMappings)} and statuscode ne ${SURVEY_RESPONSE_STATUS_CODES.INACTIVE}`
     if (req.query?.isSubmitted != null) {
-      filter += req.query?.isSubmitted === 'true' ? ` and _ofm_contact_value ne null` : ` and _ofm_contact_value eq null`
+      filter += req.query?.isSubmitted === 'true' ? ' and _ofm_contact_value ne null' : ' and _ofm_contact_value eq null'
     }
     const operation = `ofm_survey_responses?$filter=(${filter})&$apply=aggregate($count as count)`
     const response = await getOperation(operation)

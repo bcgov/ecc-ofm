@@ -11,8 +11,10 @@ readonly SOAM_CLIENT_ID=$8
 readonly SOAM_CLIENT_SECRET=$9
 readonly SOAM_IDP_HINT_BCEID=${10}
 readonly SOAM_IDP_HINT_IDIR=${11}
+readonly SPLUNK_TOKEN=${12}
 readonly SOAM_KC_REALM_ID="childcare-applications"
 readonly D365_API_ENDPOINT="http://$D365_API_PREFIX-$ENV_VAL:5091"
+readonly TIMEZONE="America/Vancouver"
 
 NAMESPACE_SUFFIX="$ENV_VAL"
 if [ "$ENV_VAL" = "dev" ] || [ "$ENV_VAL" = "test" ]; then
@@ -91,6 +93,7 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="D365_API_KEY_HEADER=$D365_API_KEY_HEADER" \
   --from-literal="D365_API_KEY_VALUE=$D365_API_KEY_VALUE" \
   --from-literal="LOG_LEVEL=$LOG_LEVEL" \
+  --from-literal="TZ=$TIMEZONE" \
   --from-literal="NODE_ENV=$NODE_ENV" \
   --from-literal="REDIS_ENABLE=true" \
   --from-literal="REDIS_CLUSTERED=true" \
@@ -118,3 +121,48 @@ oc -n "$OPENSHIFT_NAMESPACE" set env \
   --from="configmap/$APP_NAME-backend-$ENV_VAL-config-map" \
   "dc/$APP_NAME-backend-$ENV_VAL"
 
+if [ "$ENV_VAL" != 'qa' ] && [ "$ENV_VAL" != 'efx' ]; then
+    echo "Generating Splunk configuration"
+    SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
+    FLB_CONFIG="[SERVICE]
+   Flush        1
+   Daemon       Off
+   Log_Level    debug
+   HTTP_Server   On
+   HTTP_Listen   0.0.0.0
+   Parsers_File parsers.conf
+[INPUT]
+   Name   tail
+   Path   /mnt/log/*
+   Parser docker
+   Mem_Buf_Limit 20MB
+[FILTER]
+   Name record_modifier
+   Match *
+   Record hostname \${HOSTNAME}
+[OUTPUT]
+   Name   stdout
+   Match  *
+[OUTPUT]
+   Name  splunk
+   Match *
+   Host  $SPLUNK_URL
+   Port  443
+   TLS         On
+   TLS.Verify  Off
+   Message_Key $APP_NAME
+   Splunk_Token $SPLUNK_TOKEN
+"
+    PARSER_CONFIG="
+[PARSER]
+    Name        docker
+    Format      json
+"
+
+    echo Creating config map "$APP_NAME-flb-sc-config-map"
+    oc create -n "$OPENSHIFT_NAMESPACE" \
+       configmap "$APP_NAME-flb-sc-config-map" \
+       --from-literal=fluent-bit.conf="$FLB_CONFIG" \
+       --from-literal=parsers.conf="$PARSER_CONFIG" \
+       --dry-run -o yaml | oc apply -f -
+fi

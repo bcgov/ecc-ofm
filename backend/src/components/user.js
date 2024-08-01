@@ -21,7 +21,6 @@ const {
 } = require('../util/mapping/Mappings')
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const _ = require('lodash')
 
 const USER_NOT_FOUND = 'User not found.'
 const NO_PERMISSIONS = 'No permissions.'

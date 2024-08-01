@@ -10,7 +10,7 @@ const { isEmpty } = require('lodash')
 async function getPayments(req, res) {
   try {
     const payments = []
-    let operation = `ofm_payments?$select=ofm_paymentid,ofm_name,_ofm_facility_value,_ofm_funding_value,ofm_payment_type,ofm_amount,ofm_invoice_date,statuscode,statecode`
+    let operation = 'ofm_payments?$select=ofm_paymentid,ofm_name,_ofm_facility_value,_ofm_funding_value,ofm_payment_type,ofm_amount,ofm_invoice_date,statuscode,statecode'
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_invoice_date')}${buildFilterQuery(req?.query, PaymentMappings)}`
     operation += `&$filter=(${filter})`
     const response = await getOperation(operation)

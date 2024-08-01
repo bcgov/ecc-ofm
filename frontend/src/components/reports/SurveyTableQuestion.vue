@@ -3,7 +3,7 @@
     <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
       <template v-slot:item="{ item }">
         <tr>
-          <td v-for="question in questions" :key="question?.questionId">
+          <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
             <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
           </td>
           <td v-if="!readonly && !hasValueInheritanceChildQuestions && updatedResponses?.length > 1">
@@ -16,9 +16,7 @@
       <template v-slot:bottom><!-- no paging --></template>
     </v-data-table>
     <div v-if="validation && required && isTableEmpty" class="error-message mt-2">This field is required</div>
-    <AppButton v-if="!readonly && !isMaxRowsReached && !hasValueInheritanceChildQuestions" id="apply-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">
-      Add Row
-    </AppButton>
+    <AppButton v-if="showAddButton" id="add-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
   </v-container>
 </template>
 
@@ -122,6 +120,10 @@ export default {
     isTableEmpty() {
       return this.updatedResponses?.every((row) => this.isRowBlank(row?.headers))
     },
+
+    showAddButton() {
+      return !this.readonly && !this.isMaxRowsReached && !this.hasValueInheritanceChildQuestions
+    },
   },
 
   watch: {
@@ -145,22 +147,29 @@ export default {
   },
 
   methods: {
+    /*
+      1. If a table is the parents/child table of a value inheritance rule:
+        - For the parents table, the users can add a new row to the parents table if they have entered value to the parent column of the previous row (e.g.: Initials).
+        - For the child table, since it inherits values from the parents table, the "Add Row" button is hidden.
+      2. If a table is NOT the parents/child table of a value inheritance rule:
+        - The users can add a new row to the table if they have entered any value in the previous row
+    */
     addRow() {
-      if (!this.updatedResponses) {
-        this.updatedResponses = []
+      if (!isEmpty(this.updatedResponses)) {
+        const lastIndex = this.updatedResponses?.length - 1
+        if (
+          this.isRowBlank(this.updatedResponses[lastIndex]?.headers) ||
+          (!isEmpty(this.valueInheritanceParentsQuestion) && isEmpty(this.updatedResponses[lastIndex]?.headers[this.valueInheritanceParentsQuestion?.questionId]))
+        )
+          return
       }
+      this.updatedResponses = this.updatedResponses ?? []
       const row = {
         rowId: this.updatedResponses?.length ?? 0,
         tableQuestionId: this.tableQuestionId,
         headers: {},
       }
       this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
-      // If this table is the parents table of value inheritance children, the users can only add new row if they have enter value for the parent column in previous row
-      if (!isEmpty(this.updatedResponses) && !isEmpty(this.valueInheritanceParentsQuestion)) {
-        const lastIndex = this.updatedResponses?.length - 1
-        const lastResponse = this.updatedResponses[lastIndex].headers[this.valueInheritanceParentsQuestion.questionId]
-        if (isEmpty(lastResponse)) return
-      }
       this.updatedResponses?.push(row)
     },
 

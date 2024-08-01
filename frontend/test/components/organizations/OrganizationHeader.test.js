@@ -1,4 +1,4 @@
-import { describe, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -6,7 +6,7 @@ import * as directives from 'vuetify/directives'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import { useAuthStore } from '@/stores/auth.js'
 import { createTestingPinia } from '@pinia/testing'
-import { createWrapper, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 
 const vuetify = createVuetify({ components, directives })
 
