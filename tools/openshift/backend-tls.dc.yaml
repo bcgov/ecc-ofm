@@ -36,12 +36,6 @@ objects:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-backend:${TAG}
               imagePullPolicy: Always
-              volumeMounts:
-                - name: tls-certs
-                  mountPath: '/etc/tls-certs'
-                  readOnly: true
-                - name: log-storage
-                  mountPath: /logs
               livenessProbe:
                 initialDelaySeconds: 20
                 failureThreshold: 5
@@ -78,9 +72,56 @@ objects:
                 limits:
                   cpu: '${MAX_CPU}'
                   memory: '${MAX_MEM}'
+              volumeMounts:
+                - name: tls-certs
+                  mountPath: '/etc/tls-certs'
+                  readOnly: true
+                - name: log-storage
+                  mountPath: /logs
+            - image: artifacts.developer.gov.bc.ca/docker-remote/fluent/fluent-bit:1.5.7
+              name: "${APP_NAME}-${BRANCH}-fluent-bit-sidecar"
+              imagePullPolicy: Always
+              imagePullSecrets:
+                - name: artifactory-creds
+              readinessProbe:
+                tcpSocket:
+                  port: 2020
+                initialDelaySeconds: 10
+                periodSeconds: 30
+                timeoutSeconds: 5
+                failureThreshold: 5
+                successThreshold: 1
+              livenessProbe:
+                httpGet:
+                  path: /
+                  port: 2020
+                initialDelaySeconds: 10
+                periodSeconds: 30
+                timeoutSeconds: 5
+                failureThreshold: 5
+                successThreshold: 1
+              ports:
+                - containerPort: 2020
+                  protocol: TCP
+                  name: metrics
+              resources:
+                requests:
+                  cpu: "5m"
+                  memory: "25Mi"
+                limits:
+                  cpu: "10m"
+                  memory: "50Mi"
+              volumeMounts:
+                - name: log-storage
+                  mountPath: /mnt/log
+                - name: flb-sc-config-volume
+                  mountPath: /fluent-bit/etc/
           volumes:
             - name: log-storage
               emptyDir: {}
+            - name: flb-sc-config-volume
+              configMap:
+                name: ${APP_NAME}-flb-sc-config-map
             - name: tls-certs
               secret:
                 secretName: ofm-backend-cert
