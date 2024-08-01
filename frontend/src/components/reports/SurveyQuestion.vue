@@ -1,12 +1,16 @@
 <template>
   <v-form ref="form">
     <div v-if="question?.type === SURVEY_QUESTION_TYPES.NUMBER">
-      <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponse ? question?.fixedResponse : '0' }}</strong>
-      <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
+      <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
+        <strong>{{ question?.fixedResponse ? question?.fixedResponse : '0' }}</strong>
+      </div>
+      <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
     </div>
 
     <div v-if="question?.type === SURVEY_QUESTION_TYPES.CURRENCY">
-      <strong v-if="isFixedResponseQuestion">$ {{ question?.fixedResponse ? question?.fixedResponse : '0.00' }}</strong>
+      <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
+        <strong>$ {{ question?.fixedResponse ? question?.fixedResponse : '0.00' }}</strong>
+      </div>
       <AppNumberInput
         v-else
         v-model.lazy="updatedResponse.value"
@@ -14,30 +18,41 @@
         maxlength="12"
         prefix="$"
         :rules="validationRules"
-        :hide-details="isEmpty(validationRules)"
-        :disabled="disabled" />
+        :hide-details="readonly"
+        :disabled="disabled"
+        min-width="150px" />
     </div>
 
     <div v-if="question?.type === SURVEY_QUESTION_TYPES.TEXT">
-      <strong v-if="isFixedResponseQuestion">{{ question?.fixedResponse }}</strong>
-      <v-text-field v-else v-model.trim="updatedResponse.value" variant="outlined" density="compact" :rules="validationRules" :hide-details="isEmpty(validationRules)" :disabled="disabled" />
+      <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
+        <strong>{{ question?.fixedResponse }}</strong>
+      </div>
+      <v-text-field v-else v-model.trim="updatedResponse.value" variant="outlined" density="compact" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
     </div>
 
     <v-textarea
       v-if="question?.type === SURVEY_QUESTION_TYPES.TEXT_AREA"
       v-model.trim="updatedResponse.value"
       variant="outlined"
+      min-width="150px"
       :rules="validationRules"
-      :hide-details="isEmpty(validationRules)"
+      :hide-details="readonly"
       :disabled="disabled" />
 
-    <v-date-picker v-if="question?.type === SURVEY_QUESTION_TYPES.DATE" v-model="updatedResponse.value" locale="en" :disabled="readonly"></v-date-picker>
+    <AppDateInput
+      v-if="question?.type === SURVEY_QUESTION_TYPES.DATE"
+      v-model="updatedResponse.value"
+      :rules="[...validationRules, rules.MMDDYYYY]"
+      :disabled="disabled"
+      :hide-details="readonly"
+      max-width="auto"
+      density="compact" />
 
     <v-radio-group
       v-if="question?.type === SURVEY_QUESTION_TYPES.TWO_OPTION"
       v-model="updatedResponse.value"
       :rules="rules.required"
-      :hide-details="isEmpty(validationRules)"
+      :hide-details="readonly"
       :disabled="disabled"
       inline
       color="primary">
@@ -49,20 +64,22 @@
       v-if="question?.type === SURVEY_QUESTION_TYPES.CHOICE"
       v-model="updatedResponse.value"
       :rules="validationRules"
-      :hide-details="isEmpty(validationRules)"
+      :hide-details="readonly"
       :disabled="disabled"
       :items="question?.choices"
       density="compact"
       variant="outlined"
+      min-width="150px"
       return-object />
 
     <v-select
       v-if="question?.type === SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE"
       v-model.lazy="updatedResponse.value"
       :rules="validationRules"
-      :hide-details="isEmpty(validationRules)"
+      :hide-details="readonly"
       :disabled="disabled"
       variant="outlined"
+      min-width="150px"
       chips
       multiple
       :items="question?.choices">
@@ -80,13 +97,14 @@
 
 <script>
 import reportMixin from '@/mixins/reportMixin'
+import AppDateInput from '@/components/ui/AppDateInput.vue'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
 import { isEmpty, cloneDeep } from 'lodash'
 import { convertStringToArray } from '@/utils/common'
 
 export default {
-  components: { AppNumberInput },
+  components: { AppDateInput, AppNumberInput },
   mixins: [reportMixin],
   props: {
     question: {
@@ -165,9 +183,9 @@ export default {
     }
     this.NUMBER_FORMAT = {
       nullValue: '0',
-      min: 0,
       separator: ',',
-      precision: 0,
+      decimal: '.',
+      precision: 2,
     }
   },
 

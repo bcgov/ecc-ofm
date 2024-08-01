@@ -429,6 +429,7 @@ export default {
     },
 
     verifySectionComplete(section) {
+      if (!section) return
       const responseRequiredQuestions = section?.questions?.filter((question) => !question.hide && question.responseRequired)
       const isComplete = responseRequiredQuestions?.every((question) => {
         return this.clonedResponses.some(
