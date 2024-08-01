@@ -121,7 +121,7 @@ oc -n "$OPENSHIFT_NAMESPACE" set env \
   --from="configmap/$APP_NAME-backend-$ENV_VAL-config-map" \
   "dc/$APP_NAME-backend-$ENV_VAL"
 
-if [ "$ENV_VAL" != 'qa' ] || [ "$ENV_VAL" != 'efx' ]; then
+if [ "$ENV_VAL" != 'qa' ] && [ "$ENV_VAL" != 'efx' ]; then
     echo "Generating Splunk configuration"
     SPLUNK_URL="gww.splunk.educ.gov.bc.ca"
     FLB_CONFIG="[SERVICE]
