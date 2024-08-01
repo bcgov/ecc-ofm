@@ -8,11 +8,6 @@ const log = require('./logger')
 const { isEmpty } = require('lodash')
 
 async function getFundingAgreements(req, res) {
-  // TODO (jenbeckett) We shoud validate that either facilityId or applicationId are required
-  // You should be able to do this in the route with oneOf() and then this can be removed
-  if (isEmpty(req?.query)) {
-    return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Query parameter is required' })
-  }
   try {
     const fundingAgreements = []
     let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'

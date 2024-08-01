@@ -4,7 +4,7 @@ const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById } = require('../components/fundingAgreements')
-const { param, query, validationResult } = require('express-validator')
+const { param, query, validationResult, oneOf } = require('express-validator')
 const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
@@ -20,12 +20,8 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  [
-    query('applicationId').optional().isUUID(),
-    query('facilityId').optional().isUUID(),
-    query('stateCode').optional().isInt({ min: 0, max: 1 }),
-    query('statusCode').optional().isInt({ min: 0, max: 10 }),
-  ],
+  oneOf([query('applicationId').notEmpty().isUUID(), query('facilityId').notEmpty().isUUID()]),
+  [query('stateCode').optional().isInt({ min: 0, max: 1 }), query('statusCode').optional().isInt({ min: 0, max: 10 })],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -36,18 +32,32 @@ router.get(
 /**
  * Get Funding Agreement by ID
  */
-router.get('/:fundingAgreementId', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), (req, res) => {
-  validationResult(req).throw()
-  return getFundingAgreementById(req, res)
-})
+router.get(
+  '/:fundingAgreementId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getFundingAgreementById(req, res)
+  },
+)
 
 /**
  * Get Funding Agreement PDF by ID
  */
-router.get('/:fundingAgreementId/pdf', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT), (req, res) => {
-  validationResult(req).throw()
-  return getFundingPDFById(req, res)
-})
+router.get(
+  '/:fundingAgreementId/pdf',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getFundingPDFById(req, res)
+  },
+)
 
 /**
  * Update an existing Funding Agreement using fundingAgreementId
@@ -58,7 +68,7 @@ router.patch(
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
   validateExpenseAuthority(),
-  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').not().isEmpty()],
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return updateFundingAgreement(req, res)
