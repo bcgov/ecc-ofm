@@ -20,7 +20,9 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  oneOf([query('applicationId').notEmpty().isUUID(), query('facilityId').notEmpty().isUUID()]),
+  oneOf([query('applicationId').notEmpty().isUUID(), query('facilityId').notEmpty().isUUID()], {
+    message: 'URL query: [applicationId or facilityId] is required',
+  }),
   [query('stateCode').optional().isInt({ min: 0, max: 1 }), query('statusCode').optional().isInt({ min: 0, max: 10 })],
   validateFacility(),
   (req, res) => {

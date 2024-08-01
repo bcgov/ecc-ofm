@@ -39,24 +39,35 @@ const postQuestionResponseSchema = {
 }
 
 /**
- * Get survey's sections using query:
- * Accepted queries:
- * - surveyTemplateId: to find all sections in a survey
+ * Get survey's sections using query
  */
-router.get('/survey-sections', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), (req, res) => {
-  validationResult(req).throw()
-  return getSurveySections(req, res)
-})
+router.get(
+  '/survey-sections',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
+  [query('surveyTemplateId', 'URL query: [surveyTemplateId] is required').notEmpty().isUUID()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getSurveySections(req, res)
+  },
+)
 
 /**
- * Get survey's questions using query:
- * Accepted queries:
- * - sectionId: to find all questions in a survey section
+ * Get survey's questions using query
  */
-router.get('/survey-questions', passport.authenticate('jwt', { session: false }), isValidBackendToken, validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS), validateFacility(), (req, res) => {
-  validationResult(req).throw()
-  return getSurveyQuestions(req, res)
-})
+router.get(
+  '/survey-questions',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
+  [query('sectionId', 'URL query: [sectionId] is required').notEmpty().isUUID(), query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID()],
+  validateFacility(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getSurveyQuestions(req, res)
+  },
+)
 
 /**
  * Get an existing Application details using applicationId
@@ -66,7 +77,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getSurveyResponse(req, res)
@@ -81,7 +92,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('surveyResponseId', 'URL query: [surveyResponseId] is required').not().isEmpty()],
+  [query('surveyResponseId', 'URL query: [surveyResponseId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return getQuestionResponses(req, res)
@@ -96,7 +107,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('isSubmitted').optional().isBoolean()],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -112,7 +123,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('facilityId', 'URL query: [facilityId] is required').not().isEmpty()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('isSubmitted').optional().isBoolean()],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -128,7 +139,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return updateSurveyResponse(req, res)
@@ -143,7 +154,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.DELETE_DRAFT_REPORTS),
-  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').not().isEmpty()],
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return deleteSurveyResponse(req, res)
@@ -173,7 +184,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [param('questionResponseId', 'URL param: [questionResponseId] is required').not().isEmpty()],
+  [param('questionResponseId', 'URL param: [questionResponseId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return updateQuestionResponse(req, res)
@@ -188,7 +199,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [param('questionResponseId', 'URL param: [questionResponseId] is required').not().isEmpty()],
+  [param('questionResponseId', 'URL param: [questionResponseId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
     return deleteQuestionResponse(req, res)
