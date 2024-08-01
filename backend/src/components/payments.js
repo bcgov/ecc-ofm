@@ -5,7 +5,6 @@ const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
 const { PaymentMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
-const { isEmpty } = require('lodash')
 
 async function getPayments(req, res) {
   try {
