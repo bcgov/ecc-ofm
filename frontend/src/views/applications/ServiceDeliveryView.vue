@@ -67,6 +67,7 @@ import ApplicationService from '@/services/applicationService'
 import LicenceService from '@/services/licenceService'
 import { useApplicationsStore } from '@/stores/applications'
 import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, OFM_PROGRAM_CODES } from '@/utils/constants'
+import format from '@/utils/format'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
 
@@ -214,8 +215,8 @@ export default {
 
     updateLicenceDetails(updatedModel) {
       const clonedModel = cloneDeep(updatedModel)
-      clonedModel.updatableOperationFromTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationFromTime)
-      clonedModel.updatableOperationToTime = LicenceService.convertToCRMOperationDateTimeFormat(clonedModel.operationToTime)
+      clonedModel.updatableOperationFromTime = format.convertTimeToDateTimeFormat(clonedModel.operationFromTime)
+      clonedModel.updatableOperationToTime = format.convertTimeToDateTimeFormat(clonedModel.operationToTime)
       clonedModel.weekDays = clonedModel?.weekDays?.toString()
       const index = this.changedLicences.findIndex((el) => el.licenceDetailId == clonedModel.licenceDetailId)
       if (index === -1) {
