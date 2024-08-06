@@ -39,8 +39,6 @@ function convertUTCDatetoPSTDate(date) {
 function convertTimeToDateTimeFormat(time) {
   const hours = time?.split(':')[0]
   const minutes = time?.split(':')[1]
-  console.log(time)
-  console.log(momentTZ().tz(TIME_ZONE).hours(hours).minutes(minutes).seconds(0).milliseconds(0).format('YYYY-MM-DD HH:mm:ss z'))
   return momentTZ().tz(TIME_ZONE).hours(hours).minutes(minutes).seconds(0).milliseconds(0)
 }
 
