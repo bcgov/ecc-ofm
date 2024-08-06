@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "report": "npx cypress run --spec ./cypress/e2e/examples/portal-automation/assistance_request.cy.js --browser electron --headed"
+    "report": "npx cypress run --spec ./cypress/e2e/examples/portal-automation/assistance_request.cy.js --browser electron --headed",
+    "cy:open": "cypress open"
   },
   "author": "",
   "license": "ISC",
