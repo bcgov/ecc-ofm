@@ -1,7 +1,8 @@
 import { isEmpty } from 'lodash'
 import moment from 'moment'
+import momentTZ from 'moment-timezone'
 
-import { BLANK_FIELD } from '@/utils/constants'
+import { BLANK_FIELD, TIME_ZONE } from '@/utils/constants'
 
 function formatDate(date) {
   if (!date) return BLANK_FIELD
@@ -29,6 +30,18 @@ function convertUTCDatetoPSTDate(date) {
   // Adjust the date by the difference in offsets
   const pstDate = new Date(dateObject.getTime() + pstOffset * 60000)
   return pstDate.toISOString().split('.')[0] + 'Z'
+}
+
+/* Example
+- Input: 13:00
+- Output: 2024-08-06 13:00:00 PDT
+*/
+function convertTimeToDateTimeFormat(time) {
+  const hours = time?.split(':')[0]
+  const minutes = time?.split(':')[1]
+  console.log(time)
+  console.log(momentTZ().tz(TIME_ZONE).hours(hours).minutes(minutes).seconds(0).milliseconds(0).format('YYYY-MM-DD HH:mm:ss z'))
+  return momentTZ().tz(TIME_ZONE).hours(hours).minutes(minutes).seconds(0).milliseconds(0)
 }
 
 function formatTime12to24(time12h) {
@@ -69,6 +82,7 @@ function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
 }
 
 export default {
+  convertTimeToDateTimeFormat,
   convertUTCDatetoPSTDate,
   formatDate,
   formatDateTime,
