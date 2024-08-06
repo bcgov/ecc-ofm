@@ -40,10 +40,10 @@
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
     <v-card class="my-10" :class="{ greyTop: readOnly(model), 'basic-card': !readOnly(model) }" :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
-        <v-col cols="1">
+        <v-col cols="10" md="1">
           <AppLabel>Vehicle</AppLabel>
         </v-col>
-        <v-col v-if="!readOnly(model)">
+        <v-col v-if="!readOnly(model)" cols="1">
           <v-icon large class="mt-n2" @click="deleteModel(model, index)">mdi-delete-forever</v-icon>
         </v-col>
       </v-row>
