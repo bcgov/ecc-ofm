@@ -84,6 +84,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import DocumentService from '@/services/documentService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import IndigenousProgrammingSummary from '@/components/supp-allowances/IndigenousProgrammingSummary.vue'
@@ -98,7 +99,7 @@ import rules from '@/utils/rules'
 
 export default {
   components: { AppDialog, AppButton, IndigenousProgrammingSummary, SupportNeedsSummary, TransportationSummary },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   props: {
     back: {
       type: Boolean,
@@ -176,7 +177,7 @@ export default {
       return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete
     },
     readonly() {
-      return !this.isApplicationComplete || this.processing || this.loading
+      return !this.isApplicationComplete || this.processing || this.loading || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
   },
   watch: {
@@ -309,7 +310,7 @@ export default {
       }
     },
     setSubmit() {
-      this.$emit('setSubmit', this.supplementaryDeclaration && this.isApplicationComplete)
+      this.$emit('setSubmit', this.supplementaryDeclaration && this.isApplicationComplete && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING))
     },
     async saveApplication(showAlert = false, isSubmit = false) {
       try {
