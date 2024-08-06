@@ -74,11 +74,18 @@ function getUserGuid(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  let guid = req.session?.passport?.user?._json?.bceid_user_guid
-  if (!guid) {
-    guid = req.session?.passport?.user?._json?.idir_user_guid
-  }
-  return guid
+  return splitUsername(userInfo._json.preferred_username).guid
+}
+
+/**
+ * Splits the username into it's component parts.
+ * Format is username@idp e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
+ * @param {*} username
+ * @returns
+ */
+function splitUsername(username) {
+  const usernameArray = username.split('@')
+  return { guid: usernameArray[0].toUpperCase(), idp: usernameArray[1] }
 }
 
 function isIdirUser(req) {
@@ -86,15 +93,7 @@ function isIdirUser(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  let isIdir = req.session?.passport?.user?._json?.idir_user_guid ? true : false
-
-  //For local development only.
-  //generally set isIdirUser to false, so that developers can log in using their
-  //IDIRS as a normal, non-ministry user.
-  /*   if ('local' === config.get('environment') && !config.get('server:useImpersonate')) {
-    return false
-  } */
-  return isIdir
+  return !!req.session?.passport?.user?._json?.idir_username
 }
 
 function getUserName(req) {
@@ -106,6 +105,7 @@ function getUserName(req) {
 }
 
 function getBusinessName(req) {
+  // XXX This isn't available in the childcare-applications realm but also isn't currently used in the frontend
   let businessName = req.session?.passport?.user?._json?.bceid_business_name
   return businessName
 }
@@ -145,14 +145,13 @@ async function deleteOperation(operation) {
 async function getOperation(operation) {
   try {
     const url = config.get('dynamicsApi:apiEndpoint') + '/api/Operations?statement=' + operation
-    log.info('get Data Url', url)
+    log.verbose('get Data Url', url)
     const response = await axios.get(url, getHttpHeader())
-    //logResponse('getOperation', response);
+    logResponse('getOperation', response)
     return response.data
   } catch (e) {
-    log.info(e)
     log.error('getOperation Error', e.response ? e.response.status : e.message)
-    throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, { message: 'API Get error' }, e)
+    handleDynamicsError(e, 'API Get error')
   }
 }
 
@@ -272,6 +271,23 @@ async function postBatches(payload) {
   }
 }
 
+function handleDynamicsError(e, message) {
+  let status
+  if (e.response?.status.toString().startsWith('4')) {
+    // Send 400 errors back to the client
+    status = e.response?.status
+  } else {
+    // Default to 500
+    status = HttpStatus.INTERNAL_SERVER_ERROR
+  }
+  throw new ApiError(status, { message }, e)
+}
+
+function handleError(res, e) {
+  log.error(e)
+  return res.status(e?.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+}
+
 const utils = {
   getOidcDiscovery,
   prettyStringify: (obj, indent = 2) => JSON.stringify(obj, null, indent),
@@ -297,6 +313,8 @@ const utils = {
   deleteOperation,
   sleep,
   postDocuments,
+  splitUsername,
+  handleError,
 }
 
 module.exports = utils

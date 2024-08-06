@@ -5,16 +5,27 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const { getOrganization, getOrganizationFacilities, getOrganizationUsers, updateOrganization } = require('../components/organizations')
 const { param, validationResult } = require('express-validator')
+const validateOrganization = require('../middlewares/validateOrganization.js')
+const validatePermission = require('../middlewares/validatePermission.js')
+const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
 
 /**
- * Get organization's details using accountId/organizationId
+ * Get organization's details using organizationId.
  */
-router.get('/:accountId', passport.authenticate('jwt', { session: false }), isValidBackendToken, [param('accountId', 'URL param: [accountId] is required').not().isEmpty()], (req, res) => {
-  validationResult(req).throw()
-  return getOrganization(req, res)
-})
+router.get(
+  '/:organizationId',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
+  [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getOrganization(req, res)
+  },
+)
 
 /**
  * Get an organization's facilities by facilityId.
@@ -23,7 +34,9 @@ router.get(
   '/:organizationId/facilities',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
     return getOrganizationFacilities(req, res)
@@ -37,6 +50,8 @@ router.put(
   '/:organizationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
+  validateOrganization(),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
   (req, res) => {
     validationResult(req).throw()
@@ -51,7 +66,9 @@ router.get(
   '/:organizationId/users',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
+  validatePermission(PERMISSIONS.MANAGE_USERS_EDIT),
   [param('organizationId', 'URL param: [organizationId] is required').not().isEmpty()],
+  validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
     return getOrganizationUsers(req, res)

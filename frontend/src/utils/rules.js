@@ -1,6 +1,6 @@
 const REQUIRED_MSG = 'This field is required'
 const rules = {
-  email: [(v) => /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required'], // https://emailregex.com/
+  email: (v) => !v || /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v) || 'A valid email is required', // https://emailregex.com/
   required: [
     function (v) {
       if (v === 0) {
@@ -13,20 +13,36 @@ const rules = {
       return true
     },
   ],
+  notNullRequired: [(v) => v != null || REQUIRED_MSG], // value must be not null and not undefined
   postalCode: [(v) => !v || /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(v) || 'A valid postal code is required'],
-  YYYY: [(v) => (v > 1900 && v < 2100) || 'A valid year is required'],
-  notRequired: [() => true],
+  MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Date must be in MM/DD/YYYY format',
+  validEndDate(startDate) {
+    return (v) => new Date(v) > new Date(startDate) || 'End date must be after start date'
+  },
+  dateInRange: (v, startDate, endDate) => {
+    if (!v) return true
+    const date = new Date(v)
+    const minDate = new Date(startDate)
+    const maxDate = new Date(endDate)
+    if (date < minDate || date > maxDate) {
+      return `Date must be between ${startDate} and ${endDate}`
+    }
+    return true
+  },
   max(number) {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
   },
   min(number) {
     return (v) => !v || v >= number || `Min exceeded: ${number.toLocaleString('en-ca')}`
   },
+  greaterThan(value) {
+    return (v) => !v || v > value || `Must be greater than: ${value}`
+  },
   maxLength(number) {
     return (v) => !v || v.length <= number || 'Max length exceeded'
   },
   phone: (v) => !v || /^\(?([0-9]{3})\)?-([0-9]{3})-([0-9]{4})$/.test(v) || 'Must be a valid phone number in the format ###-###-####',
-  listIsNotEmpty: [(v) => v.length > 0 || 'This field is required'],
+  listIsNotEmpty: [(v) => v.length > 0 || REQUIRED_MSG],
 }
 
 export default rules

@@ -1,24 +1,14 @@
 <template>
-  <v-container fluid class="full-height">
-    <!-- login article -->
-    <article name="session-expired-banner" class="top-banner">
-      <v-row align="center" justify="center">
-        <v-col xs="10" sm="10" md="8" lg="4" xl="3">
-          <v-card class="session-expired-card">
-            <v-card-title class="gov-header">
-              <h4 id="session-expired-text">Session Expired</h4>
-            </v-card-title>
-            <v-card-text id="session-expired-descriptor">
-              <v-row style="margin: 0.3rem">
-                Your secure session has ended as a result of inactivity.
-              </v-row>
-              <a id="login-button" :href="authRoutes.LOGIN" class="ma-1" dark color="#003366" @click="clearStorage">Log
-                In</a><span>again to continue.</span>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </article>
+  <v-container fluid>
+    <AppSimpleCard>
+      <template #title>Session Expired</template>
+      <template #text>
+        Your secure session has ended as a result of inactivity.
+        <br />
+        <a id="login-button" :href="loginPath" @click="clearStorage">Log In</a>
+        again to continue.
+      </template>
+    </AppSimpleCard>
   </v-container>
 </template>
 
@@ -26,17 +16,18 @@
 import { mapActions } from 'pinia'
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
+import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 
 export default {
-  name: 'SessionExpired',
-
-  data() {
-    return {
-      authRoutes: AuthRoutes,
-    }
-  },
+  name: 'SessionExpiredView',
+  components: { AppSimpleCard },
   mounted() {
     this.setJwtToken()
+  },
+  computed: {
+    loginPath() {
+      return this.$route.query.internal ? AuthRoutes.LOGIN_IDIR : AuthRoutes.LOGIN
+    },
   },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
@@ -46,15 +37,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.full-height {
-  height: 100%;
-}
-
-.session-expired-card {
-  margin-top: 15rem;
-  width: 100%;
-  background: #f2e8d5;
-}
-</style>

@@ -8,9 +8,20 @@
     </div>
     <div>
       <h4>Facility Information</h4>
-      <FacilityInfo :loading="loading" :facility="facility" />
+      <FacilityInfo :facility="facility" />
+      <v-row no-gutters class="mt-8">
+        <AppLabel class="pt-4 mr-4">What is the end date of your fiscal year?</AppLabel>
+        <AppDateInput
+          id="fiscal-year-end-date"
+          v-model="fiscalYearEndDate"
+          :rules="[...rules.required, rules.MMDDYYYY]"
+          :disabled="readonly"
+          :hide-details="readonly"
+          label="Fiscal Year End Date"
+          class="mt-3" />
+      </v-row>
     </div>
-    <div class="mt-8">
+    <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
@@ -26,7 +37,7 @@
               id="select-primary-contact"
               v-model="primaryContact"
               :items="contacts"
-              :disabled="readonly || loading"
+              :disabled="readonly"
               item-title="fullName"
               label="Select Primary Contact"
               :rules="rules.required"
@@ -35,10 +46,10 @@
               return-object></v-select>
           </v-col>
         </v-row>
-        <ContactInfo v-if="primaryContact" :loading="loading" :contact="primaryContact" />
+        <ContactInfo v-if="primaryContact" :contact="primaryContact" />
       </v-card>
     </div>
-    <div class="mt-8">
+    <div id="secondary-contact" class="mt-8">
       <h4>Secondary Contact (Recommended)</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
@@ -54,7 +65,7 @@
               id="select-secondary-contact"
               v-model="secondaryContact"
               :items="availableSecondaryContacts"
-              :disabled="readonly || loading"
+              :disabled="readonly"
               item-title="fullName"
               label="Select Secondary Contact"
               density="compact"
@@ -63,10 +74,10 @@
               return-object></v-select>
           </v-col>
         </v-row>
-        <ContactInfo v-if="secondaryContact" :loading="loading" :contact="secondaryContact" />
+        <ContactInfo v-if="secondaryContact" :contact="secondaryContact" />
       </v-card>
     </div>
-    <div class="mt-8">
+    <div id="expense-authority" class="mt-8">
       <h4>Expense Authority</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
@@ -82,7 +93,7 @@
               id="select-expense-authority"
               v-model="expenseAuthority"
               :items="availableExpenseAuthorities"
-              :disabled="readonly || loading"
+              :disabled="readonly"
               item-title="fullName"
               label="Select Expense Authority"
               :rules="rules.required"
@@ -91,37 +102,43 @@
               return-object></v-select>
           </v-col>
         </v-row>
-        <ContactInfo v-if="expenseAuthority" :loading="loading" :contact="expenseAuthority" />
+        <ContactInfo v-if="expenseAuthority" :contact="expenseAuthority" />
       </v-card>
     </div>
   </v-form>
 </template>
 
 <script>
-import AppLabel from '@/components/ui/AppLabel.vue'
-import { useApplicationsStore } from '@/stores/applications'
-import { useAppStore } from '@/stores/app'
 import { mapState, mapWritableState, mapActions } from 'pinia'
-import { APPLICATION_STATUS_CODES } from '@/utils/constants'
-import rules from '@/utils/rules'
+
+import AppDateInput from '@/components/ui/AppDateInput.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
-import FacilityService from '@/services/facilityService'
+import { useApplicationsStore } from '@/stores/applications'
+import { APPLICATION_ROUTES } from '@/utils/constants'
+import format from '@/utils/format'
+import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'FacilityDetailsView',
-  components: { AppLabel, FacilityInfo, ContactInfo },
+  components: { AppDateInput, AppLabel, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
+
   async beforeRouteLeave(_to, _from, next) {
-    if (this.loading) return
     if (!this.readonly) {
       await this.saveApplication()
     }
-    next()
+    next(!this.processing) // only go to the next page after saveApplication is complete
   },
+
   props: {
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     back: {
       type: Boolean,
       default: false,
@@ -134,28 +151,35 @@ export default {
       type: Boolean,
       default: false,
     },
+    facility: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
+    contacts: {
+      type: Array,
+      default: () => [],
+    },
   },
+
   emits: ['process'],
+
   data() {
     return {
       rules,
-      model: {},
       isFormComplete: false,
-      facility: undefined,
-      contacts: [],
-      loading: false,
+      processing: false,
       primaryContact: undefined,
       secondaryContact: undefined,
       expenseAuthority: undefined,
+      fiscalYearEndDate: null,
     }
   },
+
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
-    readonly() {
-      return this.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
-    },
     // The primary contact cannot be the same as the secondary contact
     availableSecondaryContacts() {
       return this.contacts?.filter((contact) => contact?.contactId != this.primaryContact?.contactId)
@@ -164,10 +188,10 @@ export default {
       return this.contacts?.filter((contact) => contact?.isExpenseAuthority)
     },
   },
+
   watch: {
     isFormComplete: {
       handler(value) {
-        if (this.loading) return
         this.isFacilityDetailsComplete = value
       },
     },
@@ -183,7 +207,7 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: 'service-delivery', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     primaryContact: {
@@ -193,53 +217,34 @@ export default {
       },
     },
   },
-  async created() {
-    await this.loadData()
+
+  created() {
+    this.$emit('process', false)
+    this.fiscalYearEndDate = this.currentApplication?.fiscalYearEndDate
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
     this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
   },
+
+  async mounted() {
+    if (this.validation) {
+      await this.$refs.form?.validate()
+    }
+  },
+
   methods: {
     ...mapActions(useApplicationsStore, ['getApplication']),
-
-    async loadData() {
-      try {
-        this.$emit('process', true)
-        this.loading = true
-        await Promise.all([this.getFacility(), this.getContacts()])
-      } finally {
-        this.loading = false
-        this.$emit('process', false)
-      }
-    },
-
-    async getContacts() {
-      try {
-        this.contacts = await FacilityService.getContacts(this.currentApplication?.facilityId)
-        this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
-        })
-      } catch (error) {
-        this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
-
-    async getFacility() {
-      try {
-        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
 
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)
+        this.processing = true
         const payload = {
           primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
           expenseAuthorityId: this.expenseAuthority?.contactId ? this.expenseAuthority?.contactId : null,
+          // XXX - CRM date object uses PST timezone, so we need to convert our date to PST before sending it to CRM
+          fiscalYearEndDate: this.fiscalYearEndDate ? format.convertUTCDatetoPSTDate(this.fiscalYearEndDate) : null,
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
@@ -252,11 +257,13 @@ export default {
         this.setFailureAlert('Failed to save your application', error)
       } finally {
         this.$emit('process', false)
+        this.processing = false
       }
     },
   },
 }
 </script>
+
 <style scoped>
 .facility-name {
   color: #003366;

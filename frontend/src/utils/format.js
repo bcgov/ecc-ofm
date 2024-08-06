@@ -1,82 +1,80 @@
-import { DateTimeFormatterBuilder, LocalDate, LocalDateTime, ResolverStyle } from '@js-joda/core'
-
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 
-function formatPen(pen) {
-  if (pen?.length === 9) {
-    return (pen && pen.substring(0, 3) + ' ' + pen.substring(3, 6) + ' ' + pen.substring(6)) || ''
-  }
-  return pen
-}
-
-function getDateFormatter(pattern) {
-  return new DateTimeFormatterBuilder().appendPattern(pattern).toFormatter(ResolverStyle.STRICT)
-}
-
-function formatTableColumn(format, column) {
-  return format && column ? format(column) : column || ' '
-}
-
-function formatMincode(mincode) {
-  return mincode
-}
-
-function formatPostalCode(postalCode) {
-  return postalCode
-}
-
-const GRADE_CODE_MAP = Object.freeze({
-  K: 'KF',
-  UE: 'EU',
-  US: 'SU',
-})
-
-function formatGrade(grade) {
-  return GRADE_CODE_MAP[grade] || grade.padStart(2, '0')
-}
-
-function formatDistrictNumber(districtNumber) {
-  return districtNumber.padStart(3, '0')
-}
-
-function sortByNameValue(list, valueToSortBy) {
-  return list.sort(function (a, b) {
-    if (a[valueToSortBy] > b[valueToSortBy]) {
-      return 1
-    } else if (a[valueToSortBy] < b[valueToSortBy]) {
-      return -1
-    }
-    return 0
-  })
-}
-
-function formatPhoneNumber(phoneNumber) {
-  if (!phoneNumber) {
-    return ''
-  }
-
-  if (phoneNumber?.length === 10) {
-    return `${phoneNumber.substring(0, 3)}-${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6)}`
-  }
-
-  return 'Phone number format not recognized'
-}
+import { BLANK_FIELD } from '@/utils/constants'
 
 function formatDate(date) {
-  if (!date) return '- - - -'
-  return moment(date).format('YYYY-MMM-DD')
+  if (!date) return BLANK_FIELD
+  return moment.utc(date).format('YYYY-MMM-DD')
+}
+
+function formatTwoMonthDate(date) {
+  if (!date) return BLANK_FIELD
+  return moment.utc(date).format('YYYY-MM-DD')
 }
 
 function formatDateTime(date) {
-  if (!date) return '- - - -'
+  if (!date) return BLANK_FIELD
   return moment(date).format('YYYY-MMM-DD hh:mm A')
 }
 
-function formatContactName(contact) {
-  return contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.lastName
+function formatDateToUTC(date) {
+  return new Date(date).toLocaleString('en-CA', { timeZone: 'UTC', dateStyle: 'full' })
+}
+
+function convertUTCDatetoPSTDate(date) {
+  if (!date) return null
+  const dateObject = new Date(date)
+  const pstOffset = 8 * 60 // PST offset in minutes
+  // Adjust the date by the difference in offsets
+  const pstDate = new Date(dateObject.getTime() + pstOffset * 60000)
+  return pstDate.toISOString().split('.')[0] + 'Z'
+}
+
+function formatTime12to24(time12h) {
+  if (isEmpty(time12h) || !is12hFormat(time12h)) return time12h
+  const [time, modifier] = time12h.split(' ')
+  let [hours, minutes] = time.split(':')
+  if (hours === '12') {
+    hours = '00'
+  }
+  if (modifier?.toUpperCase() === 'PM') {
+    hours = parseInt(hours, 10) + 12
+  }
+  return `${hours}:${minutes}`
+}
+
+function formatTime24to12(time24h) {
+  if (isEmpty(time24h) || is12hFormat(time24h)) return time24h
+  let hours = Number(time24h?.split(':')[0])
+  const minutes = time24h?.split(':')[1]
+  const ampm = hours >= 12 ? 'pm' : 'am'
+  hours = hours % 12
+  hours = hours ? hours : 12 // the hour '0' should be '12'
+  return `${hours}:${minutes} ${ampm}`
+}
+
+function is12hFormat(time) {
+  return time?.toUpperCase().includes('AM') || time?.toUpperCase().includes('PM')
+}
+
+/**
+ * This function will return a decimal number in this format ###,###,###.## (e.g.: 123,456,999.12).
+ * You can specify the number of fraction digits using "numberOfFractionDigits". Default is 2 fractional digits
+ * If "decimalNumber" is not a Number, it will be set to 0 as the default value.
+ */
+function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
+  const formattedNumber = isNaN(Number(decimalNumber)) ? 0 : Number(decimalNumber)
+  return formattedNumber.toLocaleString('en-CA', { minimumFractionDigits: numberOfFractionDigits, maximumFractionDigits: numberOfFractionDigits })
 }
 
 export default {
+  convertUTCDatetoPSTDate,
   formatDate,
   formatDateTime,
+  formatDecimalNumber,
+  formatDateToUTC,
+  formatTime12to24,
+  formatTime24to12,
+  formatTwoMonthDate,
 }

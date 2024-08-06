@@ -1,33 +1,32 @@
 class MappableObject {
   constructor(input, mappings, from, to) {
-    this.data = {};
+    this.data = {}
 
     if (!input || !mappings) {
-      return;
+      return
     }
 
     for (const item of mappings) {
       if (input[item[from]] !== undefined) {
-        this.data[item[to]] = input[item[from]];
+        this.data[item[to]] = input[item[from]]
       }
     }
-
   }
 
   toJSON() {
-    return this.data;
+    return this.data
   }
 }
 
 class MappableObjectForFront extends MappableObject {
   constructor(input, mappings) {
-    super(input, mappings, 'back', 'front');
+    super(input, mappings, 'back', 'front')
   }
 }
 
 class MappableObjectForBack extends MappableObject {
   constructor(input, mappings) {
-    super(input, mappings, 'front', 'back');
+    super(input, mappings, 'front', 'back')
   }
 }
 
@@ -36,14 +35,16 @@ class MappableObjectForBack extends MappableObject {
  * Use this function to generate a list of fields based on mappings
  */
 function getMappingString(mappings) {
-  let retVal = mappings.map(item => {
-    return item.back;}).join(',');
-  console.log('mapping: ',retVal);
-  return retVal;
+  let retVal = mappings
+    .map((item) => {
+      return item.back
+    })
+    .join(',')
+  return retVal
 }
 
 module.exports = {
   MappableObjectForFront,
   MappableObjectForBack,
-  getMappingString  
-};
+  getMappingString,
+}

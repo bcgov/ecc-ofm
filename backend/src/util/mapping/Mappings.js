@@ -5,7 +5,7 @@ const UserProfileMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_first_name', front: 'firstName' },
   { back: 'ofm_last_name', front: 'lastName' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'telephone1', front: 'phone' },
 ]
 
@@ -23,6 +23,9 @@ const UserProfileFacilityMappings = [
   { back: 'accountnumber', front: 'facilityAccountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'ccof_accounttype', front: 'facilityType' },
+  { back: 'ofm_program', front: 'programCode' },
+  { back: 'ofm_ccof_requirement', front: 'ccofOneYearEnrolment' },
+  { back: 'ofm_program_start_date', front: 'programStartDate' },
   { back: 'statecode', front: 'facilityStateCode' },
   { back: 'statuscode', front: 'facilityStatusCode' },
 ]
@@ -30,6 +33,11 @@ const UserProfileFacilityMappings = [
 const RequestCategoryMappings = [
   { back: 'ofm_name', front: 'categoryName' },
   { back: 'ofm_request_categoryid', front: 'categoryId' },
+]
+
+const RequestSubCategoryMappings = [
+  { back: 'ofm_name', front: 'categoryName' },
+  { back: 'ofm_subcategoryid', front: 'subCategoryId' },
 ]
 
 const AssistanceRequestMappings = [
@@ -78,7 +86,7 @@ const UserMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'telephone1', front: 'phone' },
   { back: 'ccof_username', front: 'userName' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'ofm_portal_role_id', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_facility_business_bceid', front: 'facilities' },
 ]
@@ -92,6 +100,7 @@ const UserFacilityDetailMappings = [
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'facilityName' },
   { back: 'address1_composite', front: 'address' },
+  { back: 'ofm_program', front: 'programCode' },
 ]
 
 const UsersPermissionsFacilityMappings = [
@@ -106,10 +115,23 @@ const UsersPermissionsFacilityMappings = [
   { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
 ]
 
+const ApplicationIntakeMappings = [
+  { back: 'ofm_intakeid', front: 'applicationIntakeId' },
+  { back: 'ofm_intake_type', front: 'type' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+]
+
+const FacilityIntakeMappings = [
+  { back: 'ofm_facility_intakeid', front: 'facilityIntakeId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+]
+
 const ApplicationMappings = [
   { back: 'ofm_applicationid', front: 'applicationId' },
   { back: 'ofm_application', front: 'referenceNumber' },
   { back: 'ofm_summary_submittedon', front: 'submittedDate' },
+  { back: '_ofm_summary_submittedby_value', front: 'submittedBy' },
   { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
   { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
   { back: '_ofm_facility_value', front: 'facilityId' },
@@ -145,6 +167,21 @@ const ApplicationMappings = [
   { back: 'ofm_costs_applicable_fee', front: 'applicableFee' },
   { back: 'ofm_costs_year_facility_costs', front: 'totalYearlyFacilityCosts' },
   { back: 'ofm_licence_declaration', front: 'licenceDeclaration' },
+  { back: 'ofm_summary_declaration', front: 'applicationDeclaration' },
+  { back: 'ofm_armslengthlease', front: 'armsLength' },
+  { back: 'ofm_application_review_complete', front: 'applicationReviewComplete' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
+  { back: 'ofm_union_list', front: 'unions' },
+  { back: 'ofm_union_description', front: 'unionDescription' },
+  { back: 'ofm_union_cssea', front: 'cssea' },
+  { back: 'ofm_fiscal_year_end', front: 'fiscalYearEndDate' },
+]
+
+const ApplicationProviderEmployeeMappings = [
+  { back: 'ofm_provider_employeeid', front: 'providerEmployeeId' },
+  { back: 'ofm_employee_type', front: 'employeeType' },
+  { back: 'ofm_initials', front: 'initials' },
+  { back: 'ofm_certificate_number', front: 'certificateNumber' },
 ]
 
 const OrganizationMappings = [
@@ -154,6 +191,7 @@ const OrganizationMappings = [
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_business_type', front: 'businessTypeCode' },
   { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
+  { back: 'ofm_doing_business_as', front: 'doingBusinessAsName' },
   { back: 'telephone1', front: 'phoneLandline' },
   { back: 'telephone2', front: 'phoneCell' },
   { back: 'address1_line1', front: 'streetAddress1' },
@@ -171,9 +209,13 @@ const OrganizationMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'ofm_provider_type', front: 'providerType' },
   { back: 'ofm_ownership', front: 'ownership' },
+  { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
+  { back: 'ofm_good_standing_status', front: 'goodStandingStatusCode' },
+  { back: 'ofm_good_standing_status@OData.Community.Display.V1.FormattedValue', front: 'goodStandingStatus' },
 ]
 
 const FacilityMappings = [
+  { back: 'ofm_program', front: 'programCode' },
   { back: 'accountid', front: 'facilityId' },
   { back: 'accountnumber', front: 'accountNumber' },
   { back: 'name', front: 'name' },
@@ -194,6 +236,7 @@ const FacilityMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
+  { back: 'ofm_facility_review_complete', front: 'facilityReviewComplete' },
 ]
 
 const ContactMappings = [
@@ -202,7 +245,7 @@ const ContactMappings = [
   { back: 'ofm_last_name', front: 'lastName' },
   { back: 'telephone1', front: 'phone' },
   { back: 'emailaddress1', front: 'email' },
-  { back: 'ofm_portal_role', front: 'role' },
+  { back: 'role', front: 'role' },
   { back: 'statecode', front: 'stateCode' },
 ]
 
@@ -226,10 +269,14 @@ const LicenceDetailsMappings = [
   { back: 'ofm_enrolled_spaces', front: 'enrolledSpaces' },
   { back: 'ofm_operation_from_time', front: 'operationFromTime' },
   { back: 'ofm_operations_to_time', front: 'operationToTime' },
+  { back: 'ofm_operation_hours_from', front: 'updatableOperationFromTime' },
+  { back: 'ofm_operation_hours_to', front: 'updatableOperationToTime' },
   { back: 'ofm_week_days', front: 'weekDays' },
   { back: 'ofm_weeks_in_operation', front: 'weeksInOperation' },
   { back: 'ofm_care_type', front: 'careType' },
   { back: 'ofm_overnight_care', front: 'overnightCare' },
+  { back: 'ofm_apply_room_split_condition', front: 'applyRoomSplitCondition' },
+  { back: 'ofm_room_split_details', front: 'roomSplitDetails' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -240,24 +287,190 @@ const DocumentMappings = [
   { back: 'ofm_file_name', front: 'fileName' },
   { back: 'ofm_subject', front: 'subject' },
   { back: 'ofm_description', front: 'description' },
+  { back: 'ofm_category', front: 'documentType' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
   { back: '_ofm_regardingid_value', front: 'regardingId' },
 ]
 
+const FundingAgreementMappings = [
+  { back: 'ofm_fundingid', front: 'fundingId' },
+  { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'ofm_declaration', front: 'agreeConsentCertify' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+]
+
+const PaymentMappings = [
+  { back: 'ofm_paymentid', front: 'paymentId' },
+  { back: 'ofm_name', front: 'paymentNumber' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+  { back: '_ofm_funding_value', front: 'fundingId' },
+  { back: '_ofm_funding_value@OData.Community.Display.V1.FormattedValue', front: 'fundingAgreementNumber' },
+  { back: 'ofm_payment_type', front: 'paymentTypeCode' },
+  { back: 'ofm_payment_type@OData.Community.Display.V1.FormattedValue', front: 'paymentTypeName' },
+  { back: 'ofm_amount', front: 'amount' },
+  { back: 'ofm_invoice_date', front: 'invoiceDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+//the three different supp applications share the same data structure, so irrelevant fields will just be null.
+const SupplementaryApplicationMappings = [
+  { back: 'ofm_allowanceid', front: 'supplementaryApplicationId' },
+  { back: 'ofm_allowance_number', front: 'supplementaryReferenceNumber' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'supplementaryApplicationStatus' },
+  { back: 'ofm_submittedon', front: 'supplementaryApplicationSubmittedDate' },
+  { back: 'ofm_allowance_type', front: 'supplementaryType' },
+  { back: 'ofm_allowance_type@OData.Community.Display.V1.FormattedValue', front: 'supplementaryTypeDescription' },
+  { back: 'ofm_indigenous_expenses', front: 'indigenousFundingModel' },
+  { back: 'ofm_indigenous_description', front: 'indigenousOtherDescription' },
+  { back: 'ofm_needs_description', front: 'supportOtherDescription' },
+  { back: 'ofm_needs_expenses', front: 'supportFundingModel' },
+  { back: 'ofm_summary_ministry_last_updated', front: 'ministryLastUpdated' },
+  { back: 'ofm_summary_provider_last_updated', front: 'providerLastUpdated' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'ofm_transport_monthly_lease', front: 'monthlyLease' },
+  { back: 'ofm_transport_estimated_yearly_km', front: 'estimatedMileage' },
+  { back: 'ofm_transport_odometer', front: 'odometer' },
+  { back: 'ofm_transport_vehicle_vin', front: 'VIN' },
+  { back: 'ofm_summary_declaration', front: 'supplementaryDeclaration' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_renewal_term', front: 'renewalTerm' },
+  { back: 'ofm_retroactive_date', front: 'retroactiveDate' },
+]
+
+const RoleMappings = [
+  { back: 'ofm_name', front: 'roleName' },
+  { back: 'ofm_portal_role_number', front: 'roleNumber' },
+  { back: 'ofm_portal_roleid', front: 'roleId' },
+]
+
+const PermissionMappings = [
+  { back: 'ofm_name', front: 'permissionName' },
+  { back: 'ofm_portal_privilege_number', front: 'permissionNumber' },
+]
+
+// const ReportTemplateMappings = [
+//   { back: 'ofm_surveyid', front: 'surveyTemplateId' },
+//   { back: 'ofm_name', front: 'surveyTemplateName' },
+//   { back: 'ofm_version', front: 'version' },
+// ]
+
+const SurveySectionMappings = [
+  { back: 'ofm_sectionid', front: 'sectionId' },
+  { back: 'ofm_section_title', front: 'title' },
+  { back: 'ofm_section_order', front: 'order' },
+  { back: '_ofm_survey_value', front: 'surveyTemplateId' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const SurveyQuestionMappings = [
+  { back: 'ofm_questionid', front: 'questionId' },
+  { back: 'ofm_question_text', front: 'text' },
+  { back: 'ofm_question_type@OData.Community.Display.V1.FormattedValue', front: 'type' },
+  { back: 'ofm_sequence', front: 'sequence' },
+  { back: 'ofm_question_choice', front: 'choices' },
+  { back: 'ofm_response_required', front: 'responseRequired' },
+  { back: '_ofm_header_value', front: 'tableQuestionId' },
+  { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const SurveyQuestionBusinessRulesMappings = [
+  { back: 'ofm_question_business_ruleid', front: 'businessRuleId' },
+  { back: '_ofm_true_child_question_value', front: 'trueChildQuestionId' },
+  { back: '_ofm_false_child_question_value', front: 'falseChildQuestionId' },
+  { back: 'ofm_condition', front: 'conditionValue' },
+  { back: '_ofm_parentquestionid_value', front: 'parentQuestionId' },
+  { back: 'ofm_parent_has_response', front: 'parentHasResponse' },
+  { back: '_ofm_child_question_value', front: 'valueInheritanceChildQuestionId' },
+]
+
+const SurveyResponseMappings = [
+  { back: 'ofm_survey_responseid', front: 'surveyResponseId' },
+  { back: 'ofm_name', front: 'surveyResponseReferenceNumber' },
+  { back: '_ofm_survey_value', front: 'surveyTemplateId' },
+  { back: '_ofm_survey_value@OData.Community.Display.V1.FormattedValue', front: 'surveyTemplateName' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+  { back: '_ofm_fiscal_year_value', front: 'fiscalYearId' },
+  { back: '_ofm_fiscal_year_value@OData.Community.Display.V1.FormattedValue', front: 'fiscalYearName' },
+  { back: 'ofm_report_month@OData.Community.Display.V1.FormattedValue', front: 'monthName' },
+  { back: '_ofm_contact_value', front: 'submittedBy' },
+  { back: 'ofm_submitted_on', front: 'submittedDate' },
+  { back: 'ofm_duedate', front: 'dueDate' },
+  { back: 'ofm_late_flag', front: 'isSubmittedLate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+  { back: 'statecode', front: 'stateCode' },
+]
+
+const QuestionResponseMappings = [
+  { back: 'ofm_question_responseid', front: 'questionResponseId' },
+  { back: '_ofm_survey_response_value', front: 'surveyResponseId' },
+  { back: '_ofm_question_value', front: 'questionId' },
+  { back: '_ofm_header_value', front: 'tableQuestionId' },
+  { back: 'ofm_row_id', front: 'rowId' },
+  { back: 'ofm_response_text', front: 'value' },
+]
+
+const SystemMessageMappings = [{ back: 'ofm_message', front: 'content' }]
+
+const IrregularExpenseMappings = [
+  { back: 'modifiedon', front: 'lastUpdatedTime' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'ofm_caption', front: 'referenceNumber' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+  { back: '_ofm_assistance_request_value', front: 'assistanceRequestId' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'ofm_expenseid', front: 'irregularExpenseId' },
+  { back: '_ofm_application_value', front: 'applicationId' },
+]
+
 module.exports = {
+  ApplicationIntakeMappings,
   ApplicationMappings,
+  ApplicationProviderEmployeeMappings,
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
   ContactMappings,
   DocumentMappings,
+  FacilityIntakeMappings,
   FacilityMappings,
+  FundingAgreementMappings,
   LicenceMappings,
   LicenceDetailsMappings,
   NotificationMappings,
   OrganizationMappings,
+  PaymentMappings,
+  PermissionMappings,
+  QuestionResponseMappings,
+  RequestCategoryMappings,
+  RequestSubCategoryMappings,
+  RoleMappings,
+  SupplementaryApplicationMappings,
+  SurveySectionMappings,
+  SurveyQuestionMappings,
+  SurveyQuestionBusinessRulesMappings,
+  SurveyResponseMappings,
+  // ReportTemplateMappings,
+  SystemMessageMappings,
   UserFacilityDetailMappings,
   UserFacilityMappings,
   UserMappings,
@@ -265,5 +478,5 @@ module.exports = {
   UserProfileFacilityMappings,
   UserProfileMappings,
   UserProfileOrganizationMappings,
-  RequestCategoryMappings,
+  IrregularExpenseMappings,
 }

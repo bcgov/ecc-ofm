@@ -12,6 +12,8 @@ const ofmLightTheme = {
   dark: false,
   colors: {
     primary: '#003366',
+    error: '#d8292f',
+    success: '#2e8540',
   },
 }
 

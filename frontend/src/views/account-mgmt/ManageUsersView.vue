@@ -5,50 +5,49 @@
         <h3>Manage users</h3>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="auto">
-        <AppButton @click="toggleShowFilter()" variant="text" :disabled="isLoading">
-          Filter by facility
-          <v-icon right>mdi-filter</v-icon>
-        </AppButton>
+    <v-row class="mb-2">
+      <v-col cols="12" md="9" xl="8">
+        <FacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
-      <v-col cols="3">
-        <v-text-field v-if="showFilterInput" v-model.trim="facilityNameFilter" placeholder="Filter by facility name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
-      </v-col>
-      <v-col class="d-flex justify-end align-end">
-        <AppButton variant="text" @click="toggleDialog({})" :disabled="isLoading">
+      <v-col class="d-flex justify-end align-end pb-0">
+        <AppButton variant="text" @click="toggleDialog({})" :disabled="loading" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col class="pt-0 pb-0">
         <!-- Users Table -->
-        <v-skeleton-loader :loading="isLoading" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded.sync="expanded">
+        <v-skeleton-loader :loading="loading" type="table-tbody">
+          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded="expanded">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
               <AppButton @click.stop="toggleExpand(item)" variant="text">
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
+
             <template v-slot:item.actions="{ item }">
-              <AppButton @click.stop="toggleDialog(item)" variant="text">edit</AppButton>
+              <AppButton @click.stop="toggleDialog(item)" variant="text" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
+
             <template v-slot:item.role="{ item }">
-              <span>{{ getRoleNameById(item.role) }}</span>
+              <span>{{ item.role?.roleName }}</span>
             </template>
+
             <template v-slot:item.isExpenseAuthority="{ item }">
               <span>{{ isExpenseAuthority(item) }}</span>
             </template>
+
             <template v-slot:item.stateCode="{ item }">
               <span>{{ getStatusDescription(item) }}</span>
             </template>
 
             <!-- Slot to customize expand row content -->
-            <template v-slot:expanded-row="{ columns, item }">
+
+            <template v-slot:expanded-row="{ item }">
               <tr>
                 <td></td>
                 <td colspan="6" class="pl-0">
@@ -62,7 +61,9 @@
                       <!-- Facilities table -->
                       <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" items-per-page="-1" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
+
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
+
                         <template v-slot:bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
@@ -80,30 +81,32 @@
     </v-row>
     <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppBackButton width="400px" :to="{ name: 'account-mgmt' }">Account Management</AppBackButton>
+    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
   </v-container>
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import { mapState } from 'pinia'
-import { useAppStore } from '@/stores/app'
-import AppButton from '@/components/ui/AppButton.vue'
-import AppBackButton from '@/components/ui/AppBackButton.vue'
-import { useAuthStore } from '@/stores/auth'
-import rolesMixin from '@/mixins/rolesMixin.js'
-import alertMixin from '@/mixins/alertMixin'
-import { CRM_STATE_CODES } from '@/utils/constants'
-import { ApiRoutes } from '@/utils/constants'
-import ApiService from '@/common/apiService'
-import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
+
 import DeactivateUserDialog from '@/components/account-mgmt/DeactivateUserDialog.vue'
+import ManageUserDialog from '@/components/account-mgmt/ManageUserDialog.vue'
+import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import UserService from '@/services/userService'
+import { useAuthStore } from '@/stores/auth'
+import { CRM_STATE_CODES, ROLES } from '@/utils/constants'
 
 export default {
-  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog },
-  mixins: [rolesMixin, alertMixin],
+  name: 'ManageUsersView',
+  components: { AppButton, AppBackButton, ManageUserDialog, DeactivateUserDialog, FacilityFilter },
+  mixins: [alertMixin, permissionsMixin],
   data() {
     return {
-      isLoading: false,
+      loading: false,
       showFilterInput: false,
       facilityNameFilter: '',
       usersAndFacilities: null,
@@ -132,18 +135,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     ...mapState(useAuthStore, ['userInfo']),
 
     filteredUserFacilities() {
-      this.isLoading = true
       try {
         if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
-        return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
+        return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
       } catch (error) {
         this.setFailureAlert('Failed to filter users by facility name', error)
-      } finally {
-        this.isLoading = false
+        return []
       }
     },
   },
@@ -152,7 +152,7 @@ export default {
   },
   methods: {
     isDeactivatedUser(user) {
-      return user?.facilities?.length === 0 && !user?.role
+      return user?.facilities?.length === 0
     },
 
     isSameUser(user) {
@@ -160,7 +160,7 @@ export default {
     },
 
     showDeactivateUserButton(user) {
-      return !this.isDeactivatedUser(user) && !this.isSameUser(user) && user?.stateCode === CRM_STATE_CODES.ACTIVE
+      return !this.isDeactivatedUser(user) && !this.isSameUser(user) && user?.stateCode === CRM_STATE_CODES.ACTIVE && this.hasPermission(this.PERMISSIONS.MANAGE_USERS_EDIT)
     },
 
     /**
@@ -168,25 +168,12 @@ export default {
      */
     async getUsersAndFacilities() {
       try {
-        this.isLoading = true
-        const res = await ApiService.apiAxios.get(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + this.userInfo.organizationId)
-        this.usersAndFacilities = res.data
+        this.loading = true
+        this.usersAndFacilities = await UserService.getOrganizationUsers(this.userInfo.organizationId)
       } catch (error) {
         this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
       } finally {
-        this.isLoading = false
-      }
-    },
-
-    /**
-     * Toggle the facility input filter
-     */
-    toggleShowFilter() {
-      if (this.showFilterInput) {
-        this.showFilterInput = false
-        this.facilityNameFilter = ''
-      } else {
-        this.showFilterInput = true
+        this.loading = false
       }
     },
 
@@ -208,10 +195,7 @@ export default {
      * Get the status description for a status code
      */
     getStatusDescription(user) {
-      if (this.isDeactivatedUser(user) || user?.stateCode === CRM_STATE_CODES.INACTIVE) {
-        return 'Inactive'
-      }
-      return 'Active'
+      return this.isDeactivatedUser(user) || user?.stateCode === CRM_STATE_CODES.INACTIVE ? 'Inactive' : 'Active'
     },
 
     /**
@@ -221,8 +205,8 @@ export default {
       if (!users) return []
       return users.sort((a, b) => {
         // Check for account management role and sort by it, with true values first
-        const roleA = a.role === this.ROLES.ACCOUNT_MANAGEMENT
-        const roleB = b.role === this.ROLES.ACCOUNT_MANAGEMENT
+        const roleA = a.role?.roleName === ROLES.ACCOUNT_MANAGER
+        const roleB = b.role?.roleName === ROLES.ACCOUNT_MANAGER
         if (roleA && !roleB) return -1
         if (!roleA && roleB) return 1
 
@@ -232,7 +216,7 @@ export default {
         }
 
         // If stateCode is the same, then sort by lastName
-        return a.lastName.localeCompare(b.lastName)
+        return a.lastName?.localeCompare(b.lastName)
       })
     },
 
@@ -241,7 +225,7 @@ export default {
      */
     toggleDialog(user) {
       this.editedIndex = this.usersAndFacilities.indexOf(user)
-      this.userToUpdate = Object.assign({}, user)
+      this.userToUpdate = cloneDeep(user)
       this.showManageUserDialog = !this.showManageUserDialog
     },
 
@@ -312,6 +296,13 @@ export default {
         }
       })
       return lastExpenseAuthorityFacilityNames
+    },
+
+    /**
+     * Facility filter component value changed.
+     */
+    facilityFilterChanged(newVal) {
+      this.facilityNameFilter = newVal
     },
   },
 }

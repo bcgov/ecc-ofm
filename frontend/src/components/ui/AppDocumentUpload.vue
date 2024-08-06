@@ -1,8 +1,15 @@
 <template>
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
-      <div>The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.</div>
-      <AppButton v-if="!loading && !readonly" id="add-new-file" :primary="false" size="large" width="100px" class="addFileButton" @click="addFile">Add File</AppButton>
+      <v-row>
+        <v-col v-if="documentType" cols="12" sm="5" class="pb-0">
+          <AppLabel>{{ documentType }}</AppLabel>
+        </v-col>
+        <v-col cols="12" :sm="documentType ? '7' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
+          <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
+          <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" class="addFileButton" @click="addFile">Add File</AppButton>
+        </v-col>
+      </v-row>
       <div v-if="documents.length > 0" class="mt-6">
         <v-row v-for="item in documents" :key="item.id" no-gutters>
           <v-col cols="12" md="4" class="pr-4">
@@ -24,13 +31,20 @@
         </v-row>
       </div>
       <div v-if="uploadedDocuments.length > 0" class="mt-6 mx-4 mx-md-8 mx-lg-12">
-        <AppLabel>Uploaded Documents</AppLabel>
+        <AppLabel v-if="!documentType">Uploaded Documents</AppLabel>
         <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" items-per-page="-1" density="compact">
           <template #item.actionButtons="{ item }">
-            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId)">mdi-delete</v-icon>
+            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId, documentType)">mdi-delete</v-icon>
           </template>
           <template v-slot:bottom><!-- no paging --></template>
         </v-data-table>
+      </div>
+      <div>
+        <v-row>
+          <v-col>
+            <slot></slot>
+          </v-col>
+        </v-row>
       </div>
     </v-form>
   </v-container>
@@ -40,13 +54,20 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import { humanFileSize, getFileExtensionWithDot } from '@/utils/file'
 import { uuid } from 'vue-uuid'
+import { SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
 
 export default {
   components: { AppButton, AppLabel },
   props: {
     entityName: {
       type: String,
-      required: true,
+      required: false,
+      default: undefined,
+    },
+    documentType: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     loading: {
       type: Boolean,
@@ -56,32 +77,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     uploadedDocuments: {
       type: Array,
       default: () => [],
     },
   },
-  emits: ['updateDocuments', 'deleteUploadedDocument'],
+  emits: ['update:modelValue', 'deleteUploadedDocument', 'validateDocumentsToUpload'],
   data() {
     return {
       documents: [],
-      maxSize: 4194304, // 4 MB
       isValidForm: false,
-      fileExtensionAccept: ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx'],
-      fileFormats: 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX',
-      fileRules: [],
-      headersUploadedDocuments: [
-        { title: 'File Name', key: 'fileName', width: '34%' },
-        { title: 'Description', key: 'description', width: '60%' },
-        { title: '', key: 'actionButtons', sortable: false, width: '6%' },
-      ],
     }
   },
   watch: {
     documents: {
       handler() {
-        const areValidFilesUploaded = this.documents.every((file) => file.isValidFile)
-        this.$emit('updateDocuments', { documents: this.documents, areValidFilesUploaded: areValidFilesUploaded })
+        this.validateDocumentsToUpload()
+        const documentsToUpload = this.documents?.filter((document) => document.isValidFile && document.file)
+        this.$emit('update:modelValue', documentsToUpload)
       },
       deep: true,
     },
@@ -93,43 +110,64 @@ export default {
     },
   },
   created() {
+    this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
+    this.MAX_FILE_SIZE = 4194304 // 4 MB
+    this.fileExtensionAccept = ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx']
+    this.fileFormats = 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX'
     this.fileRules = [
       (value) => {
-        return !value || !value.length || value[0].size < this.maxSize || `The maximum file size is ${humanFileSize(this.maxSize)} for each document.`
+        return !value || !value.length || value[0].size < this.MAX_FILE_SIZE || `The maximum file size is ${humanFileSize(this.MAX_FILE_SIZE)} for each document.`
       },
       (value) => {
         return !value || !value.length || this.fileExtensionAccept.includes(getFileExtensionWithDot(value[0].name)?.toLowerCase()) || `Accepted file types are ${this.fileFormats}.`
       },
     ]
+    this.headersUploadedDocuments = [
+      { title: 'File Name', key: 'fileName', width: '34%' },
+      { title: 'Description', key: 'description', width: '60%' },
+      { title: '', key: 'actionButtons', sortable: false, width: '6%' },
+    ]
   },
   methods: {
     addFile() {
-      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true })
+      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
     },
+
     deleteFile(deletedItemId) {
       const index = this.documents.findIndex((item) => item.id === deletedItemId)
       if (index > -1) {
         this.documents.splice(index, 1)
       }
     },
+
+    validateDocumentsToUpload() {
+      this.$emit(
+        'validateDocumentsToUpload',
+        this.documents?.every((file) => file.isValidFile),
+      )
+    },
+
     // Need to add this validation because isValidForm is not responsive when file is updated
     validateFile(updatedItemId) {
       const document = this.documents.find((item) => item.id === updatedItemId)
       const file = document?.file[0]
       if (file) {
-        const isLessThanMaxSize = file.size < this.maxSize
+        const isLessThanMaxSize = file.size < this.MAX_FILE_SIZE
         const isFileExtensionAccepted = this.fileExtensionAccept.includes(getFileExtensionWithDot(file.name)?.toLowerCase())
         document.isValidFile = isLessThanMaxSize && isFileExtensionAccepted
       } else {
         document.isValidFile = true
       }
     },
+
+    resetDocuments() {
+      this.documents = []
+    },
   },
 }
 </script>
 <style scoped>
 .addFileButton {
-  margin-top: 8px;
   font-size: 16px;
 }
 </style>

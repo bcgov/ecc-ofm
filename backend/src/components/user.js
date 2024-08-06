@@ -4,6 +4,8 @@ const config = require('../config/index')
 const ApiError = require('./error')
 const axios = require('axios')
 const HttpStatus = require('http-status-codes')
+const { isEmpty } = require('lodash')
+
 const log = require('../components/logger')
 
 const {
@@ -15,10 +17,10 @@ const {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   ContactMappings,
+  RoleMappings,
 } = require('../util/mapping/Mappings')
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const _ = require('lodash')
 
 const USER_NOT_FOUND = 'User not found.'
 const NO_PERMISSIONS = 'No permissions.'
@@ -33,8 +35,8 @@ async function getUserInfo(req, res) {
   }
   const userGuid = getUserGuid(req)
   const isIdir = isIdirUser(req)
-  const queryUserName = req.params?.queryUserName
-  const userName = getUserName(req)
+  const queryUserName = req.params?.userName
+  const currentUserName = getUserName(req)
   const businessName = getBusinessName(req)
 
   // if is idir user (ministry user), make sure they are a user in dynamics
@@ -51,8 +53,8 @@ async function getUserInfo(req, res) {
   }
 
   let resData = {
-    displayName: queryUserName ? userName + '-' + queryUserName : userName,
-    userName: userName,
+    displayName: queryUserName ? `${currentUserName}-${queryUserName}` : currentUserName,
+    userName: currentUserName,
     businessName: businessName,
     isMinistryUser: isIdir,
     serverTime: new Date(),
@@ -62,7 +64,7 @@ async function getUserInfo(req, res) {
   if (isIdir) {
     if (queryUserName) {
       try {
-        log.info(`Ministry user [${userName}] is impersonating with username: [${queryUserName}].`)
+        log.info(`Ministry user [${currentUserName}] is impersonating with username: [${queryUserName}].`)
         // dynamics api requires a userID. if userID not found then it wil use the query name
         // put a random userID so that we only search by queryname
         userResponse = await getUserProfile(null, queryUserName)
@@ -75,7 +77,7 @@ async function getUserInfo(req, res) {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(resData)
       }
     } else {
-      // TODO: Get info for ministry user from session header for now... until we get an endpiont for ministry
+      // XXX Get info for ministry user from session header for now... until we get an endpiont for ministry
       // user from dynamics
       resData.userId = userGuid
       resData.firstName = req.session.passport.user._json.given_name
@@ -85,11 +87,10 @@ async function getUserInfo(req, res) {
       return res.status(HttpStatus.OK).json(resData)
     }
   } else {
-    // This is a BCeID user: if the userGuid cannot be found in dyanmics, then dyanmics will check if the userName exists,
-    // if userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
+    // This is a BCeID user
     try {
-      log.verbose('BCEID User guid: ' + userGuid + ' username: ' + userName)
-      userResponse = await getUserProfile(userGuid, userName)
+      log.verbose('BCEID User guid: ' + userGuid + ' username: ' + currentUserName)
+      userResponse = await getUserProfile(userGuid, currentUserName)
     } catch (e) {
       log.error('getUserProfile Error', e.response ? e.response.status : e.message)
       return res.status(HttpStatus.UNAUTHORIZED).json(resData)
@@ -146,12 +147,24 @@ async function getUserProfile(userGuid, userName) {
     }
 
     log.verbose('UserProfile Url is', url)
-    let response = undefined
-    response = await axios.get(url, getHttpHeader())
-    log.verbose('getUserProfile response:', response.data)
-    return response.data
+    const response = await axios.get(url, getHttpHeader())
+    const userProfile = response.data
+    log.verbose('getUserProfile response:', userProfile)
+
+    // If querying by userGuid and userName validate that the returned profile matches both the userGuid and userName
+    // BCeID usernames can change but the guid won't so check for a mismatch to prevent unauthorized access
+    // A mismatch could occur because an existing account (guid) gets a new username (username mismatch) or
+    // because an existing username is given to a new guid (guid mismatch)
+    if (userGuid && (userProfile.ccof_userid !== userGuid || userProfile.ccof_username?.toLowerCase() !== userName?.toLowerCase())) {
+      return null
+    }
+
+    return userProfile
   } catch (e) {
-    if (e.response?.status == '404') {
+    if (e.response?.status === 401) {
+      return null
+    }
+    if (e.response?.status === 404) {
       const data = e.response?.data
       log.verbose('response ', data)
       if (data?.startsWith(USER_NOT_FOUND) || data?.startsWith(NO_PERMISSIONS) || data?.startsWith(NO_PROFILE_FOUND)) {
@@ -167,21 +180,34 @@ async function getUserProfile(userGuid, userName) {
 function parseFacilityPermissions(userResponse) {
   return userResponse.facility_permission
     .filter((fp) => fp.ofm_portal_access)
-    .map((fp) => new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data)
-    .sort((a, b) => a.facilityName.localeCompare(b.facilityName))
+    .map((fp) => {
+      return {
+        ...new MappableObjectForFront(fp, UsersPermissionsFacilityMappings).data,
+        ...new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data,
+      }
+    })
+    .sort((a, b) => a.facilityName?.localeCompare(b.facilityName))
 }
 
 function mapUsersPermissionsFacilitiesObjectForFront(data) {
   const usersPermissionsFacilities = new MappableObjectForFront(data, UserMappings).toJSON()
+
+  if (usersPermissionsFacilities?.role) {
+    const role = new MappableObjectForFront(usersPermissionsFacilities?.role, RoleMappings).toJSON()
+    usersPermissionsFacilities.role = role
+  }
   if (usersPermissionsFacilities?.facilities) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
-      let facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
+      const facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
       facilityData.accountNumber = facilityData.address?.accountnumber
       facilityData.city = facilityData.address?.address1_city
       facilityData.address = facilityData.address?.address1_line1
       return facilityData
     })
+
+    return usersPermissionsFacilities
   }
+
   return {
     ...usersPermissionsFacilities,
     role: usersPermissionsFacilities.role ? Number(usersPermissionsFacilities.role) : usersPermissionsFacilities.role,
@@ -191,13 +217,14 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,ofm_portal_role,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0))&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
     })
     return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -210,24 +237,24 @@ function mapUserFacilityObjectForFront(data) {
   return userFacilities
 }
 
-async function getUserFacilities(req, res, onlyWithPortalAccess) {
+async function getUserFacilities(req, res) {
   try {
-    let userFacilities = []
-    let operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
-    if (onlyWithPortalAccess) {
-      operation = operation + ` and (ofm_portal_access eq true)`
-    }
+    const userFacilities = []
+    const operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name,ofm_program)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
     return res.status(HttpStatus.OK).json(userFacilities)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 function mapUserObjectForBack(data) {
   let newUser = new MappableObjectForBack(data, UserMappings).toJSON()
-  newUser.ofm_portal_role = String(newUser.ofm_portal_role)
+  delete newUser.ofm_portal_role_id
+
+  newUser['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${data?.role?.roleId})`
   newUser['parentcustomerid_account@odata.bind'] = `/accounts(${data?.organizationId})`
   return newUser
 }
@@ -237,9 +264,10 @@ async function createUser(req, res) {
     const payload = mapUserObjectForBack(req.body)
     const response = await postOperation('contacts', payload)
     const returnVal = new MappableObjectForFront(response, UserMappings).toJSON()
-    returnVal.role = Number(returnVal.role)
+    returnVal.role = { roleId: response._ofm_portal_role_id_value }
     return res.status(HttpStatus.OK).json(returnVal)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
@@ -248,6 +276,13 @@ function mapContactForBack(data) {
   const contact = new MappableObjectForBack(data, ContactMappings).toJSON()
   contact.entityNameSet = 'contacts'
   contact.actionMode = 'Update'
+
+  // Handle role Update
+  if (contact.role) {
+    contact['ofm_portal_role_id@odata.bind'] = `/ofm_portal_roles(${contact.role.roleId})`
+  }
+  delete contact.role
+
   return contact
 }
 
@@ -282,20 +317,19 @@ async function updateUser(req, res) {
     const response = await postBatches(payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
-async function getUserByBCeID(req, res) {
+async function userExists(req, res) {
   try {
-    const operation = `contacts?$select=contactid,ccof_username,ofm_first_name,ofm_last_name,emailaddress1&$filter=ccof_username eq '${req.params.queryUserName}'`
+    const operation = `contacts?$select=contactid&$filter=ccof_username eq '${req.params.userName}'`
     const response = await getOperation(operation)
-    const user = response.value.map((item) => new MappableObjectForFront(item, UserProfileMappings).toJSON())
-    return res.status(HttpStatus.OK).json(user)
+    return res.status(HttpStatus.OK).json({ exists: !isEmpty(response.value) })
   } catch (e) {
-    log.info('Error in getUserByBCeID:', e)
-    const errorResponse = e.data ? e.data : e?.status ? e.status : 'Unknown error'
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: errorResponse })
+    log.error('Error in getUserByBCeID:', e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
@@ -307,16 +341,18 @@ async function updateUserFacilityPermission(req, res) {
     const response = await patchOperationWithObjectId('ofm_bceid_facilities', req.params.bceidFacilityId, payload)
     return res.status(HttpStatus.OK).json(response)
   } catch (e) {
+    log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
 module.exports = {
   createUser,
-  getUserByBCeID,
   getUserFacilities,
   getUserInfo,
+  getUserProfile,
   getUsersPermissionsFacilities,
   updateUser,
   updateUserFacilityPermission,
+  userExists,
 }

@@ -29,7 +29,7 @@ export default {
       this.$emit('update:modelValue', value?.target?.oldValue?.replace(/,/g, ''))
     },
     blur(value) {
-      this.$emit('update:modelValue', Number(value?.target?.unmasked).toFixed(2))
+      this.$emit('update:modelValue', Number(value?.target?.unmasked).toFixed(this.format?.precision))
     },
   },
 }

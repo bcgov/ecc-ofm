@@ -1,39 +1,40 @@
 'use strict'
 
-import { DateTimeFormatter, LocalDate } from '@js-joda/core'
-import { filter, isPlainObject, sortBy } from 'lodash'
+import { SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 
-import ApiService from '@/common/apiService'
-import rfdc from 'rfdc/default'
-
-export function deepCloneObject(objectToBeCloned) {
-  const cloned = rfdc(objectToBeCloned)
-  return cloned
+export function isApplicationLocked(applicationStatusCode) {
+  if (!applicationStatusCode) {
+    return false
+  }
+  return !(applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || applicationStatusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 }
 
-export function equalsIgnoreCase(param1, param2) {
-  return param1?.toLowerCase() === param2?.toLowerCase()
+// Check the list of models for multiples of the same VIN.
+// We need length > 1 to enforce that there are VINS that exactly match which breaks our validation rule
+export function hasDuplicateVIN(model, transportModels) {
+  return transportModels.filter((m) => m.VIN === model.VIN).length > 1
 }
 
-export function sortArrayByDate(array, dateFieldName, isAscending, datePattern = 'uuuuMMdd') {
-  return array.sort((a, b) => {
-    const dateA = getLocalDateFromString(a[`${dateFieldName}`].toString(), datePattern)
-    const dateB = getLocalDateFromString(b[`${dateFieldName}`].toString(), datePattern)
-    return isAscending ? dateA.compareTo(dateB) : dateB.compareTo(dateA)
-  })
+export function convertStringToArray(item, separator = ',') {
+  return typeof item === 'string' ? item?.split(separator) : item
 }
 
-export function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1)
+export function convertArrayToString(item, separator = ', ') {
+  return Array.isArray(item) ? item?.join(separator) : item
 }
 
-/**
- * This function will return the first letter of each word in the camel case string, like "penRequestBatch" will return "prb"
- */
-export function abbreviateCamelCase(string) {
-  return string
-    .replace(/([A-Z])/g, ' $1')
-    .match(/\b(\w)/g)
-    .join('')
-    .toLowerCase()
+export function sanitizeWholeNumberInput(input) {
+  return input?.replace(/[^0-9]/g, '')
+}
+
+export function createPDFDownloadLink(file, fileName) {
+  const link = document.createElement('a')
+  link.href = `data:application/pdf;base64,${file}`
+  link.target = '_blank'
+  link.download = fileName
+
+  // Simulate a click on the element <a>
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }

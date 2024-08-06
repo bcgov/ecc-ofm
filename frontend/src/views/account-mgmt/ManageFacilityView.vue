@@ -1,81 +1,61 @@
 <template>
   <v-container fluid>
     <h1>Update Facility Information</h1>
-    <v-row>
-      <v-col class="ml-6 mt-6 pb-0">
+    <v-row class="mt-4">
+      <v-col cols="12" lg="6">
         <h4>Facility Details</h4>
       </v-col>
-    </v-row>
-    <v-row>
-      <v-col class="ml-6 pt-0">
-        <FacilityInfo :loading="loading" :facility="facility" class="mt-0" />
+      <v-col v-if="editable" cols="12" lg="6">
+        <v-row no-gutters justify="end" class="">
+          <AppButton size="large" :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="licence-card-header align-self-end">
+      <v-col class="py-0">
+        <FacilityInfo :loading="loading" :facility="facility" />
+      </v-col>
+    </v-row>
+    <v-row class="mt-6">
+      <v-col class="pb-1 pt-6">
         <h4>Licences</h4>
       </v-col>
-      <v-col class="d-flex justify-end align-end licence-card-header">
-        <AppButton variant="text" :disabled="loading">
-          <v-icon left>mdi-plus</v-icon>
-          Add New Licence
+      <v-col class="d-flex justify-end align-end pb-1 pt-0">
+        <AppButton v-if="licences?.length > 0 && isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+          <v-icon>mdi-arrow-expand-vertical</v-icon>
+          Expand All
+        </AppButton>
+        <AppButton v-else-if="licences?.length > 0" id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+          <v-icon>mdi-arrow-collapse-vertical</v-icon>
+          Collapse All
         </AppButton>
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-6 pr-9 pt-0">
-        <v-card class="pa-6 mt-0" variant="outlined">
+      <v-col cols="12" class="pt-0">
+        <v-card elevation="0" variant="outlined" class="w-100">
           <v-skeleton-loader :loading="loading" type="table-tbody">
-            <v-row>
-              <v-col>
-                <AppLabel>Current licences:</AppLabel>
-                <v-card v-for="item in this.licences" :key="item.licence" class="licence-card">
-                  <v-row>
-                    <v-col cols="auto">
-                      <AppLabel>Licence Number:</AppLabel>
-                    </v-col>
-                    <v-col cols="2">
-                      {{ item.licence }}
-                    </v-col>
-                    <v-col cols="auto">
-                      <v-icon icon="fa:fa-regular fa-pen-to-square" class="mr-4"></v-icon>
-                    </v-col>
-                    <v-col cols="1" />
-                    <v-col cols="auto">
-                      <AppLabel>Health Authority:</AppLabel>
-                    </v-col>
-                    <v-col cols="2" class="pb-0">
-                      <v-select
-                        id="health-authority"
-                        :items="healthAuthorities"
-                        v-model="item.healthAuthorityId"
-                        item-title="description"
-                        item-value="id"
-                        :disabled="true"
-                        density="compact"
-                        variant="outlined"></v-select>
-                    </v-col>
-                    <v-col>
-                      <v-row no-gutters justify="end">
-                        <v-icon icon="fa:fa-regular fa-trash-can"></v-icon>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-card>
-              </v-col>
-            </v-row>
+            <v-expansion-panels v-if="licences?.length > 0" v-model="panel" multiple>
+              <v-expansion-panel v-for="licence in licences" :key="licence.licenceId" :value="licence.licenceId">
+                <v-expansion-panel-title>
+                  <LicenceHeader :licence="licence" />
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <LicenceDetails :readOnly="true" :licence="licence" />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+            <div v-else class="pa-5">0 Licences</div>
           </v-skeleton-loader>
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col class="ml-6 pr-9 pb-0 d-flex flex-row align-center">
-        <h4 class="mr-2">Primary Contact</h4>
-        <h5>&nbsp;(You can only have one primary contact)</h5>
-      </v-col>
+    <v-row no-gutters class="mt-6">
+      <h4 class="mr-2">Primary Contact</h4>
+      <h5>(You can only have one primary contact)</h5>
     </v-row>
     <v-row>
-      <v-col cols="12" class="ml-6 pr-9 pt-0 pb-0">
+      <v-col cols="12" class="py-0">
         <v-card class="pa-6 mb-3" variant="outlined">
           <v-skeleton-loader :loading="loading" type="table-tbody">
             <div class="w-100">
@@ -84,9 +64,8 @@
                 <v-col cols="auto">
                   <AppLabel>Change primary contact:</AppLabel>
                 </v-col>
-                <v-col cols="4" class="pb-0">
+                <v-col cols="12" sm="6" md="4" xl="3" class="pb-0">
                   <v-select
-                    v-if="editModePrimaryContact"
                     id="primary-contact"
                     v-model="primaryContact"
                     :items="sortedContacts"
@@ -97,20 +76,21 @@
                     density="compact"
                     variant="outlined"
                     return-object></v-select>
-                  <template v-else>{{ primaryContact?.firstName }} {{ primaryContact?.lastName }}</template>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="11">
+                <v-col cols="10" sm="11">
                   <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
                 </v-col>
-                <v-col cols="1">
-                  <v-row v-if="!editModePrimaryContact" no-gutters justify="end">
-                    <v-icon icon="fa:fa-regular fa-edit" @click="toggleEditPrimaryContact()"></v-icon>
+                <v-col cols="2" sm="1">
+                  <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
+                    <AppButton variant="text" :disabled="editMode || loading" @click="toggleEditPrimaryContact()">
+                      <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
+                    </AppButton>
                   </v-row>
                 </v-col>
               </v-row>
-              <v-row v-if="editModePrimaryContact">
+              <v-row v-if="editable && editModePrimaryContact">
                 <v-col cols="12">
                   <v-row justify="end">
                     <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="toggleEditPrimaryContact()">Cancel</AppButton>
@@ -130,60 +110,83 @@
       :contacts="expenseAuthorities"
       :contactsForAdd="expenseAuthoritiesAvailableForAdd"
       :atLeastOneContactMandatory="true"
-      @save-contact-updates="saveExpenseAuthorityUpdates" />
+      :parentInEditMode="editMode"
+      :editable="editable"
+      @save-contact-updates="saveExpenseAuthorityUpdates"
+      @edit-mode-changed="contactEditModeChange" />
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
       titleInfo="(You can have more than one additional contact)"
       :contacts="additionalContacts"
       :contactsForAdd="additionalContactsAvailableForAdd"
-      @save-contact-updates="saveAdditionalContactUpdates" />
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-row justify="center" justify-md="start" class="pb-2">
-          <AppBackButton id="back-to-manage-organization" width="450px" :to="{ name: 'manage-organization' }" :loading="loading">Organization Information</AppBackButton>
-        </v-row>
-      </v-col>
-    </v-row>
+      :parentInEditMode="editMode"
+      :editable="editable"
+      @save-contact-updates="saveAdditionalContactUpdates"
+      @edit-mode-changed="contactEditModeChange" />
+    <AppBackButton id="back-to-manage-organization" max-width="500px" :to="{ name: 'manage-organization' }" :loading="loading">Organization Information</AppBackButton>
+    <NewRequestDialog
+      v-if="editable"
+      class="pa-0"
+      :show="showChangeRequestDialog"
+      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+      :defaultFacility="facility"
+      @close="toggleChangeRequestDialog"
+      @submit-phone-email="handleCRSubmit" />
+    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
-import AppBackButton from '@/components/ui/AppBackButton.vue'
-import AppLabel from '@/components/ui/AppLabel.vue'
-import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
-import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
-import ApiService from '@/common/apiService'
-import { ApiRoutes } from '@/utils/constants'
-import FacilityService from '@/services/facilityService'
-import alertMixin from '@/mixins/alertMixin'
-import rules from '@/utils/rules'
-import { useAppStore } from '@/stores/app'
+import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
+
+import AppBackButton from '@/components/ui/AppBackButton.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
+import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import EditFacilityContacts from '@/components/account-mgmt/EditFacilityContacts.vue'
+import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
+import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
+import LicenceDetails from '@/components/licences/LicenceDetails.vue'
+import LicenceHeader from '@/components/licences/LicenceHeader.vue'
+import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
+import ApplicationService from '@/services/applicationService'
+import FacilityService from '@/services/facilityService'
+import LicenceService from '@/services/licenceService'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
+import rules from '@/utils/rules'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo },
-  mixins: [alertMixin],
+  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, NewRequestDialog, UnableToSubmitCrDialog },
+  mixins: [alertMixin, permissionsMixin],
   data() {
     return {
       facilityId: null,
       licences: [],
       contacts: [],
+      panel: [],
       primaryContact: undefined,
       primaryContactLastSaved: undefined,
       facility: undefined,
       loading: false,
       rules,
+      editMode: false,
       editModePrimaryContact: false,
+      isEmpty,
+      showChangeRequestDialog: false,
+      showUnableToSubmitCrDialog: false,
+      preventChangeRequestType: undefined,
     }
   },
   computed: {
+    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['getRoleNameById', 'healthAuthorities', 'userRoles']),
     expenseAuthorities() {
       return this.contacts?.filter((contact) => contact.isExpenseAuthority)
     },
@@ -199,15 +202,24 @@ export default {
     hasPrimaryContactChanged() {
       return this.primaryContact !== this.primaryContactLastSaved
     },
+    allLicenceIDs() {
+      return this.licences?.map((licence) => licence.licenceId)
+    },
+    editable() {
+      return this.hasPermission(this.PERMISSIONS.UPDATE_ORG_FACILITY) && this.hasAccessToFacility(this.facilityId)
+    },
     sortedContacts() {
       if (!this.contacts) return []
       const contactsCopy = [...this.contacts]
       return contactsCopy.sort((a, b) => {
-        return a.firstName.localeCompare(b.firstName)
+        return a.firstName?.localeCompare(b.firstName)
       })
     },
   },
   async created() {
+    this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
+    this.OFM_PROGRAM_CODES = OFM_PROGRAM_CODES
+    this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
     this.facilityId = this.$route.params.facilityId
     await this.loadData()
     this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.facility?.primaryContactId)
@@ -233,8 +245,7 @@ export default {
       try {
         this.contacts = await FacilityService.getContacts(this.facilityId)
         this.contacts?.forEach((contact) => {
-          contact.fullName = `${contact.firstName} ${contact.lastName}`
-          contact.roleName = this.getRoleNameById(Number(contact.role))
+          contact.fullName = `${contact.firstName ?? ''} ${contact.lastName}`
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.facilityId, error)
@@ -247,6 +258,11 @@ export default {
     async getLicences() {
       try {
         this.licences = await FacilityService.getLicences(this.facilityId)
+        await Promise.all(
+          this.licences.map(async (licence) => {
+            licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
+          }),
+        )
       } catch (error) {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
       }
@@ -269,6 +285,7 @@ export default {
     toggleEditPrimaryContact() {
       this.editModePrimaryContact = !this.editModePrimaryContact
       this.primaryContact = this.primaryContactLastSaved
+      this.editMode = this.editModePrimaryContact
     },
 
     /**
@@ -284,6 +301,7 @@ export default {
         await FacilityService.updateFacilityPrimaryContact(this.facility.facilityId, this.facility.primaryContactId)
         this.primaryContactLastSaved = this.primaryContact
         this.editModePrimaryContact = false
+        this.editMode = false
         this.setSuccessAlert('Primary contact updated successfully')
       } catch (error) {
         this.setFailureAlert('Failed to update Primary Contact', error)
@@ -304,9 +322,9 @@ export default {
         contactsToAdd.forEach((obj) => (obj[property] = true))
         contactsToRemove?.forEach((obj) => (obj[property] = false))
         const contactsToUpdate = contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
-        let updateContactsTasks = contactsToUpdate.map(async (contact) => {
+        const updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
-            await ApiService.apiAxios.patch(ApiRoutes.USER_PERMISSIONS_FACILITIES + '/' + contact.bceidFacilityId, contact)
+            await FacilityService.updateFacilityContact(contact.bceidFacilityId, contact)
           } catch (error) {
             this.setFailureAlert(`Failed to update ${property} for contactId = ` + contact.contactId, error)
             throw error
@@ -335,22 +353,56 @@ export default {
     async saveAdditionalContactUpdates(contactsToAdd, contactsToRemove) {
       await this.saveContactUpdates('isAdditionalContact', 'Additional Contact', contactsToAdd, contactsToRemove)
     },
+
+    /**
+     * Toggle expansion panels
+     */
+    togglePanels() {
+      this.panel = this.panel.length === 0 ? this.allLicenceIDs : []
+    },
+
+    /**
+     * Handle edit mode change for component
+     */
+    contactEditModeChange(editMode) {
+      this.editMode = editMode
+    },
+
+    /**
+     * Check if user has access to facility
+     */
+    hasAccessToFacility(facilityId) {
+      return this.userInfo?.facilities?.some((facility) => facility.facilityId === facilityId)
+    },
+
+    /**
+     * Open/close the Change Request dialog
+     */
+    toggleChangeRequestDialog() {
+      this.showChangeRequestDialog = !this.showChangeRequestDialog
+    },
+
+    handleCRSubmit() {
+      this.loadData()
+    },
+
+    async validateOfmProgram() {
+      const programCodeMapping = {
+        [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
+        [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
+      }
+      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([{ facilityId: this.facility.facilityId }])
+      if (this.facility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
+        this.preventChangeRequestType = programCodeMapping[this.facility.programCode]
+        this.showUnableToSubmitCrDialog = true
+      } else {
+        this.toggleChangeRequestDialog()
+      }
+    },
+
+    toggleUnableToSubmitCrDialog() {
+      this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
+    },
   },
 }
 </script>
-
-<style>
-.licence-card-header {
-  margin-left: 24px;
-  padding-right: 9px;
-  padding-top: 0px;
-  padding-bottom: 1px;
-}
-
-.licence-card {
-  margin-top: 12px;
-  padding: 10px;
-  border: 1px solid black;
-  box-shadow: none;
-}
-</style>

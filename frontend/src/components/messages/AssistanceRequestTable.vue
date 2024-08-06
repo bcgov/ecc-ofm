@@ -36,8 +36,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import MessageService from '@/services/messageService'
 import format from '@/utils/format'
 
 export default {
@@ -92,8 +93,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['updateAssistanceRequest']),
-
     resetAllCheckboxes() {
       this.bodyCheckboxesSelected = []
     },
@@ -126,7 +125,7 @@ export default {
       if (selectedAssistanceRequest?.isRead != isRead) {
         selectedAssistanceRequest.isRead = isRead
         payload.isRead = isRead
-        await this.updateAssistanceRequest(assistanceRequestId, payload)
+        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
       }
     },
     isActionRequiredMessage(item) {
@@ -134,7 +133,7 @@ export default {
     },
     getItemClass(item) {
       return {
-        'action-required-message': this.isActionRequiredMessage(item),
+        'error-message': this.isActionRequiredMessage(item),
         'unread-message': !item?.isRead,
         'highlighted-row': this.selectedRequestId === item?.assistanceRequestId,
       }
@@ -153,10 +152,6 @@ export default {
 
 .unread-message {
   font-weight: bold;
-}
-
-.action-required-message {
-  color: red;
 }
 
 .highlighted-row {

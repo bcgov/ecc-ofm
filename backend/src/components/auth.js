@@ -29,10 +29,10 @@ const auth = {
   },
 
   // Get new JWT and Refresh tokens
-  async renew(refreshToken, isIdirUser) {
+  async renew(refreshToken) {
     let result = {}
-    let clientId = isIdirUser ? config.get('oidc:clientIdIDIR') : config.get('oidc:clientId')
-    let clientSecret = isIdirUser ? config.get('oidc:clientSecretIDIR') : config.get('oidc:clientSecret')
+    let clientId = config.get('oidc:clientId')
+    let clientSecret = config.get('oidc:clientSecret')
     try {
       const discovery = await utils.getOidcDiscovery()
       const response = await axios.post(
@@ -82,10 +82,9 @@ const auth = {
             log.verbose('refreshJWT', 'Can refresh JWT token')
 
             // Get new JWT and Refresh Tokens and update the request
-            let isIdir = req.session?.passport?.user?._json?.idir_user_guid ? true : false
-            const result = await auth.renew(req.user.refreshToken, isIdir)
-            req.user.jwt = result.jwt // eslint-disable-line require-atomic-updates
-            req.user.refreshToken = result.refreshToken // eslint-disable-line require-atomic-updates
+            const result = await auth.renew(req.user.refreshToken)
+            req.user.jwt = result.jwt
+            req.user.refreshToken = result.refreshToken
           } else {
             log.verbose('refreshJWT', 'Cannot refresh JWT token')
             delete req.user
@@ -101,14 +100,14 @@ const auth = {
     next()
   },
 
-  generateUiToken() {
-    const i = config.get('tokenGenerate:issuer')
-    const s = 'user@penrequest.ca'
-    const a = config.get('server:frontend')
+  generateUiToken(user) {
+    const issuer = config.get('tokenGenerate:issuer')
+    const subject = user.username
+    const audience = config.get('server:frontend')
     const signOptions = {
-      issuer: i,
-      subject: s,
-      audience: a,
+      issuer,
+      subject,
+      audience,
       expiresIn: '30m',
       algorithm: 'RS256',
     }
@@ -160,7 +159,7 @@ const auth = {
           log.info('error is from verify', e)
           return res.status(HttpStatus.UNAUTHORIZED).json()
         }
-        log.info('Backend token is valid moving to next')
+        log.verbose('Backend token is valid moving to next')
         return next()
       } else {
         log.info('no jwt responding back 401')

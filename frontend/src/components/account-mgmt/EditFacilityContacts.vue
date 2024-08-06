@@ -1,12 +1,10 @@
 <template>
-  <v-row>
-    <v-col class="ml-6 pr-9 pb-0 d-flex flex-row align-center">
-      <h4 class="mr-2">{{ title }}</h4>
-      <h5>&nbsp;{{ titleInfo }}</h5>
-    </v-col>
+  <v-row no-gutters class="mt-6">
+    <h4 class="mr-2">{{ title }}</h4>
+    <h5>{{ titleInfo }}</h5>
   </v-row>
   <v-row>
-    <v-col cols="12" class="ml-6 pr-9 pt-0">
+    <v-col cols="12" class="pt-0">
       <v-card elevation="0" variant="outlined">
         <v-expansion-panels variant="accordion" v-model="isPanelOpen">
           <v-expansion-panel elevation="0">
@@ -22,7 +20,7 @@
                     <v-col cols="auto" class="pb-0">
                       <AppLabel>Add {{ title }}:</AppLabel>
                     </v-col>
-                    <v-col cols="3" class="pb-0">
+                    <v-col cols="12" sm="6" md="4" xl="3" class="pb-0">
                       <v-autocomplete
                         id="additional-contact"
                         ref="autoComplete"
@@ -42,25 +40,29 @@
                     <v-col class="pt-2">
                       <v-data-table :headers="headers" :items="sortedContacts" density="compact">
                         <template v-slot:item.name="{ item }">
-                          {{ `${item.firstName} ${item.lastName}` }}
+                          {{ item.fullName }}
                         </template>
                         <template v-slot:item.role="{ item }">
-                          {{ getRoleNameById(item.role) }}
+                          {{ item.role?.roleName }}
                         </template>
-                        <template v-slot:item.actions="{ item }">
+                        <template v-if="editable" v-slot:item.actions="{ item }">
                           <v-row v-if="editMode" justify="end">
-                            <v-icon icon="fa:fa-regular fa-trash-can" @click="deleteContact(item)"></v-icon>
+                            <AppButton variant="text" :disabled="loading" @click="deleteContact(item)">
+                              <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon"></v-icon>
+                            </AppButton>
                           </v-row>
                         </template>
-                        <template v-slot:[`header.actions`]>
+                        <template v-if="editable" v-slot:[`header.actions`]>
                           <v-row v-if="!editMode" justify="end">
-                            <v-icon icon="fa:fa-regular fa-edit" @click="toggleEditMode()"></v-icon>
+                            <AppButton variant="text" :disabled="parentInEditMode || loading" @click="toggleEditMode()">
+                              <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
+                            </AppButton>
                           </v-row>
                         </template>
                       </v-data-table>
                     </v-col>
                   </v-row>
-                  <v-row v-if="editMode">
+                  <v-row v-if="editMode && editable">
                     <v-col cols="12" class="pb-4">
                       <v-row justify="end">
                         <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="cancelEditContacts()">Cancel</AppButton>
@@ -82,8 +84,6 @@
 import AppButton from '@/components/ui/AppButton.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import rules from '@/utils/rules'
-import { useAppStore } from '@/stores/app'
-import { mapState } from 'pinia'
 
 export default {
   name: 'EditFacilityContacts',
@@ -114,8 +114,18 @@ export default {
       required: false,
       default: false,
     },
+    parentInEditMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    editable: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
-  emits: ['save-contact-updates'],
+  emits: ['save-contact-updates', 'edit-mode-changed'],
   data() {
     return {
       contactId: null,
@@ -136,7 +146,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['getRoleNameById']),
     isSaveDisabled() {
       return this.updatedContactsToAdd?.length === 0 && this.updatedContactsToRemove?.length === 0
     },
@@ -170,6 +179,7 @@ export default {
      */
     toggleEditMode() {
       this.editMode = !this.editMode
+      this.$emit('edit-mode-changed', this.editMode)
     },
 
     /**
@@ -223,6 +233,7 @@ export default {
       this.contactId = null
       this.editMode = false
       this.errorMessage = ''
+      this.$emit('edit-mode-changed', this.editMode)
     },
 
     /**
@@ -236,6 +247,7 @@ export default {
         this.updatedContactsToAdd = []
         this.updatedContactsToRemove = []
         this.editMode = false
+        this.$emit('edit-mode-changed', this.editMode)
       }
     },
 

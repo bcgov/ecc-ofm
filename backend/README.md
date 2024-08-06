@@ -1,8 +1,7 @@
 ## OFM Backend
 
-The Node.js backend for the OFN application that handles authentication, authorization, and session management.
-This project was built using the EDUC-CCOF project as a template.  
-You may see references to the EDUC-CCOF project until we get this properly cleaned up.
+The Node.js backend for the OFM application that handles authentication, authorization, and session management.
+This project was built using the EDUC-CCOF project as a template.
 
 ### Local Setup
 
@@ -17,6 +16,20 @@ You may see references to the EDUC-CCOF project until we get this properly clean
 **`Step 5`** Run `npm run serve` in command line from backend folder, to run the app.
 
 **`Step 6`** Open http://localhost:8080/api/health to verify that the app is running.
+
+### Lint with [ESLint](https://eslint.org/)
+
+With NPM:
+
+```sh
+npm run lint
+```
+
+To fix issues:
+
+```sh
+npm run lint:fix
+```
 
 ### Unit Tests
 

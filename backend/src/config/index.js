@@ -33,12 +33,12 @@ nconf.defaults({
     port: process.env.SERVER_PORT,
   },
   oidc: {
+    discovery: process.env.SOAM_DISCOVERY,
     publicKey: process.env.SOAM_PUBLIC_KEY,
     clientId: process.env.SOAM_CLIENT_ID,
     clientSecret: process.env.SOAM_CLIENT_SECRET,
-    clientIdIDIR: process.env.SOAM_CLIENT_ID_IDIR,
-    clientSecretIDIR: process.env.SOAM_CLIENT_SECRET_IDIR,
-    discovery: process.env.SOAM_DISCOVERY,
+    idpHintBceid: process.env.SOAM_IDP_HINT_BCEID,
+    idpHintIdir: process.env.SOAM_IDP_HINT_IDIR,
   },
   secureExchange: {
     apiEndpoint: process.env.CCOF_API_ENDPOINT,
@@ -59,12 +59,14 @@ nconf.defaults({
     natsCluster: process.env.NATS_CLUSTER,
   },
   redis: {
-    use: process.env.USE_REDIS,
+    enable: process.env.REDIS_ENABLE,
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
-    password: process.env.REDIS_PASSWORD,
-    clustered: process.env.REDIS_USE_CLUSTERED,
-    facilityTTL: process.env.REDIS_FACILITY_TTL,
+    clustered: process.env.REDIS_CLUSTERED,
+  },
+  clamav: {
+    host: process.env.CLAMAV_HOST,
+    port: process.env.CLAMAV_PORT,
   },
 })
 module.exports = nconf

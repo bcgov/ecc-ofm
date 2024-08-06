@@ -5,7 +5,7 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="3" class="d-flex flex-column align-end pa-0">
-        <AppButton variant="text" width="150px" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
+        <AppButton variant="text" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon class="icon" left>mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
@@ -68,7 +68,7 @@
                     <span class="font-weight-bold">Sent:</span>
                     {{ format.formatDate(item.sentDate) }}
                   </div>
-                  <div class="pt-1">{{ item.message }}</div>
+                  <div class="pt-1" v-html="item.message" />
                 </v-col>
               </v-row>
             </template>
@@ -98,9 +98,9 @@ import format from '@/utils/format'
 import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
 
 export default {
+  components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
   mixins: [alertMixin],
   format: [format],
-  components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
   props: {
     assistanceRequestId: {
       type: String,
@@ -210,7 +210,7 @@ export default {
      * Returns the sent by value for the conversation depending on the source system.
      */
     deriveFromDisplay(item) {
-      return item.ofmSourceSystem ? `${this.userInfo?.firstName} ${this.userInfo?.lastName}` : OFM_PROGRAM
+      return item.ofmSourceSystem ? `${this.userInfo?.firstName ?? ''} ${this.userInfo?.lastName}` : OFM_PROGRAM
     },
   },
 }

@@ -8,14 +8,15 @@ function mapDocumentFileObjectForBack(documents) {
   let formData = new FormData()
   let fileMapping = []
   documents?.forEach((document, index) => {
-    if (isEmpty(document.file)) return
-    const file = document.file[0]
+    if (!document.file) return
+    const file = document.file
     let fileName = file?.name
     fileName = isHeicFile(fileName) ? updateHeicFileNameToJpg(fileName) : fileName
     fileMapping.push({
       ofm_subject: fileName,
       ofm_extension: getFileExtensionWithDot(fileName),
       ofm_file_size: file?.size,
+      ofm_category: document.documentType ?? '',
       ofm_description: document.description ?? '',
       entity_name_set: document.entityName,
       regardingid: document.entityId,
@@ -51,6 +52,17 @@ export default {
       return sortDocuments(response?.data)
     } catch (error) {
       console.log(`Failed to get the list of documents by regarding id - ${error}`)
+      throw error
+    }
+  },
+
+  async getDocumentFileByID(documentId) {
+    try {
+      if (!documentId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.DOCUMENTS}/${documentId}/file`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the approved  PDF by application id - ${error}`)
       throw error
     }
   },

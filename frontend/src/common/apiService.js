@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 import AuthService from '@/common/authService'
-import { ApiRoutes, AuthRoutes } from '@/utils/constants'
 
 // Buffer concurrent requests while refresh token is being acquired
 let failedQueue = []
@@ -49,18 +48,6 @@ const intercept = apiAxios.interceptors.response.use(
   },
 )
 
-// TODO (weskubo-cgi) Remove if unused
-function getCodes(url) {
-  return async function getCodesHandler(query) {
-    try {
-      return await apiAxios.get(url, query)
-    } catch (e) {
-      console.log(`Failed to get from Nodejs API - ${e}`)
-      throw e
-    }
-  }
-}
-
 export default {
   apiAxios: apiAxios,
   intercept: intercept,
@@ -73,43 +60,6 @@ export default {
       apiAxios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     } else {
       delete apiAxios.defaults.headers.common['Authorization']
-    }
-  },
-
-  async getUserInfo() {
-    try {
-      return await apiAxios.get(ApiRoutes.USER)
-    } catch (e) {
-      console.log(`Failed to get from Nodejs getUserInfo API - ${e}`)
-      throw e
-    }
-  },
-
-  async getUserImpersonateInfo(userName) {
-    try {
-      return await apiAxios.get(`${ApiRoutes.USER}/${userName}`)
-    } catch (e) {
-      console.log(`Failed to get from Nodejs getUserImpersonateInfo API - ${e}`)
-      throw e
-    }
-  },
-
-  async getConfig() {
-    try {
-      const response = await apiAxios.get(AuthRoutes.CONFIG)
-      return response
-    } catch (e) {
-      console.log(`Failed to do get from Nodejs getConfig API - ${e}`)
-      throw e
-    }
-  },
-
-  async getLookupInfo() {
-    try {
-      return await apiAxios.get(ApiRoutes.LOOKUP)
-    } catch (e) {
-      console.log(`Failed to get from Nodejs getLookups API - ${e}`)
-      throw e
     }
   },
 }

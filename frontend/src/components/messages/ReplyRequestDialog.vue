@@ -4,10 +4,10 @@
       <template #content>
         <v-form ref="replyRequestForm" v-model="isFormComplete" class="px-4">
           <v-row no-gutters class="mt-2">
-            <v-col class="v-col-12">
+            <v-col cols="12">
               <AppLabel variant="modal">Reply to request:</AppLabel>
             </v-col>
-            <v-col class="v-col-12">
+            <v-col cols="12">
               <v-textarea v-model="message" placeholder="Enter message text" counter maxlength="1000" variant="outlined" :rules="rules.required" :rows="6" :disabled="isLoading"></v-textarea>
             </v-col>
           </v-row>
@@ -15,7 +15,7 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload entityName="ofm_assistance_requests" :loading="isLoading" @updateDocuments="updateDocuments"></AppDocumentUpload>
+            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
         </v-form>
       </template>
@@ -40,13 +40,16 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
+import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
-import { ASSISTANCE_REQUEST_STATUS_CODES } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import DocumentService from '@/services/documentService'
+import MessageService from '@/services/messageService'
 
 export default {
   name: 'ReplyRequestDialog',
   components: { AppButton, AppDialog, AppDocumentUpload, AppLabel },
+  mixins: [alertMixin],
   props: {
     show: {
       type: Boolean,
@@ -72,8 +75,8 @@ export default {
       isDisplayed: false,
       isLoading: false,
       showReplyRequestConfirmationDialog: false,
-      uploadedDocuments: [],
       areValidFilesUploaded: true,
+      documentsToUpload: [],
     }
   },
   watch: {
@@ -84,7 +87,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useMessagesStore, ['replyToAssistanceRequest', 'updateAssistanceRequest', 'updateAssistanceRequestInStore']),
+    ...mapActions(useMessagesStore, ['updateAssistanceRequestInStore']),
 
     /**
      * Reset the form and initialize the reply request model.
@@ -109,14 +112,17 @@ export default {
       if (this.isFormComplete && this.areValidFilesUploaded) {
         try {
           this.isLoading = true
+          await DocumentService.createDocuments(this.documentsToUpload, this.assistanceRequestId)
           await this.createReply(this.assistanceRequestId)
-          await DocumentService.createDocuments(this.uploadedDocuments, this.assistanceRequestId)
           await this.updateStatusToAssigned(this.assistanceRequestId)
           await this.updateStoredAssistanceRequest(this.assistanceRequestId)
           this.$emit('reply-success-event', true) // emit success to flag showing success message
         } catch (error) {
-          console.log(`Submit processing for reply failed  - ${error}`)
-          throw error
+          if (error?.response?.data?.status === 422) {
+            this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
+          } else {
+            this.setFailureAlert('Submit reply failed', error)
+          }
         } finally {
           this.closeReplyRequestDialog()
           this.isLoading = false
@@ -133,7 +139,7 @@ export default {
           assistanceRequestId: assistanceRequestId,
           message: this.message,
         }
-        await this.replyToAssistanceRequest(payload)
+        await MessageService.createAssistanceRequestConversation(payload)
       } catch (error) {
         console.log(`Failed to create a reply for Assistance Request - ${error}`)
         throw error
@@ -148,7 +154,7 @@ export default {
         const payload = {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.ASSIGNED,
         }
-        await this.updateAssistanceRequest(assistanceRequestId, payload)
+        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
       } catch (error) {
         console.log(`Failed to update status to assigned for Assistance Request - ${error}`)
         throw error
@@ -167,9 +173,8 @@ export default {
       }
     },
 
-    updateDocuments({ documents, areValidFilesUploaded }) {
-      this.uploadedDocuments = documents
-      this.areValidFilesUploaded = areValidFilesUploaded
+    validateDocumentsToUpload(value) {
+      this.areValidFilesUploaded = value
     },
   },
 }
