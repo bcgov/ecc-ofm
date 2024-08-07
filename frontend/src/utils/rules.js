@@ -29,14 +29,14 @@ const rules = {
     }
     return true
   },
+  validHourTo(hourFrom) {
+    return (v) => !v || v > hourFrom || 'Hours To must be after Hours From'
+  },
   max(number) {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
   },
   min(number) {
     return (v) => !v || v >= number || `Min exceeded: ${number.toLocaleString('en-ca')}`
-  },
-  greaterThan(value) {
-    return (v) => !v || v > value || `Must be greater than: ${value}`
   },
   maxLength(number) {
     return (v) => !v || v.length <= number || 'Max length exceeded'

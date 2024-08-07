@@ -37,6 +37,7 @@ function convertUTCDatetoPSTDate(date) {
 - Output: 2024-08-06 13:00:00 PDT
 */
 function convertTimeToDateTimeFormat(time) {
+  if (!time) return null
   const hours = time?.split(':')[0]
   const minutes = time?.split(':')[1]
   return momentTZ().tz(TIME_ZONE).hours(hours).minutes(minutes).seconds(0).milliseconds(0)
