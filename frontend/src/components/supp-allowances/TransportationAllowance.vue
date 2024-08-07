@@ -40,7 +40,7 @@
   <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
     <v-card class="my-10" :class="{ greyTop: readOnly(model), 'basic-card': !readOnly(model) }" :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
-        <v-col cols="10" md="1">
+        <v-col cols="10" md="2" lg="1">
           <AppLabel>Vehicle</AppLabel>
         </v-col>
         <v-col v-if="!readOnly(model)" cols="1">
