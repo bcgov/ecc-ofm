@@ -6,12 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "report": "npx cypress run --spec ./cypress/e2e/examples/portal-automation/assistance_request.cy.js --browser electron --headed",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --browser electron --headed ",
+    "cy:run-one": "cypress run --browser electron --headed --spec "
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "cypress": "^13.3.0",
-    "mochawesome": "^7.1.3"
+    "mochawesome": "^7.1.3",
+    "uuid": "^10.0.0"
   }
 }
