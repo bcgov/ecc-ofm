@@ -30,7 +30,7 @@ const rules = {
     return true
   },
   validHourTo(hourFrom) {
-    return (v) => !v || v > hourFrom || `Hours To must be after Hours From`
+    return (v) => !v || v > hourFrom || 'Hours To must be after Hours From'
   },
   max(number) {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
