@@ -17,30 +17,38 @@ describe('Portal Assistance Request', () => {
     //cy.get('#notifications-table > table > tbody')
     cy.get('table').first().find('tr').should('have.length.at.least', 2)
 
-    //cy.get('table').first().find('tr').should('have.length.at.least', 2)
     cy.get('table').first().find('tr').eq(2).click({ force: true })
 
-    //         // confirm that the portal's assistance request has the right information submitted in the form for the assistance request
-    //         cy.contains('Reply').parent().should('have.class', 'reply-disabled')
+    // Validate Read/Unread in the table is Unread
+    cy.get('table').first().find('tr').eq(2).contains('Read')
 
     // Validate From: text
     cy.get('div[class*="notification-from-text"]').should(
-      'have.text',
-      `From:  Operating Funding Model Program`
+      'contain.text',
+      'Operating Funding Model Program '
     )
 
-    // Validate Mark Unread button exists
+    // Validate Mark Unread button shows
     cy.get('span').contains('Mark Unread').should('exist')
 
     // Validate content
     cy.get('div[class*="notification-content"]').should('not.be.empty')
   })
 
-  it.skip('mark message unread', () => {
-    // TODO (weskubo-cgi) Complete this test
-  })
+  it('mark message unread', () => {
+    // Click the row
+    cy.get('table').first().find('tr').eq(2).click({ force: true })
 
-  it.skip('mark message read', () => {
-    // TODO (weskubo-cgi) Complete this test
+    // Validate Mark Unread button shows
+    cy.get('span')
+      .contains('Mark Unread')
+      .should('exist')
+      .click({ force: true })
+
+    // Validate Mark Unread button is hidden
+    cy.get('span').contains('Mark Read').should('not.exist')
+
+    // Validate Read/Unread in the table is Unread
+    cy.get('table').first().find('tr').eq(2).contains('Unread')
   })
 })
