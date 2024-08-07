@@ -295,3 +295,5 @@ export const DAYS_OF_WEEK = Object.freeze([
     value: 7,
   },
 ])
+
+export const TIME_ZONE = 'America/Vancouver'

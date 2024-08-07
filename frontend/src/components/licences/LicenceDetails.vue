@@ -266,7 +266,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppTimeInput from '@/components/ui/AppTimeInput.vue'
 import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
-import LicenceService from '@/services/licenceService'
+import format from '@/utils/format'
 import rules from '@/utils/rules'
 import { useAppStore } from '@/stores/app'
 import { BLANK_FIELD, DAYS_OF_WEEK } from '@/utils/constants'
@@ -385,8 +385,8 @@ export default {
     },
 
     getErrorMessagesForOperationTime(licenceDetail) {
-      const from = LicenceService.convertToCRMOperationDateTimeFormat(licenceDetail?.operationFromTime)
-      const to = LicenceService.convertToCRMOperationDateTimeFormat(licenceDetail?.operationToTime)
+      const from = format.convertTimeToDateTimeFormat(licenceDetail?.operationFromTime)
+      const to = format.convertTimeToDateTimeFormat(licenceDetail?.operationToTime)
       return from >= to ? 'Hours To must be after Hours From' : ''
     },
   },
