@@ -197,7 +197,30 @@ jobs:
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.APP_NAME }}-${{ env.APP_NAME_BACKEND }}-${{ env.APP_ENVIRONMENT }}
 
+      - name: Run Cypress E2E tests
+        runs-on: ubuntu-24.04
+        defaults:
+        run:
+          working-directory: backend
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+            with:
+              ref: ${{ env.BRANCH }}
+          - name: Cypress run
+            uses: cypress-io/github-action@v6
+            with:
+              project: ./testing
+              browser: electron
+              wait-on: 'https://${{ env.HOST_ROUTE }}'
+            env:
+              PORTAL_URL: 'https://${{env.HOST_ROUTE}}/'
+              PORTAL_USERNAME: ${{secrets.CYPRESS_PORTAL_USERNAME}}
+              PORTAL_PASSWORD:${{secrests.CYPRESS_PORTAL_PASSWORD}}
+
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.8.0
         with:
           target: 'https://${{ env.HOST_ROUTE }}/api'
+
+

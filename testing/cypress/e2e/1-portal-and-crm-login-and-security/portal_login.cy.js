@@ -15,6 +15,10 @@ describe('Login to Portal', () => {
   })
 
   it('failed login', () => {
+    // SSO has error in application code on failed login
+    cy.on('uncaught:exception', (e) => {
+      return false
+    })
     cy.loginToPortalNoSession('doesnotexist', 'password', PORTAL_URL)
     cy.visit(PORTAL_URL)
     // Should be back on Login screen

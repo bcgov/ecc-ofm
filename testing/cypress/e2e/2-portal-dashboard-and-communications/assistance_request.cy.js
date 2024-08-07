@@ -66,6 +66,10 @@ describe('Portal Assistance Request', () => {
   })
 
   it('Checks that topic, subject, and request description are mandatory', () => {
+    // ResizeObserver loop limit exceeded
+    cy.on('uncaught:exception', (e) => {
+      return false
+    })
     cy.get('button').contains('New message').click()
 
     // checks that topic is mandatory
