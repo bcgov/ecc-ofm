@@ -1,4 +1,3 @@
-# OFM Frontend UAT workflow
 name: 3 UAT - Deploy Frontend
 
 env:

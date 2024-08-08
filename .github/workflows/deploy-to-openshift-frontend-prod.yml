@@ -1,4 +1,3 @@
-# OFM Frontend PROD workflow
 name: 4 PROD - Deploy Frontend
 
 env:

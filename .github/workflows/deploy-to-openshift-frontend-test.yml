@@ -1,4 +1,3 @@
-# OFM Frontend QA workflow
 name: 2 QA - Deploy Frontend
 
 env:
