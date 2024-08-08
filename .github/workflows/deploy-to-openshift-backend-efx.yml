@@ -1,4 +1,4 @@
-name: 5 PROD - Deploy Backend
+name: 4 EFX - Deploy Backend
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
@@ -7,7 +7,7 @@ env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   # 🖊️ EDIT to set the kube context's namespace after login. Leave blank to use your user's default namespace.
-  OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-prod
+  OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-test
   COMMON_NAMESPACE: ${{ secrets.COMMON_NAMESPACE_NO_ENV }}
 
   # SPLUNK_TOKEN: ${{ secrets.SPLUNK_TOKEN }}
@@ -25,25 +25,27 @@ env:
   IMAGE_NAME: 'ecc-ofm-backend'
   APP_NAME_BACKEND: 'backend'
   # We have multiple environments in each openshift namespace dev, test in DEV and uat, efx in TEST. This setting will help name the deployment config and routes for each.
-  APP_ENVIRONMENT: 'prod'
+  APP_ENVIRONMENT: 'efx'
 
   NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}
 
-  MIN_REPLICAS: '3'
-  MAX_REPLICAS: '5'
+  MIN_REPLICAS: '2'
+  MAX_REPLICAS: '3'
   MIN_CPU: '50m'
   MAX_CPU: '250m'
   MIN_MEM: '200Mi'
   MAX_MEM: '700Mi'
+  # SITE_URL should have no scheme or port. It will be prepended with https://
+  HOST_ROUTE: ${{ secrets.SITE_URL }}
 
 on:
   workflow_dispatch:
 
 jobs:
   openshift-ci-cd:
-    name: Deploy Backend to PROD
+    name: Deploy Backend to EFX
     runs-on: ubuntu-24.04
-    environment: prod
+    environment: efx
 
     outputs:
       ROUTE: ${{ steps.deploy-and-expose.outputs.route }}
@@ -115,11 +117,11 @@ jobs:
           # Create the image stream if it doesn't exist
           oc create imagestream ${{ env.IMAGE_NAME }} 2> /dev/null || true && echo "backend image stream in place"
 
-          # Create tag for PROD env from DEV env image
-          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }}
+          # Create tag for UAT env from DEV env image
+          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-test/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }}
 
           # Process and apply deployment template
-          oc process -f tools/openshift/backend-tls.dc.yaml \
+          oc process -f tools/openshift/backend.dc.yaml \
             -p APP_NAME=${{ env.APP_NAME }} \
             -p REPO_NAME=${{ env.REPO_NAME }} \
             -p BRANCH=${{ env.BRANCH }} \
@@ -131,10 +133,7 @@ jobs:
             -p MAX_CPU=${{ env.MAX_CPU }} \
             -p MIN_MEM=${{ env.MIN_MEM }} \
             -p MAX_MEM=${{ env.MAX_MEM }} \
-            -p HOST_ROUTE=${{ secrets.SITE_URL }} \
-            -p CA_CERT='${{ secrets.CA_CERT }}' \
-            -p CERTIFICATE='${{ secrets.CERTIFICATE }}' \
-            -p PRIVATE_KEY='${{ secrets.PRIVATE_KEY }}' \
+            -p HOST_ROUTE=${{ env.HOST_ROUTE }} \
             -p ENVIRONMENT=${{ env.APP_ENVIRONMENT }} \
             | oc apply -f -
 

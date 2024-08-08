@@ -1,4 +1,3 @@
-# OFM Backend UAT workflow
 name: 3 UAT - Deploy Backend
 
 env:
@@ -141,7 +140,7 @@ jobs:
           # Process update-configmap
           curl -s https://raw.githubusercontent.com/bcgov/${{ env.REPO_NAME }}/${{ env.BRANCH }}/tools/config/update-configmap.sh \
             | bash /dev/stdin \
-                uat \
+                ${{ env.APP_ENVIRONMENT }} \
                 ${{ env.APP_NAME }} \
                 ${{ env.NAMESPACE }} \
                 ${{ env.COMMON_NAMESPACE }} \
