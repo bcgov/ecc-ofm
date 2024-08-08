@@ -2,8 +2,15 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
+    experimentalModifyObstructiveThirdPartyCode: true,
+    defaultCommandTimeout: 10000,
+    reporter: "mochawesome",
+    reporterOptions: {
+      reportDir: "cypress/reports",
+      overwrite: true,
+      html: true,
+      json: true,
     },
+    setupNodeEvents(on, config) {},
   },
 });
