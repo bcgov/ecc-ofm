@@ -194,7 +194,7 @@ jobs:
           oc rollout status dc/${{ env.APP_NAME }}-${{ env.APP_NAME_FRONTEND }}-${{ env.APP_ENVIRONMENT }}
 
   cypress-run:
-    uses: bcgov/ecc-ofm/.github/workflows/cypress-e2e.yml@${{ env.BRANCH }}
+    uses: ./.github/workflows/cypress-e2e.yml
     secrets: inherit
 
   zap-scan:
