@@ -206,6 +206,7 @@ jobs:
     name: Run Cypress E2E tests
     needs: openshift-ci-cd
     runs-on: ubuntu-24.04
+    environment: dev
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -231,6 +232,7 @@ jobs:
     name: ZAP Scan
     needs: openshift-ci-cd
     runs-on: ubuntu-24.04
+    environment: dev
     steps:
       - name: Run ZAP Scan
         uses: zaproxy/action-full-scan@v0.8.0
