@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 
-const USERNAME = Cypress.env('portal_username')
-const PASSWORD = Cypress.env('portal_password')
-const PORTAL_URL = Cypress.env('portal_url')
+const USERNAME = Cypress.env('PORTAL_USERNAME')
+const PASSWORD = Cypress.env('PORTAL_PASSWORD')
+const PORTAL_URL = Cypress.env('PORTAL_URL')
 
 describe('Portal Assistance Request', () => {
   beforeEach(() => {

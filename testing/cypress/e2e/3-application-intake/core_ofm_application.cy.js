@@ -1,11 +1,11 @@
-const AAD_USERNAME = Cypress.env('aad_username')
-const AAD_PASSWORD = Cypress.env('aad_password')
-const CRM_URL = Cypress.env('crm_url')
-const CRM_BASE_URL = Cypress.env('crm_base_url')
+const AAD_USERNAME = Cypress.env('AAD_USERNAME')
+const AAD_PASSWORD = Cypress.env('AAD_PASSWORD')
+const CRM_URL = Cypress.env('CRM_URL')
+const CRM_BASE_URL = Cypress.env('CRM_BASE_URL')
 
-const PORTAL_USERNAME = Cypress.env('portal_username')
-const PORTAL_PASSWORD = Cypress.env('portal_password')
-const PORTAL_URL = Cypress.env('portal_url')
+const PORTAL_USERNAME = Cypress.env('PORTAL_USERNAME')
+const PORTAL_PASSWORD = Cypress.env('PORTAL_PASSWORD')
+const PORTAL_URL = Cypress.env('PORTAL_URL')
 
 const operatingCosts = [
   ['Insurance', '111.00'],

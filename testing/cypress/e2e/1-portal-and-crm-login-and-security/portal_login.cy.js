@@ -1,6 +1,6 @@
-const USERNAME = Cypress.env('portal_username')
-const PASSWORD = Cypress.env('portal_password')
-const PORTAL_URL = Cypress.env('portal_url')
+const USERNAME = Cypress.env('PORTAL_USERNAME')
+const PASSWORD = Cypress.env('PORTAL_PASSWORD')
+const PORTAL_URL = Cypress.env('PORTAL_URL')
 
 describe('Login to Portal', () => {
   it('successful login', () => {
