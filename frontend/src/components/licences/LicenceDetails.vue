@@ -184,13 +184,12 @@
                               @update:modelValue="update(licenceDetail)" />
                             <AppTimeInput
                               v-model="licenceDetail.operationToTime"
-                              :rules="[...rules.required, rules.greaterThan(licenceDetail.operationFromTime)]"
+                              :rules="[...rules.required, rules.validHourTo(licenceDetail.operationFromTime)]"
                               :disabled="readOnly"
                               :hide-details="readOnly"
                               label="To"
                               min-width="150px"
                               max-width="150px"
-                              :error-messages="getErrorMessagesForOperationTime(licenceDetail)"
                               class="pr-2"
                               @update:modelValue="update(licenceDetail)" />
                           </v-row>
@@ -266,7 +265,6 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppTimeInput from '@/components/ui/AppTimeInput.vue'
 import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
-import LicenceService from '@/services/licenceService'
 import rules from '@/utils/rules'
 import { useAppStore } from '@/stores/app'
 import { BLANK_FIELD, DAYS_OF_WEEK } from '@/utils/constants'
@@ -299,8 +297,6 @@ export default {
   data() {
     return {
       panel: [],
-      rules,
-      isFormComplete: false,
     }
   },
 
@@ -330,6 +326,7 @@ export default {
       separator: ',',
       precision: 0,
     }
+    this.rules = rules
   },
 
   async mounted() {
@@ -382,12 +379,6 @@ export default {
       } else {
         licenceDetail.weekDays = DAYS_OF_WEEK.map((day) => day.value)
       }
-    },
-
-    getErrorMessagesForOperationTime(licenceDetail) {
-      const from = LicenceService.convertToCRMOperationDateTimeFormat(licenceDetail?.operationFromTime)
-      const to = LicenceService.convertToCRMOperationDateTimeFormat(licenceDetail?.operationToTime)
-      return from >= to ? 'Hours To must be after Hours From' : ''
     },
   },
 }
