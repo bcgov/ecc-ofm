@@ -193,7 +193,17 @@ jobs:
           # Get status, returns 0 if rollout is successful
           oc rollout status dc/${{ env.APP_NAME }}-${{ env.APP_NAME_FRONTEND }}-${{ env.APP_ENVIRONMENT }}
 
-      - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.8.0
+  cypress-run:
+    uses: bcgov/ecc-ofm/.github/workflows/cypress-e2e.yml@${{ env.BRANCH }}
+    secrets: inherit
+
+  zap-scan:
+    name: ZAP Scan
+    needs: openshift-ci-cd
+    runs-on: ubuntu-24.04
+    environment: dev
+    steps:
+      - name: Run ZAP Scan
+        uses: zaproxy/action-full-scan@v0.10.0
         with:
           target: 'https://${{ env.HOST_ROUTE }}'
