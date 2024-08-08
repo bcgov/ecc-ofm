@@ -1,7 +1,7 @@
 name: Run Cypress E2E Tests
 on:
   workflow_call:
-  workflow_dispatch:
+    secrets: inherit
 jobs:
   cypress-run:
     name: Run Cypress E2E tests
@@ -16,7 +16,6 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./testing
-          #project: ./testing
           browser: electron
           wait-on: 'https://${{ env.HOST_ROUTE }}'
         env:
