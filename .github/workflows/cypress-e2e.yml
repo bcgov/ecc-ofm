@@ -16,7 +16,7 @@ jobs:
         with:
           working-directory: ./testing
           browser: electron
-          wait-on: 'https://${{ env.HOST_ROUTE }}'
+          wait-on: 'https://${{ secrets.SITE_URL  }}'
         env:
           CYPRESS_AAD_USERNAME: ${{ secrets.CYPRESS_AAD_USERNAME }}
           CYPRESS_AAD_PASSWORD: ${{ secrets.CYPRESS_AAD_PASSWORD }}
