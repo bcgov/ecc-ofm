@@ -1,4 +1,4 @@
-name: 4 PROD - Deploy Frontend
+name: 5 PROD - Deploy Frontend
 
 env:
   # 🖊️ EDIT your repository secrets to log into your OpenShift cluster and set up the context.
