@@ -1,32 +1,32 @@
-# This is a basic workflow that is manually triggered
-
 name: Run Cypress E2E Tests
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
+  workflow_call:
   workflow_dispatch:
-    # Inputs the workflow accepts.
-    inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
-        # Default value if no value is explicitly provided
-        default: 'World'
-        # Input has to be provided for the workflow to run
-        required: true
-        # The data type of the input
-        type: string
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
-  greet:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  cypress-run:
+    name: Run Cypress E2E tests
+    needs: openshift-ci-cd
+    runs-on: ubuntu-24.04
+    environment: dev
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH }}
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ./testing
+          #project: ./testing
+          browser: electron
+          wait-on: 'https://${{ env.HOST_ROUTE }}'
+        env:
+          CYPRESS_AAD_USERNAME: ${{ secrets.CYPRESS_AAD_USERNAME }}
+          CYPRESS_AAD_PASSWORD: ${{ secrets.CYPRESS_AAD_PASSWORD }}
+          CYPRESS_PORTAL_USERNAME: ${{ secrets.CYPRESS_PORTAL_USERNAME }}
+          CYPRESS_PORTAL_PASSWORD: ${{ secrets.CYPRESS_PORTAL_PASSWORD }}
+          CYPRESS_CRM_URL: ${{ secrets.CYPRESS_CRM_URL }}
+          CYPRESS_CRM_BASE_URL: ${{ secrets.CYPRESS_CRM_BASE_URL }}
+          CYPRESS_PORTAL_URL: 'https://${{ secrets.SITE_URL }}/'
