@@ -213,8 +213,8 @@ jobs:
           ref: ${{ env.BRANCH }}
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        working-directory: ./testing
         with:
+          working-directory: ./testing
           #project: ./testing
           browser: electron
           wait-on: 'https://${{ env.HOST_ROUTE }}'
