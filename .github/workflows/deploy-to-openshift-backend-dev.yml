@@ -228,8 +228,10 @@ jobs:
           PORTAL_URL: 'https://${{ env.HOST_ROUTE }}/'
 
   zap-scan:
-    name: ZAP San
+    name: ZAP Scan
     needs: openshift-ci-cd
-    uses: zaproxy/action-full-scan@v0.8.0
-    with:
-      target: 'https://${{ env.HOST_ROUTE }}/api'
+    steps:
+      - name: Run ZAP Scan
+        uses: zaproxy/action-full-scan@v0.8.0
+        with:
+          target: 'https://${{ env.HOST_ROUTE }}/api'
