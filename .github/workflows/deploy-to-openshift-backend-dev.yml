@@ -220,13 +220,13 @@ jobs:
           browser: electron
           wait-on: 'https://${{ env.HOST_ROUTE }}'
         env:
-          AAD_USERNAME: ${{ secrets.CYPRESS_AAD_USERNAME }}
-          AAD_PASSWORD: ${{ secrets.CYPRESS_AAD_PASSWORD }}
-          PORTAL_USERNAME: ${{ secrets.CYPRESS_PORTAL_USERNAME }}
-          PORTAL_PASSWORD: ${{ secrets.CYPRESS_PORTAL_PASSWORD }}
-          CRM_URL: ${{ secrets.CYPRESS_CRM_URL }}
-          CRM_BASE_URL: ${{ secrets.CYPRESS_CRM_BASE_URL }}
-          PORTAL_URL: 'https://${{ env.HOST_ROUTE }}/'
+          CYPRESS_AAD_USERNAME: ${{ secrets.CYPRESS_AAD_USERNAME }}
+          CYPRESS_AAD_PASSWORD: ${{ secrets.CYPRESS_AAD_PASSWORD }}
+          CYPRESS_PORTAL_USERNAME: ${{ secrets.CYPRESS_PORTAL_USERNAME }}
+          CYPRESS_PORTAL_PASSWORD: ${{ secrets.CYPRESS_PORTAL_PASSWORD }}
+          CYPRESS_CRM_URL: ${{ secrets.CYPRESS_CRM_URL }}
+          CYPRESS_CRM_BASE_URL: ${{ secrets.CYPRESS_CRM_BASE_URL }}
+          CYPRESS_PORTAL_URL: 'https://${{ env.HOST_ROUTE }}/'
 
   zap-scan:
     name: ZAP Scan
