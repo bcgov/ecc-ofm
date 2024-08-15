@@ -202,30 +202,9 @@ jobs:
       #     target: 'https://${{ env.HOST_ROUTE }}/api'
 
   cypress-run:
-    name: Run Cypress E2E tests
     needs: openshift-ci-cd
-    runs-on: ubuntu-24.04
-    environment: dev
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH }}
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: ./testing
-          #project: ./testing
-          browser: electron
-          wait-on: 'https://${{ env.HOST_ROUTE }}'
-        env:
-          CYPRESS_AAD_USERNAME: ${{ secrets.CYPRESS_AAD_USERNAME }}
-          CYPRESS_AAD_PASSWORD: ${{ secrets.CYPRESS_AAD_PASSWORD }}
-          CYPRESS_PORTAL_USERNAME: ${{ secrets.CYPRESS_PORTAL_USERNAME }}
-          CYPRESS_PORTAL_PASSWORD: ${{ secrets.CYPRESS_PORTAL_PASSWORD }}
-          CYPRESS_CRM_URL: ${{ secrets.CYPRESS_CRM_URL }}
-          CYPRESS_CRM_BASE_URL: ${{ secrets.CYPRESS_CRM_BASE_URL }}
-          CYPRESS_PORTAL_URL: 'https://${{ env.HOST_ROUTE }}/'
+    uses: ./.github/workflows/cypress-e2e.yml
+    secrets: inherit
 
   zap-scan:
     name: ZAP Scan
