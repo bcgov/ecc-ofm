@@ -1,10 +1,8 @@
-import { v4 as uuidv4 } from 'uuid'
-
 const USERNAME = Cypress.env('PORTAL_USERNAME')
 const PASSWORD = Cypress.env('PORTAL_PASSWORD')
 const PORTAL_URL = Cypress.env('PORTAL_URL')
 
-describe('Portal Assistance Request', () => {
+describe('Notifications', () => {
   beforeEach(() => {
     cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL)
     cy.visit(PORTAL_URL)
@@ -13,9 +11,9 @@ describe('Portal Assistance Request', () => {
   })
 
   it('view notifications ', () => {
-    // TODO (weskubo-cgi) Add identifier to notifications-table
-    //cy.get('#notifications-table > table > tbody')
-    cy.get('table').first().find('tr').should('have.length.at.least', 2)
+    cy.get('#notifications-table')
+      .find('tbody > tr')
+      .should('have.length.at.least', 2)
 
     cy.get('table').first().find('tr').eq(2).click({ force: true })
 

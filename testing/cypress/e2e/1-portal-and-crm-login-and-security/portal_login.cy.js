@@ -11,6 +11,7 @@ describe('Login to Portal', () => {
     cy.get('#assistance-card').should('exist')
     cy.get('#applications-card').should('exist')
     cy.get('#account-mgmt-card').should('exist')
+    // TODO (weskubo-cgi) Update this when Help/Resources is added
     cy.get('#help-card').should('not.exist')
   })
 

@@ -12,7 +12,16 @@
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">You have no submitted reports.</AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
+      <v-data-table
+        v-else
+        id="reporting-history-table"
+        :headers="headers"
+        :items="filteredSubmittedReports"
+        item-key="surveyResponseId"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
         <template #[`item.status`]="{ item }">
           <span :class="getStatusClass(item)">{{ item.status }}</span>
         </template>

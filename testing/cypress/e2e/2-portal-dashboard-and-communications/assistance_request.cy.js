@@ -119,12 +119,16 @@ describe('Portal Assistance Request', () => {
       .should('be.checked')
   })
 
-  it('Lets you cancel the application', () => {
+  it('Lets you cancel the message', () => {
     cy.get('button').contains('New message').click()
     cy.get('button').contains('Cancel').click()
   })
 
   it('Checks the different topics available', () => {
+    // ResizeObserver loop limit exceeded
+    cy.on('uncaught:exception', (e) => {
+      return false
+    })
     const topics = [
       'Intake & Renewal',
       'Reporting',
@@ -133,6 +137,7 @@ describe('Portal Assistance Request', () => {
       'Payments and Funding',
       'Policy Question',
       'Technical Support',
+      'Irregular Expense',
       'Other',
     ]
 
@@ -176,6 +181,10 @@ describe('Portal Assistance Request', () => {
   })
 
   it('Allows you to select multiple facilities', () => {
+    // ResizeObserver loop limit exceeded
+    cy.on('uncaught:exception', (e) => {
+      return false
+    })
     cy.get('button').contains('New message').click()
     cy.get('input[id="selectFacility"]').click({ force: true })
     cy.get('.v-list-item').contains('Select All').click()

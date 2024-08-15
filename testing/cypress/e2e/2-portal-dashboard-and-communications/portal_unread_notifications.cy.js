@@ -11,6 +11,7 @@ const PORTAL_URL = Cypress.env('PORTAL_URL')
 const MESSAGE_TIME = new dayjs().format('YYYY-MMM-DD HH:mm:ss')
 const MESSAGE_DATE = new dayjs().format('YYYY-MMM-DD')
 
+// TODO (weskubo-cgi) Update tests
 // log into crm and create notifiction
 // before(() => {
 //   cy.visit(PORTAL_URL)

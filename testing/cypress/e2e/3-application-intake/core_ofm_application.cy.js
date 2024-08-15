@@ -54,6 +54,7 @@ let primaryContact = {}
 let secondaryContact = {}
 let expenseAuthority = {}
 
+// TODO (weskubo-cgi) Fix test
 // before('Submit an application from the portal', () => {
 //   // log in to the portal
 //   cy.visit(PORTAL_URL)
@@ -316,26 +317,41 @@ let expenseAuthority = {}
 //   //   cy.get("button").contains("Submit").click();
 // })
 
-beforeEach(() => {
-  cy.origin(CRM_BASE_URL, () => {
-    cy.on('uncaught:exception', (e) => {
-      return false
-    })
-  })
-  cy.loginToAAD(AAD_USERNAME, AAD_PASSWORD, CRM_URL, CRM_BASE_URL)
-  cy.visit(CRM_URL)
+// beforeEach(() => {
+//   cy.origin(CRM_BASE_URL, () => {
+//     cy.on('uncaught:exception', (e) => {
+//       return false
+//     })
+//   })
+//   cy.loginToAAD(AAD_USERNAME, AAD_PASSWORD, CRM_URL, CRM_BASE_URL)
+//   cy.visit(CRM_URL)
 
-  cy.origin(CRM_BASE_URL, () => {
-    cy.on('uncaught:exception', (e) => {
-      return false
-    })
-    cy.get('li[aria-label="Case Management"]')
-      .find('li[aria-label="Applications"]')
-      .click({ timeout: 30000 })
-    cy.get('input[aria-label="Application Filter by keyword"]').type(
-      'APP-23000010{enter}'
-    )
-    cy.contains('APP-23000010').last().click()
+//   cy.origin(CRM_BASE_URL, () => {
+//     cy.on('uncaught:exception', (e) => {
+//       return false
+//     })
+//     cy.get('li[aria-label="Case Management"]')
+//       .find('li[aria-label="Applications"]')
+//       .click({ timeout: 30000 })
+//     cy.get('input[aria-label="Application Filter by keyword"]').type(
+//       'APP-23000010{enter}'
+//     )
+//     cy.contains('APP-23000010').last().click()
+//   })
+// })
+
+describe('Applications', () => {
+  it('view applications', () => {
+    cy.loginToPortal(PORTAL_USERNAME, PORTAL_PASSWORD, PORTAL_URL)
+    cy.visit(PORTAL_URL)
+    cy.get('#applications-card').click()
+    cy.get('h1').contains('Applications')
+
+    // Check for at least one Application
+    cy.get('#applications-history-table')
+      .find('tbody')
+      .find('tr')
+      .should('have.length.at.least', 1)
   })
 })
 

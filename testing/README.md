@@ -37,7 +37,15 @@ npx cypress open
 
 ### Portal (BCeID)
 
+- Organization Test-1088 Organization must exist in CRM
+- User must be an Account Manager
 - User must have at least 2 Facilities.
-- User must have at least 2 Notifications. The latest should be unread
+- User must have at least 2 Notifications. The latest should be read
+- User must have at least 1 Application
+- User must have at least 1 Funding Agreement
+- User must have at least 1 Historical Payment
+- User must have at least 1 Scheduled Payment
+- User must have at least 1 Pending Report
+- User must have at least 1 Historical Report
 
 ### CRM (IDIR)
