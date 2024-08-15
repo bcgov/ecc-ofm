@@ -165,7 +165,6 @@ export default {
     },
     isSupportComplete() {
       const model = this.getModel(SUPPLEMENTARY_TYPES.SUPPORT)
-      console.log(this.currentOrg)
       if (!this.currentOrg.hasInclusionPolicy && model) {
         return false
       } else if (!model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)) {
