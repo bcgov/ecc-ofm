@@ -25,3 +25,10 @@ jobs:
           CYPRESS_CRM_URL: ${{ secrets.CYPRESS_CRM_URL }}
           CYPRESS_CRM_BASE_URL: ${{ secrets.CYPRESS_CRM_BASE_URL }}
           CYPRESS_PORTAL_URL: 'https://${{ secrets.SITE_URL }}/'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
+
