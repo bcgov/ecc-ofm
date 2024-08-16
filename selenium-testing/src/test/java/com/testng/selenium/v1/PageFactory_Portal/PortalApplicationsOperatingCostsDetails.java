@@ -42,6 +42,7 @@ public class PortalApplicationsOperatingCostsDetails {
 	private WebElement save;
 
 	private final String pageLoadedText = "We acknowledge the rights, interests, priorities, and concerns of all Indigenous Peoples - First Nations, Métis, and Inuit - respecting and acknowledging their distinct cultures, histories, rights, laws, and governments";
+	private final String filePath = System.getProperty("user.dir") + "/src/test/resources/testFile.jpg";
 
 	public PortalApplicationsOperatingCostsDetails(WebDriver driver) {
 
@@ -55,7 +56,7 @@ public class PortalApplicationsOperatingCostsDetails {
 		insuranceCost.sendKeys(Keys.CONTROL + "a");
 
 		insuranceCost.sendKeys(cost);
-//
+
 	}
 
 	public void addIncomeStatement() {
@@ -63,15 +64,12 @@ public class PortalApplicationsOperatingCostsDetails {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addIncomeFile);
 		addIncomeFile.click();
 
-		// System.out.println(System.getProperty("user.dir"));
-		String filePath = System.getProperty("user.dir") + "/testFile.jpg";
 		WebElement addFile = driver.findElement(By.xpath("//*[contains(@id, 'input-') and @type ='file']"));
 		addFile.sendKeys(filePath);
 
 		WebElement description = driver.findElement(By.xpath("//*[@placeholder = 'Enter a description (Optional)']"));
 		description.sendKeys("incomeStatement");
 	
-
 	}
 	
 	public void addBalanceSheet() {
@@ -79,15 +77,12 @@ public class PortalApplicationsOperatingCostsDetails {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addBalanceFile);
 		addBalanceFile.click();
 
-		// System.out.println(System.getProperty("user.dir"));
-		String filePath = System.getProperty("user.dir") + "/testFile.jpg";
 		WebElement addFile = driver.findElement(By.xpath("//*[contains(@id, 'input-') and @type ='file']"));
 		addFile.sendKeys(filePath);
 
 		WebElement description = driver.findElement(By.xpath("//*[@placeholder = 'Enter a description (Optional)']"));
 		description.sendKeys("Balance Statement");
 		
-
 	}
 	
 	public void addSupportingDoc() {
@@ -95,15 +90,12 @@ public class PortalApplicationsOperatingCostsDetails {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addSupportingFile);
 		addSupportingFile.click();
 
-		// System.out.println(System.getProperty("user.dir"));
-		String filePath = System.getProperty("user.dir") + "/testFile.jpg";
 		WebElement addFile = driver.findElement(By.xpath("//*[contains(@id, 'input-') and @type ='file']"));
 		addFile.sendKeys(filePath);
 
 		WebElement description = driver.findElement(By.xpath("//*[@placeholder = 'Enter a description (Optional)']"));
 		description.sendKeys("Supporting File");
-		
-
+	
 	}
 
 
