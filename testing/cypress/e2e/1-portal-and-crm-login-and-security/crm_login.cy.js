@@ -3,7 +3,10 @@ const AAD_PASSWORD = Cypress.env('AAD_PASSWORD')
 const CRM_URL = Cypress.env('CRM_URL')
 const CRM_BASE_URL = Cypress.env('CRM_BASE_URL')
 
-describe('Login to CRM via AAD', () => {
+// TODO (weskubo-cgi) Test is failing in GitHubActions due to:
+// "More information required " - Your organization needs more information to keep your account secure
+// I suspect the source IP address is triggering additional MFA validation not seen locally
+describe.skip('Login to CRM via AAD', () => {
   it('successful login', () => {
     cy.webExceptions(CRM_BASE_URL)
     cy.visit('https://google.ca')
