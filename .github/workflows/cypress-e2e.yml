@@ -29,8 +29,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          working-directory: ./testing
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: testing/cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
 
