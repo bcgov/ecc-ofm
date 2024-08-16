@@ -81,7 +81,7 @@ beforeEach('Navigate to Applications', () => {
 //})
 
 describe('Applications', () => {
-  it.skip('view applications', () => {
+  it('view applications', () => {
     cy.get('h1').contains('Applications')
 
     // Check for at least one Application
