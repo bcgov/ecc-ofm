@@ -32,16 +32,17 @@ public class PortalApplicationsOperatingCostsDetails {
 	@FindBy(id = "app-back-button")
 	@CacheLookup
 	private WebElement back;
-	
+
 	@FindBy(id = "app-next-button")
 	@CacheLookup
 	private WebElement next;
-	
+
 	@FindBy(id = "app-save-button")
 	@CacheLookup
 	private WebElement save;
 
 	private final String pageLoadedText = "We acknowledge the rights, interests, priorities, and concerns of all Indigenous Peoples - First Nations, Métis, and Inuit - respecting and acknowledging their distinct cultures, histories, rights, laws, and governments";
+	private final String filePath = System.getProperty("user.dir") + "/src/test/resources/testFile.jpg";
 
 	public PortalApplicationsOperatingCostsDetails(WebDriver driver) {
 
@@ -63,49 +64,42 @@ public class PortalApplicationsOperatingCostsDetails {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addIncomeFile);
 		addIncomeFile.click();
 
-		// System.out.println(System.getProperty("user.dir"));
-		String filePath = System.getProperty("user.dir") + "/testFile.jpg";
+
 		WebElement addFile = driver.findElement(By.xpath("//*[contains(@id, 'input-') and @type ='file']"));
 		addFile.sendKeys(filePath);
 
 		WebElement description = driver.findElement(By.xpath("//*[@placeholder = 'Enter a description (Optional)']"));
 		description.sendKeys("incomeStatement");
-	
 
 	}
-	
+
 	public void addBalanceSheet() {
 		WebElement addBalanceFile = driver.findElements(By.xpath("//*[@type='button']")).get(3);
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addBalanceFile);
 		addBalanceFile.click();
 
-		// System.out.println(System.getProperty("user.dir"));
-		String filePath = System.getProperty("user.dir") + "/testFile.jpg";
+
 		WebElement addFile = driver.findElement(By.xpath("//*[contains(@id, 'input-') and @type ='file']"));
 		addFile.sendKeys(filePath);
 
 		WebElement description = driver.findElement(By.xpath("//*[@placeholder = 'Enter a description (Optional)']"));
 		description.sendKeys("Balance Statement");
-		
 
 	}
-	
+
 	public void addSupportingDoc() {
 		WebElement addSupportingFile = driver.findElements(By.xpath("//*[@type='button']")).get(4);
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addSupportingFile);
 		addSupportingFile.click();
 
-		// System.out.println(System.getProperty("user.dir"));
-		String filePath = System.getProperty("user.dir") + "/testFile.jpg";
+
 		WebElement addFile = driver.findElement(By.xpath("//*[contains(@id, 'input-') and @type ='file']"));
 		addFile.sendKeys(filePath);
 
 		WebElement description = driver.findElement(By.xpath("//*[@placeholder = 'Enter a description (Optional)']"));
 		description.sendKeys("Supporting File");
-		
 
 	}
-
 
 	public void setIAttestThatTheRentleaseAgreement() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -124,7 +118,7 @@ public class PortalApplicationsOperatingCostsDetails {
 		next.click();
 
 	}
-	
+
 	public void clickSaveButton() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(save));
@@ -132,7 +126,7 @@ public class PortalApplicationsOperatingCostsDetails {
 		save.click();
 
 	}
-	
+
 	public void clickBackButton() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(back));
