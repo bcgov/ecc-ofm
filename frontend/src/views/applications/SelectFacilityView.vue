@@ -34,6 +34,9 @@
         </v-col>
       </v-row>
     </div>
+    <div class="mb-6">
+      <NotForProfitQuestions :loading="loading"></NotForProfitQuestions>
+    </div>
   </v-form>
 </template>
 
@@ -48,10 +51,11 @@ import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
+import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 
 export default {
   name: 'SelectFacilityView',
-  components: { OrganizationInfo },
+  components: { OrganizationInfo, NotForProfitQuestions },
   mixins: [alertMixin],
 
   props: {

@@ -100,7 +100,6 @@ export default {
   },
 
   computed: {
-    ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAuthStore, ['userInfo']),
     showBack() {
       return true
