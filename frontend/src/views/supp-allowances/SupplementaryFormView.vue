@@ -225,7 +225,9 @@ export default {
   watch: {
     back: {
       async handler() {
-        await this.saveApplication()
+        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+          await this.saveApplication()
+        }
         this.$router.push({ name: 'applications-history' })
       },
     },
@@ -241,7 +243,9 @@ export default {
     },
     next: {
       async handler() {
-        await this.saveApplication()
+        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+          await this.saveApplication()
+        }
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },

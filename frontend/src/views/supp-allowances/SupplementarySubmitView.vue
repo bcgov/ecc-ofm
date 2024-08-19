@@ -195,7 +195,9 @@ export default {
   watch: {
     back: {
       async handler() {
-        await this.saveApplication()
+        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+          await this.saveApplication()
+        }
         this.$router.push({ name: 'supp-allowances-form', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },

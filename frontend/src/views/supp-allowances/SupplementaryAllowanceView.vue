@@ -141,9 +141,8 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        if (!this.currentOrg) {
-          await this.getOrganizationInfo(this.userInfo?.organizationId)
-        }
+        await this.getOrganizationInfo(this.userInfo?.organizationId)
+
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
