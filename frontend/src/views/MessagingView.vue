@@ -40,7 +40,7 @@ export default {
   components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
   data() {
     return {
-      tab: null,
+      tab: 1,
     }
   },
   computed: {

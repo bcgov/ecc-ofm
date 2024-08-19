@@ -1,37 +1,35 @@
 <template>
   <v-row>
     <v-col sm="12" md="6" class="pa-0" :class="borderClass">
-      <v-row>
-        <v-col class="mt-3 ml-3">
-          <div>
-            <AppButton variant="text" @click="toggleNewRequestDialog()">
-              <v-icon class="icon" left>mdi-email-plus-outline</v-icon>
-              <span class="btn-label">New message</span>
-            </AppButton>
-            <AppButton variant="text" @click="toggleMarkUnreadButtonInMessageTable()">
-              <v-icon class="icon" left>mdi-email-outline</v-icon>
-              <span class="btn-label">Mark unread</span>
-            </AppButton>
-            <AppButton variant="text" class="btn-style" @click="toggleMarkReadButton()">
-              <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-              <span class="btn-label">Mark read</span>
-            </AppButton>
-          </div>
+      <v-row class="mt-0 ml-0">
+        <v-col cols="12">
+          <AppButton size="small" style="display: inline-block" @click="toggleNewRequestDialog()">
+            <v-icon left>mdi-email-plus-outline</v-icon>
+            New message
+          </AppButton>
+          <AppButton size="small" variant="text" @click="toggleMarkUnreadButtonInMessageTable()">
+            <v-icon left>mdi-email-outline</v-icon>
+            Mark unread
+          </AppButton>
+          <AppButton size="small" variant="text" @click="toggleMarkReadButton()">
+            <v-icon left>mdi-email-open-outline</v-icon>
+            Mark read
+          </AppButton>
         </v-col>
       </v-row>
       <v-skeleton-loader :loading="!assistanceRequests" type="table-tbody">
         <AssistanceRequestTable
-          :markReadButtonState="markReadButtonState"
-          :markUnreadButtonInMessageTableState="markUnreadButtonInMessageTableState"
-          :markUnreadButtonInConversationThreadState="markUnreadButtonInConversationThreadState"
-          @openRequestConversation="openRequestConversation" />
+          :mark-read-button-state="markReadButtonState"
+          :mark-unread-button-in-message-table-state="markUnreadButtonInMessageTableState"
+          :mark-unread-button-in-conversation-thread-state="markUnreadButtonInConversationThreadState"
+          @open-request-conversation="openRequestConversation" />
       </v-skeleton-loader>
     </v-col>
     <v-col sm="12" md="6">
-      <RequestConversations :assistanceRequestId="selectedAssistanceRequestId" @toggleMarkUnreadButtonInConversationThread="toggleMarkUnreadButtonInConversationThread" />
+      <RequestConversations :assistance-request-id="selectedAssistanceRequestId" @toggle-mark-unread-button-in-conversation-thread="toggleMarkUnreadButtonInConversationThread" />
     </v-col>
   </v-row>
-  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" :isInvokedFromMessages="true" @close="toggleNewRequestDialog" />
+  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" :is-invoked-from-messages="true" @close="toggleNewRequestDialog" />
 </template>
 
 <script>

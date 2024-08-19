@@ -1,5 +1,5 @@
 <template>
-  <v-btn class="px-2" :class="buttonClass" height="auto" v-bind="$attrs">
+  <v-btn class="app-button px-2" :class="buttonClass" height="auto" v-bind="$attrs">
     <span class="text-wrap"><slot /></span>
     <v-icon v-if="$attrs.icon" class="button-icon">{{ $attrs.icon }}</v-icon>
   </v-btn>
@@ -30,6 +30,9 @@ export default {
 </script>
 
 <style scoped>
+.app-button {
+  margin: 1px;
+}
 .button-icon {
   font-size: 24px;
 }
@@ -109,6 +112,7 @@ export default {
 
 .small {
   font-size: 14px;
+  height: 30px !important;
   padding: 0px;
 }
 </style>
