@@ -21,8 +21,6 @@ import org.openqa.selenium.WebElement;
 public class PortalApplicationsReview {
 	private WebDriver driver;
 
-	
-
 	@FindBy(id = "app-next-button")
 	@CacheLookup
 	private WebElement next;

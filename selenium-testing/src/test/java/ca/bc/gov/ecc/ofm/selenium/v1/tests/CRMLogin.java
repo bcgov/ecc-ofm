@@ -29,8 +29,8 @@ public class CRMLogin extends BaseTest {
 	@Test
 	public void loginToCRM() {
 
-		// test = extent.createTest("Test - Login to CRM");
-		// test.info("Starting Test - Login to CRM");
+		test = extent.createTest("Test - Login to CRM");
+		test.info("Starting Test - Login to CRM");
 		try {
 			Thread.sleep(10000);
 
@@ -52,9 +52,9 @@ public class CRMLogin extends BaseTest {
 			objCRMSignInCredentialPage.clickSignInAgain();
 
 			objCRMSignInCredentialPage.clickOrgFacilities();
-//		test.pass("testcase passed!");
+			test.pass("testcase passed!");
+			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			test.fail("testcase failed!");
 			e.printStackTrace();
 		}
@@ -63,7 +63,6 @@ public class CRMLogin extends BaseTest {
 
 	@AfterTest
 	public void tearDown() {
-		// driver.close();
 		driver.quit();
 	}
 

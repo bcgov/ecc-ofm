@@ -124,7 +124,6 @@ public class PortalCreateApplication extends BaseTest {
 			test.pass("testcase passed!");
 
 		} catch (Exception e) {
-			// System.out.println(e.toString());
 			throw (e);
 
 		}
@@ -133,8 +132,7 @@ public class PortalCreateApplication extends BaseTest {
 
 	@AfterTest
 	public void tearDown() {
-		// driver.close();
-		// driver.quit();
+		 driver.quit();
 	}
 
 }

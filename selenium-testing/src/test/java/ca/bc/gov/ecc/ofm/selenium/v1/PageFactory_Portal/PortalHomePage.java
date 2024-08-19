@@ -8,8 +8,6 @@ import org.openqa.selenium.support.PageFactory;
 public class PortalHomePage {
 	WebDriver driver;
 
-//	@FindBy(xpath = "//*[@id=\'app\']/div/main/div[3]/div[2]/div[3]/div/div[3]")
-	
 	@FindBy(id = "applications-card")
 	WebElement box_Applications;
 

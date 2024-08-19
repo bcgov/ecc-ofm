@@ -17,56 +17,44 @@ import org.openqa.selenium.WebElement;
 public class PortalApplicationsServiceDelivery {
 	private WebDriver driver;
 
-	 @FindBy(id = "confirmation")
-	    @CacheLookup
-	    private WebElement iConfirmThatTheAboveInformation;
+	@FindBy(id = "confirmation")
+	@CacheLookup
+	private WebElement iConfirmThatTheAboveInformation;
 
-	 @FindBy(id = "app-next-button")
-	    @CacheLookup
-	    private WebElement next;
+	@FindBy(id = "app-next-button")
+	@CacheLookup
+	private WebElement next;
 	 
-    
-	 private final String pageLoadedText = "We acknowledge the rights, interests, priorities, and concerns of all Indigenous Peoples - First Nations, Métis, and Inuit - respecting and acknowledging their distinct cultures, histories, rights, laws, and governments";
-
-	    
+	private final String pageLoadedText = "We acknowledge the rights, interests, priorities, and concerns of all Indigenous Peoples - First Nations, Métis, and Inuit - respecting and acknowledging their distinct cultures, histories, rights, laws, and governments";
 
 	public PortalApplicationsServiceDelivery(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		
 	}
 	
 	
-	 public void setIConfirmThatTheAboveInformationCheckboxField() {
-		 ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", iConfirmThatTheAboveInformation);
-	        if (!iConfirmThatTheAboveInformation.isSelected()) {
-	            iConfirmThatTheAboveInformation.click();
-	        }
-	       
-	    }
+	public void setIConfirmThatTheAboveInformationCheckboxField() {
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", iConfirmThatTheAboveInformation);
+		if (!iConfirmThatTheAboveInformation.isSelected()) {
+			iConfirmThatTheAboveInformation.click();
+		}
+	}
 	 
-	 
-
+	public void clickNextButton() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		wait.until(ExpectedConditions.elementToBeClickable(next));
+		wait.until(ExpectedConditions.visibilityOf(next));
+		next.click();
+	}
 	
-	
-	 public void clickNextButton() {
-		 	WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-			wait.until(ExpectedConditions.elementToBeClickable(next));
-			wait.until(ExpectedConditions.visibilityOf(next));
-	        next.click();
-	       
-	    }
-	
-	  public PortalApplicationsServiceDelivery verifyPageLoaded() {
-	        (new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-	            public Boolean apply(WebDriver d) {
-	                return d.getPageSource().contains(pageLoadedText);
-	            }
-	        });
-	        return this;
-	    }
-	  
-	 
+	public PortalApplicationsServiceDelivery verifyPageLoaded() {
+		(new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver d) {
+				return d.getPageSource().contains(pageLoadedText);
+			}
+		});
+		return this;
+	}
 
 }

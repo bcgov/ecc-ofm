@@ -46,8 +46,6 @@ public class PortalSignInCredentialPage {
 	}
 
 	public void clickSignatureRequired() {
-		// WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-		// wait.until(ExpectedConditions.visibilityOf(button_signatureRequired));
 		try {
 			if (button_signatureRequired.isDisplayed())
 				button_signatureRequired.click();

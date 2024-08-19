@@ -33,7 +33,6 @@ public class PortalApplicationsFacilityDetails {
 	    private WebElement fiscalYearEndDate;
 
 	@FindBy(xpath = "//*[@id='app-next-button']/span[3]/span")
-	// *[@id="app-next-button"]/span[3]/span/i
 	private WebElement next;
 
 	public PortalApplicationsFacilityDetails(WebDriver driver) {
@@ -54,7 +53,6 @@ public class PortalApplicationsFacilityDetails {
 
 			Thread.sleep(20);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println(e.toString());
 
 		}

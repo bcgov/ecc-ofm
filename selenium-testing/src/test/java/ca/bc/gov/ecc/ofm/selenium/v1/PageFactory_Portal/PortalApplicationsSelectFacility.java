@@ -26,11 +26,9 @@ public class PortalApplicationsSelectFacility {
     @FindBy(xpath = "//*[@id=\"app\"]/div/main/div/div/div/div[2]/div/div[2]/div/button/span[3]/span/i")
     private WebElement next;
 	
-  private final String pageLoadedText = "To apply for Supplementary Funding, you must have an active OFM application for the facility";
-
+    private final String pageLoadedText = "To apply for Supplementary Funding, you must have an active OFM application for the facility";
 
 	public PortalApplicationsSelectFacility(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		
@@ -41,7 +39,6 @@ public class PortalApplicationsSelectFacility {
 	}
 
 	public void setIConfirmThatOrganizationInformationIsCheckboxField() {
-		
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", iConfirmThatOrganizationInformationIs);
 		 if (!iConfirmThatOrganizationInformationIs.isSelected()) {
 		iConfirmThatOrganizationInformationIs.click();
