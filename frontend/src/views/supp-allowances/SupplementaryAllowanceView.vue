@@ -66,13 +66,14 @@
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import { useAuthStore } from '@/stores/auth'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import ApplicationService from '@/services/applicationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 import rules from '@/utils/rules'
+import { useOrgStore } from '@/stores/org'
 
 export default {
   name: 'SupplementaryAllowanceView',
@@ -99,12 +100,13 @@ export default {
   },
 
   computed: {
+    ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAuthStore, ['userInfo']),
     showBack() {
       return true
     },
     showCancel() {
-      return !isEmpty(this.application)
+      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showSave() {
       return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
@@ -135,9 +137,13 @@ export default {
 
   methods: {
     isEmpty,
+    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     async loadData() {
       try {
         this.loading = true
+        if (!this.currentOrg) {
+          await this.getOrganizationInfo(this.userInfo?.organizationId)
+        }
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)

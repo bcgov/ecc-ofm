@@ -149,8 +149,7 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
-import { mapState, mapActions } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
+import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
 import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
@@ -211,7 +210,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
@@ -277,7 +275,6 @@ export default {
     await this.loadData()
   },
   methods: {
-    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPanelIDs : []
@@ -286,9 +283,6 @@ export default {
       try {
         this.loading = true
         this.$emit('process', true)
-        if (!this.currentOrg) {
-          await this.getOrganizationInfo(this.userInfo?.organizationId)
-        }
         if (this.$route?.query?.nextTerm === 'true') {
           this.setActiveTerm(true)
         }
