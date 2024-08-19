@@ -185,6 +185,8 @@ export default {
     readonly() {
       return !this.isApplicationComplete || this.processing || this.loading || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
+    //this function disables submit if user has filled out a Support Needs App - but then after removes inclusion policy.
+    //The logic was moved out of isSupportComplete() so the red 'missing info' messaging won't appear when user is missing inclusion policy
     hasSupportApplicationAndInclusionPolicy() {
       if (!this.getModel(SUPPLEMENTARY_TYPES.SUPPORT)) return true
       return this.currentOrg.hasInclusionPolicy
