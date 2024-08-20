@@ -13,6 +13,11 @@ describe('Portal Assistance Request', () => {
   })
 
   it('Creates an Assistance Request with a Phone Number', () => {
+    // ResizeObserver loop limit exceeded
+    cy.on('uncaught:exception', (e) => {
+      return false
+    })
+
     // input fields
     const topic = 'Intake & Renewal'
     const subject = `Cypress ${uuidv4()}`
