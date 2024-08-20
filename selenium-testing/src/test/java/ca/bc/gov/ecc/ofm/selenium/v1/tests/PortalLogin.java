@@ -31,8 +31,8 @@ public class PortalLogin extends BaseTest {
 	public void loginToPortal() throws InterruptedException {
 		try {
 			driver.get(PORTAL_URL);
-			// test = extent.createTest("Test - Login to Portal");
-			// test.info("Starting Test - Login to Portal");
+			test = extent.createTest("Test - Login to Portal");
+			test.info("Starting Test - Login to Portal");
 			wait(10);
 			PortalSignInFirstPage objPortalSigninFirstPage = new PortalSignInFirstPage(driver);
 			objPortalSigninFirstPage.clickOnBCeIdLogin();
@@ -46,11 +46,10 @@ public class PortalLogin extends BaseTest {
 			wait(20);
 			objPortalSignInCredentialPage.clickSignatureRequired();
 
-			// test.pass("testcase passed!");
+			test.pass("testcase passed!");
 		} 
 		
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			test.fail("testcase failed!");
 			e.printStackTrace();
 		}
@@ -59,7 +58,6 @@ public class PortalLogin extends BaseTest {
 
 	@AfterTest
 	public void tearDown() {
-//		driver.close();
 		driver.quit();
 	}
 

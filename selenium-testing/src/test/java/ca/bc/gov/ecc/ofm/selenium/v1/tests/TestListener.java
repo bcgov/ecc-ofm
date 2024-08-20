@@ -42,7 +42,6 @@ public class TestListener implements ITestListener {
 					MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
 			BaseTest.test.fail("Error Details" + result.getThrowable());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -32,7 +32,7 @@ public class PortalCreateApplication extends BaseTest {
 	public void CreateApplication() throws Exception {
 		try {
 			driver.get(PORTAL_URL);
-			 test = extent.createTest("Test - Portal Create Application");
+			test = extent.createTest("Test - Portal Create Application");
 			test.info("Test - Portal Create Application");
 
 			Thread.sleep(2000);
@@ -124,7 +124,6 @@ public class PortalCreateApplication extends BaseTest {
 			test.pass("testcase passed!");
 
 		} catch (Exception e) {
-			// System.out.println(e.toString());
 			throw (e);
 
 		}

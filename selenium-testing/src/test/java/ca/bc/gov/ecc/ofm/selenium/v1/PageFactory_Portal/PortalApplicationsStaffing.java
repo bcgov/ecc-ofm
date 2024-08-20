@@ -24,16 +24,6 @@ public class PortalApplicationsStaffing {
 	@FindBy(xpath = "//*[@name = 'is-unionized' and @value = '0']")
 	private WebElement unionizedNo;
 
-	// @FindBy(id = "input-103")
-	// @CacheLookup
-	// private WebElement insuranceCost;
-
-
-
-//	@FindBy(id = "app-save-button")
-//	@CacheLookup
-//	private WebElement save;
-
 	@FindBy(id = "app-next-button")
 	@CacheLookup
 	private WebElement next;
@@ -50,7 +40,6 @@ public class PortalApplicationsStaffing {
 		iteFullTime.sendKeys(Keys.CONTROL + "a");
 		
 		iteFullTime.sendKeys(count);
-//		clickSaveButton();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		WebElement initials = driver.findElements(By.xpath("//*[contains(@id, 'input') and @type = 'text']")).get(2);
 		wait.until(ExpectedConditions.elementToBeClickable(initials));
@@ -59,7 +48,6 @@ public class PortalApplicationsStaffing {
 		initials.sendKeys(Keys.CONTROL + "a");
 
 		initials.sendKeys("ab");
-//	clickSaveButton();
 
 		WebElement eceCertNumber = driver.findElements(By.xpath("//*[contains(@id, 'input') and @type = 'text']"))
 				.get(3);
@@ -86,13 +74,5 @@ public class PortalApplicationsStaffing {
 		next.click();
 
 	}
-
-//	public void clickSaveButton() {
-//		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-//		wait.until(ExpectedConditions.elementToBeClickable(save));
-//		wait.until(ExpectedConditions.visibilityOf(save));
-//		save.click();
-//
-//	}
 
 }

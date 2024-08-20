@@ -30,18 +30,11 @@ public class PortalApplicationsHomePage {
 	public void addOFMApplication() throws InterruptedException {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 		wait.until(ExpectedConditions.visibilityOf(button_addOFMApplication));
-//		wait.until(ExpectedConditions.invisibilityOf(button_addOFMApplication));
 		wait.until(ExpectedConditions.elementToBeClickable(button_addOFMApplication));
 	
 		
-//		Thread.sleep(3000);
-		
 		button_addOFMApplication.click();
 		
-		
-//		WebElement scanEle =new WebDriverWait(driver, Duration.ofSeconds(60)).until(ExpectedConditions.elementToBeClickable(button_addOFMApplication));
-//		Actions action =new Actions(driver);
-//		action.moveToElement(scanEle).click().build().perform();
 	}
 
 	public PortalApplicationsHomePage verifyPageLoaded() {
