@@ -1,4 +1,4 @@
-package com.testng.selenium.v1;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests;
 
 import java.time.Duration;
 import org.openqa.selenium.*;
@@ -8,9 +8,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.testng.selenium.v1.PageFactory_Portal.PortalSignInCredentialPage;
-import com.testng.selenium.v1.PageFactory_Portal.PortalSignInFirstPage;
-
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalSignInFirstPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class PortalLogin extends BaseTest {

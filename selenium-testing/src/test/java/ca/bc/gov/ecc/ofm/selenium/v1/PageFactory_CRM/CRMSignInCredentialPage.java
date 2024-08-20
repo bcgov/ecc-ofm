@@ -1,4 +1,4 @@
-package com.testng.selenium.v1.PageFactory_CRM;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM;
 
 import java.time.Duration;
 import java.util.Base64;

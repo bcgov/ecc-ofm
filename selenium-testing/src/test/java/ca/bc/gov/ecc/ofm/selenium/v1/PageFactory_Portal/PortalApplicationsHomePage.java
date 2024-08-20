@@ -1,4 +1,4 @@
-package com.testng.selenium.v1.PageFactory_Portal;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
 
 import java.time.Duration;
 

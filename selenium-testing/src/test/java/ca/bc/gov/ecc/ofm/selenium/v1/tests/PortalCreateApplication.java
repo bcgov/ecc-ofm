@@ -1,4 +1,4 @@
-package com.testng.selenium.v1;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests;
 
 import java.time.Duration;
 import org.openqa.selenium.*;
@@ -8,8 +8,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.aventstack.extentreports.MediaEntityBuilder;
-import com.testng.selenium.v1.PageFactory_Portal.*;
 
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class PortalCreateApplication extends BaseTest {
