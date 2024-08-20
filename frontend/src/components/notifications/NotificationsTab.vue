@@ -4,11 +4,11 @@
       <v-row>
         <v-col class="mt-3 ml-3">
           <div>
-            <AppButton size="small" variant="text" @click="toggleMarkUnreadButtonInNotificationTable(false)">
+            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
               <v-icon class="icon" left>mdi-email-outline</v-icon>
               <span class="btn-label">Mark unread</span>
             </AppButton>
-            <AppButton variant="text" size="small" @click="toggleMarkReadButton(true)">
+            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
               <v-icon class="icon" left>mdi-email-open-outline</v-icon>
               <span class="btn-label">Mark read</span>
             </AppButton>
@@ -77,5 +77,8 @@ export default {
 }
 .border-right {
   border-right: 2px solid #003366;
+}
+.notifications-button {
+  display: inline-block;
 }
 </style>
