@@ -1,4 +1,4 @@
-package com.testng.selenium.v1.PageFactory_Portal;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
 
 import java.time.Duration;
 import java.util.List;
@@ -28,16 +28,14 @@ public class PortalApplicationsFacilityDetails {
 	@CacheLookup
 	private WebElement selectSecondaryContact;
 	
-	   @FindBy(id = "fiscal-year-end-date")
-	    @CacheLookup
-	    private WebElement fiscalYearEndDate;
+	@FindBy(id = "fiscal-year-end-date")
+	@CacheLookup
+	private WebElement fiscalYearEndDate;
 
 	@FindBy(xpath = "//*[@id='app-next-button']/span[3]/span")
-	// *[@id="app-next-button"]/span[3]/span/i
 	private WebElement next;
 
 	public PortalApplicationsFacilityDetails(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 
@@ -51,10 +49,8 @@ public class PortalApplicationsFacilityDetails {
 			wait.until(ExpectedConditions.elementToBeClickable(next));
 			wait.until(ExpectedConditions.visibilityOf(next));
 			next.click();
-
 			Thread.sleep(20);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println(e.toString());
 
 		}

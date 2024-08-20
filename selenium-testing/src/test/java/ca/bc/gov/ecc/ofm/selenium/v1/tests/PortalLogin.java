@@ -1,4 +1,4 @@
-package com.testng.selenium.v1;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests;
 
 import java.time.Duration;
 import org.openqa.selenium.*;
@@ -8,9 +8,8 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.testng.selenium.v1.PageFactory_Portal.PortalSignInCredentialPage;
-import com.testng.selenium.v1.PageFactory_Portal.PortalSignInFirstPage;
-
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalSignInFirstPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class PortalLogin extends BaseTest {
@@ -32,8 +31,8 @@ public class PortalLogin extends BaseTest {
 	public void loginToPortal() throws InterruptedException {
 		try {
 			driver.get(PORTAL_URL);
-			// test = extent.createTest("Test - Login to Portal");
-			// test.info("Starting Test - Login to Portal");
+			test = extent.createTest("Test - Login to Portal");
+			test.info("Starting Test - Login to Portal");
 			wait(10);
 			PortalSignInFirstPage objPortalSigninFirstPage = new PortalSignInFirstPage(driver);
 			objPortalSigninFirstPage.clickOnBCeIdLogin();
@@ -47,11 +46,10 @@ public class PortalLogin extends BaseTest {
 			wait(20);
 			objPortalSignInCredentialPage.clickSignatureRequired();
 
-			// test.pass("testcase passed!");
+			test.pass("testcase passed!");
 		} 
 		
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			test.fail("testcase failed!");
 			e.printStackTrace();
 		}
@@ -60,7 +58,6 @@ public class PortalLogin extends BaseTest {
 
 	@AfterTest
 	public void tearDown() {
-//		driver.close();
 		driver.quit();
 	}
 

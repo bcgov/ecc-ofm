@@ -1,4 +1,4 @@
-package com.testng.selenium.v1;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,6 @@ public class TestListener implements ITestListener {
 					MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
 			BaseTest.test.fail("Error Details" + result.getThrowable());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

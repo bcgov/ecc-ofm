@@ -1,4 +1,4 @@
-package com.testng.selenium.v1.PageFactory_Portal;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
 
 import java.time.Duration;
 import java.util.Base64;
@@ -46,8 +46,6 @@ public class PortalSignInCredentialPage {
 	}
 
 	public void clickSignatureRequired() {
-		// WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-		// wait.until(ExpectedConditions.visibilityOf(button_signatureRequired));
 		try {
 			if (button_signatureRequired.isDisplayed())
 				button_signatureRequired.click();

@@ -1,4 +1,4 @@
-package com.testng.selenium.v1.PageFactory_Portal;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
 
 import java.time.Duration;
 import java.util.List;
@@ -23,12 +23,6 @@ import org.openqa.selenium.WebElement;
 public class PortalApplicationsOperatingCostsDetails {
 	private WebDriver driver;
 
-//	@FindBy(xpath = "//*[@id='add-new-file']")
-//	private List<WebElement> addNewFile;
-
-	// @FindBy(id = "input-103")
-	// @CacheLookup
-	// private WebElement insuranceCost;
 	@FindBy(id = "app-back-button")
 	@CacheLookup
 	private WebElement back;

@@ -1,4 +1,4 @@
-package com.testng.selenium.v1;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests;
 
 import java.time.Duration;
 import org.openqa.selenium.*;
@@ -8,8 +8,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.aventstack.extentreports.MediaEntityBuilder;
-import com.testng.selenium.v1.PageFactory_Portal.*;
 
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class PortalCreateApplication extends BaseTest {
@@ -32,7 +32,7 @@ public class PortalCreateApplication extends BaseTest {
 	public void CreateApplication() throws Exception {
 		try {
 			driver.get(PORTAL_URL);
-			 test = extent.createTest("Test - Portal Create Application");
+			test = extent.createTest("Test - Portal Create Application");
 			test.info("Test - Portal Create Application");
 
 			Thread.sleep(2000);
@@ -124,7 +124,6 @@ public class PortalCreateApplication extends BaseTest {
 			test.pass("testcase passed!");
 
 		} catch (Exception e) {
-			// System.out.println(e.toString());
 			throw (e);
 
 		}

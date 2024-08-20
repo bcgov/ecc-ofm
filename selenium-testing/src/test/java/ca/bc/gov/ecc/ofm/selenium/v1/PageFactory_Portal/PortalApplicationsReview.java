@@ -1,4 +1,4 @@
-package com.testng.selenium.v1.PageFactory_Portal;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
 
 import java.time.Duration;
 import java.util.List;
@@ -18,40 +18,28 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class PortalApplicationsDeclareSubmit {
+public class PortalApplicationsReview {
 	private WebDriver driver;
 
-	@FindBy(id = "declaration")
-	@CacheLookup
-	private WebElement checkboxDeclare;
 	
-	@FindBy(id = "app-submit-button")
+
+	@FindBy(id = "app-next-button")
 	@CacheLookup
-	private WebElement submit;
+	private WebElement next;
 
-
-	public PortalApplicationsDeclareSubmit(WebDriver driver) {
+	public PortalApplicationsReview(WebDriver driver) {
 
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 
 	}
 
-	public void clickDeclare() {
-		if (!checkboxDeclare.isSelected()) {
-			checkboxDeclare.click();
-		}
 
-	}
-	
-	public void clickSubmitButton() {
+	public void clickNextButton() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-		wait.until(ExpectedConditions.elementToBeClickable(submit));
-		wait.until(ExpectedConditions.visibilityOf(submit));
-		submit.click();
+		wait.until(ExpectedConditions.elementToBeClickable(next));
+		wait.until(ExpectedConditions.visibilityOf(next));
+		next.click();
 
 	}
-	
-	
-	
 }
