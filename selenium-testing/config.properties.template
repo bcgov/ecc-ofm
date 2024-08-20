@@ -1,0 +1,7 @@
+portal_url=https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/login/
+portal_username=
+portal_password=
+
+crm_url=https://mychildcareservicesdev.crm3.dynamics.com/main.aspx?appid=af54cb40-d463-ee11-8df0-000d3a09d499&pagetype=dashboard&id=73c44d9c-cfe6-ee11-a204-000d3af4865d&type=system&_canOverride=true
+crm_username=
+crm_password=

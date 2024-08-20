@@ -1,0 +1,65 @@
+package com.testng.selenium.v1;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestContext;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
+
+public class TestListener implements ITestListener {
+
+	@Override
+	public void onTestStart(ITestResult result) {
+		BaseTest.test = BaseTest.extent.createTest(result.getMethod().getMethodName());
+		BaseTest.test.info("Starting " + result.getMethod().getMethodName());
+	}
+
+	@Override
+	public void onTestSuccess(ITestResult result) {
+		BaseTest.test.pass(result.getMethod().getMethodName() + " passed");
+	}
+
+	@Override
+	public void onTestFailure(ITestResult result) {
+		try {
+			BaseTest.test.fail(result.getMethod().getMethodName() + " failed");
+
+			WebDriver driver;
+
+			driver = (WebDriver) result.getTestClass().getRealClass().getDeclaredField("driver")
+					.get(result.getInstance());
+			String screenshotPath = BaseTest.getScreenshot(driver, result.getMethod().getMethodName());
+			
+			BaseTest.test.fail(result.getMethod().getMethodName() + "failed",
+					MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+			BaseTest.test.fail("Error Details" + result.getThrowable());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void onTestSkipped(ITestResult result) {
+		BaseTest.test.skip(result.getMethod().getMethodName() + " skipped");
+	}
+
+	@Override
+	public void onStart(ITestContext context) {
+	}
+
+	@Override
+	public void onFinish(ITestContext context) {
+		BaseTest.extent.flush();
+	}
+
+}
