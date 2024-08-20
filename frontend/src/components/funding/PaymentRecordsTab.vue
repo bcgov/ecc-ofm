@@ -5,6 +5,7 @@
     <h2 class="mb-2">Payment History</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-data-table
+        id="payment-history-table"
         :headers="paymentHistoryHeaders"
         :items="filteredPaymentHistory"
         item-key="paymentId"
@@ -23,6 +24,7 @@
     <h2 class="mt-8 mb-2">Scheduled Payments</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-data-table
+        id="scheduled-payments-table"
         :headers="scheduledPaymentsHeaders"
         :items="filteredScheduledPayments"
         item-key="paymentId"

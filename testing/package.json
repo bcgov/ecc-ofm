@@ -1,14 +1,15 @@
 {
   "name": "testing-cypress",
   "version": "1.0.0",
-  "description": "ECC OFM QA Testing",
-  "main": "index.js",
+  "description": "ECC OFM Cypress Testing",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run --browser electron --headless ",
+    "cy:run-one": "cypress run --browser electron --headed --spec "
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "cypress": "^13.3.0"
+    "cypress": "^13.3.0",
+    "mochawesome": "^7.1.3",
+    "uuid": "^10.0.0"
   }
 }
