@@ -6,11 +6,11 @@
           <div>
             <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
               <v-icon class="icon" left>mdi-email-outline</v-icon>
-              <span class="btn-label">Mark unread</span>
+              Mark unread
             </AppButton>
             <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
               <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-              <span class="btn-label">Mark read</span>
+              Mark read
             </AppButton>
           </div>
         </v-col>

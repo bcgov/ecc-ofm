@@ -8,7 +8,7 @@
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
         <AppButton v-if="assistanceRequest.isRead" size="small" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon left>mdi-email-outline</v-icon>
-          <span>Mark unread</span>
+          Mark unread
         </AppButton>
         <v-tooltip
           :disabled="!showTooltip"
@@ -19,7 +19,7 @@
             <div v-bind="props">
               <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small">
                 <v-icon left>mdi-reply</v-icon>
-                <span>Reply</span>
+                Reply
               </AppButton>
             </div>
           </template>
@@ -210,7 +210,7 @@ export default {
 
 <style scoped>
 .reply-button {
-  width: 150px;
+  width: 155px;
 }
 
 .data-table {

@@ -10,7 +10,7 @@
         <v-col cols="5" md="4" lg="3" class="pa-0 d-flex justify-end mt-1">
           <AppButton v-if="notification?.isRead" size="small" :primary="false" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
             <v-icon class="icon" left>mdi-email-outline</v-icon>
-            <span class="btn-label">Mark Unread</span>
+            Mark Unread
           </AppButton>
         </v-col>
       </v-row>
