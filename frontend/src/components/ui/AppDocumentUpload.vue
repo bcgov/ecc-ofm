@@ -2,12 +2,12 @@
   <v-container fluid class="pa-0">
     <v-form ref="form" v-model="isValidForm">
       <v-row>
-        <v-col v-if="documentType" cols="12" sm="5" class="pb-0">
-          <AppLabel>{{ documentType }}</AppLabel>
+        <v-col v-if="documentLabel || documentType" cols="12" sm="7" class="pb-0">
+          <AppLabel>{{ documentLabel ?? documentType }}</AppLabel>
         </v-col>
-        <v-col cols="12" :sm="documentType ? '7' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
+        <v-col cols="12" :sm="documentType ? '5' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
           <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-          <AppButton v-if="!loading && !readonly" :disabled="disabled" id="add-new-file" :primary="false" size="large" class="addFileButton" @click="addFile">Add File</AppButton>
+          <AppButton v-if="showAddFileButton" id="add-new-file" :disabled="disabled" :primary="false" size="large" class="add-file-button" @click="addFile">Add File</AppButton>
         </v-col>
       </v-row>
       <div v-if="documents.length > 0" class="mt-6">
@@ -64,6 +64,10 @@ export default {
       required: false,
       default: undefined,
     },
+    documentLabel: {
+      type: String,
+      default: undefined,
+    },
     documentType: {
       type: String,
       required: false,
@@ -85,6 +89,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    uploadLimit: {
+      type: String,
+      default: undefined,
+    },
   },
   emits: ['update:modelValue', 'deleteUploadedDocument', 'validateDocumentsToUpload'],
   data() {
@@ -92,6 +100,14 @@ export default {
       documents: [],
       isValidForm: false,
     }
+  },
+  computed: {
+    reachUploadLimit() {
+      return this.uploadLimit && this.documents?.length + this.uploadedDocuments?.length >= Number(this.uploadLimit)
+    },
+    showAddFileButton() {
+      return !this.loading && !this.readonly && !this.reachUploadLimit
+    },
   },
   watch: {
     documents: {
@@ -167,7 +183,7 @@ export default {
 }
 </script>
 <style scoped>
-.addFileButton {
+.add-file-button {
   font-size: 16px;
 }
 
