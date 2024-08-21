@@ -12,7 +12,16 @@
 
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">You are up to date with your monthly reports.</AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
+      <v-data-table
+        v-else
+        id="pending-reports-table"
+        :headers="headers"
+        :items="filteredPendingReports"
+        item-key="surveyTemplateId"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
         <template #[`item.alert`]="{ item }">
           <template v-if="item.alert">
             <v-icon color="error">mdi-alert-circle</v-icon>

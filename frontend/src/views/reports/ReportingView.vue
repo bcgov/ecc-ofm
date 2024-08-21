@@ -1,24 +1,24 @@
 <template>
-  <OrganizationHeader :showFacility="false" />
+  <OrganizationHeader :show-facility="false" />
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-6">Reporting</h1>
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
-        <v-tab value="pending-reports-table">
+        <v-tab value="pending-reports-tab">
           <v-icon size="large">mdi-history</v-icon>
           <strong class="ml-1">Pending Reports</strong>
         </v-tab>
-        <v-tab value="reporting-history-table">
+        <v-tab value="reporting-history-tab">
           <v-icon size="large">mdi-finance</v-icon>
           <strong class="ml-1">Reporting History</strong>
         </v-tab>
       </v-tabs>
       <v-card-text>
         <v-window v-model="tab">
-          <v-window-item value="pending-reports-table">
+          <v-window-item value="pending-reports-tab">
             <PendingReportsTab />
           </v-window-item>
-          <v-window-item value="reporting-history-table">
+          <v-window-item value="reporting-history-tab">
             <ReportingHistoryTab />
           </v-window-item>
         </v-window>

@@ -1,0 +1,8 @@
+.settings
+FailedTestsScreenshots
+target
+test-output
+.classpath
+.project
+config.properties
+extent-report.html

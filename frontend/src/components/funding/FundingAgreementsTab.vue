@@ -4,7 +4,16 @@
     <FundingSearchCard :loading="loading" class="my-6" @search="loadFundingAgreements" />
     <h2 class="mb-2">Funding Details</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <v-data-table :headers="headers" :items="fundingAgreements" item-key="guid" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
+      <v-data-table
+        id="funding-agreements-table"
+        :headers="headers"
+        :items="fundingAgreements"
+        item-key="guid"
+        :items-per-page="10"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
         <template #[`item.startDate`]="{ item }">
           {{ format.formatDate(item?.startDate) }}
         </template>
