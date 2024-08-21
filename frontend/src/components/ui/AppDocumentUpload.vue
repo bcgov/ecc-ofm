@@ -143,6 +143,9 @@ export default {
       { title: 'Description', key: 'description', width: '60%' },
       { title: '', key: 'actionButtons', sortable: false, width: '6%' },
     ]
+    if (!this.disabled && !this.readonly && !this.reachUploadLimit) {
+      this.addFile()
+    }
   },
   methods: {
     addFile() {
