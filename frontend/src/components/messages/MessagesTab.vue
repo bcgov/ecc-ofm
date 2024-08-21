@@ -3,15 +3,15 @@
     <v-col sm="12" md="6" class="pa-0" :class="borderClass">
       <v-row class="mt-0 ml-0">
         <v-col cols="12">
-          <AppButton size="small" class="new-message-button" @click="toggleNewRequestDialog()">
+          <AppButton size="small" class="messages-button" @click="toggleNewRequestDialog()">
             <v-icon left>mdi-email-plus-outline</v-icon>
             New message
           </AppButton>
-          <AppButton size="small" style="display: inline-block" :primary="false" class="mx-1" @click="toggleMarkUnreadButtonInMessageTable()">
+          <AppButton size="small" class="messages-button mx-1" :primary="false" @click="toggleMarkUnreadButtonInMessageTable()">
             <v-icon left>mdi-email-outline</v-icon>
             Mark unread
           </AppButton>
-          <AppButton size="small" style="display: inline-block" :primary="false" @click="toggleMarkReadButton()">
+          <AppButton size="small" class="messages-button" :primary="false" @click="toggleMarkReadButton()">
             <v-icon left>mdi-email-open-outline</v-icon>
             Mark read
           </AppButton>
@@ -88,7 +88,7 @@ export default {
   border-bottom: 2px solid #003366;
 }
 
-.new-message-button {
+.messages-button {
   display: inline-block;
 }
 </style>
