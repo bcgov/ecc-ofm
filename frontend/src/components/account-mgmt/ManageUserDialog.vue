@@ -138,6 +138,7 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
 import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
@@ -439,8 +440,22 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
-        const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName, lastName, email)
-        return Array.isArray(res) && res.length >= 1
+        const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName ?? '', lastName, email)
+
+        // No matches
+        if (isEmpty(res)) return false
+
+        // If firstName was entered then we know there's an exact match
+        if (firstName) return true
+
+        // If firstName was blank then we need to manually validate since it is ignored in the Dynamics query
+        // and we could get results with only a lastName and email match. We want a null firstName for a match
+        for (const contact of res) {
+          if (!contact.firstName) {
+            return true
+          }
+        }
+        return false
       } catch (error) {
         this.setFailureAlert('Failed to check if user already exists in provider organization', error)
       }
