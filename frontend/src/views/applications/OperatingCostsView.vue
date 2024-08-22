@@ -49,8 +49,8 @@
         <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
         <v-card class="mt-2 pa-4" variant="outlined">
           <h5>Financial Documents</h5>
-          <div class="greyCards py-2 px-4 mt-2">
-            <v-card class="mt-2 mb-4 pa-4">
+          <div class="grey-card mt-2">
+            <v-card class="mb-4 pa-4">
               <AppDocumentUpload
                 id="financial-document-upload"
                 v-model="financialStatement.documentsToUpload"
@@ -61,7 +61,7 @@
                 :uploadedDocuments="financialStatement.uploadedDocuments"
                 @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
-            <v-card class="mt-2 mb-4 pa-4">
+            <v-card class="pa-4">
               <AppDocumentUpload
                 id="balance-sheet-document-upload"
                 v-model="balanceSheet.documentsToUpload"
@@ -73,8 +73,8 @@
                 @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
           </div>
-          <div class="greyCards py-2 px-4 mt-8">
-            <v-card class="mt-2 pt-4 mb-4 pa-4">
+          <div class="grey-card mt-8">
+            <v-card class="pa-4">
               <AppDocumentUpload
                 id="supporting-document-upload"
                 v-model="supporting.documentsToUpload"
@@ -377,11 +377,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.greyCards {
-  border: 1px solid #0000001a;
-  background-color: #0f0f0f09;
-  border-radius: 4px;
-}
-</style>
