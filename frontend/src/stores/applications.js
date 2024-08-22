@@ -90,13 +90,13 @@ export const useApplicationsStore = defineStore('applications', {
     isLicenceDocumentUploaded() {
       return this.currentApplication.licences.every((licence) => {
         const uploadedDocument = this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(licence?.licence))
-        return uploadedDocument?.length > 0
+        return !isEmpty(uploadedDocument)
       })
     },
 
     isHealthAuthorityReportUploaded() {
       const healthAuthorityReports = this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
-      return healthAuthorityReports?.length > 0
+      return !isEmpty(healthAuthorityReports)
     },
 
     /*

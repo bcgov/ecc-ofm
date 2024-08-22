@@ -194,11 +194,11 @@ export default {
       return !isEmpty(this.healthAuthorityReports?.documentsToUpload) || !isEmpty(this.healthAuthorityReports?.uploadedDocuments)
     },
 
-    haveLicenceDocumentsToProcess() {
+    hasLicenceDocumentsToProcess() {
       return Object.keys(this.licenceDocuments)?.some((licence) => !isEmpty(this.licenceDocuments[licence]?.documentsToUpload) || !isEmpty(this.licenceDocuments[licence]?.documentsToDelete))
     },
 
-    haveHealthAuthorityReportDocumentsToProcess() {
+    hasHealthAuthorityReportDocumentsToProcess() {
       return !isEmpty(this.healthAuthorityReports?.documentsToUpload) || !isEmpty(this.healthAuthorityReports?.documentsToDelete)
     },
   },
@@ -250,7 +250,7 @@ export default {
       try {
         this.$emit('process', true)
         this.processing = true
-        let reloadApplication = this.changedLicences?.length > 0 || this.haveLicenceDocumentsToProcess || this.haveHealthAuthorityReportDocumentsToProcess
+        let reloadApplication = !isEmpty(this.changedLicences) || this.hasLicenceDocumentsToProcess || this.hasHealthAuthorityReportDocumentsToProcess
         const payload = {
           licenceDeclaration: this.licenceDeclaration,
         }
@@ -266,11 +266,11 @@ export default {
           }),
         )
 
-        if (this.haveLicenceDocumentsToProcess) {
+        if (this.hasLicenceDocumentsToProcess) {
           await this.processLicenceDocuments()
         }
 
-        if (this.haveHealthAuthorityReportDocumentsToProcess) {
+        if (this.hasHealthAuthorityReportDocumentsToProcess) {
           await this.processHealthAuthorityReportDocuments()
         }
 

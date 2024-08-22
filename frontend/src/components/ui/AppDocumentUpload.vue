@@ -20,7 +20,7 @@
               :rules="[...fileRules]"
               :accept="fileExtensionAccept"
               :disabled="loading"
-              @update:modelValue="validateFile(item.id)"></v-file-input>
+              @update:model-value="validateFile(item.id)"></v-file-input>
           </v-col>
           <v-col cols="11" md="7" class="pr-4">
             <v-text-field v-model.trim="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
@@ -36,7 +36,7 @@
           <template #item.actionButtons="{ item }">
             <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId, documentType)">mdi-delete</v-icon>
           </template>
-          <template v-slot:bottom><!-- no paging --></template>
+          <template #bottom><!-- no paging --></template>
         </v-data-table>
       </div>
       <div>
@@ -102,11 +102,11 @@ export default {
     }
   },
   computed: {
-    reachUploadLimit() {
+    uploadLimitReached() {
       return this.uploadLimit && this.documents?.length + this.uploadedDocuments?.length >= Number(this.uploadLimit)
     },
     showAddFileButton() {
-      return !this.loading && !this.readonly && !this.reachUploadLimit
+      return !this.loading && !this.readonly && !this.uploadLimitReached
     },
   },
   watch: {
@@ -143,7 +143,7 @@ export default {
       { title: 'Description', key: 'description', width: '60%' },
       { title: '', key: 'actionButtons', sortable: false, width: '6%' },
     ]
-    if (!this.disabled && !this.readonly && !this.reachUploadLimit) {
+    if (!this.disabled && !this.readonly && !this.uploadLimitReached) {
       this.addFile()
     }
   },

@@ -25,7 +25,7 @@
             <LicenceDetails :licence="licence" :read-only="true" />
           </v-card>
           <v-card class="mt-4">
-            <AppDocumentUpload class="pa-4" :readonly="true" :document-label="DOCUMENT_LABELS.LICENCE" :document-type="`Licence ${licence?.licence}`" :uploaded-documents="getLicenceDocument(licence)">
+            <AppDocumentUpload class="pa-4" :readonly="true" :document-label="DOCUMENT_LABELS.LICENCE" :document-type="`Licence ${licence.licence}`" :uploaded-documents="getLicenceDocument(licence)">
               <AppMissingInfoError
                 v-if="!readonly && !getLicenceDocument(licence)?.length"
                 :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: `#${licence.licenceId}`, params: { applicationGuid: $route.params.applicationGuid } }">
