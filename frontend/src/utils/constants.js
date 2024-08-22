@@ -238,6 +238,7 @@ export const DOCUMENT_TYPES = Object.freeze({
   INCOME_STATEMENT: 'Income Statement',
   BALANCE_SHEET: 'Balance Sheet',
   SUPPORTING_DOCS: 'Supporting Documents',
+  COMMUNITY_LETTER: 'Community Support Letter',
 })
 
 export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
@@ -297,3 +298,11 @@ export const DAYS_OF_WEEK = Object.freeze([
 ])
 
 export const TIME_ZONE = 'America/Vancouver'
+
+export const BUSINESS_TYPE_CODES = Object.freeze({
+  CORPORATION: 1,
+  NON_PROFIT_SOCIETY: 2,
+  PUBLIC_INSTITUTION: 3,
+  LOCAL_GOVERNMENT: 4,
+  SOLE_PROPRIETOR: 5,
+})

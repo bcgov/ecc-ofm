@@ -142,8 +142,8 @@
                 <v-col class="">
                   <AppLabel>Does your organization have an inclusion policy?</AppLabel>
                 </v-col>
-                <v-col class="mt-2">
-                  <v-row v-if="editable && !editMode" justify="end">
+                <v-col v-if="editable && !editMode" class="mt-2">
+                  <v-row justify="end">
                     <AppButton id="edit-button" variant="text" :disabled="loading" @click="toggleEditMode()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>

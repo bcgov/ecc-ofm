@@ -34,6 +34,9 @@
         </v-col>
       </v-row>
     </div>
+    <div v-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY" class="mb-6">
+      <NotForProfitQuestions :loading="loading" :organization="organization" @update="updateModel"></NotForProfitQuestions>
+    </div>
   </v-form>
 </template>
 
@@ -46,12 +49,15 @@ import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
+import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
+import { isEqual, cloneDeep } from 'lodash'
+import format from '@/utils/format'
 
 export default {
   name: 'SelectFacilityView',
-  components: { OrganizationInfo },
+  components: { OrganizationInfo, NotForProfitQuestions },
   mixins: [alertMixin],
 
   props: {
@@ -78,7 +84,9 @@ export default {
       facilityId: undefined,
       isFormComplete: false,
       organization: undefined,
+      originalOrganization: undefined,
       loadedApplications: undefined,
+      isOrganizationUpdated: false,
     }
   },
 
@@ -108,6 +116,10 @@ export default {
         this.$refs.form?.validate()
         if (!this.isFormComplete) return
         this.$emit('process', true)
+
+        if (!isEqual(this.organization, this.originalOrganization)) {
+          await this.updateOrganization()
+        }
         const activeApplications = this.loadedApplications?.filter((el) => el.facilityId === this.facilityId)
         if (isEmpty(activeApplications)) {
           await this.createApplication()
@@ -126,6 +138,7 @@ export default {
 
   async created() {
     this.isSelectFacilityComplete = false
+    this.BUSINESS_TYPE_CODES = BUSINESS_TYPE_CODES
     if (this.userInfo?.facilities?.length === 1) {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }
@@ -139,6 +152,7 @@ export default {
         this.$emit('process', true)
         this.loading = true
         this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
+        this.originalOrganization = cloneDeep(this.organization)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
@@ -165,6 +179,19 @@ export default {
       } finally {
         this.$emit('process', false)
       }
+    },
+    async updateOrganization() {
+      const payload = {
+        dateOfIncorporation: format.convertUTCDatetoPSTDate(this.organization.dateOfIncorporation),
+        openMembership: this.organization.openMembership,
+        boardMembersElected: this.organization.boardMembersElected,
+        boardMembersSelectedMembership: this.organization.boardMembersSelectedMembership,
+        boardMembersResidentsOfBC: this.organization.boardMembersResidentsOfBC,
+      }
+      await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
+    },
+    updateModel(updatedModel) {
+      this.organization = { ...updatedModel }
     },
   },
 }
