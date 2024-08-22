@@ -49,8 +49,14 @@
           <v-card-text>Maintain or edit organization or facility information and request a change.</v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="false" cols="12" md="6" lg="4">
-        <v-card id="help-card" class="basic-card" prepend-icon="mdi-help-circle-outline" title="Help and Resources" @click="$router.push({ name: 'help' })">
+      <v-col cols="12" md="6" lg="4">
+        <v-card
+          id="help-card"
+          class="basic-card"
+          prepend-icon="mdi-help-circle-outline"
+          title="Help and Resources"
+          target="ofm_external_help"
+          href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/SitePages/2023%20OFM%20Test.aspx">
           <v-card-text>Need support? Find program training tools and resources, technical help, or call us.</v-card-text>
         </v-card>
       </v-col>
@@ -131,5 +137,9 @@ export default {
 }
 .alert-banner {
   border: 1px solid rgb(252, 186, 25);
+}
+
+a[id='help-card']:hover {
+  color: #313132;
 }
 </style>
