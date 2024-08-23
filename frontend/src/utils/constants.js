@@ -185,6 +185,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   LICENCE_INFO: 'Licence information required',
   LICENCE_CONFIRMATION: 'Confirmation of licence information required',
   DOCUMENT_UPLOAD: 'Document upload required',
+  DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'Document upload required of your Community Support Letter required',
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
   DOCUMENT_LICENCE_UPLOAD: 'Document upload of your current licence required',
@@ -247,6 +248,7 @@ export const DOCUMENT_TYPES = Object.freeze({
 export const DOCUMENT_LABELS = Object.freeze({
   LICENCE: 'A copy of your current licence',
   HEALTH_AUTHORITY_REPORT: 'A copy of your most recent Health Authority compliance report',
+  COMMUNITY_LETTER: 'Letter of Reference for Community Support',
 })
 
 export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({

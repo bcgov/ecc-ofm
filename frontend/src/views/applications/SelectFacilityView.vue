@@ -8,14 +8,20 @@
         <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
       </div>
       <OrganizationInfo :loading="loading" :organization="organization" />
-      <div v-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY" class="mb-6">
+
+      <v-card v-if="loading" class="my-4 pa-4 w-100" variant="outlined">
+        <v-skeleton-loader :loading="loading" type="table-tbody"></v-skeleton-loader>
+      </v-card>
+      <div v-else-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY">
         <NotForProfitQuestions
+          class="mb-6"
           :loading="loading"
           :organization="organization"
           @documents-complete="setDocumentsComplete"
           @update="updateModel"
           @delete-document="deleteDocument"></NotForProfitQuestions>
       </div>
+
       <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
 
@@ -83,7 +89,6 @@ export default {
   },
 
   emits: ['process'],
-
   data() {
     return {
       rules,
@@ -94,7 +99,7 @@ export default {
       updatedOrganization: undefined,
       loadedApplications: undefined,
       documentsToDelete: [],
-      documentsComplete: false,
+      documentsComplete: true,
     }
   },
 
@@ -176,8 +181,12 @@ export default {
         this.$emit('process', true)
         this.loading = true
         this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
-        this.organization.uploadedDocuments = await this.getCommunitySupportDocs()
-        this.organization.documentsToUpload = []
+        if (this.organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY) {
+          this.organization.uploadedDocuments = await this.getCommunitySupportDocs()
+          this.organization.documentsToUpload = []
+        }
+
+        this.updatedOrganization = cloneDeep(this.organization)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
@@ -233,8 +242,8 @@ export default {
 
     async processDocuments() {
       try {
-        if (!isEmpty(this.organization?.documentsToUpload)) {
-          await DocumentService.createDocuments(this.organization.documentsToUpload, this.organization.organizationId)
+        if (!isEmpty(this.updatedOrganization?.documentsToUpload)) {
+          await DocumentService.createDocuments(this.updatedOrganization.documentsToUpload, this.updatedOrganization.organizationId)
         }
         if (!isEmpty(this.documentsToDelete)) {
           await Promise.all(
