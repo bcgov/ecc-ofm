@@ -32,8 +32,6 @@ public class CRMLogin extends BaseTest {
 		test = extent.createTest("Test - Login to CRM");
 		test.info("Starting Test - Login to CRM");
 		try {
-			Thread.sleep(10000);
-
 			driver.get(CRM_URL);
 			wait(10);
 
