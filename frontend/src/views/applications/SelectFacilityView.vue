@@ -34,8 +34,9 @@
         </v-col>
       </v-row>
     </div>
+
     <div v-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY" class="mb-6">
-      <NotForProfitQuestions :loading="loading" :organization="organization" @update="updateModel"></NotForProfitQuestions>
+      <NotForProfitQuestions :loading="loading" :organization="organization" @documents-complete="setDocumentsComplete" @update="updateModel" @delete-document="deleteDocument"></NotForProfitQuestions>
     </div>
   </v-form>
 </template>
@@ -48,8 +49,9 @@ import rules from '@/utils/rules'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
+import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 import { isEqual, cloneDeep } from 'lodash'
@@ -84,9 +86,10 @@ export default {
       facilityId: undefined,
       isFormComplete: false,
       organization: undefined,
-      originalOrganization: undefined,
+      updatedOrganization: undefined,
       loadedApplications: undefined,
-      isOrganizationUpdated: false,
+      documentsToDelete: [],
+      documentsComplete: false,
     }
   },
 
@@ -101,8 +104,8 @@ export default {
 
   watch: {
     isFormComplete: {
-      handler(value) {
-        this.isSelectFacilityComplete = value
+      handler() {
+        this.checkFacilityComplete()
       },
     },
     cancel: {
@@ -117,7 +120,10 @@ export default {
         if (!this.isFormComplete) return
         this.$emit('process', true)
 
-        if (!isEqual(this.organization, this.originalOrganization)) {
+        //remove the time otherwise isEqual will always return false
+        this.organization.dateOfIncorporation = this.organization.dateOfIncorporation ? this.organization.dateOfIncorporation.slice(0, 10) : null
+
+        if (!isEqual(this.organization, this.updatedOrganization)) {
           await this.updateOrganization()
         }
         const activeApplications = this.loadedApplications?.filter((el) => el.facilityId === this.facilityId)
@@ -147,12 +153,26 @@ export default {
   },
 
   methods: {
+    updateModel(updatedModel) {
+      this.updatedOrganization = cloneDeep(updatedModel)
+    },
+    deleteDocument(documentId) {
+      this.documentsToDelete.push(documentId)
+    },
+    setDocumentsComplete(value) {
+      this.documentsComplete = value
+      this.checkFacilityComplete()
+    },
+    checkFacilityComplete() {
+      this.isSelectFacilityComplete = this.documentsComplete && this.isFormComplete
+    },
     async getOrganization() {
       try {
         this.$emit('process', true)
         this.loading = true
         this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
-        this.originalOrganization = cloneDeep(this.organization)
+        this.organization.uploadedDocuments = await this.getCommunitySupportDocs()
+        this.organization.documentsToUpload = []
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
@@ -182,16 +202,49 @@ export default {
     },
     async updateOrganization() {
       const payload = {
-        dateOfIncorporation: format.convertUTCDatetoPSTDate(this.organization.dateOfIncorporation),
-        openMembership: this.organization.openMembership,
-        boardMembersElected: this.organization.boardMembersElected,
-        boardMembersSelectedMembership: this.organization.boardMembersSelectedMembership,
-        boardMembersResidentsOfBC: this.organization.boardMembersResidentsOfBC,
+        dateOfIncorporation: format.convertUTCDatetoPSTDate(this.updatedOrganization.dateOfIncorporation),
+        openMembership: this.updatedOrganization.openMembership,
+        boardMembersElected: this.updatedOrganization.boardMembersElected,
+        boardMembersSelectedMembership: this.updatedOrganization.boardMembersSelectedMembership,
+        boardMembersResidentsOfBC: this.updatedOrganization.boardMembersResidentsOfBC,
       }
-      await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
+      try {
+        await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
+        await this.processDocuments()
+      } catch (error) {
+        this.setFailureAlert('Failed to update the organization', error)
+      }
     },
-    updateModel(updatedModel) {
-      this.organization = { ...updatedModel }
+
+    async getCommunitySupportDocs() {
+      try {
+        const docs = await DocumentService.getDocuments(this.organization.organizationId)
+        return docs?.filter((doc) => doc.documentType === DOCUMENT_TYPES.COMMUNITY_LETTER) ?? []
+      } catch (error) {
+        this.setFailureAlert("Failed to get organization's community support docs", error)
+        return
+      }
+    },
+
+    async processDocuments() {
+      try {
+        if (!isEmpty(this.organization?.documentsToUpload)) {
+          await DocumentService.createDocuments(this.organization.documentsToUpload, this.organization.organizationId)
+        }
+        if (!isEmpty(this.documentsToDelete)) {
+          await Promise.all(
+            this.documentsToDelete.map(async (documentId) => {
+              await DocumentService.deleteDocument(documentId)
+            }),
+          )
+        }
+      } catch (error) {
+        if (error?.response?.data?.status === 422) {
+          this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
+        } else {
+          this.setFailureAlert('Failed to process documents', error)
+        }
+      }
     },
   },
 }
