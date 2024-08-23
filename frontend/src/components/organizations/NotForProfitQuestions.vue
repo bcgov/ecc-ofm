@@ -4,13 +4,11 @@
       <AppLabel>Not for Profit Information</AppLabel>
       <v-card variant="outlined" class="soft-outline px-2 py-6 my-4">
         <AppLabel>Date of Incorporation</AppLabel>
-
-        <AppDateInput id="date-to" v-model="model.dateOfIncorporation" :rules="[...rules.required, rules.MMDDYYYY]" :max="todayDate" :disabled="false" label="Select The Date" class="mt-6 mx-6" />
+        <AppDateInput id="date-to" v-model="model.dateOfIncorporation" :rules="[...rules.required, rules.MMDDYYYY]" :max="todayDate" label="Select The Date" class="mt-6 mx-6" />
       </v-card>
       <v-card v-if="isReferenceLetterRequired" variant="outlined" class="soft-outline px-2 py-6 my-4 w-100">
         <v-row no-gutters>
           <AppLabel class="mr-4">Upload Documents</AppLabel>
-
           <v-tooltip
             content-class="tooltip"
             text="A letter from a community representative or agency that has knowledge about the sector and can demonstrate how the society provides services to support the local community."
@@ -27,7 +25,6 @@
             :document-type="DOCUMENT_TYPES.COMMUNITY_LETTER"
             :document-label="DOCUMENT_LABELS.COMMUNITY_LETTER"
             entity-name="accounts"
-            :disabled="false"
             :loading="loading"
             :rules="[...rules.required]"
             @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
@@ -166,9 +163,11 @@ export default {
   methods: {
     deleteUploadedDocument(documentId) {
       const foundDoc = this.model.uploadedDocuments.findIndex((el) => el.documentId === documentId)
-      this.model.uploadedDocuments.splice(foundDoc, 1)
-      this.$emit('update', this.model)
-      this.$emit('deleteDocument', documentId)
+      if (foundDoc > -1) {
+        this.model.uploadedDocuments.splice(foundDoc, 1)
+        this.$emit('update', this.model)
+        this.$emit('deleteDocument', documentId)
+      }
     },
   },
 }
