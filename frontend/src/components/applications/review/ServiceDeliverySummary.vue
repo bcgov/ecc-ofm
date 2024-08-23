@@ -2,17 +2,17 @@
   <v-container fluid class="pa-2 pb-0">
     <template v-if="!readonly">
       <AppMissingInfoError
-        v-if="isEmpty(currentApplication?.licences)"
+        v-if="isEmpty(currentApplication?.licences) || !isCCOFMissingDetailComplete()"
         :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
+      </AppMissingInfoError>
+      <AppMissingInfoError v-else-if="!isSplitClassroomComplete()" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: $route.params.applicationGuid } }">
+        {{ APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
       </AppMissingInfoError>
       <AppMissingInfoError
         v-else-if="!currentApplication?.licenceDeclaration"
         :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
-      </AppMissingInfoError>
-      <AppMissingInfoError v-else-if="!isServiceDeliveryComplete" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ !allCCOFMissingDetailComplete ? APPLICATION_ERROR_MESSAGES.LICENCE_INFO : APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
       </AppMissingInfoError>
     </template>
     <v-expansion-panels v-if="showSummary" v-model="panel" multiple>
@@ -21,26 +21,52 @@
           <LicenceHeader :licence="licence" />
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-          <LicenceDetails :licence="licence" :readOnly="true" />
+          <v-card>
+            <LicenceDetails :licence="licence" :read-only="true" />
+          </v-card>
+          <v-card class="mt-4">
+            <AppDocumentUpload class="pa-4" :readonly="true" :document-label="DOCUMENT_LABELS.LICENCE" :document-type="`Licence ${licence.licence}`" :uploaded-documents="getLicenceDocument(licence)">
+              <AppMissingInfoError
+                v-if="!readonly && !getLicenceDocument(licence)?.length"
+                :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: `#${licence.licenceId}`, params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_LICENCE_UPLOAD }}
+              </AppMissingInfoError>
+            </AppDocumentUpload>
+          </v-card>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
+
+    <v-card class="mt-4">
+      <AppDocumentUpload
+        class="pa-4"
+        :readonly="true"
+        :document-label="DOCUMENT_LABELS.HEALTH_AUTHORITY_REPORT"
+        :document-type="DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT"
+        :uploaded-documents="healthAuthorityReportDocument">
+        <AppMissingInfoError
+          v-if="!readonly && !isHealthAuthorityReportUploaded()"
+          :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#health-authority-report-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
+        </AppMissingInfoError>
+      </AppDocumentUpload>
+    </v-card>
   </v-container>
 </template>
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 
+import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import LicenceService from '@/services/licenceService'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_LABELS, DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
-  components: { AppMissingInfoError, LicenceHeader, LicenceDetails },
+  components: { AppDocumentUpload, AppMissingInfoError, LicenceHeader, LicenceDetails },
   props: {
     readonly: {
       type: Boolean,
@@ -58,34 +84,29 @@ export default {
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
-    ...mapState(useApplicationsStore, ['isServiceDeliveryComplete']),
     allLicenceIDs() {
       return this.licences?.map((licence) => licence.licenceId)
     },
-    allCCOFMissingDetailComplete() {
-      return this.currentApplication?.licences.every((licence) => {
-        return licence.licenceDetails?.every(
-          (detail) =>
-            LicenceService.isOperationalSpacesValid(detail.operationalSpaces) &&
-            LicenceService.isEnrolledSpacesValid(detail.enrolledSpaces) &&
-            LicenceService.isWeeksInOperationValid(detail.weeksInOperation) &&
-            !isEmpty(detail.operationFromTime) &&
-            !isEmpty(detail.operationToTime) &&
-            !isEmpty(detail.weekDays),
-        )
-      })
-    },
     showSummary() {
-      return !isEmpty(this.currentApplication?.licences) && (this.readonly || this.isServiceDeliveryComplete)
+      return !isEmpty(this.currentApplication?.licences) && (this.readonly || this.isLicenceDetailComplete())
+    },
+    healthAuthorityReportDocument() {
+      return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
     },
   },
   async created() {
     this.panel = this.allLicenceIDs
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
+    this.DOCUMENT_LABELS = DOCUMENT_LABELS
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
   methods: {
+    ...mapActions(useApplicationsStore, ['isCCOFMissingDetailComplete', 'isSplitClassroomComplete', 'isLicenceDetailComplete', 'isHealthAuthorityReportUploaded']),
     isEmpty,
+    getLicenceDocument(licence) {
+      return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(licence?.licence))
+    },
   },
 }
 </script>

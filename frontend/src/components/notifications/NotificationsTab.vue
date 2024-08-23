@@ -4,27 +4,27 @@
       <v-row>
         <v-col class="mt-3 ml-3">
           <div>
-            <AppButton @click="toggleMarkUnreadButtonInNotificationTable(false)" variant="text">
+            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
               <v-icon class="icon" left>mdi-email-outline</v-icon>
-              <span class="btn-label">Mark unread</span>
+              Mark unread
             </AppButton>
-            <AppButton @click="toggleMarkReadButton(true)" variant="text">
+            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
               <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-              <span class="btn-label">Mark read</span>
+              Mark read
             </AppButton>
           </div>
         </v-col>
       </v-row>
       <v-skeleton-loader :loading="!notifications" type="table-tbody">
         <NotificationsTable
-          :markReadButtonState="markReadButtonState"
-          :markUnreadButtonInNotificationTableState="markUnreadButtonInNotificationTableState"
-          :markUnreadButtonInNotificationDetailsState="markUnreadButtonInNotificationDetailsState"
-          @openNotificationDetails="openNotificationDetails" />
+          :mark-read-button-state="markReadButtonState"
+          :mark-unread-button-in-notification-table-state="markUnreadButtonInNotificationTableState"
+          :mark-unread-button-in-notification-details-state="markUnreadButtonInNotificationDetailsState"
+          @open-notification-details="openNotificationDetails" />
       </v-skeleton-loader>
     </v-col>
     <v-col cols="12" md="6">
-      <NotificationDetails :notificationId="selectedNotificationId" @toggleMarkUnreadButtonInNotificationDetails="toggleMarkUnreadButtonInNotificationDetails" />
+      <NotificationDetails :notification-id="selectedNotificationId" @toggle-mark-unread-button-in-notification-details="toggleMarkUnreadButtonInNotificationDetails" />
     </v-col>
   </v-row>
 </template>
@@ -77,5 +77,8 @@ export default {
 }
 .border-right {
   border-right: 2px solid #003366;
+}
+.notifications-button {
+  display: inline-block;
 }
 </style>

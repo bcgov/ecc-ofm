@@ -109,6 +109,7 @@ export default {
 
 .small {
   font-size: 14px;
+  height: 30px !important;
   padding: 0px;
 }
 </style>

@@ -97,9 +97,8 @@ import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/u
 import { isEmpty } from 'lodash'
 import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
 import { hasDuplicateVIN } from '@/utils/common'
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
-import { useAuthStore } from '@/stores/auth'
 
 import rules from '@/utils/rules'
 
@@ -152,7 +151,6 @@ export default {
   },
   computed: {
     ...mapState(useOrgStore, ['currentOrg']),
-    ...mapState(useAuthStore, ['userInfo']),
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
     },
@@ -165,10 +163,7 @@ export default {
     },
     isSupportComplete() {
       const model = this.getModel(SUPPLEMENTARY_TYPES.SUPPORT)
-      console.log(this.currentOrg)
-      if (!this.currentOrg.hasInclusionPolicy && model) {
-        return false
-      } else if (!model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)) {
+      if (!model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)) {
         return true
       }
       return model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value) && !isEmpty(model.supportOtherDescription)
@@ -185,16 +180,23 @@ export default {
       })
     },
     isApplicationComplete() {
-      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete
+      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete && this.hasSupportApplicationAndInclusionPolicy
     },
     readonly() {
       return !this.isApplicationComplete || this.processing || this.loading || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+    },
+    //this function disables submit if user has filled out a Support Needs App - but then after removes inclusion policy.
+    //The logic was moved out of isSupportComplete() so the red 'missing info' messaging won't appear when user is missing inclusion policy
+    hasSupportApplicationAndInclusionPolicy() {
+      return !this.getModel(SUPPLEMENTARY_TYPES.SUPPORT) || this.currentOrg.hasInclusionPolicy
     },
   },
   watch: {
     back: {
       async handler() {
-        await this.saveApplication()
+        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+          await this.saveApplication()
+        }
         this.$router.push({ name: 'supp-allowances-form', params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
@@ -239,7 +241,6 @@ export default {
     await this.loadData()
   },
   methods: {
-    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPanelIDs : []
@@ -248,9 +249,7 @@ export default {
       try {
         this.loading = true
         this.$emit('process', true)
-        if (!this.currentOrg) {
-          await this.getOrganizationInfo(this.userInfo?.organizationId)
-        }
+
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)

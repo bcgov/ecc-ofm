@@ -4,12 +4,16 @@
     <v-card>
       <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
         <v-tab value="notifications">
-          Notifications
-          <template v-if="unreadNotificationCount > 0">({{ unreadNotificationCount }} unread)</template>
+          <strong>
+            Notifications
+            <template v-if="unreadNotificationCount > 0">({{ unreadNotificationCount }} unread)</template>
+          </strong>
         </v-tab>
         <v-tab value="messages">
-          Messages
-          <template v-if="unreadMessageCount > 0">({{ unreadMessageCount }} unread)</template>
+          <strong>
+            Messages
+            <template v-if="unreadMessageCount > 0">({{ unreadMessageCount }} unread)</template>
+          </strong>
         </v-tab>
       </v-tabs>
       <v-card-text>
@@ -40,7 +44,7 @@ export default {
   components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
   data() {
     return {
-      tab: null,
+      tab: 1,
     }
   },
   computed: {

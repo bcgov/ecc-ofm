@@ -187,6 +187,8 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_UPLOAD: 'Document upload required',
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
+  DOCUMENT_LICENCE_UPLOAD: 'Document upload of your current licence required',
+  DOCUMENT_HA_REPORT_UPLOAD: 'Document upload of your most recent Health Authority compliance report required',
   FACILITY_TYPE: 'Facility type required',
   ARM_LENGTH: "Arm's Length agreement checkbox required",
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
@@ -239,6 +241,12 @@ export const DOCUMENT_TYPES = Object.freeze({
   BALANCE_SHEET: 'Balance Sheet',
   SUPPORTING_DOCS: 'Supporting Documents',
   COMMUNITY_LETTER: 'Community Support Letter',
+  HEALTH_AUTHORITY_REPORT: 'HA Compliance Rpt',
+})
+
+export const DOCUMENT_LABELS = Object.freeze({
+  LICENCE: 'A copy of your current licence',
+  HEALTH_AUTHORITY_REPORT: 'A copy of your most recent Health Authority compliance report',
 })
 
 export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
@@ -247,7 +255,6 @@ export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
   NA: 3,
 })
 
-export const ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT = 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'
 export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
 export const OFM_PROGRAM = 'OFM Program'
 
