@@ -8,8 +8,17 @@
         <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
       </div>
       <OrganizationInfo :loading="loading" :organization="organization" />
+      <div v-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY" class="mb-6">
+        <NotForProfitQuestions
+          :loading="loading"
+          :organization="organization"
+          @documents-complete="setDocumentsComplete"
+          @update="updateModel"
+          @delete-document="deleteDocument"></NotForProfitQuestions>
+      </div>
       <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
+
     <div class="mb-6">
       <h4>To start your application, select a facility</h4>
       <div>
@@ -33,10 +42,6 @@
             variant="outlined"></v-select>
         </v-col>
       </v-row>
-    </div>
-
-    <div v-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY" class="mb-6">
-      <NotForProfitQuestions :loading="loading" :organization="organization" @documents-complete="setDocumentsComplete" @update="updateModel" @delete-document="deleteDocument"></NotForProfitQuestions>
     </div>
   </v-form>
 </template>
@@ -117,7 +122,7 @@ export default {
     next: {
       async handler() {
         this.$refs.form?.validate()
-        if (!this.isFormComplete) return
+        if (!this.isFormComplete || !this.documentsComplete) return
         this.$emit('process', true)
 
         //remove the time otherwise isEqual will always return false

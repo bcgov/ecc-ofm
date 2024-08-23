@@ -13,19 +13,16 @@
         </v-card>
         <v-card v-if="isReferenceLetterRequired" variant="outlined" class="card-outline px-2 py-6 my-4 w-100">
           <v-row no-gutters>
-            <v-col cols="7" md="3" lg="2">
-              <AppLabel>Upload Documents</AppLabel>
-            </v-col>
-            <v-col>
-              <v-tooltip
-                content-class="tooltip"
-                text="A letter from a community representative or agency that has knowledge about the sector and can demonstrate how the society provides services to support the local community."
-                max-width="300px">
-                <template #activator="{ props }">
-                  <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
-                </template>
-              </v-tooltip>
-            </v-col>
+            <AppLabel class="mr-4">Upload Documents</AppLabel>
+
+            <v-tooltip
+              content-class="tooltip"
+              text="A letter from a community representative or agency that has knowledge about the sector and can demonstrate how the society provides services to support the local community."
+              max-width="300px">
+              <template #activator="{ props }">
+                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+              </template>
+            </v-tooltip>
           </v-row>
           <v-card variant="outlined" class="card-outline px-2 py-6 my-4 w-100">
             <AppDocumentUpload
@@ -54,7 +51,7 @@
           </v-row>
           <v-row no-gutters>
             <v-col>
-              <v-radio-group v-model="model.openMembership" :readonly="false" :rules="[...rules.required]" hide-details>
+              <v-radio-group v-model="model.openMembership" :readonly="false" :rules="[...rules.required]">
                 <v-row no-gutters>
                   <v-col cols="12" sm="2" lg="1">
                     <v-radio label="Yes" :value="1"></v-radio>
@@ -76,7 +73,7 @@
           </v-row>
           <v-row no-gutters>
             <v-col>
-              <v-radio-group v-model="model.boardMembersElected" :readonly="false" :rules="[...rules.required]" hide-details>
+              <v-radio-group v-model="model.boardMembersElected" :readonly="false" :rules="[...rules.required]">
                 <v-row no-gutters>
                   <v-col cols="12" sm="2" lg="1">
                     <v-radio label="Yes" :value="1"></v-radio>
@@ -97,7 +94,7 @@
           </v-row>
           <v-row no-gutters>
             <v-col>
-              <v-radio-group v-model="model.boardMembersSelectedMembership" :readonly="false" :rules="[...rules.required]" hide-details>
+              <v-radio-group v-model="model.boardMembersSelectedMembership" :readonly="false" :rules="[...rules.required]">
                 <v-row no-gutters>
                   <v-col cols="12" sm="2" lg="1">
                     <v-radio label="Yes" :value="1"></v-radio>
@@ -118,7 +115,7 @@
           </v-row>
           <v-row no-gutters>
             <v-col>
-              <v-radio-group v-model="model.boardMembersResidentsOfBC" :readonly="false" :rules="[...rules.required]" hide-details>
+              <v-radio-group v-model="model.boardMembersResidentsOfBC" :readonly="false" :rules="[...rules.required]">
                 <v-row no-gutters>
                   <v-col cols="12" sm="2" lg="1">
                     <v-radio label="Yes" :value="1"></v-radio>
