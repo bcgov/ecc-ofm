@@ -154,10 +154,10 @@
                 <v-col>
                   <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
                     <v-row no-gutters>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
                       </v-col>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
                       </v-col>
                     </v-row>
