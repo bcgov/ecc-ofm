@@ -236,6 +236,8 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   TABLE: 'Table',
 })
 
+export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
+
 export const DOCUMENT_TYPES = Object.freeze({
   INCOME_STATEMENT: 'Income Statement',
   BALANCE_SHEET: 'Balance Sheet',
