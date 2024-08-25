@@ -17,10 +17,6 @@ const createUserSchema = {
     in: ['body'],
     exists: { errorMessage: '[userName] is required' },
   },
-  firstName: {
-    in: ['body'],
-    exists: { errorMessage: '[firstName] is required' },
-  },
   lastName: {
     in: ['body'],
     exists: { errorMessage: '[lastName] is required' },

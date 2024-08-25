@@ -39,6 +39,7 @@
               :items="contacts"
               :disabled="readonly"
               item-title="fullName"
+              item-value="contactId"
               label="Select Primary Contact"
               :rules="rules.required"
               density="compact"

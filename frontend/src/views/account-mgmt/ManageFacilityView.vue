@@ -71,6 +71,7 @@
                     :items="sortedContacts"
                     :disabled="loading"
                     item-title="fullName"
+                    item-value="contactId"
                     label="Select Primary Contact"
                     :rules="rules.required"
                     density="compact"
@@ -296,7 +297,7 @@ export default {
         if (this.primaryContact === this.primaryContactLastSaved) {
           return
         }
-        this.Loading = true
+        this.loading = true
         this.facility.primaryContactId = this.primaryContact?.contactId
         await FacilityService.updateFacilityPrimaryContact(this.facility.facilityId, this.facility.primaryContactId)
         this.primaryContactLastSaved = this.primaryContact
