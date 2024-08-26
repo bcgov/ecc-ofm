@@ -8,8 +8,23 @@
         <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
       </div>
       <OrganizationInfo :loading="loading" :organization="organization" />
+
+      <v-card v-if="loading" class="my-4 pa-4 w-100" variant="outlined">
+        <v-skeleton-loader :loading="loading" type="table-tbody"></v-skeleton-loader>
+      </v-card>
+      <div v-else-if="organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY">
+        <NotForProfitQuestions
+          class="mb-6"
+          :loading="loading"
+          :organization="organization"
+          @documents-complete="setDocumentsComplete"
+          @update="updateModel"
+          @delete-document="deleteDocument"></NotForProfitQuestions>
+      </div>
+
       <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
+
     <div class="mb-6">
       <h4>To start your application, select a facility</h4>
       <div>
@@ -45,13 +60,17 @@ import rules from '@/utils/rules'
 import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
+import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import { isEmpty } from 'lodash'
+import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
+import { isEqual, cloneDeep } from 'lodash'
+import format from '@/utils/format'
 
 export default {
   name: 'SelectFacilityView',
-  components: { OrganizationInfo },
+  components: { OrganizationInfo, NotForProfitQuestions },
   mixins: [alertMixin],
 
   props: {
@@ -70,7 +89,6 @@ export default {
   },
 
   emits: ['process'],
-
   data() {
     return {
       rules,
@@ -78,7 +96,10 @@ export default {
       facilityId: undefined,
       isFormComplete: false,
       organization: undefined,
+      updatedOrganization: undefined,
       loadedApplications: undefined,
+      documentsToDelete: [],
+      documentsComplete: true,
     }
   },
 
@@ -93,8 +114,8 @@ export default {
 
   watch: {
     isFormComplete: {
-      handler(value) {
-        this.isSelectFacilityComplete = value
+      handler() {
+        this.checkFacilityComplete()
       },
     },
     cancel: {
@@ -106,8 +127,15 @@ export default {
     next: {
       async handler() {
         this.$refs.form?.validate()
-        if (!this.isFormComplete) return
+        if (!this.isFormComplete || !this.documentsComplete) return
         this.$emit('process', true)
+
+        //remove the time otherwise isEqual will always return false
+        this.organization.dateOfIncorporation = this.organization.dateOfIncorporation ? this.organization.dateOfIncorporation.slice(0, 10) : null
+
+        if (!isEqual(this.organization, this.updatedOrganization)) {
+          await this.updateOrganization()
+        }
         const activeApplications = this.loadedApplications?.filter((el) => el.facilityId === this.facilityId)
         if (isEmpty(activeApplications)) {
           await this.createApplication()
@@ -126,6 +154,7 @@ export default {
 
   async created() {
     this.isSelectFacilityComplete = false
+    this.BUSINESS_TYPE_CODES = BUSINESS_TYPE_CODES
     if (this.userInfo?.facilities?.length === 1) {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }
@@ -134,11 +163,30 @@ export default {
   },
 
   methods: {
+    updateModel(updatedModel) {
+      this.updatedOrganization = cloneDeep(updatedModel)
+    },
+    deleteDocument(documentId) {
+      this.documentsToDelete.push(documentId)
+    },
+    setDocumentsComplete(value) {
+      this.documentsComplete = value
+      this.checkFacilityComplete()
+    },
+    checkFacilityComplete() {
+      this.isSelectFacilityComplete = this.documentsComplete && this.isFormComplete
+    },
     async getOrganization() {
       try {
         this.$emit('process', true)
         this.loading = true
         this.organization = await OrganizationService.getOrganization(this.userInfo?.organizationId)
+        if (this.organization?.businessTypeCode === BUSINESS_TYPE_CODES.NON_PROFIT_SOCIETY) {
+          this.organization.uploadedDocuments = await this.getCommunitySupportDocs()
+          this.organization.documentsToUpload = []
+        }
+
+        this.updatedOrganization = cloneDeep(this.organization)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       } finally {
@@ -164,6 +212,52 @@ export default {
         this.setFailureAlert('Failed to start a new application', error)
       } finally {
         this.$emit('process', false)
+      }
+    },
+    async updateOrganization() {
+      const payload = {
+        dateOfIncorporation: format.convertUTCDatetoPSTDate(this.updatedOrganization.dateOfIncorporation),
+        openMembership: this.updatedOrganization.openMembership,
+        boardMembersElected: this.updatedOrganization.boardMembersElected,
+        boardMembersSelectedMembership: this.updatedOrganization.boardMembersSelectedMembership,
+        boardMembersResidentsOfBC: this.updatedOrganization.boardMembersResidentsOfBC,
+      }
+      try {
+        await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
+        await this.processDocuments()
+      } catch (error) {
+        this.setFailureAlert('Failed to update the organization', error)
+      }
+    },
+
+    async getCommunitySupportDocs() {
+      try {
+        const docs = await DocumentService.getDocuments(this.organization.organizationId)
+        return docs?.filter((doc) => doc.documentType === DOCUMENT_TYPES.COMMUNITY_LETTER) ?? []
+      } catch (error) {
+        this.setFailureAlert("Failed to get organization's community support docs", error)
+        return
+      }
+    },
+
+    async processDocuments() {
+      try {
+        if (!isEmpty(this.updatedOrganization?.documentsToUpload)) {
+          await DocumentService.createDocuments(this.updatedOrganization.documentsToUpload, this.updatedOrganization.organizationId)
+        }
+        if (!isEmpty(this.documentsToDelete)) {
+          await Promise.all(
+            this.documentsToDelete.map(async (documentId) => {
+              await DocumentService.deleteDocument(documentId)
+            }),
+          )
+        }
+      } catch (error) {
+        if (error?.response?.data?.status === 422) {
+          this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
+        } else {
+          this.setFailureAlert('Failed to process documents', error)
+        }
       }
     },
   },

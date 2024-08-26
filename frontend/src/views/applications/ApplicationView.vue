@@ -134,7 +134,7 @@ export default {
     },
     disableNext() {
       if (this.isSelectFacilityPage) {
-        return !this.isSelectFacilityComplete
+        return false
       }
       if (this.isReviewApplicationPage) {
         return !this.isApplicationComplete

@@ -190,7 +190,6 @@ const OrganizationMappings = [
   { back: 'name', front: 'name' },
   { back: 'emailaddress1', front: 'email' },
   { back: 'ofm_business_type', front: 'businessTypeCode' },
-  { back: 'ofm_business_type@OData.Community.Display.V1.FormattedValue', front: 'businessType' },
   { back: 'ofm_doing_business_as', front: 'doingBusinessAsName' },
   { back: 'telephone1', front: 'phoneLandline' },
   { back: 'telephone2', front: 'phoneCell' },
@@ -211,7 +210,11 @@ const OrganizationMappings = [
   { back: 'ofm_ownership', front: 'ownership' },
   { back: 'ofm_inclusion_policy', front: 'hasInclusionPolicy' },
   { back: 'ofm_good_standing_status', front: 'goodStandingStatusCode' },
-  { back: 'ofm_good_standing_status@OData.Community.Display.V1.FormattedValue', front: 'goodStandingStatus' },
+  { back: 'ofm_date_of_incorporation', front: 'dateOfIncorporation' },
+  { back: 'ofm_open_membership', front: 'openMembership' },
+  { back: 'ofm_board_members_elected_unpaid', front: 'boardMembersElected' },
+  { back: 'ofm_board_members_selected_membership', front: 'boardMembersSelectedMembership' },
+  { back: 'ofm_board_members_residents_of_bc', front: 'boardMembersResidentsOfBC' },
 ]
 
 const FacilityMappings = [
