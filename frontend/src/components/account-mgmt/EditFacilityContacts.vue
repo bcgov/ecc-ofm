@@ -6,7 +6,7 @@
   <v-row>
     <v-col cols="12" class="pt-0">
       <v-card elevation="0" variant="outlined">
-        <v-expansion-panels variant="accordion" v-model="isPanelOpen">
+        <v-expansion-panels v-model="isPanelOpen" variant="accordion">
           <v-expansion-panel elevation="0">
             <v-expansion-panel-title>
               <template v-if="isPanelOpen !== 0">
@@ -32,20 +32,20 @@
                         label="Select contact to add"
                         density="compact"
                         variant="outlined"
-                        @update:modelValue="addContact"
-                        :error-messages="errorMessage"></v-autocomplete>
+                        :error-messages="errorMessage"
+                        @update:model-value="addContact"></v-autocomplete>
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col class="pt-2">
                       <v-data-table :headers="headers" :items="sortedContacts" density="compact">
-                        <template v-slot:item.name="{ item }">
+                        <template #item.name="{ item }">
                           {{ item.fullName }}
                         </template>
-                        <template v-slot:item.role="{ item }">
+                        <template #item.role="{ item }">
                           {{ item.role?.roleName }}
                         </template>
-                        <template v-if="editable" v-slot:item.actions="{ item }">
+                        <template v-if="editable" #item.actions="{ item }">
                           <v-row v-if="editMode" justify="end">
                             <AppButton variant="text" :disabled="loading" @click="deleteContact(item)">
                               <v-icon icon="fa:fa-regular fa-trash-can" class="transaction-icon"></v-icon>
