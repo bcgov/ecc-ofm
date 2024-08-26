@@ -83,9 +83,9 @@
       chips
       multiple
       :items="question?.choices">
-      <template v-slot:prepend-item>
+      <template #prepend-item>
         <v-list-item title="Select All" @click="toggleAllItems">
-          <template v-slot:prepend>
+          <template #prepend>
             <v-checkbox-btn :color="someItemsSelected ? '#003366' : undefined" :indeterminate="someItemsSelected && !allItemsSelected" :model-value="someItemsSelected"></v-checkbox-btn>
           </template>
         </v-list-item>
@@ -102,6 +102,7 @@ import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import rules from '@/utils/rules'
 import { isEmpty, cloneDeep } from 'lodash'
 import { convertStringToArray } from '@/utils/common'
+import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
 
 export default {
   components: { AppDateInput, AppNumberInput },
@@ -160,7 +161,8 @@ export default {
   watch: {
     response: {
       handler() {
-        this.updatedResponse.value = this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE ? convertStringToArray(this.response.value) : this.response.value
+        this.updatedResponse.value =
+          this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE ? convertStringToArray(this.response.value, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : this.response.value
       },
       deep: true,
     },
@@ -203,7 +205,7 @@ export default {
       this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
       this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
       if (this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE) {
-        this.updatedResponse.value = convertStringToArray(this.updatedResponse.value)
+        this.updatedResponse.value = convertStringToArray(this.updatedResponse.value, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
       } else if (
         [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.question?.type) &&
         isEmpty(this.updatedResponse.questionResponseId) &&

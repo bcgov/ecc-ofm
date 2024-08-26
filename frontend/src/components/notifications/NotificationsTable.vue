@@ -1,6 +1,7 @@
 <template>
   <v-data-table-virtual
     v-if="notifications"
+    id="notifications-table"
     v-model="bodyCheckboxesSelected"
     :headers="headers"
     :items="notifications"

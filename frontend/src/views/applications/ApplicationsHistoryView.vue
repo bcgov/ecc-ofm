@@ -68,12 +68,21 @@
         <h3>Applications Summary</h3>
       </v-col>
       <v-col cols="12" md="7" class="d-flex align-end">
-        <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :defaultShowInput="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter v-if="!loading && !isEmpty(applicationItems)" :default-show-input="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
     <v-skeleton-loader id="table" :loading="loading" type="table-tbody">
       <div v-if="isEmpty(applicationItems)">You have no applications on file</div>
-      <v-data-table v-else :headers="headers" :items="filteredApplicationItems" item-key="applicationId" :mobile="null" mobile-breakpoint="md" class="soft-outline" density="compact">
+      <v-data-table
+        v-else
+        id="applications-history-table"
+        :headers="headers"
+        :items="filteredApplicationItems"
+        item-key="applicationId"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline"
+        density="compact">
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)">{{ item.status }}</span>
         </template>
@@ -82,7 +91,7 @@
           <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
-          <a v-else @click="getPDF(item)" href="#table">View Application</a>
+          <a v-else href="#table" @click="getPDF(item)">View Application</a>
         </template>
 
         <template #item.submittedDate="{ item }">
@@ -113,9 +122,9 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <CancelApplicationDialog :show="showCancelDialog" :applicationId="cancelledApplicationId" :applicationType="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
+    <CancelApplicationDialog :show="showCancelDialog" :application-id="cancelledApplicationId" :application-type="applicationTypeToCancel" @close="toggleCancelDialog" @cancel="cancelApplication" />
     <AppBackButton id="back-home-button" max-width="300px" :to="{ name: 'home' }">Home</AppBackButton>
-    <NewRequestDialog :show="showChangeRequestDialog" :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)" @close="toggleChangeRequestDialog" />
+    <NewRequestDialog :show="showChangeRequestDialog" :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)" @close="toggleChangeRequestDialog" />
   </v-container>
 </template>
 

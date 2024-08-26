@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="dialogTitle" :isLoading="isLoading" persistent max-width="50%" @close="closeManageUserDialog">
+    <AppDialog v-model="isDisplayed" :title="dialogTitle" :is-loading="isLoading" persistent max-width="50%" @close="closeManageUserDialog">
       <template #content>
         <v-form ref="userForm" v-model="isFormComplete">
           <v-row v-if="isAddingUser">
@@ -14,13 +14,13 @@
               <v-text-field
                 id="bceid"
                 v-model.trim="user.userName"
-                @blur="checkBCeIDExists(user.userName)"
                 placeholder="BCeID"
                 variant="outlined"
                 density="compact"
                 :rules="rules.required"
                 :error-messages="errorMessages"
-                :disabled="isLoading"></v-text-field>
+                :disabled="isLoading"
+                @blur="checkBCeIDExists(user.userName)"></v-text-field>
             </v-col>
             <v-col v-else cols="12" md="9" class="mb-5">
               <span>{{ user.userName }}</span>
@@ -31,7 +31,7 @@
               <AppLabel for="firstName">First Name:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="firstName" v-model.trim="user.firstName" placeholder="First Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+              <v-text-field id="firstName" v-model.trim="user.firstName" placeholder="First Name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -72,8 +72,8 @@
             <v-col cols="12" md="9">
               <v-select
                 id="role"
-                :items="validRoles"
                 v-model="user.role.roleId"
+                :items="validRoles"
                 item-title="roleName"
                 item-value="roleId"
                 label="Select Role"
@@ -89,9 +89,9 @@
             </v-col>
             <v-col cols="12" md="9">
               <v-select
+                v-model="selectedFacilityIds"
                 chips
                 :items="facilitiesToAdminister"
-                v-model="selectedFacilityIds"
                 item-title="facilityName"
                 item-value="facilityId"
                 multiple
@@ -100,9 +100,9 @@
                 :disabled="isLoading || isSameUser"
                 density="compact"
                 variant="outlined">
-                <template v-slot:prepend-item>
+                <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilitiesToAdminister">
-                    <template v-slot:prepend>
+                    <template #prepend>
                       <v-checkbox-btn
                         :color="someFacilitiesSelected ? '#003366' : undefined"
                         :indeterminate="someFacilitiesSelected && !allFacilitiesSelected"
@@ -122,13 +122,13 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" @click="closeManageUserDialog()" :loading="isLoading">Cancel</AppButton>
+            <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" :loading="isLoading" @click="closeManageUserDialog()">Cancel</AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="saveUser()" :loading="isLoading">
+            <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" :loading="isLoading" @click="saveUser()">
               {{ isAddingUser ? 'Add' : 'Update' }}
             </AppButton>
-            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" @click="userOperationType = 'update'" :loading="isLoading">Next</AppButton>
+            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" :loading="isLoading" @click="userOperationType = 'update'">Next</AppButton>
           </v-col>
         </v-row>
       </template>
@@ -138,6 +138,7 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
 
 import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
@@ -439,8 +440,22 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
-        const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName, lastName, email)
-        return Array.isArray(res) && res.length >= 1
+        const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName ?? '', lastName, email)
+
+        // No matches
+        if (isEmpty(res)) return false
+
+        // If firstName was entered then we know there's an exact match
+        if (firstName) return true
+
+        // If firstName was blank then we need to manually validate since it is ignored in the Dynamics query
+        // and we could get results with only a lastName and email match. We want a null firstName for a match
+        for (const contact of res) {
+          if (!contact.firstName) {
+            return true
+          }
+        }
+        return false
       } catch (error) {
         this.setFailureAlert('Failed to check if user already exists in provider organization', error)
       }

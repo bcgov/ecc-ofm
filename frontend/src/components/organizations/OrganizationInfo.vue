@@ -4,7 +4,7 @@
       <v-container fluid class="pa-0">
         <v-row no-gutters class="mb-4">
           <v-col cols="12" md="6" lg="6">
-            <v-card variant="outlined" class="card-outline fill-height">
+            <v-card variant="outlined" class="soft-outline fill-height">
               <v-row no-gutters>
                 <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Organization legal name:</AppLabel>
@@ -48,7 +48,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" md="6" lg="6" class="mt-3 mt-md-0 pl-md-3">
-            <v-card variant="outlined" class="card-outline fill-height">
+            <v-card variant="outlined" class="soft-outline fill-height">
               <v-row no-gutters>
                 <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Mailing Address:</AppLabel>
@@ -136,14 +136,14 @@
           </v-col>
         </v-row>
         <v-skeleton-loader :loading="loadingInclusionPolicy" type="table-tbody">
-          <v-card variant="outlined" class="card-outline pa-2 w-100">
+          <v-card variant="outlined" class="soft-outline pa-2 w-100">
             <div class="w-100">
               <v-row no-gutters>
                 <v-col class="">
                   <AppLabel>Does your organization have an inclusion policy?</AppLabel>
                 </v-col>
-                <v-col class="mt-2">
-                  <v-row v-if="editable && !editMode" justify="end">
+                <v-col v-if="editable && !editMode" class="mt-2">
+                  <v-row justify="end">
                     <AppButton id="edit-button" variant="text" :disabled="loading" @click="toggleEditMode()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>
@@ -154,10 +154,10 @@
                 <v-col>
                   <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
                     <v-row no-gutters>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
                       </v-col>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
                       </v-col>
                     </v-row>
@@ -308,10 +308,6 @@ export default {
 </script>
 
 <style scoped>
-.card-outline {
-  border: 1px solid #dee2e6 !important;
-}
-
 .no-hover {
   pointer-events: none;
 }

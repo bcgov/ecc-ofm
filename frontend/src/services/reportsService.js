@@ -2,15 +2,7 @@ import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
 import { convertStringToArray } from '@/utils/common'
-import { ApiRoutes, SURVEY_QUESTION_TYPES } from '@/utils/constants'
-
-function convertQuestionsChoices(questions) {
-  questions?.forEach((question) => {
-    if ([SURVEY_QUESTION_TYPES.TWO_OPTION, SURVEY_QUESTION_TYPES.CHOICE, SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE].includes(question?.type)) {
-      question.choices = convertStringToArray(question.choices?.replace(/[\\"]/g, ''))
-    }
-  })
-}
+import { ApiRoutes, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR, SURVEY_QUESTION_TYPES } from '@/utils/constants'
 
 export default {
   async getSurveySections(surveyTemplateId) {
@@ -29,7 +21,11 @@ export default {
       if (!sectionId || !facilityId) return []
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`)
       const questions = response?.data
-      convertQuestionsChoices(questions)
+      questions?.forEach((question) => {
+        if ([SURVEY_QUESTION_TYPES.TWO_OPTION, SURVEY_QUESTION_TYPES.CHOICE, SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE].includes(question?.type)) {
+          question.choices = convertStringToArray(question.choices?.slice(1, -1), SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
+        }
+      })
       return questions
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
