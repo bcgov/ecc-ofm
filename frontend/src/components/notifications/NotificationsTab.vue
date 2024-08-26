@@ -5,11 +5,11 @@
         <v-col class="mt-3 ml-3">
           <div>
             <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
-              <v-icon class="icon" left>mdi-email-outline</v-icon>
+              <v-icon class="icon mr-1" left>mdi-email-outline</v-icon>
               <span>Mark unread</span>
             </AppButton>
             <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
-              <v-icon class="icon" left>mdi-email-open-outline</v-icon>
+              <v-icon class="icon mr-1" left>mdi-email-open-outline</v-icon>
               <span>Mark read</span>
             </AppButton>
           </div>

@@ -8,9 +8,9 @@
           &nbsp;Operating Funding Model Program
         </v-col>
         <v-col cols="5" md="4" lg="3" class="pa-0 d-flex justify-end mt-1">
-          <AppButton v-if="notification?.isRead" size="small" :primary="false" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
-            <v-icon class="icon" left>mdi-email-outline</v-icon>
-            Mark Unread
+          <AppButton v-if="notification?.isRead" size="small" class="notifications-button" :primary="false" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
+            <v-icon class="icon mr-1" left>mdi-email-outline</v-icon>
+            <span>Mark Unread</span>
           </AppButton>
         </v-col>
       </v-row>
@@ -88,5 +88,10 @@ export default {
 .notification-subject-text {
   font-size: 1.1rem;
   white-space: pre-wrap;
+}
+
+.notifications-button:focus {
+  outline: 0px !important;
+  outline-offset: none !important;
 }
 </style>

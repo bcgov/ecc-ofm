@@ -4,15 +4,15 @@
       <v-row class="mt-0 ml-0">
         <v-col cols="12">
           <AppButton size="small" class="messages-button" @click="toggleNewRequestDialog()">
-            <v-icon left>mdi-email-plus-outline</v-icon>
+            <v-icon class="icon mr-1" left>mdi-email-plus-outline</v-icon>
             <span>New message</span>
           </AppButton>
           <AppButton size="small" class="messages-button mx-1" :primary="false" @click="toggleMarkUnreadButtonInMessageTable()">
-            <v-icon left>mdi-email-outline</v-icon>
+            <v-icon class="icon mr-1" left>mdi-email-outline</v-icon>
             <span>Mark unread</span>
           </AppButton>
           <AppButton size="small" class="messages-button" :primary="false" @click="toggleMarkReadButton()">
-            <v-icon left>mdi-email-open-outline</v-icon>
+            <v-icon class="icon mr-1" left>mdi-email-open-outline</v-icon>
             <span>Mark read</span>
           </AppButton>
         </v-col>
