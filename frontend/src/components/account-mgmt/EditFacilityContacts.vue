@@ -52,7 +52,7 @@
                             </AppButton>
                           </v-row>
                         </template>
-                        <template v-if="editable" v-slot:[`header.actions`]>
+                        <template v-if="editable" #[`header.actions`]>
                           <v-row v-if="!editMode" justify="end">
                             <AppButton variant="text" :disabled="parentInEditMode || loading" @click="toggleEditMode()">
                               <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
