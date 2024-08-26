@@ -7,7 +7,7 @@
       </v-col>
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
         <AppButton v-if="assistanceRequest.isRead" size="small" min-width="155px" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
-          <v-icon left class="icon mr-1">mdi-email-outline</v-icon>
+          <v-icon left class="mr-1">mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
         <v-tooltip
@@ -18,7 +18,7 @@
           <template #activator="{ props }">
             <div v-bind="props">
               <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small" min-width="155px" @click="toggleReplyRequestDialog">
-                <v-icon left class="icon mr-1">mdi-reply</v-icon>
+                <v-icon left class="mr-1">mdi-reply</v-icon>
                 <span>Reply</span>
               </AppButton>
             </div>
