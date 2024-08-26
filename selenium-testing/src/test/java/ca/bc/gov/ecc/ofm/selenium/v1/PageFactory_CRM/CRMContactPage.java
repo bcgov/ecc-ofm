@@ -1,5 +1,6 @@
 package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,8 +16,14 @@ public class CRMContactPage {
 	@FindBy(xpath = "//input[@aria-label='Portal Role, Lookup']")
 	WebElement portalRole;
 	
+	@FindBy(xpath = "//input[@type = 'text' and @aria-label='First Name']")
+	WebElement firstName;
+	
 	@FindBy(xpath = "//input[@type = 'text' and @aria-label='Last Name']")
 	WebElement lastName;
+	
+	@FindBy(xpath = "//input[@type = 'tel' and @aria-label='Business Phone']")
+	WebElement phoneNumber;
 	
 	@FindBy(xpath = "//input[@type = 'email' and @aria-label='Email']")
 	WebElement email;
@@ -33,9 +40,17 @@ public class CRMContactPage {
 		bceid.sendKeys(name);
 	}
 	
-	public void enterPortalRole(String role) {
+	public void enterPortalRole(String role) throws Exception {
+		portalRole.click();
+		Thread.sleep(1000);
+		portalRole.clear();
 		portalRole.sendKeys(role);
-		portalRole.sendKeys(Keys.ENTER);
+		Thread.sleep(2000);
+		driver.findElement(By.xpath("//ul[@aria-label = 'Lookup results']")).click();
+	}
+	
+	public void enterFirstName(String name) {
+		firstName.sendKeys(name);
 	}
 	
 	public void enterLastName(String name) {
@@ -44,6 +59,10 @@ public class CRMContactPage {
 	
 	public void enterEmail(String name) {
 		email.sendKeys(name);
+	}
+	
+	public void enterPhoneNumber(String number) {
+		phoneNumber.sendKeys(number);
 	}
 	
 	public void saveAndClose() {
