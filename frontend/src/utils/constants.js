@@ -185,7 +185,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   LICENCE_INFO: 'Licence information required',
   LICENCE_CONFIRMATION: 'Confirmation of licence information required',
   DOCUMENT_UPLOAD: 'Document upload required',
-  DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'Document upload required of your Community Support Letter required',
+  DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'A letter of community support is required to continue',
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
   DOCUMENT_LICENCE_UPLOAD: 'Document upload of your current licence required',
@@ -245,6 +245,7 @@ export const DOCUMENT_TYPES = Object.freeze({
   SUPPORTING_DOCS: 'Supporting Documents',
   COMMUNITY_LETTER: 'Community Support Letter',
   HEALTH_AUTHORITY_REPORT: 'HA Compliance Rpt',
+  INCLUSION_POLICY: 'Inclusion Policy Document',
 })
 
 export const DOCUMENT_LABELS = Object.freeze({
