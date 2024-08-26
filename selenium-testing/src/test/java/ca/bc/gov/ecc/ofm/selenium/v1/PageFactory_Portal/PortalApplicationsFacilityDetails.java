@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -58,6 +59,9 @@ public class PortalApplicationsFacilityDetails {
 	}
 
 	public void setSelectPrimaryContactTextField(String selectPrimaryContactValue) {
+		
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", selectPrimaryContact);
+		
 		selectPrimaryContact.sendKeys(selectPrimaryContactValue);
 
 	}

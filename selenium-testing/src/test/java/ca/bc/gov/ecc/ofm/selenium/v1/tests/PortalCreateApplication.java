@@ -32,7 +32,7 @@ public class PortalCreateApplication extends BaseTest {
 	public void CreateApplication() throws Exception {
 		try {
 			driver.get(PORTAL_URL);
-			test = extent.createTest("Test - Portal Create Application");
+		//	test = extent.createTest("Test - Portal Create Application");
 			test.info("Test - Portal Create Application");
 
 			Thread.sleep(2000);
@@ -70,6 +70,7 @@ public class PortalCreateApplication extends BaseTest {
 			PortalApplicationsFacilityDetails portalApplicationsFacilityDetails = new PortalApplicationsFacilityDetails(
 					driver);
 			portalApplicationsFacilityDetails.setFiscalYearEndDateDateField("09/30/2025");
+			Thread.sleep(2000);
 			portalApplicationsFacilityDetails.setSelectPrimaryContactTextField("ofmqa 08");
 			portalApplicationsFacilityDetails.setSelectExpenseAuthorityTextField("ofmqa 08");
 			portalApplicationsFacilityDetails.clickNextButton();

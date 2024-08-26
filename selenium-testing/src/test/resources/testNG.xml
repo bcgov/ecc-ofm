@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="TestNgSuite">
 	<listeners>
-		<listener class-name="com.testng.selenium.v1.TestListener" />
+		<listener class-name="ca.bc.gov.ecc.ofm.selenium.v1.tests.TestListener" />
 	</listeners>
 	<test name="Test1" preserve-order="true">
 		<classes>
-			<!--<class name="com.testng.selenium.v1.CRMLogin" />
-			<class name="com.testng.selenium.v1.PortalLogin" />-->	
-				<class name="com.testng.selenium.v1.PortalCreateApplication"
+			<!--<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.CRMLogin" />
+			<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.PortalLogin" />-->	
+				<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.PortalCreateApplication"
 			/>--> </classes>
 	</test>
 
