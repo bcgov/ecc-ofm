@@ -226,8 +226,8 @@ export default {
      * Cancel edit mode and reset the contactId
      */
     cancelEditContacts() {
-      this.contactsToDisplay = this.contacts
-      this.contactsAvailableForAdd = this.contactsForAdd
+      this.contactsToDisplay = [...this.contacts]
+      this.contactsAvailableForAdd = [...this.contactsForAdd]
       this.updatedContactsToAdd = []
       this.updatedContactsToRemove = []
       this.contactId = null
