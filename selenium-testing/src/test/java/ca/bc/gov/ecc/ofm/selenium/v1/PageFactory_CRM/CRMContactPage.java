@@ -28,6 +28,9 @@ public class CRMContactPage {
 	@FindBy(xpath = "//input[@type = 'email' and @aria-label='Email']")
 	WebElement email;
 	
+	@FindBy(xpath = "//button[@type = 'button' and @title = 'Ignore and save']")
+	WebElement ignoreAndSave;
+	
 	@FindBy(xpath = "//button[@aria-label='Save & Close']")
 	WebElement saveAndClose;
 
@@ -67,5 +70,9 @@ public class CRMContactPage {
 	
 	public void saveAndClose() {
 		saveAndClose.click();
+	}
+	
+	public void ignoreAndSave() {
+		ignoreAndSave.click();
 	}
 }

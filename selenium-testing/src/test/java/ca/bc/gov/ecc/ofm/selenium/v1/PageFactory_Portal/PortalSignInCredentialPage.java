@@ -25,6 +25,9 @@ public class PortalSignInCredentialPage {
 
 	@FindBy(id = "dialog-go-back")
 	WebElement button_signatureRequired;
+	
+	@FindBy(xpath = "//input[@type = 'submit' and @value = 'Continue']")
+	WebElement continueButton;
 
 	public PortalSignInCredentialPage(WebDriver driver) {
 		this.driver = driver;
@@ -55,6 +58,10 @@ public class PortalSignInCredentialPage {
 			System.out.println("Element does not exist.");
 		}
 
+	}
+	
+	public void continueButton() {
+		continueButton.click();
 	}
 
 }

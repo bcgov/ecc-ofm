@@ -123,6 +123,7 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			contactPage.enterEmail(contact.get("email"));
 			contactPage.enterPhoneNumber(contact.get("phoneNumber"));
 			contactPage.saveAndClose();
+			contactPage.ignoreAndSave();
 			test.info("New contact created");
 			
 			Thread.sleep(5000);

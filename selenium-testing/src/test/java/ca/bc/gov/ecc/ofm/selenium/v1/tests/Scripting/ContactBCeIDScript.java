@@ -186,6 +186,7 @@ public class ContactBCeIDScript {
 		contactPage.enterEmail(contact.get("email"));
 		contactPage.enterPhoneNumber(contact.get("phoneNumber"));
 		contactPage.saveAndClose();
+		contactPage.ignoreAndSave();
 		
 		Thread.sleep(5000);
 
@@ -233,6 +234,7 @@ public class ContactBCeIDScript {
 		objPortalSignInCredentialPage.enterPassword(Base64.getEncoder().encodeToString(password.getBytes()));
 		wait(driver, 20);
 		objPortalSignInCredentialPage.clickSubmit();
+		objPortalSignInCredentialPage.continueButton();
 		
 		// Log out of the portal
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10000));
