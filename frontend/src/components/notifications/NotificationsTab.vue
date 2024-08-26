@@ -6,11 +6,11 @@
           <div>
             <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
               <v-icon class="icon" left>mdi-email-outline</v-icon>
-              Mark unread
+              <span>Mark unread</span>
             </AppButton>
             <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
               <v-icon class="icon" left>mdi-email-open-outline</v-icon>
-              Mark read
+              <span>Mark read</span>
             </AppButton>
           </div>
         </v-col>
@@ -80,5 +80,10 @@ export default {
 }
 .notifications-button {
   display: inline-block;
+}
+
+.notifications-button:focus {
+  outline: 0px !important;
+  outline-offset: none !important;
 }
 </style>
