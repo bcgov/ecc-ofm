@@ -5,15 +5,15 @@
         <v-col cols="12">
           <AppButton size="small" class="messages-button" @click="toggleNewRequestDialog()">
             <v-icon left>mdi-email-plus-outline</v-icon>
-            New message
+            <span>New message</span>
           </AppButton>
           <AppButton size="small" class="messages-button mx-1" :primary="false" @click="toggleMarkUnreadButtonInMessageTable()">
             <v-icon left>mdi-email-outline</v-icon>
-            Mark unread
+            <span>Mark unread</span>
           </AppButton>
           <AppButton size="small" class="messages-button" :primary="false" @click="toggleMarkReadButton()">
             <v-icon left>mdi-email-open-outline</v-icon>
-            Mark read
+            <span>Mark read</span>
           </AppButton>
         </v-col>
       </v-row>
@@ -90,5 +90,10 @@ export default {
 
 .messages-button {
   display: inline-block;
+}
+
+.messages-button:focus {
+  outline: 0px !important;
+  outline-offset: none !important;
 }
 </style>

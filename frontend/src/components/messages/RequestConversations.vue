@@ -6,9 +6,9 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
-        <AppButton v-if="assistanceRequest.isRead" size="small" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
+        <AppButton v-if="assistanceRequest.isRead" size="small" min-width="155px" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon left>mdi-email-outline</v-icon>
-          Mark unread
+          <span>Mark unread</span>
         </AppButton>
         <v-tooltip
           :disabled="!showTooltip"
@@ -17,9 +17,9 @@
           text="Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).">
           <template #activator="{ props }">
             <div v-bind="props">
-              <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small">
+              <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small" min-width="155px" @click="toggleReplyRequestDialog">
                 <v-icon left>mdi-reply</v-icon>
-                Reply
+                <span>Reply</span>
               </AppButton>
             </div>
           </template>
