@@ -28,13 +28,13 @@
     </v-row>
     <v-row>
       <v-col cols="auto" class="font-weight-bold pt-0 pl-0">Status:</v-col>
-      <v-col cols="3" class="pt-0 pl-1">{{ assistanceRequest.status }}</v-col>
+      <v-col cols="3" class="pt-0 pl-1" data-cy="status">{{ assistanceRequest.status }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pl-1">Reference#:</v-col>
-      <v-col class="pt-0 pl-0">{{ assistanceRequest.referenceNumber }}</v-col>
+      <v-col class="pt-0 pl-0" data-cy="referenceNo">{{ assistanceRequest.referenceNumber }}</v-col>
     </v-row>
     <v-row>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0 pl-0">Topic:</v-col>
-      <v-col cols="3" class="pt-0 pb-0">{{ assistanceRequest.categoryName }}</v-col>
+      <v-col cols="3" class="pt-0 pb-0" data-cy="topic">{{ assistanceRequest.categoryName }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
       <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
     </v-row>
@@ -54,7 +54,7 @@
     <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table">
+          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table" data-cy="conversations-table">
             <template #headers></template>
             <template #item="{ item }">
               <v-row class="border-bottom ma-0">
