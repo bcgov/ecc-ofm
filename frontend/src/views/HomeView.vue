@@ -57,7 +57,7 @@
           title="Help and Resources"
           target="ofm_external_help"
           href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/SitePages/2023%20OFM%20Test.aspx">
-          <v-card-text>Need support? Find program training tools and resources, technical help, or call us.</v-card-text>
+          <v-card-text>Need support? Find program training tools, resources and technical help.</v-card-text>
         </v-card>
       </v-col>
     </v-row>
