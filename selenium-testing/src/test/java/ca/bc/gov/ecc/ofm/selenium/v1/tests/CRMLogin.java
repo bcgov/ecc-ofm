@@ -3,6 +3,7 @@ package ca.bc.gov.ecc.ofm.selenium.v1.tests;
 import java.time.Duration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -51,7 +52,8 @@ public class CRMLogin extends BaseTest {
 
 			objCRMSignInCredentialPage.clickOrgFacilities();
 		} catch (Exception e) {
-			test.fail("testcase failed!");
+			test.fail("testcase failed");
+			Assert.fail("testcase failed");
 			e.printStackTrace();
 		}
 

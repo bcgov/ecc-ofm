@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -38,9 +39,8 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void createOrganizationFacilityContact() {
-		// TODO (andyh0311) - For some reason the test never fails explicitly if something wrong happens. Find out why.
 		
-		// set up variables to use
+		// Setting up values to input for organization, contact, and facility
 		String guid = UUID.randomUUID().toString().substring(0, 8);
 		
 		HashMap<String, String> organization = new HashMap<String, String>();
@@ -56,6 +56,8 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
         contact.put("bceid", guid);
         contact.put("lastName",  "lname - " + guid);
         contact.put("email", guid + "@a.com");
+        contact.put("phoneNumber",  "1234567890");
+        contact.put("portalRole",  "Account Manager");
         
         Map<String, String> facility = new HashMap<String, String>();
         facility.put("facilityName", "Facility Name + " + guid);
@@ -66,7 +68,6 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 		
 		try {
 			// CRM Login
-			// TODO (andyh0311) - See if you can use the method from CRMLogin class instead of copy pasting the code here
 			test = extent.createTest("Test - CRM Create Organization, Contact, and Facility");
 			driver.get(CRM_URL);
 			wait(10);
@@ -89,15 +90,15 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			objCRMSignInCredentialPage.clickOrgFacilities();
 			test.info("Login complete");
 			
-			// beginning of new code after login
+			// Beginning of new code after login
 			Thread.sleep(5000);
-			// on home page, click on new organization button
+			// Home page - click on new organization button
 			CRMHomePage homePage = new CRMHomePage(driver);
 			homePage.pressNewOrganization();
 			
 			Thread.sleep(5000);
 			
-			// fill in new organization details
+			// Organization page - fill in new organization details
 			CRMOrganizationPage organizationPage = new CRMOrganizationPage(driver);
 			organizationPage.enterOrganizationName(organization.get("organizationName"));
 			organizationPage.enterBusinessType(organization.get("businessType"));
@@ -113,30 +114,29 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			
 			Thread.sleep(5000);
 
-			// fill in contact information
+			// Contact page - Fill in contact information
 			wait(5000);
 			CRMContactPage contactPage = new CRMContactPage(driver);
 			contactPage.enterBCeID(contact.get("bceid"));
-			// TODO (andyh0311) - Fill out the user's portal role to Account Manager
+			contactPage.enterPortalRole(contact.get("portalRole"));
 			contactPage.enterLastName(contact.get("lastName"));
 			contactPage.enterEmail(contact.get("email"));
+			contactPage.enterPhoneNumber(contact.get("phoneNumber"));
 			contactPage.saveAndClose();
 			test.info("New contact created");
 			
-			// on organization page, create new facility
 			Thread.sleep(5000);
 
+			// Organization page - Create new facility
 			organizationPage = new CRMOrganizationPage(driver);
-			// TODO (andyh0311) - scrolling bug
 			organizationPage.addNewFacility();
 			
 			Thread.sleep(5000);
 
-			// fill in facility details
+			// Facility page - Fill in facility details
 			CRMFacilityPage facilityPage = new CRMFacilityPage(driver);
 			facilityPage.enterFacilityName(facility.get("facilityName"));
 			facilityPage.enterPrimaryContact(guid);
-			// TODO (andyh0311) - scrolling bug
 			facilityPage.enterAddress(facility.get("streetAddress"));
 			facilityPage.enterPostalCode(facility.get("postalCode"));
 			facilityPage.enterCity(facility.get("city"));
@@ -157,10 +157,12 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			test.pass("Created new organization, contact, and facility");
 			
 		} catch (Exception e) {
-			test.fail("testcase failed!");
+			test.fail("testcase failed");
+			Assert.fail("testcase failed");
 			e.printStackTrace();
 		}
 	}
+	
 
 	@AfterTest
 	public void tearDown() {
