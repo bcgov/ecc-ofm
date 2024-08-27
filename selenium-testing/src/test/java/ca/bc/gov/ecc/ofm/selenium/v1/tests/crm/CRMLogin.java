@@ -1,4 +1,4 @@
-package ca.bc.gov.ecc.ofm.selenium.v1.tests;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests.crm;
 
 import java.time.Duration;
 import org.openqa.selenium.WebDriver;
@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class CRMLogin extends BaseTest {

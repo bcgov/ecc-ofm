@@ -1,14 +1,18 @@
 package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class PortalHomePage {
 	WebDriver driver;
+	WebDriverWait wait;
 	
 	@FindBy(id = "applications-card")
 	WebElement box_Applications;
@@ -19,6 +23,7 @@ public class PortalHomePage {
 	public PortalHomePage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 	public void clickOnApplicationBox() {
@@ -26,6 +31,7 @@ public class PortalHomePage {
 	}
 	
 	public void logout() {
-		logout.click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(), '" + "Log Out" + "')]")));
+		logout.click();			
 	}
 }

@@ -1,14 +1,22 @@
 package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM;
 
+import java.time.Duration;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import io.github.bonigarcia.wdm.webdriver.WebDriverBrowser;
 
 public class CRMOrganizationPage {
 	WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(xpath = "//input[@type='text' and @aria-label='Organization Legal Name']")
 	WebElement organizationName;
@@ -43,51 +51,60 @@ public class CRMOrganizationPage {
 	public CRMOrganizationPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofMillis(30000));
 	}
 
 	public void enterOrganizationName(String name) {
+		wait.until(ExpectedConditions.visibilityOf(organizationName));
 		organizationName.sendKeys(name);
 	}
 	
 	public void enterBusinessType(String type) {
+		wait.until(ExpectedConditions.visibilityOf(businessType));
 		businessType.sendKeys(type);
 	}
 	
 	public void enterProviderType(String type) {
+		wait.until(ExpectedConditions.visibilityOf(providerType));
 		providerType.sendKeys(type);
 		providerType.sendKeys(Keys.ENTER);
 	}
 	
 	public void enterOwnershipType(String type) {
+		wait.until(ExpectedConditions.visibilityOf(ownershipType));
 		ownershipType.sendKeys(type);
 		ownershipType.sendKeys(Keys.ENTER);
 	}
 	
 	public void enterAddress(String address) {
+		wait.until(ExpectedConditions.visibilityOf(streetAddress));
 		streetAddress.sendKeys(address);
 	}
 	
 	public void enterCity(String name) {
+		wait.until(ExpectedConditions.visibilityOf(city));
 		city.sendKeys(name);
 	}
 	
 	public void enterPostalCode(String name) {
+		wait.until(ExpectedConditions.visibilityOf(postalCode));
         postalCode.sendKeys(Keys.BACK_SPACE);
 		postalCode.sendKeys(name);
 		postalCode.sendKeys(Keys.ENTER);
 	}
 	
 	public void save() {
+		wait.until(ExpectedConditions.visibilityOf(save));
 		save.click();
 	}
 	
 	public void addNewContact() {
-		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addNewContact);
+		wait.until(ExpectedConditions.visibilityOf(addNewContact));
 		addNewContact.click();
 	}
 	
 	public void addNewFacility() {
-		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addNewFacility);
+		wait.until(ExpectedConditions.visibilityOf(addNewFacility));
 		addNewFacility.click();
 	}
 }

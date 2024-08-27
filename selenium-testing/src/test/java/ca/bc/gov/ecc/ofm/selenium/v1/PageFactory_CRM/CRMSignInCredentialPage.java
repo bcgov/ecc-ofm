@@ -81,8 +81,8 @@ public class CRMSignInCredentialPage {
 	}
 
 	public void clickOrgFacilities() {
-		button_OrgFacilities.click();
-
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.elementToBeClickable(button_OrgFacilities)).click();
 	}
 
 }

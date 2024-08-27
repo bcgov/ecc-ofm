@@ -1,14 +1,19 @@
 package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CRMFacilityPage {
 	WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(xpath = "//*[@aria-label='Name']")
 	WebElement facilityName;
@@ -34,39 +39,45 @@ public class CRMFacilityPage {
 	public CRMFacilityPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 	public void enterFacilityName(String name) {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@aria-label='Name']")));
 		facilityName.sendKeys(name);
 	}
 	
 	public void enterAddress(String address) {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type='text' and @aria-label='Street Address 1']")));
 		streetAddress.sendKeys(address);
 	}
 	
 	public void enterCity(String name) {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type='text' and @aria-label='City']")));
 		city.sendKeys(name);
 	}
 	
 	public void enterPostalCode(String name) {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Postal Code']")));
 		postalCode.sendKeys(Keys.BACK_SPACE);
 		postalCode.sendKeys(name);
 	}
 	
 	public void enterPrimaryContact(String name) throws Exception {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Primary Contact, Lookup']")));
 		primaryContact.click();
-		Thread.sleep(1000);
 		primaryContact.clear();
 		primaryContact.sendKeys(name);
-		Thread.sleep(2000);
-		driver.findElement(By.xpath("//ul[@aria-label = 'Lookup results']")).click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@aria-label = 'Lookup results']"))).click();
 	}
 	
 	public void addContact() {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='New Contact Facility. Add New Contact Facility']")));
 		addContact.click();
 	}
 	
 	public void save() {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='Save (CTRL+S)']")));
 		save.click();
 	}
 }

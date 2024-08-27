@@ -1,7 +1,5 @@
-package ca.bc.gov.ecc.ofm.selenium.v1.tests.Scripting;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests.scripting;
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
-
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMContactPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMFacilityPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMHomePage;
@@ -24,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -73,9 +70,9 @@ public class ContactBCeIDScript {
 	            setupNewUser(driver, data);
 	        }
 	        reader.close();
-	        
 			reader = new CSVReader(new FileReader(csvFile));
 	        headers = reader.readNext(); // Read past header line
+	        Thread.sleep(2000);
 	        
 	        // Logs in to the portal for each user on the spreadsheet
 	        while ((line = reader.readNext()) != null) {
@@ -93,16 +90,12 @@ public class ContactBCeIDScript {
 		}
     	
     }
-    
-    public static void wait(WebDriver driver, int t) {
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(t));
-	}
 
     public static void loginToCRM(WebDriver driver, String crmURL, String crmUsername, String crmPassword) throws Exception {
     	driver.get(crmURL);
 
-		Thread.sleep(2000);
-		CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);
+    	Thread.sleep(2000);
+    	CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);
 		objCRMSignInCredentialPage.enterUserId(crmUsername);
 		objCRMSignInCredentialPage.clickNext();
 		Thread.sleep(1000);
@@ -153,13 +146,11 @@ public class ContactBCeIDScript {
     	CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);
     	objCRMSignInCredentialPage.clickOrgFacilities();
 		
-		Thread.sleep(5000);
+		Thread.sleep(2000);
 		
 		// Home page - click on new organization button
 		CRMHomePage homePage = new CRMHomePage(driver);
 		homePage.pressNewOrganization();
-		
-		Thread.sleep(5000);
 		
 		// Organization page - fill in new organization details
 		CRMOrganizationPage organizationPage = new CRMOrganizationPage(driver);
@@ -171,13 +162,9 @@ public class ContactBCeIDScript {
 		organizationPage.enterPostalCode(organization.get("postalCode"));
 		organizationPage.enterCity(organization.get("city"));
 		organizationPage.save();
-		wait(driver, 5000);
 		organizationPage.addNewContact();
-		
-		Thread.sleep(5000);
 
 		// Contact page - Fill in contact information
-		wait(driver, 5000);
 		CRMContactPage contactPage = new CRMContactPage(driver);
 		contactPage.enterBCeID(contact.get("bceid"));
 		contactPage.enterPortalRole(contact.get("portalRole"));
@@ -187,14 +174,10 @@ public class ContactBCeIDScript {
 		contactPage.enterPhoneNumber(contact.get("phoneNumber"));
 		contactPage.saveAndClose();
 		contactPage.ignoreAndSave();
-		
-		Thread.sleep(5000);
 
 		// Organization page - Create new facility
 		organizationPage = new CRMOrganizationPage(driver);
 		organizationPage.addNewFacility();
-		
-		Thread.sleep(5000);
 
 		// Facility page - Fill in facility details
 		CRMFacilityPage facilityPage = new CRMFacilityPage(driver);
@@ -204,10 +187,7 @@ public class ContactBCeIDScript {
 		facilityPage.enterPostalCode(facility.get("postalCode"));
 		facilityPage.enterCity(facility.get("city"));
 		facilityPage.save();
-		wait(driver, 5000);
 		facilityPage.addContact();
-		
-		Thread.sleep(5000);
 		
 		// Link contact to facility
 		CRMNewContactFacilityPage newContactFacilityPage = new CRMNewContactFacilityPage(driver);
@@ -222,25 +202,22 @@ public class ContactBCeIDScript {
     	String password = data.get("BCeID Password");
     	
     	driver.get(portalURL);
-    	Thread.sleep(2000);
-		wait(driver, 10);
-    	
 		PortalSignInFirstPage objPortalSigninFirstPage = new PortalSignInFirstPage(driver);
 		objPortalSigninFirstPage.clickOnBCeIdLogin();
 		
     	PortalSignInCredentialPage objPortalSignInCredentialPage = new PortalSignInCredentialPage(driver);
 		objPortalSignInCredentialPage.enterUserId(username);
-		wait(driver, 20);
 		objPortalSignInCredentialPage.enterPassword(Base64.getEncoder().encodeToString(password.getBytes()));
-		wait(driver, 20);
 		objPortalSignInCredentialPage.clickSubmit();
 		objPortalSignInCredentialPage.continueButton();
 		
 		// Log out of the portal
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10000));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(), '" + username + "')]")));
-        driver.findElement(By.xpath("//*[contains(text(), '" + username + "')]")).click();
-        Thread.sleep(1000);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(10000));
+		String usernameLowerCase = username.toLowerCase();
+        String xpathExpression = "//*[translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '" + usernameLowerCase + "']";
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpathExpression)));
+        Thread.sleep(2000);
+        driver.findElement(By.xpath(xpathExpression)).click();
         PortalHomePage portalHomePage = new PortalHomePage(driver);
         portalHomePage.logout();
 		

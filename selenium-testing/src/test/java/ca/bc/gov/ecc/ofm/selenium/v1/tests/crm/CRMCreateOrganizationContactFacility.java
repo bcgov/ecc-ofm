@@ -1,4 +1,4 @@
-package ca.bc.gov.ecc.ofm.selenium.v1.tests;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests.crm;
 
 import java.time.Duration;
 import java.util.Date;
@@ -20,6 +20,7 @@ import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMHomePage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMNewContactFacilityPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMOrganizationPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class CRMCreateOrganizationContactFacility extends BaseTest {
@@ -70,33 +71,28 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			// CRM Login
 			test = extent.createTest("Test - CRM Create Organization, Contact, and Facility");
 			driver.get(CRM_URL);
-			wait(10);
-
-			CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);
-
+			
+			Thread.sleep(2000);
+	    	CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);
 			objCRMSignInCredentialPage.enterUserId(CRM_USERNAME);
 			objCRMSignInCredentialPage.clickNext();
-			wait(20);
 			Thread.sleep(1000);
 			objCRMSignInCredentialPage.enterPassword(CRM_PASSWORD);
 			Thread.sleep(1000);
 			objCRMSignInCredentialPage.clickSignIn();
 			Thread.sleep(1000);
 			objCRMSignInCredentialPage.clickYes();
-
 			objCRMSignInCredentialPage.clickSignInAgain();
-
 			Thread.sleep(5000);
 			objCRMSignInCredentialPage.clickOrgFacilities();
 			test.info("Login complete");
 			
 			// Beginning of new code after login
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 			// Home page - click on new organization button
 			CRMHomePage homePage = new CRMHomePage(driver);
 			homePage.pressNewOrganization();
-			
-			Thread.sleep(5000);
+
 			
 			// Organization page - fill in new organization details
 			CRMOrganizationPage organizationPage = new CRMOrganizationPage(driver);
@@ -108,14 +104,10 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			organizationPage.enterPostalCode(organization.get("postalCode"));
 			organizationPage.enterCity(organization.get("city"));
 			organizationPage.save();
-			wait(5000);
 			organizationPage.addNewContact();
 			test.info("Organizationd details filled out");
-			
-			Thread.sleep(5000);
 
 			// Contact page - Fill in contact information
-			wait(5000);
 			CRMContactPage contactPage = new CRMContactPage(driver);
 			contactPage.enterBCeID(contact.get("bceid"));
 			contactPage.enterPortalRole(contact.get("portalRole"));
@@ -126,13 +118,10 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			contactPage.ignoreAndSave();
 			test.info("New contact created");
 			
-			Thread.sleep(5000);
 
 			// Organization page - Create new facility
 			organizationPage = new CRMOrganizationPage(driver);
 			organizationPage.addNewFacility();
-			
-			Thread.sleep(5000);
 
 			// Facility page - Fill in facility details
 			CRMFacilityPage facilityPage = new CRMFacilityPage(driver);
@@ -143,11 +132,8 @@ public class CRMCreateOrganizationContactFacility extends BaseTest {
 			facilityPage.enterCity(facility.get("city"));
 			facilityPage.save();
 			test.info("New facility created");
-			wait(5000);
 			facilityPage.addContact();
-			
-			Thread.sleep(5000);
-			
+
 			// Link contact to facility
 			CRMNewContactFacilityPage newContactFacilityPage = new CRMNewContactFacilityPage(driver);
 			newContactFacilityPage.addNewContact(guid);
