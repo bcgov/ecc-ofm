@@ -46,27 +46,17 @@ describe('Portal Assistance Request', () => {
         row.click({ force: true })
 
         // confirm that the portal's assistance request has the right information submitted in the form for the assistance request
-        cy.contains('Reply').parent().should('have.class', 'reply-disabled')
+        cy.get('button[class*="reply-button"').should('have.attr', 'disabled')
 
         cy.get('span[class="subject-header"]').should(
           'have.text',
           `Subject: ${subject}`
         )
 
-        // TODO (weskubo-cgi) Add some ids to make more reliable selectors
-        cy.get('div[data-v-f73bc3ca]')
-          .contains('Status')
-          .next()
-          .should('have.text', 'Open')
-        cy.get('div[data-v-f73bc3ca]')
-          .contains('Reference#')
-          .next()
-          .should('have.text', referenceNo)
-        cy.get('div[data-v-f73bc3ca]')
-          .contains('Topic')
-          .next()
-          .should('have.text', topic)
-        cy.contains(description).should('exist')
+        cy.get('[data-cy="status"]').should('have.text', 'Open')
+        cy.get('[data-cy="referenceNo"').should('have.text', referenceNo)
+        cy.get('[data-cy="topic"]').should('have.text', topic)
+        cy.get('[data-cy="conversations-table"]').contains(description)
       })
   })
 

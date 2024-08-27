@@ -6,9 +6,9 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
-        <AppButton v-if="assistanceRequest.isRead" size="small" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
-          <v-icon left>mdi-email-outline</v-icon>
-          Mark unread
+        <AppButton v-if="assistanceRequest.isRead" size="small" min-width="155px" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
+          <v-icon left class="mr-1">mdi-email-outline</v-icon>
+          <span>Mark unread</span>
         </AppButton>
         <v-tooltip
           :disabled="!showTooltip"
@@ -17,9 +17,9 @@
           text="Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).">
           <template #activator="{ props }">
             <div v-bind="props">
-              <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small">
-                <v-icon left>mdi-reply</v-icon>
-                Reply
+              <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small" min-width="155px" @click="toggleReplyRequestDialog">
+                <v-icon left class="mr-1">mdi-reply</v-icon>
+                <span>Reply</span>
               </AppButton>
             </div>
           </template>
@@ -28,13 +28,13 @@
     </v-row>
     <v-row>
       <v-col cols="auto" class="font-weight-bold pt-0 pl-0">Status:</v-col>
-      <v-col cols="3" class="pt-0 pl-1">{{ assistanceRequest.status }}</v-col>
+      <v-col cols="3" class="pt-0 pl-1" data-cy="status">{{ assistanceRequest.status }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pl-1">Reference#:</v-col>
-      <v-col class="pt-0 pl-0">{{ assistanceRequest.referenceNumber }}</v-col>
+      <v-col class="pt-0 pl-0" data-cy="referenceNo">{{ assistanceRequest.referenceNumber }}</v-col>
     </v-row>
     <v-row>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0 pl-0">Topic:</v-col>
-      <v-col cols="3" class="pt-0 pb-0">{{ assistanceRequest.categoryName }}</v-col>
+      <v-col cols="3" class="pt-0 pb-0" data-cy="topic">{{ assistanceRequest.categoryName }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
       <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
     </v-row>
@@ -54,7 +54,7 @@
     <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table">
+          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table" data-cy="conversations-table">
             <template #headers></template>
             <template #item="{ item }">
               <v-row class="border-bottom ma-0">
