@@ -30,8 +30,8 @@
 
     <div v-if="model.facilityType" id="arm-length">
       <!-- ARM LENGTH -->
-      <div class="arm-length">
-        <v-checkbox v-if="isRentLease" v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
+      <div v-if="isRentLease" class="arm-length">
+        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
           <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
         </v-checkbox>
         <v-tooltip content-class="tooltip" max-width="300px" text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
