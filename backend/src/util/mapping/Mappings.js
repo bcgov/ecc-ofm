@@ -389,6 +389,7 @@ const SurveyQuestionMappings = [
   { back: 'ofm_response_required', front: 'responseRequired' },
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
+  { back: 'ofm_additional_info', front: 'additionalInfo' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
