@@ -37,13 +37,4 @@ public class PortalIrregularExpenseApplicationsHomePage {
 			driver.quit();
 		}
 	}
-
-	public PortalIrregularExpenseApplicationsHomePage verifyPageLoaded() {
-		wait.until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
-				return d.getPageSource().contains(pageLoadedText);
-			}
-		});
-		return this;
-	}
 }

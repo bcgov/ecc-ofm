@@ -55,56 +55,53 @@ public class CRMOrganizationPage {
 	}
 
 	public void enterOrganizationName(String name) {
-		wait.until(ExpectedConditions.visibilityOf(organizationName));
+		wait.until(ExpectedConditions.elementToBeClickable(organizationName));
 		organizationName.sendKeys(name);
 	}
 	
 	public void enterBusinessType(String type) {
-		wait.until(ExpectedConditions.visibilityOf(businessType));
+		wait.until(ExpectedConditions.elementToBeClickable(businessType));
 		businessType.sendKeys(type);
 	}
 	
 	public void enterProviderType(String type) {
-		wait.until(ExpectedConditions.visibilityOf(providerType));
+		wait.until(ExpectedConditions.elementToBeClickable(providerType));
 		providerType.sendKeys(type);
 		providerType.sendKeys(Keys.ENTER);
 	}
 	
 	public void enterOwnershipType(String type) {
-		wait.until(ExpectedConditions.visibilityOf(ownershipType));
+		wait.until(ExpectedConditions.elementToBeClickable(ownershipType));
 		ownershipType.sendKeys(type);
 		ownershipType.sendKeys(Keys.ENTER);
 	}
 	
 	public void enterAddress(String address) {
-		wait.until(ExpectedConditions.visibilityOf(streetAddress));
+		wait.until(ExpectedConditions.elementToBeClickable(streetAddress));
 		streetAddress.sendKeys(address);
 	}
 	
 	public void enterCity(String name) {
-		wait.until(ExpectedConditions.visibilityOf(city));
+		wait.until(ExpectedConditions.elementToBeClickable(city));
 		city.sendKeys(name);
 	}
 	
 	public void enterPostalCode(String name) {
-		wait.until(ExpectedConditions.visibilityOf(postalCode));
+		wait.until(ExpectedConditions.elementToBeClickable(postalCode));
         postalCode.sendKeys(Keys.BACK_SPACE);
 		postalCode.sendKeys(name);
 		postalCode.sendKeys(Keys.ENTER);
 	}
 	
 	public void save() {
-		wait.until(ExpectedConditions.visibilityOf(save));
-		save.click();
+		wait.until(ExpectedConditions.elementToBeClickable(save)).click();
 	}
 	
 	public void addNewContact() {
-		wait.until(ExpectedConditions.visibilityOf(addNewContact));
-		addNewContact.click();
+		wait.until(ExpectedConditions.elementToBeClickable(addNewContact)).click();
 	}
 	
 	public void addNewFacility() {
-		wait.until(ExpectedConditions.visibilityOf(addNewFacility));
-		addNewFacility.click();
+		wait.until(ExpectedConditions.elementToBeClickable(addNewFacility)).click();
 	}
 }

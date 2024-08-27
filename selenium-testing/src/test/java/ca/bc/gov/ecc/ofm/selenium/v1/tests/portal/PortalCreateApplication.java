@@ -45,8 +45,6 @@ public class PortalCreateApplication extends BaseTest {
 			objPortalSignInCredentialPage.enterUserId(PORTAL_USERNAME);
 			objPortalSignInCredentialPage.enterPassword(PORTAL_PASSWORD);
 			objPortalSignInCredentialPage.clickSubmit();
-			wait(5000);
-			Thread.sleep(9000);
 			objPortalSignInCredentialPage.clickSignatureRequired();
 			test.info("login complete");
 
@@ -57,18 +55,18 @@ public class PortalCreateApplication extends BaseTest {
 			test.info("homepage complete");
 
 			Thread.sleep(5000);
-			portalApplicationsHomePage.verifyPageLoaded().addOFMApplication();
+			portalApplicationsHomePage.addOFMApplication();
 
 			test.info("Create Application page");
 			PortalApplicationsSelectFacility portalApplicationsSelectFacility = new PortalApplicationsSelectFacility(
 					driver);
 			Thread.sleep(2000);
-			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", portalApplicationsSelectFacility.getIConfirmThatOrganizationInformationIs());
 			portalApplicationsSelectFacility.setIConfirmThatOrganizationInformationIsCheckboxField();
 			portalApplicationsSelectFacility.setToStartYourApplicationSelectATextField("ofmqa_fac_automation");
 			portalApplicationsSelectFacility.clickNextButton();
 			test.info("Select facility page complete");
 
+			Thread.sleep(2000);
 			PortalApplicationsFacilityDetails portalApplicationsFacilityDetails = new PortalApplicationsFacilityDetails(
 					driver);
 			portalApplicationsFacilityDetails.setFiscalYearEndDateDateField("09/30/2025");

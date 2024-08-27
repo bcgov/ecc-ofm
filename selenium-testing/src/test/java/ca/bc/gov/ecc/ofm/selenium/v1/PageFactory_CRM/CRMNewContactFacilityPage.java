@@ -30,20 +30,18 @@ public class CRMNewContactFacilityPage {
 	}
 
 	public void addNewContact(String name) throws Exception {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Contact, Lookup']")));
+		wait.until(ExpectedConditions.elementToBeClickable(addContact));
 		addContact.click();
 		addContact.clear();
 		addContact.sendKeys(name);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@aria-label = 'Lookup results']"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//ul[@aria-label = 'Lookup results']"))).click();
 	}
 	
 	public void togglePortalAccess() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[contains(@aria-label, 'Portal Access')]")));
-		portalAccessToggle.click();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[contains(@aria-label, 'Portal Access')]"))).click();
 	}
 
 	public void saveAndClose() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='Save & Close']")));
-		saveAndClose.click();
+		wait.until(ExpectedConditions.elementToBeClickable(saveAndClose)).click();
 	}
 }

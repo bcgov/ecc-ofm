@@ -212,13 +212,8 @@ public class ContactBCeIDScript {
 		objPortalSignInCredentialPage.continueButton();
 		
 		// Log out of the portal
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(10000));
-		String usernameLowerCase = username.toLowerCase();
-        String xpathExpression = "//*[translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '" + usernameLowerCase + "']";
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpathExpression)));
-        Thread.sleep(2000);
-        driver.findElement(By.xpath(xpathExpression)).click();
         PortalHomePage portalHomePage = new PortalHomePage(driver);
+        portalHomePage.clickOnUsername(username);
         portalHomePage.logout();
 		
     }

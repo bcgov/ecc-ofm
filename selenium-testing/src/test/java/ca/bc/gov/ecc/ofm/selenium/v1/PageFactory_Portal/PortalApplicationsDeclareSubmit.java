@@ -20,6 +20,7 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsDeclareSubmit {
 	private WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(id = "declaration")
 	@CacheLookup
@@ -31,9 +32,9 @@ public class PortalApplicationsDeclareSubmit {
 
 
 	public PortalApplicationsDeclareSubmit(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 
 	}
 
@@ -45,13 +46,10 @@ public class PortalApplicationsDeclareSubmit {
 	}
 	
 	public void clickSubmitButton() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(submit));
 		wait.until(ExpectedConditions.visibilityOf(submit));
 		submit.click();
 
 	}
-	
-	
 	
 }

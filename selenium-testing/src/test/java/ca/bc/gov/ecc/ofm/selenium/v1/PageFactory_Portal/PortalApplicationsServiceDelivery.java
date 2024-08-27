@@ -16,6 +16,7 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsServiceDelivery {
 	private WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(id = "confirmation")
 	@CacheLookup
@@ -30,9 +31,8 @@ public class PortalApplicationsServiceDelivery {
 	public PortalApplicationsServiceDelivery(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-		
+		wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 	}
-	
 	
 	public void setIConfirmThatTheAboveInformationCheckboxField() {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", iConfirmThatTheAboveInformation);
@@ -40,26 +40,11 @@ public class PortalApplicationsServiceDelivery {
 			iConfirmThatTheAboveInformation.click();
 		}
 	}
-	 
-	 
-
-	
 	
 	 public void clickNextButton() {
-		 	WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-			wait.until(ExpectedConditions.elementToBeClickable(next));
-			wait.until(ExpectedConditions.visibilityOf(next));
-	        next.click();
-	       
-	    }
-	
-	  public PortalApplicationsServiceDelivery verifyPageLoaded() {
-		  (new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-	            public Boolean apply(WebDriver d) {
-	                return d.getPageSource().contains(pageLoadedText);
-	            }
-	      });
-	      return this;
-	  }
+		 wait.until(ExpectedConditions.elementToBeClickable(next));
+		 wait.until(ExpectedConditions.visibilityOf(next));
+		 next.click();
+	 }
 
 }

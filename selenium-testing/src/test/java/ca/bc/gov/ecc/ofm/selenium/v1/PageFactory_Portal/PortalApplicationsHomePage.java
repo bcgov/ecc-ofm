@@ -15,35 +15,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class PortalApplicationsHomePage {
 	WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(id = "core-application-button")
 	@CacheLookup
 	WebElement button_addOFMApplication;
 
-	private final String pageLoadedText = "OFM Application";
-
 	public PortalApplicationsHomePage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofSeconds(10000));
 	}
 
 	public void addOFMApplication() throws InterruptedException {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 		wait.until(ExpectedConditions.visibilityOf(button_addOFMApplication));
 		wait.until(ExpectedConditions.elementToBeClickable(button_addOFMApplication));
-	
-		
 		button_addOFMApplication.click();
 		
-	}
-
-	public PortalApplicationsHomePage verifyPageLoaded() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(80));
-		wait.until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
-				return d.getPageSource().contains(pageLoadedText);
-			}
-		});
-		return this;
 	}
 }

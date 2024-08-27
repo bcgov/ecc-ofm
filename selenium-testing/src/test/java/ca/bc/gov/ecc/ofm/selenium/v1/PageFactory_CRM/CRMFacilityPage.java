@@ -43,41 +43,39 @@ public class CRMFacilityPage {
 	}
 
 	public void enterFacilityName(String name) {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@aria-label='Name']")));
+		wait.until(ExpectedConditions.elementToBeClickable(facilityName));
 		facilityName.sendKeys(name);
 	}
 	
 	public void enterAddress(String address) {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type='text' and @aria-label='Street Address 1']")));
+		wait.until(ExpectedConditions.elementToBeClickable(streetAddress));
 		streetAddress.sendKeys(address);
 	}
 	
 	public void enterCity(String name) {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type='text' and @aria-label='City']")));
+		wait.until(ExpectedConditions.elementToBeClickable(city));
 		city.sendKeys(name);
 	}
 	
 	public void enterPostalCode(String name) {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Postal Code']")));
+		wait.until(ExpectedConditions.elementToBeClickable(postalCode));
 		postalCode.sendKeys(Keys.BACK_SPACE);
 		postalCode.sendKeys(name);
 	}
 	
 	public void enterPrimaryContact(String name) throws Exception {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Primary Contact, Lookup']")));
+		wait.until(ExpectedConditions.elementToBeClickable(primaryContact));
 		primaryContact.click();
 		primaryContact.clear();
 		primaryContact.sendKeys(name);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@aria-label = 'Lookup results']"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//ul[@aria-label = 'Lookup results']"))).click();
 	}
 	
 	public void addContact() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='New Contact Facility. Add New Contact Facility']")));
-		addContact.click();
+		wait.until(ExpectedConditions.elementToBeClickable(addContact)).click();
 	}
 	
 	public void save() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@aria-label='Save (CTRL+S)']")));
-		save.click();
+		wait.until(ExpectedConditions.elementToBeClickable(save)).click();
 	}
 }

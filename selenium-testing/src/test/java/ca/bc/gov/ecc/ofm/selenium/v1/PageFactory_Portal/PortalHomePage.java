@@ -30,8 +30,16 @@ public class PortalHomePage {
 		box_Applications.click();
 	}
 	
+	public void clickOnUsername(String username) throws Exception {
+		String usernameLowerCase = username.toLowerCase();
+        String xpathExpression = "//*[translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = '" + usernameLowerCase + "']";
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpathExpression)));
+        Thread.sleep(2000);
+        driver.findElement(By.xpath(xpathExpression)).click();
+	}
+	
 	public void logout() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(), '" + "Log Out" + "')]")));
+		wait.until(ExpectedConditions.elementToBeClickable(logout));
 		logout.click();			
 	}
 }

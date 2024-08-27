@@ -29,9 +29,7 @@ public class PortalIrregularExpenseApplicationsDetails {
 
 	}
 
-	private final String pageLoadedText = "Download the application below, and attach the completed form to this request using the Add File button.";
 	private final String filePath = System.getProperty("user.dir") + "/src/test/resources/testFile.jpg";
-	
 	
 	public void setSubjectTextField(String subjectValue) {
 		WebElement subject = driver.findElements(By.xpath("//*[contains(@id, 'input-')]")).get(4);
@@ -62,14 +60,5 @@ public class PortalIrregularExpenseApplicationsDetails {
 	public WebElement getaddNewFileButton() {
 		return this.addNewFileButton;
 	}
-
-	public PortalIrregularExpenseApplicationsDetails verifyPageLoaded() {
-		(new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
-				return d.getPageSource().contains(pageLoadedText);
-			}
-		});
-		return this;
-	}
-
+	
 }

@@ -16,7 +16,8 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsSelectFacility {
 	private WebDriver driver;
-
+	WebDriverWait wait;
+	
 	@FindBy(id = "confirm-info")
 	private WebElement iConfirmThatOrganizationInformationIs;
 
@@ -25,15 +26,11 @@ public class PortalApplicationsSelectFacility {
 	
     @FindBy(xpath = "//*[@id=\"app\"]/div/main/div/div/div/div[2]/div/div[2]/div/button/span[3]/span/i")
     private WebElement next;
-	
-  private final String pageLoadedText = "To apply for Supplementary Funding, you must have an active OFM application for the facility";
-
 
 	public PortalApplicationsSelectFacility(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-		
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 	public void setToStartYourApplicationSelectATextField(String facility) {
@@ -41,33 +38,16 @@ public class PortalApplicationsSelectFacility {
 	}
 
 	public void setIConfirmThatOrganizationInformationIsCheckboxField() {
-		
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", iConfirmThatOrganizationInformationIs);
-		 if (!iConfirmThatOrganizationInformationIs.isSelected()) {
-		iConfirmThatOrganizationInformationIs.click();
-		 }
-
+		if (!iConfirmThatOrganizationInformationIs.isSelected()) {
+			iConfirmThatOrganizationInformationIs.click();
+		}
 	}
 	
 	 public void clickNextButton() {
-		 	WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-			wait.until(ExpectedConditions.elementToBeClickable(next));
-			wait.until(ExpectedConditions.visibilityOf(next));
-	        next.click();
-	       
-	    }
+		 wait.until(ExpectedConditions.elementToBeClickable(next));
+		 wait.until(ExpectedConditions.visibilityOf(next));
+		 next.click();
+	 }
 	
-	  public PortalApplicationsSelectFacility verifyPageLoaded() {
-	        (new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-	            public Boolean apply(WebDriver d) {
-	                return d.getPageSource().contains(pageLoadedText);
-	            }
-	        });
-	        return this;
-	    }
-	  
-	  public WebElement getIConfirmThatOrganizationInformationIs() {
-		  return this.iConfirmThatOrganizationInformationIs;
-	  }
-
 }

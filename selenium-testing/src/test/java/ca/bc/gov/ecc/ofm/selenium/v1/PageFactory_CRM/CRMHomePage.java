@@ -25,7 +25,6 @@ public class CRMHomePage {
 	}
 
 	public void pressNewOrganization() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@aria-label='New']")));
-		newOrganizationButton.click();
+		wait.until(ExpectedConditions.elementToBeClickable(newOrganizationButton)).click();
 	}
 }

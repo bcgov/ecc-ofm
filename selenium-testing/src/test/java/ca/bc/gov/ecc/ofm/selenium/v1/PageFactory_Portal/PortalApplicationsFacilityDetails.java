@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsFacilityDetails {
 	private WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(id = "select-expense-authority")
 	@CacheLookup
@@ -38,14 +39,11 @@ public class PortalApplicationsFacilityDetails {
 	public PortalApplicationsFacilityDetails(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
-
-	private final String pageLoadedText = "This person may be the same as your primary or secondary contact";
 
 	public void clickNextButton() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 			wait.until(ExpectedConditions.elementToBeClickable(next));
 			wait.until(ExpectedConditions.visibilityOf(next));
 			next.click();
@@ -75,14 +73,5 @@ public class PortalApplicationsFacilityDetails {
 	 public void setFiscalYearEndDateDateField(String fiscalDate) {
 		 fiscalYearEndDate.sendKeys(fiscalDate);
 	    }
-
-	public PortalApplicationsFacilityDetails verifyPageLoaded() {
-		(new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
-				return d.getPageSource().contains(pageLoadedText);
-			}
-		});
-		return this;
-	}
 
 }
