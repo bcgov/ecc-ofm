@@ -28,8 +28,8 @@
                   <v-skeleton-loader v-else type="chip" class="chip-loader" />
                 </div>
               </v-col>
-              <v-col v-if="false" class="px-0" style="width: 50px">
-                <v-btn id="help_button" aria-label="Help" rounded @click="$router.push({ name: 'help' })">
+              <v-col class="px-0" style="width: 50px">
+                <v-btn id="help_button" aria-label="Help" rounded target="ofm_external_help" href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/SitePages/2023%20OFM%20Test.aspx">
                   <v-icon aria-hidden="false" icon="mdi-help-circle-outline" size="38" color="white" />
                 </v-btn>
               </v-col>
