@@ -163,17 +163,17 @@
                     </v-row>
                   </v-radio-group>
                   <template v-if="showDocuments">
-                    <v-col cols="12" lg="10" xl="8" xxl="6" v-if="organizationEdit.hasInclusionPolicy" class="pt-0">
-                      <AppLabel>Inclusion Policy Document:</AppLabel>
+                    <v-col v-if="organizationEdit.hasInclusionPolicy" cols="12" lg="10" xl="8" xxl="6" class="pt-0">
                       <AppDocumentUpload
                         id="inclusion-policy-upload"
                         ref="documentUpload"
+                        :document-type="DOCUMENT_TYPES.INCLUSION_POLICY"
                         v-model="documentsToUpload"
-                        entityName="accounts"
+                        entity-name="accounts"
                         :loading="loadingInclusionPolicy"
                         :readonly="!editMode"
-                        :uploadedDocuments="uploadedDocumentsEdit"
-                        @deleteUploadedDocument="deleteUploadedDocument" />
+                        :uploaded-documents="uploadedDocumentsEdit"
+                        @delete-uploaded-document="deleteUploadedDocument" />
                       <v-alert v-if="showUploadDocumentsAlert" density="compact" type="error" class="mt-1">
                         Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
                       </v-alert>
@@ -202,6 +202,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import { isEmpty } from 'lodash'
+import { DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   components: { AppButton, AppLabel, AppDocumentUpload },
@@ -254,6 +255,9 @@ export default {
     showUploadDocumentsAlert() {
       return this.editMode && this.invalidInclusionPolicy
     },
+  },
+  created() {
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
 
   updated() {

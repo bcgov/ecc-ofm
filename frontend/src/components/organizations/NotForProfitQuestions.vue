@@ -37,7 +37,7 @@
       </v-card>
 
       <v-card variant="outlined" class="soft-outline px-2 py-6 my-4 w-100">
-        <AppLabel>Does your facility's not-for-profit have an open membership?</AppLabel>
+        <AppLabel>Does your not-for-profit facility have an open membership?</AppLabel>
         <v-radio-group v-model="model.openMembership" :readonly="false" :rules="[...rules.required]">
           <v-row no-gutters>
             <v-col cols="12" sm="2" lg="1">
@@ -51,7 +51,7 @@
       </v-card>
 
       <v-card variant="outlined" class="soft-outline px-2 py-6 my-4 w-100">
-        <AppLabel>Does your facility's not-for-profit have elected, unpaid board members?</AppLabel>
+        <AppLabel>Does your not-for-profit facility have elected, unpaid board members?</AppLabel>
         <v-radio-group v-model="model.boardMembersElected" :readonly="false" :rules="[...rules.required]">
           <v-row no-gutters>
             <v-col cols="12" sm="2" lg="1">
@@ -65,7 +65,7 @@
       </v-card>
 
       <v-card variant="outlined" class="soft-outline px-2 py-6 my-4 w-100">
-        <AppLabel>Does your facility's not-for-profit have board members selected from the entire membership?</AppLabel>
+        <AppLabel>Does your not-for-profit facility have board members selected from the entire membership?</AppLabel>
         <v-radio-group v-model="model.boardMembersSelectedMembership" :readonly="false" :rules="[...rules.required]">
           <v-row no-gutters>
             <v-col cols="12" sm="2" lg="1">

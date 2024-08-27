@@ -89,7 +89,7 @@ import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
@@ -161,7 +161,8 @@ export default {
 
     async getInclusionPolicyDocuments() {
       try {
-        this.uploadedDocuments = await DocumentService.getDocuments(this.userInfo.organizationId)
+        const docs = await DocumentService.getDocuments(this.userInfo.organizationId)
+        this.uploadedDocuments = docs?.filter((doc) => doc.documentType === DOCUMENT_TYPES.INCLUSION_POLICY) ?? []
       } catch (error) {
         this.setFailureAlert("Failed to get organization's Inclusion Policy Document(s)", error)
         return
