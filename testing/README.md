@@ -47,7 +47,7 @@ Instructions on how to install and run Cypress tests in headless mode as well as
 - User must have at least 1 Application
 - User must have at least 1 Funding Agreement
 - User must have at least 1 Historical Payment
-- User must have at least 1 Scheduled Payment1-portal-and-crm-login-and-security
+- User must have at least 1 Scheduled Payment
 - User must have at least 1 Pending Report
 - User must have at least 1 Historical Report
 
