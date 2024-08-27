@@ -19,6 +19,12 @@ public class PortalApplicationsHomePage {
 	@FindBy(id = "core-application-button")
 	@CacheLookup
 	WebElement button_addOFMApplication;
+	
+	@FindBy(id = "supp-allowances-button")
+	@CacheLookup
+	WebElement button_addOFMAllowanceApplication;
+	
+	
 
 	private final String pageLoadedText = "OFM Application";
 
@@ -34,6 +40,16 @@ public class PortalApplicationsHomePage {
 	
 		
 		button_addOFMApplication.click();
+		
+	}
+	
+	public void addAllowanceOFMApplication() throws InterruptedException {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+		wait.until(ExpectedConditions.visibilityOf(button_addOFMAllowanceApplication));
+		wait.until(ExpectedConditions.elementToBeClickable(button_addOFMAllowanceApplication));
+	
+		
+		button_addOFMAllowanceApplication.click();
 		
 	}
 
