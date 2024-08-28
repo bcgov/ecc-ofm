@@ -3,16 +3,24 @@ const PASSWORD = Cypress.env('PORTAL_PASSWORD')
 const PORTAL_URL = Cypress.env('PORTAL_URL')
 
 describe('Login to Portal', () => {
+  it('system messages', () => {
+    cy.visit(PORTAL_URL)
+    cy.get('div[role="alert"]').contains('Test Message')
+  })
   it('successful login', () => {
     cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL)
     cy.visit(PORTAL_URL)
+
+    // Facility is hidden in Org header
+    cy.get('#changeFacility').should('not.exist')
+
+    // All cards are available to Account Manager
     cy.get('#reporting-card').should('exist')
     cy.get('#funding-card').should('exist')
     cy.get('#assistance-card').should('exist')
     cy.get('#applications-card').should('exist')
     cy.get('#account-mgmt-card').should('exist')
-    // TODO (weskubo-cgi) Update this when Help/Resources is added
-    cy.get('#help-card').should('not.exist')
+    cy.get('#help-card').should('exist')
   })
 
   it('failed login', () => {
