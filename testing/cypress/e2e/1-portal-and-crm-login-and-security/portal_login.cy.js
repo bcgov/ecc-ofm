@@ -3,6 +3,10 @@ const PASSWORD = Cypress.env('PORTAL_PASSWORD')
 const PORTAL_URL = Cypress.env('PORTAL_URL')
 
 describe('Login to Portal', () => {
+  it('system messages', () => {
+    cy.visit(PORTAL_URL)
+    cy.get('div[role="alert"]').contains('Test Message')
+  })
   it('successful login', () => {
     cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL)
     cy.visit(PORTAL_URL)

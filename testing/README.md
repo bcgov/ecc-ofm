@@ -40,6 +40,7 @@ Instructions on how to install and run Cypress tests in headless mode as well as
 
 ### Portal (BCeID)
 
+- At least one "Test Message" System Message must exist in CRM
 - Organization Test-1088 Organization must exist in CRM
 - User must be an Account Manager
 - User must have at least 2 Facilities.
