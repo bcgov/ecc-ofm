@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash'
+
 import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 
@@ -14,7 +16,7 @@ export default {
   async getSystemMessages() {
     try {
       const response = await ApiService.apiAxios.get(ApiRoutes.SYSTEM_MESSAGES)
-      return response.data
+      return response.data?.filter((message) => !isEmpty(message.content))
     } catch (error) {
       console.log(`Failed to get system messages - ${error}`)
       throw error
