@@ -83,7 +83,7 @@
                 <AppNumberInput
                   v-model="model.odometer"
                   required
-                  :format="wholeNumberNonZeroFormat"
+                  :format="wholeNumberFormat"
                   suffix="km"
                   variant="outlined"
                   density="compact"
@@ -101,7 +101,7 @@
                 <AppNumberInput
                   v-model="model.estimatedMileage"
                   required
-                  :format="wholeNumberNonZeroFormat"
+                  :format="wholeNumberFormat"
                   suffix="km"
                   variant="outlined"
                   density="compact"
@@ -227,7 +227,7 @@ export default {
         separator: ',',
         precision: 2,
       },
-      wholeNumberNonZeroFormat: {
+      wholeNumberFormat: {
         nullValue: '',
         precision: 0,
       },
