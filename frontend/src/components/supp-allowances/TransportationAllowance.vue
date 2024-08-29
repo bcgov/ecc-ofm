@@ -80,15 +80,15 @@
                 <p>Vehicle mileage at time of application (odometer reading):</p>
               </v-col>
               <v-col cols="6" xl="7" class="pt-2 text-center">
-                <v-text-field
+                <AppNumberInput
                   v-model="model.odometer"
                   required
-                  type="number"
+                  :format="wholeNumberNonZeroFormat"
                   suffix="km"
                   variant="outlined"
                   density="compact"
-                  :rules="[rules.max(999999), ...rules.required]"
-                  :disabled="readOnly(model)"></v-text-field>
+                  :rules="[rules.max(999999), rules.min(1), ...rules.required]"
+                  :disabled="readOnly(model)"></AppNumberInput>
               </v-col>
             </v-row>
           </v-col>
@@ -98,15 +98,15 @@
                 <p>Estimated Yearly KM:</p>
               </v-col>
               <v-col cols="6" xl="7" class="pt-2 text-center">
-                <v-text-field
+                <AppNumberInput
                   v-model="model.estimatedMileage"
                   required
-                  type="number"
+                  :format="wholeNumberNonZeroFormat"
                   suffix="km"
                   variant="outlined"
                   density="compact"
-                  :rules="[rules.max(999999), ...rules.required]"
-                  :disabled="readOnly(model)"></v-text-field>
+                  :rules="[rules.max(999999), rules.min(1), ...rules.required]"
+                  :disabled="readOnly(model)"></AppNumberInput>
               </v-col>
             </v-row>
           </v-col>
@@ -226,6 +226,10 @@ export default {
         decimal: '.',
         separator: ',',
         precision: 2,
+      },
+      wholeNumberNonZeroFormat: {
+        nullValue: '',
+        precision: 0,
       },
     }
   },

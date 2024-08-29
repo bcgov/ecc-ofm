@@ -491,12 +491,26 @@ export default {
       this.showCancelDialog = !this.showCancelDialog
     },
     setNext() {
+      console.log('called')
+      console.log(this.models)
+      let int = 0
       this.$emit(
         'setNext',
         this.models.every((el) => {
-          if (el.statusCode && isApplicationLocked(el.statusCode)) {
+          int++
+          console.log('rounds ', int)
+          //console.log(el)
+
+          console.log(el.supplementaryType)
+          if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
+            // console.log(el.odometer)
+            // console.log(el.estimatedMileage)
+            // console.log(!el.odometer && !el.estimatedMileage)
+            return el.odometer && el.estimatedMileage
+          } else if (el.statusCode && isApplicationLocked(el.statusCode)) {
             return true
           }
+          console.log('is empty ,', this.isModelEmpty(el))
           return this.isModelEmpty(el)
         }),
       )
