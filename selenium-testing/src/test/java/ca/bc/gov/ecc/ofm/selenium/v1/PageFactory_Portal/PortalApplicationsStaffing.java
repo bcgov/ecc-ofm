@@ -32,7 +32,7 @@ public class PortalApplicationsStaffing {
 	public PortalApplicationsStaffing(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-		wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		wait = new WebDriverWait(driver, Duration.ofMillis(20000));
 	}
 
 	public void setITEFullTime(String count) {

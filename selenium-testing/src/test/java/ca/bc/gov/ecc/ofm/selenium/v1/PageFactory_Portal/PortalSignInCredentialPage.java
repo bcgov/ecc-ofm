@@ -27,50 +27,43 @@ public class PortalSignInCredentialPage {
 
 	@FindBy(id = "dialog-go-back")
 	WebElement button_signatureRequired;
-	
+
 	@FindBy(xpath = "//input[@type = 'submit' and @value = 'Continue']")
 	WebElement continueButton;
 
 	public PortalSignInCredentialPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-		wait = new WebDriverWait(driver,  Duration.ofMillis(10000));
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 	public void enterUserId(String userid) {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name = 'user']")));
-		text_userID.sendKeys(userid);
+		wait.until(ExpectedConditions.elementToBeClickable(text_userID)).sendKeys(userid);
 	}
 
 	public void enterPassword(String encodedPassword) {
 		byte[] decodedBytes = Base64.getDecoder().decode(encodedPassword);
 		String decoded_password = new String(decodedBytes);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name = 'password']")));
-		text_password.sendKeys(decoded_password);
+		wait.until(ExpectedConditions.elementToBeClickable(text_password)).sendKeys(decoded_password);
 	}
 
 	public void clickSubmit() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name = 'btnSubmit']")));
-		button_btnSubmit.click();
+		wait.until(ExpectedConditions.elementToBeClickable(button_btnSubmit)).click();
 	}
 
 	public void clickSignatureRequired() {
 		try {
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.id("dialog-go-back")));
-			button_signatureRequired.click();
-		}
-		catch (Exception e) {
+			wait.until(ExpectedConditions.elementToBeClickable(button_signatureRequired)).click();
+		} catch (Exception e) {
 			System.out.println("No signature needed");
 		}
 
 	}
-	
+
 	public void continueButton() {
 		try {
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@type = 'submit' and @value = 'Continue']")));
-			continueButton.click();
-		}
-		catch (Exception e) {
+			wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+		} catch (Exception e) {
 			System.out.println("No login history needed");
 		}
 	}

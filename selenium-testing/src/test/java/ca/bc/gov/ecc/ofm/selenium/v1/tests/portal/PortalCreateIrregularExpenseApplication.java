@@ -49,7 +49,6 @@ public class PortalCreateIrregularExpenseApplication extends BaseTest {
 			PortalIrregularExpenseApplicationsDetails portalIrregularExpenseApplicationsDetails = new PortalIrregularExpenseApplicationsDetails(driver);
 			portalIrregularExpenseApplicationsDetails.setSubjectTextField("Irregular Expense Test Subject");
 			portalIrregularExpenseApplicationsDetails.setRequestDescriptionTextField("Irregular expense test description");
-			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", portalIrregularExpenseApplicationsDetails.getaddNewFileButton());
 			portalIrregularExpenseApplicationsDetails.addNewFile();
 			portalIrregularExpenseApplicationsDetails.clickSubmitNewRequest();
 			test.info("Submit page complete");

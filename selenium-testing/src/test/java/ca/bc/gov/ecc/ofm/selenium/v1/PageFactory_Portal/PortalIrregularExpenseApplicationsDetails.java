@@ -57,8 +57,6 @@ public class PortalIrregularExpenseApplicationsDetails {
 		submitNewRequestButton.click();
 	}
 	
-	public WebElement getaddNewFileButton() {
-		return this.addNewFileButton;
-	}
+
 	
 }
