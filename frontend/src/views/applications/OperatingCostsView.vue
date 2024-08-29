@@ -21,7 +21,7 @@
       </v-col>
       <v-col v-if="facilityTypeTooltip" cols="2" md="2" lg="1" class="mt-4" align="center">
         <v-tooltip content-class="tooltip" :text="facilityTypeTooltip" max-width="300px">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
           </template>
         </v-tooltip>
@@ -30,15 +30,22 @@
 
     <div v-if="model.facilityType" id="arm-length">
       <!-- ARM LENGTH -->
-      <v-checkbox v-if="isRentLease" v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
-        <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
-      </v-checkbox>
+      <div v-if="isRentLease" class="arm-length">
+        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
+          <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
+        </v-checkbox>
+        <v-tooltip content-class="tooltip" max-width="300px" text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
+          <template #activator="{ props }">
+            <v-icon size="large" v-bind="props" class="ml-2 pt-7">mdi-information-slab-circle-outline</v-icon>
+          </template>
+        </v-tooltip>
+      </div>
 
       <!-- OPERATING COST / FACILITY COST -->
       <v-card class="my-4 px-6 py-4">
         <AppMissingInfoError v-if="showErrorMessage && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
         <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
-        <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facilityType="model.facilityType" @update="updateModel" />
+        <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facility-type="model.facilityType" @update="updateModel" />
       </v-card>
 
       <!-- UPLOAD DOCUMENTS -->
@@ -49,41 +56,41 @@
         <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isSupportingDocsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_SUPPORTING_UPLOAD }}</AppMissingInfoError>
         <v-card class="mt-2 pa-4" variant="outlined">
           <h5>Financial Documents</h5>
-          <div class="greyCards py-2 px-4 mt-2">
-            <v-card class="mt-2 mb-4 pa-4">
+          <div class="grey-card mt-2">
+            <v-card class="mb-4 pa-4">
               <AppDocumentUpload
                 id="financial-document-upload"
                 v-model="financialStatement.documentsToUpload"
-                entityName="ofm_applications"
-                :documentType="DOCUMENT_TYPES.INCOME_STATEMENT"
+                entity-name="ofm_applications"
+                :document-type="DOCUMENT_TYPES.INCOME_STATEMENT"
                 :loading="processing"
                 :readonly="readonly"
-                :uploadedDocuments="financialStatement.uploadedDocuments"
-                @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+                :uploaded-documents="financialStatement.uploadedDocuments"
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
-            <v-card class="mt-2 mb-4 pa-4">
+            <v-card class="pa-4">
               <AppDocumentUpload
                 id="balance-sheet-document-upload"
                 v-model="balanceSheet.documentsToUpload"
-                entityName="ofm_applications"
-                :documentType="DOCUMENT_TYPES.BALANCE_SHEET"
+                entity-name="ofm_applications"
+                :document-type="DOCUMENT_TYPES.BALANCE_SHEET"
                 :loading="processing"
                 :readonly="readonly"
-                :uploadedDocuments="balanceSheet.uploadedDocuments"
-                @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+                :uploaded-documents="balanceSheet.uploadedDocuments"
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
           </div>
-          <div class="greyCards py-2 px-4 mt-8">
-            <v-card class="mt-2 pt-4 mb-4 pa-4">
+          <div class="grey-card mt-8">
+            <v-card class="pa-4">
               <AppDocumentUpload
                 id="supporting-document-upload"
                 v-model="supporting.documentsToUpload"
-                entityName="ofm_applications"
-                :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS"
+                entity-name="ofm_applications"
+                :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS"
                 :loading="processing"
                 :readonly="readonly"
-                :uploadedDocuments="supporting.uploadedDocuments"
-                @deleteUploadedDocument="deleteUploadedDocument"></AppDocumentUpload>
+                :uploaded-documents="supporting.uploadedDocuments"
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
 
               <ul class="ml-7 mt-4">
                 <li>Your yearly operating cost Rent/Lease payment schedule</li>
@@ -377,11 +384,8 @@ export default {
   },
 }
 </script>
-
 <style scoped>
-.greyCards {
-  border: 1px solid #0000001a;
-  background-color: #0f0f0f09;
-  border-radius: 4px;
+.arm-length {
+  display: flex;
 }
 </style>

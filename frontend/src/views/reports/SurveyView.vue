@@ -59,6 +59,7 @@ import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
 import SurveySection from '@/components/reports/SurveySection.vue'
 import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitConfirmationDialog.vue'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
+import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
 
 export default {
   name: 'SurveyView',
@@ -200,7 +201,7 @@ export default {
           this.clonedResponses?.map(async (response) => {
             if (this.isHiddenOrDeleted(response)) return
             const originalResponse = this.getOriginalQuestionResponse(response)
-            response.value = Array.isArray(response.value) ? response.value?.toString() : response.value
+            response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
             if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
               await ReportsService.createQuestionResponse(response)
               callGetQuestionsResponses = true

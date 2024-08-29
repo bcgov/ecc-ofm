@@ -12,7 +12,16 @@
 
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">You are up to date with your monthly reports.</AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredPendingReports" item-key="surveyTemplateId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
+      <v-data-table
+        v-else
+        id="pending-reports-table"
+        :headers="headers"
+        :items="filteredPendingReports"
+        item-key="surveyTemplateId"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
         <template #[`item.alert`]="{ item }">
           <template v-if="item.alert">
             <v-icon color="error">mdi-alert-circle</v-icon>
@@ -28,8 +37,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showUpdate(item)" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">Update</AppButton>
-            <AppButton v-else-if="showView()" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
             <AppButton
               v-if="showUnlock(item)"
               :primary="false"

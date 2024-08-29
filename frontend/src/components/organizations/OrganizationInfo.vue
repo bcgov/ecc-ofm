@@ -4,7 +4,7 @@
       <v-container fluid class="pa-0">
         <v-row no-gutters class="mb-4">
           <v-col cols="12" md="6" lg="6">
-            <v-card variant="outlined" class="card-outline fill-height">
+            <v-card variant="outlined" class="soft-outline fill-height">
               <v-row no-gutters>
                 <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Organization legal name:</AppLabel>
@@ -48,7 +48,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" md="6" lg="6" class="mt-3 mt-md-0 pl-md-3">
-            <v-card variant="outlined" class="card-outline fill-height">
+            <v-card variant="outlined" class="soft-outline fill-height">
               <v-row no-gutters>
                 <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
                   <AppLabel>Mailing Address:</AppLabel>
@@ -136,14 +136,14 @@
           </v-col>
         </v-row>
         <v-skeleton-loader :loading="loadingInclusionPolicy" type="table-tbody">
-          <v-card variant="outlined" class="card-outline pa-2 w-100">
+          <v-card variant="outlined" class="soft-outline pa-2 w-100">
             <div class="w-100">
               <v-row no-gutters>
                 <v-col class="">
                   <AppLabel>Does your organization have an inclusion policy?</AppLabel>
                 </v-col>
-                <v-col class="mt-2">
-                  <v-row v-if="editable && !editMode" justify="end">
+                <v-col v-if="editable && !editMode" class="mt-2">
+                  <v-row justify="end">
                     <AppButton id="edit-button" variant="text" :disabled="loading" @click="toggleEditMode()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>
@@ -154,26 +154,26 @@
                 <v-col>
                   <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
                     <v-row no-gutters>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
                       </v-col>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
                       </v-col>
                     </v-row>
                   </v-radio-group>
                   <template v-if="showDocuments">
-                    <v-col cols="12" lg="10" xl="8" xxl="6" v-if="organizationEdit.hasInclusionPolicy" class="pt-0">
-                      <AppLabel>Inclusion Policy Document:</AppLabel>
+                    <v-col v-if="organizationEdit.hasInclusionPolicy" cols="12" lg="10" xl="8" xxl="6" class="pt-0">
                       <AppDocumentUpload
                         id="inclusion-policy-upload"
                         ref="documentUpload"
+                        :document-type="DOCUMENT_TYPES.INCLUSION_POLICY"
                         v-model="documentsToUpload"
-                        entityName="accounts"
+                        entity-name="accounts"
                         :loading="loadingInclusionPolicy"
                         :readonly="!editMode"
-                        :uploadedDocuments="uploadedDocumentsEdit"
-                        @deleteUploadedDocument="deleteUploadedDocument" />
+                        :uploaded-documents="uploadedDocumentsEdit"
+                        @delete-uploaded-document="deleteUploadedDocument" />
                       <v-alert v-if="showUploadDocumentsAlert" density="compact" type="error" class="mt-1">
                         Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
                       </v-alert>
@@ -202,6 +202,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import { isEmpty } from 'lodash'
+import { DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   components: { AppButton, AppLabel, AppDocumentUpload },
@@ -254,6 +255,9 @@ export default {
     showUploadDocumentsAlert() {
       return this.editMode && this.invalidInclusionPolicy
     },
+  },
+  created() {
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
 
   updated() {
@@ -308,10 +312,6 @@ export default {
 </script>
 
 <style scoped>
-.card-outline {
-  border: 1px solid #dee2e6 !important;
-}
-
 .no-hover {
   pointer-events: none;
 }
