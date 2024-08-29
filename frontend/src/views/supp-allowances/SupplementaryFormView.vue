@@ -250,11 +250,12 @@ export default {
       async handler() {
         if (this.transportAppsHaveZero) {
           await this.$refs.form?.validate()
+          return
         } else if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
           await this.saveApplication()
-          const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
-          this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
         }
+        const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
+        this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },
     },
   },
