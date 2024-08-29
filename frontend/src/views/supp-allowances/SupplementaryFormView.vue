@@ -221,6 +221,11 @@ export default {
       //disable all components on the form if user is in bad standing or does not have correct permissions
       return !this.hasGoodStanding || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
+    transportAppsHaveZero() {
+      return this.models
+        .filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+        ?.some((el) => el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0')
+    },
   },
   watch: {
     back: {
@@ -243,11 +248,13 @@ export default {
     },
     next: {
       async handler() {
-        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+        if (this.transportAppsHaveZero) {
+          await this.$refs.form?.validate()
+        } else if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
           await this.saveApplication()
+          const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
+          this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
         }
-        const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
-        this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },
     },
   },
@@ -296,6 +303,11 @@ export default {
       }
     },
     async saveApplication(showAlert = false) {
+      if (this.transportAppsHaveZero) {
+        await this.$refs.form?.validate()
+        this.setFailureAlert('Failed to save Transportation Allowance')
+        return
+      }
       try {
         this.loading = true
         this.$emit('process', true)
@@ -491,26 +503,12 @@ export default {
       this.showCancelDialog = !this.showCancelDialog
     },
     setNext() {
-      console.log('called')
-      console.log(this.models)
-      let int = 0
       this.$emit(
         'setNext',
         this.models.every((el) => {
-          int++
-          console.log('rounds ', int)
-          //console.log(el)
-
-          console.log(el.supplementaryType)
-          if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
-            // console.log(el.odometer)
-            // console.log(el.estimatedMileage)
-            // console.log(!el.odometer && !el.estimatedMileage)
-            return el.odometer && el.estimatedMileage
-          } else if (el.statusCode && isApplicationLocked(el.statusCode)) {
+          if (el.statusCode && isApplicationLocked(el.statusCode)) {
             return true
           }
-          console.log('is empty ,', this.isModelEmpty(el))
           return this.isModelEmpty(el)
         }),
       )

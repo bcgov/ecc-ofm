@@ -36,7 +36,7 @@ const rules = {
     return (v) => !v || v <= number || `Max exceeded: ${number.toLocaleString('en-ca')}`
   },
   min(number) {
-    return (v) => !v || v >= number || `Number must be at least: ${number.toLocaleString('en-ca')}`
+    return (v) => !v || v >= number || `Please enter a number greater than  ${(number - 1).toLocaleString('en-ca')}  in the field`
   },
   maxLength(number) {
     return (v) => !v || v.length <= number || 'Max length exceeded'
