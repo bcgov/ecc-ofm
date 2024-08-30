@@ -82,7 +82,6 @@
               <v-col cols="6" xl="7" class="pt-2 text-center">
                 <AppNumberInput
                   v-model="model.odometer"
-                  required
                   :format="wholeNumberFormat"
                   suffix="km"
                   :rules="[rules.max(999999), rules.min(1), ...rules.required]"
@@ -98,7 +97,6 @@
               <v-col cols="6" xl="7" class="pt-2 text-center">
                 <AppNumberInput
                   v-model="model.estimatedMileage"
-                  required
                   :format="wholeNumberFormat"
                   suffix="km"
                   :rules="[rules.max(999999), rules.min(1), ...rules.required]"
