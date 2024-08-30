@@ -85,8 +85,6 @@
                   required
                   :format="wholeNumberFormat"
                   suffix="km"
-                  variant="outlined"
-                  density="compact"
                   :rules="[rules.max(999999), rules.min(1), ...rules.required]"
                   :disabled="readOnly(model)"></AppNumberInput>
               </v-col>
@@ -103,8 +101,6 @@
                   required
                   :format="wholeNumberFormat"
                   suffix="km"
-                  variant="outlined"
-                  density="compact"
                   :rules="[rules.max(999999), rules.min(1), ...rules.required]"
                   :disabled="readOnly(model)"></AppNumberInput>
               </v-col>
