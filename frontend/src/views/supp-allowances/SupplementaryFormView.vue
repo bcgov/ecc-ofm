@@ -221,6 +221,11 @@ export default {
       //disable all components on the form if user is in bad standing or does not have correct permissions
       return !this.hasGoodStanding || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
+    transportAppsHaveZero() {
+      return this.models
+        .filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+        ?.some((el) => el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0')
+    },
   },
   watch: {
     back: {
@@ -243,7 +248,10 @@ export default {
     },
     next: {
       async handler() {
-        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+        if (this.transportAppsHaveZero) {
+          await this.$refs.form?.validate()
+          return
+        } else if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
           await this.saveApplication()
         }
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
@@ -296,6 +304,11 @@ export default {
       }
     },
     async saveApplication(showAlert = false) {
+      if (this.transportAppsHaveZero) {
+        await this.$refs.form?.validate()
+        this.setFailureAlert('Failed to save Transportation Allowance')
+        return
+      }
       try {
         this.loading = true
         this.$emit('process', true)
