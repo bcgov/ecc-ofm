@@ -83,7 +83,16 @@ export default {
 
   methods: {
     isDisabled(item) {
-      return this.loading || (this.isSelectFacilityPage && item.routeName !== APPLICATION_ROUTES.FACILITY_DETAILS) || (item.routeName === APPLICATION_ROUTES.SUBMIT && !this.isApplicationComplete)
+      return (
+        this.loading ||
+        (this.isSelectFacilityPage && !this.isFacilityDetails(item)) ||
+        (!this.isFacilityDetails(item) && !this.isFacilityDetailsComplete) ||
+        (item.routeName === APPLICATION_ROUTES.SUBMIT && !this.isApplicationComplete)
+      )
+    },
+
+    isFacilityDetails(item) {
+      return item?.routeName === APPLICATION_ROUTES.FACILITY_DETAILS
     },
 
     isCurrent(item) {
@@ -114,7 +123,7 @@ export default {
     },
 
     getVerticalLineClass(item) {
-      if (this.isSelectFacilityPage || (item.routeName === APPLICATION_ROUTES.REVIEW && !this.isApplicationComplete)) {
+      if (this.isSelectFacilityPage || !this.isFacilityDetailsComplete || (item.routeName === APPLICATION_ROUTES.REVIEW && !this.isApplicationComplete)) {
         return 'vertical-line-disabled'
       }
       return 'vertical-line-active'

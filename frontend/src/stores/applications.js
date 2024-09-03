@@ -5,6 +5,7 @@ import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
@@ -49,7 +50,17 @@ export const useApplicationsStore = defineStore('applications', {
       Facility Details page
     */
     checkFacilityDetailsComplete() {
-      return this.currentApplication?.primaryContactId && this.currentApplication?.expenseAuthorityId && this.currentApplication?.fiscalYearEndDate
+      const authStore = useAuthStore()
+      const currentFacility = authStore?.userInfo?.facilities?.find((facility) => facility.facilityId === this.currentApplication?.facilityId)
+      if (!currentFacility) return false
+      const isFacilityLocationAttributesComplete =
+        !isEmpty(currentFacility?.k12SchoolGrounds) &&
+        !isEmpty(currentFacility?.municipalCommunity) &&
+        !isEmpty(currentFacility?.reserve) &&
+        !isEmpty(currentFacility?.yppDesignation) &&
+        !isEmpty(currentFacility?.yppEnrolled) &&
+        !isEmpty(currentFacility?.personalResidence)
+      return this.currentApplication?.primaryContactId && this.currentApplication?.expenseAuthorityId && this.currentApplication?.fiscalYearEndDate && isFacilityLocationAttributesComplete
     },
 
     /* 

@@ -9,8 +9,8 @@
     <div>
       <h4>Facility Information</h4>
       <FacilityInfo :facility="facility" />
-      <v-row no-gutters class="mt-8">
-        <AppLabel class="pt-4 mr-4">What is the end date of your fiscal year?</AppLabel>
+      <v-row no-gutters class="my-6">
+        <AppLabel class="pt-7 mr-4">What is the end date of your fiscal year?</AppLabel>
         <AppDateInput
           id="fiscal-year-end-date"
           v-model="fiscalYearEndDate"
@@ -21,6 +21,7 @@
           class="mt-3" />
       </v-row>
     </div>
+    <FacilityLocationAttributes :facility="facility" :readonly="readonly" />
     <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
       <p>
@@ -114,6 +115,7 @@ import { mapState, mapWritableState, mapActions } from 'pinia'
 
 import AppDateInput from '@/components/ui/AppDateInput.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
+import FacilityLocationAttributes from '@/components/facilities/FacilityLocationAttributes.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
@@ -125,7 +127,7 @@ import alertMixin from '@/mixins/alertMixin'
 
 export default {
   name: 'FacilityDetailsView',
-  components: { AppDateInput, AppLabel, FacilityInfo, ContactInfo },
+  components: { AppDateInput, AppLabel, FacilityLocationAttributes, FacilityInfo, ContactInfo },
   mixins: [alertMixin],
 
   async beforeRouteLeave(_to, _from, next) {
@@ -207,7 +209,9 @@ export default {
       },
     },
     next: {
-      handler() {
+      async handler() {
+        await this.$refs.form?.validate()
+        if (!this.isFormComplete) return
         this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
