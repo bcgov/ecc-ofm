@@ -215,12 +215,6 @@ const OrganizationMappings = [
   { back: 'ofm_board_members_elected_unpaid', front: 'boardMembersElected' },
   { back: 'ofm_board_members_selected_membership', front: 'boardMembersSelectedMembership' },
   { back: 'ofm_board_members_residents_of_bc', front: 'boardMembersResidentsOfBC' },
-  { back: 'ofm_on_k12_school_grounds_or_board_affiliated', front: 'k12SchoolGrounds' },
-  { back: 'ofm_in_municipal_community_center', front: 'municipalCommunity' },
-  { back: 'ofm_on_reserve', front: 'reserve' },
-  { back: 'ofm_ypp_designation', front: 'yppDesignation' },
-  { back: 'ofm_ypp_enrolled', front: 'yppEnrolled' },
-  { back: 'ofm_personal_residence', front: 'personalResidence' },
 ]
 
 const FacilityMappings = [
@@ -246,6 +240,12 @@ const FacilityMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
   { back: 'ofm_facility_review_complete', front: 'facilityReviewComplete' },
+  { back: 'ofm_on_k12_school_grounds_or_board_affiliated', front: 'k12SchoolGrounds' },
+  { back: 'ofm_in_municipal_community_center', front: 'municipalCommunity' },
+  { back: 'ofm_on_reserve', front: 'reserve' },
+  { back: 'ofm_ypp_designation', front: 'yppDesignation' },
+  { back: 'ofm_ypp_enrolled', front: 'yppEnrolled' },
+  { back: 'ofm_personal_residence', front: 'personalResidence' },
 ]
 
 const ContactMappings = [

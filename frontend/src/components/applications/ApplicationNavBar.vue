@@ -85,18 +85,18 @@ export default {
     isDisabled(item) {
       return (
         this.loading ||
-        (this.isSelectFacilityPage && !this.isFacilityDetails(item)) ||
-        (!this.isFacilityDetails(item) && !this.isFacilityDetailsComplete) ||
-        (item.routeName === APPLICATION_ROUTES.SUBMIT && !this.isApplicationComplete)
+        (this.isSelectFacilityPage && !this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS)) ||
+        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isFacilityDetailsComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && !this.isApplicationComplete)
       )
     },
 
-    isFacilityDetails(item) {
-      return item?.routeName === APPLICATION_ROUTES.FACILITY_DETAILS
+    isCurrent(item) {
+      return this.isRouteNameEqual(item, this.$route.name) || (this.isSelectFacilityPage && this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS))
     },
 
-    isCurrent(item) {
-      return item.routeName === this.$route.name || (this.isSelectFacilityPage && item.routeName === APPLICATION_ROUTES.FACILITY_DETAILS)
+    isRouteNameEqual(item, routeName) {
+      return item?.routeName === routeName
     },
 
     navigateToPage(item) {
@@ -123,7 +123,7 @@ export default {
     },
 
     getVerticalLineClass(item) {
-      if (this.isSelectFacilityPage || !this.isFacilityDetailsComplete || (item.routeName === APPLICATION_ROUTES.REVIEW && !this.isApplicationComplete)) {
+      if (this.isSelectFacilityPage || !this.isFacilityDetailsComplete || (this.isRouteNameEqual(item, APPLICATION_ROUTES.REVIEW) && !this.isApplicationComplete)) {
         return 'vertical-line-disabled'
       }
       return 'vertical-line-active'

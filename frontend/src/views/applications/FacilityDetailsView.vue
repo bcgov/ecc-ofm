@@ -8,7 +8,7 @@
     </div>
     <div>
       <h4>Facility Information</h4>
-      <FacilityInfo :facility="facility" />
+      <FacilityInfo :facility="currentApplication?.facility" />
       <v-row no-gutters class="my-6">
         <AppLabel class="pt-7 mr-4">What is the end date of your fiscal year?</AppLabel>
         <AppDateInput
@@ -21,7 +21,7 @@
           class="mt-3" />
       </v-row>
     </div>
-    <FacilityLocationAttributes :facility="facility" :readonly="readonly" />
+    <FacilityLocationAttributes id="location-attributes" :facility="currentApplication?.facility" :readonly="readonly" @update="updateFacilityLocationAttributes" />
     <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
       <p>
@@ -119,6 +119,7 @@ import FacilityLocationAttributes from '@/components/facilities/FacilityLocation
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
+import FacilityService from '@/services/facilityService'
 import { useApplicationsStore } from '@/stores/applications'
 import { APPLICATION_ROUTES } from '@/utils/constants'
 import format from '@/utils/format'
@@ -177,6 +178,7 @@ export default {
       secondaryContact: undefined,
       expenseAuthority: undefined,
       fiscalYearEndDate: null,
+      updatedFacilityLocationAttributes: null,
     }
   },
 
@@ -189,6 +191,16 @@ export default {
     },
     availableExpenseAuthorities() {
       return this.contacts?.filter((contact) => contact?.isExpenseAuthority)
+    },
+    isFacilityLocationAttributesUpdated() {
+      return (
+        this.updatedFacilityLocationAttributes?.k12SchoolGrounds !== this.currentApplication?.facility?.k12SchoolGrounds ||
+        this.updatedFacilityLocationAttributes?.municipalCommunity !== this.currentApplication?.facility?.municipalCommunity ||
+        this.updatedFacilityLocationAttributes?.reserve !== this.currentApplication?.facility?.reserve ||
+        this.updatedFacilityLocationAttributes?.yppDesignation !== this.currentApplication?.facility?.yppDesignation ||
+        this.updatedFacilityLocationAttributes?.yppEnrolled !== this.currentApplication?.facility?.yppEnrolled ||
+        this.updatedFacilityLocationAttributes?.personalResidence !== this.currentApplication?.facility?.personalResidence
+      )
     },
   },
 
@@ -244,6 +256,7 @@ export default {
       try {
         this.$emit('process', true)
         this.processing = true
+        let reloadApplication = false
         const payload = {
           primaryContactId: this.primaryContact?.contactId ? this.primaryContact?.contactId : null,
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
@@ -251,8 +264,15 @@ export default {
           // XXX - CRM date object uses PST timezone, so we need to convert our date to PST before sending it to CRM
           fiscalYearEndDate: this.fiscalYearEndDate ? format.convertUTCDatetoPSTDate(this.fiscalYearEndDate) : null,
         }
+        if (this.isFacilityLocationAttributesUpdated) {
+          reloadApplication = true
+          await FacilityService.updateFacility(this.currentApplication?.facility?.facilityId, this.updatedFacilityLocationAttributes)
+        }
         if (ApplicationService.isApplicationUpdated(payload)) {
+          reloadApplication = true
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
+        }
+        if (reloadApplication) {
           await this.getApplication(this.$route.params.applicationGuid)
         }
         if (showAlert) {
@@ -263,6 +283,17 @@ export default {
       } finally {
         this.$emit('process', false)
         this.processing = false
+      }
+    },
+
+    updateFacilityLocationAttributes(updatedFacility) {
+      this.updatedFacilityLocationAttributes = {
+        k12SchoolGrounds: updatedFacility?.k12SchoolGrounds,
+        municipalCommunity: updatedFacility?.municipalCommunity,
+        reserve: updatedFacility?.reserve,
+        yppDesignation: updatedFacility?.yppDesignation,
+        yppEnrolled: updatedFacility?.yppDesignation ? updatedFacility?.yppEnrolled : null,
+        personalResidence: updatedFacility?.personalResidence,
       }
     },
   },
