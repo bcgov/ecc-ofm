@@ -45,7 +45,7 @@
             <div v-if="!isEmpty(getModelsByType(panel.supplementaryType))">
               <v-expansion-panel-title>
                 <!-- page complete -->
-                <div v-if="isPanelComplete(panel.id)">
+                <div v-if="isPanelComplete(panel)">
                   <span class="header-label">{{ panel.title }}</span>
                   <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
                 </div>
@@ -76,7 +76,7 @@
             <div>
               <v-expansion-panel-title>
                 <!-- page complete -->
-                <div v-if="isPanelComplete(DISCRETIONARY_PANEL.id)">
+                <div v-if="isPanelComplete(DISCRETIONARY_PANEL)">
                   <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
                   <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
                 </div>

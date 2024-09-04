@@ -79,8 +79,8 @@
             <IndigenousProgrammingAllowance
               v-if="panel.id === INDIGENOUS"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
-              @update="updateModel"
-              :formDisabled="currentTermDisabled || formDisabled" />
+              :formDisabled="currentTermDisabled || formDisabled"
+              @update="updateModel" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === SUPPORT_NEEDS"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
@@ -105,9 +105,9 @@
               :renewalTerm="renewalTerm"
               :startDate="getStartDate(renewalTerm)"
               @update="updateModel"
-              @addModel="addBlankTransportModel"
-              @deleteModel="deleteTransportModel"
-              @deleteDocument="deleteDocument" />
+              @add-model="addBlankTransportModel"
+              @delete-model="deleteTransportModel"
+              @delete-document="deleteDocument" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -129,13 +129,13 @@
             <IndigenousProgrammingAllowance
               v-if="panel.id === INDIGENOUS"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
-              @update="updateModel"
-              :formDisabled="currentTermDisabled || formDisabled" />
+              :formDisabled="formDisabled"
+              @update="updateModel" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === SUPPORT_NEEDS"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :formDisabled="currentTermDisabled || formDisabled"
+              :formDisabled="formDisabled"
               @update="updateModel" />
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -151,13 +151,13 @@
           <v-expansion-panel-text>
             <TransportationAllowance
               :transportModels="getTransportModels(nextRenewalTerm)"
-              :formDisabled="currentTermDisabled || formDisabled"
+              :formDisabled="formDisabled"
               :renewalTerm="nextRenewalTerm"
               :startDate="getStartDate(nextRenewalTerm)"
               @update="updateModel"
-              @addModel="addBlankTransportModel"
-              @deleteModel="deleteTransportModel"
-              @deleteDocument="deleteDocument" />
+              @add-model="addBlankTransportModel"
+              @delete-model="deleteTransportModel"
+              @delete-document="deleteDocument" />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
