@@ -108,7 +108,7 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-divider v-if="facility?.additionalAddresses.length === 0" />
+        <v-divider v-if="facility?.additionalAddresses?.length === 0" />
 
         <v-expansion-panels v-else>
           <v-expansion-panel>

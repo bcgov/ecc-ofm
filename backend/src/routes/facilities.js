@@ -46,7 +46,7 @@ router.get(
 /**
  * Update a Facility
  */
-router.put(
+router.patch(
   '/:facilityId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,

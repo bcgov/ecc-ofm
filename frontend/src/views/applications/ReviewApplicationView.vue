@@ -31,7 +31,7 @@
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :facility="facility" :contacts="contacts" />
+              <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :contacts="contacts" />
               <ServiceDeliverySummary v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY" :readonly="readonly" :licences="currentApplication?.licences" />
               <OperatingCostsSummary v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
               <StaffingSummary v-if="page.id === APPLICATION_ROUTES.STAFFING" :readonly="readonly" />
@@ -77,12 +77,6 @@ export default {
     next: {
       type: Boolean,
       default: false,
-    },
-    facility: {
-      type: Object,
-      default: () => {
-        return {}
-      },
     },
     contacts: {
       type: Array,

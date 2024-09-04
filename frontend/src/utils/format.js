@@ -4,6 +4,11 @@ import momentTZ from 'moment-timezone'
 
 import { BLANK_FIELD, TIME_ZONE } from '@/utils/constants'
 
+function formatBooleanToYesNo(value) {
+  if (value == null) return ''
+  return value ? 'Yes' : 'No'
+}
+
 function formatDate(date) {
   if (!date) return BLANK_FIELD
   return moment.utc(date).format('YYYY-MMM-DD')
@@ -83,6 +88,7 @@ function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
 export default {
   convertTimeToDateTimeFormat,
   convertUTCDatetoPSTDate,
+  formatBooleanToYesNo,
   formatDate,
   formatDateTime,
   formatDecimalNumber,

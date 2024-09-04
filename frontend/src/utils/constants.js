@@ -184,6 +184,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   EXPENSE_AUTHORITY: 'Expense authority required',
   LICENCE_INFO: 'Licence information required',
   LICENCE_CONFIRMATION: 'Confirmation of licence information required',
+  FACILITY_LOCATION_ATTRIBUTES: 'Facility location information required',
   DOCUMENT_UPLOAD: 'Document upload required',
   DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'A letter of community support is required to continue',
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',

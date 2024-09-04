@@ -69,7 +69,7 @@ export default {
   async updateFacility(facilityId, facility) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.put(ApiRoutes.FACILITIES + '/' + facilityId, facility)
+      const response = await ApiService.apiAxios.patch(ApiRoutes.FACILITIES + '/' + facilityId, facility)
       return response?.data
     } catch (error) {
       console.log(`Failed to update facility by facility id - ${error}`)
