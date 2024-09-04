@@ -124,6 +124,7 @@ import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES, CORE_S
 import { hasDuplicateVIN } from '@/utils/common'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
+import moment from 'moment'
 
 import rules from '@/utils/rules'
 
@@ -300,8 +301,8 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const termTwoEndDate = new Date(formattedEndDate.setFullYear(formattedEndDate.getFullYear() - 1))
-      const termOneEndDate = new Date(termTwoEndDate.setFullYear(termTwoEndDate.getFullYear() - 1))
+      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
 
       switch (true) {
         case today < termOneEndDate:

@@ -185,6 +185,7 @@ import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
 import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
 import format from '@/utils/format'
+import moment from 'moment'
 
 export default {
   name: 'SupplementaryFormView',
@@ -538,9 +539,8 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-
-      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
-      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
+      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
@@ -575,11 +575,11 @@ export default {
       }
     },
     setIsCurrentTermDisabled(termEndDate, today) {
-      const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_TERM_EXPIRES))
+      const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.currentTermDisabled = today > priorDate
     },
     setIsNextTermEnabled(termEndDate, today) {
-      const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_NEXT_TERM_ENABLED))
+      const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
     },
     setActiveTerm(value) {
@@ -598,8 +598,8 @@ export default {
       }
     },
     getStartDate(term) {
-      const termTwoStartDate = new Date(new Date(this.fundingAgreement.startDate).setFullYear(new Date(this.fundingAgreement.startDate).getFullYear() + 1))
-      const termThreeStartDate = new Date(new Date(termTwoStartDate).setFullYear(new Date(termTwoStartDate).getFullYear() + 1))
+      const termTwoStartDate = moment(new Date(this.fundingAgreement.startDate)).add(1, 'years').toDate()
+      const termThreeStartDate = moment(new Date(this.fundingAgreement.startDate)).add(2, 'years').toDate()
 
       switch (true) {
         case term === SUPP_TERM_CODES.TERM_ONE:
