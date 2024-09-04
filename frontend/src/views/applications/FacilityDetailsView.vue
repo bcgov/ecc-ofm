@@ -196,7 +196,7 @@ export default {
       return (
         this.updatedFacilityLocationAttributes?.k12SchoolGrounds !== this.currentApplication?.facility?.k12SchoolGrounds ||
         this.updatedFacilityLocationAttributes?.municipalCommunity !== this.currentApplication?.facility?.municipalCommunity ||
-        this.updatedFacilityLocationAttributes?.reserve !== this.currentApplication?.facility?.reserve ||
+        this.updatedFacilityLocationAttributes?.onReserve !== this.currentApplication?.facility?.onReserve ||
         this.updatedFacilityLocationAttributes?.yppDesignation !== this.currentApplication?.facility?.yppDesignation ||
         this.updatedFacilityLocationAttributes?.yppEnrolled !== this.currentApplication?.facility?.yppEnrolled ||
         this.updatedFacilityLocationAttributes?.personalResidence !== this.currentApplication?.facility?.personalResidence
@@ -290,7 +290,7 @@ export default {
       this.updatedFacilityLocationAttributes = {
         k12SchoolGrounds: updatedFacility?.k12SchoolGrounds,
         municipalCommunity: updatedFacility?.municipalCommunity,
-        reserve: updatedFacility?.reserve,
+        onReserve: updatedFacility?.onReserve,
         yppDesignation: updatedFacility?.yppDesignation,
         yppEnrolled: updatedFacility?.yppDesignation ? updatedFacility?.yppEnrolled : null,
         personalResidence: updatedFacility?.personalResidence,

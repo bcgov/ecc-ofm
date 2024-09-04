@@ -69,7 +69,7 @@ export const useApplicationsStore = defineStore('applications', {
         !isEmpty(facility) &&
         facility?.k12SchoolGrounds != null &&
         facility?.municipalCommunity != null &&
-        facility?.reserve != null &&
+        facility?.onReserve != null &&
         facility?.yppDesignation != null &&
         (facility?.yppDesignation === 0 || facility?.yppEnrolled != null) &&
         facility?.personalResidence != null

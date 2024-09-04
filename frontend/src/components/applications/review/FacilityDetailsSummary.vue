@@ -19,27 +19,27 @@
       <div v-if="isFacilityLocationAttributesComplete(currentApplication?.facility)">
         <v-row no-gutters>
           <AppLabel class="mr-2">Is your facility located on K-12 school grounds or affiliated with a Board of Education?</AppLabel>
-          <div>{{ currentApplication?.facility?.k12SchoolGrounds ? 'Yes' : 'No' }}</div>
+          <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.k12SchoolGrounds) }}</div>
         </v-row>
         <v-row no-gutters>
           <AppLabel class="mr-2">Is your facility located in a municipal community center?</AppLabel>
-          <div>{{ currentApplication?.facility?.municipalCommunity ? 'Yes' : 'No' }}</div>
+          <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.municipalCommunity) }}</div>
         </v-row>
         <v-row no-gutters>
           <AppLabel class="mr-2">Is your facility located on Reserve?</AppLabel>
-          <div>{{ currentApplication?.facility?.reserve ? 'Yes' : 'No' }}</div>
+          <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.onReserve) }}</div>
         </v-row>
         <v-row no-gutters>
           <AppLabel class="mr-2">Is your facility designated as a Young Parent Program (YPP) facility?</AppLabel>
-          <div>{{ currentApplication?.facility?.yppDesignation ? 'Yes' : 'No' }}</div>
+          <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.yppDesignation) }}</div>
         </v-row>
         <v-row v-if="currentApplication?.facility?.yppDesignation" no-gutters>
           <AppLabel class="mr-2">Do you currently have YPP families enrolled?</AppLabel>
-          <div>{{ currentApplication?.facility?.yppEnrolled ? 'Yes' : 'No' }}</div>
+          <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.yppEnrolled) }}</div>
         </v-row>
         <v-row no-gutters>
           <AppLabel class="mr-2">Does your facility operate in a personal residence?</AppLabel>
-          <div>{{ currentApplication?.facility?.personalResidence ? 'Yes' : 'No' }}</div>
+          <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.personalResidence) }}</div>
         </v-row>
       </div>
       <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#location-attributes', params: { applicationGuid: $route.params.applicationGuid } }">

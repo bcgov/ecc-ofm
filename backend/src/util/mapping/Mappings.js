@@ -242,7 +242,7 @@ const FacilityMappings = [
   { back: 'ofm_facility_review_complete', front: 'facilityReviewComplete' },
   { back: 'ofm_on_k12_school_grounds_or_board_affiliated', front: 'k12SchoolGrounds' },
   { back: 'ofm_in_municipal_community_center', front: 'municipalCommunity' },
-  { back: 'ofm_on_reserve', front: 'reserve' },
+  { back: 'ofm_on_reserve', front: 'onReserve' },
   { back: 'ofm_ypp_designation', front: 'yppDesignation' },
   { back: 'ofm_ypp_enrolled', front: 'yppEnrolled' },
   { back: 'ofm_personal_residence', front: 'personalResidence' },
