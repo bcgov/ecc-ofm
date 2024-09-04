@@ -6,6 +6,7 @@
         <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
           <div v-if="!question.hide">
             <AppLabel>{{ question?.text }}</AppLabel>
+            <div v-if="question?.additionalInfo" v-html="question?.additionalInfo" class="my-2" />
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
               :questions="getTableQuestionHeaders(question)"

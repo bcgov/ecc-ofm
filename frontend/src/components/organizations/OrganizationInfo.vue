@@ -3,147 +3,174 @@
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-container fluid class="pa-0">
         <v-row no-gutters class="mb-4">
-          <v-col cols="12" md="6" lg="6">
-            <v-card variant="outlined" class="card-outline fill-height">
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
-                  <AppLabel>Organization legal name:</AppLabel>
+          <v-col cols="12" lg="6">
+            <v-card variant="outlined" class="soft-outline fill-height px-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4" xxl="3">
+                  <AppLabel>Organization Legal Name:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8" xxl="9">
                   {{ organization?.name }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
-                  <AppLabel>Doing business as:</AppLabel>
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4" xxl="3">
+                  <AppLabel>Doing Business As:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8" xxl="9">
                   {{ organization?.doingBusinessAsName }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
-                  <AppLabel>Email address:</AppLabel>
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4" xxl="3">
+                  <AppLabel>Business Type:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8" xxl="9">
+                  {{ getBusinessTypeNameById(organization?.businessTypeCode) }}
+                </v-col>
+              </v-row>
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4" xxl="3">
+                  <AppLabel>Email Address:</AppLabel>
+                </v-col>
+                <v-col cols="12" sm="7" xl="8" xxl="9">
                   {{ organization?.email }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4" xxl="3">
                   <AppLabel>Phone (landline):</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8" xxl="9">
                   {{ organization?.phoneLandline }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4" xxl="3">
                   <AppLabel>Phone (cell):</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8" xxl="9">
                   {{ organization?.phoneCell }}
                 </v-col>
               </v-row>
             </v-card>
           </v-col>
-          <v-col cols="12" md="6" lg="6" class="mt-3 mt-md-0 pl-md-3">
-            <v-card variant="outlined" class="card-outline fill-height">
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
-                  <AppLabel>Mailing Address:</AppLabel>
-                </v-col>
+          <v-col cols="12" lg="6" class="mt-3 mt-lg-0 pl-lg-3">
+            <v-card variant="outlined" class="soft-outline fill-height px-2">
+              <v-row no-gutters class="my-2">
+                <AppLabel>Mailing Address:</AppLabel>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4">
                   <AppLabel>Street Address 1:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8">
                   {{ organization?.isMailingAddressDifferent ? organization?.mailingStreetAddress1 : organization?.streetAddress1 }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4">
                   <AppLabel>Street Address 2:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8">
                   {{ organization?.isMailingAddressDifferent ? organization?.mailingStreetAddress2 : organization?.streetAddress2 }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
-                <v-col cols="auto" sm="auto" md="auto" lg="auto" class="ma-2">
-                  <AppLabel>City:</AppLabel>
+                <v-col cols="12" xl="4">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="5" xl="4" xxl="3">
+                      <AppLabel>City:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="7" xl="8" xxl="9">
+                      {{ organization?.isMailingAddressDifferent ? organization?.mailingCity : organization?.city }}
+                    </v-col>
+                  </v-row>
                 </v-col>
-                <v-col cols="3" class="ma-2">
-                  {{ organization?.isMailingAddressDifferent ? organization?.mailingCity : organization?.city }}
+                <v-col cols="12" xl="4" class="my-2 my-xl-0">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="5" xl="4" xxl="3">
+                      <AppLabel>Province:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="7" xl="8" xxl="9">
+                      {{ organization?.isMailingAddressDifferent ? organization?.mailingProvince : organization?.province }}
+                    </v-col>
+                  </v-row>
                 </v-col>
-                <v-col cols="auto" class="ma-2">
-                  <AppLabel>Prov:</AppLabel>
-                </v-col>
-                <v-col cols="auto" class="ma-2">
-                  {{ organization?.isMailingAddressDifferent ? organization?.mailingProvince : organization?.province }}
-                </v-col>
-                <v-col cols="auto" class="ma-2">
-                  <AppLabel>Postal Code:</AppLabel>
-                </v-col>
-                <v-col cols="2" class="ma-2">
-                  {{ organization?.isMailingAddressDifferent ? organization?.mailingPostalCode : organization?.postalCode }}
+                <v-col cols="12" xl="4">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="5" xxl="4">
+                      <AppLabel>Postal Code:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="7" xxl="8">
+                      {{ organization?.isMailingAddressDifferent ? organization?.mailingPostalCode : organization?.postalCode }}
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
-              <v-row><v-col></v-col></v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" class="ma-2">
-                  <AppLabel>Physical Address:</AppLabel>
-                </v-col>
+              <v-row no-gutters class="mt-6 mt-xl-10 mb-2">
+                <AppLabel>Physical Address:</AppLabel>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="3" lg="3" class="ma-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4">
                   <AppLabel>Street Address 1:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8">
                   {{ organization?.streetAddress1 }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="12" sm="3" md="2" lg="3" class="ma-2">
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" sm="5" xl="4">
                   <AppLabel>Street Address 2:</AppLabel>
                 </v-col>
-                <v-col cols="12" sm="8" md="8" lg="8" class="ma-2">
+                <v-col cols="12" sm="7" xl="8">
                   {{ organization?.streetAddress2 }}
                 </v-col>
               </v-row>
-              <v-row no-gutters>
-                <v-col cols="auto" class="ma-2">
-                  <AppLabel>City:</AppLabel>
+              <v-row no-gutters class="my-2">
+                <v-col cols="12" xl="4">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="5" xl="4" xxl="3">
+                      <AppLabel>City:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="7" xl="8" xxl="9">
+                      {{ organization?.city }}
+                    </v-col>
+                  </v-row>
                 </v-col>
-                <v-col cols="3" class="ma-2">
-                  {{ organization?.city }}
+                <v-col cols="12" xl="4" class="my-2 my-xl-0">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="5" xl="4" xxl="3">
+                      <AppLabel>Province:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="7" xl="8" xxl="9">
+                      {{ organization?.province }}
+                    </v-col>
+                  </v-row>
                 </v-col>
-                <v-col cols="auto" class="ma-2">
-                  <AppLabel>Prov:</AppLabel>
-                </v-col>
-                <v-col cols="auto" class="ma-2">
-                  {{ organization?.province }}
-                </v-col>
-                <v-col cols="auto" class="ma-2">
-                  <AppLabel>Postal Code:</AppLabel>
-                </v-col>
-                <v-col cols="2" class="ma-2">
-                  {{ organization?.postalCode }}
+                <v-col cols="12" xl="4">
+                  <v-row no-gutters>
+                    <v-col cols="12" sm="5" xxl="4">
+                      <AppLabel>Postal Code:</AppLabel>
+                    </v-col>
+                    <v-col cols="12" sm="7" xxl="8">
+                      {{ organization?.postalCode }}
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-card>
           </v-col>
         </v-row>
         <v-skeleton-loader :loading="loadingInclusionPolicy" type="table-tbody">
-          <v-card variant="outlined" class="card-outline pa-2 w-100">
+          <v-card variant="outlined" class="soft-outline pa-2 w-100">
             <div class="w-100">
               <v-row no-gutters>
                 <v-col class="">
                   <AppLabel>Does your organization have an inclusion policy?</AppLabel>
                 </v-col>
-                <v-col class="mt-2">
-                  <v-row v-if="editable && !editMode" justify="end">
+                <v-col v-if="editable && !editMode" class="mt-2">
+                  <v-row justify="end">
                     <AppButton id="edit-button" variant="text" :disabled="loading" @click="toggleEditMode()">
                       <v-icon icon="fa:fa-regular fa-edit" class="transaction-icon"></v-icon>
                     </AppButton>
@@ -154,26 +181,26 @@
                 <v-col>
                   <v-radio-group v-model="organizationEdit.hasInclusionPolicy" :readonly="!editMode" hide-details>
                     <v-row no-gutters>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="Yes" :value="true"></v-radio>
                       </v-col>
-                      <v-col cols="12" sm="2" md="1">
+                      <v-col cols="12" sm="2" lg="1">
                         <v-radio :class="{ 'no-hover': !editMode }" label="No" :value="false"></v-radio>
                       </v-col>
                     </v-row>
                   </v-radio-group>
                   <template v-if="showDocuments">
-                    <v-col cols="12" lg="10" xl="8" xxl="6" v-if="organizationEdit.hasInclusionPolicy" class="pt-0">
-                      <AppLabel>Inclusion Policy Document:</AppLabel>
+                    <v-col v-if="organizationEdit.hasInclusionPolicy" cols="12" lg="10" xl="8" xxl="6" class="pt-0">
                       <AppDocumentUpload
                         id="inclusion-policy-upload"
                         ref="documentUpload"
                         v-model="documentsToUpload"
-                        entityName="accounts"
+                        :document-type="DOCUMENT_TYPES.INCLUSION_POLICY"
+                        entity-name="accounts"
                         :loading="loadingInclusionPolicy"
                         :readonly="!editMode"
-                        :uploadedDocuments="uploadedDocumentsEdit"
-                        @deleteUploadedDocument="deleteUploadedDocument" />
+                        :uploaded-documents="uploadedDocumentsEdit"
+                        @delete-uploaded-document="deleteUploadedDocument" />
                       <v-alert v-if="showUploadDocumentsAlert" density="compact" type="error" class="mt-1">
                         Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
                       </v-alert>
@@ -198,10 +225,14 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
+import { mapState } from 'pinia'
+
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
-import { isEmpty } from 'lodash'
+import { useAppStore } from '@/stores/app'
+import { DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   components: { AppButton, AppLabel, AppDocumentUpload },
@@ -245,6 +276,7 @@ export default {
   },
 
   computed: {
+    ...mapState(useAppStore, ['getBusinessTypeNameById']),
     documentsExistOrBeingAdded() {
       return !isEmpty(this.documentsToUpload) || !isEmpty(this.uploadedDocumentsEdit)
     },
@@ -254,6 +286,9 @@ export default {
     showUploadDocumentsAlert() {
       return this.editMode && this.invalidInclusionPolicy
     },
+  },
+  created() {
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
 
   updated() {
@@ -308,10 +343,6 @@ export default {
 </script>
 
 <style scoped>
-.card-outline {
-  border: 1px solid #dee2e6 !important;
-}
-
 .no-hover {
   pointer-events: none;
 }

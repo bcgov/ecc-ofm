@@ -149,8 +149,7 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
-import { mapState, mapActions } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
+import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
 import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
@@ -211,7 +210,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
       return this.PANELS?.map((panel) => panel.id)
@@ -223,11 +221,18 @@ export default {
       //disable all components on the form if user is in bad standing or does not have correct permissions
       return !this.hasGoodStanding || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
+    transportAppsHaveZero() {
+      return this.models
+        .filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+        ?.some((el) => el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0')
+    },
   },
   watch: {
     back: {
       async handler() {
-        await this.saveApplication()
+        if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+          await this.saveApplication()
+        }
         this.$router.push({ name: 'applications-history' })
       },
     },
@@ -243,7 +248,12 @@ export default {
     },
     next: {
       async handler() {
-        await this.saveApplication()
+        if (this.transportAppsHaveZero) {
+          await this.$refs.form?.validate()
+          return
+        } else if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
+          await this.saveApplication()
+        }
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
       },
@@ -277,7 +287,6 @@ export default {
     await this.loadData()
   },
   methods: {
-    ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPanelIDs : []
@@ -286,9 +295,6 @@ export default {
       try {
         this.loading = true
         this.$emit('process', true)
-        if (!this.currentOrg) {
-          await this.getOrganizationInfo(this.userInfo?.organizationId)
-        }
         if (this.$route?.query?.nextTerm === 'true') {
           this.setActiveTerm(true)
         }
@@ -298,6 +304,11 @@ export default {
       }
     },
     async saveApplication(showAlert = false) {
+      if (this.transportAppsHaveZero) {
+        await this.$refs.form?.validate()
+        this.setFailureAlert('Failed to save Transportation Allowance')
+        return
+      }
       try {
         this.loading = true
         this.$emit('process', true)

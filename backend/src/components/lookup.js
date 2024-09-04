@@ -112,6 +112,10 @@ async function getReportTemplates() {
 }
 */
 
+async function getBusinessTypes() {
+  return fetchAndCacheData('businessTypes', 'ecc_business_type')
+}
+
 async function getHealthAuthorities() {
   return fetchAndCacheData('healthAuthorities', 'ecc_health_authorities')
 }
@@ -137,11 +141,12 @@ async function getUnions() {
  */
 async function getLookupInfo(_req, res) {
   try {
-    const [applicationIntakes, requestCategories, requestSubCategories, roles, healthAuthorities, facilityTypes, licenceTypes, paymentTypes, unions] = await Promise.all([
+    const [applicationIntakes, requestCategories, requestSubCategories, roles, businessTypes, healthAuthorities, facilityTypes, licenceTypes, paymentTypes, unions] = await Promise.all([
       getApplicationIntakes(),
       getRequestCategories(),
       getRequestSubCategories(),
       getRoles(),
+      getBusinessTypes(),
       getHealthAuthorities(),
       getFacilityTypes(),
       getLicenceTypes(),
@@ -154,6 +159,7 @@ async function getLookupInfo(_req, res) {
       requestCategories: requestCategories,
       requestSubCategories: requestSubCategories,
       roles: roles,
+      businessTypes: businessTypes,
       healthAuthorities: healthAuthorities,
       facilityTypes: facilityTypes,
       licenceTypes: licenceTypes,

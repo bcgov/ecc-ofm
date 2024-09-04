@@ -1,15 +1,16 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <v-card v-if="notification" variant="flat">
     <v-card-title class="notification-details-header">
       <v-row>
-        <v-col sm="12" lg="9" xl="10" class="notification-from-text pa-0">
+        <v-col cols="7" md="8" lg="9" class="notification-from-text pa-0">
           <strong>From:</strong>
           &nbsp;Operating Funding Model Program
         </v-col>
-        <v-col sm="12" lg="3" xl="2" class="pa-0 d-flex justify-end mt-1">
-          <AppButton v-if="notification?.isRead" variant="text" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
-            <v-icon class="icon" left>mdi-email-outline</v-icon>
-            <span class="btn-label">Mark Unread</span>
+        <v-col cols="5" md="4" lg="3" class="pa-0 d-flex justify-end mt-1">
+          <AppButton v-if="notification?.isRead" size="small" class="notifications-button" :primary="false" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
+            <v-icon class="mr-1" left>mdi-email-outline</v-icon>
+            <span>Mark Unread</span>
           </AppButton>
         </v-col>
       </v-row>
@@ -87,5 +88,10 @@ export default {
 .notification-subject-text {
   font-size: 1.1rem;
   white-space: pre-wrap;
+}
+
+.notifications-button:focus {
+  outline: 0px !important;
+  outline-offset: none !important;
 }
 </style>

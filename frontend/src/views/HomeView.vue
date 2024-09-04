@@ -11,7 +11,7 @@
     </v-banner>
   </v-row>
   <AppHeroImage />
-  <OrganizationHeader />
+  <OrganizationHeader :show-facility="false" />
   <v-container v-bind="$attrs">
     <v-row>
       <v-col class="pa-1">

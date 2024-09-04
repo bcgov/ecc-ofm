@@ -1,41 +1,40 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <v-container v-if="assistanceRequest">
     <v-row>
-      <v-col cols="9" class="d-flex align-center pl-0 pt-0 pb-4">
+      <v-col cols="7" lg="9" class="d-flex align-center pl-0 pt-0 pb-4">
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
-      <v-col cols="3" class="d-flex flex-column align-end pa-0">
-        <AppButton variant="text" v-if="assistanceRequest.isRead" @click="this.$emit('toggleMarkUnreadButtonInConversationThread')">
-          <v-icon class="icon" left>mdi-email-outline</v-icon>
+      <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
+        <AppButton v-if="assistanceRequest.isRead" size="small" min-width="155px" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
+          <v-icon left class="mr-1">mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
-        <v-tooltip v-if="showTooltip" content-class="tooltip" :text="getReplyDisabledText()">
-          <template v-slot:activator="{ props }">
-            <div v-bind="props" class="reply-disabled">
-              <v-icon left>mdi-reply</v-icon>
-              <span>Reply</span>
+        <v-tooltip
+          :disabled="!showTooltip"
+          class="ma-1"
+          content-class="tooltip"
+          text="Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).">
+          <template #activator="{ props }">
+            <div v-bind="props">
+              <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small" min-width="155px" @click="toggleReplyRequestDialog">
+                <v-icon left class="mr-1">mdi-reply</v-icon>
+                <span>Reply</span>
+              </AppButton>
             </div>
           </template>
         </v-tooltip>
-        <AppButton variant="text" v-else-if="isReplyButtonEnabled" @click="toggleReplyRequestDialog" class="pr-2">
-          <v-icon class="icon" left>mdi-reply</v-icon>
-          <span>Reply</span>
-        </AppButton>
-        <div v-else class="reply-disabled">
-          <v-icon left>mdi-reply</v-icon>
-          <span>Reply</span>
-        </div>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="auto" class="font-weight-bold pt-0 pl-0">Status:</v-col>
-      <v-col cols="3" class="pt-0 pl-1">{{ assistanceRequest.status }}</v-col>
+      <v-col cols="3" class="pt-0 pl-1" data-cy="status">{{ assistanceRequest.status }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pl-1">Reference#:</v-col>
-      <v-col class="pt-0 pl-0">{{ assistanceRequest.referenceNumber }}</v-col>
+      <v-col class="pt-0 pl-0" data-cy="referenceNo">{{ assistanceRequest.referenceNumber }}</v-col>
     </v-row>
     <v-row>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0 pl-0">Topic:</v-col>
-      <v-col cols="3" class="pt-0 pb-0">{{ assistanceRequest.categoryName }}</v-col>
+      <v-col cols="3" class="pt-0 pb-0" data-cy="topic">{{ assistanceRequest.categoryName }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
       <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
     </v-row>
@@ -44,18 +43,18 @@
         <span class="font-weight-bold">Sort By:</span>
         <AppButton variant="text" @click="toggleSort()">
           <span>{{ isSortedDesc ? 'Newest' : 'Oldest' }} first</span>
-          <v-icon v-if="isSortedDesc" class="icon">mdi-arrow-up</v-icon>
-          <v-icon v-else class="icon">mdi-arrow-down</v-icon>
+          <v-icon v-if="isSortedDesc">mdi-arrow-up</v-icon>
+          <v-icon v-else>mdi-arrow-down</v-icon>
         </AppButton>
       </v-col>
     </v-row>
     <v-row v-if="showCloseRequestBanner">
-      <CloseRequestBanner :assistanceRequestId="assistanceRequestId" class="pa-0 mb-4" />
+      <CloseRequestBanner :assistance-request-id="assistanceRequestId" class="pa-0 mb-4" />
     </v-row>
     <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table">
+          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table" data-cy="conversations-table">
             <template #headers></template>
             <template #item="{ item }">
               <v-row class="border-bottom ma-0">
@@ -78,8 +77,8 @@
     </v-row>
     <ReplyRequestDialog
       class="pa-0"
-      :assistanceRequestId="assistanceRequest.assistanceRequestId"
-      :referenceNumber="assistanceRequest.referenceNumber"
+      :assistance-request-id="assistanceRequest.assistanceRequestId"
+      :reference-number="assistanceRequest.referenceNumber"
       :show="showReplyRequestDialog"
       @reply-success-event="replySuccessEvent"
       @close="toggleReplyRequestDialog" />
@@ -95,12 +94,11 @@ import CloseRequestBanner from '@/components/messages/CloseRequestBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
-import { ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT, ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
 
 export default {
   components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
   mixins: [alertMixin],
-  format: [format],
   props: {
     assistanceRequestId: {
       type: String,
@@ -108,6 +106,7 @@ export default {
       default: '',
     },
   },
+  format: [format],
   emits: ['toggleMarkUnreadButtonInConversationThread'],
   data() {
     return {
@@ -200,13 +199,6 @@ export default {
     },
 
     /**
-     * Returns the text to display in the tooltip for the reply button when it is disabled.
-     */
-    getReplyDisabledText() {
-      return ASSISTANCE_REQUEST_REPLY_DISABLED_TEXT
-    },
-
-    /**
      * Returns the sent by value for the conversation depending on the source system.
      */
     deriveFromDisplay(item) {
@@ -217,6 +209,10 @@ export default {
 </script>
 
 <style scoped>
+.reply-button {
+  width: 155px;
+}
+
 .data-table {
   max-height: 48vh;
 }
@@ -233,14 +229,5 @@ export default {
 
 .border-bottom {
   border-top: 1px solid #e0e0e0;
-}
-
-.reply-disabled {
-  padding-right: 10px;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 1.25px;
-  color: #c0c0c0;
-  font-family: BCSans, veranda, arial, sans-serif;
 }
 </style>

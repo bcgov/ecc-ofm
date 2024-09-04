@@ -16,6 +16,7 @@ export const useAppStore = defineStore('app', {
     requestCategories: {},
     requestSubCategories: {},
     roles: {},
+    businessTypes: {},
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
@@ -25,6 +26,12 @@ export const useAppStore = defineStore('app', {
     unions: {},
   }),
   getters: {
+    getBusinessTypeNameById: (state) => {
+      return (id) => {
+        const businessType = state.businessTypes?.find((item) => item.id === id)
+        return businessType?.description
+      }
+    },
     getRoleNameById: (state) => {
       return (id) => {
         const role = state.roles?.find((role) => role.roleId === id)
@@ -82,6 +89,7 @@ export const useAppStore = defineStore('app', {
         this.requestCategories = lookupInfo?.data?.requestCategories
         this.requestSubCategories = lookupInfo?.data?.requestSubCategories
         this.roles = lookupInfo?.data?.roles
+        this.businessTypes = lookupInfo?.data?.businessTypes
         this.healthAuthorities = lookupInfo?.data?.healthAuthorities
         this.facilityTypes = lookupInfo?.data?.facilityTypes
         this.licenceTypes = lookupInfo?.data?.licenceTypes

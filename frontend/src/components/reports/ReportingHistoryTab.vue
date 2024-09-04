@@ -12,7 +12,16 @@
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">You have no submitted reports.</AppAlertBanner>
-      <v-data-table v-else :headers="headers" :items="filteredSubmittedReports" item-key="surveyResponseId" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
+      <v-data-table
+        v-else
+        id="reporting-history-table"
+        :headers="headers"
+        :items="filteredSubmittedReports"
+        item-key="surveyResponseId"
+        density="compact"
+        :mobile="null"
+        mobile-breakpoint="md"
+        class="soft-outline">
         <template #[`item.status`]="{ item }">
           <span :class="getStatusClass(item)">{{ item.status }}</span>
         </template>
@@ -21,8 +30,8 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showUpdate(item)" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">Update</AppButton>
-            <AppButton v-else-if="showView()" :primary="false" size="small" height="30px" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
             <AppButton
               v-if="showUnlock(item)"
               :primary="false"
