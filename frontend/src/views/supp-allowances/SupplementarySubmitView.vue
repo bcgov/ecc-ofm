@@ -13,7 +13,7 @@
         </AppButton>
       </v-col>
     </v-row>
-    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :isLoading="loading" persistent max-width="40%" @close="toggleCancelDialog">
+    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :is-loading="loading" persistent max-width="40%" @close="toggleCancelDialog">
       <template #content>
         <v-row class="mb-2">
           <v-col class="text-center">
@@ -33,15 +33,19 @@
         </v-row>
       </template>
     </AppDialog>
-    <div>
-      <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-      <div v-else>
-        <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
-            <div v-if="panel.supplementaryApplicationId">
+
+    <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
+    <div v-else>
+      <v-expansion-panels v-model="panel" multiple>
+        <div v-if="hasCoreServiesApplication" class="w-100">
+          <v-expansion-panel-title class="tooltip py-6" hide-actions>
+            <span class="header-label">Core Services Allowance</span>
+          </v-expansion-panel-title>
+          <v-expansion-panel v-for="panel in CORE_SERVICES_PANELS" :key="panel.id" :value="panel.id">
+            <div v-if="!isEmpty(getModelsByType(panel.supplementaryType))">
               <v-expansion-panel-title>
                 <!-- page complete -->
-                <div v-if="isPanelComplete(panel)">
+                <div v-if="isPanelComplete(panel.id)">
                   <span class="header-label">{{ panel.title }}</span>
                   <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
                 </div>
@@ -53,31 +57,52 @@
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <IndigenousProgrammingSummary
-                  v-if="panel.id === 'indigenous' && panel.supplementaryApplicationId"
-                  :indigenousProgrammingModels="getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
+                  v-if="panel.supplementaryType === SUPPLEMENTARY_TYPES.INDIGENOUS"
+                  :indigenous-programming-models="getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
                 <SupportNeedsSummary
-                  v-if="panel.id === 'support-needs' && panel.supplementaryApplicationId"
-                  :supportModels="getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)"
-                  :hasInclusionPolicy="currentOrg.hasInclusionPolicy"></SupportNeedsSummary>
-                <TransportationSummary
-                  v-if="panel.id === 'transportation' && panel.supplementaryApplicationId"
-                  :draftTransportModels="getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)"
-                  :allTransportModels="allTransportModels"></TransportationSummary>
+                  v-if="panel.supplementaryType === SUPPLEMENTARY_TYPES.SUPPORT"
+                  :support-models="getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)"
+                  :has-inclusion-policy="currentOrg.hasInclusionPolicy"></SupportNeedsSummary>
               </v-expansion-panel-text>
             </div>
           </v-expansion-panel>
-        </v-expansion-panels>
+        </div>
 
-        <v-checkbox
-          id="declaration"
-          v-model="supplementaryDeclaration"
-          color="primary"
-          :rules="rules.required"
-          :disabled="readonly"
-          label="I certify that all of the information provided is true and complete to the best of my knowledge."
-          class="my-10"
-          @input="setSubmit"></v-checkbox>
-      </div>
+        <div v-if="hasTransportApplication" class="w-100">
+          <v-expansion-panel-title class="tooltip py-6 mt-8" hide-actions>
+            <span class="header-label">Discretionary Services Allowance</span>
+          </v-expansion-panel-title>
+          <v-expansion-panel :key="DISCRETIONARY_PANEL.id" :value="DISCRETIONARY_PANEL.id">
+            <div>
+              <v-expansion-panel-title>
+                <!-- page complete -->
+                <div v-if="isPanelComplete(DISCRETIONARY_PANEL.id)">
+                  <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+                  <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
+                </div>
+                <div v-else>
+                  <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+                  <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
+                  <span class="error-message">Your form is missing required information.</span>
+                </div>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <TransportationSummary :draft-transport-models="getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)" :all-transport-models="allTransportModels"></TransportationSummary>
+              </v-expansion-panel-text>
+            </div>
+          </v-expansion-panel>
+        </div>
+      </v-expansion-panels>
+
+      <v-checkbox
+        id="declaration"
+        v-model="supplementaryDeclaration"
+        color="primary"
+        :rules="rules.required"
+        :disabled="readonly"
+        label="I certify that all of the information provided is true and complete to the best of my knowledge."
+        class="my-10"
+        @input="setSubmit"></v-checkbox>
     </div>
   </v-form>
 </template>
@@ -95,7 +120,7 @@ import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummar
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
+import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
 import { hasDuplicateVIN } from '@/utils/common'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
@@ -152,7 +177,7 @@ export default {
   computed: {
     ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
-      return this.PANELS?.map((panel) => panel.id)
+      return this.allPanels?.map((panel) => panel.id)
     },
     isIndigenousComplete() {
       const model = this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)
@@ -190,6 +215,12 @@ export default {
     hasSupportApplicationAndInclusionPolicy() {
       return !this.getModel(SUPPLEMENTARY_TYPES.SUPPORT) || this.currentOrg.hasInclusionPolicy
     },
+    hasTransportApplication() {
+      return !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT))
+    },
+    hasCoreServiesApplication() {
+      return !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)) || !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS))
+    },
   },
   watch: {
     back: {
@@ -220,23 +251,9 @@ export default {
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.SUPPORT_CHECKBOX_LABELS = SUPPORT_CHECKBOX_LABELS
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
-    this.PANELS = [
-      {
-        title: 'Indigenous Programming Allowance',
-        id: 'indigenous',
-        supplementaryType: this.SUPPLEMENTARY_TYPES.INDIGENOUS,
-      },
-      {
-        title: 'Support Needs Programming Allowance',
-        id: 'support-needs',
-        supplementaryType: this.SUPPLEMENTARY_TYPES.SUPPORT,
-      },
-      {
-        title: 'Transportation Allowance',
-        id: 'transportation',
-        supplementaryType: this.SUPPLEMENTARY_TYPES.TRANSPORT,
-      },
-    ]
+    this.CORE_SERVICES_PANELS = CORE_SERVICES_PANELS
+    this.DISCRETIONARY_PANEL = DISCRETIONARY_PANEL
+    this.allPanels = [...CORE_SERVICES_PANELS, DISCRETIONARY_PANEL]
     this.panel = this.allPanelIDs
     await this.loadData()
   },
@@ -261,9 +278,6 @@ export default {
         this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
 
         for (const el of this.models) {
-          const found = this.PANELS.find((panel) => panel.supplementaryType == el.supplementaryType)
-          found.supplementaryApplicationId = el.supplementaryApplicationId
-
           if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
             el.uploadedDocuments = await DocumentService.getDocuments(el.supplementaryApplicationId)
           }

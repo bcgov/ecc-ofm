@@ -3,6 +3,9 @@
 
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
+      <AppAlertBanner v-if="!hasInclusionPolicy" type="info">
+        Providers are encouraged to use this funding in accordance with their inclusion policy. Providers may also consult with their local SCD program to inquire how it may be used.
+      </AppAlertBanner>
       <AppLabel>Purpose of the Fund:</AppLabel>
       To help child care providers welcome children and families of all abilities by covering costs related to inclusion that may not be covered by base funding or other provincial funding. Children
       with support needs, including those with disabilities, neurodiversity, or behaviors that challenge staff, may need additional support, accommodations, or program modifications to participate
@@ -19,8 +22,8 @@
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      An Inclusion Policy is a requirement to apply for Support Needs Allowance. Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can upload your
-      policy in
+      <strong>An Inclusion Policy is a requirement to apply for Support Needs Allowance.</strong>
+      Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can upload your policy in
       <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
     </v-col>
   </v-row>
@@ -98,10 +101,6 @@
         :rules="rules.required"></v-textarea>
     </v-row>
   </div>
-  <AppAlertBanner v-else type="warning">
-    You must have an inclusion policy to apply for Support Needs Allowance. Your organization account manager can update inclusion policy details in
-    <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
-  </AppAlertBanner>
 </template>
 
 <script>

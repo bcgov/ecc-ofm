@@ -66,7 +66,11 @@
     <div v-if="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
-        <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
+        <v-expansion-panel-title class="tooltip py-6" hide-actions>
+          <span class="header-label">Core Services Allowance</span>
+        </v-expansion-panel-title>
+
+        <v-expansion-panel v-for="panel in CORE_SERVICES_PANELS" :key="panel.id" :value="panel.id">
           <v-expansion-panel-title>
             <span class="header-label">{{ panel.title }}</span>
             <span v-if="isFundingActive(panel.id, renewalTerm)" class="active-label ml-9">Active</span>
@@ -83,8 +87,19 @@
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
               :formDisabled="currentTermDisabled || formDisabled"
               @update="updateModel" />
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <v-expansion-panel-title class="tooltip py-6 mt-8" hide-actions>
+          <span class="header-label">Discretionary Services Allowance</span>
+        </v-expansion-panel-title>
+        <v-expansion-panel :key="DISCRETIONARY_PANEL.id" :value="DISCRETIONARY_PANEL.id">
+          <v-expansion-panel-title>
+            <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+            <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, renewalTerm)" class="active-label ml-9">Active</span>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
             <TransportationAllowance
-              v-if="panel.id === TRANSPORTATION"
               :transportModels="getTransportModels(renewalTerm)"
               :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="renewalTerm"
@@ -97,10 +112,15 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
+
     <div v-if="nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
       <v-expansion-panels v-else v-model="panel" multiple>
-        <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
+        <v-expansion-panel-title class="tooltip py-6" hide-actions>
+          <span class="header-label">Core Services Allowance</span>
+        </v-expansion-panel-title>
+
+        <v-expansion-panel v-for="panel in CORE_SERVICES_PANELS" :key="panel.id" :value="panel.id">
           <v-expansion-panel-title>
             <span class="header-label">{{ panel.title }}</span>
             <span v-if="isFundingActive(panel.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
@@ -110,17 +130,28 @@
               v-if="panel.id === INDIGENOUS"
               :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
               @update="updateModel"
-              :formDisabled="formDisabled" />
+              :formDisabled="currentTermDisabled || formDisabled" />
             <SupportNeedsProgrammingAllowance
               v-if="panel.id === SUPPORT_NEEDS"
               :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
               :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :formDisabled="formDisabled"
+              :formDisabled="currentTermDisabled || formDisabled"
               @update="updateModel" />
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <v-expansion-panel-title class="tooltip py-6 mt-8" hide-actions>
+          <span class="header-label">Discretionary Services Allowance</span>
+        </v-expansion-panel-title>
+        <v-expansion-panel :key="DISCRETIONARY_PANEL.id" :value="DISCRETIONARY_PANEL.id">
+          <v-expansion-panel-title>
+            <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+            <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
             <TransportationAllowance
-              v-if="panel.id === TRANSPORTATION"
               :transportModels="getTransportModels(nextRenewalTerm)"
-              :formDisabled="formDisabled"
+              :formDisabled="currentTermDisabled || formDisabled"
               :renewalTerm="nextRenewalTerm"
               :startDate="getStartDate(nextRenewalTerm)"
               @update="updateModel"
@@ -152,7 +183,7 @@ import { uuid } from 'vue-uuid'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
-import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
+import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
 import format from '@/utils/format'
 
 export default {
@@ -212,7 +243,8 @@ export default {
   computed: {
     ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
-      return this.PANELS?.map((panel) => panel.id)
+      const allPanels = [...this.CORE_SERVICES_PANELS, this.DISCRETIONARY_PANEL]
+      return allPanels?.map((panel) => panel.id)
     },
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === GOOD_STANDING_STATUS_CODES.GOOD
@@ -264,20 +296,9 @@ export default {
     this.TRANSPORTATION = 'transportation'
     this.SUPPORT_NEEDS = 'support-needs'
     this.INDIGENOUS = 'indigenous'
-    this.PANELS = [
-      {
-        title: 'Indigenous Programming Allowance',
-        id: this.INDIGENOUS,
-      },
-      {
-        title: 'Support Needs Programming Allowance',
-        id: this.SUPPORT_NEEDS,
-      },
-      {
-        title: 'Transportation Allowance',
-        id: this.TRANSPORTATION,
-      },
-    ]
+    this.CORE_SERVICES_PANELS = CORE_SERVICES_PANELS
+    this.DISCRETIONARY_PANEL = DISCRETIONARY_PANEL
+
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
