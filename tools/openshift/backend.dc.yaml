@@ -76,7 +76,7 @@ objects:
                 - name: log-storage
                   mountPath: /logs
             - image: artifacts.developer.gov.bc.ca/docker-remote/fluent/fluent-bit:1.5.7
-              name: "${APP_NAME}-${BRANCH}-fluent-bit-sidecar"
+              name: '${APP_NAME}-fluent-bit-sidecar-${ENVIRONMENT}'
               imagePullPolicy: Always
               imagePullSecrets:
                 - name: artifactory-creds
@@ -103,11 +103,11 @@ objects:
                   name: metrics
               resources:
                 requests:
-                  cpu: "5m"
-                  memory: "25Mi"
+                  cpu: '5m'
+                  memory: '25Mi'
                 limits:
-                  cpu: "10m"
-                  memory: "50Mi"
+                  cpu: '10m'
+                  memory: '50Mi'
               volumeMounts:
                 - name: log-storage
                   mountPath: /mnt/log
