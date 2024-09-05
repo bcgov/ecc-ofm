@@ -44,9 +44,7 @@
     <ol>
       <li class="mx-5">
         The
-        <a href="https://www2.gov.bc.ca/assets/gov/family-and-social-supports/child-care/running-a-daycare-or-preschool/inclusive-child-care/inclusive-childcare-toolkit.pdf" target="_blank">
-          Inclusive Child Care Toolkit:
-        </a>
+        <a href="https://www2.gov.bc.ca/assets/download/4E6FA25EBD15485E81C402B9FED01870" target="_blank">Inclusive Child Care Toolkit:</a>
         provides resources to help providers and early childhood professionals develop an understanding of inclusive child care practices, and provides information on how to develop an Inclusion
         Policy.
       </li>

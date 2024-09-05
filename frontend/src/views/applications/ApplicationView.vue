@@ -13,27 +13,17 @@
           <ApplicationNavBar />
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
-          <router-view
-            class="min-screen-height"
-            :readonly="readonly"
-            :cancel="cancel"
-            :back="back"
-            :next="next"
-            :save="save"
-            :submit="submit"
-            :facility="facility"
-            :contacts="contacts"
-            @process="process" />
+          <router-view class="min-screen-height" :readonly="readonly" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
           <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
             :loading="processing"
-            :showBack="showBack"
-            :showCancel="showCancel"
-            :showSave="showSave"
-            :showNext="showNext"
-            :showSubmit="showSubmit"
-            :disableNext="disableNext"
-            :disableSubmit="disableSubmit"
+            :show-back="showBack"
+            :show-cancel="showCancel"
+            :show-save="showSave"
+            :show-next="showNext"
+            :show-submit="showSubmit"
+            :disable-next="disableNext"
+            :disable-submit="disableSubmit"
             @back="toggleBack"
             @cancel="toggleCancel"
             @save="toggleSave"
@@ -175,7 +165,7 @@ export default {
         this.validation = false
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
-        await Promise.all([this.getContacts(), this.getFacility()])
+        await this.getContacts()
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
@@ -192,15 +182,6 @@ export default {
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
-
-    async getFacility() {
-      try {
-        if (isEmpty(this.currentApplication)) return
-        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
       }
     },
 

@@ -65,102 +65,108 @@
     </AppAlertBanner>
     <div v-if="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-      <v-expansion-panels v-else v-model="panel" multiple>
-        <v-expansion-panel-title class="tooltip py-6" hide-actions>
-          <span class="header-label">Core Services Allowance</span>
-        </v-expansion-panel-title>
+      <template v-else>
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Core Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ panelComponent.title }}</span>
+              <span v-if="isFundingActive(panelComponent.id, renewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <IndigenousProgrammingAllowance
+                v-if="panelComponent.id === INDIGENOUS"
+                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
+                :formDisabled="currentTermDisabled || formDisabled"
+                @update="updateModel" />
+              <SupportNeedsProgrammingAllowance
+                v-if="panelComponent.id === SUPPORT_NEEDS"
+                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
+                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+                :formDisabled="currentTermDisabled || formDisabled"
+                @update="updateModel" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
 
-        <v-expansion-panel v-for="panel in CORE_SERVICES_PANELS" :key="panel.id" :value="panel.id">
-          <v-expansion-panel-title>
-            <span class="header-label">{{ panel.title }}</span>
-            <span v-if="isFundingActive(panel.id, renewalTerm)" class="active-label ml-9">Active</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <IndigenousProgrammingAllowance
-              v-if="panel.id === INDIGENOUS"
-              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
-              :formDisabled="currentTermDisabled || formDisabled"
-              @update="updateModel" />
-            <SupportNeedsProgrammingAllowance
-              v-if="panel.id === SUPPORT_NEEDS"
-              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
-              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :formDisabled="currentTermDisabled || formDisabled"
-              @update="updateModel" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel-title class="tooltip py-6 mt-8" hide-actions>
-          <span class="header-label">Discretionary Services Allowance</span>
-        </v-expansion-panel-title>
-        <v-expansion-panel :key="DISCRETIONARY_PANEL.id" :value="DISCRETIONARY_PANEL.id">
-          <v-expansion-panel-title>
-            <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
-            <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, renewalTerm)" class="active-label ml-9">Active</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <TransportationAllowance
-              :transportModels="getTransportModels(renewalTerm)"
-              :formDisabled="currentTermDisabled || formDisabled"
-              :renewalTerm="renewalTerm"
-              :startDate="getStartDate(renewalTerm)"
-              @update="updateModel"
-              @add-model="addBlankTransportModel"
-              @delete-model="deleteTransportModel"
-              @delete-document="deleteDocument" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Discretionary Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel">
+          <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+              <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, renewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <TransportationAllowance
+                :transportModels="getTransportModels(renewalTerm)"
+                :formDisabled="currentTermDisabled || formDisabled"
+                :renewalTerm="renewalTerm"
+                :startDate="getStartDate(renewalTerm)"
+                @update="updateModel"
+                @add-model="addBlankTransportModel"
+                @delete-model="deleteTransportModel"
+                @delete-document="deleteDocument" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </template>
     </div>
 
     <div v-if="nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-      <v-expansion-panels v-else v-model="panel" multiple>
-        <v-expansion-panel-title class="tooltip py-6" hide-actions>
-          <span class="header-label">Core Services Allowance</span>
-        </v-expansion-panel-title>
+      <template v-else>
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Core Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ panelComponent.title }}</span>
+              <span v-if="isFundingActive(panelComponent.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <IndigenousProgrammingAllowance
+                v-if="panelComponent.id === INDIGENOUS"
+                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
+                :formDisabled="formDisabled"
+                @update="updateModel" />
+              <SupportNeedsProgrammingAllowance
+                v-if="panelComponent.id === SUPPORT_NEEDS"
+                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
+                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+                :formDisabled="formDisabled"
+                @update="updateModel" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
 
-        <v-expansion-panel v-for="panel in CORE_SERVICES_PANELS" :key="panel.id" :value="panel.id">
-          <v-expansion-panel-title>
-            <span class="header-label">{{ panel.title }}</span>
-            <span v-if="isFundingActive(panel.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <IndigenousProgrammingAllowance
-              v-if="panel.id === INDIGENOUS"
-              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
-              :formDisabled="formDisabled"
-              @update="updateModel" />
-            <SupportNeedsProgrammingAllowance
-              v-if="panel.id === SUPPORT_NEEDS"
-              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
-              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :formDisabled="formDisabled"
-              @update="updateModel" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <v-expansion-panel-title class="tooltip py-6 mt-8" hide-actions>
-          <span class="header-label">Discretionary Services Allowance</span>
-        </v-expansion-panel-title>
-        <v-expansion-panel :key="DISCRETIONARY_PANEL.id" :value="DISCRETIONARY_PANEL.id">
-          <v-expansion-panel-title>
-            <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
-            <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <TransportationAllowance
-              :transportModels="getTransportModels(nextRenewalTerm)"
-              :formDisabled="formDisabled"
-              :renewalTerm="nextRenewalTerm"
-              :startDate="getStartDate(nextRenewalTerm)"
-              @update="updateModel"
-              @add-model="addBlankTransportModel"
-              @delete-model="deleteTransportModel"
-              @delete-document="deleteDocument" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Discretionary Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+              <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <TransportationAllowance
+                :transportModels="getTransportModels(nextRenewalTerm)"
+                :formDisabled="formDisabled"
+                :renewalTerm="nextRenewalTerm"
+                :startDate="getStartDate(nextRenewalTerm)"
+                @update="updateModel"
+                @add-model="addBlankTransportModel"
+                @delete-model="deleteTransportModel"
+                @delete-document="deleteDocument" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </template>
     </div>
   </v-form>
 </template>
@@ -616,10 +622,6 @@ export default {
 }
 </script>
 <style scoped>
-.header-label {
-  font-weight: 700;
-  font-size: 20px;
-}
 .active-label {
   font-weight: 700;
   font-size: 18px;
