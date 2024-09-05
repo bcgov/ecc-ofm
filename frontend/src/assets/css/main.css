@@ -152,6 +152,18 @@ input[type='number'] {
   color: #ffffff !important;
 }
 
+.supplementary-header {
+  background-color: #003466 !important;
+  color: #ffffff !important;
+  padding: 8px 24px 16px !important;
+}
+
+.supplementary-header-label {
+  font-weight: 700;
+  font-size: 20px;
+  margin-right: 12px;
+}
+
 .soft-outline {
   border: 1px solid #00000040 !important;
 }

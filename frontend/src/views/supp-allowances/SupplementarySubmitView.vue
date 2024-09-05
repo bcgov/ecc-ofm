@@ -38,29 +38,29 @@
     <div v-else>
       <v-expansion-panels v-model="panel" multiple>
         <div v-if="hasCoreServiesApplication" class="w-100">
-          <v-expansion-panel-title class="tooltip py-6" hide-actions>
-            <span class="header-label">Core Services Allowance</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel v-for="panel in CORE_SERVICES_PANELS" :key="panel.id" :value="panel.id">
-            <div v-if="!isEmpty(getModelsByType(panel.supplementaryType))">
+          <div class="supplementary-header py-6 mt-8 w-100">
+            <p class="supplementary-header-label">Core Services Allowance</p>
+          </div>
+          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+            <div v-if="!isEmpty(getModelsByType(panelComponent.supplementaryType))">
               <v-expansion-panel-title>
                 <!-- page complete -->
-                <div v-if="isPanelComplete(panel)">
-                  <span class="header-label">{{ panel.title }}</span>
+                <div v-if="isPanelComplete(panelComponent)">
+                  <span class="supplementary-header-label">{{ panelComponent.title }}</span>
                   <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
                 </div>
                 <div v-else>
-                  <span class="header-label">{{ panel.title }}</span>
+                  <span class="supplementary-header-label">{{ panelComponent.title }}</span>
                   <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
                   <span class="error-message">Your form is missing required information.</span>
                 </div>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <IndigenousProgrammingSummary
-                  v-if="panel.supplementaryType === SUPPLEMENTARY_TYPES.INDIGENOUS"
+                  v-if="panelComponent.supplementaryType === SUPPLEMENTARY_TYPES.INDIGENOUS"
                   :indigenous-programming-models="getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
                 <SupportNeedsSummary
-                  v-if="panel.supplementaryType === SUPPLEMENTARY_TYPES.SUPPORT"
+                  v-if="panelComponent.supplementaryType === SUPPLEMENTARY_TYPES.SUPPORT"
                   :support-models="getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)"
                   :has-inclusion-policy="currentOrg.hasInclusionPolicy"></SupportNeedsSummary>
               </v-expansion-panel-text>
@@ -69,19 +69,19 @@
         </div>
 
         <div v-if="hasTransportApplication" class="w-100">
-          <v-expansion-panel-title class="tooltip py-6 mt-8" hide-actions>
-            <span class="header-label">Discretionary Services Allowance</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel :key="DISCRETIONARY_PANEL.id" :value="DISCRETIONARY_PANEL.id">
+          <div class="supplementary-header py-6 mt-8 w-100">
+            <p class="supplementary-header-label">Discretionary Services Allowance</p>
+          </div>
+          <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
             <div>
               <v-expansion-panel-title>
                 <!-- page complete -->
                 <div v-if="isPanelComplete(DISCRETIONARY_PANEL)">
-                  <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+                  <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
                   <v-icon class="check-icon pb-1">mdi-check-circle</v-icon>
                 </div>
                 <div v-else>
-                  <span class="header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+                  <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
                   <v-icon class="alert-icon pb-1 mr-2">mdi-alert-circle</v-icon>
                   <span class="error-message">Your form is missing required information.</span>
                 </div>
@@ -375,15 +375,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.greyBorder {
-  border: 1px solid #0000001a;
-}
-
-.header-label {
-  font-weight: 700;
-  font-size: 20px;
-  margin-right: 12px;
-}
-</style>
