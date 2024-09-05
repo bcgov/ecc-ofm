@@ -38,7 +38,7 @@
     <div v-else>
       <v-expansion-panels v-model="panel" multiple>
         <div v-if="hasCoreServiesApplication" class="w-100">
-          <div class="supplementary-header py-6 mt-8 w-100">
+          <div class="supplementary-header">
             <p class="supplementary-header-label">Core Services Allowance</p>
           </div>
           <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
@@ -69,7 +69,7 @@
         </div>
 
         <div v-if="hasTransportApplication" class="w-100">
-          <div class="supplementary-header py-6 mt-8 w-100">
+          <div class="supplementary-header">
             <p class="supplementary-header-label">Discretionary Services Allowance</p>
           </div>
           <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
