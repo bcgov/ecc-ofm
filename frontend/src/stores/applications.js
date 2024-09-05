@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
+import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
 import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
@@ -36,8 +37,14 @@ export const useApplicationsStore = defineStore('applications', {
       try {
         this.currentApplication = await ApplicationService.getApplication(applicationId)
         if (!this.currentApplication) return
-        this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
-        this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
+        const [uploadedDocuments, licences, facility] = await Promise.all([
+          DocumentService.getDocuments(applicationId),
+          LicenceService.getLicences(this.currentApplication?.facilityId),
+          FacilityService.getFacility(this.currentApplication?.facilityId),
+        ])
+        this.currentApplication.uploadedDocuments = uploadedDocuments
+        this.currentApplication.licences = licences
+        this.currentApplication.facility = facility
         this.checkApplicationComplete()
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
@@ -49,7 +56,24 @@ export const useApplicationsStore = defineStore('applications', {
       Facility Details page
     */
     checkFacilityDetailsComplete() {
-      return this.currentApplication?.primaryContactId && this.currentApplication?.expenseAuthorityId && this.currentApplication?.fiscalYearEndDate
+      return (
+        this.currentApplication?.primaryContactId &&
+        this.currentApplication?.expenseAuthorityId &&
+        this.currentApplication?.fiscalYearEndDate &&
+        this.isFacilityLocationAttributesComplete(this.currentApplication?.facility)
+      )
+    },
+
+    isFacilityLocationAttributesComplete(facility) {
+      return (
+        !isEmpty(facility) &&
+        facility?.k12SchoolGrounds != null &&
+        facility?.municipalCommunity != null &&
+        facility?.onReserve != null &&
+        facility?.yppDesignation != null &&
+        (facility?.yppDesignation === 0 || facility?.yppEnrolled != null) &&
+        facility?.personalResidence != null
+      )
     },
 
     /* 
