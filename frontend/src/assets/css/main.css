@@ -153,9 +153,10 @@ input[type='number'] {
 }
 
 .supplementary-header {
-  background-color: #003466 !important;
-  color: #ffffff !important;
-  padding: 8px 24px 16px !important;
+  background-color: #003466;
+  border-radius: 4px;
+  color: #ffffff;
+  padding: 12px 24px 16px;
 }
 
 .supplementary-header-label {
