@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form">
     <AppAlertBanner type="info">
-      If you answer No to any of these questions, you will not be eligible for OFM funding. More information can be at the
+      Note: If you answer "No" to any of these questions, you will not be eligible for OFM funding. More information can be at the
       <a href="https://www2.gov.bc.ca/gov/content?id=F0D0FD2A00064CDDBF634CF83E4E2599" target="_blank">OFM website</a>
       for eligibility.
     </AppAlertBanner>
