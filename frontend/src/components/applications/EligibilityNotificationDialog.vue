@@ -5,6 +5,7 @@
         Thank you for your interest in joining the $10 a Day ChildCareBC Program. Based on the answers you have provided, your facility has not met the minimum eligibility criteria to participate at
         this time. For more information about the $10 a Day ChildCareBC Program, please visit our
         <a href="https://www2.gov.bc.ca/gov/content?id=F0D0FD2A00064CDDBF634CF83E4E2599" target="_blank">website</a>
+        <span>.</span>
       </div>
     </template>
     <template #button>

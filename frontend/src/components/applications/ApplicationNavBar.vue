@@ -145,22 +145,15 @@ export default {
       if (this.isSelectFacilityPage) {
         return 'mdi-circle'
       }
-      switch (item.routeName) {
-        case APPLICATION_ROUTES.FACILITY_DETAILS:
-          return this.isFacilityDetailsComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case APPLICATION_ROUTES.ELIGIBILITY:
-          return this.isEligibilityComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case APPLICATION_ROUTES.SERVICE_DELIVERY:
-          return this.isServiceDeliveryComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case APPLICATION_ROUTES.OPERATING_COSTS:
-          return this.isOperatingCostsComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case APPLICATION_ROUTES.STAFFING:
-          return this.isStaffingComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case APPLICATION_ROUTES.REVIEW:
-          return this.isApplicationComplete ? 'mdi-check-circle' : 'mdi-circle'
-        case APPLICATION_ROUTES.SUBMIT:
-          return this.isDeclareSubmitComplete ? 'mdi-check-circle' : 'mdi-circle'
-      }
+      const isComplete =
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && this.isFacilityDetailsComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && this.isEligibilityComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.SERVICE_DELIVERY) && this.isServiceDeliveryComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.OPERATING_COSTS) && this.isOperatingCostsComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.STAFFING) && this.isStaffingComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.REVIEW) && this.isApplicationComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && this.isDeclareSubmitComplete)
+      return isComplete ? 'mdi-check-circle' : 'mdi-circle'
     },
   },
 }
