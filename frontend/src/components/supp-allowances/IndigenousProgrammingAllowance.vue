@@ -11,8 +11,14 @@
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Eligible expenses:</AppLabel>
-
       To reduce barriers to accessing these funds, all expenses are eligible except for staffing enhancements for the purpose of reducing ratio.
+    </v-col>
+  </v-row>
+  <br />
+  <v-row no-gutters class="mr-2 my-2">
+    <v-col cols="12">
+      <AppLabel>Ineligible expenses include:</AppLabel>
+      Staffing enhancements
     </v-col>
   </v-row>
   <br />

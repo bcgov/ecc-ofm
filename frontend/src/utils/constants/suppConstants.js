@@ -1,3 +1,5 @@
+import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
+
 export const INDIG_CHECKBOX_LABELS = Object.freeze([
   { label: 'Honoraria for Elder involvement, language revitalization and/ or other resource people including curriculum development resource', value: '1' },
   { label: 'Culturally based meals and traditional foods', value: '2' },
@@ -21,4 +23,23 @@ export const SUPP_TERM_CODES = Object.freeze({
   TERM_ONE: 1,
   TERM_TWO: 2,
   TERM_THREE: 3,
+})
+
+export const CORE_SERVICES_PANELS = Object.freeze([
+  {
+    title: 'Indigenous Programming Allowance',
+    id: 'indigenous',
+    supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
+  },
+  {
+    title: 'Support Needs Programming Allowance',
+    id: 'support-needs',
+    supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
+  },
+])
+
+export const DISCRETIONARY_PANEL = Object.freeze({
+  title: 'Transportation Allowance',
+  id: 'transportation',
+  supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
 })
