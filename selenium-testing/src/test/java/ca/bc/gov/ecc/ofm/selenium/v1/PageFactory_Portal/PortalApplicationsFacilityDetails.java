@@ -10,11 +10,13 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsFacilityDetails {
 	private WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(id = "select-expense-authority")
 	@CacheLookup
@@ -38,14 +40,11 @@ public class PortalApplicationsFacilityDetails {
 	public PortalApplicationsFacilityDetails(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
-
-	private final String pageLoadedText = "This person may be the same as your primary or secondary contact";
 
 	public void clickNextButton() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 			wait.until(ExpectedConditions.elementToBeClickable(next));
 			wait.until(ExpectedConditions.visibilityOf(next));
 			next.click();
@@ -58,6 +57,9 @@ public class PortalApplicationsFacilityDetails {
 	}
 
 	public void setSelectPrimaryContactTextField(String selectPrimaryContactValue) {
+		
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", selectPrimaryContact);
+		
 		selectPrimaryContact.sendKeys(selectPrimaryContactValue);
 
 	}
@@ -75,14 +77,5 @@ public class PortalApplicationsFacilityDetails {
 	 public void setFiscalYearEndDateDateField(String fiscalDate) {
 		 fiscalYearEndDate.sendKeys(fiscalDate);
 	    }
-
-	public PortalApplicationsFacilityDetails verifyPageLoaded() {
-		(new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
-				return d.getPageSource().contains(pageLoadedText);
-			}
-		});
-		return this;
-	}
 
 }

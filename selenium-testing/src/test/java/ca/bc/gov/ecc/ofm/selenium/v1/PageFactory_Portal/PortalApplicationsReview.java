@@ -20,26 +20,22 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsReview {
 	private WebDriver driver;
-
-	
+	WebDriverWait wait;
 
 	@FindBy(id = "app-next-button")
 	@CacheLookup
 	private WebElement next;
 
 	public PortalApplicationsReview(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 
 	public void clickNextButton() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(next));
 		wait.until(ExpectedConditions.visibilityOf(next));
 		next.click();
-
 	}
 }

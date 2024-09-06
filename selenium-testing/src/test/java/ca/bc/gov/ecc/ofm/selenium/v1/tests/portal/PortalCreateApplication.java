@@ -1,8 +1,9 @@
-package ca.bc.gov.ecc.ofm.selenium.v1.tests;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests.portal;
 
 import java.time.Duration;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -10,6 +11,7 @@ import org.testng.annotations.Test;
 import com.aventstack.extentreports.MediaEntityBuilder;
 
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.*;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class PortalCreateApplication extends BaseTest {
@@ -32,7 +34,7 @@ public class PortalCreateApplication extends BaseTest {
 	public void CreateApplication() throws Exception {
 		try {
 			driver.get(PORTAL_URL);
-			test = extent.createTest("Test - Portal Create Application");
+		//	test = extent.createTest("Test - Portal Create Application");
 			test.info("Test - Portal Create Application");
 
 			Thread.sleep(2000);
@@ -43,8 +45,6 @@ public class PortalCreateApplication extends BaseTest {
 			objPortalSignInCredentialPage.enterUserId(PORTAL_USERNAME);
 			objPortalSignInCredentialPage.enterPassword(PORTAL_PASSWORD);
 			objPortalSignInCredentialPage.clickSubmit();
-			wait(5000);
-			Thread.sleep(9000);
 			objPortalSignInCredentialPage.clickSignatureRequired();
 			test.info("login complete");
 
@@ -55,21 +55,22 @@ public class PortalCreateApplication extends BaseTest {
 			test.info("homepage complete");
 
 			Thread.sleep(5000);
-			portalApplicationsHomePage.verifyPageLoaded().addOFMApplication();
+			portalApplicationsHomePage.addOFMApplication();
 
 			test.info("Create Application page");
 			PortalApplicationsSelectFacility portalApplicationsSelectFacility = new PortalApplicationsSelectFacility(
 					driver);
 			Thread.sleep(2000);
-			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", portalApplicationsSelectFacility.getIConfirmThatOrganizationInformationIs());
 			portalApplicationsSelectFacility.setIConfirmThatOrganizationInformationIsCheckboxField();
 			portalApplicationsSelectFacility.setToStartYourApplicationSelectATextField("ofmqa_fac_automation");
 			portalApplicationsSelectFacility.clickNextButton();
 			test.info("Select facility page complete");
 
+			Thread.sleep(2000);
 			PortalApplicationsFacilityDetails portalApplicationsFacilityDetails = new PortalApplicationsFacilityDetails(
 					driver);
 			portalApplicationsFacilityDetails.setFiscalYearEndDateDateField("09/30/2025");
+			Thread.sleep(2000);
 			portalApplicationsFacilityDetails.setSelectPrimaryContactTextField("ofmqa 08");
 			portalApplicationsFacilityDetails.setSelectExpenseAuthorityTextField("ofmqa 08");
 			portalApplicationsFacilityDetails.clickNextButton();
@@ -124,8 +125,9 @@ public class PortalCreateApplication extends BaseTest {
 			test.pass("testcase passed!");
 
 		} catch (Exception e) {
-			throw (e);
-
+			test.fail("testcase failed");
+			Assert.fail("testcase failed");
+			e.printStackTrace();
 		}
 
 	}

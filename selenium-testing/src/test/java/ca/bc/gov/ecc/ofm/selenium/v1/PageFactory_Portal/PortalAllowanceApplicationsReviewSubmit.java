@@ -18,38 +18,39 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class PortalApplicationsDeclareSubmit {
+public class PortalAllowanceApplicationsReviewSubmit {
 	private WebDriver driver;
-	WebDriverWait wait;
 
 	@FindBy(id = "declaration")
 	@CacheLookup
 	private WebElement checkboxDeclare;
-	
+
 	@FindBy(id = "app-submit-button")
 	@CacheLookup
 	private WebElement submit;
 
+	public PortalAllowanceApplicationsReviewSubmit(WebDriver driver) {
 
-	public PortalApplicationsDeclareSubmit(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 
 	}
 
 	public void clickDeclare() {
+
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", checkboxDeclare);
 		if (!checkboxDeclare.isSelected()) {
 			checkboxDeclare.click();
 		}
 
 	}
-	
+
 	public void clickSubmitButton() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50));
 		wait.until(ExpectedConditions.elementToBeClickable(submit));
 		wait.until(ExpectedConditions.visibilityOf(submit));
 		submit.click();
 
 	}
-	
+
 }

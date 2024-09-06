@@ -1,6 +1,7 @@
-package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal;
+package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM;
 
 import java.time.Duration;
+import java.util.Base64;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,21 +11,20 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class PortalSignInFirstPage {
+public class CRMHomePage {
 	WebDriver driver;
 	WebDriverWait wait;
 
-	@FindBy(id = "bceid-login")
-	WebElement button_BCeIdLogin;
+	@FindBy(xpath = "//*[@aria-label='New']")
+	WebElement newOrganizationButton;
 
-	public PortalSignInFirstPage(WebDriver driver) {
+	public CRMHomePage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-		wait = new WebDriverWait(driver,  Duration.ofMillis(10000));
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
-	public void clickOnBCeIdLogin() {
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("bceid-login")));
-		button_BCeIdLogin.click();
+	public void pressNewOrganization() {
+		wait.until(ExpectedConditions.elementToBeClickable(newOrganizationButton)).click();
 	}
 }
