@@ -75,7 +75,7 @@ export default {
   async updateApplication(applicationId, payload) {
     try {
       if (!applicationId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.put(ApiRoutes.APPLICATIONS + '/' + applicationId, payload)
+      const response = await ApiService.apiAxios.patch(ApiRoutes.APPLICATIONS + '/' + applicationId, payload)
       return response
     } catch (error) {
       console.log(`Failed to update the application - ${error}`)

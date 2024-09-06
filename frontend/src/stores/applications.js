@@ -6,7 +6,7 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
@@ -14,6 +14,7 @@ export const useApplicationsStore = defineStore('applications', {
     currentApplication: undefined,
     isSelectFacilityComplete: false,
     isFacilityDetailsComplete: false,
+    isEligibilityComplete: false,
     isServiceDeliveryComplete: false,
     isOperatingCostsComplete: false,
     isStaffingComplete: false,
@@ -21,12 +22,13 @@ export const useApplicationsStore = defineStore('applications', {
     validation: false,
   }),
   getters: {
-    isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+    isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isEligibilityComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
     isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
   },
   actions: {
     checkApplicationComplete() {
       this.isFacilityDetailsComplete = this.checkFacilityDetailsComplete()
+      this.isEligibilityComplete = this.checkEligibilityComplete(this.currentApplication)
       this.isServiceDeliveryComplete = this.checkServiceDeliveryComplete()
       this.isOperatingCostsComplete = this.checkOperatingCostsComplete()
       this.isStaffingComplete = this.checkStaffingComplete()
@@ -74,6 +76,34 @@ export const useApplicationsStore = defineStore('applications', {
         (facility?.yppDesignation === 0 || facility?.yppEnrolled != null) &&
         facility?.personalResidence != null
       )
+    },
+
+    /*
+      Eligibility page
+    */
+    checkEligibilityComplete(application) {
+      return (
+        application?.greaterOneYearCCOFTDAD &&
+        (!this.isCCOFProgram() || application?.ccfriParticipation) &&
+        application?.ministryGoodStanding &&
+        application?.healthAuthorityGoodStanding &&
+        application?.eceCertificatesGoodStanding &&
+        application?.eceweParticipation &&
+        application?.accbParticipation &&
+        application?.provideActualExpenses &&
+        application?.providePreviousFYFinancialStatements &&
+        application?.liabilityInsuranceCoverage &&
+        application?.economicAnalysisParticipation &&
+        (!this.isOperateInPersonalResidence() || application?.operateSeparateBankAccount)
+      )
+    },
+
+    isCCOFProgram() {
+      return this.currentApplication?.facility?.programCode === OFM_PROGRAM_CODES.CCOF
+    },
+
+    isOperateInPersonalResidence() {
+      return this.currentApplication?.facility?.personalResidence === YES_NO_RADIO_GROUP_MAPPING.YES
     },
 
     /* 

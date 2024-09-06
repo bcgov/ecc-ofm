@@ -159,6 +159,7 @@ export const OFM_PROGRAM_CODES = Object.freeze({
 export const APPLICATION_ROUTES = Object.freeze({
   SELECT_FACILITY: 'select-facility',
   FACILITY_DETAILS: 'facility-details',
+  ELIGIBILITY: 'eligibility',
   SERVICE_DELIVERY: 'service-delivery',
   OPERATING_COSTS: 'operating-costs',
   STAFFING: 'staffing',
@@ -259,6 +260,12 @@ export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
   YES: 1,
   NO: 2,
   NA: 3,
+})
+
+export const YES_NO_RADIO_GROUP_MAPPING = Object.freeze({
+  YES: 1,
+  NO: 0,
+  NA: 2,
 })
 
 export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'

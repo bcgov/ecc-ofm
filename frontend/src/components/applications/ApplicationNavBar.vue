@@ -34,6 +34,7 @@ export default {
     ...mapState(useApplicationsStore, [
       'currentApplication',
       'isFacilityDetailsComplete',
+      'isEligibilityComplete',
       'isServiceDeliveryComplete',
       'isOperatingCostsComplete',
       'isStaffingComplete',
@@ -53,28 +54,33 @@ export default {
         title: 'Facility Details',
         routeName: APPLICATION_ROUTES.FACILITY_DETAILS,
       },
-      serviceDelivery: {
+      eligibility: {
         id: 2,
+        title: 'Eligibility',
+        routeName: APPLICATION_ROUTES.ELIGIBILITY,
+      },
+      serviceDelivery: {
+        id: 3,
         title: 'Service Delivery',
         routeName: APPLICATION_ROUTES.SERVICE_DELIVERY,
       },
       operatingCosts: {
-        id: 3,
+        id: 4,
         title: 'Operating Costs',
         routeName: APPLICATION_ROUTES.OPERATING_COSTS,
       },
       staffing: {
-        id: 4,
+        id: 5,
         title: 'Staffing',
         routeName: APPLICATION_ROUTES.STAFFING,
       },
       review: {
-        id: 5,
+        id: 6,
         title: 'Review',
         routeName: APPLICATION_ROUTES.REVIEW,
       },
       submit: {
-        id: 6,
+        id: 7,
         title: 'Declare & Submit',
         routeName: APPLICATION_ROUTES.SUBMIT,
       },
@@ -87,6 +93,7 @@ export default {
         this.loading ||
         (this.isSelectFacilityPage && !this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS)) ||
         (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isFacilityDetailsComplete) ||
+        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
         (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && !this.isApplicationComplete)
       )
     },
@@ -123,7 +130,12 @@ export default {
     },
 
     getVerticalLineClass(item) {
-      if (this.isSelectFacilityPage || !this.isFacilityDetailsComplete || (this.isRouteNameEqual(item, APPLICATION_ROUTES.REVIEW) && !this.isApplicationComplete)) {
+      if (
+        this.isSelectFacilityPage ||
+        !this.isFacilityDetailsComplete ||
+        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isEligibilityComplete) ||
+        (this.isRouteNameEqual(item, APPLICATION_ROUTES.REVIEW) && !this.isApplicationComplete)
+      ) {
         return 'vertical-line-disabled'
       }
       return 'vertical-line-active'
@@ -136,6 +148,8 @@ export default {
       switch (item.routeName) {
         case APPLICATION_ROUTES.FACILITY_DETAILS:
           return this.isFacilityDetailsComplete ? 'mdi-check-circle' : 'mdi-circle'
+        case APPLICATION_ROUTES.ELIGIBILITY:
+          return this.isEligibilityComplete ? 'mdi-check-circle' : 'mdi-circle'
         case APPLICATION_ROUTES.SERVICE_DELIVERY:
           return this.isServiceDeliveryComplete ? 'mdi-check-circle' : 'mdi-circle'
         case APPLICATION_ROUTES.OPERATING_COSTS:

@@ -1,6 +1,5 @@
 <template>
   <v-form ref="form">
-    <h2>Review</h2>
     <v-row v-if="!loading" no-gutters class="mb-2">
       <v-col cols="12" align="right">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">

@@ -175,6 +175,18 @@ const ApplicationMappings = [
   { back: 'ofm_union_description', front: 'unionDescription' },
   { back: 'ofm_union_cssea', front: 'cssea' },
   { back: 'ofm_fiscal_year_end', front: 'fiscalYearEndDate' },
+  { back: 'ofm_greaterthan_1_year_ccof_or_tdad', front: 'greaterOneYearCCOFTDAD' },
+  { back: 'ofm_ccfri_participation', front: 'ccfriParticipation' },
+  { back: 'ofm_ministry_good_standing', front: 'ministryGoodStanding' },
+  { back: 'ofm_health_authority_good_standing', front: 'healthAuthorityGoodStanding' },
+  { back: 'ofm_ece_certificates_good_standing', front: 'eceCertificatesGoodStanding' },
+  { back: 'ofm_ecewe_participation', front: 'eceweParticipation' },
+  { back: 'ofm_accb_participation', front: 'accbParticipation' },
+  { back: 'ofm_provide_actual_expenses', front: 'provideActualExpenses' },
+  { back: 'ofm_provide_previous_fy_financial_statements', front: 'providePreviousFYFinancialStatements' },
+  { back: 'ofm_gt_2mliability_insurance_coverage', front: 'liabilityInsuranceCoverage' },
+  { back: 'ofm_economic_analysis_participation', front: 'economicAnalysisParticipation' },
+  { back: 'ofm_operate_separate_bank_account', front: 'operateSeparateBankAccount' },
 ]
 
 const ApplicationProviderEmployeeMappings = [
