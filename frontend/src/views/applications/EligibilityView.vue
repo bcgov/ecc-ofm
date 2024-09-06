@@ -141,7 +141,11 @@
           @update:model-value="validateResponse(model.operateSeparateBankAccount)" />
       </div>
     </v-card>
-    <EligibilityNotificationDialog :application-id="currentApplication?.applicationId" :show="showEligibilityNotificationDialog && !readonly" @close="toggleEligibilityNotificationDialog" />
+    <EligibilityNotificationDialog
+      :application-id="currentApplication?.applicationId"
+      :show="showEligibilityNotificationDialog && !readonly"
+      @close="toggleEligibilityNotificationDialog"
+      @cancel="goToApplicationHistory" />
   </v-form>
 </template>
 
@@ -278,6 +282,10 @@ export default {
 
     toggleEligibilityNotificationDialog() {
       this.showEligibilityNotificationDialog = !this.showEligibilityNotificationDialog
+    },
+
+    goToApplicationHistory() {
+      this.$router.push({ name: 'applications-history' })
     },
   },
 }
