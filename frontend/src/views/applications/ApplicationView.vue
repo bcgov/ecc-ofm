@@ -69,20 +69,21 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly', 'isEligibilityComplete']),
+    ...mapState(useApplicationsStore, [
+      'currentApplication',
+      'isApplicationComplete',
+      'isSelectFacilityComplete',
+      'isDeclareSubmitComplete',
+      'isApplicationReadonly',
+      'isFacilityDetailsComplete',
+      'isEligibilityComplete',
+    ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
-      return (
-        this.loading ||
-        this.processing ||
-        this.isApplicationReadonly ||
-        !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ||
-        (!this.isEligibilityComplete &&
-          [APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.REVIEW, APPLICATION_ROUTES.SUBMIT].includes(this.$route.name))
-      )
+      return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showBack() {
       return [
@@ -152,11 +153,20 @@ export default {
     isSelectFacilityPage() {
       return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
     },
+    isFacilityDetailsPage() {
+      return this.$route.name === APPLICATION_ROUTES.FACILITY_DETAILS
+    },
+    isEligibilityPage() {
+      return this.$route.name === APPLICATION_ROUTES.ELIGIBILITY
+    },
     isReviewApplicationPage() {
       return this.$route.name === APPLICATION_ROUTES.REVIEW
     },
     isApplicationConfirmationPage() {
       return this.$route.name === APPLICATION_ROUTES.CONFIRMATION
+    },
+    isPageAccessible() {
+      return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
     },
   },
 
@@ -181,6 +191,9 @@ export default {
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
         await this.getContacts()
+        if (!this.isPageAccessible) {
+          this.$router.push({ name: 'applications-history' })
+        }
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
