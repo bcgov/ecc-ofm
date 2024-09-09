@@ -31,6 +31,7 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :contacts="contacts" />
+              <EligibilitySummary v-if="page.id === APPLICATION_ROUTES.ELIGIBILITY" />
               <ServiceDeliverySummary v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY" :readonly="readonly" :licences="currentApplication?.licences" />
               <OperatingCostsSummary v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
               <StaffingSummary v-if="page.id === APPLICATION_ROUTES.STAFFING" :readonly="readonly" />
@@ -47,6 +48,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import FacilityDetailsSummary from '@/components/applications/review/FacilityDetailsSummary.vue'
+import EligibilitySummary from '@/components/applications/review/EligibilitySummary.vue'
 import ServiceDeliverySummary from '@/components/applications/review/ServiceDeliverySummary.vue'
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
@@ -56,7 +58,7 @@ import { isEmpty } from 'lodash'
 
 export default {
   name: 'ReviewApplicationView',
-  components: { AppButton, FacilityDetailsSummary, ServiceDeliverySummary, OperatingCostsSummary, StaffingSummary },
+  components: { AppButton, FacilityDetailsSummary, EligibilitySummary, ServiceDeliverySummary, OperatingCostsSummary, StaffingSummary },
   mixins: [alertMixin],
 
   async beforeRouteLeave(_to, _from, next) {
@@ -93,7 +95,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isEligibilityComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
@@ -119,6 +121,10 @@ export default {
       {
         title: 'Facility',
         id: APPLICATION_ROUTES.FACILITY_DETAILS,
+      },
+      {
+        title: 'Eligibility',
+        id: APPLICATION_ROUTES.ELIGIBILITY,
       },
       {
         title: 'Service Delivery Details',
@@ -162,6 +168,8 @@ export default {
       switch (page.id) {
         case APPLICATION_ROUTES.FACILITY_DETAILS:
           return this.isFacilityDetailsComplete
+        case APPLICATION_ROUTES.ELIGIBILITY:
+          return this.isEligibilityComplete
         case APPLICATION_ROUTES.SERVICE_DELIVERY:
           return this.isServiceDeliveryComplete
         case APPLICATION_ROUTES.OPERATING_COSTS:
