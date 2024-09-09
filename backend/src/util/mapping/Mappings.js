@@ -187,6 +187,9 @@ const ApplicationMappings = [
   { back: 'ofm_gt_2mliability_insurance_coverage', front: 'liabilityInsuranceCoverage' },
   { back: 'ofm_economic_analysis_participation', front: 'economicAnalysisParticipation' },
   { back: 'ofm_operate_separate_bank_account', front: 'operateSeparateBankAccount' },
+  { back: 'ofm_month_to_month', front: 'monthToMonthRentLease' },
+  { back: 'ofm_costs_lease_start_date', front: 'rentLeaseStartDate' },
+  { back: 'ofm_costs_lease_end_date', front: 'rentLeaseEndDate' },
 ]
 
 const ApplicationProviderEmployeeMappings = [

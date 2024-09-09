@@ -28,18 +28,9 @@
       </v-col>
     </v-row>
 
-    <div v-if="model.facilityType" id="arm-length">
-      <!-- ARM LENGTH -->
-      <div v-if="isRentLease" class="arm-length">
-        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
-          <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
-        </v-checkbox>
-        <v-tooltip content-class="tooltip" max-width="300px" text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
-          <template #activator="{ props }">
-            <v-icon size="large" v-bind="props" class="ml-2 pt-7">mdi-information-slab-circle-outline</v-icon>
-          </template>
-        </v-tooltip>
-      </div>
+    <div v-if="model.facilityType">
+      <!-- RENT/LEASE INFORMATION -->
+      <RentLeaseInformation v-if="isRentLease" />
 
       <!-- OPERATING COST / FACILITY COST -->
       <v-card class="my-4 px-6 py-4">
@@ -115,6 +106,7 @@ import { isEmpty } from 'lodash'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import RentLeaseInformation from '@/components/applications/RentLeaseInformation.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'

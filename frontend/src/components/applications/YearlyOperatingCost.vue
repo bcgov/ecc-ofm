@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
-    <AppLabel>Yearly Operating Cost</AppLabel>
+    <h4>Yearly Operating Cost</h4>
     <v-card class="my-2" variant="outlined">
       <v-row no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="6" class="px-4">

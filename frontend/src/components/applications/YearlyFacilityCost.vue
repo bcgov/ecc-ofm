@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0 my-8">
-    <AppLabel>Yearly Facility Cost</AppLabel>
+    <h4>Yearly Facility Cost</h4>
     <v-card class="my-2" variant="outlined">
       <!-- RENT/LEASE -->
       <v-row v-if="facilityType === FACILITY_TYPES.RENT_LEASE" no-gutters class="pt-4">
