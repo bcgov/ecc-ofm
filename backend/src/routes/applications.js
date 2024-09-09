@@ -136,7 +136,7 @@ router.get(
 /**
  * Update an existing Application using applicationId
  */
-router.put(
+router.patch(
   '/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,

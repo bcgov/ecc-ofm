@@ -1,7 +1,8 @@
 <template>
   <v-radio-group v-model="updatedValue" inline color="primary">
     <v-radio label="Yes" :value="1" class="mr-12" />
-    <v-radio label="No" :value="0" />
+    <v-radio label="No" :value="0" class="mr-12" />
+    <v-radio v-if="allowNotApplicable" label="N/A" :value="2" />
   </v-radio-group>
 </template>
 
@@ -13,6 +14,10 @@ export default {
     modelValue: {
       type: Number,
       default: null,
+    },
+    allowNotApplicable: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue'],

@@ -3,8 +3,12 @@
     <v-card>
       <v-card-title class="dialog-title text-wrap">
         <v-row no-gutters justify="space-between" align="center">
-          <h3 class="dialog-header">{{ title }}</h3>
-          <v-btn v-if="!isLoading" variant="text" icon="mdi-window-close" @click="$emit('close')" />
+          <v-col cols="10" md="11">
+            <h3 class="dialog-header">{{ title }}</h3>
+          </v-col>
+          <v-col cols="2" md="1" align="right">
+            <v-btn v-if="!isLoading" variant="text" icon="mdi-window-close" @click="$emit('close')" />
+          </v-col>
         </v-row>
       </v-card-title>
       <div class="yellow-line"></div>
@@ -30,6 +34,7 @@ export default {
       default: false,
     },
   },
+  emits: ['close'],
 }
 </script>
 <style scoped>
