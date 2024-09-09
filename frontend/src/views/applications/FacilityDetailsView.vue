@@ -1,12 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormComplete">
     <div>
-      <h4 class="my-4">
-        Your facility:
-        <span class="facility-name ml-6">{{ currentApplication?.facilityName }}</span>
-      </h4>
-    </div>
-    <div>
       <h4>Facility Information</h4>
       <FacilityInfo :facility="currentApplication?.facility" />
       <v-row no-gutters class="my-6">
@@ -224,7 +218,7 @@ export default {
       async handler() {
         await this.$refs.form?.validate()
         if (!this.isFormComplete) return
-        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     primaryContact: {
@@ -299,11 +293,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.facility-name {
-  color: #003366;
-  font-size: 1.3em;
-  text-decoration: underline;
-}
-</style>

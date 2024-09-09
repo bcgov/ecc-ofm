@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-    <ApplicationHeader v-if="!isSelectFacilityPage" />
     <div v-if="isApplicationConfirmationPage">
       <router-view class="min-screen-height" />
     </div>
@@ -13,6 +12,7 @@
           <ApplicationNavBar />
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
+          <ApplicationHeader v-if="!isSelectFacilityPage" />
           <router-view class="min-screen-height" :readonly="readonly" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
           <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
@@ -69,17 +69,25 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly', 'isEligibilityComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
-      return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return (
+        this.loading ||
+        this.processing ||
+        this.isApplicationReadonly ||
+        !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ||
+        (!this.isEligibilityComplete &&
+          [APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.REVIEW, APPLICATION_ROUTES.SUBMIT].includes(this.$route.name))
+      )
     },
     showBack() {
       return [
         APPLICATION_ROUTES.FACILITY_DETAILS,
+        APPLICATION_ROUTES.ELIGIBILITY,
         APPLICATION_ROUTES.SERVICE_DELIVERY,
         APPLICATION_ROUTES.OPERATING_COSTS,
         APPLICATION_ROUTES.STAFFING,
@@ -93,6 +101,7 @@ export default {
         (!this.readonly &&
           [
             APPLICATION_ROUTES.FACILITY_DETAILS,
+            APPLICATION_ROUTES.ELIGIBILITY,
             APPLICATION_ROUTES.SERVICE_DELIVERY,
             APPLICATION_ROUTES.OPERATING_COSTS,
             APPLICATION_ROUTES.STAFFING,
@@ -104,6 +113,7 @@ export default {
     showNext() {
       return [
         APPLICATION_ROUTES.SELECT_FACILITY,
+        APPLICATION_ROUTES.ELIGIBILITY,
         APPLICATION_ROUTES.FACILITY_DETAILS,
         APPLICATION_ROUTES.SERVICE_DELIVERY,
         APPLICATION_ROUTES.OPERATING_COSTS,
@@ -114,9 +124,14 @@ export default {
     showSave() {
       return (
         !this.readonly &&
-        [APPLICATION_ROUTES.FACILITY_DETAILS, APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.SUBMIT].includes(
-          this.$route.name,
-        )
+        [
+          APPLICATION_ROUTES.FACILITY_DETAILS,
+          APPLICATION_ROUTES.ELIGIBILITY,
+          APPLICATION_ROUTES.SERVICE_DELIVERY,
+          APPLICATION_ROUTES.OPERATING_COSTS,
+          APPLICATION_ROUTES.STAFFING,
+          APPLICATION_ROUTES.SUBMIT,
+        ].includes(this.$route.name)
       )
     },
     showSubmit() {
