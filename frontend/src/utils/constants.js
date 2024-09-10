@@ -194,6 +194,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_HA_REPORT_UPLOAD: 'Document upload of your most recent Health Authority compliance report required',
   FACILITY_TYPE: 'Facility type required',
   ARM_LENGTH: "Arm's Length agreement checkbox required",
+  RENT_LEASE_DATE_RANGE: 'Rent lease start and end dates required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
   UNION: 'Union information required',
@@ -266,6 +267,11 @@ export const YES_NO_RADIO_GROUP_MAPPING = Object.freeze({
   YES: 1,
   NO: 0,
   NA: 2,
+})
+
+export const YES_NO_CRM_MAPPING = Object.freeze({
+  YES: 1,
+  NO: 0,
 })
 
 export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'

@@ -1,31 +1,41 @@
 <template>
-  <v-card v-if="isRentLease" class="my-4 px-6 pt-4 pb-6">
+  <v-card class="my-4 px-6 pt-4 pb-6">
     <h4>Rent/Lease Information</h4>
     <p class="mt-2 mb-4">Please select the start and end date of your facility's rental or lease agreement.</p>
     <v-card variant="outlined" class="pa-2">
-      <v-row no-gutters class="pa-2 mt-4">
-        <AppLabel class="pt-4">Rent/Lease Date Range:</AppLabel>
-        <AppDateInput
-          id="date-from"
-          v-model="model.rentLeaseStartDate"
-          :rules="model.monthToMonthRentLease ? [...rules.required, rules.MMDDYYYY] : [rules.MMDDYYYY]"
-          :disabled="loading"
-          :hide-details="loading"
-          label="Start"
-          class="mx-3" />
-        <AppDateInput
-          id="date-to"
-          v-model="model.rentLeaseEndDate"
-          :rules="model.monthToMonthRentLease ? [...rules.required, rules.MMDDYYYY, rules.validEndDate(model.rentLeaseStartDate)] : [rules.MMDDYYYY, rules.validEndDate(model.dateFrom)]"
-          :disabled="loading"
-          :hide-details="loading"
-          label="End"
-          class="mx-3" />
+      <v-row no-gutters class="px-2">
+        <AppLabel class="pt-8">Rent/Lease Date Range:</AppLabel>
+        <v-row no-gutters class="mt-4">
+          <AppDateInput
+            id="start-date"
+            v-model="model.rentLeaseStartDate"
+            :rules="isMonthToMonthRentLease ? [] : [...rules.required, rules.MMDDYYYY]"
+            :disabled="readonly"
+            :hide-details="readonly || isMonthToMonthRentLease"
+            label="Start"
+            class="mx-3" />
+          <AppDateInput
+            id="end-date"
+            v-model="model.rentLeaseEndDate"
+            :rules="isMonthToMonthRentLease ? [] : [...rules.required, rules.MMDDYYYY, rules.validEndDate(model.rentLeaseStartDate)]"
+            :disabled="readonly"
+            :hide-details="readonly || isMonthToMonthRentLease"
+            label="End"
+            class="mx-3 mt-4 mt-sm-0" />
+        </v-row>
       </v-row>
-      <v-checkbox id="month-to-month-rent" v-model="model.monthToMonthRentLease" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :disabled="readonly" :hide-details="true">
+      <v-checkbox
+        id="month-to-month-rent"
+        v-model="model.monthToMonthRentLease"
+        color="primary"
+        :true-value="YES_NO_CRM_MAPPING.YES"
+        :false-value="YES_NO_CRM_MAPPING.NO"
+        :disabled="readonly"
+        hide-details
+        class="mt-6">
         <template #label>My facility's rent/lease is on a month-to-month basis.</template>
       </v-checkbox>
-      <div id="arm-length" class="arm-length">
+      <div id="arm-length" class="d-flex mt-2">
         <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
           <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
         </v-checkbox>
@@ -40,14 +50,15 @@
 </template>
 
 <script>
+import AppDateInput from '@/components/ui/AppDateInput.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
-import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState } from 'pinia'
 import rules from '@/utils/rules'
+import { YES_NO_CHOICE_CRM_MAPPING, YES_NO_CRM_MAPPING } from '@/utils/constants'
 
 export default {
-  components: { AppLabel, AppNumberInput },
+  components: { AppDateInput, AppLabel },
   props: {
     readonly: {
       type: Boolean,
@@ -57,38 +68,30 @@ export default {
   emits: ['update'],
   data() {
     return {
-      rules,
-      fieldNumberFormat: {
-        nullValue: '0.00',
-        min: 0,
-        decimal: '.',
-        separator: ',',
-        precision: 2,
-      },
-      totalNumberFormat: {
-        decimal: '.',
-        separator: ',',
-        prefix: '$ ',
-      },
       model: {},
     }
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
-    totalYearlyCost() {
-      const totalYearlyCost = Object.values(this.model)?.reduce((total, cost) => total + Number(cost), 0)
-      return totalYearlyCost.toFixed(2)
+    isMonthToMonthRentLease() {
+      return this.model.monthToMonthRentLease === YES_NO_CRM_MAPPING.YES
     },
   },
   watch: {
     model: {
-      handler(value) {
-        this.$emit('update', value)
+      handler() {
+        this.model.rentLeaseStartDate = this.model.rentLeaseStartDate ? this.model.rentLeaseStartDate : null
+        this.model.rentLeaseEndDate = this.model.rentLeaseEndDate && this.model.rentLeaseEndDate > this.model.rentLeaseStartDate ? this.model.rentLeaseEndDate : null
+        this.model.armsLength = this.model.armsLength ? this.model.armsLength : null
+        this.$emit('update', this.model)
       },
       deep: true,
     },
   },
   created() {
+    this.rules = rules
+    this.YES_NO_CHOICE_CRM_MAPPING = YES_NO_CHOICE_CRM_MAPPING
+    this.YES_NO_CRM_MAPPING = YES_NO_CRM_MAPPING
     this.model = {
       rentLeaseStartDate: this.currentApplication?.rentLeaseStartDate,
       rentLeaseEndDate: this.currentApplication?.rentLeaseEndDate,
@@ -98,8 +101,3 @@ export default {
   },
 }
 </script>
-<style scoped>
-.totalYearlyCost {
-  font-weight: 700;
-}
-</style>

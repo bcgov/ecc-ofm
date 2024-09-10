@@ -7,20 +7,54 @@
     </AppMissingInfoError>
     <div v-else>
       <h4 class="mb-4 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
-      <AppMissingInfoError
-        v-if="!readonly && isRentLease && currentApplication.armsLength !== YES_NO_CHOICE_CRM_MAPPING.YES"
-        :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
-      </AppMissingInfoError>
-      <AppMissingInfoError
-        v-if="!readonly && totalOperationalCost === 0"
-        :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
-        {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
-      </AppMissingInfoError>
-      <div v-else>
-        <YearlyOperatingCostSummary />
-        <YearlyFacilityCostSummary class="mt-4" />
+
+      <!-- RENT/LEASE INFORMATION -->
+      <div class="my-4">
+        <h4>Rent/Lease Information</h4>
+        <v-card v-if="isRentLease" class="my-1 px-4 py-1" variant="outlined">
+          <div>
+            <div>
+              <v-row v-if="currentApplication?.rentLeaseStartDate && currentApplication?.rentLeaseEndDate" no-gutters class="px-2 mt-4">
+                <AppLabel class="mr-2">Rent/Lease Date Range:</AppLabel>
+                <span>{{ format.formatDate(currentApplication?.rentLeaseStartDate) }} to {{ format.formatDate(currentApplication?.rentLeaseEndDate) }}</span>
+              </v-row>
+              <AppMissingInfoError
+                v-else-if="!readonly && currentApplication.monthToMonthRentLease !== 1"
+                :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#rent-lease-info', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ APPLICATION_ERROR_MESSAGES.RENT_LEASE_DATE_RANGE }}
+              </AppMissingInfoError>
+            </div>
+            <v-checkbox v-if="currentApplication.monthToMonthRentLease" v-model="currentApplication.monthToMonthRentLease" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
+              <template #label>My facility's rent/lease is on a month-to-month basis.</template>
+            </v-checkbox>
+          </div>
+          <div>
+            <AppMissingInfoError
+              v-if="!readonly && currentApplication.armsLength !== YES_NO_CHOICE_CRM_MAPPING.YES"
+              :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
+              {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
+            </AppMissingInfoError>
+            <v-checkbox v-else v-model="currentApplication.armsLength" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
+              <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
+            </v-checkbox>
+          </div>
+        </v-card>
       </div>
+
+      <!-- OPERATING COST / FACILITY COST -->
+      <div>
+        <AppMissingInfoError
+          v-if="!readonly && totalOperationalCost === 0"
+          :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
+        </AppMissingInfoError>
+        <div v-else>
+          <YearlyOperatingCostSummary />
+          <YearlyFacilityCostSummary class="mt-4" />
+        </div>
+      </div>
+
+      <!-- UPLOAD DOCUMENTS -->
       <div class="mt-4">
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
@@ -58,17 +92,19 @@
 </template>
 
 <script>
+import { mapState } from 'pinia'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import YearlyOperatingCostSummary from '@/components/applications/review/YearlyOperatingCostSummary.vue'
 import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFacilityCostSummary.vue'
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
-import { mapState } from 'pinia'
+import format from '@/utils/format'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 export default {
-  components: { AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
+  components: { AppLabel, AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
   props: {
     readonly: {
       type: Boolean,
@@ -102,6 +138,7 @@ export default {
   },
 
   created() {
+    this.format = format
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
