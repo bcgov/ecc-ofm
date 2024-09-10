@@ -258,7 +258,6 @@ export default {
       await this.getRedirectedApplications()
       await this.getSupplementaryApplications()
       await this.getIrregularExpenseApplications()
-
       this.mergeRegularAndSupplementaryApplications()
 
       if (!this.currentOrg) {

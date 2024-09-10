@@ -837,7 +837,6 @@ export default {
             if (fa) {
               this.fundingAgreements.push(fa)
               const additionalFacilityInfo = await FacilityService.getFacility(facility.facilityId)
-
               facility.isUnionized = additionalFacilityInfo?.isUnionized
             } else {
               facility.isUnionized = null

@@ -1,6 +1,5 @@
 <template>
   <AppAlertBanner v-if="isWarningDisplayed && hasInclusionPolicy" type="info">You have already received the Support Needs Allowance for the current year.</AppAlertBanner>
-
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppAlertBanner v-if="!hasInclusionPolicy" type="info">
@@ -16,12 +15,10 @@
       Equipment, program resources, or minor Facility modifications to enhance inclusion for all children in the participant's programming.
       <br />
       <br />
-
       <AppLabel>Ineligible expenses include:</AppLabel>
       Staffing enhancements including support workers; individualized, therapeutic, or medical equipment.
       <br />
       <br />
-
       Providers can contact their local
       <a href="https://www2.gov.bc.ca/gov/content/health/managing-your-health/child-behaviour-development/early-childhood-intervention" target="_blank">
         Supported Child Development or Aboriginal Supported Child Development
