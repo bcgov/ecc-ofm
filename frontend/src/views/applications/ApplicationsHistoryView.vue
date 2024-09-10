@@ -181,7 +181,6 @@ export default {
       supplementaryApplications: [],
       applicationItems: [],
       irregularExpenses: [],
-      redirectedApplications: [],
       headers: [
         { title: 'Application ID', key: 'referenceNumber', width: '6%' },
         { title: 'Application Type', key: 'applicationType', width: '12%' },
@@ -259,6 +258,7 @@ export default {
       await this.getRedirectedApplications()
       await this.getSupplementaryApplications()
       await this.getIrregularExpenseApplications()
+
       this.mergeRegularAndSupplementaryApplications()
 
       if (!this.currentOrg) {
@@ -340,19 +340,17 @@ export default {
     },
 
     async getRedirectedApplications() {
-      //if an application is redirected - it will not show up in the first call to getActiveApplications() and
+      //if an application is redirected - it will not show up in the first call to getActiveApplications() and we will have a mismatch in application length
       if (this.userInfo?.facilities.length === this.applications.length) return
 
-      const redirectedApplications = await Promise.all(
-        this.userInfo?.facilities
-          .filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId))
-          .map(async (fac) => {
-            const redirectedApp = await ApplicationService.getRedirectedApplicationByFacilityId(fac.facilityId)
-            if (redirectedApp) return redirectedApp[0] //there will only ever be 1 redirected app - if redirected, they are essentially kicked out of OFM
-          }),
-      )
-
-      this.applications.push(...redirectedApplications)
+      this.userInfo?.facilities
+        .filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId))
+        .forEach(async (fac) => {
+          const redirectedApp = await ApplicationService.getRedirectedApplicationByFacilityId(fac.facilityId)
+          if (redirectedApp.length) {
+            this.applications.push(redirectedApp[0]) //there will only ever be 1 redirected app - if redirected, they are essentially kicked out of OFM
+          }
+        })
     },
 
     /**
