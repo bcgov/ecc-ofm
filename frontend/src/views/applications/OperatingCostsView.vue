@@ -366,8 +366,9 @@ export default {
     },
 
     updateRentLeaseInfoModel(updatedModel) {
-      this.rentLeaseInfoModel.rentLeaseStartDate = updatedModel?.rentLeaseStartDate
-      this.rentLeaseInfoModel.rentLeaseEndDate = updatedModel?.rentLeaseEndDate
+      const isEndDateAfterStartDate = updatedModel.rentLeaseEndDate > updatedModel.rentLeaseStartDate
+      this.rentLeaseInfoModel.rentLeaseStartDate = isEndDateAfterStartDate ? updatedModel?.rentLeaseStartDate : null
+      this.rentLeaseInfoModel.rentLeaseEndDate = isEndDateAfterStartDate ? updatedModel?.rentLeaseEndDate : null
       this.rentLeaseInfoModel.monthToMonthRentLease = updatedModel?.monthToMonthRentLease
       this.rentLeaseInfoModel.armsLength = updatedModel?.armsLength
     },

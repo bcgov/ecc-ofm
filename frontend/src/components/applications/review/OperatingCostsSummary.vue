@@ -59,7 +59,7 @@
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
           <v-card class="mt-2 mb-3 pa-3">
-            <AppDocumentUpload :readonly="true" :documentType="DOCUMENT_TYPES.INCOME_STATEMENT" :uploadedDocuments="documentsFinancialStatements">
+            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
               <AppMissingInfoError
                 v-if="!readonly && !documentsFinancialStatements.length"
                 :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
@@ -68,7 +68,7 @@
             </AppDocumentUpload>
           </v-card>
           <v-card class="pl-3">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :documentType="DOCUMENT_TYPES.BALANCE_SHEET" :uploadedDocuments="documentsBalanceSheets">
+            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
               <AppMissingInfoError
                 v-if="!readonly && !documentsBalanceSheets.length"
                 :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
@@ -77,7 +77,7 @@
             </AppDocumentUpload>
           </v-card>
           <v-card class="pl-3 mt-3 pt-0">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :documentType="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploadedDocuments="documentsSupporting">
+            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploaded-documents="documentsSupporting">
               <AppMissingInfoError
                 v-if="!readonly && isRentLease && !documentsSupporting.length"
                 :to="{ name: 'operating-costs', hash: '#supporting-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
