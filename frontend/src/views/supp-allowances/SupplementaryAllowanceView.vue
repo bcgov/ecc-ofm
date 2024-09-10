@@ -74,6 +74,7 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 import rules from '@/utils/rules'
 import { useOrgStore } from '@/stores/org'
+import { UNION_TYPE_CODES } from '@/utils/constants'
 
 export default {
   name: 'SupplementaryAllowanceView',
@@ -166,7 +167,7 @@ export default {
     },
 
     getValidApplication(facilityId) {
-      return this.applications?.find((application) => application.facilityId === facilityId && ApplicationService.isValidApplication(application))
+      return this.applications?.find((application) => application.facilityId === facilityId && ApplicationService.isValidApplication(application) && application?.isUnionized === UNION_TYPE_CODES.NO)
     },
 
     process(value) {

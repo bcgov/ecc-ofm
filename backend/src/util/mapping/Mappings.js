@@ -246,6 +246,7 @@ const FacilityMappings = [
   { back: 'ofm_ypp_designation', front: 'yppDesignation' },
   { back: 'ofm_ypp_enrolled', front: 'yppEnrolled' },
   { back: 'ofm_personal_residence', front: 'personalResidence' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
 ]
 
 const ContactMappings = [

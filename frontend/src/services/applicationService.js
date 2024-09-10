@@ -24,6 +24,17 @@ export default {
     }
   },
 
+  async getRedirectedApplicationByFacilityId(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the list of applications by facility id - ${error}`)
+      throw error
+    }
+  },
+
   async getActiveApplications() {
     try {
       const authStore = useAuthStore()

@@ -502,7 +502,7 @@ export default {
     },
     filteredFacilties() {
       if (this.isIrregularExpenseRequest) {
-        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId))
+        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId) && fac?.isUnionized === 0)
       }
       return this.facilities
     },
@@ -836,6 +836,11 @@ export default {
             const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
             if (fa) {
               this.fundingAgreements.push(fa)
+              const additionalFacilityInfo = await FacilityService.getFacility(facility.facilityId)
+
+              facility.isUnionized = additionalFacilityInfo?.isUnionized
+            } else {
+              facility.isUnionized = null
             }
           }),
         )
