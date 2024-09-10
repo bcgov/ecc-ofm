@@ -9,9 +9,9 @@
       <h4 class="mb-4 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
 
       <!-- RENT/LEASE INFORMATION -->
-      <div class="my-4">
+      <div v-if="isRentLease" class="my-4">
         <h4>Rent/Lease Information</h4>
-        <v-card v-if="isRentLease" class="my-1 px-4 py-1" variant="outlined">
+        <v-card class="my-1 px-4 py-1" variant="outlined">
           <div>
             <div>
               <v-row v-if="currentApplication?.rentLeaseStartDate && currentApplication?.rentLeaseEndDate" no-gutters class="px-2 mt-4">
