@@ -339,17 +339,8 @@ export default {
     },
 
     async getRedirectedApplications() {
-      //if an application is redirected - it will not show up in the first call to getActiveApplications() and we will have a mismatch in application length
-      if (this.userInfo?.facilities.length === this.applications.length) return
-
-      this.userInfo?.facilities
-        .filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId))
-        .forEach(async (fac) => {
-          const redirectedApp = await ApplicationService.getRedirectedApplicationByFacilityId(fac.facilityId)
-          if (redirectedApp.length) {
-            this.applications.push(redirectedApp[0]) //there will only ever be 1 redirected app - if redirected, they are essentially kicked out of OFM
-          }
-        })
+      const redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId)))
+      this.applications = [...this.applications, ...redirectedApplications]
     },
 
     /**

@@ -112,7 +112,7 @@ export default {
         (facility) =>
           facility.intakeWindowCheckForAddApplication &&
           facility.ccofEnrolmentCheckForAddApplication &&
-          this.loadedApplications?.find((el) => el.facilityId === facility.facilityId && el.statusCode !== APPLICATION_STATUS_CODES.REDIRECTED),
+          this.loadedApplications?.some((el) => el.facilityId === facility.facilityId && el.statusCode !== APPLICATION_STATUS_CODES.REDIRECTED),
       )
     },
   },
@@ -167,14 +167,10 @@ export default {
     this.loadedApplications = await ApplicationService.getActiveApplications()
 
     //get the redirected applications so we can prevent those facilities from starting another OFM app
-    this.userInfo?.facilities
-      .filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId))
-      .forEach(async (fac) => {
-        const redirectedApp = await ApplicationService.getRedirectedApplicationByFacilityId(fac.facilityId)
-        if (redirectedApp.length) {
-          this.loadedApplications.push(redirectedApp[0])
-        }
-      })
+    const redirectedApplications = await ApplicationService.getRedirectedApplications(
+      this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)),
+    )
+    this.loadedApplications = [...this.loadedApplications, ...redirectedApplications]
   },
 
   methods: {

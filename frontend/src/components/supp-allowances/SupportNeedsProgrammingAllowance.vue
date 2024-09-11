@@ -31,7 +31,7 @@
     <v-col cols="12">
       <strong>An Inclusion Policy is a requirement to apply for Support Needs Allowance.</strong>
       You can upload your policy in
-      <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
+      <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
     </v-col>
   </v-row>
   <br />
