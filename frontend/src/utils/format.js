@@ -2,11 +2,19 @@ import { isEmpty } from 'lodash'
 import moment from 'moment'
 import momentTZ from 'moment-timezone'
 
-import { BLANK_FIELD, TIME_ZONE } from '@/utils/constants'
+import { BLANK_FIELD, TIME_ZONE, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 function formatBooleanToYesNo(value) {
-  if (value == null) return ''
-  return value ? 'Yes' : 'No'
+  switch (value) {
+    case YES_NO_RADIO_GROUP_MAPPING.NO:
+      return 'No'
+    case YES_NO_RADIO_GROUP_MAPPING.YES:
+      return 'Yes'
+    case YES_NO_RADIO_GROUP_MAPPING.NA:
+      return 'N/A'
+    default:
+      return ''
+  }
 }
 
 function formatDate(date) {

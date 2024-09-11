@@ -160,8 +160,12 @@ export const useApplicationsStore = defineStore('applications', {
       const isRequiredFinancialDocsUploaded = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
       const isFacilityTypeRequiredDocsUploaded = !this.isRentLease(this.currentApplication) || this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.SUPPORTING_DOCS])
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
-      const isArmsLengthConfirmed = !this.isRentLease(this.currentApplication) || this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES
-      return this.currentApplication?.facilityType && isArmsLengthConfirmed && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
+      const isRentLeaseInformationComplete =
+        !this.isRentLease(this.currentApplication) ||
+        (this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
+          (this.currentApplication?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
+            (this.currentApplication?.rentLeaseStartDate && this.currentApplication?.rentLeaseEndDate && this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)))
+      return this.currentApplication?.facilityType && isRentLeaseInformationComplete && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
     },
 
     checkRequiredDocsExist(application, requiredDocumentTypes) {

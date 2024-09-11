@@ -1,15 +1,15 @@
 <template>
   <v-container fluid class="pa-0 my-8">
-    <AppLabel>Yearly Facility Cost</AppLabel>
+    <h4>Yearly Facility Cost</h4>
     <v-card class="my-2" variant="outlined">
       <!-- RENT/LEASE -->
       <v-row v-if="facilityType === FACILITY_TYPES.RENT_LEASE" no-gutters class="pt-4">
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Rent/Lease</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.rentLeaseCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
@@ -20,30 +20,30 @@
       <v-row v-if="facilityType === FACILITY_TYPES.OWNED_WITH_MORTGAGE" no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Mortgage</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.mortgageCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Property/Municipal Tax</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Strata Fees</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
@@ -54,20 +54,20 @@
       <v-row v-if="facilityType === FACILITY_TYPES.OWNED_WITHOUT_MORTGAGE" no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Property/Municipal Tax</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Strata Fees</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
@@ -78,30 +78,30 @@
       <v-row v-if="facilityType === FACILITY_TYPES.PROVIDED_FREE_OF_CHARGE" no-gutters class="mt-2 pt-2">
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Fee (If Applicable)</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.applicableFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Property/Municipal Tax</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <p>Strata Fees</p>
             </v-col>
-            <v-col cols="6" xl="7" align="center" class="px-2">
+            <v-col cols="12" sm="5" align="center" class="px-sm-2">
               <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
@@ -111,10 +111,10 @@
       <v-row no-gutters class="mt-2">
         <v-col cols="12" lg="6" class="px-4">
           <v-row no-gutters>
-            <v-col cols="6" xl="5" class="pt-2">
+            <v-col cols="12" sm="7" class="pt-2">
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
-            <v-col cols="6" xl="7" class="pl-6">
+            <v-col cols="12" sm="5" class="pl-sm-6">
               <AppNumberInput :value="totalYearlyCost" :format="totalNumberFormat" variant="plain" readonly class="totalYearlyCost"></AppNumberInput>
             </v-col>
           </v-row>
