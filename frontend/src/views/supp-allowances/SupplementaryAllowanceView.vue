@@ -28,7 +28,7 @@
           </v-col>
         </v-row>
         <div v-if="application">
-          <span>You are applying this program for the Application&ensp;</span>
+          <span>You are applying for this allowance linked to your base funding &ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
             :key="application?.applicationId"

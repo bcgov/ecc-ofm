@@ -3,7 +3,6 @@
     <v-col cols="12">
       <AppLabel>Purpose of the fund:</AppLabel>
       Participants are eligible if using a designated vehicle to safely transport children:
-
       <v-row no-gutters>
         <v-col cols="12" class="mr-2 my-2">
           Between school and their offsite child care location;
