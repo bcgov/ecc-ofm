@@ -24,6 +24,24 @@ export default {
     }
   },
 
+  async getRedirectedApplications(facilities) {
+    try {
+      let applications = []
+      await Promise.all(
+        facilities?.map(async (facility) => {
+          const response = await ApiService.apiAxios.get(
+            `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`,
+          )
+          applications = applications?.concat(response?.data)
+        }),
+      )
+      return applications
+    } catch (error) {
+      console.log(`Failed to get the list of applications by facility id - ${error}`)
+      throw error
+    }
+  },
+
   async getActiveApplications() {
     try {
       const authStore = useAuthStore()

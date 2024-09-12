@@ -22,7 +22,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="12" md="6">
+        <v-col v-if="hasNonUnionFacilityGroupOrg" cols="12" md="6">
           <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
               {{ NOT_IN_GOOD_STANDING_WARNING_MESSAGE }}
@@ -43,7 +43,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="12" md="6">
+        <v-col v-if="showIrregularExpenseCard" cols="12" md="6">
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
@@ -55,9 +55,7 @@
               Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="irregular-expense-button" :loading="loading" :disabled="!hasAValidFundingAgreement" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">
-                Add Irregular Expenses Funding Application
-              </AppButton>
+              <AppButton id="irregular-expense-button" :loading="loading" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">Add Irregular Expenses Funding Application</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -92,6 +90,16 @@
             {{ getApplicationAction(item) }}
           </router-link>
           <a v-else href="#table" @click="getPDF(item)">View Application</a>
+          <v-tooltip
+            v-if="item.statusCode === APPLICATION_STATUS_CODES.REDIRECTED"
+            content-class="tooltip"
+            text="Redirected applications are with the $10 a Day team for review. For next steps, please check your email.">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" variant="text">
+                <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
         </template>
 
         <template #item.submittedDate="{ item }">
@@ -154,6 +162,9 @@ import {
   APPLICATION_TYPES,
   REQUEST_CATEGORY_NAMES,
   FUNDING_AGREEMENT_STATUS_CODES,
+  PROVIDER_TYPE_CODES,
+  UNION_TYPE_CODES,
+  CRM_STATE_CODES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -187,7 +198,6 @@ export default {
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
       applicationTypeToCancel: undefined,
-      orgInfo: undefined,
       showChangeRequestDialog: false,
     }
   },
@@ -197,8 +207,11 @@ export default {
     ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
 
-    hasAValidFundingAgreement() {
-      return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
+    showIrregularExpenseCard() {
+      if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
+        return false
+      }
+      return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE && application?.isUnionized === UNION_TYPE_CODES.NO)
     },
 
     hasGoodStanding() {
@@ -227,6 +240,16 @@ export default {
     isCCOFEnrolmentCheckSatisfied() {
       return this.userInfo?.facilities?.some((facility) => facility.ccofEnrolmentCheckForAddApplication)
     },
+    hasNonUnionFacilityGroupOrg() {
+      if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
+        return false
+      }
+
+      //additional logic here to prevent access to supp apps if they leave core app after selecting not Unionized - then return to the history page
+      return this.applications?.some(
+        (application) => application?.isUnionized === UNION_TYPE_CODES.NO && application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode !== APPLICATION_STATUS_CODES.DRAFT,
+      )
+    },
   },
 
   async created() {
@@ -240,6 +263,7 @@ export default {
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
       await this.getApplicationsAndFundingAgreement()
+      await this.getRedirectedApplications()
       await this.getSupplementaryApplications()
       await this.getIrregularExpenseApplications()
       this.mergeRegularAndSupplementaryApplications()
@@ -258,7 +282,9 @@ export default {
     ...mapActions(useOrgStore, ['getOrganizationInfo']),
     isEmpty,
     getApplicationAction(application) {
-      if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
+      if (application.statusCode === APPLICATION_STATUS_CODES.REDIRECTED) {
+        return ''
+      } else if (this.DRAFT_STATUS_CODES.includes(application?.statusCode)) {
         return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) ? 'Continue Application' : 'View Application'
       }
       return 'View Application'
@@ -268,11 +294,11 @@ export default {
     },
 
     showPDFDownloadButton(application) {
-      //OFM core generates PDF upon submit - Supp App generates PDF only once approved
-      if (application.applicationType === APPLICATION_TYPES.OFM) {
-        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
-      } else if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
+      if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE || application.statusCode === APPLICATION_STATUS_CODES.REDIRECTED) {
         return false
+        //OFM core generates PDF upon submit - Supp App generates PDF only once approved
+      } else if (application.applicationType === APPLICATION_TYPES.OFM) {
+        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
       }
       return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
     },
@@ -315,9 +341,14 @@ export default {
     },
 
     async getSupplementaryApplications() {
-      this.supplementaryApplications = (await Promise.all(this.applications.map((application) => ApplicationService.getSupplementaryApplications(application.applicationId))))
-        .filter((application) => application.length > 0)
+      this.supplementaryApplications = (await Promise.all(this.applications.map((application) => ApplicationService.getSupplementaryApplications(application?.applicationId))))
+        .filter((application) => application?.length > 0)
         .flat()
+    },
+
+    async getRedirectedApplications() {
+      const redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId)))
+      this.applications.push(...redirectedApplications)
     },
 
     /**
@@ -386,7 +417,7 @@ export default {
     },
 
     getStatusClass(statusCode) {
-      if (this.DRAFT_STATUS_CODES.includes(statusCode)) {
+      if (this.DRAFT_STATUS_CODES.includes(statusCode) || statusCode === APPLICATION_STATUS_CODES.REDIRECTED) {
         return 'status-gray'
       } else if (
         [

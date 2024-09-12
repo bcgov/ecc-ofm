@@ -1,7 +1,7 @@
 <template>
   <v-container class="mt-16">
     <div class="mt-16">
-      <h2 class="mb-8 text-center">Allowances Application Submitted</h2>
+      <h2 class="mb-8 text-center">Allowances (Core and Discretionary Services) Application Submitted</h2>
       <h4 class="mb-8 text-center">Check your dashboard for updates on the progress of your application. We may reach out if we need more information</h4>
 
       <v-row justify="space-around" no-gutters class="mt-10">

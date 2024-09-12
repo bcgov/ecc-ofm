@@ -1,6 +1,5 @@
 <template>
-  <AppAlertBanner v-if="isWarningDisplayed && hasInclusionPolicy" type="info">You have already received the Support Needs Allowance for the current term.</AppAlertBanner>
-
+  <AppAlertBanner v-if="isWarningDisplayed && hasInclusionPolicy" type="info">You have already received the Support Needs Allowance for the current year.</AppAlertBanner>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppAlertBanner v-if="!hasInclusionPolicy" type="info">
@@ -12,19 +11,27 @@
       meaningfully alongside other children.
       <br />
       <br />
-      Providers are encouraged to use this funding with their local
+      <AppLabel>Eligible expenses:</AppLabel>
+      Equipment, program resources, or minor Facility modifications to enhance inclusion for all children in the participant's programming.
+      <br />
+      <br />
+      <AppLabel>Ineligible expenses include:</AppLabel>
+      Staffing enhancements including support workers; individualized, therapeutic, or medical equipment.
+      <br />
+      <br />
+      Providers can contact their local
       <a href="https://www2.gov.bc.ca/gov/content/health/managing-your-health/child-behaviour-development/early-childhood-intervention" target="_blank">
         Supported Child Development or Aboriginal Supported Child Development
       </a>
-      programs.
+      programs for suggestions on how to use this funding.
     </v-col>
   </v-row>
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <strong>An Inclusion Policy is a requirement to apply for Support Needs Allowance.</strong>
-      Providers participating in the OFM Test must have an Inclusion Policy to receive this funding. You can upload your policy in
-      <router-link to="/account-mgmt/manage-organization">Account Management.</router-link>
+      You can upload your policy in
+      <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
     </v-col>
   </v-row>
   <br />

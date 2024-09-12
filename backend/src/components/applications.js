@@ -38,7 +38,7 @@ function mapSupplementaryApplicationObjectForFront(data) {
 async function getApplications(req, res) {
   try {
     const applications = []
-    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(${buildFilterQuery(
+    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,ofm_unionized,_ofm_facility_value&$filter=(${buildFilterQuery(
       req?.query,
       ApplicationMappings,
     )})`
