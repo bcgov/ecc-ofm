@@ -284,12 +284,7 @@
       </template>
     </AppDialog>
     <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
-    <NewRequestConfirmationDialog
-      :reference-number="referenceNumber"
-      :show="showNewRequestConfirmationDialog"
-      :is-invoked-from-messages="isInvokedFromMessages"
-      :return-to="returnTo"
-      @close="toggleNewRequestConfirmationDialog" />
+    <NewRequestConfirmationDialog :reference-number="referenceNumber" :show="showNewRequestConfirmationDialog" :return-to="returnTo" @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -329,10 +324,6 @@ export default {
       type: Boolean,
       default: false,
       required: true,
-    },
-    isInvokedFromMessages: {
-      type: Boolean,
-      default: false, // If true, the dialog is invoked from the Messages page
     },
     defaultRequestCategoryId: {
       type: String,

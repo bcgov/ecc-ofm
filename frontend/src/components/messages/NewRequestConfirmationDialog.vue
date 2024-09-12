@@ -40,10 +40,6 @@ export default {
       default: '',
       required: true,
     },
-    isInvokedFromMessages: {
-      type: Boolean,
-      default: false,
-    },
     returnTo: {
       type: String,
       default: 'home',
@@ -70,10 +66,7 @@ export default {
 
     viewMessages() {
       this.closeDialog()
-      if (!this.isInvokedFromMessages) {
-        // Component not invoked from the Messages page, redirect accordingly
-        this.$router.push({ name: 'messaging' })
-      }
+      this.$router.push({ name: 'messaging' })
     },
 
     returnPage() {
