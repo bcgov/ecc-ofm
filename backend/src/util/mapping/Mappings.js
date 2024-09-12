@@ -28,6 +28,7 @@ const UserProfileFacilityMappings = [
   { back: 'ofm_program_start_date', front: 'programStartDate' },
   { back: 'statecode', front: 'facilityStateCode' },
   { back: 'statuscode', front: 'facilityStatusCode' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
 ]
 
 const RequestCategoryMappings = [

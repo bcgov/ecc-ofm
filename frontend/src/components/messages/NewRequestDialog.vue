@@ -836,10 +836,6 @@ export default {
             const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
             if (fa) {
               this.fundingAgreements.push(fa)
-              const additionalFacilityInfo = await FacilityService.getFacility(facility.facilityId)
-              facility.isUnionized = additionalFacilityInfo?.isUnionized
-            } else {
-              facility.isUnionized = null
             }
           }),
         )
