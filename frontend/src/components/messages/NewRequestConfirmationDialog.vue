@@ -40,7 +40,7 @@ export default {
       default: '',
       required: true,
     },
-    invokedFromMessages: {
+    isInvokedFromMessages: {
       type: Boolean,
       default: false,
     },

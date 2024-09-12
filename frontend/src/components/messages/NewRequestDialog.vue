@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" :isLoading="isLoading" persistent max-width="60%" @close="closeNewRequestDialog">
+    <AppDialog v-model="isDisplayed" title="New request" :is-loading="isLoading" persistent max-width="60%" @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-5 mx-lg-1">
           <v-row no-gutters class="mt-2">
@@ -43,21 +43,17 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col v-for="(item, index) in requestSubCategories" :key="index" class="v-col-12 v-col-sm-4 v-col-xl-4">
+              <v-col v-for="(item, index) in requestSubCategories" :key="index" class="v-col-12 v-col-md-6 v-col-lg-4">
                 <v-checkbox
                   :label="item.categoryName"
                   :input-value="newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === item.subCategoryId)"
-                  @change="(val) => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"
                   density="compact"
                   :class="changeTypeClass"
-                  hide-details></v-checkbox>
+                  hide-details
+                  @change="(val) => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"></v-checkbox>
               </v-col>
             </v-row>
-            <v-row no-gutters class="pb-4">
-              <v-col class="d-flex flex-column align-center">
-                <span class="v-messages error-text-red" v-if="changeTypeClass !== ''">At least one Change type is required</span>
-              </v-col>
-            </v-row>
+            <div v-if="changeTypeClass" align="center" class="v-messages error-message pb-4">At least one Change type is required</div>
           </template>
           <v-row v-if="showFacility" no-gutters>
             <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-2">
@@ -78,9 +74,9 @@
                 item-title="facilityName"
                 :disabled="isLoading || lockFacility"
                 return-object>
-                <template v-slot:prepend-item>
+                <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilities">
-                    <template v-slot:prepend>
+                    <template #prepend>
                       <v-checkbox-btn
                         :color="someFacilitiesSelected ? '#003366' : undefined"
                         :indeterminate="someFacilitiesSelected && !allFacilitiesSelected"
@@ -104,20 +100,17 @@
                 return-object></v-select>
             </v-col>
           </v-row>
-          <v-row v-if="isAccountMaintenanceRequest && showFacility" no-gutters class="pb-6">
-            <v-col class="v-col-12 v-col-md-3 v-col-xl-1 pt-3 mt-0" />
-            <v-col class="v-col-12 v-col-md-9 v-col-xl-11 mt-0">
-              <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center pt-1">
-                <v-icon size="large" class="alert-icon pb-1 ml-5">mdi-alert-circle</v-icon>
-                <p class="text-error ml-2">
-                  The selected facility is not part of the OFM program and therefore cannot be updated using this method. Click
-                  <a href="#" @click.prevent="toggleUnableToSubmitCrDialog">here</a>
-                  for further instructions.
-                </p>
-              </div>
-              <span class="facility-tip pl-1">Submit a separate request for each facility</span>
-            </v-col>
-          </v-row>
+          <div v-if="isAccountMaintenanceRequest && showFacility" class="mb-6">
+            <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center mb-2">
+              <v-icon size="large" class="alert-icon">mdi-alert-circle</v-icon>
+              <p class="text-error ml-2">
+                The selected facility is not part of the OFM program and therefore cannot be updated using this method. Click
+                <a href="#" @click.prevent="toggleUnableToSubmitCrDialog">here</a>
+                for further instructions.
+              </p>
+            </div>
+            <div class="facility-tip">Submit a separate request for each facility</div>
+          </div>
           <template v-if="isOrgPhoneEmailChecked">
             <v-row no-gutters>
               <v-col class="v-col-12 v-col-md-3 v-col-xl-3 pt-1 mb-0">
@@ -250,10 +243,10 @@
             </div>
             <AppDocumentUpload
               v-model="documentsToUpload"
-              entityName="ofm_assistance_requests"
+              entity-name="ofm_assistance_requests"
               :disabled="isDisabled"
               :loading="isLoading"
-              @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
+              @validate-documents-to-upload="validateDocumentsToUpload"></AppDocumentUpload>
             <AppMissingInfoError v-if="isIrregularExpenseRequest && !documentsToUpload.length">Document upload required</AppMissingInfoError>
           </v-row>
           <template v-if="showContactMethods">
@@ -282,19 +275,19 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center pt-2">
-            <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" @click="closeNewRequestDialog()" :loading="isLoading">Cancel</AppButton>
+            <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" :loading="isLoading" @click="closeNewRequestDialog()">Cancel</AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center pt-2">
-            <AppButton id="submit-new-request" size="large" width="200px" @click="submit()" :disabled="isDisabled" :loading="isLoading">Submit</AppButton>
+            <AppButton id="submit-new-request" size="large" width="200px" :disabled="isDisabled" :loading="isLoading" @click="submit()">Submit</AppButton>
           </v-col>
         </v-row>
       </template>
     </AppDialog>
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
     <NewRequestConfirmationDialog
-      :referenceNumber="referenceNumber"
+      :reference-number="referenceNumber"
       :show="showNewRequestConfirmationDialog"
-      :isInvokedFromMessages="isInvokedFromMessages"
+      :is-invoked-from-messages="isInvokedFromMessages"
       :return-to="returnTo"
       @close="toggleNewRequestConfirmationDialog" />
   </v-container>
@@ -858,13 +851,13 @@ export default {
 
 .change-type-required:deep(.mdi-checkbox-blank-outline)::before {
   content: '\F0131';
-  border-color: #b00020;
-  border-block-color: #b00020;
+  border-color: #d8292f;
+  border-block-color: #d8292f;
   border-style: groove;
   border-width: 2px;
 }
 
-.error-text-red {
-  color: #b00020;
+.v-messages {
+  opacity: 1;
 }
 </style>

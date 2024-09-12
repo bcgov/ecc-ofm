@@ -169,7 +169,7 @@ export default {
     // Need to add this validation because isValidForm is not responsive when file is updated
     validateFile(updatedItemId) {
       const document = this.documents.find((item) => item.id === updatedItemId)
-      const file = document?.file[0]
+      const file = document?.file
       if (file) {
         const isLessThanMaxSize = file.size < this.MAX_FILE_SIZE
         const isFileExtensionAccepted = this.fileExtensionAccept.includes(getFileExtensionWithDot(file.name)?.toLowerCase())
