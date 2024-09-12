@@ -32,7 +32,7 @@ export default {
           const response = await ApiService.apiAxios.get(
             `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`,
           )
-          applications = applications?.concat(response.data)
+          applications = applications?.concat(response?.data)
         }),
       )
       return applications
