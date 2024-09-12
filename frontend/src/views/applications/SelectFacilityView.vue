@@ -100,6 +100,7 @@ export default {
       loadedApplications: undefined,
       documentsToDelete: [],
       documentsComplete: true,
+      redirectedApplications: undefined,
     }
   },
 
@@ -108,7 +109,9 @@ export default {
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
 
     filteredFacilities() {
-      return this.userInfo?.facilities?.filter((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
+      return this.userInfo?.facilities?.filter(
+        (facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication && !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
+      )
     },
   },
 
@@ -160,6 +163,9 @@ export default {
     }
     await this.getOrganization()
     this.loadedApplications = await ApplicationService.getActiveApplications()
+
+    //get the redirected applications so we can prevent those facilities from starting another OFM app
+    this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)))
   },
 
   methods: {

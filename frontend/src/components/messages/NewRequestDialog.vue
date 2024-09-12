@@ -306,6 +306,7 @@ import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { useMessagesStore } from '@/stores/messages'
+import { useOrgStore } from '@/stores/org'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
@@ -324,7 +325,7 @@ import MessageService from '@/services/messageService'
 import OrganizationService from '@/services/organizationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE, FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE, FUNDING_AGREEMENT_STATUS_CODES, PROVIDER_TYPE_CODES } from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
@@ -396,6 +397,7 @@ export default {
   computed: {
     ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
+    ...mapState(useOrgStore, ['currentOrg']),
     permittedRequestCategories() {
       let categories = [...this.requestCategories]
 
@@ -502,7 +504,11 @@ export default {
     },
     filteredFacilties() {
       if (this.isIrregularExpenseRequest) {
-        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId))
+        //family org can never apply for irregular expense
+        if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
+          return []
+        }
+        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId) && fac?.isUnionized === 0)
       }
       return this.facilities
     },
@@ -550,6 +556,9 @@ export default {
         if (this.isIrregularExpenseRequest && !this.fundingAgreements) {
           this.isLoading = true
           await this.getFundingAgreements()
+          if (!this.currentOrg) {
+            await this.getOrganizationInfo(this.userInfo?.organizationId)
+          }
           this.isLoading = false
         }
         this.resetModelData(this.isAccountMaintenanceRequest)
@@ -587,6 +596,7 @@ export default {
   },
   methods: {
     ...mapActions(useMessagesStore, ['addNewAssistanceRequestToStore', 'updateAssistanceRequestInStore']),
+    ...mapActions(useOrgStore, ['getOrganizationInfo']),
 
     //this function runs to check if the selected facility is able to submit certain kinds of assitance requests.
     //it is only available to Account Managers and should only be called if the correct checkbox(es) are selected

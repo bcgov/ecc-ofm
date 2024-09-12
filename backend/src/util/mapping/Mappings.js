@@ -28,6 +28,7 @@ const UserProfileFacilityMappings = [
   { back: 'ofm_program_start_date', front: 'programStartDate' },
   { back: 'statecode', front: 'facilityStateCode' },
   { back: 'statuscode', front: 'facilityStatusCode' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
 ]
 
 const RequestCategoryMappings = [
@@ -261,6 +262,7 @@ const FacilityMappings = [
   { back: 'ofm_ypp_designation', front: 'yppDesignation' },
   { back: 'ofm_ypp_enrolled', front: 'yppEnrolled' },
   { back: 'ofm_personal_residence', front: 'personalResidence' },
+  { back: 'ofm_unionized', front: 'isUnionized' },
 ]
 
 const ContactMappings = [

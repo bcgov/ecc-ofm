@@ -1,16 +1,21 @@
-<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
   <p class="my-11">
-    Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
-    <strong class="text-decoration-underline">one or all</strong>
-    that applies to your organization.
+    Allowances (Core and Discretionary) have a one-year term. You must re-apply annually to continue receiving funding.
+    <br />
+    The renewal date will be the anniversary of your OFM base funding agreement
+  </p>
+
+  <p class="my-11">
+    You may apply for one or more allowances. You may also apply through
+    <router-link :to="{ name: 'applications-history' }">Applications</router-link>
+    at any time.
   </p>
 
   <AppAlertBanner v-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
-      <v-col cols="12" lg="1">
+      <v-col cols="12" lg="2">
         <AppLabel>Application Year:</AppLabel>
       </v-col>
 

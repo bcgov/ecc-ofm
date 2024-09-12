@@ -1,6 +1,10 @@
 <template>
+  <p class="my-11">
+    Your application is almost ready to submit. Please check and review all your inputs.
+    <br />
+    You will not be able to change these details after submission
+  </p>
   <v-form ref="form" class="mt-10">
-    <h2>Allowances (Core and Discretionary Services)</h2>
     <v-row v-if="!loading" no-gutters class="mb-2">
       <v-col cols="12" align="right">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">

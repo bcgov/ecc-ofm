@@ -72,6 +72,7 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   CANCELLED_BY_SP: 8, // INACTIVE state
   EXPIRED: 9, // INACTIVE state
   VERIFIED: 10,
+  REDIRECTED: 11, // INACTIVE state
 })
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
@@ -331,4 +332,14 @@ export const BUSINESS_TYPE_CODES = Object.freeze({
   PUBLIC_INSTITUTION: 3,
   LOCAL_GOVERNMENT: 4,
   SOLE_PROPRIETOR: 5,
+})
+
+export const PROVIDER_TYPE_CODES = Object.freeze({
+  GROUP: 1,
+  FAMILY: 2,
+})
+
+export const UNION_TYPE_CODES = Object.freeze({
+  NO: 0,
+  YES: 1,
 })
