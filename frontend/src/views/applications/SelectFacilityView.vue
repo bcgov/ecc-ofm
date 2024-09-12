@@ -100,6 +100,7 @@ export default {
       loadedApplications: undefined,
       documentsToDelete: [],
       documentsComplete: true,
+      redirectedApplications: undefined,
     }
   },
 
@@ -109,10 +110,7 @@ export default {
 
     filteredFacilities() {
       return this.userInfo?.facilities?.filter(
-        (facility) =>
-          facility.intakeWindowCheckForAddApplication &&
-          facility.ccofEnrolmentCheckForAddApplication &&
-          this.loadedApplications?.some((el) => el.facilityId === facility.facilityId && el.statusCode !== APPLICATION_STATUS_CODES.REDIRECTED),
+        (facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication && !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
       )
     },
   },
@@ -167,10 +165,7 @@ export default {
     this.loadedApplications = await ApplicationService.getActiveApplications()
 
     //get the redirected applications so we can prevent those facilities from starting another OFM app
-    const redirectedApplications = await ApplicationService.getRedirectedApplications(
-      this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)),
-    )
-    this.loadedApplications = [...this.loadedApplications, ...redirectedApplications]
+    this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)))
   },
 
   methods: {

@@ -164,6 +164,7 @@ import {
   FUNDING_AGREEMENT_STATUS_CODES,
   PROVIDER_TYPE_CODES,
   UNION_TYPE_CODES,
+  CRM_STATE_CODES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -207,6 +208,9 @@ export default {
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
 
     showIrregularExpenseCard() {
+      if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
+        return false
+      }
       return this.applications?.some((application) => application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE && application?.isUnionized === UNION_TYPE_CODES.NO)
     },
 
@@ -240,7 +244,11 @@ export default {
       if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
         return false
       }
-      return this.applications?.some((application) => application?.isUnionized === UNION_TYPE_CODES.NO)
+
+      //additional logic here to prevent access to supp apps if they leave core app after selecting not Unionized - then return to the history page
+      return this.applications?.some(
+        (application) => application?.isUnionized === UNION_TYPE_CODES.NO && application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode !== APPLICATION_STATUS_CODES.DRAFT,
+      )
     },
   },
 
@@ -340,7 +348,7 @@ export default {
 
     async getRedirectedApplications() {
       const redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId)))
-      this.applications = [...this.applications, ...redirectedApplications]
+      this.applications.push(...redirectedApplications)
     },
 
     /**
