@@ -4,9 +4,10 @@
       <h2 class="pb-6">{{ section?.title }}</h2>
       <v-form ref="form">
         <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
-          <div v-if="!question.hide">
+          <div v-if="isAdditionalInfoText(question)" v-html="question?.additionalInfo" />
+          <div v-else-if="!question.hide">
             <AppLabel>{{ question?.text }}</AppLabel>
-            <div v-if="question?.additionalInfo" v-html="question?.additionalInfo" class="my-2" />
+            <div v-if="question?.additionalInfo" class="my-2" v-html="question?.additionalInfo" />
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
               :questions="getTableQuestionHeaders(question)"
@@ -14,7 +15,7 @@
               :readonly="readonly"
               :required="question.responseRequired"
               :validation="validation"
-              :maxRows="question?.tableMaxRows"
+              :max-rows="question?.tableMaxRows"
               @update="updateResponses"
               @delete="deleteTableResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :validation="validation" :readonly="readonly" @update="updateResponses" />
@@ -84,6 +85,10 @@ export default {
 
     deleteTableResponses(response) {
       this.$emit('deleteTableResponses', response)
+    },
+
+    isAdditionalInfoText(question) {
+      return !question?.type && question?.additionalInfo
     },
   },
 }
