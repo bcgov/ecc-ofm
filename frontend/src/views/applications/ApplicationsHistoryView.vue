@@ -180,6 +180,7 @@ export default {
       format,
       applications: [],
       supplementaryApplications: [],
+      redirectedApplications: [],
       applicationItems: [],
       irregularExpenses: [],
       headers: [
@@ -236,7 +237,11 @@ export default {
     },
     isAddCoreApplicationAllowed() {
       return this.userInfo?.facilities?.some(
-        (facility) => facility.facilityStateCode === CRM_STATE_CODES.ACTIVE && facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication,
+        (facility) =>
+          facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
+          facility.intakeWindowCheckForAddApplication &&
+          facility.ccofEnrolmentCheckForAddApplication &&
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
       )
     },
     isCCOFEnrolmentCheckSatisfied() {
@@ -349,8 +354,8 @@ export default {
     },
 
     async getRedirectedApplications() {
-      const redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId)))
-      this.applications.push(...redirectedApplications)
+      this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId)))
+      this.applications.push(...this.redirectedApplications)
     },
 
     /**
