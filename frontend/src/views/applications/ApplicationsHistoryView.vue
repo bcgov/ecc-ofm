@@ -235,7 +235,9 @@ export default {
       }
     },
     isAddCoreApplicationAllowed() {
-      return this.userInfo?.facilities?.some((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
+      return this.userInfo?.facilities?.some(
+        (facility) => facility.facilityStateCode === CRM_STATE_CODES.ACTIVE && facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication,
+      )
     },
     isCCOFEnrolmentCheckSatisfied() {
       return this.userInfo?.facilities?.some((facility) => facility.ccofEnrolmentCheckForAddApplication)
