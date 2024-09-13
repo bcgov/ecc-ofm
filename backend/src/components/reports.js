@@ -107,7 +107,7 @@ async function getSurveyResponses(req, res) {
     if (req.query?.isSubmitted != null) {
       filter += req.query?.isSubmitted === 'true' ? ' and _ofm_contact_value ne null' : ' and _ofm_contact_value eq null'
     }
-    const operation = `ofm_survey_responses?$filter=(${filter})`
+    const operation = `ofm_survey_responses?$filter=(${filter})&pageSize=500`
     const response = await getOperation(operation)
     response?.value?.forEach((surveyResponse) => surveyResponses.push(new MappableObjectForFront(surveyResponse, SurveyResponseMappings).toJSON()))
     if (isEmpty(surveyResponses)) {

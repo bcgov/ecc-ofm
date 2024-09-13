@@ -124,7 +124,7 @@ export default {
         this.searchQueries = searchQueries
         await Promise.all(
           this.userInfo?.facilities?.map(async (facility) => {
-            const response = await ReportsService.getSubmittedSurveyResponsesByFacilityAndSubmittedDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
+            const response = await ReportsService.getSubmittedSurveyResponsesByFacility(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (!isEmpty(response)) {
               this.submittedReports = this.submittedReports?.concat(response)
             }

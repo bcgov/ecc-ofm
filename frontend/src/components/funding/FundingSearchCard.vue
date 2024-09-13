@@ -131,7 +131,7 @@ export default {
     },
     defaultDateFilter: {
       type: String,
-      default: DATE_FILTER_TYPES.THREE_MONTHS,
+      default: null,
     },
   },
 
