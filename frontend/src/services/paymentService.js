@@ -2,21 +2,13 @@ import ApiService from '@/common/apiService'
 import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 export default {
-  async getActivePaymentsByFacilityId(facilityId) {
+  async getActivePaymentsByFacilityId(facilityId, dateFrom = null, dateTo = null) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.PAYMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the list of active payments by facility id - ${error}`)
-      throw error
-    }
-  },
-
-  async getActivePaymentsByFacilityIdAndDate(facilityId, dateFrom, dateTo) {
-    try {
-      if (!facilityId || !dateFrom) return
-      let url = `${ApiRoutes.PAYMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&dateFrom=${dateFrom}`
+      let url = `${ApiRoutes.PAYMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`
+      if (dateFrom) {
+        url += `&dateFrom=${dateFrom}`
+      }
       if (dateTo) {
         url += `&dateTo=${dateTo}`
       }
@@ -28,10 +20,13 @@ export default {
     }
   },
 
-  async getPaymentsByFacilityIdAndStatusAndDate(facilityId, statusCode, dateFrom, dateTo) {
+  async getPaymentsByFacilityIdAndStatus(facilityId, statusCode, dateFrom = null, dateTo = null) {
     try {
-      if (!facilityId || !statusCode || !dateFrom) return
-      let url = `${ApiRoutes.PAYMENTS}?facilityId=${facilityId}&statusCode=${statusCode}&dateFrom=${dateFrom}`
+      if (!facilityId || !statusCode) return
+      let url = `${ApiRoutes.PAYMENTS}?facilityId=${facilityId}&statusCode=${statusCode}`
+      if (dateFrom) {
+        url += `&dateFrom=${dateFrom}`
+      }
       if (dateTo) {
         url += `&dateTo=${dateTo}`
       }
