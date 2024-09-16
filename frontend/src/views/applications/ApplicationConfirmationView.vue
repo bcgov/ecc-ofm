@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2 class="mb-8 text-center">OFM Application Submitted</h2>
+    <h2 class="mb-8 text-center">$10 a Day Funding Application Submitted</h2>
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
     <div v-else>
       <v-row class="flex justify-end mb-1">

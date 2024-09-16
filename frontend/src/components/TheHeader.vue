@@ -76,7 +76,7 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
     appTitle() {
-      return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
+      return '$10 a Day ChildCareBC Centres'
     },
     height() {
       return this.$vuetify.display.xs && this.showMenu ? 140 : 64
