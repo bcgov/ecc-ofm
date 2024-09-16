@@ -106,7 +106,6 @@ export default {
       panels: [],
     }
   },
-
   computed: {
     allPanelIDs() {
       const allPanels = [...this.GENERAL_PANELS, ...this.TEST_PARTICIPANT_PANELS]
@@ -134,7 +133,6 @@ export default {
         id: 'training',
       },
     ]
-
     this.panels = this.allPanelIDs
   },
   methods: {
