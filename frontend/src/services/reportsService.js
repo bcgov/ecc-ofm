@@ -66,10 +66,13 @@ export default {
     }
   },
 
-  async getSubmittedSurveyResponsesByFacilityAndSubmittedDate(facilityId, dateFrom, dateTo) {
+  async getSubmittedSurveyResponsesByFacility(facilityId, dateFrom = null, dateTo = null) {
     try {
       if (!facilityId) return
-      let url = `${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=true&dateFrom=${dateFrom}`
+      let url = `${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=true`
+      if (dateFrom) {
+        url += `&dateFrom=${dateFrom}`
+      }
       if (dateTo) {
         url += `&dateTo=${dateTo}`
       }

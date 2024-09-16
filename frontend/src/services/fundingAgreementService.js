@@ -64,10 +64,13 @@ export default {
     }
   },
 
-  async getFAsByFacilityIdAndStartDate(facilityId, startDateFrom, startDateTo) {
+  async getFAsByFacilityId(facilityId, startDateFrom = null, startDateTo = null) {
     try {
-      if (!facilityId && !startDateFrom) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&includeEA=true&dateFrom=${startDateFrom}`
+      if (!facilityId) return
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&includeEA=true`
+      if (startDateFrom) {
+        url += `&dateFrom=${startDateFrom}`
+      }
       if (startDateTo) {
         url += `&dateTo=${startDateTo}`
       }
