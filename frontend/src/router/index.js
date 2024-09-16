@@ -295,7 +295,6 @@ const router = createRouter({
       component: HelpView,
       meta: {
         requiresAuth: true,
-        hidden: true,
       },
     },
     {
