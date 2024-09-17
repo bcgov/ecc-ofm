@@ -18,7 +18,7 @@ public class CRMOrgSearchPage {
 	WebDriver driver;
 	WebDriverWait wait;
 
-	@FindBy(xpath = "//*[@id='ViewSelector_4_5daf8291-112d-ed11-9db0-000d3af4f2d7']/span/i")
+	@FindBy(xpath = "//button[contains(@id, 'ViewSelector')]")
 	WebElement orgFacdropDown;
 	
 	@FindBy(xpath = "//*[text()='Active Facilities']")
@@ -38,8 +38,8 @@ public class CRMOrgSearchPage {
 
 	
 	public void selectFacility(String facility) {
-		orgFacdropDown.click();		
-		button_activeFacilities.click();
+		wait.until(ExpectedConditions.visibilityOf(orgFacdropDown)).click();
+		wait.until(ExpectedConditions.visibilityOf(button_activeFacilities)).click();
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

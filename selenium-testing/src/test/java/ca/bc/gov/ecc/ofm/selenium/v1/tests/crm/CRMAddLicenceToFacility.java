@@ -21,6 +21,7 @@ import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMNewContactFacilityPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMOrgSearchPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMOrganizationPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.LicenseDetailsPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -41,8 +42,6 @@ public class CRMAddLicenceToFacility extends BaseTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void createOrganizationFacilityContact() {
-		
-		
 		
 		try {
 			// CRM Login
@@ -67,17 +66,22 @@ public class CRMAddLicenceToFacility extends BaseTest {
 			// Beginning of new code after login
 			Thread.sleep(2000);
 		
-
-			
 			// Search facility
 			objCRMSignInCredentialPage.clickOrgFacilities();
-			//*[@id="ViewSelector_4_5daf8291-112d-ed11-9db0-000d3af4f2d7"]/span/i
 			CRMOrgSearchPage cRMOrgSearchPage = new CRMOrgSearchPage(driver);
 			cRMOrgSearchPage.selectFacility("ofmqa_fac_automation");
 			
 			
 			CRMFacilityPage cRMFacilityPage = new CRMFacilityPage(driver);
 			cRMFacilityPage.clickLicenceTab();
+			cRMFacilityPage.addNewLicense();
+			
+			Thread.sleep(2000);
+			LicenseDetailsPage licenseDetailsPage = new LicenseDetailsPage(driver);
+			licenseDetailsPage.setLicenseNumber("LN-1234");
+			licenseDetailsPage.setStartDate();
+			licenseDetailsPage.setHealthAuthority();
+			licenseDetailsPage.saveLicense();
 			
 			test.info("Licence added to facility successfully");
 			test.pass("Added licence to facility");

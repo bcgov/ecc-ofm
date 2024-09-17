@@ -77,7 +77,6 @@ public class CRMSignInCredentialPage {
 
 	public void clickSignInAgain() {
 		wait.until(ExpectedConditions.visibilityOf(button_SignInAgain)).click();
-
 	}
 
 	public void clickOrgFacilities() {

@@ -38,6 +38,11 @@ public class CRMFacilityPage {
 
 	@FindBy(xpath = "//*[@aria-label = 'Licences' and @role = 'tab']")
 	WebElement licenceTab;
+	
+	@FindBy(xpath = "//*[@aria-label = 'New Licence. Add New Licence']")
+	WebElement addNewLicense;
+	
+	
 
 	public CRMFacilityPage(WebDriver driver) {
 		this.driver = driver;
@@ -83,6 +88,10 @@ public class CRMFacilityPage {
 	}
 	
 	public void clickLicenceTab() {
-		licenceTab.click();
+		wait.until(ExpectedConditions.elementToBeClickable(licenceTab)).click();
+	}
+	
+	public void addNewLicense() {
+		wait.until(ExpectedConditions.elementToBeClickable(addNewLicense)).click();
 	}
 }
