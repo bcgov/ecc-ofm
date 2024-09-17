@@ -62,7 +62,7 @@ import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, CRM_STATE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 import { isEqual, cloneDeep } from 'lodash'
@@ -110,7 +110,11 @@ export default {
 
     filteredFacilities() {
       return this.userInfo?.facilities?.filter(
-        (facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication && !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
+        (facility) =>
+          facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
+          facility.intakeWindowCheckForAddApplication &&
+          facility.ccofEnrolmentCheckForAddApplication &&
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
       )
     },
   },
