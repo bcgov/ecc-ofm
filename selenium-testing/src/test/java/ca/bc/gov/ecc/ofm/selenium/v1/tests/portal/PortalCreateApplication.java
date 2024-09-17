@@ -34,7 +34,7 @@ public class PortalCreateApplication extends BaseTest {
 	public void CreateApplication() throws Exception {
 		try {
 			driver.get(PORTAL_URL);
-		//	test = extent.createTest("Test - Portal Create Application");
+			test = extent.createTest("Test - Portal Create Application");
 			test.info("Test - Portal Create Application");
 
 			Thread.sleep(2000);
@@ -66,7 +66,7 @@ public class PortalCreateApplication extends BaseTest {
 			portalApplicationsSelectFacility.clickNextButton();
 			test.info("Select facility page complete");
 
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 			PortalApplicationsFacilityDetails portalApplicationsFacilityDetails = new PortalApplicationsFacilityDetails(
 					driver);
 			portalApplicationsFacilityDetails.setFiscalYearEndDateDateField("09/30/2025");
@@ -75,17 +75,24 @@ public class PortalCreateApplication extends BaseTest {
 			portalApplicationsFacilityDetails.setSelectExpenseAuthorityTextField("ofmqa 08");
 			portalApplicationsFacilityDetails.clickNextButton();
 			test.info("facility details page complete");
+			
+			Thread.sleep(5000);
+			PortalApplicationsEligibilityPage portalApplicationsEligibilityPage = new PortalApplicationsEligibilityPage(driver);
+			portalApplicationsEligibilityPage.setEligibility();
+			portalApplicationsEligibilityPage.clickNext();
 
 			PortalApplicationsServiceDelivery portalApplicationsServiceDelivery = new PortalApplicationsServiceDelivery(
 					driver);
 			Thread.sleep(2000);
+			portalApplicationsServiceDelivery.addLicense();
+			portalApplicationsServiceDelivery.addHealthAuthorityCompliance();
 			portalApplicationsServiceDelivery.setIConfirmThatTheAboveInformationCheckboxField();
 			portalApplicationsServiceDelivery.clickNextButton();
 			test.info("service delivery page complete");
 
 			PortalApplicationsOperatingCosts portalApplicationsOperatingCosts = new PortalApplicationsOperatingCosts(
 					driver);
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 			portalApplicationsOperatingCosts.setSelectAFacilityTypeTextField("Owned Without Mortgage");
 
 			PortalApplicationsOperatingCostsDetails portalApplicationsOperatingCostsDetails = new PortalApplicationsOperatingCostsDetails(
@@ -94,9 +101,6 @@ public class PortalCreateApplication extends BaseTest {
 			portalApplicationsOperatingCostsDetails.setInsuranceCost("500.00");
 			Thread.sleep(5000);
 			portalApplicationsOperatingCostsDetails.addIncomeStatement();
-			Thread.sleep(2000);
-			portalApplicationsOperatingCostsDetails.clickSaveButton();
-			Thread.sleep(5000);
 			portalApplicationsOperatingCostsDetails.addBalanceSheet();
 			Thread.sleep(2000);
 			portalApplicationsOperatingCostsDetails.clickNextButton();
