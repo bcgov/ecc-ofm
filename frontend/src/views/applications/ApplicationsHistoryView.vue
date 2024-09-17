@@ -9,7 +9,7 @@
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              Add $10 a Day Funding Application
+              $10 a Day Funding Application
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
               {{ ofmApplicationCardText }}
