@@ -104,7 +104,7 @@
             <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center mb-2">
               <v-icon size="large" class="alert-icon">mdi-alert-circle</v-icon>
               <p class="text-error ml-2">
-                The selected facility is not part of the OFM program and therefore cannot be updated using this method. Click
+                The selected facility is not enrolled in the $10 a Day - Operating Funding Model and therefore cannot be updated using this method. Click
                 <a href="#" @click.prevent="toggleUnableToSubmitCrDialog">here</a>
                 for further instructions.
               </p>

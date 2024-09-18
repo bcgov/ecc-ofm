@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form">
     <v-row v-if="!loading" no-gutters class="mb-2">
+      <strong>Your $10 a Day Funding application is almost ready to submit. Please check and review all your inputs. You will not be able to change these details after submission.</strong>
       <v-col cols="12" align="right">
         <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>

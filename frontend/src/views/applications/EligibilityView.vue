@@ -1,8 +1,8 @@
 <template>
   <v-form ref="form">
     <AppAlertBanner type="info">
-      Note: If you answer "No" to any of these questions, you will not be eligible for OFM funding. More information can be at the
-      <a href="https://www2.gov.bc.ca/gov/content?id=F0D0FD2A00064CDDBF634CF83E4E2599" target="_blank">OFM website</a>
+      Note: If you answer "No" to any of these questions, you will not be eligible for a $10 a Day Funding. More information can be at the
+      <a href="https://www2.gov.bc.ca/gov/content?id=F0D0FD2A00064CDDBF634CF83E4E2599" target="_blank">$10 a Day Funding website</a>
       for eligibility.
     </AppAlertBanner>
     <v-card variant="outlined" class="pa-4 my-6">

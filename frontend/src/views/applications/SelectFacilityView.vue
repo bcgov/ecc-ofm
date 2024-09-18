@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="mx-4">
-    <h1>Begin an Operating Funding Model application</h1>
+    <h1>Begin a $10 a Day Funding application</h1>
     <div class="mt-8">
       <h4>Organization information</h4>
       <div>

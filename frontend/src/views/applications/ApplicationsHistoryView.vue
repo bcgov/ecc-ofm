@@ -9,14 +9,14 @@
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              OFM Application
+              $10 a Day Funding Application
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
               {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
               <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
-                Add OFM Application
+                Add $10 a Day Application
               </AppButton>
             </v-card-actions>
           </v-card>

@@ -276,7 +276,7 @@ export const YES_NO_CRM_MAPPING = Object.freeze({
 })
 
 export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
-export const OFM_PROGRAM = 'OFM Program'
+export const OFM_PROGRAM = '$10 a Day Funding Program'
 
 export const PHONE_FORMAT = '###-###-####'
 export const EMAIL_FORMAT = 'email@domain.com'
@@ -284,7 +284,7 @@ export const EMAIL_FORMAT = 'email@domain.com'
 export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan failed.'
 
 export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
-  'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.'
+  'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive $10 a Day funding. Contact BC Registries immediately to resolve.'
 
 export const BLANK_FIELD = '- - - -'
 
