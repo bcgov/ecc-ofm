@@ -4,7 +4,7 @@
       <h2 class="pb-6">{{ section?.title }}</h2>
       <v-form ref="form">
         <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
-          <div v-if="isAdditionalInfoText(question)" v-html="question?.additionalInfo" />
+          <div v-if="isInstruction(question)" v-html="question?.additionalInfo" />
           <div v-else-if="!question.hide">
             <AppLabel>{{ question?.text }}</AppLabel>
             <div v-if="question?.additionalInfo" class="my-2" v-html="question?.additionalInfo" />
@@ -87,8 +87,8 @@ export default {
       this.$emit('deleteTableResponses', response)
     },
 
-    isAdditionalInfoText(question) {
-      return !question?.type && question?.additionalInfo
+    isInstruction(question) {
+      return question?.type === this.SURVEY_QUESTION_TYPES.INSTRUCTIONS
     },
   },
 }

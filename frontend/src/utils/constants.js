@@ -239,6 +239,7 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   CHOICE: 'Choice',
   MULTIPLE_CHOICE: 'Multiple Choice',
   TABLE: 'Table',
+  INSTRUCTIONS: 'Instructions',
 })
 
 export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
