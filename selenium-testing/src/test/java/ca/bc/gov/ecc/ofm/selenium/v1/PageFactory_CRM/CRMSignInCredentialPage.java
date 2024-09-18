@@ -37,6 +37,9 @@ public class CRMSignInCredentialPage {
 
 	@FindBy(xpath = "//*[text()='Organization-Facilities']")
 	WebElement button_OrgFacilities;
+	
+	@FindBy(xpath = "//*[text()='Assistance Requests']")
+	WebElement buttonAssistanceRequest;
 
 	public CRMSignInCredentialPage(WebDriver driver) {
 		this.driver = driver;
@@ -74,11 +77,14 @@ public class CRMSignInCredentialPage {
 
 	public void clickSignInAgain() {
 		wait.until(ExpectedConditions.visibilityOf(button_SignInAgain)).click();
-
 	}
 
 	public void clickOrgFacilities() {
 		wait.until(ExpectedConditions.elementToBeClickable(button_OrgFacilities)).click();
+	}
+	
+	public void clickAssistanceRequest() {
+		wait.until(ExpectedConditions.elementToBeClickable(buttonAssistanceRequest)).click();
 	}
 
 }

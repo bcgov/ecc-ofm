@@ -17,6 +17,12 @@ public class CRMHomePage {
 
 	@FindBy(xpath = "//*[@aria-label='New']")
 	WebElement newOrganizationButton;
+	
+	@FindBy(xpath = "//*[@aria-label='Irregular Expense Test Subject']")
+	WebElement assistanceRequestButton;
+	
+	@FindBy(xpath = "//*[@aria-label='Edit']")
+	WebElement editButton;
 
 	public CRMHomePage(WebDriver driver) {
 		this.driver = driver;
@@ -26,5 +32,15 @@ public class CRMHomePage {
 
 	public void pressNewOrganization() {
 		wait.until(ExpectedConditions.elementToBeClickable(newOrganizationButton)).click();
+	}
+	
+	public void selectIrregularExpenseApplication() {
+		try {
+			wait.until(ExpectedConditions.elementToBeClickable(assistanceRequestButton)).click();
+			wait.until(ExpectedConditions.elementToBeClickable(editButton)).click();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
