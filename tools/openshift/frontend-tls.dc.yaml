@@ -154,7 +154,6 @@ objects:
           BANNER_ENVIRONMENT: '${BANNER_ENVIRONMENT}',
           BANNER_COLOR: '${BANNER_COLOR}',
           TDAD_CONTACT_EMAIL: '${TDAD_CONTACT_EMAIL}',
-          CCOF_URL: '${CCOF_URL}',
           IRREGULAR_EXPENSE_FORM_URL: '${IRREGULAR_EXPENSE_FORM_URL}'
         };
 parameters:
@@ -205,9 +204,6 @@ parameters:
     required: false
   - name: TDAD_CONTACT_EMAIL
     description: The contact email for 10 dollar a day daycare centers
-    required: true
-  - name: CCOF_URL
-    description: The URL for the CCOF portal that belongs to the same application environment.
     required: true
   - name: IRREGULAR_EXPENSE_FORM_URL
     description: The URL to download the Irregular Expense application form.
