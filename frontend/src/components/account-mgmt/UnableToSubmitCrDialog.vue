@@ -3,8 +3,8 @@
     <template #content>
       <div class="confirm-dialog-text text-center">
         <template v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM || PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM">
-          <h3 class="mb-3">{{ TITLE_CCOF_TDAD }}</h3>
-          {{ MSG_TEXT }}
+          <h3 class="mb-3">This facility is not enrolled in the $10 a Day - Operating Funding Model</h3>
+          Please contact the $10 a Day Program through {{ OFM_CONTACT_EMAIL }}
         </template>
         <template v-else-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM">
           <h3 class="mb-3">Your organization does not have any facilites enrolled in the $10 a Day - Operating Funding Model</h3>
@@ -62,9 +62,7 @@ export default {
   },
   created() {
     this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
-    this.TITLE_CCOF_TDAD = 'This facility is not enrolled in the $10 a Day - Operating Funding Model'
-    this.MSG_TEXT = `Please contact the $10 a Day Program through ${this.OFM_CONTACT_EMAIL}`
-    this.OFM_CONTACT_EMAIL = StaticConfig.TDAD_CONTACT_EMAIL
+    this.TITLE_CCOF_TDAD = this.OFM_CONTACT_EMAIL = StaticConfig.TDAD_CONTACT_EMAIL
   },
   methods: {
     closeDialog() {
