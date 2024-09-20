@@ -23,11 +23,11 @@ export default {
     }
   },
 
-  async getApprovedApplicationsByFacilityId(facilityId) {
+  async getApprovedApplicationsCountByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`)
-      return response?.data
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}/applications-count?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`)
+      return response?.data[0]?.count
     } catch (error) {
       console.log(`Failed to get the list of approved applications by facility id - ${error}`)
       throw error
@@ -270,8 +270,8 @@ export default {
   async hasApprovedApplication(facilities = []) {
     const results = await Promise.all(
       facilities.map(async (facility) => {
-        const applications = await this.getApprovedApplicationsByFacilityId(facility.facilityId)
-        return applications?.length > 0
+        const approvedApplicationsCount = await this.getApprovedApplicationsCountByFacilityId(facility.facilityId)
+        return approvedApplicationsCount > 0
       }),
     )
     return results.some((result) => result)

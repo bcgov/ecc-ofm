@@ -50,6 +50,17 @@ async function getApplications(req, res) {
   }
 }
 
+async function getApplicationsCount(req, res) {
+  try {
+    const operation = `ofm_applications?$filter=(${buildFilterQuery(req?.query, ApplicationMappings)})&$apply=aggregate($count as count)`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 async function getApplication(req, res) {
   try {
     const operation = `ofm_applications(${req.params.applicationId})?$expand=ofm_application_provideremployee($select=ofm_provider_employeeid,ofm_employee_type,ofm_initials,ofm_certificate_number)`
@@ -249,6 +260,7 @@ async function deleteEmployeeCertificate(req, res) {
 
 module.exports = {
   getApplications,
+  getApplicationsCount,
   getApplication,
   updateApplication,
   createApplication,
