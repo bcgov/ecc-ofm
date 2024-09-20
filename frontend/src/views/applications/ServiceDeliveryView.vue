@@ -181,7 +181,7 @@ export default {
     },
 
     isLicenceDetailsEditable() {
-      return !this.readonly && this.facility?.programCode === OFM_PROGRAM_CODES.CCOF && !this.facility?.facilityReviewComplete && !this.currentApplication?.applicationReviewComplete
+      return !this.readonly && this.facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE && !this.facility?.facilityReviewComplete && !this.currentApplication?.applicationReviewComplete
     },
 
     isHealthAuthorityReportsUploaded() {

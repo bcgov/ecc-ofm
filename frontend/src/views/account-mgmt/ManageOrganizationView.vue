@@ -190,8 +190,8 @@ export default {
     async validateOfmProgram() {
       try {
         this.loading = true
-        const hasActiveAppOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement(this.userInfo.facilities)
-        if (!this.hasAnOFMFacility && !hasActiveAppOrFunding) {
+        const hasApprovedApplication = await ApplicationService.hasApprovedApplication(this.userInfo.facilities)
+        if (!this.hasAnOFMFacility && !hasApprovedApplication) {
           this.preventChangeRequestType = PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM
           this.showUnableToSubmitCrDialog = true
           return

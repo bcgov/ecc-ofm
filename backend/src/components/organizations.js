@@ -3,6 +3,7 @@ const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { getMappingString } = require('../util/common')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { OrganizationMappings, FacilityMappings, UserProfileMappings } = require('../util/mapping/Mappings')
+const { OFM_PROGRAM_CODES } = require('../util/constants')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 
@@ -20,7 +21,7 @@ async function getOrganization(req, res) {
 
 async function getOrganizationFacilities(req, res) {
   try {
-    const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${req.params.organizationId}) and (statecode eq 0)`
+    const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${req.params.organizationId}) and (statecode eq 0) and (ofm_program ne ${OFM_PROGRAM_CODES.CCOF})`
     const response = await getOperation(operation)
     let orgFacilities = []
     response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))

@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
-import FundingAgreementService from '@/services/fundingAgreementService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
 import { APPLICATION_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
@@ -20,6 +19,17 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)
+      throw error
+    }
+  },
+
+  async getApprovedApplicationsByFacilityId(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the list of approved applications by facility id - ${error}`)
       throw error
     }
   },
@@ -257,14 +267,11 @@ export default {
     return fundingAgreement?.stateCode === CRM_STATE_CODES.ACTIVE && isUnexpired
   },
 
-  async hasActiveApplicationOrFundingAgreement(facilities = []) {
+  async hasApprovedApplication(facilities = []) {
     const results = await Promise.all(
       facilities.map(async (facility) => {
-        const applications = await this.getActiveApplicationsByFacilityId(facility.facilityId)
-        return applications?.some(async (application) => {
-          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId)
-          return this.checkApplicationStatus(application) || this.checkFundingAgreement(application?.fundingAgreement)
-        })
+        const applications = await this.getApprovedApplicationsByFacilityId(facility.facilityId)
+        return applications?.length > 0
       }),
     )
     return results.some((result) => result)

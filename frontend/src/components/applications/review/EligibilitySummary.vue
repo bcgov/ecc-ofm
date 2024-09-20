@@ -5,7 +5,7 @@
         <AppLabel>Is your facility currently in receipt of Child Care Operating Funding or $10 a Day ChildCareBC funding for a minimum of 1 year?</AppLabel>
         <div>{{ format.formatBooleanToYesNo(currentApplication?.greaterOneYearCCOFTDAD) }}</div>
       </div>
-      <div v-if="isCCOFProgram()">
+      <div v-if="isMultipleProgram()">
         <AppLabel>
           Is your facility approved or is your application being processed by the Ministry to participate in the Child Care Fee Reduction Initiative for the current year (if eligible)?
         </AppLabel>
@@ -84,7 +84,7 @@ export default {
     this.format = format
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['isCCOFProgram', 'isOperateInPersonalResidence']),
+    ...mapActions(useApplicationsStore, ['isMultipleProgram', 'isOperateInPersonalResidence']),
   },
 }
 </script>
