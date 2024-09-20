@@ -84,7 +84,7 @@ export const useApplicationsStore = defineStore('applications', {
     checkEligibilityComplete(application) {
       return (
         application?.greaterOneYearCCOFTDAD &&
-        (!this.isCCOFProgram() || application?.ccfriParticipation) &&
+        (!this.isMultipleProgram() || application?.ccfriParticipation) &&
         application?.ministryGoodStanding &&
         application?.healthAuthorityGoodStanding &&
         application?.eceCertificatesGoodStanding &&
@@ -98,8 +98,8 @@ export const useApplicationsStore = defineStore('applications', {
       )
     },
 
-    isCCOFProgram() {
-      return this.currentApplication?.facility?.programCode === OFM_PROGRAM_CODES.CCOF
+    isMultipleProgram() {
+      return this.currentApplication?.facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE
     },
 
     isOperateInPersonalResidence() {

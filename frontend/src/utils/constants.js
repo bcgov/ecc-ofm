@@ -155,6 +155,7 @@ export const OFM_PROGRAM_CODES = Object.freeze({
   OFM: 1,
   CCOF: 2,
   TDAD: 3,
+  MULTIPLE: 4,
 })
 
 export const APPLICATION_ROUTES = Object.freeze({

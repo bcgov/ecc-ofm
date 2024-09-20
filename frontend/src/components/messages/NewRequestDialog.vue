@@ -592,15 +592,12 @@ export default {
         return this.facilityValidInOFM.get(selectedFacility.facilityId)
       }
 
-      const programCodeMapping = {
-        [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
-        [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
-      }
-      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([selectedFacility])
-
-      if (selectedFacility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
+      const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(selectedFacility?.programCode)
+      const isTDADProgram = OFM_PROGRAM_CODES.TDAD === selectedFacility?.programCode
+      const hasApprovedApplication = await ApplicationService.hasApprovedApplication([selectedFacility])
+      if ((isCCOForMultipleProgram || isTDADProgram) && !hasApprovedApplication) {
         this.facilityValidInOFM.set(selectedFacility.facilityId, false)
-        this.preventChangeRequestType = programCodeMapping[selectedFacility.programCode]
+        this.preventChangeRequestType = isCCOForMultipleProgram ? PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM : PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM
         this.showFacilityNotInOFMMessage = true
         this.disabled = true
         return false

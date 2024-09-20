@@ -16,7 +16,7 @@
           :disabled="readonly"
           @update:model-value="validateResponse(model.greaterOneYearCCOFTDAD)" />
       </div>
-      <div v-if="isCCOFProgram()">
+      <div v-if="isMultipleProgram()">
         <div>Is your facility approved or is your application being processed by the Ministry to participate in the Child Care Fee Reduction Initiative for the current year (if eligible)?</div>
         <AppYesNoRadioGroup
           id="ccfri-participation"
@@ -232,7 +232,7 @@ export default {
     this.rules = rules
     this.model = {
       greaterOneYearCCOFTDAD: this.currentApplication?.greaterOneYearCCOFTDAD,
-      ccfriParticipation: this.isCCOFProgram() ? this.currentApplication?.ccfriParticipation : null,
+      ccfriParticipation: this.isMultipleProgram() ? this.currentApplication?.ccfriParticipation : null,
       ministryGoodStanding: this.currentApplication?.ministryGoodStanding,
       healthAuthorityGoodStanding: this.currentApplication?.healthAuthorityGoodStanding,
       eceCertificatesGoodStanding: this.currentApplication?.eceCertificatesGoodStanding,
@@ -253,7 +253,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'checkEligibilityComplete', 'isCCOFProgram', 'isOperateInPersonalResidence']),
+    ...mapActions(useApplicationsStore, ['getApplication', 'checkEligibilityComplete', 'isMultipleProgram', 'isOperateInPersonalResidence']),
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)

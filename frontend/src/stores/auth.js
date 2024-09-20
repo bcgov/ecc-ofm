@@ -91,7 +91,9 @@ export const useAuthStore = defineStore('auth', {
               const limitedIntakeFacilities = intake?.facilities?.map((facility) => facility.facilityId)
               return isWithinApplicationIntakeWindow && (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
             })
-            facility.ccofEnrolmentCheckForAddApplication = facility?.programCode !== OFM_PROGRAM_CODES.CCOF || (facility?.programCode === OFM_PROGRAM_CODES.CCOF && facility?.ccofOneYearEnrolment)
+            const isCCOFProgram = facility?.programCode === OFM_PROGRAM_CODES.CCOF
+            const isMultipleProgram = facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE
+            facility.ccofEnrolmentCheckForAddApplication = !isCCOFProgram && (!isMultipleProgram || (isMultipleProgram && facility?.ccofOneYearEnrolment))
           })
 
           this.isUserInfoLoaded = true

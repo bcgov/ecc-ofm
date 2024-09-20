@@ -2,12 +2,12 @@
   <AppDialog v-model="isDisplayed" title="Unable to submit your request" class="text-wrap" persistent :max-width="$vuetify.display.mdAndDown ? '80%' : '50%'" @close="closeDialog">
     <template #content>
       <div class="confirm-dialog-text text-center">
-        <template v-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM || PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM">
+        <template v-if="[PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM, PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM].includes(displayType)">
           <h3 class="mb-3">This facility is not enrolled in the $10 a Day - Operating Funding Model</h3>
           Please contact the $10 a Day Program through {{ OFM_CONTACT_EMAIL }}
         </template>
         <template v-else-if="displayType === PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM">
-          <h3 class="mb-3">Your organization does not have any facilites enrolled in the $10 a Day - Operating Funding Model</h3>
+          <h3 class="mb-3">Your organization does not have any facilities enrolled in the $10 a Day - Operating Funding Model</h3>
           Participants of the $10 a Day Program should contact the team through emailing {{ OFM_CONTACT_EMAIL }}
         </template>
       </div>
@@ -62,7 +62,7 @@ export default {
   },
   created() {
     this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
-    this.TITLE_CCOF_TDAD = this.OFM_CONTACT_EMAIL = StaticConfig.TDAD_CONTACT_EMAIL
+    this.OFM_CONTACT_EMAIL = StaticConfig.TDAD_CONTACT_EMAIL
   },
   methods: {
     closeDialog() {
