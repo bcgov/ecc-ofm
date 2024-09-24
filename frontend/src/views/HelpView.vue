@@ -2,20 +2,20 @@
   <OrganizationHeader :show-facility="false" />
   <v-container fluid>
     <h1>Help and Resources</h1>
-    <h3 class="mt-6">General</h3>
-    <v-row no-gutters class="my-2">
+    <v-row no-gutters class="my-6">
       <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(generalPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="toggleGeneralPanel">
+        <AppButton v-if="isEmpty(panels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
-        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="toggleGeneralPanel">
+        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-collapse-vertical</v-icon>
           Collapse All
         </AppButton>
       </v-col>
     </v-row>
-    <v-expansion-panels v-model="generalPanels" multiple>
+    <h3 class="mt-4 ml-1">General</h3>
+    <v-expansion-panels v-model="panels" multiple>
       <v-expansion-panel v-for="panelComponent in GENERAL_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
@@ -55,20 +55,8 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <h3 class="mt-10">Test Participants</h3>
-    <v-row no-gutters class="my-2">
-      <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="toggleTestParticipantPanel">
-          <v-icon>mdi-arrow-expand-vertical</v-icon>
-          Expand All
-        </AppButton>
-        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="toggleTestParticipantPanel">
-          <v-icon>mdi-arrow-collapse-vertical</v-icon>
-          Collapse All
-        </AppButton>
-      </v-col>
-    </v-row>
-    <v-expansion-panels v-model="testParticipantPanels" multiple>
+    <h3 class="mt-8 ml-1">Test Participants</h3>
+    <v-expansion-panels v-model="panels" multiple>
       <v-expansion-panel v-for="panelComponent in TEST_PARTICIPANT_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
@@ -103,22 +91,21 @@
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 
 export default {
   components: { AppBackButton, AppButton, OrganizationHeader },
+  mixins: [permissionsMixin],
   data() {
     return {
-      generalPanels: [],
-      testParticipantPanels: [],
+      panels: [],
     }
   },
   computed: {
-    allGeneralPanelIDs() {
-      return this.GENERAL_PANELS.map((panel) => panel.id)
-    },
-    allTestParticipantPanelIDs() {
-      return this.TEST_PARTICIPANT_PANELS.map((panel) => panel.id)
+    allPanelIDs() {
+      const allPanels = [...this.GENERAL_PANELS, ...this.TEST_PARTICIPANT_PANELS]
+      return allPanels.map((panel) => panel.id)
     },
   },
   created() {
@@ -142,16 +129,12 @@ export default {
         id: 'training',
       },
     ]
-    this.generalPanels = this.allGeneralPanelIDs
-    this.testParticipantPanels = this.allTestParticipantPanelIDs
+    this.panels = this.allPanelIDs
   },
   methods: {
     isEmpty,
-    toggleGeneralPanel() {
-      this.generalPanels = isEmpty(this.generalPanels) ? this.allGeneralPanelIDs : []
-    },
-    toggleTestParticipantPanel() {
-      this.testParticipantPanels = isEmpty(this.testParticipantPanels) ? this.allTestParticipantPanelIDs : []
+    togglePanel() {
+      this.panels = isEmpty(this.panels) ? this.allPanelIDs : []
     },
   },
 }
