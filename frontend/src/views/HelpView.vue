@@ -2,20 +2,20 @@
   <OrganizationHeader :show-facility="false" />
   <v-container fluid>
     <h1>Help and Resources</h1>
-    <h3 class="my-4 ml-1">General</h3>
-    <v-row no-gutters class="mb-2">
+    <h3 class="mt-6">General</h3>
+    <v-row no-gutters class="my-2">
       <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(panels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton v-if="isEmpty(generalPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="toggleGeneralPanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
-        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="toggleGeneralPanel">
           <v-icon>mdi-arrow-collapse-vertical</v-icon>
           Collapse All
         </AppButton>
       </v-col>
     </v-row>
-    <v-expansion-panels v-model="panels" multiple>
+    <v-expansion-panels v-model="generalPanels" multiple>
       <v-expansion-panel v-for="panelComponent in GENERAL_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
@@ -27,15 +27,13 @@
           </a>
           <br />
           <br />
-          <a
-            href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/2023%20OFM%20Library/Core%20and%20Discretionary%20Allowance/2024%20-%20OFM%20Core%20%20Discretionary%20Allowances%20Factsheet.pdf"
-            target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/2487215BAFC64F07927996FF988CDADD" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2024 - OFM Core Discretionary Allowances Factsheet</span>
           </a>
           <br />
           <br />
-          <a href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/2023%20OFM%20Library/OFM%20Comparison%20to%20EE.pdf" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/F3541D04A82E4155AFC3E7A54E25837D" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>OFM Comparison Infographic</span>
           </a>
@@ -50,23 +48,33 @@
           <a
             href="https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/services-policies-for-government/internal-corporate-services/finance-forms/fin-312-direct-deposit-application.pdf"
             target="_blank">
-            <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>Direct Deposit Application - FIN 312</span>
           </a>
           <br />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <h3 class="my-8 ml-1">Test Participants</h3>
-    <v-expansion-panels v-model="panels" multiple>
+    <h3 class="mt-10">Test Participants</h3>
+    <v-row no-gutters class="my-2">
+      <v-col cols="12" class="d-flex flex-column align-start">
+        <AppButton v-if="isEmpty(testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="toggleTestParticipantPanel">
+          <v-icon>mdi-arrow-expand-vertical</v-icon>
+          Expand All
+        </AppButton>
+        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="toggleTestParticipantPanel">
+          <v-icon>mdi-arrow-collapse-vertical</v-icon>
+          Collapse All
+        </AppButton>
+      </v-col>
+    </v-row>
+    <v-expansion-panels v-model="testParticipantPanels" multiple>
       <v-expansion-panel v-for="panelComponent in TEST_PARTICIPANT_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="panelComponent.id === 'manuals'">
-          <a
-            href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/2023%20OFM%20Library/Policy%20and%20Procedure%20Manual/2023%20-%20OFM%20$10%20a%20Day%20ChildCareBC%20Centres%20-%20Policy%20and%20Procedures%20Manual.pdf"
-            target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/46A19E72A2C94FA19A8A5CA2131A1B91" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2023 - Policy and Procedure Manual</span>
           </a>
@@ -87,7 +95,7 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <AppBackButton id="back-home-button" size="large" width="220px" :to="{ name: 'home' }">Home</AppBackButton>
+    <AppBackButton id="back-home-button" size="large" width="220px" :to="{ name: 'home' }" class="mt-6">Home</AppBackButton>
   </v-container>
 </template>
 
@@ -95,21 +103,22 @@
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
-import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 
 export default {
   components: { AppBackButton, AppButton, OrganizationHeader },
-  mixins: [permissionsMixin],
   data() {
     return {
-      panels: [],
+      generalPanels: [],
+      testParticipantPanels: [],
     }
   },
   computed: {
-    allPanelIDs() {
-      const allPanels = [...this.GENERAL_PANELS, ...this.TEST_PARTICIPANT_PANELS]
-      return allPanels.map((panel) => panel.id)
+    allGeneralPanelIDs() {
+      return this.GENERAL_PANELS.map((panel) => panel.id)
+    },
+    allTestParticipantPanelIDs() {
+      return this.TEST_PARTICIPANT_PANELS.map((panel) => panel.id)
     },
   },
   created() {
@@ -133,12 +142,16 @@ export default {
         id: 'training',
       },
     ]
-    this.panels = this.allPanelIDs
+    this.generalPanels = this.allGeneralPanelIDs
+    this.testParticipantPanels = this.allTestParticipantPanelIDs
   },
   methods: {
     isEmpty,
-    togglePanel() {
-      this.panels = isEmpty(this.panels) ? this.allPanelIDs : []
+    toggleGeneralPanel() {
+      this.generalPanels = isEmpty(this.generalPanels) ? this.allGeneralPanelIDs : []
+    },
+    toggleTestParticipantPanel() {
+      this.testParticipantPanels = isEmpty(this.testParticipantPanels) ? this.allTestParticipantPanelIDs : []
     },
   },
 }
