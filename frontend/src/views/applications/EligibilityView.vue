@@ -108,7 +108,7 @@
           @update:model-value="validateResponse(model.providePreviousFYFinancialStatements)" />
       </div>
       <div>
-        <div>Does your facility have liability insurance coverage for a minimum of $2,000,000?</div>
+        <div>Does your facility have liability insurance coverage for a minimum of $5,000,000?</div>
         <AppYesNoRadioGroup
           id="liability-insurance-coverage"
           v-model="model.liabilityInsuranceCoverage"
