@@ -4,7 +4,7 @@
     <h1>Help and Resources</h1>
     <v-row no-gutters class="my-6">
       <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(this.generalPanels) && isEmpty(this.testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton v-if="isEmpty(generalPanels) && isEmpty(testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
