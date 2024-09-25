@@ -4,7 +4,7 @@
     <h1>Help and Resources</h1>
     <v-row no-gutters class="my-6">
       <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(panels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton v-if="isEmpty(generalPanels) && isEmpty(testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
@@ -15,7 +15,7 @@
       </v-col>
     </v-row>
     <h3 class="mt-4 ml-1">General</h3>
-    <v-expansion-panels v-model="panels" multiple>
+    <v-expansion-panels v-model="generalPanels" multiple>
       <v-expansion-panel v-for="panelComponent in GENERAL_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
@@ -56,7 +56,7 @@
       </v-expansion-panel>
     </v-expansion-panels>
     <h3 class="mt-8 ml-1">Test Participants</h3>
-    <v-expansion-panels v-model="panels" multiple>
+    <v-expansion-panels v-model="testParticipantPanels" multiple>
       <v-expansion-panel v-for="panelComponent in TEST_PARTICIPANT_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
@@ -91,21 +91,22 @@
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
-import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 
 export default {
   components: { AppBackButton, AppButton, OrganizationHeader },
-  mixins: [permissionsMixin],
   data() {
     return {
-      panels: [],
+      generalPanels: [],
+      testParticipantPanels: [],
     }
   },
   computed: {
-    allPanelIDs() {
-      const allPanels = [...this.GENERAL_PANELS, ...this.TEST_PARTICIPANT_PANELS]
-      return allPanels.map((panel) => panel.id)
+    allGeneralPanelIDs() {
+      return this.GENERAL_PANELS.map((panel) => panel.id)
+    },
+    allTestParticipantPanelIDs() {
+      return this.TEST_PARTICIPANT_PANELS.map((panel) => panel.id)
     },
   },
   created() {
@@ -129,12 +130,14 @@ export default {
         id: 'training',
       },
     ]
-    this.panels = this.allPanelIDs
+    this.generalPanels = this.allGeneralPanelIDs
+    this.testParticipantPanels = this.allTestParticipantPanelIDs
   },
   methods: {
     isEmpty,
     togglePanel() {
-      this.panels = isEmpty(this.panels) ? this.allPanelIDs : []
+      this.generalPanels = isEmpty(this.generalPanels) ? this.allGeneralPanelIDs : []
+      this.testParticipantPanels = isEmpty(this.testParticipantPanels) ? this.allTestParticipantPanelIDs : []
     },
   },
 }
