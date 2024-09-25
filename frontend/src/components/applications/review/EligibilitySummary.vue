@@ -49,7 +49,7 @@
         <div>{{ format.formatBooleanToYesNo(currentApplication?.providePreviousFYFinancialStatements) }}</div>
       </div>
       <div>
-        <AppLabel>Does your facility have liability insurance coverage for a minimum of $2,000,000?</AppLabel>
+        <AppLabel>Does your facility have liability insurance coverage for a minimum of $5,000,000?</AppLabel>
         <div>{{ format.formatBooleanToYesNo(currentApplication?.liabilityInsuranceCoverage) }}</div>
       </div>
       <div>
