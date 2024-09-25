@@ -4,14 +4,16 @@
     <h1>Help and Resources</h1>
     <v-row no-gutters class="my-6">
       <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(generalPanels) && isEmpty(testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
-          <v-icon>mdi-arrow-expand-vertical</v-icon>
-          Expand All
-        </AppButton>
-        <AppButton v-else id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanel">
-          <v-icon>mdi-arrow-collapse-vertical</v-icon>
-          Collapse All
-        </AppButton>
+        <div style="display: inline-block">
+          <AppButton id="expand-button" :primary="false" size="large" width="200px" :disabled="expandAllDisabled" class="mr-3 panel-button" @click="expandAll">
+            <v-icon>mdi-arrow-expand-vertical</v-icon>
+            Expand All
+          </AppButton>
+          <AppButton id="collapse-button" :primary="false" size="large" width="200px" :disabled="collapseAllDisabled" class="panel-button" @click="collapseAll">
+            <v-icon>mdi-arrow-collapse-vertical</v-icon>
+            Collapse All
+          </AppButton>
+        </div>
       </v-col>
     </v-row>
     <h3 class="mt-4 ml-1">General</h3>
@@ -108,6 +110,12 @@ export default {
     allTestParticipantPanelIDs() {
       return this.TEST_PARTICIPANT_PANELS.map((panel) => panel.id)
     },
+    collapseAllDisabled() {
+      return isEmpty(this.generalPanels) && isEmpty(this.testParticipantPanels)
+    },
+    expandAllDisabled() {
+      return this.allGeneralPanelIDs.length === this.generalPanels.length && this.allTestParticipantPanelIDs.length === this.testParticipantPanels.length
+    },
   },
   created() {
     this.GENERAL_PANELS = [
@@ -134,12 +142,20 @@ export default {
     this.testParticipantPanels = this.allTestParticipantPanelIDs
   },
   methods: {
-    isEmpty,
-    togglePanel() {
-      const isAllCollapsed = isEmpty(this.generalPanels) && isEmpty(this.testParticipantPanels)
-      this.generalPanels = isAllCollapsed ? this.allGeneralPanelIDs : []
-      this.testParticipantPanels = isAllCollapsed ? this.allTestParticipantPanelIDs : []
+    collapseAll() {
+      this.generalPanels = []
+      this.testParticipantPanels = []
+    },
+    expandAll() {
+      this.generalPanels = this.allGeneralPanelIDs
+      this.testParticipantPanels = this.allTestParticipantPanelIDs
     },
   },
 }
 </script>
+
+<style scoped>
+.panel-button {
+  display: inline-block;
+}
+</style>
