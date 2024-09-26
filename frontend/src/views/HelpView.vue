@@ -31,12 +31,6 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2024 - OFM Core Discretionary Allowances Factsheet</span>
           </a>
-          <br />
-          <br />
-          <a href="https://www2.gov.bc.ca/assets/download/F3541D04A82E4155AFC3E7A54E25837D" target="_blank">
-            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>OFM Comparison Infographic</span>
-          </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
           <a href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres" target="_blank">
@@ -55,7 +49,7 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <h3 class="mt-8 ml-1">Test Participants</h3>
+    <h3 class="mt-8 ml-1">$10 a Day Participants</h3>
     <v-expansion-panels v-model="testParticipantPanels" multiple>
       <v-expansion-panel v-for="panelComponent in TEST_PARTICIPANT_PANELS" :key="panelComponent.id" :value="panelComponent.id">
         <v-expansion-panel-title>
@@ -66,8 +60,6 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2023 - Policy and Procedure Manual</span>
           </a>
-          <br />
-          <br />
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
           <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
@@ -122,7 +114,7 @@ export default {
     ]
     this.TEST_PARTICIPANT_PANELS = [
       {
-        title: 'Manuals and Guides',
+        title: 'Supporting Materials',
         id: 'manuals',
       },
       {
