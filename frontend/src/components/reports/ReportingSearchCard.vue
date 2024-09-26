@@ -182,7 +182,7 @@ export default {
     resetFilter() {
       // this.selectedReportTypes = this.reportTemplates
       this.selectedStatuses = this.STATUS_FILTER_OPTIONS
-      this.selectedDateFilterType = DATE_FILTER_TYPES.THREE_MONTHS
+      this.selectedDateFilterType = null
       this.selectedDateFrom = null
       this.selectedDateTo = null
     },

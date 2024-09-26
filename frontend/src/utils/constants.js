@@ -72,6 +72,7 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   CANCELLED_BY_SP: 8, // INACTIVE state
   EXPIRED: 9, // INACTIVE state
   VERIFIED: 10,
+  REDIRECTED: 11, // INACTIVE state
 })
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
@@ -154,11 +155,13 @@ export const OFM_PROGRAM_CODES = Object.freeze({
   OFM: 1,
   CCOF: 2,
   TDAD: 3,
+  MULTIPLE: 4,
 })
 
 export const APPLICATION_ROUTES = Object.freeze({
   SELECT_FACILITY: 'select-facility',
   FACILITY_DETAILS: 'facility-details',
+  ELIGIBILITY: 'eligibility',
   SERVICE_DELIVERY: 'service-delivery',
   OPERATING_COSTS: 'operating-costs',
   STAFFING: 'staffing',
@@ -184,6 +187,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   EXPENSE_AUTHORITY: 'Expense authority required',
   LICENCE_INFO: 'Licence information required',
   LICENCE_CONFIRMATION: 'Confirmation of licence information required',
+  FACILITY_LOCATION_ATTRIBUTES: 'Facility location information required',
   DOCUMENT_UPLOAD: 'Document upload required',
   DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'A letter of community support is required to continue',
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
@@ -192,6 +196,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_HA_REPORT_UPLOAD: 'Document upload of your most recent Health Authority compliance report required',
   FACILITY_TYPE: 'Facility type required',
   ARM_LENGTH: "Arm's Length agreement checkbox required",
+  RENT_LEASE_DATE_RANGE: 'Rent lease start and end dates required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',
   UNION: 'Union information required',
@@ -235,6 +240,7 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   CHOICE: 'Choice',
   MULTIPLE_CHOICE: 'Multiple Choice',
   TABLE: 'Table',
+  INSTRUCTIONS: 'Instructions',
 })
 
 export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
@@ -260,8 +266,19 @@ export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
   NA: 3,
 })
 
+export const YES_NO_RADIO_GROUP_MAPPING = Object.freeze({
+  YES: 1,
+  NO: 0,
+  NA: 2,
+})
+
+export const YES_NO_CRM_MAPPING = Object.freeze({
+  YES: 1,
+  NO: 0,
+})
+
 export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
-export const OFM_PROGRAM = 'OFM Program'
+export const OFM_PROGRAM = '$10 a Day Funding Program'
 
 export const PHONE_FORMAT = '###-###-####'
 export const EMAIL_FORMAT = 'email@domain.com'
@@ -269,7 +286,7 @@ export const EMAIL_FORMAT = 'email@domain.com'
 export const VIRUS_SCAN_ERROR_MESSAGE = 'Cannot upload document - virus scan failed.'
 
 export const NOT_IN_GOOD_STANDING_WARNING_MESSAGE =
-  'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive OFM funding. Contact BC Registries immediately to resolve.'
+  'A BC Registries check has returned as "not in good standing" for your organization. Good standing is a requirement to receive $10 a Day funding. Contact BC Registries immediately to resolve.'
 
 export const BLANK_FIELD = '- - - -'
 
@@ -317,4 +334,14 @@ export const BUSINESS_TYPE_CODES = Object.freeze({
   PUBLIC_INSTITUTION: 3,
   LOCAL_GOVERNMENT: 4,
   SOLE_PROPRIETOR: 5,
+})
+
+export const PROVIDER_TYPE_CODES = Object.freeze({
+  GROUP: 1,
+  FAMILY: 2,
+})
+
+export const UNION_TYPE_CODES = Object.freeze({
+  NO: 0,
+  YES: 1,
 })

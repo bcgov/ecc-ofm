@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0">
     <div class="mt-2 ml-2">View upcoming and past payments for all funding types.</div>
-    <FundingSearchCard :loading="loading" :show-payment-types-filter="true" :default-date-filter="DATE_FILTER_TYPES.YTD" class="my-6" @search="loadPayments" />
+    <FundingSearchCard :loading="loading" :show-payment-types-filter="true" class="my-6" @search="loadPayments" />
     <h2 class="mb-2">Payment History</h2>
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <v-data-table
@@ -122,7 +122,7 @@ export default {
       let paymentHistory = []
       await Promise.all(
         this.searchQueries?.facilities?.map(async (facility) => {
-          const paidPaymentsForFacility = await PaymentService.getPaymentsByFacilityIdAndStatusAndDate(
+          const paidPaymentsForFacility = await PaymentService.getPaymentsByFacilityIdAndStatus(
             facility.facilityId,
             PAYMENT_STATUS_CODES.PAID,
             this.searchQueries?.dateFrom,
@@ -152,10 +152,7 @@ export default {
       }
       await Promise.all(
         this.searchQueries?.facilities?.map(async (facility) => {
-          const scheduledPaymentsForFacility =
-            this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.YTD
-              ? await PaymentService.getActivePaymentsByFacilityId(facility.facilityId)
-              : await PaymentService.getActivePaymentsByFacilityIdAndDate(facility.facilityId, dateFrom, dateTo)
+          const scheduledPaymentsForFacility = await PaymentService.getActivePaymentsByFacilityId(facility.facilityId, dateFrom, dateTo)
           scheduledPayments = scheduledPayments?.concat(scheduledPaymentsForFacility)
         }),
       )

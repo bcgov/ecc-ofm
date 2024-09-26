@@ -41,7 +41,7 @@
                   <LicenceHeader :licence="licence" />
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                  <LicenceDetails :readOnly="true" :licence="licence" />
+                  <LicenceDetails :read-only="true" :licence="licence" />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -107,21 +107,21 @@
     <EditFacilityContacts
       :loading="loading"
       title="Expense Authorities"
-      titleInfo="(You can have more than one expense authority)"
+      title-info="(You can have more than one expense authority)"
       :contacts="expenseAuthorities"
-      :contactsForAdd="expenseAuthoritiesAvailableForAdd"
-      :atLeastOneContactMandatory="true"
-      :parentInEditMode="editMode"
+      :contacts-for-add="expenseAuthoritiesAvailableForAdd"
+      :at-least-one-contact-mandatory="true"
+      :parent-in-edit-mode="editMode"
       :editable="editable"
       @save-contact-updates="saveExpenseAuthorityUpdates"
       @edit-mode-changed="contactEditModeChange" />
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
-      titleInfo="(You can have more than one additional contact)"
+      title-info="(You can have more than one additional contact)"
       :contacts="additionalContacts"
-      :contactsForAdd="additionalContactsAvailableForAdd"
-      :parentInEditMode="editMode"
+      :contacts-for-add="additionalContactsAvailableForAdd"
+      :parent-in-edit-mode="editMode"
       :editable="editable"
       @save-contact-updates="saveAdditionalContactUpdates"
       @edit-mode-changed="contactEditModeChange" />
@@ -130,11 +130,11 @@
       v-if="editable"
       class="pa-0"
       :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
-      :defaultFacility="facility"
+      :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+      :default-facility="facility"
       @close="toggleChangeRequestDialog"
       @submit-phone-email="handleCRSubmit" />
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -219,7 +219,6 @@ export default {
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
-    this.OFM_PROGRAM_CODES = OFM_PROGRAM_CODES
     this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
     this.facilityId = this.$route.params.facilityId
     await this.loadData()
@@ -388,13 +387,11 @@ export default {
     },
 
     async validateOfmProgram() {
-      const programCodeMapping = {
-        [OFM_PROGRAM_CODES.CCOF]: PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
-        [OFM_PROGRAM_CODES.TDAD]: PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
-      }
-      const hasValidApplicationOrFunding = await ApplicationService.hasActiveApplicationOrFundingAgreement([{ facilityId: this.facility.facilityId }])
-      if (this.facility?.programCode in programCodeMapping && !hasValidApplicationOrFunding) {
-        this.preventChangeRequestType = programCodeMapping[this.facility.programCode]
+      const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(this.facility?.programCode)
+      const isTDADProgram = OFM_PROGRAM_CODES.TDAD === this.facility?.programCode
+      const hasApprovedApplication = await ApplicationService.hasApprovedApplication([{ facilityId: this.facility?.facilityId }])
+      if ((isCCOForMultipleProgram || isTDADProgram) && !hasApprovedApplication) {
+        this.preventChangeRequestType = isCCOForMultipleProgram ? PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM : PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM
         this.showUnableToSubmitCrDialog = true
       } else {
         this.toggleChangeRequestDialog()

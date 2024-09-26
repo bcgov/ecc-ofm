@@ -16,32 +16,21 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsOperatingCosts {
 	private WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(id = "select-facility-types")
 	@CacheLookup
 	private WebElement selectAFacilityType;
 
-	private final String pageLoadedText = "We acknowledge the rights, interests, priorities, and concerns of all Indigenous Peoples - First Nations, Métis, and Inuit - respecting and acknowledging their distinct cultures, histories, rights, laws, and governments";
-
 	public PortalApplicationsOperatingCosts(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 	public void setSelectAFacilityTypeTextField(String selectAFacilityTypeValue) {
 		selectAFacilityType.sendKeys(selectAFacilityTypeValue);
 
-	}
-
-	public PortalApplicationsOperatingCosts verifyPageLoaded() {
-		(new WebDriverWait(driver, Duration.ofSeconds(30))).until(new ExpectedCondition<Boolean>() {
-			public Boolean apply(WebDriver d) {
-				return d.getPageSource().contains(pageLoadedText);
-			}
-		});
-		return this;
 	}
 
 }

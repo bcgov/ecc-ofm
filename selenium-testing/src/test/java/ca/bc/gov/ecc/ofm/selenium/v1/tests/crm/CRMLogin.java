@@ -1,13 +1,15 @@
-package ca.bc.gov.ecc.ofm.selenium.v1.tests;
+package ca.bc.gov.ecc.ofm.selenium.v1.tests.crm;
 
 import java.time.Duration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class CRMLogin extends BaseTest {
@@ -32,8 +34,6 @@ public class CRMLogin extends BaseTest {
 		test = extent.createTest("Test - Login to CRM");
 		test.info("Starting Test - Login to CRM");
 		try {
-			Thread.sleep(10000);
-
 			driver.get(CRM_URL);
 			wait(10);
 
@@ -53,7 +53,8 @@ public class CRMLogin extends BaseTest {
 
 			objCRMSignInCredentialPage.clickOrgFacilities();
 		} catch (Exception e) {
-			test.fail("testcase failed!");
+			test.fail("testcase failed");
+			Assert.fail("testcase failed");
 			e.printStackTrace();
 		}
 

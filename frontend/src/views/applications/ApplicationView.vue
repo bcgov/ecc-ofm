@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-    <ApplicationHeader v-if="!isSelectFacilityPage" />
     <div v-if="isApplicationConfirmationPage">
       <router-view class="min-screen-height" />
     </div>
@@ -13,27 +12,18 @@
           <ApplicationNavBar />
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
-          <router-view
-            class="min-screen-height"
-            :readonly="readonly"
-            :cancel="cancel"
-            :back="back"
-            :next="next"
-            :save="save"
-            :submit="submit"
-            :facility="facility"
-            :contacts="contacts"
-            @process="process" />
+          <ApplicationHeader v-if="!isSelectFacilityPage" />
+          <router-view class="min-screen-height" :readonly="readonly" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
           <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
             :loading="processing"
-            :showBack="showBack"
-            :showCancel="showCancel"
-            :showSave="showSave"
-            :showNext="showNext"
-            :showSubmit="showSubmit"
-            :disableNext="disableNext"
-            :disableSubmit="disableSubmit"
+            :show-back="showBack"
+            :show-cancel="showCancel"
+            :show-save="showSave"
+            :show-next="showNext"
+            :show-submit="showSubmit"
+            :disable-next="disableNext"
+            :disable-submit="disableSubmit"
             @back="toggleBack"
             @cancel="toggleCancel"
             @save="toggleSave"
@@ -79,7 +69,15 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isSelectFacilityComplete', 'isDeclareSubmitComplete', 'isApplicationReadonly']),
+    ...mapState(useApplicationsStore, [
+      'currentApplication',
+      'isApplicationComplete',
+      'isSelectFacilityComplete',
+      'isDeclareSubmitComplete',
+      'isApplicationReadonly',
+      'isFacilityDetailsComplete',
+      'isEligibilityComplete',
+    ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
@@ -90,6 +88,7 @@ export default {
     showBack() {
       return [
         APPLICATION_ROUTES.FACILITY_DETAILS,
+        APPLICATION_ROUTES.ELIGIBILITY,
         APPLICATION_ROUTES.SERVICE_DELIVERY,
         APPLICATION_ROUTES.OPERATING_COSTS,
         APPLICATION_ROUTES.STAFFING,
@@ -103,6 +102,7 @@ export default {
         (!this.readonly &&
           [
             APPLICATION_ROUTES.FACILITY_DETAILS,
+            APPLICATION_ROUTES.ELIGIBILITY,
             APPLICATION_ROUTES.SERVICE_DELIVERY,
             APPLICATION_ROUTES.OPERATING_COSTS,
             APPLICATION_ROUTES.STAFFING,
@@ -114,6 +114,7 @@ export default {
     showNext() {
       return [
         APPLICATION_ROUTES.SELECT_FACILITY,
+        APPLICATION_ROUTES.ELIGIBILITY,
         APPLICATION_ROUTES.FACILITY_DETAILS,
         APPLICATION_ROUTES.SERVICE_DELIVERY,
         APPLICATION_ROUTES.OPERATING_COSTS,
@@ -124,9 +125,14 @@ export default {
     showSave() {
       return (
         !this.readonly &&
-        [APPLICATION_ROUTES.FACILITY_DETAILS, APPLICATION_ROUTES.SERVICE_DELIVERY, APPLICATION_ROUTES.OPERATING_COSTS, APPLICATION_ROUTES.STAFFING, APPLICATION_ROUTES.SUBMIT].includes(
-          this.$route.name,
-        )
+        [
+          APPLICATION_ROUTES.FACILITY_DETAILS,
+          APPLICATION_ROUTES.ELIGIBILITY,
+          APPLICATION_ROUTES.SERVICE_DELIVERY,
+          APPLICATION_ROUTES.OPERATING_COSTS,
+          APPLICATION_ROUTES.STAFFING,
+          APPLICATION_ROUTES.SUBMIT,
+        ].includes(this.$route.name)
       )
     },
     showSubmit() {
@@ -147,11 +153,20 @@ export default {
     isSelectFacilityPage() {
       return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
     },
+    isFacilityDetailsPage() {
+      return this.$route.name === APPLICATION_ROUTES.FACILITY_DETAILS
+    },
+    isEligibilityPage() {
+      return this.$route.name === APPLICATION_ROUTES.ELIGIBILITY
+    },
     isReviewApplicationPage() {
       return this.$route.name === APPLICATION_ROUTES.REVIEW
     },
     isApplicationConfirmationPage() {
       return this.$route.name === APPLICATION_ROUTES.CONFIRMATION
+    },
+    isPageAccessible() {
+      return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
     },
   },
 
@@ -175,7 +190,10 @@ export default {
         this.validation = false
         this.loading = true
         await this.getApplication(this.$route.params.applicationGuid)
-        await Promise.all([this.getContacts(), this.getFacility()])
+        await this.getContacts()
+        if (!this.isPageAccessible) {
+          this.$router.push({ name: 'applications-history' })
+        }
       } catch (error) {
         this.setFailureAlert('Failed to load the application', error)
       } finally {
@@ -192,15 +210,6 @@ export default {
         })
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.currentApplication?.facilityId, error)
-      }
-    },
-
-    async getFacility() {
-      try {
-        if (isEmpty(this.currentApplication)) return
-        this.facility = await FacilityService.getFacility(this.currentApplication?.facilityId)
-      } catch (error) {
-        this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.currentApplication?.facilityId, error)
       }
     },
 

@@ -5,6 +5,7 @@ const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
 const {
   getApplications,
+  getApplicationsCount,
   getApplication,
   updateApplication,
   createApplication,
@@ -87,6 +88,22 @@ router.get(
 )
 
 /**
+ * Get applications count using query
+ */
+router.get(
+  '/applications-count',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID()],
+  validateFacility(),
+  (req, res) => {
+    validationResult(req).throw()
+    return getApplicationsCount(req, res)
+  },
+)
+
+/**
  * Create a new Application
  */
 router.post(
@@ -136,7 +153,7 @@ router.get(
 /**
  * Update an existing Application using applicationId
  */
-router.put(
+router.patch(
   '/:applicationId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,

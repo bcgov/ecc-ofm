@@ -22,6 +22,8 @@ const {
 
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 
+const { OFM_PROGRAM_CODES } = require('../util/constants')
+
 const USER_NOT_FOUND = 'User not found.'
 const NO_PERMISSIONS = 'No permissions.'
 const NO_PROFILE_FOUND = 'No profile found.'
@@ -179,13 +181,13 @@ async function getUserProfile(userGuid, userName) {
 
 function parseFacilityPermissions(userResponse) {
   return userResponse.facility_permission
-    .filter((fp) => fp.ofm_portal_access)
     .map((fp) => {
       return {
         ...new MappableObjectForFront(fp, UsersPermissionsFacilityMappings).data,
         ...new MappableObjectForFront(fp.facility, UserProfileFacilityMappings).data,
       }
     })
+    .filter((fp) => fp.ofmPortalAccess && fp.programCode !== OFM_PROGRAM_CODES.CCOF)
     .sort((a, b) => a.facilityName?.localeCompare(b.facilityName))
 }
 

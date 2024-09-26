@@ -50,13 +50,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card
-          id="help-card"
-          class="basic-card"
-          prepend-icon="mdi-help-circle-outline"
-          title="Help and Resources"
-          target="ofm_external_help"
-          href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/SitePages/2023%20OFM%20Test.aspx">
+        <v-card id="help-card" class="basic-card" prepend-icon="mdi-help-circle-outline" title="Help and Resources" @click="$router.push({ name: 'help' })">
           <v-card-text>Need support? Find program training tools, resources and technical help.</v-card-text>
         </v-card>
       </v-col>

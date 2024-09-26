@@ -1,9 +1,8 @@
 <template>
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
-      <AppLabel>Eligibility:</AppLabel>
+      <AppLabel>Purpose of the fund:</AppLabel>
       Participants are eligible if using a designated vehicle to safely transport children:
-
       <v-row no-gutters>
         <v-col cols="12" class="mr-2 my-2">
           Between school and their offsite child care location;
@@ -33,7 +32,7 @@
     </v-col>
   </v-row>
 
-  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Transportation Allowance for the current term. You may add another vehicle(s).</AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Transportation Allowance for the current year. You may add another vehicle(s).</AppAlertBanner>
 
   <v-divider class="my-5"></v-divider>
 

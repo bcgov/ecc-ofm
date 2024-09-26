@@ -9,7 +9,7 @@
       <v-col cols="10" md="7" lg="5" xxl="3" class="mt-3">
         <v-select
           id="select-facility-types"
-          v-model="model.facilityType"
+          v-model="facilityType"
           :items="facilityTypes"
           :disabled="readonly"
           item-title="description"
@@ -28,24 +28,15 @@
       </v-col>
     </v-row>
 
-    <div v-if="model.facilityType" id="arm-length">
-      <!-- ARM LENGTH -->
-      <div v-if="isRentLease" class="arm-length">
-        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
-          <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
-        </v-checkbox>
-        <v-tooltip content-class="tooltip" max-width="300px" text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
-          <template #activator="{ props }">
-            <v-icon size="large" v-bind="props" class="ml-2 pt-7">mdi-information-slab-circle-outline</v-icon>
-          </template>
-        </v-tooltip>
-      </div>
+    <div v-if="facilityType">
+      <!-- RENT/LEASE INFORMATION -->
+      <RentLeaseInformation v-if="isRentLease" id="rent-lease-info" @update="updateRentLeaseInfoModel" />
 
       <!-- OPERATING COST / FACILITY COST -->
       <v-card class="my-4 px-6 py-4">
         <AppMissingInfoError v-if="showErrorMessage && totalOperationalCost === 0">{{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}</AppMissingInfoError>
-        <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateModel" />
-        <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facility-type="model.facilityType" @update="updateModel" />
+        <YearlyOperatingCost id="yearly-operating-cost" :readonly="readonly" @update="updateCostsModel" />
+        <YearlyFacilityCost id="yearly-facility-cost" :readonly="readonly" :facility-type="facilityType" @update="updateCostsModel" />
       </v-card>
 
       <!-- UPLOAD DOCUMENTS -->
@@ -115,13 +106,14 @@ import { isEmpty } from 'lodash'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
+import RentLeaseInformation from '@/components/applications/RentLeaseInformation.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
-  components: { AppLabel, AppDocumentUpload, AppMissingInfoError, YearlyOperatingCost, YearlyFacilityCost },
+  components: { AppLabel, AppDocumentUpload, AppMissingInfoError, RentLeaseInformation, YearlyOperatingCost, YearlyFacilityCost },
   mixins: [alertMixin],
 
   async beforeRouteLeave(_to, _from, next) {
@@ -155,7 +147,9 @@ export default {
   data() {
     return {
       rules,
-      model: {},
+      facilityType: null,
+      costsModel: {},
+      rentLeaseInfoModel: {},
       financialStatement: {
         uploadedDocuments: [],
         documentsToUpload: [],
@@ -179,35 +173,30 @@ export default {
     ...mapState(useAppStore, ['facilityTypes']),
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
-    sanitizedModel() {
+    sanitizedCostsModel() {
       const sanitizedModel = {}
-      Object.keys(this.model)?.forEach((key) => {
-        if (key === 'facilityType' || Number(this.model[key]) <= 5000000) {
-          sanitizedModel[key] = this.model[key]
+      Object.keys(this.costsModel)?.forEach((key) => {
+        if (Number(this.costsModel[key]) <= 5000000) {
+          sanitizedModel[key] = this.costsModel[key]
         }
       })
-      if (this.isRentLease && !this.model?.armsLength) {
-        sanitizedModel.armsLength = null
-      }
       return sanitizedModel
     },
     isFormComplete() {
+      return this.facilityType && this.isRentLeaseInformationComplete && this.totalOperationalCost > 0 && this.isFinancialDocsUploaded && (!this.isRentLease || this.isSupportingDocsUploaded)
+    },
+    isRentLeaseInformationComplete() {
       return (
-        this.model.facilityType &&
-        (!this.isRentLease || this.model?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES) &&
-        this.totalOperationalCost > 0 &&
-        this.isFinancialDocsUploaded &&
-        (!this.isRentLease || this.isSupportingDocsUploaded)
+        !this.isRentLease ||
+        (this.rentLeaseInfoModel?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
+          (this.rentLeaseInfoModel?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES || (this.rentLeaseInfoModel?.rentLeaseStartDate && this.rentLeaseInfoModel?.rentLeaseEndDate)))
       )
     },
     totalOperationalCost() {
-      const costsModel = Object.assign({}, this.model)
-      delete costsModel?.facilityType
-      delete costsModel?.armsLength
-      return Object.values(costsModel).reduce((total, cost) => total + Number(cost), 0)
+      return Object.values(this.costsModel).reduce((total, cost) => total + Number(cost), 0)
     },
     isRentLease() {
-      return this.model.facilityType === FACILITY_TYPES.RENT_LEASE
+      return this.facilityType === FACILITY_TYPES.RENT_LEASE
     },
     isFinancialDocsUploaded() {
       const isFinancialStatementUploaded = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments)
@@ -227,7 +216,7 @@ export default {
       return !this.readonly && !this.processing && this.validation
     },
     facilityTypeTooltip() {
-      switch (this.model.facilityType) {
+      switch (this.facilityType) {
         case FACILITY_TYPES.RENT_LEASE:
           return 'If you rent or lease the child care facility, please enter the payment details.'
         case FACILITY_TYPES.OWNED_WITH_MORTGAGE:
@@ -268,8 +257,7 @@ export default {
 
   created() {
     this.$emit('process', false)
-    this.model.facilityType = this.currentApplication?.facilityType
-    this.model.armsLength = this.currentApplication?.armsLength
+    this.facilityType = this.currentApplication?.facilityType
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
@@ -296,8 +284,13 @@ export default {
           const reload = await this.processDocuments()
           if (reload) reloadApplication = true
         }
-        if (ApplicationService.isApplicationUpdated(this.sanitizedModel)) {
-          await ApplicationService.updateApplication(this.$route.params.applicationGuid, this.sanitizedModel)
+        const payload = {
+          facilityType: this.facilityType,
+          ...this.rentLeaseInfoModel,
+          ...this.sanitizedCostsModel,
+        }
+        if (ApplicationService.isApplicationUpdated(payload)) {
+          await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
           reloadApplication = true
         }
         if (reloadApplication) {
@@ -372,8 +365,16 @@ export default {
       }
     },
 
-    updateModel(updatedModel) {
-      Object.entries(updatedModel)?.forEach(([key, value]) => (this.model[key] = Number(value)))
+    updateRentLeaseInfoModel(updatedModel) {
+      const isEndDateAfterStartDate = updatedModel.rentLeaseEndDate > updatedModel.rentLeaseStartDate
+      this.rentLeaseInfoModel.rentLeaseStartDate = isEndDateAfterStartDate ? updatedModel?.rentLeaseStartDate : null
+      this.rentLeaseInfoModel.rentLeaseEndDate = isEndDateAfterStartDate ? updatedModel?.rentLeaseEndDate : null
+      this.rentLeaseInfoModel.monthToMonthRentLease = updatedModel?.monthToMonthRentLease
+      this.rentLeaseInfoModel.armsLength = updatedModel?.armsLength
+    },
+
+    updateCostsModel(updatedModel) {
+      Object.entries(updatedModel)?.forEach(([key, value]) => (this.costsModel[key] = Number(value)))
     },
 
     getUploadedDocuments(uploadedDocuments) {
@@ -384,8 +385,3 @@ export default {
   },
 }
 </script>
-<style scoped>
-.arm-length {
-  display: flex;
-}
-</style>

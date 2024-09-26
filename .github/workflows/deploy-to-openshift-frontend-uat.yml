@@ -44,7 +44,6 @@ env:
   BANNER_ENVIRONMENT: 'UAT'
   BANNER_COLOR: '#800080'
   TDAD_CONTACT_EMAIL: '10aDayCentres@gov.bc.ca'
-  CCOF_URL: 'https://test.mychildcareservices.gov.bc.ca'
   IRREGULAR_EXPENSE_FORM_URL: 'https://www2.gov.bc.ca/assets/download/80DAA65E3FA44EFCA61F4557C6FAEE59'
 
 on:
@@ -147,7 +146,6 @@ jobs:
             -p BANNER_ENVIRONMENT=${{ env.BANNER_ENVIRONMENT }} \
             -p BANNER_COLOR=${{ env.BANNER_COLOR }} \
             -p TDAD_CONTACT_EMAIL=${{ env.TDAD_CONTACT_EMAIL }} \
-            -p CCOF_URL=${{ env.CCOF_URL }} \
             -p IRREGULAR_EXPENSE_FORM_URL=${{ env.IRREGULAR_EXPENSE_FORM_URL }} \
             | oc apply -f -
 

@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <h2 class="mb-8 text-center">OFM Application Submitted</h2>
+    <div class="mb-8 text-center">
+      <h2>$10 a Day Funding Application Submitted</h2>
+      <br />
+      <strong class="mb-8 text-center">Thank you for your submission. For current status information, please check the application dashboard.</strong>
+    </div>
+
     <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
     <div v-else>
       <v-row class="flex justify-end mb-1">
@@ -11,7 +16,7 @@
         </v-col>
       </v-row>
 
-      <v-card elevation="2" class="supp-applications-card">
+      <v-card v-if="hasNonUnionFacilityGroupOrg" elevation="2" class="supp-applications-card">
         <v-card-text class="px-8" py-6>
           <v-row no-gutters class="align-center">
             <v-col cols="12" md="8">
@@ -55,7 +60,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppAlertBanner from '../../components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, GOOD_STANDING_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE, PROVIDER_TYPE_CODES, UNION_TYPE_CODES } from '@/utils/constants'
 import { useOrgStore } from '@/stores/org'
 import { useAuthStore } from '@/stores/auth'
 import { useApplicationsStore } from '@/stores/applications'
@@ -68,6 +73,7 @@ export default {
   data() {
     return {
       loading: false,
+      facility: undefined,
     }
   },
   computed: {
@@ -76,6 +82,12 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication']),
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === this.GOOD_STANDING_STATUS_CODES.GOOD
+    },
+    hasNonUnionFacilityGroupOrg() {
+      if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
+        return false
+      }
+      return this.currentApplication?.isUnionized === UNION_TYPE_CODES.NO
     },
   },
   async created() {

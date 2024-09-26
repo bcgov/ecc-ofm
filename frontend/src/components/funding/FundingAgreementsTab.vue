@@ -123,7 +123,7 @@ export default {
         this.fundingAgreements = []
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
-            const facilityFas = await FundingAgreementService.getFAsByFacilityIdAndStartDate(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
+            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
                 fa.fundingAgreementType = APPLICATION_TYPES.OFM

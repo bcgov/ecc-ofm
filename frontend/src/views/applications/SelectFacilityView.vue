@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="mx-4">
-    <h1>Begin an Operating Funding Model application</h1>
+    <h1>Begin a $10 a Day Funding application</h1>
     <div class="mt-8">
       <h4>Organization information</h4>
       <div>
@@ -62,7 +62,7 @@ import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, CRM_STATE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 import { isEqual, cloneDeep } from 'lodash'
@@ -100,6 +100,7 @@ export default {
       loadedApplications: undefined,
       documentsToDelete: [],
       documentsComplete: true,
+      redirectedApplications: undefined,
     }
   },
 
@@ -108,7 +109,13 @@ export default {
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
 
     filteredFacilities() {
-      return this.userInfo?.facilities?.filter((facility) => facility.intakeWindowCheckForAddApplication && facility.ccofEnrolmentCheckForAddApplication)
+      return this.userInfo?.facilities?.filter(
+        (facility) =>
+          facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
+          facility.intakeWindowCheckForAddApplication &&
+          facility.ccofEnrolmentCheckForAddApplication &&
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
+      )
     },
   },
 
@@ -160,6 +167,9 @@ export default {
     }
     await this.getOrganization()
     this.loadedApplications = await ApplicationService.getActiveApplications()
+
+    //get the redirected applications so we can prevent those facilities from starting another OFM app
+    this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)))
   },
 
   methods: {

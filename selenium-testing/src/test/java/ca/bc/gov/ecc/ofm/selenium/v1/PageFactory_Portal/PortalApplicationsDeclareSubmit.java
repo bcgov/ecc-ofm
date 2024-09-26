@@ -20,10 +20,7 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsDeclareSubmit {
 	private WebDriver driver;
-
-	@FindBy(id = "declaration")
-	@CacheLookup
-	private WebElement checkboxDeclare;
+	WebDriverWait wait;
 	
 	@FindBy(id = "app-submit-button")
 	@CacheLookup
@@ -31,27 +28,23 @@ public class PortalApplicationsDeclareSubmit {
 
 
 	public PortalApplicationsDeclareSubmit(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 
 	}
 
 	public void clickDeclare() {
-		if (!checkboxDeclare.isSelected()) {
-			checkboxDeclare.click();
-		}
-
+		WebElement checkboxDeclare = driver.findElements(By.xpath("//*[contains(@for, 'declaration') and text()='I certify that all of the information provided is true and complete to the best of my knowledge.']")).get(0);
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", checkboxDeclare);
+		wait.until(ExpectedConditions.elementToBeClickable(checkboxDeclare)).click();
 	}
 	
 	public void clickSubmitButton() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(submit));
 		wait.until(ExpectedConditions.visibilityOf(submit));
 		submit.click();
 
 	}
-	
-	
 	
 }

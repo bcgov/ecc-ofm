@@ -3,6 +3,7 @@ const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { getMappingString } = require('../util/common')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { OrganizationMappings, FacilityMappings, UserProfileMappings } = require('../util/mapping/Mappings')
+const { OFM_PROGRAM_CODES } = require('../util/constants')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 
@@ -20,15 +21,20 @@ async function getOrganization(req, res) {
 
 async function getOrganizationFacilities(req, res) {
   try {
-    const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${req.params.organizationId}) and (statecode eq 0)`
-    const response = await getOperation(operation)
-    let orgFacilities = []
-    response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))
+    const orgFacilities = await getRawOrganizationFacilities(req.params.organizationId)
     return res.status(HttpStatus.OK).json(orgFacilities)
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
+}
+
+async function getRawOrganizationFacilities(organizationId) {
+  const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${organizationId}) and (statecode eq 0) and (ofm_program ne ${OFM_PROGRAM_CODES.CCOF})`
+  const response = await getOperation(operation)
+  const orgFacilities = []
+  response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))
+  return orgFacilities
 }
 
 async function updateOrganization(req, res) {
@@ -68,6 +74,7 @@ async function getOrganizationUsers(req, res) {
 module.exports = {
   getOrganization,
   getOrganizationFacilities,
+  getRawOrganizationFacilities,
   updateOrganization,
   getOrganizationUsers,
 }

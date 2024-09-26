@@ -38,7 +38,7 @@ function mapSupplementaryApplicationObjectForFront(data) {
 async function getApplications(req, res) {
   try {
     const applications = []
-    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,_ofm_facility_value&$filter=(${buildFilterQuery(
+    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,ofm_unionized,_ofm_facility_value&$filter=(${buildFilterQuery(
       req?.query,
       ApplicationMappings,
     )})`
@@ -47,6 +47,17 @@ async function getApplications(req, res) {
     return res.status(HttpStatus.OK).json(applications)
   } catch (e) {
     handleError(res, e)
+  }
+}
+
+async function getApplicationsCount(req, res) {
+  try {
+    const operation = `ofm_applications?$filter=(${buildFilterQuery(req?.query, ApplicationMappings)})&$apply=aggregate($count as count)`
+    const response = await getOperation(operation)
+    return res.status(HttpStatus.OK).json(response?.value)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
@@ -249,6 +260,7 @@ async function deleteEmployeeCertificate(req, res) {
 
 module.exports = {
   getApplications,
+  getApplicationsCount,
   getApplication,
   updateApplication,
   createApplication,

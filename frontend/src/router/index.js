@@ -26,6 +26,7 @@ import ApplicationConfirmationView from '@/views/applications/ApplicationConfirm
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
 import DeclareSubmitView from '@/views/applications/DeclareSubmitView.vue'
+import EligibilityView from '@/views/applications/EligibilityView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
 import OperatingCostsView from '@/views/applications/OperatingCostsView.vue'
 import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vue'
@@ -217,6 +218,11 @@ const router = createRouter({
           component: FacilityDetailsView,
         },
         {
+          path: ':applicationGuid/eligibility',
+          name: APPLICATION_ROUTES.ELIGIBILITY,
+          component: EligibilityView,
+        },
+        {
           path: ':applicationGuid/service-delivery',
           name: APPLICATION_ROUTES.SERVICE_DELIVERY,
           component: ServiceDeliveryView,
@@ -289,7 +295,6 @@ const router = createRouter({
       component: HelpView,
       meta: {
         requiresAuth: true,
-        hidden: true,
       },
     },
     {

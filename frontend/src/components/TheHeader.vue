@@ -29,7 +29,7 @@
                 </div>
               </v-col>
               <v-col class="px-0" style="width: 50px">
-                <v-btn id="help_button" aria-label="Help" rounded target="ofm_external_help" href="https://bcgov.sharepoint.com/sites/CCD-TDADExternal/SitePages/2023%20OFM%20Test.aspx">
+                <v-btn id="help_button" aria-label="Help" rounded @click="$router.push({ name: 'help' })">
                   <v-icon aria-hidden="false" icon="mdi-help-circle-outline" size="38" color="white" />
                 </v-btn>
               </v-col>
@@ -76,7 +76,7 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests', 'unreadMessageCount']),
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
     appTitle() {
-      return import.meta.env.VITE_APP_TITLE || 'Operating Funding Model'
+      return import.meta.env.VITE_APP_TITLE || '$10 a Day ChildCareBC Centres'
     },
     height() {
       return this.$vuetify.display.xs && this.showMenu ? 140 : 64

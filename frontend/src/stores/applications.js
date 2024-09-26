@@ -3,9 +3,10 @@ import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
+import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
@@ -13,6 +14,7 @@ export const useApplicationsStore = defineStore('applications', {
     currentApplication: undefined,
     isSelectFacilityComplete: false,
     isFacilityDetailsComplete: false,
+    isEligibilityComplete: false,
     isServiceDeliveryComplete: false,
     isOperatingCostsComplete: false,
     isStaffingComplete: false,
@@ -20,12 +22,13 @@ export const useApplicationsStore = defineStore('applications', {
     validation: false,
   }),
   getters: {
-    isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+    isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isEligibilityComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
     isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
   },
   actions: {
     checkApplicationComplete() {
       this.isFacilityDetailsComplete = this.checkFacilityDetailsComplete()
+      this.isEligibilityComplete = this.checkEligibilityComplete(this.currentApplication)
       this.isServiceDeliveryComplete = this.checkServiceDeliveryComplete()
       this.isOperatingCostsComplete = this.checkOperatingCostsComplete()
       this.isStaffingComplete = this.checkStaffingComplete()
@@ -36,8 +39,14 @@ export const useApplicationsStore = defineStore('applications', {
       try {
         this.currentApplication = await ApplicationService.getApplication(applicationId)
         if (!this.currentApplication) return
-        this.currentApplication.uploadedDocuments = await DocumentService.getDocuments(applicationId)
-        this.currentApplication.licences = await LicenceService.getLicences(this.currentApplication?.facilityId)
+        const [uploadedDocuments, licences, facility] = await Promise.all([
+          DocumentService.getDocuments(applicationId),
+          LicenceService.getLicences(this.currentApplication?.facilityId),
+          FacilityService.getFacility(this.currentApplication?.facilityId),
+        ])
+        this.currentApplication.uploadedDocuments = uploadedDocuments
+        this.currentApplication.licences = licences
+        this.currentApplication.facility = facility
         this.checkApplicationComplete()
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
@@ -49,7 +58,52 @@ export const useApplicationsStore = defineStore('applications', {
       Facility Details page
     */
     checkFacilityDetailsComplete() {
-      return this.currentApplication?.primaryContactId && this.currentApplication?.expenseAuthorityId && this.currentApplication?.fiscalYearEndDate
+      return (
+        this.currentApplication?.primaryContactId &&
+        this.currentApplication?.expenseAuthorityId &&
+        this.currentApplication?.fiscalYearEndDate &&
+        this.isFacilityLocationAttributesComplete(this.currentApplication?.facility)
+      )
+    },
+
+    isFacilityLocationAttributesComplete(facility) {
+      return (
+        !isEmpty(facility) &&
+        facility?.k12SchoolGrounds != null &&
+        facility?.municipalCommunity != null &&
+        facility?.onReserve != null &&
+        facility?.yppDesignation != null &&
+        (facility?.yppDesignation === 0 || facility?.yppEnrolled != null) &&
+        facility?.personalResidence != null
+      )
+    },
+
+    /*
+      Eligibility page
+    */
+    checkEligibilityComplete(application) {
+      return (
+        application?.greaterOneYearCCOFTDAD &&
+        (!this.isMultipleProgram() || application?.ccfriParticipation) &&
+        application?.ministryGoodStanding &&
+        application?.healthAuthorityGoodStanding &&
+        application?.eceCertificatesGoodStanding &&
+        application?.eceweParticipation &&
+        application?.accbParticipation &&
+        application?.provideActualExpenses &&
+        application?.providePreviousFYFinancialStatements &&
+        application?.liabilityInsuranceCoverage &&
+        application?.economicAnalysisParticipation &&
+        (!this.isOperateInPersonalResidence() || application?.operateSeparateBankAccount)
+      )
+    },
+
+    isMultipleProgram() {
+      return this.currentApplication?.facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE
+    },
+
+    isOperateInPersonalResidence() {
+      return this.currentApplication?.facility?.personalResidence === YES_NO_RADIO_GROUP_MAPPING.YES
     },
 
     /* 
@@ -106,8 +160,12 @@ export const useApplicationsStore = defineStore('applications', {
       const isRequiredFinancialDocsUploaded = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
       const isFacilityTypeRequiredDocsUploaded = !this.isRentLease(this.currentApplication) || this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.SUPPORTING_DOCS])
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
-      const isArmsLengthConfirmed = !this.isRentLease(this.currentApplication) || this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES
-      return this.currentApplication?.facilityType && isArmsLengthConfirmed && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
+      const isRentLeaseInformationComplete =
+        !this.isRentLease(this.currentApplication) ||
+        (this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
+          (this.currentApplication?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
+            (this.currentApplication?.rentLeaseStartDate && this.currentApplication?.rentLeaseEndDate && this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)))
+      return this.currentApplication?.facilityType && isRentLeaseInformationComplete && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
     },
 
     checkRequiredDocsExist(application, requiredDocumentTypes) {

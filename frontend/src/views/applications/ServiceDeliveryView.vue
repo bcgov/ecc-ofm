@@ -1,11 +1,5 @@
 <template>
   <v-form ref="form">
-    <h2 class="mb-4">Service Delivery Details</h2>
-    <h4 class="mb-2">
-      Your facility:
-      <span class="facility-name ml-6">{{ currentApplication?.facilityName }}</span>
-    </h4>
-
     <div v-if="!isEmpty(currentApplication?.licences)">
       <v-row no-gutters class="mb-2">
         <v-col cols="12" align="right">
@@ -187,7 +181,7 @@ export default {
     },
 
     isLicenceDetailsEditable() {
-      return !this.readonly && this.facility?.programCode === OFM_PROGRAM_CODES.CCOF && !this.facility?.facilityReviewComplete && !this.currentApplication?.applicationReviewComplete
+      return !this.readonly && this.facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE && !this.facility?.facilityReviewComplete && !this.currentApplication?.applicationReviewComplete
     },
 
     isHealthAuthorityReportsUploaded() {
@@ -211,7 +205,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
       },
     },
     save: {
@@ -410,12 +404,6 @@ export default {
 </script>
 
 <style scoped>
-.facility-name {
-  color: #003366;
-  font-size: 1.3em;
-  text-decoration: underline;
-}
-
 :deep(.v-label) {
   opacity: 1;
 }

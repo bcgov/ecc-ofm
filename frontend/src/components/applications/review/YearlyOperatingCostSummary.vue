@@ -5,78 +5,64 @@
       <v-row no-gutters>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
-              <p>Insurance</p>
+            <v-col cols="12" sm="7">
+              <p>Maintenance and Minor Repairs</p>
             </v-col>
-            <v-col cols="6" xl="7" class="px-2">
-              {{ format.formatDecimalNumber(currentApplication?.insuranceCost) }}
-            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.insuranceCost) }}</v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
-              <p>Upkeep and Labour</p>
+            <v-col cols="12" sm="7">
+              <p>Upkeep</p>
             </v-col>
-            <v-col cols="6" xl="7" class="px-2">
-              {{ format.formatDecimalNumber(currentApplication?.upkeepLabourCost) }}
-            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.upkeepLabourCost) }}</v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row no-gutters>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
+            <v-col cols="12" sm="7">
+              <p>Office Furniture and Equipment</p>
+            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.furnitureEquipmentsCost) }}</v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="6">
+          <v-row no-gutters class="pa-1">
+            <v-col cols="12" sm="7">
+              <p>Facility Maintenance and Minor Improvements</p>
+            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.maintenanceRepairsCost) }}</v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row no-gutters>
+        <v-col cols="12" lg="6">
+          <v-row no-gutters class="pa-1">
+            <v-col cols="12" sm="7">
+              <p>Janitorial Services</p>
+            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.suppliesCost) }}</v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="6">
+          <v-row no-gutters class="pa-1">
+            <v-col cols="12" sm="7">
               <p>Utilities</p>
             </v-col>
-            <v-col cols="6" xl="7" class="px-2">
-              {{ format.formatDecimalNumber(currentApplication?.utilitiesCost) }}
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="12" lg="6">
-          <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
-              <p>Maintenance and Repairs</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="px-2">
-              {{ format.formatDecimalNumber(currentApplication?.maintenanceRepairsCost) }}
-            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.utilitiesCost) }}</v-col>
           </v-row>
         </v-col>
       </v-row>
       <v-row no-gutters>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
-              <p>Furniture and Equipment</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="px-2">
-              {{ format.formatDecimalNumber(currentApplication?.furnitureEquipmentsCost) }}
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="12" lg="6">
-          <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
-              <p>Supplies</p>
-            </v-col>
-            <v-col cols="6" xl="7" class="px-2">
-              {{ format.formatDecimalNumber(currentApplication?.suppliesCost) }}
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-row no-gutters>
-        <v-col cols="12" lg="6">
-          <v-row no-gutters class="pa-1">
-            <v-col cols="6" xl="5">
+            <v-col cols="12" sm="7">
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
-            <v-col cols="6" xl="7" class="px-2 total-yearly-cost">
-              {{ format.formatDecimalNumber(currentApplication?.totalYearlyOperatingCosts) }}
-            </v-col>
+            <v-col cols="12" sm="5" class="px-sm-2 total-yearly-cost">$ {{ format.formatDecimalNumber(currentApplication?.totalYearlyOperatingCosts) }}</v-col>
           </v-row>
         </v-col>
       </v-row>

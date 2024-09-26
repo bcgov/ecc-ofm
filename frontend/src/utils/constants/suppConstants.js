@@ -1,10 +1,12 @@
+import { SUPPLEMENTARY_TYPES } from '@/utils/constants'
+
 export const INDIG_CHECKBOX_LABELS = Object.freeze([
   { label: 'Honoraria for Elder involvement, language revitalization and/ or other resource people including curriculum development resource', value: '1' },
   { label: 'Culturally based meals and traditional foods', value: '2' },
   { label: 'Materials for a cultural program (beads, wood, food, etc.)', value: '3' },
   { label: 'Books, music, videos, and arts and crafts materials', value: '4' },
   { label: 'Culturally relevant toys and games', value: '5' },
-  { label: 'Facility décor enhancement-pictures, including artwork, outdoor play, and natural materials', value: '6' },
+  { label: 'Facility decor enhancement (pictures, including artwork, photos, outdoor structures, and natural materials)', value: '6' },
   { label: 'Field trips and outings', value: '7' },
   { label: 'Land-based play support', value: '8' },
   { label: 'Other', value: '9' },
@@ -21,4 +23,23 @@ export const SUPP_TERM_CODES = Object.freeze({
   TERM_ONE: 1,
   TERM_TWO: 2,
   TERM_THREE: 3,
+})
+
+export const CORE_SERVICES_PANELS = Object.freeze([
+  {
+    title: 'Indigenous Programming Allowance',
+    id: 'indigenous',
+    supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
+  },
+  {
+    title: 'Support Needs Programming Allowance',
+    id: 'support-needs',
+    supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
+  },
+])
+
+export const DISCRETIONARY_PANEL = Object.freeze({
+  title: 'Transportation Allowance',
+  id: 'transportation',
+  supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
 })

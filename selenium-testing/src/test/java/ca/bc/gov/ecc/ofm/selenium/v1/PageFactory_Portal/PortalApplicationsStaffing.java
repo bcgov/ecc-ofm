@@ -20,6 +20,7 @@ import org.openqa.selenium.WebElement;
 
 public class PortalApplicationsStaffing {
 	private WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(xpath = "//*[@name = 'is-unionized' and @value = '0']")
 	private WebElement unionizedNo;
@@ -29,38 +30,30 @@ public class PortalApplicationsStaffing {
 	private WebElement next;
 
 	public PortalApplicationsStaffing(WebDriver driver) {
-
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
-
+		wait = new WebDriverWait(driver, Duration.ofMillis(20000));
 	}
 
 	public void setITEFullTime(String count) {
 		WebElement iteFullTime = driver.findElements(By.xpath("//*[contains(@id, 'input') and @type = 'text']")).get(0);
 		iteFullTime.sendKeys(Keys.CONTROL + "a");
-		
 		iteFullTime.sendKeys(count);
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		
 		WebElement initials = driver.findElements(By.xpath("//*[contains(@id, 'input') and @type = 'text']")).get(2);
 		wait.until(ExpectedConditions.elementToBeClickable(initials));
-		
-		
 		initials.sendKeys(Keys.CONTROL + "a");
-
 		initials.sendKeys("ab");
 
 		WebElement eceCertNumber = driver.findElements(By.xpath("//*[contains(@id, 'input') and @type = 'text']"))
 				.get(3);
 		eceCertNumber.sendKeys(Keys.CONTROL + "a");
-
 		eceCertNumber.sendKeys("12345");
 
 	}
-
 	
 
 	public void setUnionizedNo() {
-
 		if (!unionizedNo.isSelected()) {
 			unionizedNo.click();
 		}
@@ -68,11 +61,9 @@ public class PortalApplicationsStaffing {
 	}
 
 	public void clickNextButton() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.elementToBeClickable(next));
 		wait.until(ExpectedConditions.visibilityOf(next));
 		next.click();
-
 	}
 
 }

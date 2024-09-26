@@ -1,5 +1,5 @@
 <template>
-  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Indigenous Programming Allowance for the current term.</AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Indigenous Programming Allowance for the current year.</AppAlertBanner>
   <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
       <AppLabel>Purpose of the fund:</AppLabel>
@@ -11,8 +11,14 @@
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Eligible expenses:</AppLabel>
-
-      To reduce barriers to accessing these funds, all expenses are eligible except for staffing enhancements for the purpose of reducing ratio.
+      Eligible expenses: Expenses to enhance the participant's delivery of Indigenous curriculum in collaboration with Indigenous Peoples in their communities.
+    </v-col>
+  </v-row>
+  <br />
+  <v-row no-gutters class="mr-2 my-2">
+    <v-col cols="12">
+      <AppLabel>Ineligible expenses include:</AppLabel>
+      Staffing enhancements
     </v-col>
   </v-row>
   <br />

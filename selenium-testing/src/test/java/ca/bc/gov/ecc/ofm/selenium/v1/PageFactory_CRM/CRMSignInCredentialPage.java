@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CRMSignInCredentialPage {
 	WebDriver driver;
+	WebDriverWait wait;
 
 	@FindBy(name = "loginfmt")
 	WebElement text_userID;
@@ -36,10 +37,14 @@ public class CRMSignInCredentialPage {
 
 	@FindBy(xpath = "//*[text()='Organization-Facilities']")
 	WebElement button_OrgFacilities;
+	
+	@FindBy(xpath = "//*[text()='Assistance Requests']")
+	WebElement buttonAssistanceRequest;
 
 	public CRMSignInCredentialPage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
+		wait = new WebDriverWait(driver, Duration.ofMillis(10000));
 	}
 
 	public void enterUserId(String userid) {
@@ -57,9 +62,7 @@ public class CRMSignInCredentialPage {
 	}
 
 	public void clickForm() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-		wait.until(ExpectedConditions.visibilityOf(form_lightbox));
-		form_lightbox.click();
+		wait.until(ExpectedConditions.visibilityOf(form_lightbox)).click();
 	}
 
 	public void clickSignIn() {
@@ -67,22 +70,21 @@ public class CRMSignInCredentialPage {
 	}
 
 	public void clickYes() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 		wait.until(ExpectedConditions.visibilityOf(form_lightbox));
 		form_lightbox.click();
 		button_Yes.click();
 	}
 
 	public void clickSignInAgain() {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-		wait.until(ExpectedConditions.visibilityOf(button_SignInAgain));
-		button_SignInAgain.click();
-
+		wait.until(ExpectedConditions.visibilityOf(button_SignInAgain)).click();
 	}
 
 	public void clickOrgFacilities() {
-		button_OrgFacilities.click();
-
+		wait.until(ExpectedConditions.elementToBeClickable(button_OrgFacilities)).click();
+	}
+	
+	public void clickAssistanceRequest() {
+		wait.until(ExpectedConditions.elementToBeClickable(buttonAssistanceRequest)).click();
 	}
 
 }

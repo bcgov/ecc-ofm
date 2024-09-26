@@ -1,16 +1,21 @@
-<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
   <p class="my-11">
-    Currently, there are three Operating Funding Model Allowances available. Please check them and apply for
-    <strong class="text-decoration-underline">one or all</strong>
-    that applies to your organization.
+    Allowances (Core and Discretionary) have a one-year term. You must re-apply annually to continue receiving funding.
+    <br />
+    The renewal date will be the anniversary of your OFM base funding agreement
+  </p>
+
+  <p class="my-11">
+    You may apply for one or more allowances. You may also apply through
+    <router-link :to="{ name: 'applications-history' }">Applications</router-link>
+    at any time.
   </p>
 
   <AppAlertBanner v-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
-      <v-col cols="12" lg="1">
+      <v-col cols="12" lg="2">
         <AppLabel>Application Year:</AppLabel>
       </v-col>
 
@@ -65,71 +70,108 @@
     </AppAlertBanner>
     <div v-if="!nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-      <v-expansion-panels v-else v-model="panel" multiple>
-        <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
-          <v-expansion-panel-title>
-            <span class="header-label">{{ panel.title }}</span>
-            <span v-if="isFundingActive(panel.id, renewalTerm)" class="active-label ml-9">Active</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <IndigenousProgrammingAllowance
-              v-if="panel.id === INDIGENOUS"
-              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
-              @update="updateModel"
-              :formDisabled="currentTermDisabled || formDisabled" />
-            <SupportNeedsProgrammingAllowance
-              v-if="panel.id === SUPPORT_NEEDS"
-              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
-              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :formDisabled="currentTermDisabled || formDisabled"
-              @update="updateModel" />
-            <TransportationAllowance
-              v-if="panel.id === TRANSPORTATION"
-              :transportModels="getTransportModels(renewalTerm)"
-              :formDisabled="currentTermDisabled || formDisabled"
-              :renewalTerm="renewalTerm"
-              :startDate="getStartDate(renewalTerm)"
-              @update="updateModel"
-              @addModel="addBlankTransportModel"
-              @deleteModel="deleteTransportModel"
-              @deleteDocument="deleteDocument" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <template v-else>
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Core Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ panelComponent.title }}</span>
+              <span v-if="isFundingActive(panelComponent.id, renewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <IndigenousProgrammingAllowance
+                v-if="panelComponent.id === INDIGENOUS"
+                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
+                :formDisabled="currentTermDisabled || formDisabled"
+                @update="updateModel" />
+              <SupportNeedsProgrammingAllowance
+                v-if="panelComponent.id === SUPPORT_NEEDS"
+                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
+                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+                :formDisabled="currentTermDisabled || formDisabled"
+                @update="updateModel" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Discretionary Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel">
+          <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+              <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, renewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <TransportationAllowance
+                :transportModels="getTransportModels(renewalTerm)"
+                :formDisabled="currentTermDisabled || formDisabled"
+                :renewalTerm="renewalTerm"
+                :startDate="getStartDate(renewalTerm)"
+                @update="updateModel"
+                @add-model="addBlankTransportModel"
+                @delete-model="deleteTransportModel"
+                @delete-document="deleteDocument" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </template>
     </div>
+
     <div v-if="nextTermActive">
       <v-skeleton-loader v-if="loading" :loading="loading" type="table-tbody"></v-skeleton-loader>
-      <v-expansion-panels v-else v-model="panel" multiple>
-        <v-expansion-panel v-for="panel in PANELS" :key="panel.id" :value="panel.id">
-          <v-expansion-panel-title>
-            <span class="header-label">{{ panel.title }}</span>
-            <span v-if="isFundingActive(panel.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <IndigenousProgrammingAllowance
-              v-if="panel.id === INDIGENOUS"
-              :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
-              @update="updateModel"
-              :formDisabled="formDisabled" />
-            <SupportNeedsProgrammingAllowance
-              v-if="panel.id === SUPPORT_NEEDS"
-              :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
-              :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-              :formDisabled="formDisabled"
-              @update="updateModel" />
-            <TransportationAllowance
-              v-if="panel.id === TRANSPORTATION"
-              :transportModels="getTransportModels(nextRenewalTerm)"
-              :formDisabled="formDisabled"
-              :renewalTerm="nextRenewalTerm"
-              :startDate="getStartDate(nextRenewalTerm)"
-              @update="updateModel"
-              @addModel="addBlankTransportModel"
-              @deleteModel="deleteTransportModel"
-              @deleteDocument="deleteDocument" />
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <template v-else>
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Core Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ panelComponent.title }}</span>
+              <span v-if="isFundingActive(panelComponent.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <IndigenousProgrammingAllowance
+                v-if="panelComponent.id === INDIGENOUS"
+                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
+                :formDisabled="formDisabled"
+                @update="updateModel" />
+              <SupportNeedsProgrammingAllowance
+                v-if="panelComponent.id === SUPPORT_NEEDS"
+                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
+                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
+                :formDisabled="formDisabled"
+                @update="updateModel" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+        <div class="supplementary-header">
+          <p class="supplementary-header-label">Discretionary Services Allowance</p>
+        </div>
+        <v-expansion-panels v-model="panel" multiple>
+          <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
+            <v-expansion-panel-title>
+              <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
+              <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <TransportationAllowance
+                :transportModels="getTransportModels(nextRenewalTerm)"
+                :formDisabled="formDisabled"
+                :renewalTerm="nextRenewalTerm"
+                :startDate="getStartDate(nextRenewalTerm)"
+                @update="updateModel"
+                @add-model="addBlankTransportModel"
+                @delete-model="deleteTransportModel"
+                @delete-document="deleteDocument" />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </template>
     </div>
   </v-form>
 </template>
@@ -152,8 +194,9 @@ import { uuid } from 'vue-uuid'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
-import { SUPP_TERM_CODES } from '@/utils/constants/suppConstants'
+import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
 import format from '@/utils/format'
+import moment from 'moment'
 
 export default {
   name: 'SupplementaryFormView',
@@ -212,7 +255,8 @@ export default {
   computed: {
     ...mapState(useOrgStore, ['currentOrg']),
     allPanelIDs() {
-      return this.PANELS?.map((panel) => panel.id)
+      const allPanels = [...this.CORE_SERVICES_PANELS, this.DISCRETIONARY_PANEL]
+      return allPanels?.map((panel) => panel.id)
     },
     hasGoodStanding() {
       return this.currentOrg?.goodStandingStatusCode === GOOD_STANDING_STATUS_CODES.GOOD
@@ -264,20 +308,9 @@ export default {
     this.TRANSPORTATION = 'transportation'
     this.SUPPORT_NEEDS = 'support-needs'
     this.INDIGENOUS = 'indigenous'
-    this.PANELS = [
-      {
-        title: 'Indigenous Programming Allowance',
-        id: this.INDIGENOUS,
-      },
-      {
-        title: 'Support Needs Programming Allowance',
-        id: this.SUPPORT_NEEDS,
-      },
-      {
-        title: 'Transportation Allowance',
-        id: this.TRANSPORTATION,
-      },
-    ]
+    this.CORE_SERVICES_PANELS = CORE_SERVICES_PANELS
+    this.DISCRETIONARY_PANEL = DISCRETIONARY_PANEL
+
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
@@ -517,9 +550,8 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-
-      const termTwoEndDate = new Date(new Date(this.fundingAgreement.endDate).setFullYear(new Date(this.fundingAgreement.endDate).getFullYear() - 1))
-      const termOneEndDate = new Date(new Date(termTwoEndDate).setFullYear(new Date(termTwoEndDate).getFullYear() - 1))
+      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
@@ -554,11 +586,11 @@ export default {
       }
     },
     setIsCurrentTermDisabled(termEndDate, today) {
-      const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_TERM_EXPIRES))
+      const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.currentTermDisabled = today > priorDate
     },
     setIsNextTermEnabled(termEndDate, today) {
-      const priorDate = new Date(new Date(termEndDate).setDate(termEndDate.getDate() - this.DAYS_BEFORE_NEXT_TERM_ENABLED))
+      const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
     },
     setActiveTerm(value) {
@@ -577,8 +609,8 @@ export default {
       }
     },
     getStartDate(term) {
-      const termTwoStartDate = new Date(new Date(this.fundingAgreement.startDate).setFullYear(new Date(this.fundingAgreement.startDate).getFullYear() + 1))
-      const termThreeStartDate = new Date(new Date(termTwoStartDate).setFullYear(new Date(termTwoStartDate).getFullYear() + 1))
+      const termTwoStartDate = moment(new Date(this.fundingAgreement.startDate)).add(1, 'years').toDate()
+      const termThreeStartDate = moment(new Date(this.fundingAgreement.startDate)).add(2, 'years').toDate()
 
       switch (true) {
         case term === SUPP_TERM_CODES.TERM_ONE:
@@ -595,10 +627,6 @@ export default {
 }
 </script>
 <style scoped>
-.header-label {
-  font-weight: 700;
-  font-size: 20px;
-}
 .active-label {
   font-weight: 700;
   font-size: 18px;
