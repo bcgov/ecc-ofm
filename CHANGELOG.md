@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [1.1.0] - 2024-09-26
+
+- See JIRA
+
 ## [1.0.1] - 2024-08-26
 
 ### Added
@@ -27,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/bcgov/ecc-ofm/compare/1.0.1...HEAD
+[unreleased]: https://github.com/bcgov/ecc-ofm/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/bcgov/ecc-ofm/releases/tag/1.1.0
 [1.0.1]: https://github.com/bcgov/ecc-ofm/releases/tag/1.0.1
 [1.0.0]: https://github.com/bcgov/ecc-ofm/releases/tag/1.0.0
