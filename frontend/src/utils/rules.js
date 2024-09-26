@@ -15,7 +15,7 @@ const rules = {
   ],
   notNullRequired: [(v) => v != null || REQUIRED_MSG], // value must be not null and not undefined
   postalCode: [(v) => !v || /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(v) || 'A valid postal code is required'],
-  MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Date must be in MM/DD/YYYY format',
+  MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Invalid date format',
   validEndDate(startDate) {
     return (v) => new Date(v) > new Date(startDate) || 'End date must be after start date'
   },
