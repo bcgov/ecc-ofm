@@ -294,6 +294,7 @@ const router = createRouter({
       name: 'help',
       component: HelpView,
       meta: {
+        hidden: true,
         requiresAuth: true,
       },
     },
