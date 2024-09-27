@@ -28,7 +28,7 @@
                   <v-skeleton-loader v-else type="chip" class="chip-loader" />
                 </div>
               </v-col>
-              <v-col class="px-0" style="width: 50px">
+              <v-col v-if="false" class="px-0" style="width: 50px">
                 <v-btn id="help_button" aria-label="Help" rounded @click="$router.push({ name: 'help' })">
                   <v-icon aria-hidden="false" icon="mdi-help-circle-outline" size="38" color="white" />
                 </v-btn>
