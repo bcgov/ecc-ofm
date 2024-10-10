@@ -22,6 +22,7 @@ import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMOrgSearchPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMOrganizationPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMSignInCredentialPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.LicenseDetailsPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.ServiceDeliveryDetailsPage;
 import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -74,14 +75,30 @@ public class CRMAddLicenceToFacility extends BaseTest {
 			
 			CRMFacilityPage cRMFacilityPage = new CRMFacilityPage(driver);
 			cRMFacilityPage.clickLicenceTab();
-			cRMFacilityPage.addNewLicense();
 			
+			// Creates license 1234
 			Thread.sleep(2000);
 			LicenseDetailsPage licenseDetailsPage = new LicenseDetailsPage(driver);
-			licenseDetailsPage.setLicenseNumber("LN-1234");
-			licenseDetailsPage.setStartDate();
-			licenseDetailsPage.setHealthAuthority();
-			licenseDetailsPage.saveLicense();
+			createNewLicense(licenseDetailsPage, cRMFacilityPage, "LN-1234");
+			
+			// Creates SDD
+			Thread.sleep(2000);
+			ServiceDeliveryDetailsPage serviceDeliveryDetailsPage = new ServiceDeliveryDetailsPage(driver);
+			
+			createNewSDD(serviceDeliveryDetailsPage, licenseDetailsPage, "52", "Monday", "9:00 AM", "5:00 PM", "12", "12", "12");
+			createNewSDD(serviceDeliveryDetailsPage, licenseDetailsPage, "52", "Monday", "9:00 AM", "5:00 PM", "15", "15", "15");
+			
+			licenseDetailsPage.saveAndCloseLicense();
+			
+			// Creates license 5678
+			Thread.sleep(2000);
+			createNewLicense(licenseDetailsPage, cRMFacilityPage, "LN-5678");
+			
+			Thread.sleep(2000);
+			createNewSDD(serviceDeliveryDetailsPage, licenseDetailsPage, "52", "Monday", "9:00 AM", "5:00 PM", "21", "21", "21");
+			createNewSDD(serviceDeliveryDetailsPage, licenseDetailsPage, "52", "Monday", "9:00 AM", "5:00 PM", "18", "18", "18");
+			
+			licenseDetailsPage.saveAndCloseLicense();
 			
 			test.info("Licence added to facility successfully");
 			test.pass("Added licence to facility");
@@ -91,6 +108,34 @@ public class CRMAddLicenceToFacility extends BaseTest {
 			Assert.fail("testcase failed");
 			e.printStackTrace();
 		}
+	}
+	
+	public void createNewLicense(LicenseDetailsPage licenseDetailsPage, CRMFacilityPage cRMFacilityPage, String licenseNumber) {
+		try {
+			cRMFacilityPage.addNewLicense();
+			Thread.sleep(2000);
+			licenseDetailsPage.setLicenseNumber(licenseNumber);
+			licenseDetailsPage.setStartDate();
+			licenseDetailsPage.setHealthAuthority();
+			licenseDetailsPage.saveLicense();
+		}
+		catch(Exception e) {
+			System.out.println("Could not create license");
+		}
+	}
+	
+	public void createNewSDD(ServiceDeliveryDetailsPage serviceDeliveryDetailsPage, LicenseDetailsPage licenseDetailsPage, String weeksInOperation, String dayOfWeek, 
+			String hoursOfOperationFrom, String hoursOfOperationTo, String licenseSpaces, String operationalSpaces, String enrolledSpaces) {
+		licenseDetailsPage.addNewSDD();
+		serviceDeliveryDetailsPage.setLicenceType();
+		serviceDeliveryDetailsPage.setWeeksInOperation(weeksInOperation);
+		serviceDeliveryDetailsPage.setDaysOfWeek(dayOfWeek);
+		serviceDeliveryDetailsPage.setHoursOfOperationFrom(hoursOfOperationFrom);
+		serviceDeliveryDetailsPage.setHoursOfOperationTo(hoursOfOperationTo);
+		serviceDeliveryDetailsPage.setLicenseSpaces(licenseSpaces);
+		serviceDeliveryDetailsPage.setOperationalSpaces(operationalSpaces);
+		serviceDeliveryDetailsPage.setEnrolledSpacesField(enrolledSpaces);
+		serviceDeliveryDetailsPage.saveAndCLoseSDD();
 	}
 	
 

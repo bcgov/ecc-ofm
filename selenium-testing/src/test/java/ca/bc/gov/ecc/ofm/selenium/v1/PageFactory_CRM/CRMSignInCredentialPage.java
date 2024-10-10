@@ -40,6 +40,9 @@ public class CRMSignInCredentialPage {
 	
 	@FindBy(xpath = "//*[text()='Assistance Requests']")
 	WebElement buttonAssistanceRequest;
+	
+	@FindBy(xpath = "//*[@aria-label[contains(., 'Sign in with')]]")
+	WebElement signInAccount;
 
 	public CRMSignInCredentialPage(WebDriver driver) {
 		this.driver = driver;
@@ -85,6 +88,10 @@ public class CRMSignInCredentialPage {
 	
 	public void clickAssistanceRequest() {
 		wait.until(ExpectedConditions.elementToBeClickable(buttonAssistanceRequest)).click();
+	}
+	
+	public void clickAccount() {
+		wait.until(ExpectedConditions.elementToBeClickable(signInAccount)).click();
 	}
 
 }

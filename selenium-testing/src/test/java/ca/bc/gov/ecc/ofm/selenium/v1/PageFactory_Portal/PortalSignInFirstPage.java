@@ -16,6 +16,9 @@ public class PortalSignInFirstPage {
 
 	@FindBy(id = "bceid-login")
 	WebElement button_BCeIdLogin;
+	
+	@FindBy(id = "idir-login")
+	WebElement IDIRLoginButton;
 
 	public PortalSignInFirstPage(WebDriver driver) {
 		this.driver = driver;
@@ -26,5 +29,9 @@ public class PortalSignInFirstPage {
 	public void clickOnBCeIdLogin() {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("bceid-login")));
 		button_BCeIdLogin.click();
+	}
+	
+	public void clickOnIDIRLogin() {
+		wait.until(ExpectedConditions.elementToBeClickable(IDIRLoginButton)).click();
 	}
 }
