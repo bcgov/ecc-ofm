@@ -63,7 +63,6 @@ export default {
       save: false,
       submit: false,
       showCancelDialog: false,
-      facility: {},
       contacts: [],
     }
   },

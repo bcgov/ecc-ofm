@@ -142,12 +142,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    facility: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
   },
 
   emits: ['process'],
@@ -181,7 +175,12 @@ export default {
     },
 
     isLicenceDetailsEditable() {
-      return !this.readonly && this.facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE && !this.facility?.facilityReviewComplete && !this.currentApplication?.applicationReviewComplete
+      return (
+        !this.readonly &&
+        this.currentApplication?.facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE &&
+        !this.currentApplication?.facility?.facilityReviewComplete &&
+        !this.currentApplication?.applicationReviewComplete
+      )
     },
 
     isHealthAuthorityReportsUploaded() {

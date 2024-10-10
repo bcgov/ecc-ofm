@@ -149,12 +149,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    facility: {
-      type: Object,
-      default: () => {
-        return {}
-      },
-    },
     contacts: {
       type: Array,
       default: () => [],
