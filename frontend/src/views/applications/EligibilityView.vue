@@ -1,10 +1,6 @@
 <template>
   <v-form ref="form">
-    <AppAlertBanner type="info">
-      Note: If you answer "No" to any of these questions, you will not be eligible for a $10 a Day Funding. More information can be at the
-      <a href="https://www2.gov.bc.ca/gov/content?id=F0D0FD2A00064CDDBF634CF83E4E2599" target="_blank">$10 a Day Funding website</a>
-      for eligibility.
-    </AppAlertBanner>
+    <AppAlertBanner type="info">Note: If you answer "No" to any of these questions, you will not be eligible for $10 a Day Funding.</AppAlertBanner>
     <v-card variant="outlined" class="pa-4 my-6">
       <div>
         <div>Is your facility currently in receipt of Child Care Operating Funding or $10 a Day ChildCareBC funding for a minimum of 1 year?</div>

@@ -60,6 +60,18 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2023 - Policy and Procedure Manual</span>
           </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/DD532A29A11B4BE1AF56FD0A1929FB26" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>2023 - Funding Agreement Template</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/D10A0045B4724B81A235A2CE418F29DB" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>Applicant Guide</span>
+          </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
           <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
@@ -71,6 +83,18 @@
           <a href="https://rise.articulate.com/share/4IlRwcyWDpuotLtH71zjj_czAkUUsPOw#/" target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>Policy and Procedure Manual Training e-Module</span>
+          </a>
+        </v-expansion-panel-text>
+        <v-expansion-panel-text v-if="panelComponent.id === 'other'">
+          <a href="https://www2.gov.bc.ca/assets/download/CAF7A4B7BB5248838968459A0BBD6CC2" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>EE $10 a Day Policy and Procedure Manual</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/37637565F3824721A91EE6D0ED0F1D7C" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>EE $10 a Day Funding Agreement Template</span>
           </a>
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -121,9 +145,14 @@ export default {
         title: 'Training e-Modules',
         id: 'training',
       },
+      {
+        title: 'Other',
+        id: 'other',
+      },
     ]
     this.generalPanels = this.allGeneralPanelIDs
-    this.testParticipantPanels = this.allTestParticipantPanelIDs
+    // OFMCC-6203 - Other section will be collapsed by default
+    this.testParticipantPanels = this.allTestParticipantPanelIDs.slice(0, -1)
   },
   methods: {
     isEmpty,
