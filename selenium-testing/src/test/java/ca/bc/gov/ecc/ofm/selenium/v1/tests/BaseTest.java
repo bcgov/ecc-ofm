@@ -30,6 +30,9 @@ public class BaseTest {
 	protected static String PORTAL_URL;
 	protected static String PORTAL_USERNAME;
 	protected static String PORTAL_PASSWORD;
+	protected static String INTERNAL_PORTAL_URL;
+	protected static String INTERNAL_PORTAL_USERNAME;
+	protected static String INTERNAL_PORTAL_PASSWORD;
 	protected static String CRM_URL;
 	protected static String CRM_USERNAME;
 	protected static String CRM_PASSWORD;
@@ -48,6 +51,9 @@ public class BaseTest {
 			PORTAL_URL = properties.getProperty("portal_url");
 			PORTAL_USERNAME = properties.getProperty("portal_username");
 			PORTAL_PASSWORD = properties.getProperty("portal_password");
+			INTERNAL_PORTAL_URL = properties.getProperty("internal_portal_url");
+			INTERNAL_PORTAL_USERNAME = properties.getProperty("internal_portal_username");
+			INTERNAL_PORTAL_PASSWORD = properties.getProperty("internal_portal_password");
 			CRM_URL = properties.getProperty("crm_url");
 			CRM_USERNAME = properties.getProperty("crm_username");
 			CRM_PASSWORD = properties.getProperty("crm_password");

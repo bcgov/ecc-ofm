@@ -22,6 +22,10 @@ public class PortalIrregularExpenseApplicationsDetails {
 	@CacheLookup
 	private WebElement submitNewRequestButton;
 	
+	@FindBy(id = "selectFacility")
+	@CacheLookup
+	private WebElement selectFacilityField;
+	
 
 	public PortalIrregularExpenseApplicationsDetails(WebDriver driver) {
 		this.driver = driver;
@@ -40,7 +44,10 @@ public class PortalIrregularExpenseApplicationsDetails {
 	public void setRequestDescriptionTextField(String requestDescriptionValue) {
 		WebElement requestDescription = driver.findElements(By.xpath("//*[contains(@id, 'input-')]")).get(6);
 		requestDescription.sendKeys(requestDescriptionValue);
-
+	}
+	
+	public void addFacility(String facility) {
+		selectFacilityField.sendKeys(facility);
 	}
 	
 	public void addNewFile() {

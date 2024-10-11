@@ -213,7 +213,7 @@ public class ContactBCeIDScript {
 		
 		// Log out of the portal
         PortalHomePage portalHomePage = new PortalHomePage(driver);
-        portalHomePage.clickOnUsername(username);
+        portalHomePage.clickOnUsername();
         portalHomePage.logout();
 		
     }

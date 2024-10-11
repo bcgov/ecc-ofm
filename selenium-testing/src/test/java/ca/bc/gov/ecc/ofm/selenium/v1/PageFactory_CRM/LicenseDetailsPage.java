@@ -32,6 +32,9 @@ public class LicenseDetailsPage {
 	@FindBy(xpath = "//*[@aria-label='Save (CTRL+S)']")
 	WebElement saveButton;
 	
+	@FindBy(xpath = "//*[@aria-label='Save & Close']")
+	WebElement saveAndCloseButton;
+	
 	@FindBy(xpath = "//*[@aria-label='New Service Delivery Detail. Add New Service Delivery Detail']")
 	WebElement newServiceDeliveryDetail;
 	
@@ -58,5 +61,13 @@ public class LicenseDetailsPage {
 	
 	public void saveLicense() {
 		wait.until(ExpectedConditions.visibilityOf(saveButton)).click();
+	}
+	
+	public void saveAndCloseLicense() {
+		wait.until(ExpectedConditions.visibilityOf(saveAndCloseButton)).click();
+	}
+	
+	public void addNewSDD() {
+		wait.until(ExpectedConditions.visibilityOf(newServiceDeliveryDetail)).click();
 	}
 }

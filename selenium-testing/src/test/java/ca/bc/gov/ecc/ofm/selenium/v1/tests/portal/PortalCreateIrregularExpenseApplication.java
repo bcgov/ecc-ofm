@@ -45,10 +45,12 @@ public class PortalCreateIrregularExpenseApplication extends BaseTest {
 			PortalIrregularExpenseApplicationsHomePage portalIrregularExpenseApplicationsHomePage = new PortalIrregularExpenseApplicationsHomePage(driver);
 			test.info("Homepage complete");
 			
+			Thread.sleep(5000);
 			portalIrregularExpenseApplicationsHomePage.addIrregularExpenseApplication();
 			PortalIrregularExpenseApplicationsDetails portalIrregularExpenseApplicationsDetails = new PortalIrregularExpenseApplicationsDetails(driver);
 			portalIrregularExpenseApplicationsDetails.setSubjectTextField("Irregular Expense Test Subject");
 			portalIrregularExpenseApplicationsDetails.setRequestDescriptionTextField("Irregular expense test description");
+			portalIrregularExpenseApplicationsDetails.addFacility("ofmqa_fac_automation");
 			portalIrregularExpenseApplicationsDetails.addNewFile();
 			portalIrregularExpenseApplicationsDetails.clickSubmitNewRequest();
 			test.info("Submit page complete");
