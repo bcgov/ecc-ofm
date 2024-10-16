@@ -20,7 +20,7 @@ describe('Login to Portal', () => {
     cy.get('#assistance-card').should('exist')
     cy.get('#applications-card').should('exist')
     cy.get('#account-mgmt-card').should('exist')
-    cy.get('#help-card').should('not.exist')
+    cy.get('#help-card').should('exist')
   })
 
   it('failed login', () => {

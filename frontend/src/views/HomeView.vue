@@ -49,7 +49,7 @@
           <v-card-text>Maintain or edit organization or facility information and request a change.</v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="false" cols="12" md="6" lg="4">
+      <v-col cols="12" md="6" lg="4">
         <v-card id="help-card" class="basic-card" prepend-icon="mdi-help-circle-outline" title="Help and Resources" @click="$router.push({ name: 'help' })">
           <v-card-text>Need support? Find program training tools, resources and technical help.</v-card-text>
         </v-card>
