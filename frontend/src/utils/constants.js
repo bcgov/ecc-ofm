@@ -132,6 +132,7 @@ export const SUPPLEMENTARY_TYPES = Object.freeze({
 
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
+  FUNDING_ENVELOPE_CR: 'Funding Envelope Change Request',
   REPORTING: 'Reporting',
   IRREGULAR_EXPENSES: 'Irregular Expense',
 })
