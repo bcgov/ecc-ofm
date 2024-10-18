@@ -12,10 +12,6 @@
           <v-icon size="large">mdi-history</v-icon>
           <strong>Payment Records</strong>
         </v-tab>
-        <v-tab v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="funding-allocation">
-          <v-icon size="large">mdi-call-split</v-icon>
-          <strong>Funding Allocation</strong>
-        </v-tab>
       </v-tabs>
       <v-card-text>
         <v-window v-model="tab">
@@ -24,9 +20,6 @@
           </v-window-item>
           <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="payment-records">
             <PaymentRecordsTab />
-          </v-window-item>
-          <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="funding-allocation">
-            <FundingAllocationTab />
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -39,14 +32,13 @@
 <script>
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import FundingAgreementsTab from '@/components/funding/FundingAgreementsTab.vue'
-import FundingAllocationTab from '@/components/funding/FundingAllocationTab.vue'
 import PaymentRecordsTab from '@/components/funding/PaymentRecordsTab.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import permissionsMixin from '@/mixins/permissionsMixin'
 
 export default {
   name: 'FundingOverviewView',
-  components: { AppBackButton, FundingAgreementsTab, FundingAllocationTab, PaymentRecordsTab, OrganizationHeader },
+  components: { AppBackButton, FundingAgreementsTab, PaymentRecordsTab, OrganizationHeader },
   mixins: [permissionsMixin],
   data() {
     return {

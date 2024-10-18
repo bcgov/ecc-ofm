@@ -211,15 +211,6 @@
           <v-row v-if="showRequestDescription" no-gutters>
             <v-col class="v-col-12 pb-0">
               <AppLabel variant="modal">Request description:</AppLabel>
-              <div v-if="isFundingEnvelopeRequest" class="mt-2 mb-4">
-                <div class="mb-2">
-                  Each Funding Envelope has restrictions for how the funding can be used and if or how it can be re-allocated between the Funding Envelopes and between line items within the Funding
-                  Envelopes, as applicable. Please see the Policy and Procedures Manual for detailed information.
-                </div>
-                <div>
-                  In the box below, please outline your request to re-allocate funds, including the amount and the envelopes you are moving funds between. Please also attach any relevant documents.
-                </div>
-              </div>
             </v-col>
             <v-col class="v-col-12">
               <v-textarea
@@ -426,9 +417,6 @@ export default {
     isReportingRequest() {
       return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)
     },
-    isFundingEnvelopeRequest() {
-      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.FUNDING_ENVELOPE_CR)
-    },
     isAnySubCategoryChecked() {
       return this.newRequestModel.subCategories.length > 0
     },
@@ -515,7 +503,7 @@ export default {
       return this.documentsToUpload.length
     },
     isMultipleFacilities() {
-      return !(this.isAccountMaintenanceRequest || this.isFundingEnvelopeRequest || this.isIrregularExpenseRequest || this.isReportingRequest)
+      return !(this.isAccountMaintenanceRequest || this.isIrregularExpenseRequest || this.isReportingRequest)
     },
     facilityLabel() {
       return `Facility${this.isMultipleFacilities ? '(s)' : ''}:`
@@ -869,10 +857,5 @@ export default {
 
 .v-messages {
   opacity: 1;
-}
-
-:deep(.v-select__selection-text) {
-  white-space: normal; /* Wraps the selected item text */
-  word-wrap: break-word;
 }
 </style>

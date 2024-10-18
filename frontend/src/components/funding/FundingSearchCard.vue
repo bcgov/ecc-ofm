@@ -5,22 +5,10 @@
         <v-col cols="12" lg="6" class="mb-6 mb-lg-0">
           <v-row>
             <v-col cols="12" sm="6" lg="3" xl="2" class="pb-0">
-              <AppLabel>{{ selectSingleFacility ? 'Facility:' : 'Facility(s):' }}</AppLabel>
+              <AppLabel>Facility(s):</AppLabel>
             </v-col>
             <v-col cols="12" sm="9" lg="8">
               <v-select
-                v-if="selectSingleFacility"
-                v-model="selectedFacilities"
-                :items="userInfo.facilities"
-                item-title="facilityName"
-                label="Select Facility"
-                :disabled="loading"
-                :rules="rules.required"
-                density="compact"
-                variant="outlined"
-                return-object />
-              <v-select
-                v-else
                 v-model="selectedFacilities"
                 :items="userInfo.facilities"
                 item-title="facilityName"
@@ -79,7 +67,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col v-if="showDateFilter" cols="12" lg="6">
+        <v-col cols="12" lg="6">
           <v-row>
             <v-col cols="12" sm="5" lg="2" xl="2" class="pb-0">
               <AppLabel>Date:</AppLabel>
@@ -144,14 +132,6 @@ export default {
     defaultDateFilter: {
       type: String,
       default: null,
-    },
-    showDateFilter: {
-      type: Boolean,
-      default: true,
-    },
-    selectSingleFacility: {
-      type: Boolean,
-      default: false,
     },
   },
 
@@ -225,7 +205,7 @@ export default {
 
   methods: {
     resetFilter() {
-      this.selectedFacilities = this.selectSingleFacility ? this.userInfo?.facilities[0] : this.userInfo?.facilities
+      this.selectedFacilities = this.userInfo?.facilities
       this.selectedDateFilterType = this.defaultDateFilter
       this.selectedPaymentFilterTypes = this.paymentTypes
       this.selectedDateFrom = null
