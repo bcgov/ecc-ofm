@@ -90,7 +90,7 @@ export default {
       )
       return response?.data[0]
     } catch (error) {
-      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      console.log(`Failed to get funding envelopes of the last funding agreement by facility id and status - ${error}`)
       throw error
     }
   },

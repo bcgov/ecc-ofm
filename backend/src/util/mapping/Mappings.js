@@ -334,7 +334,7 @@ const FundingAgreementMappings = [
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
 
   // Annual Base Funding
-  { back: 'ofm_envelope_hr_total_base', front: 'envelopeHRTotal' },
+  { back: 'ofm_envelope_hr_total', front: 'envelopeHRTotal' },
   { back: 'ofm_envelope_hr_wages_paidtimeoff', front: 'envelopeHRWagePaidTimeOff' },
   { back: 'ofm_envelope_hr_benefits', front: 'envelopeHRBenefits' },
   { back: 'ofm_envelope_hr_employerhealthtax', front: 'envelopeHREmployerHealthTax' },

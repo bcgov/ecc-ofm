@@ -82,7 +82,7 @@
 import format from '@/utils/format'
 
 export default {
-  name: 'BaseFundingPaidCard',
+  name: 'BaseFundingCard',
   props: {
     loading: {
       type: Boolean,
