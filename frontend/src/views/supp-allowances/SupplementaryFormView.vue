@@ -548,16 +548,45 @@ export default {
       )
     },
     setSuppTermDates() {
+      //if (some calculation to dermine length of term) {block of date terms defined one way}
+      //this would have term two end date be the same as FA end date
+      //else - keep it as is
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
-      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
+      const formattedStartDate = new Date(this.fundingAgreement.startDate)
+
+      // var now =  //todays date
+      // var end =  // another date
+      const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
+
+      console.log(daysOfTerm)
+
+      const TWO_YEARS = 730
+
+      let termTwoEndDate
+      let termOneEndDate
+      if (daysOfTerm > TWO_YEARS) {
+        termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+        termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
+      } else {
+        termTwoEndDate = formattedEndDate
+        termOneEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+      }
+
+      console.log('reg end date', formattedEndDate)
+      console.log('t 2 ', termTwoEndDate)
+      console.log('t 1', termOneEndDate)
+
+      //in a 2 year - term 2 end date should become t1 end date
+
+      //formatted end date will end term two
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
         //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
         //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
         case today < termOneEndDate || !this.fundingAgreement?.endDate:
+          console.log('term  1')
           this.fundingExpiryDate = termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
@@ -566,14 +595,19 @@ export default {
           break
 
         case today < termTwoEndDate:
+          console.log('term  2')
           this.fundingExpiryDate = termTwoEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(termTwoEndDate, today)
-          this.setIsNextTermEnabled(termTwoEndDate, today)
+          if (daysOfTerm > TWO_YEARS) {
+            this.setIsNextTermEnabled(termTwoEndDate, today)
+          }
+
           break
 
-        case today < formattedEndDate:
+        case today < formattedEndDate && daysOfTerm > TWO_YEARS:
+          console.log('term  3')
           this.fundingExpiryDate = formattedEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(formattedEndDate, today)
