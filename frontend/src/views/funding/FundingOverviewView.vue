@@ -12,6 +12,7 @@
           <v-icon size="large">mdi-history</v-icon>
           <strong>Payment Records</strong>
         </v-tab>
+        <!-- TODO (vietle-cgi) - update permission once we receive confirmation for this requirement -->
         <v-tab v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" value="funding-allocation">
           <v-icon size="large">mdi-call-split</v-icon>
           <strong>Funding Allocation</strong>
@@ -25,6 +26,7 @@
           <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="payment-records">
             <PaymentRecordsTab />
           </v-window-item>
+          <!-- TODO (vietle-cgi) - update permission once we receive confirmation for this requirement -->
           <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" value="funding-allocation">
             <FundingAllocationTab />
           </v-window-item>
