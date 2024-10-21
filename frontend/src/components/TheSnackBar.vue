@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div @mouseover="pause = true" @mouseleave="pause = false">
     <v-snackbar v-model="showSnackBar" :timeout="timeout" elevation="24" location="top" centered :color="colour" transition="slide-y-transition" class="snackbar">
