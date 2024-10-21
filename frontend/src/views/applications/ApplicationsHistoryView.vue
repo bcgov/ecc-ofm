@@ -305,9 +305,7 @@ export default {
         return false
         //OFM core generates PDF upon submit - Supp App generates PDF only once approved
       } else if (application.applicationType === APPLICATION_TYPES.OFM) {
-        return false
-        // OFMCC-6204 - temporary hide the PDF button for Base Funding Application because of the missing fields issue
-        // return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
+        return !this.DRAFT_STATUS_CODES.includes(application?.statusCode)
       }
       return application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED || application.statusCode === SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
     },
