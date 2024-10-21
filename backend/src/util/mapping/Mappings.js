@@ -332,6 +332,18 @@ const FundingAgreementMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+
+  // Annual Base Funding
+  { back: 'ofm_envelope_hr_total_base', front: 'envelopeHRTotal' },
+  { back: 'ofm_envelope_hr_wages_paidtimeoff', front: 'envelopeHRWagePaidTimeOff' },
+  { back: 'ofm_envelope_hr_benefits', front: 'envelopeHRBenefits' },
+  { back: 'ofm_envelope_hr_employerhealthtax', front: 'envelopeHREmployerHealthTax' },
+  { back: 'ofm_envelope_hr_prodevhours', front: 'envelopeHRProDevHours' },
+  { back: 'ofm_envelope_hr_prodevexpenses', front: 'envelopeHRProDevExpenses' },
+  { back: 'ofm_envelope_programming', front: 'envelopeProgramming' },
+  { back: 'ofm_envelope_administrative', front: 'envelopeAdministrative' },
+  { back: 'ofm_envelope_operational', front: 'envelopeOperational' },
+  { back: 'ofm_envelope_facility', front: 'envelopeFacility' },
 ]
 
 const PaymentMappings = [

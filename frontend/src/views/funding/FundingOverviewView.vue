@@ -3,7 +3,7 @@
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-2">Funding</h1>
     <v-card>
-      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
+      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366" show-arrows>
         <v-tab v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" value="agreements">
           <v-icon size="large">mdi-file-document-outline</v-icon>
           <strong>Funding Agreements</strong>

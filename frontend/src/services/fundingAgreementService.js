@@ -81,4 +81,17 @@ export default {
       throw error
     }
   },
+
+  async getFundingEnvelopesByFacilityIdAndStatus(facilityId, statusCode) {
+    try {
+      if (!facilityId && !statusCode) return
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}&includeFundingEnvelopes=true`,
+      )
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      throw error
+    }
+  },
 }
