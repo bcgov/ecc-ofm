@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="ma-2">
-    <v-card class="pa-6">
+    <v-card elevation="2" class="pa-6">
       <v-row no-gutters>
         <v-col cols="12" lg="6" class="mb-6 mb-lg-0">
           <v-row>
@@ -110,7 +110,7 @@
       </v-row>
     </v-card>
     <v-row no-gutters class="mt-2" justify="end">
-      <AppButton id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="resetFilter">Reset</AppButton>
+      <AppButton v-if="showResetButton" id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="resetFilter">Reset</AppButton>
       <AppButton id="search" size="large" width="150px" :loading="loading" @click="search">Search</AppButton>
     </v-row>
   </v-form>
@@ -152,6 +152,10 @@ export default {
     selectSingleFacility: {
       type: Boolean,
       default: false,
+    },
+    showResetButton: {
+      type: Boolean,
+      default: true,
     },
   },
 

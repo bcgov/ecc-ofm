@@ -11,6 +11,10 @@ async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []
     let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
+    if (req.query?.includeFundingEnvelopes) {
+      operation +=
+        ',ofm_envelope_hr_total,ofm_envelope_hr_wages_paidtimeoff,ofm_envelope_hr_benefits,ofm_envelope_hr_employerhealthtax,ofm_envelope_hr_prodevhours,ofm_envelope_hr_prodevexpenses,ofm_envelope_programming,ofm_envelope_administrative,ofm_envelope_operational,ofm_envelope_facility'
+    }
     if (req.query?.includeEA) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }

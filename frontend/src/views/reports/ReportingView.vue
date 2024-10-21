@@ -3,7 +3,7 @@
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-6">Reporting</h1>
     <v-card>
-      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
+      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366" show-arrows>
         <v-tab value="pending-reports-tab">
           <v-icon size="large">mdi-history</v-icon>
           <strong class="ml-1">Pending Reports</strong>

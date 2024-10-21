@@ -3,7 +3,7 @@
   <v-container fluid v-bind="$attrs">
     <h1 class="mb-2">Funding</h1>
     <v-card>
-      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
+      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366" show-arrows>
         <v-tab v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" value="agreements">
           <v-icon size="large">mdi-file-document-outline</v-icon>
           <strong>Funding Agreements</strong>
@@ -12,7 +12,8 @@
           <v-icon size="large">mdi-history</v-icon>
           <strong>Payment Records</strong>
         </v-tab>
-        <v-tab v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="funding-allocation">
+        <!-- TODO (vietle-cgi) - update permission once we receive confirmation for this requirement -->
+        <v-tab v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" value="funding-allocation">
           <v-icon size="large">mdi-call-split</v-icon>
           <strong>Funding Allocation</strong>
         </v-tab>
@@ -25,7 +26,8 @@
           <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="payment-records">
             <PaymentRecordsTab />
           </v-window-item>
-          <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS)" value="funding-allocation">
+          <!-- TODO (vietle-cgi) - update permission once we receive confirmation for this requirement -->
+          <v-window-item v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" value="funding-allocation">
             <FundingAllocationTab />
           </v-window-item>
         </v-window>
