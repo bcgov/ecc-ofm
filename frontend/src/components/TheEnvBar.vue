@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar class="env-bar" v-if="bannerColor" :color="bannerColor" height="20">
+  <v-app-bar v-if="bannerColor" class="env-bar" :color="bannerColor" height="20">
     <div>
       <h3 class="env-text">{{ bannerEnvironment }} Environment</h3>
     </div>

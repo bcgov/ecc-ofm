@@ -2,7 +2,7 @@
   <OrganizationHeader />
   <v-container fluid v-bind="$attrs">
     <v-card>
-      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366">
+      <v-tabs v-model="tab" bg-color="#ffffff" density="compact" color="#003366" show-arrows>
         <v-tab value="notifications">
           <strong>
             Notifications
