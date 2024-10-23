@@ -11,7 +11,8 @@
     at any time.
   </p>
 
-  <AppAlertBanner v-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
+  <AppAlertBanner v-if="isFundingTermComplete" type="warning">Your current year funding is ending and you are no longer able to make changes.</AppAlertBanner>
+  <AppAlertBanner v-else-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
@@ -24,7 +25,9 @@
         <AppButton id="current-year-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Year</AppButton>
       </v-col>
       <v-col cols="6" lg="2">
-        <AppButton id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Year</AppButton>
+        <AppButton v-if="!isFundingTermComplete" id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">
+          Next Year
+        </AppButton>
       </v-col>
     </v-row>
     <v-row v-if="fundingExpiryDate">
@@ -250,6 +253,7 @@ export default {
       currentTermDisabled: false,
       nextTermActive: false,
       fundingExpiryDate: undefined,
+      isFundingTermComplete: false,
     }
   },
   computed: {
@@ -548,23 +552,15 @@ export default {
       )
     },
     setSuppTermDates() {
-      //if (some calculation to dermine length of term) {block of date terms defined one way}
-      //this would have term two end date be the same as FA end date
-      //else - keep it as is
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
       const formattedStartDate = new Date(this.fundingAgreement.startDate)
-
-      // var now =  //todays date
-      // var end =  // another date
       const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
-
-      console.log(daysOfTerm)
-
       const TWO_YEARS = 730
 
       let termTwoEndDate
       let termOneEndDate
+      //ofmcc-6357- allow supp terms to work with both a FA term of 2 and 3 years in length
       if (daysOfTerm > TWO_YEARS) {
         termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
         termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
@@ -573,20 +569,11 @@ export default {
         termOneEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
       }
 
-      console.log('reg end date', formattedEndDate)
-      console.log('t 2 ', termTwoEndDate)
-      console.log('t 1', termOneEndDate)
-
-      //in a 2 year - term 2 end date should become t1 end date
-
-      //formatted end date will end term two
-
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
         //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
         //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
         case today < termOneEndDate || !this.fundingAgreement?.endDate:
-          console.log('term  1')
           this.fundingExpiryDate = termOneEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
@@ -595,7 +582,6 @@ export default {
           break
 
         case today < termTwoEndDate:
-          console.log('term  2')
           this.fundingExpiryDate = termTwoEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
@@ -607,7 +593,6 @@ export default {
           break
 
         case today < formattedEndDate && daysOfTerm > TWO_YEARS:
-          console.log('term  3')
           this.fundingExpiryDate = formattedEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(formattedEndDate, today)
@@ -618,6 +603,8 @@ export default {
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.currentTermDisabled = true
       }
+
+      this.setIsNearTermEndDate(formattedEndDate, today)
     },
     setIsCurrentTermDisabled(termEndDate, today) {
       const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
@@ -626,6 +613,10 @@ export default {
     setIsNextTermEnabled(termEndDate, today) {
       const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
+    },
+    setIsNearTermEndDate(formattedEndDate, today) {
+      const priorDate = moment(formattedEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
+      this.isFundingTermComplete = today > priorDate || today > formattedEndDate
     },
     setActiveTerm(value) {
       this.nextTermActive = value

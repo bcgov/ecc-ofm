@@ -32,27 +32,27 @@
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
             :key="application?.applicationId"
-            :applicationId="application?.applicationId"
-            :fundingAgreement="application?.fundingAgreement"
+            :application-id="application?.applicationId"
+            :funding-agreement="application?.fundingAgreement"
             :cancel="cancel"
             :back="back"
             :next="next"
             :save="save"
             :submit="submit"
             @process="process"
-            @setSubmit="setSubmit"
-            @setNext="setNext" />
+            @set-submit="setSubmit"
+            @set-next="setNext" />
         </div>
       </div>
       <AppNavButtons
         :loading="processing"
-        :showBack="showBack"
-        :showCancel="showCancel"
-        :showSave="showSave"
-        :showNext="showNext"
-        :showSubmit="showSubmit"
-        :disableSubmit="disableSubmit"
-        :disableNext="disableNext"
+        :show-back="showBack"
+        :show-cancel="showCancel"
+        :show-save="showSave"
+        :show-next="showNext"
+        :show-submit="showSubmit"
+        :disable-submit="disableSubmit"
+        :disable-next="disableNext"
         @back="toggleBack"
         @cancel="toggleCancel"
         @save="toggleSave"
