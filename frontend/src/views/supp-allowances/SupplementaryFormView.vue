@@ -11,7 +11,8 @@
     at any time.
   </p>
 
-  <AppAlertBanner v-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
+  <AppAlertBanner v-if="isFundingTermComplete" type="warning">Your current year funding is ending and you are no longer able to make changes.</AppAlertBanner>
+  <AppAlertBanner v-else-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
@@ -24,7 +25,9 @@
         <AppButton id="current-year-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Year</AppButton>
       </v-col>
       <v-col cols="6" lg="2">
-        <AppButton id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">Next Year</AppButton>
+        <AppButton v-if="!isFundingTermComplete" id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">
+          Next Year
+        </AppButton>
       </v-col>
     </v-row>
     <v-row v-if="fundingExpiryDate">
@@ -250,6 +253,7 @@ export default {
       currentTermDisabled: false,
       nextTermActive: false,
       fundingExpiryDate: undefined,
+      isFundingTermComplete: false,
     }
   },
   computed: {
@@ -550,8 +554,20 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
-      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
+      const formattedStartDate = new Date(this.fundingAgreement.startDate)
+      const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
+      const TWO_YEARS = 730
+
+      let termTwoEndDate
+      let termOneEndDate
+      //ofmcc-6357- allow supp terms to work with both a FA term of 2 and 3 years in length
+      if (daysOfTerm > TWO_YEARS) {
+        termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+        termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
+      } else {
+        termTwoEndDate = formattedEndDate
+        termOneEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
+      }
 
       switch (true) {
         //not having a funding agreement or FA end date will only happen if a user navigates to SuppApp right after
@@ -570,10 +586,13 @@ export default {
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(termTwoEndDate, today)
-          this.setIsNextTermEnabled(termTwoEndDate, today)
+          if (daysOfTerm > TWO_YEARS) {
+            this.setIsNextTermEnabled(termTwoEndDate, today)
+          }
+
           break
 
-        case today < formattedEndDate:
+        case today < formattedEndDate && daysOfTerm > TWO_YEARS:
           this.fundingExpiryDate = formattedEndDate
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.setIsCurrentTermDisabled(formattedEndDate, today)
@@ -584,6 +603,8 @@ export default {
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
           this.currentTermDisabled = true
       }
+
+      this.setIsNearTermEndDate(formattedEndDate, today)
     },
     setIsCurrentTermDisabled(termEndDate, today) {
       const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
@@ -592,6 +613,10 @@ export default {
     setIsNextTermEnabled(termEndDate, today) {
       const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
+    },
+    setIsNearTermEndDate(formattedEndDate, today) {
+      const priorDate = moment(formattedEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
+      this.isFundingTermComplete = today > priorDate || today > formattedEndDate
     },
     setActiveTerm(value) {
       this.nextTermActive = value
