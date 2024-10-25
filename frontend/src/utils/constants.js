@@ -88,6 +88,13 @@ export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
   CANCELLED: 10,
 })
 
+export const FUNDING_REALLOCATION_REQUEST_STATUS_CODES = Object.freeze({
+  IN_PROGRESS: 1,
+  APPROVED: 2,
+  INELIGIBLE: 3,
+  CANCELLED: 4,
+})
+
 export const PAYMENT_STATUS_CODES = Object.freeze({
   PENDING_PAYMENT: 1,
   PAID: 2, // INACTIVE state
