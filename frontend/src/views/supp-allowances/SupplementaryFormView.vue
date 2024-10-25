@@ -201,6 +201,10 @@ import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/ut
 import format from '@/utils/format'
 import moment from 'moment'
 
+const DAYS_BEFORE_TERM_EXPIRES = 45
+const DAYS_BEFORE_NEXT_TERM_ENABLED = 120
+const TWO_YEARS = 730
+
 export default {
   name: 'SupplementaryFormView',
   components: { AppAlertBanner, AppButton, AppDialog, AppLabel, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
@@ -314,12 +318,10 @@ export default {
     this.INDIGENOUS = 'indigenous'
     this.CORE_SERVICES_PANELS = CORE_SERVICES_PANELS
     this.DISCRETIONARY_PANEL = DISCRETIONARY_PANEL
-
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
-    this.DAYS_BEFORE_TERM_EXPIRES = 45
-    this.DAYS_BEFORE_NEXT_TERM_ENABLED = 120
+
     this.setSuppTermDates()
     await this.loadData()
   },
@@ -556,11 +558,11 @@ export default {
       const formattedEndDate = new Date(this.fundingAgreement.endDate)
       const formattedStartDate = new Date(this.fundingAgreement.startDate)
       const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
-      const TWO_YEARS = 730
-
       let termTwoEndDate
       let termOneEndDate
+
       //ofmcc-6357- allow supp terms to work with both a FA term of 2 and 3 years in length
+      //this will account for leap years as a standard non leap year term would be 729 days.
       if (daysOfTerm > TWO_YEARS) {
         termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
         termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
@@ -607,15 +609,15 @@ export default {
       this.setIsNearTermEndDate(formattedEndDate, today)
     },
     setIsCurrentTermDisabled(termEndDate, today) {
-      const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
+      const priorDate = moment(termEndDate).subtract(DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.currentTermDisabled = today > priorDate
     },
     setIsNextTermEnabled(termEndDate, today) {
-      const priorDate = moment(termEndDate).subtract(this.DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
+      const priorDate = moment(termEndDate).subtract(DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
     },
     setIsNearTermEndDate(formattedEndDate, today) {
-      const priorDate = moment(formattedEndDate).subtract(this.DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
+      const priorDate = moment(formattedEndDate).subtract(DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.isFundingTermComplete = today > priorDate || today > formattedEndDate
     },
     setActiveTerm(value) {
