@@ -135,6 +135,7 @@ import rules from '@/utils/rules'
 export default {
   components: { AppDialog, AppButton, IndigenousProgrammingSummary, SupportNeedsSummary, TransportationSummary },
   mixins: [alertMixin, permissionsMixin],
+  inheritAttrs: false,
   props: {
     back: {
       type: Boolean,
