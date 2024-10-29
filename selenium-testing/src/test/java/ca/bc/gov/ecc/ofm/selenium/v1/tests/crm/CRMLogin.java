@@ -34,7 +34,7 @@ public class CRMLogin extends BaseTest {
 		test = extent.createTest("Test - Login to CRM");
 		test.info("Starting Test - Login to CRM");
 		try {
-			driver.get(CRM_URL);
+			driver.get(QA_CRM_URL);
 			wait(10);
 
 			CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);

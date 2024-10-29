@@ -1,5 +1,6 @@
 .settings
 FailedTestsScreenshots
+SuccessTestsScreenshots
 target
 test-output
 .classpath

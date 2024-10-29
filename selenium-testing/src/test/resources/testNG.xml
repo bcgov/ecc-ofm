@@ -7,7 +7,8 @@
 		<classes>
 			<!--<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.CRMLogin" />
 			<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.PortalLogin" />-->	
-			<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.PortalCreateApplication" />
+			<!-- <class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.PortalCreateApplication" /> -->
+			<class name="ca.bc.gov.ecc.ofm.selenium.v1.tests.scripting.SmokeTestScript" />
 		</classes>
 	</test>
 </suite>

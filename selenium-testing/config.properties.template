@@ -1,11 +1,25 @@
-portal_url=https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/login/
-portal_username=
-portal_password=
+qa_portal_url=https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/login/
+qa_portal_username=
+qa_portal_password=
 
-internal_portal_url=https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/internal
+qa_secondary_portal_username=
+
+uat_portal_url=https://ofm-frontend-uat-e1800b-test.apps.silver.devops.gov.bc.ca/login
+uat_portal_username=
+uat_portal_password=
+
+uat_secondary_portal_username=
+
+qa_internal_portal_url=https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca/internal
+
+uat_internal_portal_url=https://ofm-frontend-uat-e1800b-test.apps.silver.devops.gov.bc.ca/internal
+
 internal_portal_username=
 internal_portal_password=
 
-crm_url=https://mychildcareservicesdev.crm3.dynamics.com/main.aspx?appid=af54cb40-d463-ee11-8df0-000d3a09d499&pagetype=dashboard&id=73c44d9c-cfe6-ee11-a204-000d3af4865d&type=system&_canOverride=true
+qa_crm_url=https://mychildcareservicestest.crm3.dynamics.com/main.aspx?appid=82d8c881-80c4-4203-8b92-6bd07871cfb2&forceUCI=1&pagetype=dashboard&id=73c44d9c-cfe6-ee11-a204-000d3af4865d&type=system&_canOverride=true
+
+uat_crm_url=https://mychildcareservicesuat.crm3.dynamics.com/main.aspx?appid=12eb8357-7190-481b-8a91-239b4bb12b2b&forceUCI=1&pagetype=entitylist&etn=account&viewid=5daf8291-112d-ed11-9db0-000d3af4f2d7&viewType=1039
+
 crm_username=
 crm_password=

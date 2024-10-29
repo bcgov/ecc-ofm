@@ -33,7 +33,7 @@ public class PortalCreateApplication extends BaseTest {
 	@Test
 	public void CreateApplication() throws Exception {
 		try {
-			driver.get(PORTAL_URL);
+			driver.get(QA_PORTAL_URL);
 			test = extent.createTest("Test - Portal Create Application");
 			test.info("Test - Portal Create Application");
 
@@ -42,8 +42,8 @@ public class PortalCreateApplication extends BaseTest {
 			objPortalSigninFirstPage.clickOnBCeIdLogin();
 
 			PortalSignInCredentialPage objPortalSignInCredentialPage = new PortalSignInCredentialPage(driver);
-			objPortalSignInCredentialPage.enterUserId(PORTAL_USERNAME);
-			objPortalSignInCredentialPage.enterPassword(PORTAL_PASSWORD);
+			objPortalSignInCredentialPage.enterUserId(QA_PORTAL_USERNAME);
+			objPortalSignInCredentialPage.enterPassword(QA_PORTAL_PASSWORD);
 			objPortalSignInCredentialPage.clickSubmit();
 			objPortalSignInCredentialPage.clickSignatureRequired();
 			test.info("login complete");

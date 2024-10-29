@@ -11,7 +11,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class PortalImpersonatePage {
+public class InternalPortalImpersonatePage {
 	
 	WebDriver driver;
 	WebDriverWait wait;
@@ -24,7 +24,7 @@ public class PortalImpersonatePage {
 	
 	
 	
-	public PortalImpersonatePage(WebDriver driver) {
+	public InternalPortalImpersonatePage(WebDriver driver) {
 		this.driver = driver;
 		PageFactory.initElements(driver, this);
 		wait = new WebDriverWait(driver, Duration.ofMillis(10000));

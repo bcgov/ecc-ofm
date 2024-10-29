@@ -24,7 +24,7 @@ public class CRMHomePage {
 	@FindBy(xpath = "//*[@aria-label='Edit']")
 	WebElement editButton;
 	
-	@FindBy(xpath = "//*[@aria-label[contains(., 'Account Manager')]]")
+	@FindBy(id = "mectrl_headerPicture")
 	WebElement profileButton;
 	
 	@FindBy(xpath = "//*[@aria-label='Sign out of this account']")
