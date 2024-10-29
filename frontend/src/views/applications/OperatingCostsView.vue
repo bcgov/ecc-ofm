@@ -30,7 +30,7 @@
 
     <div v-if="facilityType">
       <!-- RENT/LEASE INFORMATION -->
-      <RentLeaseInformation v-if="isRentLease" id="rent-lease-info" @update="updateRentLeaseInfoModel" />
+      <RentLeaseInformation v-if="isRentLease" id="rent-lease-info" :readonly="readonly" @update="updateRentLeaseInfoModel" />
 
       <!-- OPERATING COST / FACILITY COST -->
       <v-card class="my-4 px-6 py-4">
