@@ -314,7 +314,7 @@ export default {
     this.panel = this.allPanelIDs
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
     this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
-    this.DAYS_BEFORE_TERM_EXPIRES = 45
+    this.DAYS_BEFORE_TERM_EXPIRES = 1
     this.DAYS_BEFORE_NEXT_TERM_ENABLED = 120
     this.setSuppTermDates()
     await this.loadData()
