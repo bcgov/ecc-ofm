@@ -556,9 +556,9 @@ export default {
     setSuppTermDates() {
       const today = new Date()
       const formattedEndDate = moment(this.fundingAgreement?.endDate).endOf('day').toDate()
+      const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
       let termTwoEndDate
       let termOneEndDate
-      const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
 
       //ofmcc-6357- allow supp terms to work with both a FA term of 2 and 3 years in length
       //this will account for leap years as a standard non leap year term would be 729 days.
