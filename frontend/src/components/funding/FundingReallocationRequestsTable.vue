@@ -13,13 +13,15 @@
         :mobile="null"
         mobile-breakpoint="md"
         class="soft-outline">
-        <template #no-data>Your selected facility have no submitted requests.</template>
+        <template #no-data>The selected facility has not submitted a funding re-allocation request.</template>
         <template #[`item.date`]="{ item }">
           {{ format.formatDate(item?.date) }}
         </template>
         <template #[`item.amount`]="{ item }">$ {{ format.formatDecimalNumber(item?.amount) }}</template>
         <template #[`item.statusCode`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
+          <div class="min-width-column">
+            <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
+          </div>
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -74,3 +76,8 @@ export default {
   },
 }
 </script>
+<style scoped>
+.min-width-column {
+  min-width: 105px;
+}
+</style>
