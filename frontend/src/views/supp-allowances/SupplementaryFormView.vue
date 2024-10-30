@@ -555,9 +555,9 @@ export default {
     },
     setSuppTermDates() {
       const today = new Date()
-      const formattedEndDate = new Date(this.fundingAgreement.endDate)
-      const formattedStartDate = new Date(this.fundingAgreement.startDate)
-      const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
+      const formattedEndDate = moment(this.fundingAgreement?.endDate).endOf('day').toDate()
+      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').endOf('day').toDate()
+      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').endOf('day').toDate()
       let termTwoEndDate
       let termOneEndDate
 
