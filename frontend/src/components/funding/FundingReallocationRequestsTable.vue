@@ -8,7 +8,6 @@
         :headers="fundingRequestsHeaders"
         :items="fundingReallocationRequests"
         item-key="fundingEnvelopeId"
-        :items-per-page="10"
         density="compact"
         :mobile="null"
         mobile-breakpoint="md"

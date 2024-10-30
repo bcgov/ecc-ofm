@@ -1,6 +1,7 @@
 <template>
   <v-container fluid class="pa-0">
     <div class="ma-2">View or submit a change for your centre's current monthly funding allocations. Funds can be re-allocated based on the rules below.</div>
+    <!-- TODO (vietle-cgi) - update permission once we receive confirmation for this requirement -->
     <v-row v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" no-gutters class="mx-2 my-6 my-sm-2 justify-end">
       <AppButton :loading="loading" @click="toggleAssistanceRequestDialog()">Request to Re-allocate Funds</AppButton>
     </v-row>
