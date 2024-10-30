@@ -89,7 +89,7 @@ async function updateFundingAgreement(req, res) {
 async function getFundingReallocationRequests(req, res) {
   try {
     const fundingReallocationRequests = []
-    let operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode
+    const operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode
               &$filter=(_ofm_funding_value eq ${req?.params?.fundingAgreementId})&pageSize=500`
     const response = await getOperation(operation)
     response?.value?.forEach((reallocationRequest) => fundingReallocationRequests.push(new MappableObjectForFront(reallocationRequest, FundingReallocationRequestMappings).toJSON()))
