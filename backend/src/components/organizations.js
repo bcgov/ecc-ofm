@@ -30,7 +30,7 @@ async function getOrganizationFacilities(req, res) {
 }
 
 async function getRawOrganizationFacilities(organizationId) {
-  const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${organizationId}) and (statecode eq 0) and (ofm_program ne ${OFM_PROGRAM_CODES.CCOF})`
+  const operation = `accounts?$select=accountid,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${organizationId}) and (statecode eq 0) and (ofm_program ne ${OFM_PROGRAM_CODES.CCOF})&pageSize=500`
   const response = await getOperation(operation)
   const orgFacilities = []
   response?.value?.forEach((item) => orgFacilities.push(new MappableObjectForFront(item, FacilityMappings).toJSON()))
