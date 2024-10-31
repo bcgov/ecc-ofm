@@ -35,7 +35,7 @@ public class CRMCreateIrregularExpenseApplication extends BaseTest {
 			test = extent.createTest("Test - Create Irregular Expense Application - CRM");
 			
 			// Sign in to CRM
-			loginToCRM(driver, CRM_URL, CRM_USERNAME, CRM_PASSWORD);
+			loginToCRM(driver, QA_CRM_URL, CRM_USERNAME, CRM_PASSWORD);
 			
 			test.info("Login complete");
 			

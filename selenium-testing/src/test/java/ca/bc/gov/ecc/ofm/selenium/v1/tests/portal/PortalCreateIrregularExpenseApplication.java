@@ -3,6 +3,7 @@ package ca.bc.gov.ecc.ofm.selenium.v1.tests.portal;
 import java.time.Duration;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -17,8 +18,9 @@ public class PortalCreateIrregularExpenseApplication extends BaseTest {
 
 	@BeforeTest
 	public void initDriver() {
+		ChromeOptions options = new ChromeOptions();	
 		WebDriverManager.chromedriver().setup();
-		driver = new ChromeDriver();
+		driver = new ChromeDriver(options);
 		driver.manage().window().maximize();
 	}
 
@@ -26,7 +28,7 @@ public class PortalCreateIrregularExpenseApplication extends BaseTest {
 	@Test
 	public void CreateIrregularExpenseApplication() throws InterruptedException {
 		try {
-			driver.get(PORTAL_URL);
+			driver.get(QA_PORTAL_URL);
 			test = extent.createTest("Test - Create irregular expense application");
 			test.info("Starting Test - Create irregular expense application");
 			
@@ -34,8 +36,8 @@ public class PortalCreateIrregularExpenseApplication extends BaseTest {
 			objPortalSigninFirstPage.clickOnBCeIdLogin();
 
 			PortalSignInCredentialPage objPortalSignInCredentialPage = new PortalSignInCredentialPage(driver);
-			objPortalSignInCredentialPage.enterUserId(PORTAL_USERNAME);
-			objPortalSignInCredentialPage.enterPassword(PORTAL_PASSWORD);
+			objPortalSignInCredentialPage.enterUserId(QA_PORTAL_USERNAME);
+			objPortalSignInCredentialPage.enterPassword(QA_PORTAL_PASSWORD);
 			objPortalSignInCredentialPage.clickSubmit();
 			objPortalSignInCredentialPage.clickSignatureRequired();
 			test.info("Login complete");

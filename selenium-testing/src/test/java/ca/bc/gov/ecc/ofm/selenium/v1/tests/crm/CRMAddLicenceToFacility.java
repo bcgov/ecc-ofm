@@ -47,7 +47,7 @@ public class CRMAddLicenceToFacility extends BaseTest {
 		try {
 			// CRM Login
 			test = extent.createTest("Test - CRM Create Organization, Contact, and Facility");
-			driver.get(CRM_URL);
+			driver.get(QA_CRM_URL);
 			
 			Thread.sleep(2000);
 	    	CRMSignInCredentialPage objCRMSignInCredentialPage = new CRMSignInCredentialPage(driver);

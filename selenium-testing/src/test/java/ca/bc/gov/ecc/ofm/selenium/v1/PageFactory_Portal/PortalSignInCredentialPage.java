@@ -41,10 +41,8 @@ public class PortalSignInCredentialPage {
 		wait.until(ExpectedConditions.elementToBeClickable(text_userID)).sendKeys(userid);
 	}
 
-	public void enterPassword(String encodedPassword) {
-		byte[] decodedBytes = Base64.getDecoder().decode(encodedPassword);
-		String decoded_password = new String(decodedBytes);
-		wait.until(ExpectedConditions.elementToBeClickable(text_password)).sendKeys(decoded_password);
+	public void enterPassword(String userPassword) {
+		wait.until(ExpectedConditions.elementToBeClickable(text_password)).sendKeys(userPassword);
 	}
 
 	public void clickSubmit() {
@@ -55,7 +53,7 @@ public class PortalSignInCredentialPage {
 		try {
 			wait.until(ExpectedConditions.elementToBeClickable(button_signatureRequired)).click();
 		} catch (Exception e) {
-			System.out.println("No signature needed");
+			System.out.println("[INFO] No signature needed");
 		}
 
 	}

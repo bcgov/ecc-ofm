@@ -32,7 +32,7 @@ public class PortalLogin extends BaseTest {
 	@Test
 	public void loginToPortal() throws InterruptedException {
 		try {
-			driver.get(PORTAL_URL);
+			driver.get(QA_PORTAL_URL);
 			test = extent.createTest("Test - Login to Portal");
 			test.info("Starting Test - Login to Portal");
 			wait(10);
@@ -40,9 +40,9 @@ public class PortalLogin extends BaseTest {
 			objPortalSigninFirstPage.clickOnBCeIdLogin();
 
 			PortalSignInCredentialPage objPortalSignInCredentialPage = new PortalSignInCredentialPage(driver);
-			objPortalSignInCredentialPage.enterUserId(PORTAL_USERNAME);
+			objPortalSignInCredentialPage.enterUserId(QA_PORTAL_USERNAME);
 			wait(20);
-			objPortalSignInCredentialPage.enterPassword(PORTAL_PASSWORD);
+			objPortalSignInCredentialPage.enterPassword(QA_PORTAL_PASSWORD);
 			wait(20);
 			objPortalSignInCredentialPage.clickSubmit();
 			wait(20);

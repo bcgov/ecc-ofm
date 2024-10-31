@@ -3,6 +3,7 @@ package ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM;
 import java.time.Duration;
 import java.util.Base64;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -38,7 +39,7 @@ public class CRMSignInCredentialPage {
 	@FindBy(xpath = "//*[text()='Organization-Facilities']")
 	WebElement button_OrgFacilities;
 	
-	@FindBy(xpath = "//*[text()='Assistance Requests']")
+	@FindBy(xpath = "\"//*[text()='Assistance Requests']\"")
 	WebElement buttonAssistanceRequest;
 	
 	@FindBy(xpath = "//*[@aria-label[contains(., 'Sign in with')]]")
@@ -58,10 +59,8 @@ public class CRMSignInCredentialPage {
 		button_next.click();
 	}
 
-	public void enterPassword(String encodedPassword) {
-		byte[] decodedBytes = Base64.getDecoder().decode(encodedPassword);
-		String decoded_password = new String(decodedBytes);
-		text_password.sendKeys(decoded_password);
+	public void enterPassword(String userPassword) {
+		text_password.sendKeys(userPassword);
 	}
 
 	public void clickForm() {
@@ -92,6 +91,15 @@ public class CRMSignInCredentialPage {
 	
 	public void clickAccount() {
 		wait.until(ExpectedConditions.elementToBeClickable(signInAccount)).click();
+	}
+	
+	public void isLoginScreenAvailable() throws Exception {
+
+	    WebElement element = driver.findElement(By.xpath("//*[text()='Pick an account']"));
+	    
+	    if (element == null) {
+	    	throw new Exception("Login page not present");
+	    }
 	}
 
 }
