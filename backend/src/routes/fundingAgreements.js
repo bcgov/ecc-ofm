@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById } = require('../components/fundingAgreements')
+const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById, getFundingReallocationRequests } = require('../components/fundingAgreements')
 const { param, query, validationResult, oneOf } = require('express-validator')
 const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
 const validateFacility = require('../middlewares/validateFacility.js')
@@ -74,5 +74,21 @@ router.patch(
   (req, res) => {
     validationResult(req).throw()
     return updateFundingAgreement(req, res)
+  },
+)
+
+/**
+ * Get the list of Funding Reallocation Requests
+ */
+router.get(
+  '/:fundingAgreementId/funding-reallocation-requests',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  // TODO (vietle-cgi) - update permission once we receive confirmation for this requirement
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  (req, res) => {
+    validationResult(req).throw()
+    return getFundingReallocationRequests(req, res)
   },
 )

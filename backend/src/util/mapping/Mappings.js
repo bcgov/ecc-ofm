@@ -346,6 +346,19 @@ const FundingAgreementMappings = [
   { back: 'ofm_envelope_facility', front: 'envelopeFacility' },
 ]
 
+const FundingReallocationRequestMappings = [
+  { back: 'ofm_funding_envelope_changeid', front: 'fundingEnvelopeId' },
+  { back: '_ofm_funding_value', front: 'fundingId' },
+  { back: 'ofm_funding_envelope_from', front: 'envelopeCodeFrom' },
+  { back: 'ofm_funding_envelope_from@OData.Community.Display.V1.FormattedValue', front: 'envelopeNameFrom' },
+  { back: 'ofm_funding_envelope_to', front: 'envelopeCodeTo' },
+  { back: 'ofm_funding_envelope_to@OData.Community.Display.V1.FormattedValue', front: 'envelopeNameTo' },
+  { back: 'ofm_amount_base', front: 'amount' },
+  { back: 'createdon', front: 'date' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+]
+
 const PaymentMappings = [
   { back: 'ofm_paymentid', front: 'paymentId' },
   { back: 'ofm_name', front: 'paymentNumber' },
@@ -493,6 +506,7 @@ module.exports = {
   FacilityIntakeMappings,
   FacilityMappings,
   FundingAgreementMappings,
+  FundingReallocationRequestMappings,
   LicenceMappings,
   LicenceDetailsMappings,
   NotificationMappings,

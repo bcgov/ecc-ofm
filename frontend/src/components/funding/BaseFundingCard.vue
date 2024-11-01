@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="2" class="ma-2">
-    <v-card-title class="card-title"><strong>Base Funding Paid</strong></v-card-title>
+    <v-card-title class="card-title"><strong>Base Funding</strong></v-card-title>
     <v-skeleton-loader :loading="loading" type="table-tbody" class="pa-6">
       <v-container fluid class="pa-0">
         <div>The base funding shown is only from the current fiscal year and does not include changes from funding re-allocation requests.</div>

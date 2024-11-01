@@ -18,7 +18,8 @@
                 :rules="rules.required"
                 density="compact"
                 variant="outlined"
-                return-object />
+                return-object
+                class="wrapped-select" />
               <v-select
                 v-else
                 v-model="selectedFacilities"
@@ -261,3 +262,9 @@ export default {
   },
 }
 </script>
+<style scoped>
+:deep(.wrapped-select .v-select__selection-text) {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+</style>
