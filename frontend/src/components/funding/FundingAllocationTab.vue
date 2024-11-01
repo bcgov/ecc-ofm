@@ -78,7 +78,7 @@ export default {
       this.fundingReallocationRequests?.sort((a, b) => {
         const dateA = new Date(a.date)
         const dateB = new Date(b.date)
-        return a.statusCode > b.statusCode || dateB - dateA
+        return a.statusCode - b.statusCode || dateB - dateA
       })
     },
 
