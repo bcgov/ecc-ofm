@@ -38,6 +38,11 @@ env:
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The image tag to deploy'
+        required: true
+        type: string
 
 jobs:
   openshift-ci-cd:
@@ -50,6 +55,11 @@ jobs:
       SELECTOR: ${{ steps.deploy-and-expose.outputs.selector }}
 
     steps:
+      - name: Print Workflow Dispatch Inputs and Env Vars
+        uses: shayki5/print-workflow-dispatch-inputs@v1
+        with:
+          add_to_summary: 'true'
+          print_env_vars: 'false'
       - name: Check for required secrets
         uses: actions/github-script@v6
         with:
@@ -93,10 +103,6 @@ jobs:
         with:
           ref: ${{ env.BRANCH }}
 
-      - name: Get latest tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get-latest-tag
-
       - name: Install oc
         uses: redhat-actions/openshift-tools-installer@v1
         with:
@@ -116,7 +122,7 @@ jobs:
           oc create imagestream ${{ env.IMAGE_NAME }} 2> /dev/null || true && echo "backend image stream in place"
 
           # Create tag for PROD env from DEV env image
-          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }} ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ steps.get-latest-tag.outputs.tag }}
+          oc tag ${{ env.NAMESPACE }}-dev/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ inputs.tag }} ${{ env.NAMESPACE }}-prod/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ inputs.tag }}
 
           # Process and apply deployment template
           oc process -f tools/openshift/backend-tls.dc.yaml \
@@ -124,7 +130,7 @@ jobs:
             -p REPO_NAME=${{ env.REPO_NAME }} \
             -p BRANCH=${{ env.BRANCH }} \
             -p NAMESPACE=${{ env.OPENSHIFT_NAMESPACE }} \
-            -p TAG=${{ steps.get-latest-tag.outputs.tag }} \
+            -p TAG=${{ inputs.tag }} \
             -p MIN_REPLICAS=${{ env.MIN_REPLICAS }} \
             -p MAX_REPLICAS=${{ env.MAX_REPLICAS }} \
             -p MIN_CPU=${{ env.MIN_CPU }} \
