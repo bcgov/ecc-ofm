@@ -3,16 +3,19 @@
     <h3>Funding Re-allocation Requests</h3>
     <div class="pt-2 pb-4">The funding re-allocation requests shown include all fiscal years of the selected facility.</div>
     <v-skeleton-loader :loading="loading" type="table-tbody">
+      <StatusFilter v-if="!isEmpty(fundingReallocationRequests)" :loading="loading" class="mb-4" @status-filter-changed="statusFilterChanged" />
       <v-data-table
         id="funding-requests-table"
         :headers="fundingRequestsHeaders"
-        :items="fundingReallocationRequests"
+        :items="filteredFundingReallocationRequests"
         item-key="fundingEnvelopeId"
         density="compact"
         :mobile="null"
         mobile-breakpoint="md"
         class="soft-outline">
-        <template #no-data>The selected facility has not submitted a funding re-allocation request.</template>
+        <template #no-data>
+          <span v-if="isEmpty(fundingReallocationRequests)">The selected facility has not submitted a funding re-allocation request.</span>
+        </template>
         <template #[`item.date`]="{ item }">
           {{ format.formatDate(item?.date) }}
         </template>
@@ -28,11 +31,14 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
+import StatusFilter from '@/components/funding/StatusFilter.vue'
 import { FUNDING_REALLOCATION_REQUEST_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
 export default {
   name: 'FundingReallocationRequestsTable',
+  components: { StatusFilter },
   props: {
     loading: {
       type: Boolean,
@@ -52,12 +58,21 @@ export default {
         { title: 'Amount', key: 'amount' },
         { title: 'Status', key: 'statusCode' },
       ],
+      statusFilter: null,
     }
+  },
+  computed: {
+    filteredFundingReallocationRequests() {
+      return isEmpty(this.statusFilter)
+        ? this.fundingReallocationRequests
+        : this.fundingReallocationRequests?.filter((request) => request?.statusName?.toUpperCase().includes(this.statusFilter?.toUpperCase()))
+    },
   },
   created() {
     this.format = format
   },
   methods: {
+    isEmpty,
     getStatusClass(statusCode) {
       switch (statusCode) {
         case FUNDING_REALLOCATION_REQUEST_STATUS_CODES.IN_PROGRESS:
@@ -71,6 +86,9 @@ export default {
         default:
           return ''
       }
+    },
+    statusFilterChanged(newVal) {
+      this.statusFilter = newVal
     },
   },
 }
