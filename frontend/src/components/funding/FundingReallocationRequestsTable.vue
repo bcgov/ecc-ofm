@@ -33,7 +33,6 @@
 <script>
 import { isEmpty } from 'lodash'
 import StatusFilter from '@/components/funding/StatusFilter.vue'
-
 import { FUNDING_REALLOCATION_REQUEST_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
