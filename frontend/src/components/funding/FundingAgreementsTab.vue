@@ -104,7 +104,7 @@ export default {
           this.fundingAgreements.push({
             startDate: app.startDate,
             endDate: app.endDate,
-            fundingAgreementNumber: app.supplementaryReferenceNumber,
+            fundingAgreementNumber: app.fundingAgreementNumber,
             fundingAgreementType: app.supplementaryTypeDescription,
             expenseAuthority: BLANK_FIELD,
             facilityName: applications?.find((el) => app?.applicationId === el?.applicationId)?.facilityName,
@@ -154,7 +154,7 @@ export default {
         this.fundingAgreements.push({
           startDate: app.startDate,
           endDate: app.endDate,
-          fundingAgreementNumber: app.referenceNumber,
+          fundingAgreementNumber: app.fundingAgreementNumber,
           fundingAgreementType: APPLICATION_TYPES.IRREGULAR_EXPENSE,
           expenseAuthority: BLANK_FIELD,
           facilityName: activeFA.facilityName,
