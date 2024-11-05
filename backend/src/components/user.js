@@ -219,7 +219,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})&pageSize=1000`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
@@ -242,7 +242,7 @@ function mapUserFacilityObjectForFront(data) {
 async function getUserFacilities(req, res) {
   try {
     const userFacilities = []
-    const operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name,ofm_program)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)`
+    const operation = `ofm_bceid_facilities?$expand=ofm_facility($select=accountnumber,address1_composite,name,ofm_program)&$filter=(statecode eq 0 and _ofm_bceid_value eq ${req.params.contactId}) and (ofm_facility/statecode eq 0)&pageSize=1000`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => userFacilities.push(mapUserFacilityObjectForFront(item)))
     return res.status(HttpStatus.OK).json(userFacilities)
