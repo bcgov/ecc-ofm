@@ -201,7 +201,7 @@ import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/ut
 import format from '@/utils/format'
 import moment from 'moment'
 
-const DAYS_BEFORE_TERM_EXPIRES = 45
+const DAYS_BEFORE_TERM_EXPIRES = 1
 const DAYS_BEFORE_NEXT_TERM_ENABLED = 120
 const TWO_YEARS = 730
 
