@@ -203,7 +203,7 @@ import moment from 'moment'
 
 const DAYS_BEFORE_TERM_EXPIRES = 1
 const DAYS_BEFORE_NEXT_TERM_ENABLED = 120
-const TWO_YEARS = 730
+const TWO_YEARS = 731
 
 export default {
   name: 'SupplementaryFormView',
