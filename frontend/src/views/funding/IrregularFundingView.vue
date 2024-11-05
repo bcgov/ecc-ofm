@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     downloadFileName() {
-      return `Approval_Notification_${this.application?.referenceNumber}`
+      return `Approval_Notification_${this.application?.fundingAgreementNumber}`
     },
   },
 

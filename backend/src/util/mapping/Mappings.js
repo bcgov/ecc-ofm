@@ -400,6 +400,7 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'ofm_renewal_term', front: 'renewalTerm' },
   { back: 'ofm_retroactive_date', front: 'retroactiveDate' },
+  { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
 ]
 
 const RoleMappings = [
@@ -492,6 +493,7 @@ const IrregularExpenseMappings = [
   { back: 'ofm_end_date', front: 'endDate' },
   { back: 'ofm_expenseid', front: 'irregularExpenseId' },
   { back: '_ofm_application_value', front: 'applicationId' },
+   { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
 ]
 
 module.exports = {
