@@ -338,7 +338,7 @@ export default {
           if (nameComparison !== 0) {
             return nameComparison
           }
-          return a.address.localeCompare(b.address)
+          return a.address?.localeCompare(b.address)
         })
       } catch (error) {
         this.setFailureAlert('Failed to sort facilities', error)
