@@ -30,7 +30,8 @@
         </AppButton>
       </v-col>
     </v-row>
-    <v-row v-if="fundingExpiryDate">
+
+    <v-row v-if="fundingExpiryDate != 'Invalid Date'">
       <v-col cols="12">
         <div v-if="!nextTermActive">If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToUTC(fundingExpiryDate) }}</div>
       </v-col>
@@ -203,7 +204,7 @@ import moment from 'moment'
 
 const DAYS_BEFORE_TERM_EXPIRES = 1
 const DAYS_BEFORE_NEXT_TERM_ENABLED = 120
-const TWO_YEARS = 731
+const TWO_YEARS = 732
 
 export default {
   name: 'SupplementaryFormView',
@@ -557,7 +558,7 @@ export default {
       const today = new Date()
       const formattedEndDate = moment(this.fundingAgreement?.endDate).endOf('day').toDate()
       const formattedStartDate = new Date(this.fundingAgreement.startDate)
-      const daysOfTerm = moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays()
+      const daysOfTerm = Math.floor(moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays())
       let termTwoEndDate
       let termOneEndDate
 
