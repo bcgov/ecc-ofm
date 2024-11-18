@@ -3,12 +3,14 @@ package ca.bc.gov.ecc.ofm.selenium.v1.tests.scripting;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.*;
 import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.*;
 import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.CustomReporter;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
+import org.testng.TestNG;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Listeners;
@@ -21,17 +23,19 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+@Listeners(CustomReporter.class)
 public class SmokeTestScript extends BaseTest {
 	
 	WebDriver driver;
-
+	
 	@BeforeTest
 	private void initDriver() {
-		
-		ChromeOptions options = new ChromeOptions();
+        
+        ChromeOptions options = new ChromeOptions();
 		options.setCapability("goog:loggingPrefs", java.util.Collections.singletonMap("browser", Level.ALL));
 		
 		// Setting up headless
@@ -75,6 +79,8 @@ public class SmokeTestScript extends BaseTest {
 			
 			System.out.println("[INFO] Test #1 - Logging into external portal - [Complete]");
 			
+			BaseTest.getScreenshot(driver, "[Complete] Test #1 - Logging into external portal");
+			
 			test.info("Test #2 - All tiles load without error - In Progress");
 			
 			System.out.println("[INFO] Test #2 - All tiles load without error - [In Progress]");
@@ -115,6 +121,8 @@ public class SmokeTestScript extends BaseTest {
 			
 			System.out.println("[INFO] Test #2 - Applications, Reports, and Funding load without error - [Complete]");
 			
+			BaseTest.getScreenshot(driver, "[Complete] Test #2 - Applications, Reports, and Funding load without error");
+			
 			test.info("Test #3 - External links return status code 200 and messages load without error - In Progress");
 			
 			System.out.println("[INFO] Test #3 - External links return status code 200 and messages load without error - [In Progress]");
@@ -144,6 +152,8 @@ public class SmokeTestScript extends BaseTest {
 			
 			System.out.println("[INFO] Test #3 - External links return status code 200 and messages load without error - [Complete]");
 			
+			BaseTest.getScreenshot(driver, "[Complete] Test #3 - External links return status code 200 and messages load without error");
+			
 			test.info("Test #4 - Logging into internal portal and checking status code is 200 - In Progress");
 			
 			System.out.println("[INFO] Test #4 - Logging into internal portal and checking status code is 200 - [In Progress]");
@@ -165,6 +175,8 @@ public class SmokeTestScript extends BaseTest {
 			
 			System.out.println("[INFO] Test #4 - Logging into internal portal and checking status code is 200 - [Complete]");
 			
+			BaseTest.getScreenshot(driver, "[Complete] Test #4 - Logging into internal portal and checking status code is 200");
+			
 			test.info("Test #5 - Using impersonate - In Progress");
 			
 			System.out.println("[INFO] Test #5 - Using impersonate - [In Progress]");
@@ -181,6 +193,8 @@ public class SmokeTestScript extends BaseTest {
 			test.info("Test #5 - Using impersonate - Complete");
 			
 			System.out.println("[INFO] Test #5 - Using impersonate - [Complete]");
+			
+			BaseTest.getScreenshot(driver, "[Complete] Test #5 - Using impersonate");
 			
 			test.info("Test #6 - Using impersonate, click all tiles without error - In Progress");
 			
@@ -215,6 +229,8 @@ public class SmokeTestScript extends BaseTest {
 			
 			System.out.println("[INFO] Test #6 - Using impersonate, click all tiles without error - [Complete]");
 			
+			BaseTest.getScreenshot(driver, "[Complete] Test #6 - Using impersonate, click all tiles without error");
+			
 			test.info("Test #7 - Using impersonate, login to another user - In Progress");
 			
 			System.out.println("[INFO] Test #7 - Using impersonate, login to another user - [In Progress]");
@@ -230,6 +246,8 @@ public class SmokeTestScript extends BaseTest {
 			test.info("Test #7 - Using impersonate, login to another user - Complete");
 			
 			System.out.println("[INFO] Test #7 - Using impersonate, login to another user - [Complete]");
+			
+			BaseTest.getScreenshot(driver, "[Complete] Test #7 - Using impersonate, login to another user");
 			
 			test.info("Test #8 - Using impersonate, External link return status code 200 and messages load without error - In Progress");
 			
@@ -248,6 +266,8 @@ public class SmokeTestScript extends BaseTest {
 			
 			System.out.println("[INFO] Test #8 - Using impersonate, External link return status code 200 and messages load without error - [Complete]");
 			
+			BaseTest.getScreenshot(driver, "[Complete] Test #8 - Using impersonate, External link return status code 200 and messages load without error");
+			
 			test.info("Test #9 - Log into CRM - In Progress");
 			
 			System.out.println("[INFO] Test #9 - Log into CRM - [In Progress]");
@@ -259,6 +279,8 @@ public class SmokeTestScript extends BaseTest {
 			test.info("Test #9 - Log into CRM - Complete");
 			
 			System.out.println("[INFO] Test #9 - Log into CRM - [Complete]");
+			
+			BaseTest.getScreenshot(driver, "[Complete] Test #9 - Log into CRM");
 			
 			test.info("Test #10 - Navigation pain - In progress");
 			
@@ -300,7 +322,7 @@ public class SmokeTestScript extends BaseTest {
 	        
 	        System.out.println("[INFO] Test #10 - Navigation pain - [Complete]");
 	        
-			BaseTest.getScreenshot(driver, "success-result-");
+	        BaseTest.getScreenshot(driver, "[Complete] Test #10 - Navigation pain");
 			
 	        test.pass("Completed - Smoke test passed");
 	        
@@ -308,9 +330,9 @@ public class SmokeTestScript extends BaseTest {
 		}
 		catch(Exception e) {
 			
-			BaseTest.getScreenshot(driver, "failed-result-");
 			test.fail("Fail - Smoke test failed");
 			Assert.fail("Fail - Smoke test failed: " + e.getMessage());
+			BaseTest.getScreenshot(driver, "[Failed] Test step failed");
 		}
 	}
 	

@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.nio.file.*;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -76,29 +78,42 @@ public class BaseTest {
 			UAT_SECONDARY_PORTAL_USERNAME = properties.getProperty("uat_secondary_portal_username");
 			UAT_INTERNAL_PORTAL_URL = properties.getProperty("uat_internal_portal_url");
 			UAT_CRM_URL = properties.getProperty("uat_crm_url");
-					
+			
+			cleanTestExecutionScreenshots();		
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
+	
+	// Cleans out the TestExecutionScreenshots
+	public static void cleanTestExecutionScreenshots() {
+		Path folderPath = Paths.get("TestExecutionScreenshots");
+
+		try (Stream<Path> paths = Files.walk(folderPath)) {
+            paths.filter(path -> !path.equals(folderPath))
+                 .sorted((path1, path2) -> path2.compareTo(path1))
+                 .forEach(path -> {
+                     try {
+                         Files.delete(path);
+                     } catch (IOException e) {
+                         e.printStackTrace();
+                     }
+                 });
+        }
+        catch(Exception e) {
+    	   e.printStackTrace();
+        }
+	}
 
 	public static String getScreenshot(WebDriver driver, String screenshotName) throws Exception {
-		String dateName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
 		TakesScreenshot ts = (TakesScreenshot) driver;
 		File source = ts.getScreenshotAs(OutputType.FILE);
 		String destination;
 		
 		// after execution, takes screenshot of either failed or pass
-		if (screenshotName.contains("failed")) {
-			destination = System.getProperty("user.dir") + File.separator + "FailedTestsScreenshots" + File.separator + screenshotName + dateName
-					+ ".png";
-		}
-		else {
-			destination = System.getProperty("user.dir") + File.separator + "SuccessTestsScreenshots" + File.separator + screenshotName + dateName
-					+ ".png";
-		}
+		destination = System.getProperty("user.dir") + File.separator + "TestExecutionScreenshots" + File.separator + screenshotName + ".png";
 		
 		File finalDestination = new File(destination);
 		FileUtils.copyFile(source, finalDestination);
