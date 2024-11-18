@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="TestNgSuite">
 	<listeners>
-		<listener class-name="ca.bc.gov.ecc.ofm.selenium.v1.tests.TestListener" />
+		<listener class-name="ca.bc.gov.ecc.ofm.selenium.v1.tests.CustomReporter" />
 	</listeners>
 	<test name="Test1" preserve-order="true">
 		<classes>
