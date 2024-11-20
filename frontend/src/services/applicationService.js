@@ -147,18 +147,21 @@ export default {
     }
   },
 
-  async getSupplementaryApplicationsByDate(applicationId, filterQuery, startDateFrom, startDateTo) {
+  async getSupplementaryApplicationsByDate(applicationId, statusCode, startDateFrom, startDateTo, pcmValidated) {
     try {
       if (!applicationId) return
       let url = `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}`
-      if (filterQuery) {
-        url += `?${filterQuery}`
+      if (statusCode) {
+        url += `?statusCode=${statusCode}`
       }
       if (startDateFrom) {
         url += `&dateFrom=${startDateFrom}`
       }
       if (startDateTo) {
         url += `&dateTo=${startDateTo}`
+      }
+      if (pcmValidated) {
+        url += '&pcmValidated=true'
       }
       const response = await ApiService.apiAxios.get(url)
       return response?.data
