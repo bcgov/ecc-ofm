@@ -401,6 +401,7 @@ const SupplementaryApplicationMappings = [
   { back: 'ofm_renewal_term', front: 'renewalTerm' },
   { back: 'ofm_retroactive_date', front: 'retroactiveDate' },
   { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
+  { back: 'ofm_pcm_validated', front: 'pcmValidated' },
 ]
 
 const RoleMappings = [
@@ -494,6 +495,8 @@ const IrregularExpenseMappings = [
   { back: 'ofm_expenseid', front: 'irregularExpenseId' },
   { back: '_ofm_application_value', front: 'applicationId' },
   { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
+  { back: 'ofm_pcm_validated', front: 'pcmValidated' },
+
 ]
 
 module.exports = {

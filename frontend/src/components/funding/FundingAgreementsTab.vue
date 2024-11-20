@@ -92,7 +92,7 @@ export default {
             applications?.map((application) =>
               ApplicationService.getSupplementaryApplicationsByDate(
                 application.applicationId,
-                `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`,
+                `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}&pcmValidated=true`,
                 searchQueries?.dateFrom,
                 searchQueries?.dateTo,
               ),
@@ -149,7 +149,8 @@ export default {
       }
     },
     async loadIrregularExpenses(activeFA) {
-      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED)
+      const getPCMValidation = true
+      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED, getPCMValidation)
       expenseApplications?.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,
