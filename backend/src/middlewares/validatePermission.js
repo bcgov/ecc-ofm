@@ -3,12 +3,12 @@ const { getRoles } = require('../components/lookup')
 
 /**
  * Validates that the user has the specified permission.
- * @param {*} permission
+ * @param {*} requiredPermissions
  * @returns
  */
-module.exports = function (permission) {
+module.exports = function (...requiredPermissions) {
   return async function (req, res, next) {
-    log.verbose(`validating permission ${permission}`)
+    log.verbose(`validating permission ${requiredPermissions}`)
 
     const userRole = req.session?.passport?.user?.role
 
@@ -18,9 +18,9 @@ module.exports = function (permission) {
 
     const roles = await getRoles()
     const matchingRole = roles.find((role) => role.data.roleId === userRole.ofm_portal_roleid)
-    const permissions = matchingRole ? matchingRole.data.permissions : []
+    const permissions = matchingRole ? matchingRole.data.permissions?.map((p) => p.permissionName) : []
 
-    const valid = permissions.some((p) => p.permissionName === permission)
+    const valid = requiredPermissions?.some((p) => permissions.includes(p))
 
     valid ? next() : res.sendStatus(403)
   }
