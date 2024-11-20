@@ -496,7 +496,6 @@ const IrregularExpenseMappings = [
   { back: '_ofm_application_value', front: 'applicationId' },
   { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
   { back: 'ofm_pcm_validated', front: 'pcmValidated' },
-
 ]
 
 module.exports = {
