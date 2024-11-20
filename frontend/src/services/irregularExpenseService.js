@@ -2,12 +2,15 @@ import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
 
 export default {
-  async getIrregularExpenseApplications(applicationId, statusCode = undefined) {
+  async getIrregularExpenseApplications(applicationId, statusCode = undefined, pcmValidated = undefined) {
     try {
       if (!applicationId) return
       let url = `${ApiRoutes.IRREGULAR_APPLICATIONS}?applicationId=${applicationId}`
       if (statusCode) {
         url += `&statusCode=${statusCode}`
+      }
+      if (pcmValidated) {
+        url += '&pcmValidated=true'
       }
       const response = await ApiService.apiAxios.get(url)
       return response?.data

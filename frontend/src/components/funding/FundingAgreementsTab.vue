@@ -90,12 +90,7 @@ export default {
         this.supplementaryApplications = (
           await Promise.all(
             applications?.map((application) =>
-              ApplicationService.getSupplementaryApplicationsByDate(
-                application.applicationId,
-                `statusCode=${SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED}`,
-                searchQueries?.dateFrom,
-                searchQueries?.dateTo,
-              ),
+              ApplicationService.getSupplementaryApplicationsByDate(application.applicationId, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED, searchQueries?.dateFrom, searchQueries?.dateTo, true),
             ),
           )
         ).flat()
@@ -149,7 +144,7 @@ export default {
       }
     },
     async loadIrregularExpenses(activeFA) {
-      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED)
+      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED, true)
       expenseApplications?.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,
