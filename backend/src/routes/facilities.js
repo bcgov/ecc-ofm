@@ -19,7 +19,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
@@ -35,7 +35,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
@@ -50,8 +50,8 @@ router.patch(
   '/:facilityId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY, PERMISSIONS.APPLY_FOR_FUNDING),
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
   validateFacility(true),
   (req, res) => {
     validationResult(req).throw()
@@ -67,7 +67,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').not().isEmpty()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
