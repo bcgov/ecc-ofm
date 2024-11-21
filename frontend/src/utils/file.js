@@ -3,7 +3,6 @@
  * @param {*} bytes
  * @param {*} decimals
  */
-
 export function humanFileSize(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes'
   const k = 1024
@@ -39,4 +38,24 @@ export function isHeicFile(fileName) {
 export function updateHeicFileNameToJpg(filename) {
   const regex = /\.heic(?![\s\S]*\.heic)/i //looks for last occurrence of .heic case-insensitive
   return filename?.replace(regex, '.jpg')
+}
+
+/**
+ * Quick and dirty way to determine image type based on base64 encoding.
+ * @param image The base64 encoded image
+ */
+export function deriveImageType(image) {
+  const key = image.charAt(0)
+  switch (key) {
+    case '/':
+      return 'jpg'
+    case 'i':
+      return 'png'
+    case 'R':
+      return 'gif'
+    case 'U':
+      return 'webp'
+    default:
+      return '*'
+  }
 }
