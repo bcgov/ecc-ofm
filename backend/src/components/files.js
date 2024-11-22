@@ -1,7 +1,6 @@
 'use strict'
 const { getOperation, handleError } = require('./utils')
 const HttpStatus = require('http-status-codes')
-const log = require('./logger')
 
 async function getFile(req, res) {
   try {
