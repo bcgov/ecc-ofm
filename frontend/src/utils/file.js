@@ -45,8 +45,7 @@ export function updateHeicFileNameToJpg(filename) {
  * @param image The base64 encoded image
  */
 export function deriveImageType(image) {
-  const key = image.charAt(0)
-  switch (key) {
+  switch (image.charAt(0)) {
     case '/':
       return 'jpg'
     case 'i':
