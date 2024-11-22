@@ -16,6 +16,7 @@ export const ApiRoutes = Object.freeze({
   FACILITIES: baseRoot + '/facilities',
   FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
   FACILITIES_LICENCES: baseRoot + '/facilities/:facilityId/licences',
+  FILES: baseRoot + '/files',
   FUNDING_AGREEMENTS: baseRoot + '/funding-agreements',
   LICENCES: baseRoot + '/licences',
   LOOKUP: baseRoot + '/config/lookup',

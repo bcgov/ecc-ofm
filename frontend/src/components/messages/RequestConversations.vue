@@ -87,14 +87,18 @@
 
 <script>
 import { mapState, mapActions } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import { useMessagesStore } from '@/stores/messages'
-import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 import CloseRequestBanner from '@/components/messages/CloseRequestBanner.vue'
+import ReplyRequestDialog from '@/components/messages/ReplyRequestDialog.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import alertMixin from '@/mixins/alertMixin'
-import format from '@/utils/format'
+import FileService from '@/services/fileService'
+import { useAuthStore } from '@/stores/auth'
+import { useMessagesStore } from '@/stores/messages'
 import { ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
+import { deriveImageType } from '@/utils/file'
+import format from '@/utils/format'
+
+const ID_REGEX = /\(([^)]+)\)/
 
 export default {
   components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
@@ -148,6 +152,7 @@ export default {
     assistanceRequestId: async function (newVal) {
       this.loading = true
       await this.getAssistanceRequestConversation(this.assistanceRequestId)
+      await this.formatConversation()
       this.sortConversation()
       this.loading = false
       this.assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === newVal)
@@ -203,6 +208,29 @@ export default {
      */
     deriveFromDisplay(item) {
       return item.ofmSourceSystem ? `${this.userInfo?.firstName ?? ''} ${this.userInfo?.lastName}` : OFM_PROGRAM
+    },
+    async formatConversation() {
+      const parser = new DOMParser()
+      for (const conversation of this.assistanceRequestConversation) {
+        const document = parser.parseFromString(conversation.message, 'text/html')
+        // Update CRM img tags to load correctly
+        for (const img of document.querySelectorAll('img[src*="/api/data"]')) {
+          const matches = ID_REGEX.exec(img.getAttribute('src'))
+          if (matches) {
+            const fileId = matches[1]
+            const image = await FileService.getFile(fileId)
+            const imageType = deriveImageType(image)
+            img.setAttribute('src', `data:image/${imageType};base64,${image}`)
+          } else {
+            img.remove()
+          }
+        }
+        // Remove CRM links for now until we can support them
+        document.querySelectorAll('a[href*="/api/data"]').forEach((link) => link.remove())
+
+        // Update the message content
+        conversation.message = document.documentElement.innerHTML
+      }
     },
   },
 }
