@@ -98,7 +98,6 @@ import { ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
 import { deriveImageType } from '@/utils/file'
 import format from '@/utils/format'
 
-const CRM_PATH = '/api/data'
 const ID_REGEX = /\(([^)]+)\)/
 
 export default {
@@ -212,22 +211,24 @@ export default {
     },
     async formatConversation() {
       const parser = new DOMParser()
-      // Lookup for occurences of CRM imageblobs and replace with custom API call
       for (const conversation of this.assistanceRequestConversation) {
         const document = parser.parseFromString(conversation.message, 'text/html')
-        for (const img of document.querySelectorAll('img')) {
-          const src = img.getAttribute('src')
-          // Validate the path in case there are externally linked images
-          if (src?.startsWith(CRM_PATH)) {
-            const matches = ID_REGEX.exec(src)
-            if (matches) {
-              const fileId = matches[1]
-              const image = await FileService.getFile(fileId)
-              const imageType = deriveImageType(image)
-              img.setAttribute('src', `data:image/${imageType};base64,${image}`)
-            }
+        // Update CRM img tags to load correctly
+        for (const img of document.querySelectorAll('img[src*="/api/data"]')) {
+          const matches = ID_REGEX.exec(img.getAttribute('src'))
+          if (matches) {
+            const fileId = matches[1]
+            const image = await FileService.getFile(fileId)
+            const imageType = deriveImageType(image)
+            img.setAttribute('src', `data:image/${imageType};base64,${image}`)
+          } else {
+            img.remove()
           }
         }
+        // Remove CRM links for now until we can support them
+        document.querySelectorAll('a[href*="/api/data"]').forEach((link) => link.remove())
+
+        // Update the message content
         conversation.message = document.documentElement.innerHTML
       }
     },
