@@ -52,7 +52,6 @@ public class PortalFundingEnvelopeChangeRequest {
 
     public void setSummaryTextField(String summaryValue) {
         summary.sendKeys(summaryValue);
-
     }
 
     public void setRequestDescriptionTextField(String requestDescriptionValue) {

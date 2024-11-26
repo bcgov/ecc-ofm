@@ -27,7 +27,6 @@ public class PortalFundingAllocationTab{
 
     public void ClickReallocateFunds() throws InterruptedException {
         try {
-            wait.until(ExpectedConditions.visibilityOf(requestToReallocateFunds));
             wait.until(ExpectedConditions.elementToBeClickable(requestToReallocateFunds)).click();
         }
         catch(Exception e) {

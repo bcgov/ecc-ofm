@@ -27,7 +27,7 @@ public class PortalCreateFundingEnvelopeChangeRequest extends BaseTest {
     public void CreateFundingEnvelopeChangeRequest() throws InterruptedException {
         try {
             driver.get(QA_PORTAL_URL);
-            //test = extent.createTest("Test - Create Funding Envelope Change Request");
+            test = extent.createTest("Test - Create Funding Envelope Change Request");
             test.info("Starting Test - Create Funding Envelope Change Request");
 
             PortalSignInFirstPage objPortalSigninFirstPage = new PortalSignInFirstPage(driver);
