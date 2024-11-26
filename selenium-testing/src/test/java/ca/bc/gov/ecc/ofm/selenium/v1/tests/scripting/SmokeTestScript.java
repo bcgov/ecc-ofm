@@ -1,31 +1,36 @@
 package ca.bc.gov.ecc.ofm.selenium.v1.tests.scripting;
 
-import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.*;
-import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.*;
-import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
-import ca.bc.gov.ecc.ofm.selenium.v1.tests.CustomReporter;
-import io.github.bonigarcia.wdm.WebDriverManager;
-
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.Assert;
-import org.testng.TestNG;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Listeners;
-import org.testng.annotations.Test;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
+
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMHomePage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_CRM.CRMSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.InternalPortalImpersonatePage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.InternalPortalSignInFirstPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalHomePage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalMessagesAndNotificationsPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalSignInCredentialPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.PageFactory_Portal.PortalSignInFirstPage;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.BaseTest;
+import ca.bc.gov.ecc.ofm.selenium.v1.tests.CustomReporter;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 @Listeners(CustomReporter.class)
 public class SmokeTestScript extends BaseTest {
@@ -240,7 +245,7 @@ public class SmokeTestScript extends BaseTest {
 			portalHomePage.clickImpersonate();
 			
 			Thread.sleep(3000);
-			portalImpersonatePage.setImpersonateField("UAT_SECONDARY_PORTAL_USERNAME");
+			portalImpersonatePage.setImpersonateField(UAT_SECONDARY_PORTAL_USERNAME);
 			portalImpersonatePage.clickSearchButton();
 			
 			test.info("Test #7 - Using impersonate, login to another user - Complete");

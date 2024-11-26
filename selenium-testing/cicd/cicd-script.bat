@@ -42,7 +42,7 @@ set "$assigneeUser=%accountId%"
 set "$mandatoryFields={\"reporter\":{\"id\":\"%accountId%\",\"label\":\"%jiraAccountName%\",\"name\":\"%jiraAccountName%\"}}"
 
 :: File path for results file
-set "$resultPath=@\"%WORKSPACE%/target/surefire-reports/testng-results.xml\"
+set "$resultPath=@\"%WORKSPACE%/selenium-testing/target/surefire-reports/testng-results.xml\"
 
 :: =========================================
 ::  Create an automation task, run it, send test results to Zephyr.
@@ -84,9 +84,9 @@ set "$issueSelf=%issueSelf%"
 ::  Attach test result screenshots to the Jira test case
 :: =========================================
 
-set "$imageDir=%WORKSPACE%/TestExecutionScreenshots"
+set "$imageDir=%WORKSPACE%/selenium-testing/TestExecutionScreenshots"
  
-for %%F in (%$imageDir%\*.png) do (
+for %%F in ("%$imageDir%\*.png") do (
     echo Sending: %%F
     curl --location --request POST "%$issueSelf%/attachments" ^
          --user "%$jiraRestAPIAuth%" ^

@@ -103,7 +103,7 @@ public class BaseTest {
                  });
         }
         catch(Exception e) {
-    	   e.printStackTrace();
+    	   System.out.println("[INFO] There is no folder for screenshots created yet, one will be created");
         }
 	}
 
