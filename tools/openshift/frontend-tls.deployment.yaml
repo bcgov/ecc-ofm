@@ -4,39 +4,44 @@ kind: Template
 labels:
   template: '${REPO_NAME}-template'
 metadata:
-  name: '${REPO_NAME}-frontend-dc'
+  name: '${REPO_NAME}-frontend-deployment'
 objects:
-  - apiVersion: v1
-    kind: DeploymentConfig
+  - apiVersion: apps/v1
+    kind: Deployment
     metadata:
       annotations:
         openshift.io/generated-by: OpenShiftNewApp
       creationTimestamp:
       labels:
-        app: '${APP_NAME}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${BRANCH}'
         branch: '${BRANCH}'
       name: '${APP_NAME}-frontend-${ENVIRONMENT}'
     spec:
       replicas: ${{MIN_REPLICAS}}
       selector:
-        app: '${APP_NAME}-${BRANCH}'
-        deploymentconfig: '${APP_NAME}-frontend-${ENVIRONMENT}'
+        matchLabels:
+          app: '${APP_NAME}-frontend-${BRANCH}'
       strategy:
-        resources: {}
-        type: Rolling
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
+          maxSurge: 25%
       template:
         metadata:
           annotations:
             openshift.io/generated-by: OpenShiftNewApp
           creationTimestamp:
           labels:
-            app: '${APP_NAME}-${BRANCH}'
+            app: '${APP_NAME}-frontend-${BRANCH}'
             deploymentconfig: '${APP_NAME}-frontend-${ENVIRONMENT}'
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-frontend:${TAG}
               imagePullPolicy: Always
               volumeMounts:
+                - name: tls-certs
+                  mountPath: '/etc/tls-certs'
+                  readOnly: true
                 - name: js-runtime-config
                   mountPath: '/srv/js/config'
               livenessProbe:
@@ -69,12 +74,13 @@ objects:
                   cpu: '${MAX_CPU}'
                   memory: '${MAX_MEM}'
           volumes:
+            - name: tls-certs
+              secret:
+                secretName: ofm-frontend-cert
             - name: js-runtime-config
               configMap:
                 name: ofm-frontend-${ENVIRONMENT}-config-map
       test: false
-      triggers:
-        - type: ConfigChange
   - apiVersion: v1
     kind: Service
     metadata:
@@ -83,7 +89,7 @@ objects:
         openshift.io/generated-by: OpenShiftNewApp
       creationTimestamp:
       labels:
-        app: '${APP_NAME}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${BRANCH}'
       name: '${APP_NAME}-frontend-${ENVIRONMENT}'
     spec:
       ports:
@@ -92,18 +98,19 @@ objects:
           protocol: TCP
           targetPort: 2015
       selector:
-        app: '${APP_NAME}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${BRANCH}'
         deploymentconfig: '${APP_NAME}-frontend-${ENVIRONMENT}'
   - apiVersion: v1
     kind: Route
     metadata:
       name: '${APP_NAME}-frontend-${ENVIRONMENT}'
       labels:
-        app: '${APP_NAME}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${BRANCH}'
       annotations:
         openshift.io/host.generated: 'true'
         router.openshift.io/cookie-same-site: 'Strict'
     spec:
+      host: '${HOST_ROUTE}'
       to:
         kind: Service
         name: '${APP_NAME}-frontend-${ENVIRONMENT}'
@@ -111,8 +118,11 @@ objects:
       port:
         targetPort: 2015-tcp
       tls:
-        termination: edge
+        caCertificate: '${CA_CERT}'
+        certificate: '${CERTIFICATE}'
+        key: '${PRIVATE_KEY}'
         insecureEdgeTerminationPolicy: Redirect
+        termination: edge
       wildcardPolicy: None
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
@@ -120,8 +130,8 @@ objects:
       name: '${APP_NAME}-frontend-${ENVIRONMENT}-cpu-autoscaler'
     spec:
       scaleTargetRef:
-        apiVersion: apps.openshift.io/v1
-        kind: DeploymentConfig
+        apiVersion: apps/v1
+        kind: Deployment
         name: '${APP_NAME}-frontend-${ENVIRONMENT}'
         subresource: scale
       minReplicas: ${{MIN_REPLICAS}}
@@ -164,7 +174,7 @@ parameters:
     required: true
   - name: HOST_ROUTE
     description: The host the route will use to expose service outside cluster
-    required: false
+    required: true
   - name: TAG
     description: The identifying tag for this specific deployment
     required: true
@@ -186,15 +196,6 @@ parameters:
   - name: MAX_MEM
     description: The maximum amount of memory
     required: true
-  - name: CA_CERT
-    description: The CA Certificate
-    required: false
-  - name: CERTIFICATE
-    description: The Certificate
-    required: false
-  - name: PRIVATE_KEY
-    description: The private key
-    required: false
   - name: BANNER_ENVIRONMENT
     description: The title for the application banner. It which indicates what environment is running
     required: false
@@ -203,7 +204,16 @@ parameters:
     required: false
   - name: TDAD_CONTACT_EMAIL
     description: The contact email for 10 dollar a day daycare centers
-    required: false
+    required: true
   - name: IRREGULAR_EXPENSE_FORM_URL
     description: The URL to download the Irregular Expense application form.
-    required: false
+    required: true
+  - name: CA_CERT
+    description: The CA Certificate
+    required: true
+  - name: CERTIFICATE
+    description: The Certificate
+    required: true
+  - name: PRIVATE_KEY
+    description: The private key
+    required: true
