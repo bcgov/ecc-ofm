@@ -119,7 +119,7 @@ echo
 echo Setting environment variables for "$APP_NAME-backend-$ENV_VAL" application
 oc -n "$OPENSHIFT_NAMESPACE" set env \
   --from="configmap/$APP_NAME-backend-$ENV_VAL-config-map" \
-  "dc/$APP_NAME-backend-$ENV_VAL"
+  "deployment/$APP_NAME-backend-$ENV_VAL"
 
 if [ "$ENV_VAL" != 'qa' ] && [ "$ENV_VAL" != 'efx' ]; then
     echo "Generating Splunk configuration"
