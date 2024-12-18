@@ -22,7 +22,6 @@ public class PortalPaymentsAndFundingRequest extends BaseTest {
         driver.manage().window().maximize();
     }
 
-
     @Test
     public void CreateFundingEnvelopeChangeRequest() throws InterruptedException {
         try {
