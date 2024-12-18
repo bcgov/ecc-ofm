@@ -23,7 +23,7 @@ public class PortalPaymentsAndFundingRequest extends BaseTest {
     }
 
     @Test
-    public void CreateFundingEnvelopeChangeRequest() throws InterruptedException {
+    public void CreatePaymentsAndFundingRequest() throws InterruptedException {
         try {
             driver.get(QA_PORTAL_URL);
             test = extent.createTest("Test - Create Payments and Funding Request");
