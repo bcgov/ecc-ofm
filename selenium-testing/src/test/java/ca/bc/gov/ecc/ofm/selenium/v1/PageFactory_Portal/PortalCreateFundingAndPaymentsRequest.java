@@ -64,7 +64,7 @@ public class PortalCreateFundingAndPaymentsRequest {
     public void addNewFile() {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addNewFileButton);
         addFile.sendKeys(filePath);
-        description.sendKeys("Payments and Funding Change Request file");
+        description.sendKeys("Payments and Funding file");
     }
 
     public void clickSubmitNewRequest() {
