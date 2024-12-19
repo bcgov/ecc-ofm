@@ -67,7 +67,7 @@
                     <span class="font-weight-bold">Sent:</span>
                     {{ format.formatDate(item.sentDate) }}
                   </div>
-                  <div class="pt-1" v-html="item.message" />
+                  <div class="pt-1" @click.capture="handlePdf" v-html="item.message" />
                 </v-col>
               </v-row>
             </template>
@@ -209,6 +209,17 @@ export default {
     deriveFromDisplay(item) {
       return item.ofmSourceSystem ? `${this.userInfo?.firstName ?? ''} ${this.userInfo?.lastName}` : OFM_PROGRAM
     },
+    handlePdf(event) {
+      console.log(event.target)
+      if (event.target.classList.contains('conversation-pdf')) {
+        fetch(event.target.dataset.link)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const blobUrl = URL.createObjectURL(blob)
+            window.open(blobUrl)
+          })
+      }
+    },
     async formatConversation() {
       const parser = new DOMParser()
       for (const conversation of this.assistanceRequestConversation) {
@@ -218,15 +229,36 @@ export default {
           const matches = ID_REGEX.exec(img.getAttribute('src'))
           if (matches) {
             const fileId = matches[1]
-            const image = await FileService.getFile(fileId)
-            const imageType = deriveImageType(image)
-            img.setAttribute('src', `data:image/${imageType};base64,${image}`)
+            const imageFile = await FileService.getFile(fileId, true)
+            const imageType = deriveImageType(imageFile.fileData)
+            img.setAttribute('src', `data:image/${imageType};base64,${imageFile.fileData}`)
           } else {
             img.remove()
           }
         }
+
         // Remove CRM links for now until we can support them
-        document.querySelectorAll('a[href*="/api/data"]').forEach((link) => link.remove())
+        const fileLinks = document.querySelectorAll('a[href*="/api/data"]')
+
+        for (const fileLink of fileLinks) {
+          const matches = ID_REGEX.exec(fileLink.dataset.value)
+          if (matches) {
+            const fileId = matches[1]
+            const file = await FileService.getFile(fileId)
+            const dataLink = `data:${file.mimetype};base64,${file.fileData}`
+
+            if (file.mimetype === 'application/pdf') {
+              fileLink.setAttribute('href', '#')
+              fileLink.classList.add('conversation-pdf')
+              fileLink.setAttribute('data-link', dataLink)
+            } else {
+              fileLink.setAttribute('href', dataLink)
+              fileLink.setAttribute('download', file.filename)
+            }
+          } else {
+            fileLink.remove()
+          }
+        }
 
         // Update the message content
         conversation.message = document.documentElement.innerHTML
