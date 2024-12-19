@@ -56,9 +56,9 @@
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="panelComponent.id === 'manuals'">
-          <a href="https://www2.gov.bc.ca/assets/download/2215735D9D5540079294C5B032864123" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/46A19E72A2C94FA19A8A5CA2131A1B91" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2024 - Policy and Procedure Manual</span>
+            <span>2023 - Policy and Procedure Manual</span>
           </a>
           <br />
           <br />
