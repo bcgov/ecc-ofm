@@ -210,7 +210,6 @@ export default {
       return item.ofmSourceSystem ? `${this.userInfo?.firstName ?? ''} ${this.userInfo?.lastName}` : OFM_PROGRAM
     },
     handlePdf(event) {
-      console.log(event.target)
       if (event.target.classList.contains('conversation-pdf')) {
         fetch(event.target.dataset.link)
           .then((res) => res.blob())
