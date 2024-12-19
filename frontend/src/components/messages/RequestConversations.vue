@@ -67,7 +67,7 @@
                     <span class="font-weight-bold">Sent:</span>
                     {{ format.formatDate(item.sentDate) }}
                   </div>
-                  <div class="pt-1" @click.capture="handlePdf" v-html="item.message" />
+                  <div class="pt-1" v-html="item.message" />
                 </v-col>
               </v-row>
             </template>
@@ -209,16 +209,6 @@ export default {
     deriveFromDisplay(item) {
       return item.ofmSourceSystem ? `${this.userInfo?.firstName ?? ''} ${this.userInfo?.lastName}` : OFM_PROGRAM
     },
-    handlePdf(event) {
-      if (event.target.classList.contains('conversation-pdf')) {
-        fetch(event.target.dataset.link)
-          .then((res) => res.blob())
-          .then((blob) => {
-            const blobUrl = URL.createObjectURL(blob)
-            window.open(blobUrl)
-          })
-      }
-    },
     async formatConversation() {
       const parser = new DOMParser()
       for (const conversation of this.assistanceRequestConversation) {
@@ -246,14 +236,8 @@ export default {
             const file = await FileService.getFile(fileId)
             const dataLink = `data:${file.mimetype};base64,${file.fileData}`
 
-            if (file.mimetype === 'application/pdf') {
-              fileLink.setAttribute('href', '#')
-              fileLink.classList.add('conversation-pdf')
-              fileLink.setAttribute('data-link', dataLink)
-            } else {
-              fileLink.setAttribute('href', dataLink)
-              fileLink.setAttribute('download', file.filename)
-            }
+            fileLink.setAttribute('href', dataLink)
+            fileLink.setAttribute('download', file.filename)
           } else {
             fileLink.remove()
           }
