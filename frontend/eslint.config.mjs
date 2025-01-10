@@ -13,7 +13,7 @@ export default [
     rules: {
       semi: 'off',
       'eol-last': ['error', 'always'],
-      indent: ['error', 2, { SwitchCase: 1 }],
+      indent: 'off', // Defer to Prettier
       quotes: ['error', 'single', { avoidEscape: true }],
       'no-unused-vars': ['error', { args: 'after-used', argsIgnorePattern: '^_', caughtErrors: 'all', caughtErrorsIgnorePattern: '^ignore' }],
       'vue/no-v-text-v-html-on-component': ['error', { allow: ['v-card-text'] }],
