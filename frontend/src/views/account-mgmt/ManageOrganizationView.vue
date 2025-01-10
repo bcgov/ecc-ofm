@@ -4,7 +4,7 @@
       <v-col cols="12" lg="6" class="pb-0">
         <h4>Organization Details</h4>
       </v-col>
-      <v-col cols="12" lg="6" v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" class="pb-0">
+      <v-col v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" cols="12" lg="6" class="pb-0">
         <v-row no-gutters justify="end">
           <AppButton :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
@@ -16,10 +16,10 @@
           :loading="loading"
           :editable="hasPermission(PERMISSIONS.UPDATE_ORG_FACILITY)"
           :organization="organization"
-          :showDocuments="true"
-          :uploadedDocuments="uploadedDocuments"
-          @saveInclusionPolicyData="saveInclusionPolicyData"
-          class="mt-1" />
+          :show-documents="true"
+          :uploaded-documents="uploadedDocuments"
+          class="mt-1"
+          @save-inclusion-policy-data="saveInclusionPolicyData" />
       </v-col>
     </v-row>
     <v-row>
@@ -39,7 +39,13 @@
                       <h4>Your Facilities</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in userFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card>
+                      <v-card
+                        v-for="item in userFacilities"
+                        :key="item.facilityId"
+                        class="facility-card mr-4"
+                        @click="navigateToFacility(item.facilityId)">
+                        {{ item.facilityName }}
+                      </v-card>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -49,27 +55,44 @@
                       <h4>Other Facilities (read-only)</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in otherFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                      <v-card
+                        v-for="item in otherFacilities"
+                        :key="item.facilityId"
+                        class="facility-card mr-4"
+                        @click="navigateToFacility(item.facilityId)">
+                        {{ item.name }}
+                      </v-card>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
               </v-col>
               <v-col v-else>
-                <v-card v-for="item in facilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                <v-card
+                  v-for="item in facilities"
+                  :key="item.facilityId"
+                  class="facility-card mr-4"
+                  @click="navigateToFacility(item.facilityId)">
+                  {{ item.name }}
+                </v-card>
               </v-col>
             </v-row>
           </v-skeleton-loader>
         </v-card>
       </v-col>
     </v-row>
-    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading" class="mt-4">Account Management</AppBackButton>
+    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading" class="mt-4">
+      Account Management
+    </AppBackButton>
     <NewRequestDialog
       class="pa-0"
       :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+      :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
       @close="toggleChangeRequestDialog"
       @submit-phone-email="handleCRSubmit" />
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog
+      :show="showUnableToSubmitCrDialog"
+      :display-type="preventChangeRequestType"
+      @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -89,7 +112,13 @@ import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
+import {
+  REQUEST_CATEGORY_NAMES,
+  OFM_PROGRAM_CODES,
+  PREVENT_CHANGE_REQUEST_TYPES,
+  VIRUS_SCAN_ERROR_MESSAGE,
+  DOCUMENT_TYPES,
+} from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
@@ -115,7 +144,9 @@ export default {
       return this.userInfo.facilities
     },
     otherFacilities() {
-      return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
+      return this.facilities.filter(
+        (f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId),
+      )
     },
     hasAnOFMFacility() {
       return this.facilities.some((facility) => facility.programCode === OFM_PROGRAM_CODES.OFM)
@@ -238,7 +269,10 @@ export default {
         if (error?.response?.data?.status === 422) {
           this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
         } else {
-          this.setFailureAlert(`Failed Inclusion Policy Document(s) update on Organization: ${this.organization.organizationId}`, error)
+          this.setFailureAlert(
+            `Failed Inclusion Policy Document(s) update on Organization: ${this.organization.organizationId}`,
+            error,
+          )
         }
       }
     },

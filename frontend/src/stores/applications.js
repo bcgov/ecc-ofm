@@ -6,7 +6,14 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
+import {
+  APPLICATION_STATUS_CODES,
+  DOCUMENT_TYPES,
+  FACILITY_TYPES,
+  OFM_PROGRAM_CODES,
+  YES_NO_CHOICE_CRM_MAPPING,
+  YES_NO_RADIO_GROUP_MAPPING,
+} from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
@@ -22,7 +29,12 @@ export const useApplicationsStore = defineStore('applications', {
     validation: false,
   }),
   getters: {
-    isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isEligibilityComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+    isApplicationComplete: (state) =>
+      state.isFacilityDetailsComplete &&
+      state.isEligibilityComplete &&
+      state.isServiceDeliveryComplete &&
+      state.isOperatingCostsComplete &&
+      state.isStaffingComplete,
     isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
   },
   actions: {
@@ -138,18 +150,24 @@ export const useApplicationsStore = defineStore('applications', {
     },
 
     isSplitClassroomComplete() {
-      return this.currentApplication?.licences.every((licence) => licence.licenceDetails?.every((detail) => LicenceService.isSplitClassRoomInfoValid(detail)))
+      return this.currentApplication?.licences.every((licence) =>
+        licence.licenceDetails?.every((detail) => LicenceService.isSplitClassRoomInfoValid(detail)),
+      )
     },
 
     isLicenceDocumentUploaded() {
       return this.currentApplication.licences.every((licence) => {
-        const uploadedDocument = this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(licence?.licence))
+        const uploadedDocument = this.currentApplication?.uploadedDocuments?.filter((document) =>
+          document.documentType?.includes(licence?.licence),
+        )
         return !isEmpty(uploadedDocument)
       })
     },
 
     isHealthAuthorityReportUploaded() {
-      const healthAuthorityReports = this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
+      const healthAuthorityReports = this.currentApplication?.uploadedDocuments?.filter((document) =>
+        document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT),
+      )
       return !isEmpty(healthAuthorityReports)
     },
 
@@ -157,19 +175,35 @@ export const useApplicationsStore = defineStore('applications', {
       Operating Cost page
     */
     checkOperatingCostsComplete() {
-      const isRequiredFinancialDocsUploaded = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
-      const isFacilityTypeRequiredDocsUploaded = !this.isRentLease(this.currentApplication) || this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.SUPPORTING_DOCS])
-      const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
+      const isRequiredFinancialDocsUploaded = this.checkRequiredDocsExist(this.currentApplication, [
+        DOCUMENT_TYPES.INCOME_STATEMENT,
+        DOCUMENT_TYPES.BALANCE_SHEET,
+      ])
+      const isFacilityTypeRequiredDocsUploaded =
+        !this.isRentLease(this.currentApplication) ||
+        this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.SUPPORTING_DOCS])
+      const areCostsPositive =
+        this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
       const isRentLeaseInformationComplete =
         !this.isRentLease(this.currentApplication) ||
         (this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
           (this.currentApplication?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
-            (this.currentApplication?.rentLeaseStartDate && this.currentApplication?.rentLeaseEndDate && this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)))
-      return this.currentApplication?.facilityType && isRentLeaseInformationComplete && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
+            (this.currentApplication?.rentLeaseStartDate &&
+              this.currentApplication?.rentLeaseEndDate &&
+              this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)))
+      return (
+        this.currentApplication?.facilityType &&
+        isRentLeaseInformationComplete &&
+        isRequiredFinancialDocsUploaded &&
+        isFacilityTypeRequiredDocsUploaded &&
+        areCostsPositive
+      )
     },
 
     checkRequiredDocsExist(application, requiredDocumentTypes) {
-      return requiredDocumentTypes.every((type) => application.uploadedDocuments.some((doc) => doc.documentType === type))
+      return requiredDocumentTypes.every((type) =>
+        application.uploadedDocuments.some((doc) => doc.documentType === type),
+      )
     },
 
     isRentLease(application) {
@@ -202,15 +236,26 @@ export const useApplicationsStore = defineStore('applications', {
     },
 
     areEmployeeCertificatesComplete(certificates, application) {
-      return this.areAllEmployeeCertificatesEntered(certificates, application) && this.areAllCertificateInitialsUnique(certificates) && this.areAllCertificateNumbersUnique(certificates)
+      return (
+        this.areAllEmployeeCertificatesEntered(certificates, application) &&
+        this.areAllCertificateInitialsUnique(certificates) &&
+        this.areAllCertificateNumbersUnique(certificates)
+      )
     },
 
     areAllEmployeeCertificatesEntered(certificates, application) {
-      const filteredCertificates = certificates?.filter((certificate) => certificate.initials && certificate.certificateNumber)
-      const totalInfantECEducatorStaff = application?.staffingInfantECEducatorFullTime + application?.staffingInfantECEducatorPartTime
+      const filteredCertificates = certificates?.filter(
+        (certificate) => certificate.initials && certificate.certificateNumber,
+      )
+      const totalInfantECEducatorStaff =
+        application?.staffingInfantECEducatorFullTime + application?.staffingInfantECEducatorPartTime
       const totalECEducatorStaff = application?.staffingECEducatorFullTime + application?.staffingECEducatorPartTime
-      const totalECEducatorAssistantStaff = application?.staffingECEducatorAssistantFullTime + application?.staffingECEducatorAssistantPartTime
-      return filteredCertificates?.length === totalInfantECEducatorStaff + totalECEducatorStaff + totalECEducatorAssistantStaff
+      const totalECEducatorAssistantStaff =
+        application?.staffingECEducatorAssistantFullTime + application?.staffingECEducatorAssistantPartTime
+      return (
+        filteredCertificates?.length ===
+        totalInfantECEducatorStaff + totalECEducatorStaff + totalECEducatorAssistantStaff
+      )
     },
 
     areAllCertificateInitialsUnique(certificates) {
@@ -220,7 +265,9 @@ export const useApplicationsStore = defineStore('applications', {
     },
 
     areAllCertificateNumbersUnique(certificates) {
-      const allCertificateNumbers = certificates?.map((certificate) => certificate.certificateNumber)?.filter((certificateNumber) => certificateNumber)
+      const allCertificateNumbers = certificates
+        ?.map((certificate) => certificate.certificateNumber)
+        ?.filter((certificateNumber) => certificateNumber)
       const uniqueCertificateNumbers = [...new Set(allCertificateNumbers)]
       return allCertificateNumbers?.length === uniqueCertificateNumbers?.length
     },
@@ -231,7 +278,11 @@ export const useApplicationsStore = defineStore('applications', {
     },
 
     isUnionSectionComplete(application) {
-      return application?.isUnionized === 0 || (!isEmpty(application?.unions) && (!this.isOtherUnionSelected(application) || !isEmpty(application?.unionDescription)))
+      return (
+        application?.isUnionized === 0 ||
+        (!isEmpty(application?.unions) &&
+          (!this.isOtherUnionSelected(application) || !isEmpty(application?.unionDescription)))
+      )
     },
 
     isCSSEASectionComplete(application) {

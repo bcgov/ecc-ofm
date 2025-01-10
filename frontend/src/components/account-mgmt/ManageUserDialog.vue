@@ -1,10 +1,18 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" :title="dialogTitle" :is-loading="isLoading" persistent max-width="50%" @close="closeManageUserDialog">
+    <AppDialog
+      v-model="isDisplayed"
+      :title="dialogTitle"
+      :is-loading="isLoading"
+      persistent
+      max-width="50%"
+      @close="closeManageUserDialog">
       <template #content>
         <v-form ref="userForm" v-model="isFormComplete">
           <v-row v-if="isAddingUser">
-            <v-col cols="12" class="pl-0 d-flex align-center justify-center">Note: users must have an active Business BCeID to gain access to the portal.</v-col>
+            <v-col cols="12" class="pl-0 d-flex align-center justify-center">
+              Note: users must have an active Business BCeID to gain access to the portal.
+            </v-col>
           </v-row>
           <v-row no-gutters class="mt-5">
             <v-col cols="12" md="3">
@@ -31,7 +39,13 @@
               <AppLabel for="firstName">First Name:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="firstName" v-model.trim="user.firstName" placeholder="First Name" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+              <v-text-field
+                id="firstName"
+                v-model.trim="user.firstName"
+                placeholder="First Name"
+                variant="outlined"
+                density="compact"
+                :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -39,7 +53,14 @@
               <AppLabel for="lastName">Last Name:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="lastName" v-model.trim="user.lastName" placeholder="Last Name" variant="outlined" density="compact" :rules="rules.required" :disabled="isLoading"></v-text-field>
+              <v-text-field
+                id="lastName"
+                v-model.trim="user.lastName"
+                placeholder="Last Name"
+                variant="outlined"
+                density="compact"
+                :rules="rules.required"
+                :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -47,7 +68,14 @@
               <AppLabel for="phone">Phone:</AppLabel>
             </v-col>
             <v-col cols="12" md="9">
-              <v-text-field id="phone" v-model.trim="user.phone" placeholder="###-###-####" :rules="[rules.phone]" variant="outlined" density="compact" :disabled="isLoading"></v-text-field>
+              <v-text-field
+                id="phone"
+                v-model.trim="user.phone"
+                placeholder="###-###-####"
+                :rules="[rules.phone]"
+                variant="outlined"
+                density="compact"
+                :disabled="isLoading"></v-text-field>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -122,18 +150,43 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="cancel-reply-request" :primary="false" size="large" width="200px" :loading="isLoading" @click="closeManageUserDialog()">Cancel</AppButton>
+            <AppButton
+              id="cancel-reply-request"
+              :primary="false"
+              size="large"
+              width="200px"
+              :loading="isLoading"
+              @click="closeManageUserDialog()">
+              Cancel
+            </AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton v-if="!wasNewUserAdded || isUpdatingUser" id="submit-reply-request" size="large" width="200px" :loading="isLoading" @click="saveUser()">
+            <AppButton
+              v-if="!wasNewUserAdded || isUpdatingUser"
+              id="submit-reply-request"
+              size="large"
+              width="200px"
+              :loading="isLoading"
+              @click="saveUser()">
               {{ isAddingUser ? 'Add' : 'Update' }}
             </AppButton>
-            <AppButton v-if="wasNewUserAdded && !isUpdatingUser" id="submit-reply-request" size="large" width="200px" :loading="isLoading" @click="userOperationType = 'update'">Next</AppButton>
+            <AppButton
+              v-if="wasNewUserAdded && !isUpdatingUser"
+              id="submit-reply-request"
+              size="large"
+              width="200px"
+              :loading="isLoading"
+              @click="userOperationType = 'update'">
+              Next
+            </AppButton>
           </v-col>
         </v-row>
       </template>
     </AppDialog>
-    <DuplicateUserDialog :show="showDuplicateUserDialog" @close="toggleDuplicateUserDialog()" @proceed-confirmed="closeDialogAndSaveUser()" />
+    <DuplicateUserDialog
+      :show="showDuplicateUserDialog"
+      @close="toggleDuplicateUserDialog()"
+      @proceed-confirmed="closeDialogAndSaveUser()" />
   </v-container>
 </template>
 
@@ -391,14 +444,20 @@ export default {
      * Get facilities to add.
      */
     getFacilitiesToAdd(selectedFacilities, userFacilities) {
-      return selectedFacilities?.filter((selectedFacility) => !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId))
+      return selectedFacilities?.filter(
+        (selectedFacility) =>
+          !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId),
+      )
     },
 
     /**
      * Get facilities to remove.
      */
     getFacilitiesToRemove(selectedFacility, userFacilities) {
-      return userFacilities?.filter((userFacility) => !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId))
+      return userFacilities?.filter(
+        (userFacility) =>
+          !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId),
+      )
     },
 
     /**
@@ -440,7 +499,12 @@ export default {
      */
     async doesUserExist(firstName, lastName, email) {
       try {
-        const res = await OrganizationService.getOrganizationUsers(this.userInfo.organizationId, firstName ?? '', lastName, email)
+        const res = await OrganizationService.getOrganizationUsers(
+          this.userInfo.organizationId,
+          firstName ?? '',
+          lastName,
+          email,
+        )
 
         // No matches
         if (isEmpty(res)) return false

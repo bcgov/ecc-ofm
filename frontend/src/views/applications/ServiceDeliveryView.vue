@@ -3,7 +3,13 @@
     <div v-if="!isEmpty(currentApplication?.licences)">
       <v-row no-gutters class="mb-2">
         <v-col cols="12" align="right">
-          <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+          <AppButton
+            v-if="isEmpty(panel)"
+            id="expand-button"
+            :primary="false"
+            size="large"
+            width="200px"
+            @click="togglePanel">
             <v-icon>mdi-arrow-expand-vertical</v-icon>
             Expand All
           </AppButton>
@@ -14,7 +20,10 @@
         </v-col>
       </v-row>
       <v-expansion-panels v-model="panel" multiple>
-        <v-expansion-panel v-for="licence in currentApplication?.licences" :key="licence.licenceId" :value="licence.licenceId">
+        <v-expansion-panel
+          v-for="licence in currentApplication?.licences"
+          :key="licence.licenceId"
+          :value="licence.licenceId">
           <v-expansion-panel-title>
             <LicenceHeader :id="licence.licenceId" :licence="licence" />
           </v-expansion-panel-title>
@@ -31,7 +40,9 @@
             <v-card class="my-4 pa-4">
               <h4>Upload Documents</h4>
               <div>{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-              <AppMissingInfoError v-if="showErrorMessage && !isLicenceDocumentUploaded(licence)">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_LICENCE_UPLOAD }}</AppMissingInfoError>
+              <AppMissingInfoError v-if="showErrorMessage && !isLicenceDocumentUploaded(licence)">
+                {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_LICENCE_UPLOAD }}
+              </AppMissingInfoError>
               <div class="grey-card mt-2">
                 <v-card class="pa-4">
                   <AppDocumentUpload
@@ -56,7 +67,9 @@
       <v-card class="my-4 pa-4">
         <h4>Upload Documents</h4>
         <div>{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-        <AppMissingInfoError v-if="showErrorMessage && !isHealthAuthorityReportsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="showErrorMessage && !isHealthAuthorityReportsUploaded">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
+        </AppMissingInfoError>
         <div class="grey-card mt-2">
           <v-card class="pa-4">
             <AppDocumentUpload
@@ -86,11 +99,15 @@
         class="mt-4"></v-checkbox>
     </div>
 
-    <AppMissingInfoError v-else-if="showErrorMessage">{{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}</AppMissingInfoError>
+    <AppMissingInfoError v-else-if="showErrorMessage">
+      {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
+    </AppMissingInfoError>
 
     <p id="account-management" class="pb-3">
       Your organization account manager can update licence details in
-      <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">Account Management</router-link>
+      <router-link :to="{ name: 'manage-facility', params: { facilityId: currentApplication?.facilityId } }">
+        Account Management
+      </router-link>
     </p>
   </v-form>
 </template>
@@ -108,7 +125,14 @@ import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_LABELS, DOCUMENT_TYPES, OFM_PROGRAM_CODES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
+import {
+  APPLICATION_ERROR_MESSAGES,
+  APPLICATION_ROUTES,
+  DOCUMENT_LABELS,
+  DOCUMENT_TYPES,
+  OFM_PROGRAM_CODES,
+  SUPPORTED_DOCUMENTS_MESSAGE,
+} from '@/utils/constants'
 import format from '@/utils/format'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
@@ -184,15 +208,25 @@ export default {
     },
 
     isHealthAuthorityReportsUploaded() {
-      return !isEmpty(this.healthAuthorityReports?.documentsToUpload) || !isEmpty(this.healthAuthorityReports?.uploadedDocuments)
+      return (
+        !isEmpty(this.healthAuthorityReports?.documentsToUpload) ||
+        !isEmpty(this.healthAuthorityReports?.uploadedDocuments)
+      )
     },
 
     hasLicenceDocumentsToProcess() {
-      return Object.keys(this.licenceDocuments)?.some((licence) => !isEmpty(this.licenceDocuments[licence]?.documentsToUpload) || !isEmpty(this.licenceDocuments[licence]?.documentsToDelete))
+      return Object.keys(this.licenceDocuments)?.some(
+        (licence) =>
+          !isEmpty(this.licenceDocuments[licence]?.documentsToUpload) ||
+          !isEmpty(this.licenceDocuments[licence]?.documentsToDelete),
+      )
     },
 
     hasHealthAuthorityReportDocumentsToProcess() {
-      return !isEmpty(this.healthAuthorityReports?.documentsToUpload) || !isEmpty(this.healthAuthorityReports?.documentsToDelete)
+      return (
+        !isEmpty(this.healthAuthorityReports?.documentsToUpload) ||
+        !isEmpty(this.healthAuthorityReports?.documentsToDelete)
+      )
     },
   },
 
@@ -204,7 +238,10 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.ELIGIBILITY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -214,7 +251,10 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.OPERATING_COSTS,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },
@@ -243,7 +283,10 @@ export default {
       try {
         this.$emit('process', true)
         this.processing = true
-        let reloadApplication = !isEmpty(this.changedLicences) || this.hasLicenceDocumentsToProcess || this.hasHealthAuthorityReportDocumentsToProcess
+        let reloadApplication =
+          !isEmpty(this.changedLicences) ||
+          this.hasLicenceDocumentsToProcess ||
+          this.hasHealthAuthorityReportDocumentsToProcess
         const payload = {
           licenceDeclaration: this.licenceDeclaration,
         }
@@ -337,7 +380,9 @@ export default {
 
     setFormComplete() {
       this.isServiceDeliveryComplete =
-        this.currentApplication.licences.every((licence) => licence.isLicenceDetailsComplete && this.isLicenceDocumentUploaded(licence)) &&
+        this.currentApplication.licences.every(
+          (licence) => licence.isLicenceDetailsComplete && this.isLicenceDocumentUploaded(licence),
+        ) &&
         this.isHealthAuthorityReportsUploaded &&
         this.licenceDeclaration
     },
@@ -346,13 +391,17 @@ export default {
       this.currentApplication?.licences?.forEach(
         (licence) =>
           (this.licenceDocuments[licence?.licence] = {
-            uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(licence?.licence)),
+            uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) =>
+              document.documentType?.includes(licence?.licence),
+            ),
             documentsToUpload: [],
             documentsToDelete: [],
           }),
       )
       this.healthAuthorityReports = {
-        uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT)),
+        uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) =>
+          document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT),
+        ),
         documentsToUpload: [],
         documentsToDelete: [],
       }
@@ -360,7 +409,9 @@ export default {
 
     deleteUploadedLicenceDocuments(documentId, documentType) {
       const licence = documentType?.substring(documentType?.indexOf(' ') + 1)
-      const index = this.licenceDocuments[licence]?.uploadedDocuments?.findIndex((item) => item.documentId === documentId)
+      const index = this.licenceDocuments[licence]?.uploadedDocuments?.findIndex(
+        (item) => item.documentId === documentId,
+      )
       if (index > -1) {
         this.licenceDocuments[licence]?.documentsToDelete.push(documentId)
         this.licenceDocuments[licence]?.uploadedDocuments.splice(index, 1)
@@ -372,22 +423,37 @@ export default {
       await Promise.all(
         Object.keys(this.licenceDocuments)?.map(async (licence) => {
           if (!isEmpty(this.licenceDocuments[licence]?.documentsToUpload)) {
-            await DocumentService.createDocuments(this.licenceDocuments[licence]?.documentsToUpload, this.$route.params.applicationGuid)
+            await DocumentService.createDocuments(
+              this.licenceDocuments[licence]?.documentsToUpload,
+              this.$route.params.applicationGuid,
+            )
           }
           if (!isEmpty(this.licenceDocuments[licence]?.documentsToDelete)) {
-            this.licenceDocuments[licence]?.documentsToDelete.map(async (documentId) => await DocumentService.deleteDocument(documentId))
+            this.licenceDocuments[licence]?.documentsToDelete.map(
+              async (documentId) => await DocumentService.deleteDocument(documentId),
+            )
           }
         }),
       )
     },
 
     isLicenceDocumentUploaded(licence) {
-      return !isEmpty(this.licenceDocuments[licence.licence]?.documentsToUpload) || !isEmpty(this.licenceDocuments[licence.licence]?.uploadedDocuments)
+      return (
+        !isEmpty(this.licenceDocuments[licence.licence]?.documentsToUpload) ||
+        !isEmpty(this.licenceDocuments[licence.licence]?.uploadedDocuments)
+      )
     },
 
     async processHealthAuthorityReportDocuments() {
-      await DocumentService.createDocuments(this.healthAuthorityReports?.documentsToUpload, this.$route.params.applicationGuid)
-      await Promise.all(this.healthAuthorityReports?.documentsToDelete.map(async (documentId) => await DocumentService.deleteDocument(documentId)))
+      await DocumentService.createDocuments(
+        this.healthAuthorityReports?.documentsToUpload,
+        this.$route.params.applicationGuid,
+      )
+      await Promise.all(
+        this.healthAuthorityReports?.documentsToDelete.map(
+          async (documentId) => await DocumentService.deleteDocument(documentId),
+        ),
+      )
     },
 
     deleteUploadedHealthAuthorityReports(documentId, _) {

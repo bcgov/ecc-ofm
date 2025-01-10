@@ -1,11 +1,16 @@
 <template>
   <v-container fluid>
     <v-row v-if="loading" justify="center">
-      <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-height-screen"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        size="100"
+        :width="6"
+        color="#003366"
+        class="min-height-screen"></v-progress-circular>
     </v-row>
     <v-row v-else no-gutters>
       <v-col cols="12" md="3" lg="2">
-        <SurveyNavBar :sections="sections" :currentSection="currentSection" @update="updateCurrentSection" />
+        <SurveyNavBar :sections="sections" :current-section="currentSection" @update="updateCurrentSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
         <SurveySection
@@ -14,19 +19,24 @@
           :validation="validation"
           :responses="responsesToBeDisplayed"
           @update="updateClonedResponses"
-          @deleteTableResponses="deleteTableResponses"
+          @delete-table-responses="deleteTableResponses"
           @process="process" />
-        <v-alert v-if="showIncompleteSurveyErrorAlert" type="error" title="You cannot submit the report until it is complete.">
-          <AppButton class="mt-2" :primary="false" size="large" @click="goToIncompleteSection">Update Incomplete Section</AppButton>
+        <v-alert
+          v-if="showIncompleteSurveyErrorAlert"
+          type="error"
+          title="You cannot submit the report until it is complete.">
+          <AppButton class="mt-2" :primary="false" size="large" @click="goToIncompleteSection">
+            Update Incomplete Section
+          </AppButton>
         </v-alert>
         <AppNavButtons
           :loading="loading || processing"
-          :showBack="true"
-          :showCancel="showCancel"
-          :showSave="showSave"
-          :showNext="showNext"
-          :showSubmit="showSubmit"
-          :disableSubmit="!isSurveyComplete"
+          :show-back="true"
+          :show-cancel="showCancel"
+          :show-save="showSave"
+          :show-next="showNext"
+          :show-submit="showSubmit"
+          :disable-submit="!isSurveyComplete"
           @back="back"
           @cancel="toggleCancelDialog"
           @save="save(true)"
@@ -63,7 +73,14 @@ import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
 
 export default {
   name: 'SurveyView',
-  components: { AppButton, AppNavButtons, AppCancelDialog, SurveyNavBar, SurveySection, SurveySubmitConfirmationDialog },
+  components: {
+    AppButton,
+    AppNavButtons,
+    AppCancelDialog,
+    SurveyNavBar,
+    SurveySection,
+    SurveySubmitConfirmationDialog,
+  },
   mixins: [alertMixin, reportMixin],
   data() {
     return {
@@ -83,7 +100,10 @@ export default {
 
   computed: {
     readonly() {
-      return this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE || !this.hasPermission(this.PERMISSIONS?.SUBMIT_DRAFT_REPORTS)
+      return (
+        this.surveyResponse?.stateCode === CRM_STATE_CODES.INACTIVE ||
+        !this.hasPermission(this.PERMISSIONS?.SUBMIT_DRAFT_REPORTS)
+      )
     },
     showCancel() {
       return !this.readonly
@@ -148,7 +168,10 @@ export default {
         this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyTemplateId)
         await Promise.all(
           this.sections?.map(async (section) => {
-            section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
+            section.questions = await ReportsService.getSectionQuestions(
+              section?.sectionId,
+              this.surveyResponse?.facilityId,
+            )
           }),
         )
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
@@ -188,7 +211,9 @@ export default {
       if (this.readonly) return
       try {
         this.processing = true
-        const responsesToDelete = this.clonedResponses?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response))
+        const responsesToDelete = this.clonedResponses?.filter(
+          (response) => response.questionResponseId && this.isHiddenOrDeleted(response),
+        )
         let callGetQuestionsResponses = responsesToDelete?.length > 0
         await Promise.all(
           responsesToDelete?.map(async (response) => {
@@ -201,7 +226,9 @@ export default {
           this.clonedResponses?.map(async (response) => {
             if (this.isHiddenOrDeleted(response)) return
             const originalResponse = this.getOriginalQuestionResponse(response)
-            response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
+            response.value = Array.isArray(response.value)
+              ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
+              : response.value
             if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
               await ReportsService.createQuestionResponse(response)
               callGetQuestionsResponses = true
@@ -258,14 +285,16 @@ export default {
     },
 
     updateClonedResponses(updatedResponse) {
-      /* eslint-disable indent */
       const index = this.isTableQuestionResponse(updatedResponse)
         ? this.clonedResponses.findIndex(
             (item) =>
-              !this.isHiddenOrDeleted(item) && item.questionId === updatedResponse?.questionId && item.tableQuestionId === updatedResponse?.tableQuestionId && item.rowId === updatedResponse?.rowId,
+              !this.isHiddenOrDeleted(item) &&
+              item.questionId === updatedResponse?.questionId &&
+              item.tableQuestionId === updatedResponse?.tableQuestionId &&
+              item.rowId === updatedResponse?.rowId,
           )
         : this.clonedResponses.findIndex((item) => item.questionId === updatedResponse?.questionId)
-      /* eslint-enable indent */
+
       if (index > -1) {
         this.clonedResponses[index].value = updatedResponse?.value
       } else {
@@ -364,7 +393,9 @@ export default {
     resetResponsesForHiddenQuestions() {
       this.clonedResponses?.forEach((response) => {
         const question = this.currentSection?.questions?.find(
-          (item) => item.questionId === response.questionId || (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId),
+          (item) =>
+            item.questionId === response.questionId ||
+            (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId),
         )
         response.hide = question?.hide
         response.value = question?.hide ? null : response.value
@@ -385,13 +416,18 @@ export default {
 
     addInheritanceValuesToChildrenQuestions(section, parentsQuestion) {
       let parentsResponses = this.clonedResponses?.filter(
-        (item) => !this.isHiddenOrDeleted(item) && item.questionId === parentsQuestion.questionId && item.tableQuestionId === parentsQuestion.tableQuestionId,
+        (item) =>
+          !this.isHiddenOrDeleted(item) &&
+          item.questionId === parentsQuestion.questionId &&
+          item.tableQuestionId === parentsQuestion.tableQuestionId,
       )
       parentsResponses = parentsResponses.sort((response1, response2) => {
         return response1.rowId - response2.rowId
       })
       parentsQuestion?.businessRules?.forEach((rule) => {
-        const childQuestion = section?.questions?.find((item) => item.questionId === rule.valueInheritanceChildQuestionId)
+        const childQuestion = section?.questions?.find(
+          (item) => item.questionId === rule.valueInheritanceChildQuestionId,
+        )
         if (childQuestion) {
           childQuestion.inheritanceValues = parentsResponses?.map((response) => response.value)
         }
@@ -404,7 +440,11 @@ export default {
           const tableQuestion = section?.questions?.find((item) => item.questionId === question.tableQuestionId)
           if (tableQuestion?.hide) return
           const response = this.clonedResponses?.find(
-            (response) => !response.delete && response.questionId === question.questionId && response.tableQuestionId === question.tableQuestionId && response.rowId === index,
+            (response) =>
+              !response.delete &&
+              response.questionId === question.questionId &&
+              response.tableQuestionId === question.tableQuestionId &&
+              response.rowId === index,
           )
           // Update existing row
           if (response) {
@@ -431,13 +471,17 @@ export default {
 
     verifySectionComplete(section) {
       if (!section) return
-      const responseRequiredQuestions = section?.questions?.filter((question) => !question.hide && question.responseRequired)
+      const responseRequiredQuestions = section?.questions?.filter(
+        (question) => !question.hide && question.responseRequired,
+      )
       const isComplete = responseRequiredQuestions?.every((question) => {
         return this.clonedResponses.some(
           (response) =>
             !this.isHiddenOrDeleted(response) &&
-            ((this.isLastSection(section) && response.value === 'Yes') || (!this.isLastSection(section) && !isEmpty(response.value))) &&
-            (response.questionId === question.questionId || (this.isTableQuestion(question) && response.tableQuestionId === question.questionId)),
+            ((this.isLastSection(section) && response.value === 'Yes') ||
+              (!this.isLastSection(section) && !isEmpty(response.value))) &&
+            (response.questionId === question.questionId ||
+              (this.isTableQuestion(question) && response.tableQuestionId === question.questionId)),
         )
       })
       section.isComplete = isComplete

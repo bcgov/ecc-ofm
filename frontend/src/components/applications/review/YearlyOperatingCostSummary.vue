@@ -8,7 +8,9 @@
             <v-col cols="12" sm="7">
               <p>Maintenance and Minor Repairs</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.insuranceCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.insuranceCost) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -16,7 +18,9 @@
             <v-col cols="12" sm="7">
               <p>Upkeep</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.upkeepLabourCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.upkeepLabourCost) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -26,7 +30,9 @@
             <v-col cols="12" sm="7">
               <p>Office Furniture and Equipment</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.furnitureEquipmentsCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.furnitureEquipmentsCost) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -34,7 +40,9 @@
             <v-col cols="12" sm="7">
               <p>Facility Maintenance and Minor Improvements</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.maintenanceRepairsCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.maintenanceRepairsCost) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -44,7 +52,9 @@
             <v-col cols="12" sm="7">
               <p>Janitorial Services</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.suppliesCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.suppliesCost) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -52,7 +62,9 @@
             <v-col cols="12" sm="7">
               <p>Utilities</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.utilitiesCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.utilitiesCost) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -62,7 +74,9 @@
             <v-col cols="12" sm="7">
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2 total-yearly-cost">$ {{ format.formatDecimalNumber(currentApplication?.totalYearlyOperatingCosts) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2 total-yearly-cost">
+              $ {{ format.formatDecimalNumber(currentApplication?.totalYearlyOperatingCosts) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>

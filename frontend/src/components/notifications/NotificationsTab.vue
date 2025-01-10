@@ -4,11 +4,19 @@
       <v-row>
         <v-col class="mt-3 ml-3">
           <div>
-            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
+            <AppButton
+              class="mx-1 notifications-button"
+              size="small"
+              :primary="false"
+              @click="toggleMarkUnreadButtonInNotificationTable(false)">
               <v-icon class="mr-1" left>mdi-email-outline</v-icon>
               <span>Mark unread</span>
             </AppButton>
-            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
+            <AppButton
+              class="mx-1 notifications-button"
+              size="small"
+              :primary="false"
+              @click="toggleMarkReadButton(true)">
               <v-icon class="mr-1" left>mdi-email-open-outline</v-icon>
               <span>Mark read</span>
             </AppButton>
@@ -24,7 +32,9 @@
       </v-skeleton-loader>
     </v-col>
     <v-col cols="12" md="6">
-      <NotificationDetails :notification-id="selectedNotificationId" @toggle-mark-unread-button-in-notification-details="toggleMarkUnreadButtonInNotificationDetails" />
+      <NotificationDetails
+        :notification-id="selectedNotificationId"
+        @toggle-mark-unread-button-in-notification-details="toggleMarkUnreadButtonInNotificationDetails" />
     </v-col>
   </v-row>
 </template>

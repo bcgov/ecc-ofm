@@ -7,7 +7,14 @@
       </AppButton>
     </v-col>
     <v-col cols="12" sm="6" lg="4" class="pb-0">
-      <v-text-field v-show="showFilterInput" v-model.trim="statusFilter" placeholder="Filter by Status" variant="outlined" density="compact" :disabled="loading" hide-details />
+      <v-text-field
+        v-show="showFilterInput"
+        v-model.trim="statusFilter"
+        placeholder="Filter by Status"
+        variant="outlined"
+        density="compact"
+        :disabled="loading"
+        hide-details />
     </v-col>
   </v-row>
 </template>

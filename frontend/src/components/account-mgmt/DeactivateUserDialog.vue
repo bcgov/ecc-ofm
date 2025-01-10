@@ -1,15 +1,36 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
+  <AppDialog
+    v-model="isDisplayed"
+    title="Confirm"
+    :is-loading="isLoading"
+    persistent
+    max-width="50%"
+    @close="closeDialog">
     <template #content>
       <div align="center">Are you sure you want to deactivate this BCeID: {{ user?.userName }}?</div>
     </template>
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
+          <AppButton
+            id="dialog-go-back"
+            :primary="false"
+            size="large"
+            width="250px"
+            :loading="isLoading"
+            @click="closeDialog">
+            Go back
+          </AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-deactivate-user" size="large" width="250px" :loading="isLoading" @click="deactivateUser">Deactivate user</AppButton>
+          <AppButton
+            id="dialog-deactivate-user"
+            size="large"
+            width="250px"
+            :loading="isLoading"
+            @click="deactivateUser">
+            Deactivate user
+          </AppButton>
         </v-col>
       </v-row>
     </template>

@@ -5,7 +5,9 @@
 
     <p>Carefully review your funding agreement.</p>
 
-    <AppButton size="medium" width="240px" class="mt-2" :loading="loading" @click="goToDeclaration()">Scroll to bottom</AppButton>
+    <AppButton size="medium" width="240px" class="mt-2" :loading="loading" @click="goToDeclaration()">
+      Scroll to bottom
+    </AppButton>
 
     <h4 class="my-10">Service Delivery Details</h4>
 
@@ -47,42 +49,65 @@
         <div class="pa-lg-7 pa-5 overflow-y-auto grey-div-with-border">
           I do hereby certify that I am the
           <strong>authorized signing authority</strong>
-          and that all of the information provided is true and complete to the best of my knowledge and belief. I consent to the Ministry contacting other branches within the Ministry and other
-          Province ministries to validate the accuracy of any information that I have provided.
+          and that all of the information provided is true and complete to the best of my knowledge and belief. I
+          consent to the Ministry contacting other branches within the Ministry and other Province ministries to
+          validate the accuracy of any information that I have provided.
           <br />
           <br />
-          By completing and submitting this Program Confirmation Form (the Form) electronically, I hereby confirm that I have carefully read this Form and the corresponding terms and conditions of the
-          Operating Funding Model (OFM) Funding Agreement (the Funding Agreement) and that I agree to be bound by such terms and conditions. I further confirm that by clicking “I agree” below, I
-          represent and warrant that:
+          By completing and submitting this Program Confirmation Form (the Form) electronically, I hereby confirm that I
+          have carefully read this Form and the corresponding terms and conditions of the Operating Funding Model (OFM)
+          Funding Agreement (the Funding Agreement) and that I agree to be bound by such terms and conditions. I further
+          confirm that by clicking “I agree” below, I represent and warrant that:
           <br />
           <br />
           <ol class="pl-4">
-            <li class="pl-4">I am the authorized representative and signing authority of the Provider as named in the OFM Agreement (the Provider);</li>
             <li class="pl-4">
-              I have authority to submit the Form on behalf of the Provider and that by clicking “I agree”, I do hereby bind the Provider to the terms and conditions of the Funding Agreement if the
-              Province accepts this Form and enrolls the Provider in the Operating Funding Model Program; and
+              I am the authorized representative and signing authority of the Provider as named in the OFM Agreement
+              (the Provider);
             </li>
             <li class="pl-4">
-              All information provided in the Form or otherwise in support of the Provider to receive funding under the Funding Agreement is true and complete to the best of my knowledge and belief. I
-              understand and acknowledge that providing false or misleading information either on the Form or otherwise to the Province to obtain any funding under the Funding Agreement or otherwise
-              failing to comply with the Funding Agreement could result in certain penalties or repayment obligations, or both, under any or all of the Child Care BC Act, any successor legislation, or
-              the Funding Agreement.
+              I have authority to submit the Form on behalf of the Provider and that by clicking “I agree”, I do hereby
+              bind the Provider to the terms and conditions of the Funding Agreement if the Province accepts this Form
+              and enrolls the Provider in the Operating Funding Model Program; and
+            </li>
+            <li class="pl-4">
+              All information provided in the Form or otherwise in support of the Provider to receive funding under the
+              Funding Agreement is true and complete to the best of my knowledge and belief. I understand and
+              acknowledge that providing false or misleading information either on the Form or otherwise to the Province
+              to obtain any funding under the Funding Agreement or otherwise failing to comply with the Funding
+              Agreement could result in certain penalties or repayment obligations, or both, under any or all of the
+              Child Care BC Act, any successor legislation, or the Funding Agreement.
               <br />
               <br />
-              I understand and acknowledge that until such time as the Province confirms approval or temporary approval of enrolment, in writing the Provider is not formally enrolled in the Program.
-              The Province is not responsible for any pre-payments the Provider may make in anticipation of enrolment in either of these initiatives and any pre-payments made are at the Provider's own
-              risk.
+              I understand and acknowledge that until such time as the Province confirms approval or temporary approval
+              of enrolment, in writing the Provider is not formally enrolled in the Program. The Province is not
+              responsible for any pre-payments the Provider may make in anticipation of enrolment in either of these
+              initiatives and any pre-payments made are at the Provider's own risk.
             </li>
           </ol>
         </div>
       </v-col>
 
-      <v-checkbox v-model="fundingAgreement.agreeConsentCertify" class="ml-3" :disabled="readonly" color="primary" label="I agree, consent and certify" />
+      <v-checkbox
+        v-model="fundingAgreement.agreeConsentCertify"
+        class="ml-3"
+        :disabled="readonly"
+        color="primary"
+        label="I agree, consent and certify" />
     </v-row>
 
     <v-row v-if="!loading" class="justify-center justify-sm-space-between mx-md-7 my-3">
       <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
-      <AppButton id="submit-funding-agreement" size="large" width="240px" class="mt-2" :disabled="submitDisabled" :loading="loading" @click="submit()">Submit</AppButton>
+      <AppButton
+        id="submit-funding-agreement"
+        size="large"
+        width="240px"
+        class="mt-2"
+        :disabled="submitDisabled"
+        :loading="loading"
+        @click="submit()">
+        Submit
+      </AppButton>
     </v-row>
   </v-container>
 </template>
@@ -128,7 +153,9 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     readonly() {
-      const isExpenseAuthority = this.userInfo?.facilities?.some((facility) => facility.facilityId === this.fundingAgreement?.facilityId && facility.isExpenseAuthority)
+      const isExpenseAuthority = this.userInfo?.facilities?.some(
+        (facility) => facility.facilityId === this.fundingAgreement?.facilityId && facility.isExpenseAuthority,
+      )
       return !isExpenseAuthority || LOCKED_STATUSES.includes(this.fundingAgreement?.statusCode)
     },
     submitDisabled() {

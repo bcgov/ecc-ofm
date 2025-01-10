@@ -4,7 +4,13 @@
       <AppLabel>Not for Profit Information</AppLabel>
       <v-card variant="outlined" class="soft-outline px-2 py-6 my-4">
         <AppLabel>Date of Incorporation</AppLabel>
-        <AppDateInput id="date-to" v-model="model.dateOfIncorporation" :rules="[...rules.required, rules.MMDDYYYY]" :max="todayDate" label="Select The Date" class="mt-6 mx-6" />
+        <AppDateInput
+          id="date-to"
+          v-model="model.dateOfIncorporation"
+          :rules="[...rules.required, rules.MMDDYYYY]"
+          :max="todayDate"
+          label="Select The Date"
+          class="mt-6 mx-6" />
       </v-card>
       <v-card v-if="isReferenceLetterRequired" variant="outlined" class="soft-outline px-2 py-6 my-4 w-100">
         <v-row no-gutters>

@@ -80,7 +80,9 @@ export default {
 
   computed: {
     filteredPaymentHistory() {
-      const filteredPayments = this.paymentHistory?.filter((payment) => this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode))
+      const filteredPayments = this.paymentHistory?.filter((payment) =>
+        this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode),
+      )
       filteredPayments?.sort((a, b) => {
         const dateA = new Date(a.invoiceDate)
         const dateB = new Date(b.invoiceDate)
@@ -89,7 +91,9 @@ export default {
       return filteredPayments
     },
     filteredScheduledPayments() {
-      const filteredPayments = this.scheduledPayments?.filter((payment) => this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode))
+      const filteredPayments = this.scheduledPayments?.filter((payment) =>
+        this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode),
+      )
       filteredPayments?.sort((a, b) => {
         const dateA = new Date(a.invoiceDate)
         const dateB = new Date(b.invoiceDate)
@@ -137,7 +141,10 @@ export default {
     // YTD date filter is not applicable for Scheduled Payments, so we'll return all outstanding payments if Date Filter = YTD
     async loadScheduledPayments() {
       let scheduledPayments = []
-      const dateFrom = this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.CUSTOM ? this.searchQueries?.dateFrom : moment().startOf('day')
+      const dateFrom =
+        this.searchQueries?.dateFilterType === DATE_FILTER_TYPES.CUSTOM
+          ? this.searchQueries?.dateFrom
+          : moment().startOf('day')
       let dateTo
       switch (this.searchQueries?.dateFilterType) {
         case DATE_FILTER_TYPES.THREE_MONTHS:
@@ -152,7 +159,11 @@ export default {
       }
       await Promise.all(
         this.searchQueries?.facilities?.map(async (facility) => {
-          const scheduledPaymentsForFacility = await PaymentService.getActivePaymentsByFacilityId(facility.facilityId, dateFrom, dateTo)
+          const scheduledPaymentsForFacility = await PaymentService.getActivePaymentsByFacilityId(
+            facility.facilityId,
+            dateFrom,
+            dateTo,
+          )
           scheduledPayments = scheduledPayments?.concat(scheduledPaymentsForFacility)
         }),
       )

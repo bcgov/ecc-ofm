@@ -7,7 +7,11 @@
             <v-icon class="mr-1" left>mdi-email-plus-outline</v-icon>
             <span>New message</span>
           </AppButton>
-          <AppButton size="small" class="messages-button mx-1" :primary="false" @click="toggleMarkUnreadButtonInMessageTable()">
+          <AppButton
+            size="small"
+            class="messages-button mx-1"
+            :primary="false"
+            @click="toggleMarkUnreadButtonInMessageTable()">
             <v-icon class="mr-1" left>mdi-email-outline</v-icon>
             <span>Mark unread</span>
           </AppButton>
@@ -26,7 +30,9 @@
       </v-skeleton-loader>
     </v-col>
     <v-col sm="12" md="6">
-      <RequestConversations :assistance-request-id="selectedAssistanceRequestId" @toggle-mark-unread-button-in-conversation-thread="toggleMarkUnreadButtonInConversationThread" />
+      <RequestConversations
+        :assistance-request-id="selectedAssistanceRequestId"
+        @toggle-mark-unread-button-in-conversation-thread="toggleMarkUnreadButtonInConversationThread" />
     </v-col>
   </v-row>
   <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />

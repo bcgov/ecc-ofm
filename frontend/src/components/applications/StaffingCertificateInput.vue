@@ -1,7 +1,15 @@
 <template>
   <v-form ref="form">
     <v-row no-gutters class="mt-8">
-      <v-col v-for="(certificate, index) in certificates" :key="index" cols="12" md="6" lg="4" xl="3" class="px-6 px-lg-8 mb-2" align="center">
+      <v-col
+        v-for="(certificate, index) in certificates"
+        :key="index"
+        cols="12"
+        md="6"
+        lg="4"
+        xl="3"
+        class="px-6 px-lg-8 mb-2"
+        align="center">
         <v-row no-gutters>
           <v-col cols="12" sm="1" class="pt-2">{{ index + 1 }}.</v-col>
           <v-col cols="12" sm="4">

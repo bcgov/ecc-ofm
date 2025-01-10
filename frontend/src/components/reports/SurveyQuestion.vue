@@ -4,7 +4,15 @@
       <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
         <strong>{{ question?.fixedResponse ? question?.fixedResponse : '0' }}</strong>
       </div>
-      <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
+      <AppNumberInput
+        v-else
+        v-model.lazy="updatedResponse.value"
+        :format="NUMBER_FORMAT"
+        maxlength="12"
+        :rules="validationRules"
+        :hide-details="readonly"
+        :disabled="disabled"
+        min-width="150px" />
     </div>
 
     <div v-if="question?.type === SURVEY_QUESTION_TYPES.CURRENCY">
@@ -27,7 +35,15 @@
       <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
         <strong>{{ question?.fixedResponse }}</strong>
       </div>
-      <v-text-field v-else v-model.trim="updatedResponse.value" variant="outlined" density="compact" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
+      <v-text-field
+        v-else
+        v-model.trim="updatedResponse.value"
+        variant="outlined"
+        density="compact"
+        :rules="validationRules"
+        :hide-details="readonly"
+        :disabled="disabled"
+        min-width="150px" />
     </div>
 
     <v-textarea
@@ -86,7 +102,10 @@
       <template #prepend-item>
         <v-list-item title="Select All" @click="toggleAllItems">
           <template #prepend>
-            <v-checkbox-btn :color="someItemsSelected ? '#003366' : undefined" :indeterminate="someItemsSelected && !allItemsSelected" :model-value="someItemsSelected"></v-checkbox-btn>
+            <v-checkbox-btn
+              :color="someItemsSelected ? '#003366' : undefined"
+              :indeterminate="someItemsSelected && !allItemsSelected"
+              :model-value="someItemsSelected"></v-checkbox-btn>
           </template>
         </v-list-item>
         <v-divider class="mt-2"></v-divider>
@@ -162,13 +181,19 @@ export default {
     response: {
       handler() {
         this.updatedResponse.value =
-          this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE ? convertStringToArray(this.response.value, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : this.response.value
+          this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE
+            ? convertStringToArray(this.response.value, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
+            : this.response.value
       },
       deep: true,
     },
     'updatedResponse.value': {
       handler() {
-        if ((isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) || this.response?.value === this.updatedResponse?.value) return
+        if (
+          (isEmpty(this.response) && isEmpty(this.updatedResponse?.value)) ||
+          this.response?.value === this.updatedResponse?.value
+        )
+          return
         this.$emit('update', cloneDeep(this.updatedResponse))
       },
       deep: true,
@@ -205,7 +230,10 @@ export default {
       this.updatedResponse.hasValueInheritanceChildren = this.question?.hasValueInheritanceChildren
       this.updatedResponse.surveyResponseId = this.$route.params.surveyResponseGuid
       if (this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE) {
-        this.updatedResponse.value = convertStringToArray(this.updatedResponse.value, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
+        this.updatedResponse.value = convertStringToArray(
+          this.updatedResponse.value,
+          SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR,
+        )
       } else if (
         [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.question?.type) &&
         isEmpty(this.updatedResponse.questionResponseId) &&

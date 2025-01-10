@@ -7,11 +7,14 @@
       <v-col v-if="showFacility" class="header-facility justify-md-end justify-sm-start" cols="12" md="6">
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">
+            <v-list-item
+              v-for="facility in userInfo.facilities"
+              :key="facility.facilityId"
+              @click="changeFacility(facility)">
               <v-list-item-title>{{ facility.facilityName }}</v-list-item-title>
             </v-list-item>
           </v-list>

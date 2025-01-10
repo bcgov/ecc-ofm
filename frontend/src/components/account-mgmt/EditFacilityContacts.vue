@@ -65,8 +65,25 @@
                   <v-row v-if="editMode && editable">
                     <v-col cols="12" class="pb-4">
                       <v-row justify="end">
-                        <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="cancelEditContacts()">Cancel</AppButton>
-                        <AppButton id="save" :disabled="isSaveDisabled" :primary="true" size="large" :loading="loading" class="mr-4" @click="saveContactsToUpdate()">Save</AppButton>
+                        <AppButton
+                          id="cancel"
+                          :primary="false"
+                          size="large"
+                          :loading="loading"
+                          class="mr-6"
+                          @click="cancelEditContacts()">
+                          Cancel
+                        </AppButton>
+                        <AppButton
+                          id="save"
+                          :disabled="isSaveDisabled"
+                          :primary="true"
+                          size="large"
+                          :loading="loading"
+                          class="mr-4"
+                          @click="saveContactsToUpdate()">
+                          Save
+                        </AppButton>
                       </v-row>
                     </v-col>
                   </v-row>
@@ -207,8 +224,12 @@ export default {
       const contactToAdd = this.contactsAvailableForAdd.find((item) => item.contactId === this.contactId)
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
-      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter((obj) => obj.contactId !== contactToAdd.contactId)
-      this.updatedContactsToRemove = this.updatedContactsToRemove.filter((obj) => obj.contactId !== contactToAdd.contactId)
+      this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(
+        (obj) => obj.contactId !== contactToAdd.contactId,
+      )
+      this.updatedContactsToRemove = this.updatedContactsToRemove.filter(
+        (obj) => obj.contactId !== contactToAdd.contactId,
+      )
       this.contactId = null
       this.removeFocus()
     },

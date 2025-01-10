@@ -7,7 +7,13 @@
   <v-form ref="form" class="mt-10">
     <v-row v-if="!loading" no-gutters class="mb-2">
       <v-col cols="12" align="right">
-        <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton
+          v-if="isEmpty(panel)"
+          id="expand-button"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
@@ -17,7 +23,13 @@
         </AppButton>
       </v-col>
     </v-row>
-    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :is-loading="loading" persistent max-width="40%" @close="toggleCancelDialog">
+    <AppDialog
+      v-model="showCancelDialog"
+      title="Cancel Changes"
+      :is-loading="loading"
+      persistent
+      max-width="40%"
+      @close="toggleCancelDialog">
       <template #content>
         <v-row class="mb-2">
           <v-col class="text-center">
@@ -29,10 +41,19 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="go-back-button" :primary="false" size="large" width="200px" :to="{ name: 'applications-history' }">Cancel Changes</AppButton>
+            <AppButton
+              id="go-back-button"
+              :primary="false"
+              size="large"
+              width="200px"
+              :to="{ name: 'applications-history' }">
+              Cancel Changes
+            </AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="cancel-button" size="large" width="200px" @click="toggleCancelDialog()">Stay on page</AppButton>
+            <AppButton id="cancel-button" size="large" width="200px" @click="toggleCancelDialog()">
+              Stay on page
+            </AppButton>
           </v-col>
         </v-row>
       </template>
@@ -45,7 +66,10 @@
           <div class="supplementary-header">
             <p class="supplementary-header-label">Core Services Allowance</p>
           </div>
-          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+          <v-expansion-panel
+            v-for="panelComponent in CORE_SERVICES_PANELS"
+            :key="panelComponent.id"
+            :value="panelComponent.id">
             <div v-if="!isEmpty(getModelsByType(panelComponent.supplementaryType))">
               <v-expansion-panel-title>
                 <!-- page complete -->
@@ -62,7 +86,9 @@
               <v-expansion-panel-text>
                 <IndigenousProgrammingSummary
                   v-if="panelComponent.supplementaryType === SUPPLEMENTARY_TYPES.INDIGENOUS"
-                  :indigenous-programming-models="getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS)"></IndigenousProgrammingSummary>
+                  :indigenous-programming-models="
+                    getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS)
+                  "></IndigenousProgrammingSummary>
                 <SupportNeedsSummary
                   v-if="panelComponent.supplementaryType === SUPPLEMENTARY_TYPES.SUPPORT"
                   :support-models="getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)"
@@ -91,7 +117,9 @@
                 </div>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <TransportationSummary :draft-transport-models="getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)" :all-transport-models="allTransportModels"></TransportationSummary>
+                <TransportationSummary
+                  :draft-transport-models="getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)"
+                  :all-transport-models="allTransportModels"></TransportationSummary>
               </v-expansion-panel-text>
             </div>
           </v-expansion-panel>
@@ -124,7 +152,13 @@ import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummar
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
+import {
+  INDIG_CHECKBOX_LABELS,
+  SUPPORT_CHECKBOX_LABELS,
+  SUPP_TERM_CODES,
+  CORE_SERVICES_PANELS,
+  DISCRETIONARY_PANEL,
+} from '@/utils/constants/suppConstants'
 import { hasDuplicateVIN } from '@/utils/common'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
@@ -187,22 +221,39 @@ export default {
     },
     isIndigenousComplete() {
       const model = this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS)
-      if (!model?.indigenousFundingModel.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)) {
+      if (
+        !model?.indigenousFundingModel.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
+      ) {
         return true
       }
-      return model?.indigenousFundingModel.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value) && !isEmpty(model.indigenousOtherDescription)
+      return (
+        model?.indigenousFundingModel.includes(
+          this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+        ) && !isEmpty(model.indigenousOtherDescription)
+      )
     },
     isSupportComplete() {
       const model = this.getModel(SUPPLEMENTARY_TYPES.SUPPORT)
-      if (!model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)) {
+      if (
+        !model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
+      ) {
         return true
       }
-      return model?.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value) && !isEmpty(model.supportOtherDescription)
+      return (
+        model?.supportFundingModel.includes(
+          this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+        ) && !isEmpty(model.supportOtherDescription)
+      )
     },
     isTransportComplete() {
       const models = this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)
       return models.every((model) => {
-        if (!model.VIN || !model.estimatedMileage || !model.odometer || hasDuplicateVIN(model, this.allTransportModels)) {
+        if (
+          !model.VIN ||
+          !model.estimatedMileage ||
+          !model.odometer ||
+          hasDuplicateVIN(model, this.allTransportModels)
+        ) {
           return false
         } else if (model.monthlyLease == 0) {
           return model.uploadedDocuments?.length != 0
@@ -211,10 +262,20 @@ export default {
       })
     },
     isApplicationComplete() {
-      return this.isIndigenousComplete && this.isSupportComplete && this.isTransportComplete && this.hasSupportApplicationAndInclusionPolicy
+      return (
+        this.isIndigenousComplete &&
+        this.isSupportComplete &&
+        this.isTransportComplete &&
+        this.hasSupportApplicationAndInclusionPolicy
+      )
     },
     readonly() {
-      return !this.isApplicationComplete || this.processing || this.loading || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return (
+        !this.isApplicationComplete ||
+        this.processing ||
+        this.loading ||
+        !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      )
     },
     //this function disables submit if user has filled out a Support Needs App - but then after removes inclusion policy.
     //The logic was moved out of isSupportComplete() so the red 'missing info' messaging won't appear when user is missing inclusion policy
@@ -225,7 +286,10 @@ export default {
       return !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT))
     },
     hasCoreServiesApplication() {
-      return !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)) || !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS))
+      return (
+        !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)) ||
+        !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS))
+      )
     },
   },
   watch: {
@@ -234,7 +298,10 @@ export default {
         if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)) {
           await this.saveApplication()
         }
-        this.$router.push({ name: 'supp-allowances-form', params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: 'supp-allowances-form',
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     cancel: {
@@ -276,12 +343,19 @@ export default {
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
-        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid, true)
+        this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
+          this.$route.params.applicationGuid,
+          true,
+        )
 
         this.setSuppTermDates()
         //we need submitted transport applications to verify that all VINs are unique, even in past applications
         this.allTransportModels = [...this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)]
-        this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
+        this.models = this.models.filter(
+          (el) =>
+            el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT ||
+            el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED,
+        )
 
         for (const el of this.models) {
           if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
@@ -344,7 +418,12 @@ export default {
       }
     },
     setSubmit() {
-      this.$emit('setSubmit', this.supplementaryDeclaration && this.isApplicationComplete && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING))
+      this.$emit(
+        'setSubmit',
+        this.supplementaryDeclaration &&
+          this.isApplicationComplete &&
+          this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING),
+      )
     },
     async saveApplication(showAlert = false, isSubmit = false) {
       try {

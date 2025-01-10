@@ -10,10 +10,14 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="return-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">Return to home</AppButton>
+          <AppButton id="return-home-button" :primary="false" size="large" width="200px" :to="{ name: 'home' }">
+            Return to home
+          </AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="view-reports-button" size="large" width="200px" :to="{ name: 'reporting' }">View reports</AppButton>
+          <AppButton id="view-reports-button" size="large" width="200px" :to="{ name: 'reporting' }">
+            View reports
+          </AppButton>
         </v-col>
       </v-row>
     </template>

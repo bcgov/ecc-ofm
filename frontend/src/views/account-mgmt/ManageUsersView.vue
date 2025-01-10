@@ -10,7 +10,11 @@
         <FacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
       <v-col class="d-flex justify-end align-end pb-0">
-        <AppButton variant="text" @click="toggleDialog({})" :disabled="loading" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">
+        <AppButton
+          v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)"
+          variant="text"
+          :disabled="loading"
+          @click="toggleDialog({})">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
@@ -20,34 +24,46 @@
       <v-col class="pt-0 pb-0">
         <!-- Users Table -->
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded="expanded">
+          <v-data-table
+            :headers="headersUsers"
+            :items="filteredUserFacilities"
+            item-key="contactId"
+            item-value="contactId"
+            show-expand
+            density="compact"
+            :expanded="expanded">
             <!-- Slot to customize expand row event -->
-            <template v-slot:item.data-table-expand="{ item }">
-              <AppButton @click.stop="toggleExpand(item)" variant="text">
+            <template #item.data-table-expand="{ item }">
+              <AppButton variant="text" @click.stop="toggleExpand(item)">
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
 
-            <template v-slot:item.actions="{ item }">
-              <AppButton @click.stop="toggleDialog(item)" variant="text" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
+            <template #item.actions="{ item }">
+              <AppButton
+                v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)"
+                variant="text"
+                @click.stop="toggleDialog(item)">
+                edit
+              </AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
 
-            <template v-slot:item.role="{ item }">
+            <template #item.role="{ item }">
               <span>{{ item.role?.roleName }}</span>
             </template>
 
-            <template v-slot:item.isExpenseAuthority="{ item }">
+            <template #item.isExpenseAuthority="{ item }">
               <span>{{ isExpenseAuthority(item) }}</span>
             </template>
 
-            <template v-slot:item.stateCode="{ item }">
+            <template #item.stateCode="{ item }">
               <span>{{ getStatusDescription(item) }}</span>
             </template>
 
             <!-- Slot to customize expand row content -->
 
-            <template v-slot:expanded-row="{ item }">
+            <template #expanded-row="{ item }">
               <tr>
                 <td></td>
                 <td colspan="6" class="pl-0">
@@ -59,19 +75,28 @@
                   <v-row>
                     <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" items-per-page="-1" density="compact">
-                        <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
+                      <v-data-table
+                        :headers="headersFacilities"
+                        :items="item.facilities"
+                        item-key="facilityId"
+                        items-per-page="-1"
+                        density="compact">
+                        <template #item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
 
-                        <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
+                        <template #item.isExpenseAuthority="{ item }">
+                          {{ item.isExpenseAuthority ? 'Yes' : 'No' }}
+                        </template>
 
-                        <template v-slot:bottom><!-- no paging --></template>
+                        <template #bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
                     <v-col cols="12"></v-col>
                   </v-row>
                 </td>
                 <td class="pl-0">
-                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="deactivateUser(item)">Deactivate user</AppButton>
+                  <AppButton v-if="showDeactivateUserButton(item)" variant="text" @click="deactivateUser(item)">
+                    Deactivate user
+                  </AppButton>
                 </td>
               </tr>
             </template>
@@ -79,9 +104,20 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
-    <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
-    <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
-    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
+    <ManageUserDialog
+      :show="showManageUserDialog"
+      :updating-user="userToUpdate"
+      @close="toggleDialog"
+      @close-refresh="closeDialogAndRefresh"
+      @update-success-event="updateSuccessEvent" />
+    <DeactivateUserDialog
+      :show="showDeactivateUserDialog"
+      :user="userToDeactivate"
+      @close="toggleDeactivateUserDialog"
+      @deactivate="getUsersAndFacilities" />
+    <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading">
+      Account Management
+    </AppBackButton>
   </v-container>
 </template>
 
@@ -140,7 +176,13 @@ export default {
     filteredUserFacilities() {
       try {
         if (!this.facilityNameFilter) return this.sortUsers(this.usersAndFacilities)
-        return this.sortUsers(this.usersAndFacilities.filter((user) => user.facilities.some((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()))))
+        return this.sortUsers(
+          this.usersAndFacilities.filter((user) =>
+            user.facilities.some((facility) =>
+              facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()),
+            ),
+          ),
+        )
       } catch (error) {
         this.setFailureAlert('Failed to filter users by facility name', error)
         return []
@@ -160,7 +202,12 @@ export default {
     },
 
     showDeactivateUserButton(user) {
-      return !this.isDeactivatedUser(user) && !this.isSameUser(user) && user?.stateCode === CRM_STATE_CODES.ACTIVE && this.hasPermission(this.PERMISSIONS.MANAGE_USERS_EDIT)
+      return (
+        !this.isDeactivatedUser(user) &&
+        !this.isSameUser(user) &&
+        user?.stateCode === CRM_STATE_CODES.ACTIVE &&
+        this.hasPermission(this.PERMISSIONS.MANAGE_USERS_EDIT)
+      )
     },
 
     /**
@@ -171,7 +218,10 @@ export default {
         this.loading = true
         this.usersAndFacilities = await UserService.getOrganizationUsers(this.userInfo.organizationId)
       } catch (error) {
-        this.setFailureAlert('Failed to get the list of users by organization id: ' + this.userInfo.organizationId, error)
+        this.setFailureAlert(
+          'Failed to get the list of users by organization id: ' + this.userInfo.organizationId,
+          error,
+        )
       } finally {
         this.loading = false
       }
@@ -268,7 +318,9 @@ export default {
     deactivateUser(user) {
       const facilityNames = this.getLastExpenseAuthoritiesForUser(user)
       if (facilityNames.length > 0) {
-        this.setFailureAlert(`Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`)
+        this.setFailureAlert(
+          `Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`,
+        )
       } else {
         this.toggleDeactivateUserDialog(user)
       }
@@ -289,7 +341,9 @@ export default {
       targetFacilities.forEach((facility) => {
         // Check if any other user has a facility with the same facilityId and isExpenseAuthority true
         const hasOtherUserWithAuthority = this.usersAndFacilities.some(
-          (userToCheck) => userToCheck.contactId !== user.contactId && userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority),
+          (userToCheck) =>
+            userToCheck.contactId !== user.contactId &&
+            userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority),
         )
         if (!hasOtherUserWithAuthority) {
           lastExpenseAuthorityFacilityNames.push(facility.facilityName)

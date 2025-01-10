@@ -7,7 +7,8 @@
         <v-col cols="12" class="mr-2 my-2">
           Between school and their offsite child care location;
           <br />
-          To and from the child care location and a collective point of access where geographical distance or obstacle (e.g. a body of water) creates an ongoing barrier for families and Participants.
+          To and from the child care location and a collective point of access where geographical distance or obstacle
+          (e.g. a body of water) creates an ongoing barrier for families and Participants.
         </v-col>
       </v-row>
     </v-col>
@@ -17,10 +18,15 @@
     <v-col cols="12">
       <AppLabel>Eligible expenses:</AppLabel>
       <br />
-      Mileage of the Participant's designated vehicle will be reimbursed at the B.C. government standard mileage rate for private vehicles. This includes
-      <strong>funding for the Participant's routine vehicle costs, including financing costs, fuel, insurance, depreciation, and routine maintenance.</strong>
-      The Participant's actual lease or financing costs for the designed vehicle used to transport children for the purpose stated in the Eligibility section above. The Participant is required to
-      submit supporting information and documentation relating to the actual mileage and lease/purchase costs of the designated vehicle to the Province.
+      Mileage of the Participant's designated vehicle will be reimbursed at the B.C. government standard mileage rate
+      for private vehicles. This includes
+      <strong>
+        funding for the Participant's routine vehicle costs, including financing costs, fuel, insurance, depreciation,
+        and routine maintenance.
+      </strong>
+      The Participant's actual lease or financing costs for the designed vehicle used to transport children for the
+      purpose stated in the Eligibility section above. The Participant is required to submit supporting information and
+      documentation relating to the actual mileage and lease/purchase costs of the designated vehicle to the Province.
     </v-col>
   </v-row>
   <br />
@@ -28,16 +34,25 @@
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Ineligible expenses include:</AppLabel>
-      Travel related to operations (e.g., grocery store), driver wages, other transportation, tickets or traffic fines, licensing costs.
+      Travel related to operations (e.g., grocery store), driver wages, other transportation, tickets or traffic fines,
+      licensing costs.
     </v-col>
   </v-row>
 
-  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Transportation Allowance for the current year. You may add another vehicle(s).</AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">
+    You have already received the Transportation Allowance for the current year. You may add another vehicle(s).
+  </AppAlertBanner>
 
   <v-divider class="my-5"></v-divider>
 
-  <div v-for="(model, index) in models" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" @input="update(model)">
-    <v-card class="my-10" :class="{ greyTop: readOnly(model), 'basic-card': !readOnly(model) }" :disabled="readOnly(model)">
+  <div
+    v-for="(model, index) in models"
+    :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
+    @input="update(model)">
+    <v-card
+      class="my-10"
+      :class="{ greyTop: readOnly(model), 'basic-card': !readOnly(model) }"
+      :disabled="readOnly(model)">
       <v-row class="pa-7 pt-10">
         <v-col cols="10" md="2" lg="1">
           <AppLabel>Vehicle</AppLabel>
@@ -109,7 +124,12 @@
                 <p>Vehicle financing/Lease cost per month: (If any)</p>
               </v-col>
               <v-col cols="6" xl="7" class="pt-2 text-center">
-                <AppNumberInput v-model.lazy="model.monthlyLease" :format="monthlyLeaseFormat" :disabled="readOnly(model)" prefix="$" maxlength="6"></AppNumberInput>
+                <AppNumberInput
+                  v-model.lazy="model.monthlyLease"
+                  :format="monthlyLeaseFormat"
+                  :disabled="readOnly(model)"
+                  prefix="$"
+                  maxlength="6"></AppNumberInput>
               </v-col>
             </v-row>
           </v-col>
@@ -125,10 +145,10 @@
               id="application-document-upload"
               :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
               v-model="model.documentsToUpload"
-              entityName="ofm_allowances"
+              entity-name="ofm_allowances"
               :loading="readOnly(model)"
-              :uploadedDocuments="model.uploadedDocuments"
-              @deleteUploadedDocument="deleteUploadedDocument" />
+              :uploaded-documents="model.uploadedDocuments"
+              @delete-uploaded-document="deleteUploadedDocument" />
 
             <div v-if="areDocumentsMissing(model) && !readOnly">
               <v-row class="my-5">
@@ -144,8 +164,9 @@
         <v-col cols="12" md="6">
           <AppLabel>Transportation Allowance Start Date</AppLabel>
           <p>
-            Please provide the date your centre began to safely transport children between your centre and school (or a collective point of access) to support regular ongoing child care. Please note,
-            the start date cannot be before the start of the Funding Agreement.
+            Please provide the date your centre began to safely transport children between your centre and school (or a
+            collective point of access) to support regular ongoing child care. Please note, the start date cannot be
+            before the start of the Funding Agreement.
           </p>
         </v-col>
         <v-col cols="12" sm="6" lg="5" class="ml-0">
@@ -159,14 +180,22 @@
             :max="formattedEndDate"
             label="From"
             clearable
-            @update:modelValue="updateDate(model)" />
+            @update:model-value="updateDate(model)" />
         </v-col>
       </v-row>
     </v-card>
   </div>
 
   <v-row v-if="!formDisabled" class="d-flex flex-column align-end my-8">
-    <AppButton v-if="isAddButtonEnabled" id="add-vehicle" :primary="false" size="large" width="300px" @click="addModel()">+ Add another vehicle</AppButton>
+    <AppButton
+      v-if="isAddButtonEnabled"
+      id="add-vehicle"
+      :primary="false"
+      size="large"
+      width="300px"
+      @click="addModel()">
+      + Add another vehicle
+    </AppButton>
   </v-row>
 </template>
 

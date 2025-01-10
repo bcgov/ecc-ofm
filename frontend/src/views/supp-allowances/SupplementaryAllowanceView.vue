@@ -2,7 +2,12 @@
   <v-container fluid>
     <h1 class="my-2">Allowances (Core and Discretionary Services)</h1>
     <div v-if="loading" align="center">
-      <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-height-screen"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        size="100"
+        :width="6"
+        color="#003366"
+        class="min-height-screen"></v-progress-circular>
     </div>
     <div v-else>
       <div class="min-height-screen my-4">
@@ -146,18 +151,28 @@ export default {
         // navigate from the Application Confirmation page (after the providers have just submitted their core funding application)
         if (this.$route.params.applicationGuid) {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
-          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid, true)
+          this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
+            this.$route.params.applicationGuid,
+            true,
+          )
         }
         // navigate from the Application History page
         else {
           this.applications = await ApplicationService.getActiveApplications()
-          this.applications = this.applications?.filter((application) => ApplicationService.checkApplicationStatus(application))
+          this.applications = this.applications?.filter((application) =>
+            ApplicationService.checkApplicationStatus(application),
+          )
           await Promise.all(
             this.applications?.map(async (application) => {
-              application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
+              application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
+                application.applicationId,
+                true,
+              )
             }),
           )
-          this.facilities = this.userInfo?.facilities?.filter((facility) => this.getValidApplication(facility.facilityId))
+          this.facilities = this.userInfo?.facilities?.filter((facility) =>
+            this.getValidApplication(facility.facilityId),
+          )
         }
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
@@ -167,7 +182,12 @@ export default {
     },
 
     getValidApplication(facilityId) {
-      return this.applications?.find((application) => application.facilityId === facilityId && ApplicationService.isValidApplication(application) && application?.isUnionized === UNION_TYPE_CODES.NO)
+      return this.applications?.find(
+        (application) =>
+          application.facilityId === facilityId &&
+          ApplicationService.isValidApplication(application) &&
+          application?.isUnionized === UNION_TYPE_CODES.NO,
+      )
     },
 
     process(value) {

@@ -4,7 +4,13 @@
     <h1>Help and Resources</h1>
     <v-row no-gutters class="my-6">
       <v-col cols="12" class="d-flex flex-column align-start">
-        <AppButton v-if="isEmpty(generalPanels) && isEmpty(testParticipantPanels)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton
+          v-if="isEmpty(generalPanels) && isEmpty(testParticipantPanels)"
+          id="expand-button"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
@@ -21,7 +27,9 @@
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="panelComponent.id === 'faq'">
-          <a href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres/faq-child-care-providers" target="_blank">
+          <a
+            href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres/faq-child-care-providers"
+            target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>$10 a Day Program Frequently Asked Questions - Province of British Columbia (gov.bc.ca)</span>
           </a>
@@ -33,7 +41,9 @@
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
-          <a href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres" target="_blank">
+          <a
+            href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres"
+            target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>$10 a Day ChildCareBC Centres Website - Province of British Columbia (gov.bc.ca)</span>
           </a>
@@ -51,7 +61,10 @@
     </v-expansion-panels>
     <h3 class="mt-8 ml-1">$10 a Day Participants</h3>
     <v-expansion-panels v-model="testParticipantPanels" multiple>
-      <v-expansion-panel v-for="panelComponent in TEST_PARTICIPANT_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+      <v-expansion-panel
+        v-for="panelComponent in TEST_PARTICIPANT_PANELS"
+        :key="panelComponent.id"
+        :value="panelComponent.id">
         <v-expansion-panel-title>
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
         </v-expansion-panel-title>
@@ -99,7 +112,9 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <AppBackButton id="back-home-button" size="large" width="220px" :to="{ name: 'home' }" class="mt-6">Home</AppBackButton>
+    <AppBackButton id="back-home-button" size="large" width="220px" :to="{ name: 'home' }" class="mt-6">
+      Home
+    </AppBackButton>
   </v-container>
 </template>
 

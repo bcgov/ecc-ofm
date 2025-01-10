@@ -5,7 +5,9 @@
       <slot></slot>
     </div>
     <div v-if="!isEmpty(to)" align="right" class="mb-4">
-      <router-link class="error-message" :to="to">To add this information, click here. This will bring you to a different page.</router-link>
+      <router-link class="error-message" :to="to">
+        To add this information, click here. This will bring you to a different page.
+      </router-link>
     </div>
   </div>
 </template>

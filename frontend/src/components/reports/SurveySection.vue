@@ -18,7 +18,13 @@
               :max-rows="question?.tableMaxRows"
               @update="updateResponses"
               @delete="deleteTableResponses" />
-            <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :validation="validation" :readonly="readonly" @update="updateResponses" />
+            <SurveyQuestion
+              v-else
+              :question="question"
+              :response="getQuestionResponse(question)"
+              :validation="validation"
+              :readonly="readonly"
+              @update="updateResponses" />
           </div>
         </div>
       </v-form>
@@ -70,13 +76,17 @@ export default {
     },
 
     getTableQuestionHeaders(tableQuestion) {
-      const headers = this.section?.questions?.filter((question) => question.tableQuestionId === tableQuestion?.questionId)
+      const headers = this.section?.questions?.filter(
+        (question) => question.tableQuestionId === tableQuestion?.questionId,
+      )
       headers.forEach((header) => (header.hide = tableQuestion?.hide))
       return headers
     },
 
     getTableQuestionResponses(tableQuestion) {
-      return this.responses?.filter((response) => !this.isHiddenOrDeleted(response) && response.tableQuestionId === tableQuestion?.questionId)
+      return this.responses?.filter(
+        (response) => !this.isHiddenOrDeleted(response) && response.tableQuestionId === tableQuestion?.questionId,
+      )
     },
 
     updateResponses(response) {

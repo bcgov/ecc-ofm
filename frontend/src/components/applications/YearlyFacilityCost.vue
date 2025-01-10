@@ -10,7 +10,13 @@
               <p>Rent/Lease</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.rentLeaseCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.rentLeaseCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -24,7 +30,13 @@
               <p>Mortgage</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.mortgageCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.mortgageCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -34,7 +46,13 @@
               <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.propertyTax"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -44,7 +62,13 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.strataFee"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -58,7 +82,13 @@
               <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.propertyTax"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -68,7 +98,13 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.strataFee"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -82,7 +118,13 @@
               <p>Fee (If Applicable)</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.applicableFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.applicableFee"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -92,7 +134,13 @@
               <p>Property/Municipal Tax</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.propertyTax" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.propertyTax"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -102,7 +150,13 @@
               <p>Strata Fees</p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.strataFee" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.strataFee"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -115,7 +169,12 @@
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
             <v-col cols="12" sm="5" class="pl-sm-6">
-              <AppNumberInput :value="totalYearlyCost" :format="totalNumberFormat" variant="plain" readonly class="totalYearlyCost"></AppNumberInput>
+              <AppNumberInput
+                :value="totalYearlyCost"
+                :format="totalNumberFormat"
+                variant="plain"
+                readonly
+                class="totalYearlyCost"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -191,11 +250,15 @@ export default {
   },
   created() {
     this.model = {
-      rentLeaseCost: this.currentApplication?.rentLeaseCost ? this.currentApplication?.rentLeaseCost?.toFixed(2) : '0.00',
+      rentLeaseCost: this.currentApplication?.rentLeaseCost
+        ? this.currentApplication?.rentLeaseCost?.toFixed(2)
+        : '0.00',
       mortgageCost: this.currentApplication?.mortgageCost ? this.currentApplication?.mortgageCost?.toFixed(2) : '0.00',
       propertyTax: this.currentApplication?.propertyTax ? this.currentApplication?.propertyTax?.toFixed(2) : '0.00',
       strataFee: this.currentApplication?.strataFee ? this.currentApplication?.strataFee?.toFixed(2) : '0.00',
-      applicableFee: this.currentApplication?.applicableFee ? this.currentApplication?.applicableFee?.toFixed(2) : '0.00',
+      applicableFee: this.currentApplication?.applicableFee
+        ? this.currentApplication?.applicableFee?.toFixed(2)
+        : '0.00',
     }
     this.FACILITY_TYPES = FACILITY_TYPES
   },

@@ -1,7 +1,9 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
     <v-card class="mb-4 pa-4">
-      <AppMissingInfoError v-if="!readonly && !isUnionSectionComplete(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError
+        v-if="!readonly && !isUnionSectionComplete(currentApplication)"
+        :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.UNION }}
       </AppMissingInfoError>
       <div v-else>
@@ -20,7 +22,9 @@
       </div>
     </v-card>
     <v-card class="my-4 pa-4">
-      <AppMissingInfoError v-if="!readonly && !isCSSEASectionComplete(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError
+        v-if="!readonly && !isCSSEASectionComplete(currentApplication)"
+        :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.CSSEA }}
       </AppMissingInfoError>
       <div v-else>
@@ -34,22 +38,38 @@
       <div v-if="!readonly && !isEmployeeInformationComplete">
         <AppMissingInfoError
           v-if="!isThereAtLeastOneEmployee(currentApplication)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{
+            name: APPLICATION_ROUTES.STAFFING,
+            hash: '#employee-section',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllEmployeeCertificatesEntered(currentApplication?.providerEmployees, currentApplication)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{
+            name: APPLICATION_ROUTES.STAFFING,
+            hash: '#employee-section',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllCertificateInitialsUnique(currentApplication?.providerEmployees)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{
+            name: APPLICATION_ROUTES.STAFFING,
+            hash: '#employee-section',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllCertificateNumbersUnique(currentApplication?.providerEmployees)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{
+            name: APPLICATION_ROUTES.STAFFING,
+            hash: '#employee-section',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
         </AppMissingInfoError>
       </div>
@@ -200,20 +220,31 @@ export default {
       )
     },
     eceCertificates() {
-      return this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE)
+      return this.currentApplication?.providerEmployees?.filter(
+        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE,
+      )
     },
     eceaCertificates() {
-      return this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA)
+      return this.currentApplication?.providerEmployees?.filter(
+        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA,
+      )
     },
     iteCertificates() {
-      return this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE)
+      return this.currentApplication?.providerEmployees?.filter(
+        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE,
+      )
     },
     unionsNames() {
-      const names = convertStringToArray(this.currentApplication?.unions)?.map((item) => this.getUnionNameById(Number(item)))
+      const names = convertStringToArray(this.currentApplication?.unions)?.map((item) =>
+        this.getUnionNameById(Number(item)),
+      )
       return convertArrayToString(names)
     },
     isEmployeeInformationComplete() {
-      return this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
+      return (
+        this.isThereAtLeastOneEmployee(this.currentApplication) &&
+        this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
+      )
     },
   },
 

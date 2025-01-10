@@ -5,7 +5,10 @@
       <h4>Organization information</h4>
       <div>
         <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
-        <span>Please review the following pre-populated information for correctness and contact your organization's account manager to make updates if required.</span>
+        <span>
+          Please review the following pre-populated information for correctness and contact your organization's account
+          manager to make updates if required.
+        </span>
       </div>
       <OrganizationInfo :loading="loading" :organization="organization" />
 
@@ -22,7 +25,12 @@
           @delete-document="deleteDocument"></NotForProfitQuestions>
       </div>
 
-      <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
+      <v-checkbox
+        id="confirm-info"
+        :value="1"
+        :rules="rules.required"
+        color="primary"
+        label="I confirm that Organization information is correct."></v-checkbox>
     </div>
 
     <div class="mb-6">
@@ -62,7 +70,14 @@ import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, CRM_STATE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import {
+  APPLICATION_ROUTES,
+  APPLICATION_STATUS_CODES,
+  BUSINESS_TYPE_CODES,
+  CRM_STATE_CODES,
+  DOCUMENT_TYPES,
+  VIRUS_SCAN_ERROR_MESSAGE,
+} from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 import { isEqual, cloneDeep } from 'lodash'
@@ -138,7 +153,9 @@ export default {
         this.$emit('process', true)
 
         //remove the time otherwise isEqual will always return false
-        this.organization.dateOfIncorporation = this.organization.dateOfIncorporation ? this.organization.dateOfIncorporation.slice(0, 10) : null
+        this.organization.dateOfIncorporation = this.organization.dateOfIncorporation
+          ? this.organization.dateOfIncorporation.slice(0, 10)
+          : null
 
         if (!isEqual(this.organization, this.updatedOrganization)) {
           await this.updateOrganization()
@@ -152,8 +169,12 @@ export default {
             const dateB = new Date(b.submittedDate)
             return dateB - dateA // descending order (the most recent submitted application at the top)
           })
-          const existingApplication = activeApplications?.find((el) => el.statusCode === APPLICATION_STATUS_CODES.DRAFT) ?? activeApplications[0]
-          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: existingApplication?.applicationId } })
+          const existingApplication =
+            activeApplications?.find((el) => el.statusCode === APPLICATION_STATUS_CODES.DRAFT) ?? activeApplications[0]
+          this.$router.push({
+            name: APPLICATION_ROUTES.FACILITY_DETAILS,
+            params: { applicationGuid: existingApplication?.applicationId },
+          })
         }
       },
     },
@@ -169,7 +190,11 @@ export default {
     this.loadedApplications = await ApplicationService.getActiveApplications()
 
     //get the redirected applications so we can prevent those facilities from starting another OFM app
-    this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)))
+    this.redirectedApplications = await ApplicationService.getRedirectedApplications(
+      this.userInfo?.facilities.filter(
+        (fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId),
+      ),
+    )
   },
 
   methods: {
@@ -217,7 +242,10 @@ export default {
         }
         const response = await ApplicationService.createApplication(payload)
         this.setSuccessAlert('Started a new application successfully')
-        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.FACILITY_DETAILS,
+          params: { applicationGuid: response?.applicationId },
+        })
       } catch (error) {
         this.setFailureAlert('Failed to start a new application', error)
       } finally {
@@ -253,7 +281,10 @@ export default {
     async processDocuments() {
       try {
         if (!isEmpty(this.updatedOrganization?.documentsToUpload)) {
-          await DocumentService.createDocuments(this.updatedOrganization.documentsToUpload, this.updatedOrganization.organizationId)
+          await DocumentService.createDocuments(
+            this.updatedOrganization.documentsToUpload,
+            this.updatedOrganization.organizationId,
+          )
         }
         if (!isEmpty(this.documentsToDelete)) {
           await Promise.all(

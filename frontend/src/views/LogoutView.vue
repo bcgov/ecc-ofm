@@ -21,13 +21,13 @@ import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 export default {
   name: 'LogoutView',
   components: { AppSimpleCard },
-  created() {
-    this.setJwtToken()
-  },
   computed: {
     loginPath() {
       return this.$route.query.internal ? AuthRoutes.LOGIN_IDIR : AuthRoutes.LOGIN
     },
+  },
+  created() {
+    this.setJwtToken()
   },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),

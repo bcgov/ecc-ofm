@@ -35,7 +35,10 @@
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllFacilities">
                     <template #prepend>
-                      <v-checkbox-btn :color="someFacilitiesSelected ? '#003366' : undefined" :indeterminate="someFacilitiesSelected && !allFacilitiesSelected" :model-value="someFacilitiesSelected" />
+                      <v-checkbox-btn
+                        :color="someFacilitiesSelected ? '#003366' : undefined"
+                        :indeterminate="someFacilitiesSelected && !allFacilitiesSelected"
+                        :model-value="someFacilitiesSelected" />
                     </template>
                   </v-list-item>
                   <v-divider class="mt-2" />
@@ -44,7 +47,9 @@
                   <v-chip v-if="index < MAX_NUMBER_FACILITIES_DISPLAY">
                     <span>{{ item.title }}</span>
                   </v-chip>
-                  <span v-if="index === MAX_NUMBER_FACILITIES_DISPLAY" class="text-grey text-caption align-self-center">(+{{ selectedFacilities.length - MAX_NUMBER_FACILITIES_DISPLAY }} others)</span>
+                  <span v-if="index === MAX_NUMBER_FACILITIES_DISPLAY" class="text-grey text-caption align-self-center">
+                    (+{{ selectedFacilities.length - MAX_NUMBER_FACILITIES_DISPLAY }} others)
+                  </span>
                 </template>
               </v-select>
             </v-col>
@@ -86,7 +91,11 @@
               <AppLabel>Date:</AppLabel>
             </v-col>
             <v-col cols="12" sm="12" lg="9" xl="7">
-              <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_OPTIONS" :default-option="selectedDateFilterType" />
+              <AppButtonRadioGroup
+                v-model="selectedDateFilterType"
+                :disabled="loading"
+                :options="DATE_FILTER_OPTIONS"
+                :default-option="selectedDateFilterType" />
             </v-col>
           </v-row>
           <v-row v-if="selectedDateFilterType === 'Custom'">
@@ -95,7 +104,14 @@
             </v-col>
             <v-col cols="12" sm="12" lg="10">
               <v-row class="mt-2">
-                <AppDateInput id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" :hide-details="loading" label="From" class="mx-3" />
+                <AppDateInput
+                  id="date-from"
+                  v-model="selectedDateFrom"
+                  :rules="[...rules.required, rules.MMDDYYYY]"
+                  :disabled="loading"
+                  :hide-details="loading"
+                  label="From"
+                  class="mx-3" />
                 <AppDateInput
                   id="date-to"
                   v-model="selectedDateTo"
@@ -111,7 +127,17 @@
       </v-row>
     </v-card>
     <v-row no-gutters class="mt-2" justify="end">
-      <AppButton v-if="showResetButton" id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="resetFilter">Reset</AppButton>
+      <AppButton
+        v-if="showResetButton"
+        id="reset"
+        :primary="false"
+        size="large"
+        width="100px"
+        :loading="loading"
+        class="mr-8"
+        @click="resetFilter">
+        Reset
+      </AppButton>
       <AppButton id="search" size="large" width="150px" :loading="loading" @click="search">Search</AppButton>
     </v-row>
   </v-form>

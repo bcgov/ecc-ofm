@@ -8,7 +8,9 @@ export default {
   async getSurveySections(surveyTemplateId) {
     try {
       if (!surveyTemplateId) return []
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-sections?surveyTemplateId=${surveyTemplateId}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.REPORTS}/survey-sections?surveyTemplateId=${surveyTemplateId}`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)
@@ -19,11 +21,22 @@ export default {
   async getSectionQuestions(sectionId, facilityId) {
     try {
       if (!sectionId || !facilityId) return []
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`,
+      )
       const questions = response?.data
       questions?.forEach((question) => {
-        if ([SURVEY_QUESTION_TYPES.TWO_OPTION, SURVEY_QUESTION_TYPES.CHOICE, SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE].includes(question?.type)) {
-          question.choices = convertStringToArray(question.choices?.slice(1, -1), SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
+        if (
+          [
+            SURVEY_QUESTION_TYPES.TWO_OPTION,
+            SURVEY_QUESTION_TYPES.CHOICE,
+            SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE,
+          ].includes(question?.type)
+        ) {
+          question.choices = convertStringToArray(
+            question.choices?.slice(1, -1),
+            SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR,
+          )
         }
       })
       return questions
@@ -47,7 +60,9 @@ export default {
   async getDraftSurveyResponsesByFacility(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=false`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=false`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the draft survey response by Facility - ${error}`)
@@ -58,7 +73,9 @@ export default {
   async getDraftSurveyResponsesCountByFacility(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-responses-count?facilityId=${facilityId}&isSubmitted=false`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.REPORTS}/survey-responses-count?facilityId=${facilityId}&isSubmitted=false`,
+      )
       return response?.data[0]?.count
     } catch (error) {
       console.log(`Failed to get the draft survey responses count by Facility - ${error}`)
@@ -87,7 +104,10 @@ export default {
   async updateSurveyResponse(surveyResponseId, payload) {
     try {
       if (!surveyResponseId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.patch(`${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`, payload)
+      const response = await ApiService.apiAxios.patch(
+        `${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`,
+        payload,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to update survey response - ${error}`)
@@ -109,7 +129,9 @@ export default {
   async getQuestionResponses(surveyResponseId) {
     try {
       if (!surveyResponseId) return []
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get survey's questions' responses - ${error}`)
@@ -131,7 +153,10 @@ export default {
   async updateQuestionResponse(questionResponseId, payload) {
     try {
       if (!questionResponseId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.patch(`${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`, payload)
+      const response = await ApiService.apiAxios.patch(
+        `${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`,
+        payload,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to update question response - ${error}`)

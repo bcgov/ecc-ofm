@@ -1,15 +1,33 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Confirm" :is-loading="loading" persistent max-width="50%" @close="closeDialog">
+  <AppDialog
+    v-model="isDisplayed"
+    title="Confirm"
+    :is-loading="loading"
+    persistent
+    max-width="50%"
+    @close="closeDialog">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to delete this report response?</div>
+      <div class="confirm-dialog-text d-flex flex-column align-center">
+        Are you sure you want to delete this report response?
+      </div>
     </template>
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="go-back" :primary="false" size="large" width="250px" :loading="loading" @click="closeDialog">Go Back</AppButton>
+          <AppButton id="go-back" :primary="false" size="large" width="250px" :loading="loading" @click="closeDialog">
+            Go Back
+          </AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="delete-response" size="large" min-width="250px" max-width="450px" :loading="loading" @click="deleteResponse">Delete Response</AppButton>
+          <AppButton
+            id="delete-response"
+            size="large"
+            min-width="250px"
+            max-width="450px"
+            :loading="loading"
+            @click="deleteResponse">
+            Delete Response
+          </AppButton>
         </v-col>
       </v-row>
     </template>

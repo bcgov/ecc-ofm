@@ -93,13 +93,18 @@ export default {
         this.loading ||
         (this.isSelectFacilityPage && !this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS)) ||
         (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isFacilityDetailsComplete) ||
-        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
+        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) &&
+          !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) &&
+          !this.isEligibilityComplete) ||
         (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && !this.isApplicationComplete)
       )
     },
 
     isCurrent(item) {
-      return this.isRouteNameEqual(item, this.$route.name) || (this.isSelectFacilityPage && this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS))
+      return (
+        this.isRouteNameEqual(item, this.$route.name) ||
+        (this.isSelectFacilityPage && this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS))
+      )
     },
 
     isRouteNameEqual(item, routeName) {

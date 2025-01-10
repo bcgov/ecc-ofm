@@ -9,7 +9,9 @@
             <v-col cols="12" sm="7">
               <p>Rent/Lease</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.rentLeaseCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.rentLeaseCost) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -21,7 +23,9 @@
             <v-col cols="12" sm="7">
               <p>Mortgage</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.mortgageCost) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.mortgageCost) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -29,7 +33,9 @@
             <v-col cols="12" sm="7">
               <p>Property/Municipal Tax</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6" class="pa-1">
@@ -37,7 +43,9 @@
             <v-col cols="12" sm="7">
               <p>Strata Fees</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.strataFee) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.strataFee) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -49,7 +57,9 @@
             <v-col cols="12" sm="7">
               <p>Property/Municipal Tax</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -57,7 +67,9 @@
             <v-col cols="12" sm="7">
               <p>Strata Fees</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.strataFee) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.strataFee) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -69,7 +81,9 @@
             <v-col cols="12" sm="7">
               <p>Fee (If Applicable)</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.applicableFee) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.applicableFee) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -77,7 +91,9 @@
             <v-col cols="12" sm="7">
               <p>Property/Municipal Tax</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.propertyTax) }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -85,7 +101,9 @@
             <v-col cols="12" sm="7">
               <p>Strata Fees</p>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2">$ {{ format.formatDecimalNumber(currentApplication?.strataFee) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2">
+              $ {{ format.formatDecimalNumber(currentApplication?.strataFee) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -96,7 +114,9 @@
             <v-col cols="12" sm="7">
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
-            <v-col cols="12" sm="5" class="px-sm-2 totalYearlyCost">$ {{ format.formatDecimalNumber(currentApplication?.totalYearlyFacilityCosts) }}</v-col>
+            <v-col cols="12" sm="5" class="px-sm-2 totalYearlyCost">
+              $ {{ format.formatDecimalNumber(currentApplication?.totalYearlyFacilityCosts) }}
+            </v-col>
           </v-row>
         </v-col>
       </v-row>

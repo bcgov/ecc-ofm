@@ -1,9 +1,18 @@
 <template>
   <v-form ref="form">
     <v-row v-if="!loading" no-gutters class="mb-2">
-      <strong>Your $10 a Day Funding application is almost ready to submit. Please check and review all your inputs. You will not be able to change these details after submission.</strong>
+      <strong>
+        Your $10 a Day Funding application is almost ready to submit. Please check and review all your inputs. You will
+        not be able to change these details after submission.
+      </strong>
       <v-col cols="12" align="right">
-        <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton
+          v-if="isEmpty(panel)"
+          id="expand-button"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
@@ -31,10 +40,19 @@
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :contacts="contacts" />
+              <FacilityDetailsSummary
+                v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS"
+                :readonly="readonly"
+                :contacts="contacts" />
               <EligibilitySummary v-if="page.id === APPLICATION_ROUTES.ELIGIBILITY" />
-              <ServiceDeliverySummary v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY" :readonly="readonly" :licences="currentApplication?.licences" />
-              <OperatingCostsSummary v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
+              <ServiceDeliverySummary
+                v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY"
+                :readonly="readonly"
+                :licences="currentApplication?.licences" />
+              <OperatingCostsSummary
+                v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS"
+                :readonly="readonly"
+                :documents="currentApplication?.uploadedDocuments" />
               <StaffingSummary v-if="page.id === APPLICATION_ROUTES.STAFFING" :readonly="readonly" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -59,7 +77,14 @@ import { isEmpty } from 'lodash'
 
 export default {
   name: 'ReviewApplicationView',
-  components: { AppButton, FacilityDetailsSummary, EligibilitySummary, ServiceDeliverySummary, OperatingCostsSummary, StaffingSummary },
+  components: {
+    AppButton,
+    FacilityDetailsSummary,
+    EligibilitySummary,
+    ServiceDeliverySummary,
+    OperatingCostsSummary,
+    StaffingSummary,
+  },
   mixins: [alertMixin],
 
   async beforeRouteLeave(_to, _from, next) {
@@ -96,7 +121,14 @@ export default {
   },
 
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isEligibilityComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
+    ...mapState(useApplicationsStore, [
+      'currentApplication',
+      'isFacilityDetailsComplete',
+      'isEligibilityComplete',
+      'isServiceDeliveryComplete',
+      'isOperatingCostsComplete',
+      'isStaffingComplete',
+    ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
@@ -106,12 +138,18 @@ export default {
   watch: {
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.STAFFING,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.SUBMIT,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },

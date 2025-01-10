@@ -1,9 +1,14 @@
 <template>
   <v-form ref="form">
-    <AppAlertBanner type="info">Note: If you answer "No" to any of these questions, you will not be eligible for $10 a Day Funding.</AppAlertBanner>
+    <AppAlertBanner type="info">
+      Note: If you answer "No" to any of these questions, you will not be eligible for $10 a Day Funding.
+    </AppAlertBanner>
     <v-card variant="outlined" class="pa-4 my-6">
       <div>
-        <div>Is your facility currently in receipt of Child Care Operating Funding or $10 a Day ChildCareBC funding for a minimum of 1 year?</div>
+        <div>
+          Is your facility currently in receipt of Child Care Operating Funding or $10 a Day ChildCareBC funding for a
+          minimum of 1 year?
+        </div>
         <AppYesNoRadioGroup
           id="greater-one-year-ccof-tdad"
           v-model="model.greaterOneYearCCOFTDAD"
@@ -13,7 +18,10 @@
           @update:model-value="validateResponse(model.greaterOneYearCCOFTDAD)" />
       </div>
       <div v-if="isMultipleProgram()">
-        <div>Is your facility approved or is your application being processed by the Ministry to participate in the Child Care Fee Reduction Initiative for the current year (if eligible)?</div>
+        <div>
+          Is your facility approved or is your application being processed by the Ministry to participate in the Child
+          Care Fee Reduction Initiative for the current year (if eligible)?
+        </div>
         <AppYesNoRadioGroup
           id="ccfri-participation"
           v-model="model.ccfriParticipation"
@@ -44,8 +52,8 @@
       </div>
       <div>
         <div>
-          Do all your current Early Childhood Educator(s) have an active, valid certificate? (If your licence does not require an Early Childhood Educator and you have none working in your operation,
-          select N/A)
+          Do all your current Early Childhood Educator(s) have an active, valid certificate? (If your licence does not
+          require an Early Childhood Educator and you have none working in your operation, select N/A)
         </div>
         <AppYesNoRadioGroup
           id="ece-certificates-good-standing"
@@ -58,8 +66,8 @@
       </div>
       <div>
         <div>
-          Is your facility approved or is your application being processed by the Ministry to participate in the Early Childhood Educator Wage Enhancement Initiative for the current year, if
-          applicable?
+          Is your facility approved or is your application being processed by the Ministry to participate in the Early
+          Childhood Educator Wage Enhancement Initiative for the current year, if applicable?
         </div>
         <AppYesNoRadioGroup
           id="ecewe-participation"
@@ -71,7 +79,9 @@
           @update:model-value="validateResponse(model.eceweParticipation)" />
       </div>
       <div>
-        <div>Have you enrolled, or are you willing to enroll, families eligible for the Affordable Child Care Benefit?</div>
+        <div>
+          Have you enrolled, or are you willing to enroll, families eligible for the Affordable Child Care Benefit?
+        </div>
         <AppYesNoRadioGroup
           id="accb-participation"
           v-model="model.accbParticipation"
@@ -92,8 +102,9 @@
       </div>
       <div>
         <div>
-          Will your facility be able to provide the financial statements for your facility (at a minimum, the income statement and balance sheet) for your prior fiscal year. The document must be
-          verified (signed) by the designated representative for your organization i.e. your expense authority.
+          Will your facility be able to provide the financial statements for your facility (at a minimum, the income
+          statement and balance sheet) for your prior fiscal year. The document must be verified (signed) by the
+          designated representative for your organization i.e. your expense authority.
         </div>
         <AppYesNoRadioGroup
           id="provide-previous-fy-financial-statements"
@@ -115,8 +126,9 @@
       </div>
       <div>
         <div>
-          Is your facility willing and able to accommodate and assist with an economic analysis on the cost of child care in various business models through the provision of your current business
-          financials at the Ministry's request?
+          Is your facility willing and able to accommodate and assist with an economic analysis on the cost of child
+          care in various business models through the provision of your current business financials at the Ministry's
+          request?
         </div>
         <AppYesNoRadioGroup
           id="economic-analysis-participation"
@@ -127,7 +139,10 @@
           @update:model-value="validateResponse(model.economicAnalysisParticipation)" />
       </div>
       <div v-if="isOperateInPersonalResidence()">
-        <div>Is your facility willing to operate a separate business bank account to be used exclusively for revenue and allowable expenses under the $10 a Day ChildCareBC Funding Agreement?</div>
+        <div>
+          Is your facility willing to operate a separate business bank account to be used exclusively for revenue and
+          allowable expenses under the $10 a Day ChildCareBC Funding Agreement?
+        </div>
         <AppYesNoRadioGroup
           id="operate-separate-bank-account"
           v-model="model.operateSeparateBankAccount"
@@ -206,7 +221,10 @@ export default {
   watch: {
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.FACILITY_DETAILS,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -218,7 +236,10 @@ export default {
       async handler() {
         await this.$refs.form?.validate()
         if (!this.checkEligibilityComplete(this.model)) return
-        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.SERVICE_DELIVERY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },
@@ -238,7 +259,9 @@ export default {
       providePreviousFYFinancialStatements: this.currentApplication?.providePreviousFYFinancialStatements,
       liabilityInsuranceCoverage: this.currentApplication?.liabilityInsuranceCoverage,
       economicAnalysisParticipation: this.currentApplication?.economicAnalysisParticipation,
-      operateSeparateBankAccount: this.isOperateInPersonalResidence() ? this.currentApplication?.operateSeparateBankAccount : null,
+      operateSeparateBankAccount: this.isOperateInPersonalResidence()
+        ? this.currentApplication?.operateSeparateBankAccount
+        : null,
     }
   },
 
@@ -249,7 +272,12 @@ export default {
   },
 
   methods: {
-    ...mapActions(useApplicationsStore, ['getApplication', 'checkEligibilityComplete', 'isMultipleProgram', 'isOperateInPersonalResidence']),
+    ...mapActions(useApplicationsStore, [
+      'getApplication',
+      'checkEligibilityComplete',
+      'isMultipleProgram',
+      'isOperateInPersonalResidence',
+    ]),
     async saveApplication(showAlert = false) {
       try {
         this.$emit('process', true)

@@ -9,7 +9,8 @@ export const useNotificationsStore = defineStore('notifications', {
     notifications: null,
   }),
   getters: {
-    unreadNotificationCount: (state) => (state.notifications ? state.notifications.filter((notification) => !notification.isRead).length : 0),
+    unreadNotificationCount: (state) =>
+      state.notifications ? state.notifications.filter((notification) => !notification.isRead).length : 0,
   },
   actions: {
     async getNotifications(contactId) {

@@ -1,9 +1,15 @@
 <template>
   <v-container fluid class="px-2">
     <h3>Funding Re-allocation Requests</h3>
-    <div class="pt-2 pb-4">The funding re-allocation requests shown include all fiscal years of the selected facility.</div>
+    <div class="pt-2 pb-4">
+      The funding re-allocation requests shown include all fiscal years of the selected facility.
+    </div>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <StatusFilter v-if="!isEmpty(fundingReallocationRequests)" :loading="loading" class="mb-4" @status-filter-changed="statusFilterChanged" />
+      <StatusFilter
+        v-if="!isEmpty(fundingReallocationRequests)"
+        :loading="loading"
+        class="mb-4"
+        @status-filter-changed="statusFilterChanged" />
       <v-data-table
         id="funding-requests-table"
         :headers="fundingRequestsHeaders"
@@ -14,7 +20,9 @@
         mobile-breakpoint="md"
         class="soft-outline">
         <template #no-data>
-          <span v-if="isEmpty(fundingReallocationRequests)">The selected facility has not submitted a funding re-allocation request.</span>
+          <span v-if="isEmpty(fundingReallocationRequests)">
+            The selected facility has not submitted a funding re-allocation request.
+          </span>
         </template>
         <template #[`item.date`]="{ item }">
           {{ format.formatDate(item?.date) }}
@@ -65,7 +73,9 @@ export default {
     filteredFundingReallocationRequests() {
       return isEmpty(this.statusFilter)
         ? this.fundingReallocationRequests
-        : this.fundingReallocationRequests?.filter((request) => request?.statusName?.toUpperCase().includes(this.statusFilter?.toUpperCase()))
+        : this.fundingReallocationRequests?.filter((request) =>
+            request?.statusName?.toUpperCase().includes(this.statusFilter?.toUpperCase()),
+          )
     },
   },
   created() {

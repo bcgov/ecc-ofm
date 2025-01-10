@@ -4,7 +4,10 @@
       <h4 class="text-decoration-underline">Transport</h4>
     </div>
 
-    <v-card v-for="model in draftTransportModels" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" class="pb-0 my-8">
+    <v-card
+      v-for="model in draftTransportModels"
+      :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
+      class="pb-0 my-8">
       <v-row class="pa-7">
         <v-col cols="11">
           <div class="">
@@ -88,7 +91,12 @@
 
       <v-row v-else>
         <v-col cols="12" class="px-4">
-          <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid }, query: { nextTerm: model.isNextTerm } }">
+          <AppMissingInfoError
+            :to="{
+              name: 'supp-allowances-form',
+              params: { applicationGuid: $route.params.applicationGuid },
+              query: { nextTerm: model.isNextTerm },
+            }">
             <template v-if="!model.VIN || !model.odometer || !model.estimatedMileage">
               {{ APPLICATION_ERROR_MESSAGES.SUPP_TRANSPORT }}
               <br />
@@ -150,7 +158,13 @@ export default {
       return model.uploadedDocuments?.length < 2
     },
     isModelComplete(model) {
-      return model.VIN && model.odometer && model.estimatedMileage && !this.areDocumentsMissing(model) && !hasDuplicateVIN(model, this.allTransportModels)
+      return (
+        model.VIN &&
+        model.odometer &&
+        model.estimatedMileage &&
+        !this.areDocumentsMissing(model) &&
+        !hasDuplicateVIN(model, this.allTransportModels)
+      )
     },
   },
 }

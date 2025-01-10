@@ -11,17 +11,38 @@
         </v-col>
       </v-row>
     </v-alert>
-    <AppDialog v-model="showConfirmDialog" title="Confirm" :isLoading="isLoading" persistent max-width="40%" @close="toggleConfirmDialog">
+    <AppDialog
+      v-model="showConfirmDialog"
+      title="Confirm"
+      :is-loading="isLoading"
+      persistent
+      max-width="40%"
+      @close="toggleConfirmDialog">
       <template #content>
         <div align="center" class="confirm-dialog-text">Are you sure you want to close this request?</div>
       </template>
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="dialog-go-back" :primary="false" size="large" width="200px" @click="toggleConfirmDialog" :loading="isLoading">Go back</AppButton>
+            <AppButton
+              id="dialog-go-back"
+              :primary="false"
+              size="large"
+              width="200px"
+              :loading="isLoading"
+              @click="toggleConfirmDialog">
+              Go back
+            </AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="dialog-close-request" size="large" width="200px" @click="closeAssistanceRequest" :loading="isLoading">Close request</AppButton>
+            <AppButton
+              id="dialog-close-request"
+              size="large"
+              width="200px"
+              :loading="isLoading"
+              @click="closeAssistanceRequest">
+              Close request
+            </AppButton>
           </v-col>
         </v-row>
       </template>

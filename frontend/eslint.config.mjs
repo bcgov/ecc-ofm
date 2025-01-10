@@ -15,7 +15,10 @@ export default [
       'eol-last': ['error', 'always'],
       indent: 'off', // Defer to Prettier
       quotes: ['error', 'single', { avoidEscape: true }],
-      'no-unused-vars': ['error', { args: 'after-used', argsIgnorePattern: '^_', caughtErrors: 'all', caughtErrorsIgnorePattern: '^ignore' }],
+      'no-unused-vars': [
+        'error',
+        { args: 'after-used', argsIgnorePattern: '^_', caughtErrors: 'all', caughtErrorsIgnorePattern: '^ignore' },
+      ],
       'vue/no-v-text-v-html-on-component': ['error', { allow: ['v-card-text'] }],
       'vue/valid-v-slot': [
         'error',

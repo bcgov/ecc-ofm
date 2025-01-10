@@ -55,7 +55,9 @@ export default {
     },
 
     getReportTitle(surveyResponse) {
-      return isEmpty(surveyResponse) ? BLANK_FIELD : `${surveyResponse?.surveyTemplateName} - ${surveyResponse?.monthName} ${surveyResponse?.fiscalYearName?.slice(0, -3)}`
+      return isEmpty(surveyResponse)
+        ? BLANK_FIELD
+        : `${surveyResponse?.surveyTemplateName} - ${surveyResponse?.monthName} ${surveyResponse?.fiscalYearName?.slice(0, -3)}`
     },
 
     isHiddenOrDeleted(item) {

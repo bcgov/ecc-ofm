@@ -10,7 +10,14 @@
           <v-card-text id="login_descriptor">Log in with your IDIR account</v-card-text>
           <v-card-actions>
             <v-row>
-              <AppButton icon="mdi-login" :href="authRoutes.LOGIN_IDIR" @click="clearStorage" width="250px" id="idir-login">IDIR Log In</AppButton>
+              <AppButton
+                id="idir-login"
+                icon="mdi-login"
+                :href="authRoutes.LOGIN_IDIR"
+                width="250px"
+                @click="clearStorage">
+                IDIR Log In
+              </AppButton>
             </v-row>
           </v-card-actions>
         </v-card>

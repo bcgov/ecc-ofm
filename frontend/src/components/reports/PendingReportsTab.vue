@@ -1,17 +1,27 @@
 <template>
   <v-container fluid class="pa-0">
-    <div class="mt-2">Complete, manage or submit current reports for your facilities. Request to unlock or view overdue reports and past submissions.</div>
+    <div class="mt-2">
+      Complete, manage or submit current reports for your facilities. Request to unlock or view overdue reports and past
+      submissions.
+    </div>
     <v-row class="mt-1 mb-4">
       <v-col cols="12" md="5">
         <h2>Report Details</h2>
       </v-col>
       <v-col cols="12" md="7">
-        <FacilityFilter v-if="!isEmpty(pendingReports)" :loading="loading" :default-show-input="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter
+          v-if="!isEmpty(pendingReports)"
+          :loading="loading"
+          :default-show-input="true"
+          justify="end"
+          @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
 
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">You are up to date with your monthly reports.</AppAlertBanner>
+      <AppAlertBanner v-if="isEmpty(pendingReports)" type="info">
+        You are up to date with your monthly reports.
+      </AppAlertBanner>
       <v-data-table
         v-else
         id="pending-reports-table"
@@ -33,12 +43,20 @@
           </template>
         </template>
         <template #[`item.statusName`]="{ item }">
-          <span class="status-gray">{{ item.statusCode === SURVEY_RESPONSE_STATUS_CODES.ACTIVE ? SURVEY_RESPONSE_STATUSES.DRAFT : item.statusName }}</span>
+          <span class="status-gray">
+            {{
+              item.statusCode === SURVEY_RESPONSE_STATUS_CODES.ACTIVE ? SURVEY_RESPONSE_STATUSES.DRAFT : item.statusName
+            }}
+          </span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
-            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">
+              Update
+            </AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">
+              View
+            </AppButton>
             <AppButton
               v-if="showUnlock(item)"
               :primary="false"
@@ -66,7 +84,10 @@
       :lock-facility="true"
       return-to="reporting"
       @close="toggleAssistanceRequestDialog" />
-    <DeleteSurveyResponseDialog :show="showDeleteResponseDialog" :survey-response-id="surveyResponseIdToDelete" @close="toggleDeleteDialog" />
+    <DeleteSurveyResponseDialog
+      :show="showDeleteResponseDialog"
+      :survey-response-id="surveyResponseIdToDelete"
+      @close="toggleDeleteDialog" />
   </v-container>
 </template>
 
@@ -109,17 +130,23 @@ export default {
 
   computed: {
     filteredPendingReports() {
-      return isEmpty(this.facilityNameFilter) ? this.pendingReports : this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
+      return isEmpty(this.facilityNameFilter)
+        ? this.pendingReports
+        : this.pendingReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
     filteredFacilityIds() {
-      const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
+      const filteredFacilities = this.userInfo?.facilities?.filter((facility) =>
+        facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()),
+      )
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
     defaultAssistanceRequestSubject() {
       return `Unlock ${this.surveyResponseToUnlock?.surveyResponseReferenceNumber} ${this.surveyResponseToUnlock?.title}`
     },
     defaultAssistanceRequestFacility() {
-      return this.userInfo?.facilities?.find((facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId)
+      return this.userInfo?.facilities?.find(
+        (facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId,
+      )
     },
   },
 
@@ -163,7 +190,9 @@ export default {
         const isOverdueB = this.isOverdue(b) ? -1 : 1
         const overDueComparison = isOverdueA - isOverdueB
         const facilityNameComparison = a.facilityName?.localeCompare(b.facilityName)
-        const surveyResponseNumberComparison = a.surveyResponseReferenceNumber?.localeCompare(b.surveyResponseReferenceNumber)
+        const surveyResponseNumberComparison = a.surveyResponseReferenceNumber?.localeCompare(
+          b.surveyResponseReferenceNumber,
+        )
         return overDueComparison || facilityNameComparison || surveyResponseNumberComparison
       })
     },

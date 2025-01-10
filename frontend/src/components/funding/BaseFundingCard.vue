@@ -3,7 +3,10 @@
     <v-card-title class="card-title"><strong>Base Funding</strong></v-card-title>
     <v-skeleton-loader :loading="loading" type="table-tbody" class="pa-6">
       <v-container fluid class="pa-0">
-        <div>The base funding shown is only from the current fiscal year and does not include changes from funding re-allocation requests.</div>
+        <div>
+          The base funding shown is only from the current fiscal year and does not include changes from funding
+          re-allocation requests.
+        </div>
         <v-row no-gutters class="my-4">
           <v-col cols="12" lg="6">
             <v-card class="pa-4 mb-2 mb-sm-0 mr-lg-4">

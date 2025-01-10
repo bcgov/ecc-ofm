@@ -38,11 +38,22 @@
               <AppLabel>Status(es):</AppLabel>
             </v-col>
             <v-col cols="12" sm="9" lg="8">
-              <v-select v-model.lazy="selectedStatuses" :items="STATUS_FILTER_OPTIONS" :disabled="loading" :rules="rules.required" variant="outlined" label="Select Status(es)" chips multiple>
+              <v-select
+                v-model.lazy="selectedStatuses"
+                :items="STATUS_FILTER_OPTIONS"
+                :disabled="loading"
+                :rules="rules.required"
+                variant="outlined"
+                label="Select Status(es)"
+                chips
+                multiple>
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleAllStatuses">
                     <template #prepend>
-                      <v-checkbox-btn :color="someStatusesSelected ? '#003366' : undefined" :indeterminate="someStatusesSelected && !allStatusesSelected" :model-value="someStatusesSelected" />
+                      <v-checkbox-btn
+                        :color="someStatusesSelected ? '#003366' : undefined"
+                        :indeterminate="someStatusesSelected && !allStatusesSelected"
+                        :model-value="someStatusesSelected" />
                     </template>
                   </v-list-item>
                   <v-divider class="mt-2" />
@@ -57,7 +68,11 @@
               <AppLabel>Date:</AppLabel>
             </v-col>
             <v-col cols="12" sm="12" lg="9" xl="7">
-              <AppButtonRadioGroup v-model="selectedDateFilterType" :disabled="loading" :options="DATE_FILTER_OPTIONS" :default-option="selectedDateFilterType" />
+              <AppButtonRadioGroup
+                v-model="selectedDateFilterType"
+                :disabled="loading"
+                :options="DATE_FILTER_OPTIONS"
+                :default-option="selectedDateFilterType" />
             </v-col>
           </v-row>
           <v-row v-if="selectedDateFilterType === 'Custom'">
@@ -66,7 +81,14 @@
             </v-col>
             <v-col cols="12" sm="12" lg="10">
               <v-row class="mt-2">
-                <AppDateInput id="date-from" v-model="selectedDateFrom" :rules="[...rules.required, rules.MMDDYYYY]" :disabled="loading" :hide-details="loading" label="From" class="mx-3" />
+                <AppDateInput
+                  id="date-from"
+                  v-model="selectedDateFrom"
+                  :rules="[...rules.required, rules.MMDDYYYY]"
+                  :disabled="loading"
+                  :hide-details="loading"
+                  label="From"
+                  class="mx-3" />
                 <AppDateInput
                   id="date-to"
                   v-model="selectedDateTo"
@@ -82,7 +104,16 @@
       </v-row>
     </v-card>
     <v-row no-gutters class="mt-2" justify="end">
-      <AppButton id="reset" :primary="false" size="large" width="100px" :loading="loading" class="mr-8" @click="resetFilter">Reset</AppButton>
+      <AppButton
+        id="reset"
+        :primary="false"
+        size="large"
+        width="100px"
+        :loading="loading"
+        class="mr-8"
+        @click="resetFilter">
+        Reset
+      </AppButton>
       <AppButton id="search" size="large" width="150px" :loading="loading" @click="search">Search</AppButton>
     </v-row>
   </v-form>
@@ -170,7 +201,11 @@ export default {
       { label: DATE_FILTER_TYPES.YTD, value: DATE_FILTER_TYPES.YTD },
       { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM },
     ]
-    this.STATUS_FILTER_OPTIONS = [SURVEY_RESPONSE_STATUSES.COMPLETED, SURVEY_RESPONSE_STATUSES.COMPLETED_LATE, SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED]
+    this.STATUS_FILTER_OPTIONS = [
+      SURVEY_RESPONSE_STATUSES.COMPLETED,
+      SURVEY_RESPONSE_STATUSES.COMPLETED_LATE,
+      SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED,
+    ]
     this.resetFilter()
   },
 

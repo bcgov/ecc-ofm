@@ -21,11 +21,23 @@
         <h4>Licences</h4>
       </v-col>
       <v-col class="d-flex justify-end align-end pb-1 pt-0">
-        <AppButton v-if="licences?.length > 0 && isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+        <AppButton
+          v-if="licences?.length > 0 && isEmpty(panel)"
+          id="expand-button"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="togglePanels()">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
-        <AppButton v-else-if="licences?.length > 0" id="collapse-button" :primary="false" size="large" width="200px" @click="togglePanels()">
+        <AppButton
+          v-else-if="licences?.length > 0"
+          id="collapse-button"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="togglePanels()">
           <v-icon>mdi-arrow-collapse-vertical</v-icon>
           Collapse All
         </AppButton>
@@ -81,7 +93,7 @@
               </v-row>
               <v-row>
                 <v-col cols="10" sm="11">
-                  <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
+                  <ContactInfo v-card-variant="flat" :loading="loading" :contact="primaryContact" class="mt-0" />
                 </v-col>
                 <v-col cols="2" sm="1">
                   <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
@@ -94,8 +106,25 @@
               <v-row v-if="editable && editModePrimaryContact">
                 <v-col cols="12">
                   <v-row justify="end">
-                    <AppButton id="cancel" :primary="false" size="large" :loading="loading" class="mr-6" @click="toggleEditPrimaryContact()">Cancel</AppButton>
-                    <AppButton id="save" :primary="true" size="large" :loading="loading" :disabled="!hasPrimaryContactChanged" class="mr-4" @click="savePrimaryContact()">Save</AppButton>
+                    <AppButton
+                      id="cancel"
+                      :primary="false"
+                      size="large"
+                      :loading="loading"
+                      class="mr-6"
+                      @click="toggleEditPrimaryContact()">
+                      Cancel
+                    </AppButton>
+                    <AppButton
+                      id="save"
+                      :primary="true"
+                      size="large"
+                      :loading="loading"
+                      :disabled="!hasPrimaryContactChanged"
+                      class="mr-4"
+                      @click="savePrimaryContact()">
+                      Save
+                    </AppButton>
                   </v-row>
                 </v-col>
               </v-row>
@@ -125,7 +154,13 @@
       :editable="editable"
       @save-contact-updates="saveAdditionalContactUpdates"
       @edit-mode-changed="contactEditModeChange" />
-    <AppBackButton id="back-to-manage-organization" max-width="500px" :to="{ name: 'manage-organization' }" :loading="loading">Organization Information</AppBackButton>
+    <AppBackButton
+      id="back-to-manage-organization"
+      max-width="500px"
+      :to="{ name: 'manage-organization' }"
+      :loading="loading">
+      Organization Information
+    </AppBackButton>
     <NewRequestDialog
       v-if="editable"
       class="pa-0"
@@ -134,7 +169,10 @@
       :default-facility="facility"
       @close="toggleChangeRequestDialog"
       @submit-phone-email="handleCRSubmit" />
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    <UnableToSubmitCrDialog
+      :show="showUnableToSubmitCrDialog"
+      :display-type="preventChangeRequestType"
+      @close="toggleUnableToSubmitCrDialog" />
   </v-container>
 </template>
 
@@ -164,7 +202,18 @@ import rules from '@/utils/rules'
 
 export default {
   name: 'ManageFacilityView',
-  components: { AppButton, AppBackButton, AppLabel, FacilityInfo, EditFacilityContacts, ContactInfo, LicenceHeader, LicenceDetails, NewRequestDialog, UnableToSubmitCrDialog },
+  components: {
+    AppButton,
+    AppBackButton,
+    AppLabel,
+    FacilityInfo,
+    EditFacilityContacts,
+    ContactInfo,
+    LicenceHeader,
+    LicenceDetails,
+    NewRequestDialog,
+    UnableToSubmitCrDialog,
+  },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -321,7 +370,8 @@ export default {
       try {
         contactsToAdd.forEach((obj) => (obj[property] = true))
         contactsToRemove?.forEach((obj) => (obj[property] = false))
-        const contactsToUpdate = contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
+        const contactsToUpdate =
+          contactsToRemove?.length === 0 ? [...contactsToAdd] : [...contactsToAdd, ...contactsToRemove]
         const updateContactsTasks = contactsToUpdate.map(async (contact) => {
           try {
             await FacilityService.updateFacilityContact(contact.bceidFacilityId, contact)
@@ -387,11 +437,17 @@ export default {
     },
 
     async validateOfmProgram() {
-      const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(this.facility?.programCode)
+      const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(
+        this.facility?.programCode,
+      )
       const isTDADProgram = OFM_PROGRAM_CODES.TDAD === this.facility?.programCode
-      const hasApprovedApplication = await ApplicationService.hasApprovedApplication([{ facilityId: this.facility?.facilityId }])
+      const hasApprovedApplication = await ApplicationService.hasApprovedApplication([
+        { facilityId: this.facility?.facilityId },
+      ])
       if ((isCCOForMultipleProgram || isTDADProgram) && !hasApprovedApplication) {
-        this.preventChangeRequestType = isCCOForMultipleProgram ? PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM : PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM
+        this.preventChangeRequestType = isCCOForMultipleProgram
+          ? PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM
+          : PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM
         this.showUnableToSubmitCrDialog = true
       } else {
         this.toggleChangeRequestDialog()

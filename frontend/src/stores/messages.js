@@ -9,7 +9,8 @@ export const useMessagesStore = defineStore('messages', {
     assistanceRequestConversation: null,
   }),
   getters: {
-    unreadMessageCount: (state) => (state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0),
+    unreadMessageCount: (state) =>
+      state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0,
   },
   actions: {
     async getAssistanceRequests(contactId) {
@@ -24,7 +25,9 @@ export const useMessagesStore = defineStore('messages', {
 
     async addNewAssistanceRequestToStore(assistanceRequestId) {
       const newAssistanceRequest = await MessageService.getAssistanceRequest(assistanceRequestId)
-      const foundAssistanceRequestWithSameID = this.assistanceRequests?.find((item) => item.assistanceRequestId === newAssistanceRequest?.assistanceRequestId)
+      const foundAssistanceRequestWithSameID = this.assistanceRequests?.find(
+        (item) => item.assistanceRequestId === newAssistanceRequest?.assistanceRequestId,
+      )
       if (!foundAssistanceRequestWithSameID) {
         this.assistanceRequests?.push(newAssistanceRequest)
         this.sortAssistanceRequests(this.assistanceRequests)
@@ -33,7 +36,9 @@ export const useMessagesStore = defineStore('messages', {
 
     async updateAssistanceRequestInStore(assistanceRequestId) {
       const assistanceRequest = await MessageService.getAssistanceRequest(assistanceRequestId)
-      const assistanceRequestIndex = this.assistanceRequests?.findIndex((item) => item.assistanceRequestId === assistanceRequest?.assistanceRequestId)
+      const assistanceRequestIndex = this.assistanceRequests?.findIndex(
+        (item) => item.assistanceRequestId === assistanceRequest?.assistanceRequestId,
+      )
       if (assistanceRequestIndex !== -1) {
         this.assistanceRequests[assistanceRequestIndex] = assistanceRequest
       }

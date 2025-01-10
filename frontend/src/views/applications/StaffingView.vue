@@ -1,13 +1,22 @@
 <template>
   <v-form ref="form">
-    <v-row no-gutters class="mt-4"><strong>Please provide staffing information for the selected facility:</strong></v-row>
+    <v-row no-gutters class="mt-4">
+      <strong>Please provide staffing information for the selected facility:</strong>
+    </v-row>
     <v-card id="union-section" class="my-6 pa-4">
       <v-row no-gutters class="mt-4">
         <v-col cols="12">
           <AppLabel>Is your facility unionized?</AppLabel>
         </v-col>
         <v-col cols="12">
-          <v-radio-group id="is-unionized" v-model="model.isUnionized" :rules="rules.required" :hide-details="readonly" :disabled="readonly" inline color="primary">
+          <v-radio-group
+            id="is-unionized"
+            v-model="model.isUnionized"
+            :rules="rules.required"
+            :hide-details="readonly"
+            :disabled="readonly"
+            inline
+            color="primary">
             <v-radio label="Yes" :value="1" />
             <v-radio label="No" :value="0" />
           </v-radio-group>
@@ -31,10 +40,13 @@
               :items="unions"
               item-title="description"
               item-value="id">
-              <template v-slot:prepend-item>
+              <template #prepend-item>
                 <v-list-item title="Select All" @click="toggleAllUnions">
-                  <template v-slot:prepend>
-                    <v-checkbox-btn :color="someUnionsSelected ? '#003366' : undefined" :indeterminate="someUnionsSelected && !allUnionsSelected" :model-value="someUnionsSelected"></v-checkbox-btn>
+                  <template #prepend>
+                    <v-checkbox-btn
+                      :color="someUnionsSelected ? '#003366' : undefined"
+                      :indeterminate="someUnionsSelected && !allUnionsSelected"
+                      :model-value="someUnionsSelected"></v-checkbox-btn>
                   </template>
                 </v-list-item>
                 <v-divider class="mt-2"></v-divider>
@@ -47,7 +59,14 @@
             <AppLabel>Please specify your other union(s):</AppLabel>
           </v-col>
           <v-col cols="12" lg="8" xl="6">
-            <v-text-field id="other-union-desc" v-model.trim="model.unionDescription" :rules="rules.required" variant="outlined" density="compact" :disabled="readonly" :hide-details="readonly" />
+            <v-text-field
+              id="other-union-desc"
+              v-model.trim="model.unionDescription"
+              :rules="rules.required"
+              variant="outlined"
+              density="compact"
+              :disabled="readonly"
+              :hide-details="readonly" />
           </v-col>
         </v-row>
       </div>
@@ -58,7 +77,14 @@
           <AppLabel>Does your facility belong to CSSEA?</AppLabel>
         </v-col>
         <v-col cols="12">
-          <v-radio-group id="belong-cssea" v-model="model.cssea" :rules="rules.notNullRequired" :hide-details="readonly" :disabled="readonly" inline color="primary">
+          <v-radio-group
+            id="belong-cssea"
+            v-model="model.cssea"
+            :rules="rules.notNullRequired"
+            :hide-details="readonly"
+            :disabled="readonly"
+            inline
+            color="primary">
             <v-radio label="Yes" :value="true" />
             <v-radio label="No" :value="false" />
           </v-radio-group>
@@ -66,10 +92,18 @@
       </v-row>
     </v-card>
     <div v-if="!readonly && validation && !isStaffingComplete">
-      <AppMissingInfoError v-if="!isThereAtLeastOneEmployee(model)">{{ APPLICATION_ERROR_MESSAGES.STAFFING }}</AppMissingInfoError>
-      <AppMissingInfoError v-if="!areAllEmployeeCertificatesEntered(allUpdatedCertificates, model)">{{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}</AppMissingInfoError>
-      <AppMissingInfoError v-if="!areAllCertificateInitialsUnique(allUpdatedCertificates)">{{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}</AppMissingInfoError>
-      <AppMissingInfoError v-if="!areAllCertificateNumbersUnique(allUpdatedCertificates)">{{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}</AppMissingInfoError>
+      <AppMissingInfoError v-if="!isThereAtLeastOneEmployee(model)">
+        {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
+      </AppMissingInfoError>
+      <AppMissingInfoError v-if="!areAllEmployeeCertificatesEntered(allUpdatedCertificates, model)">
+        {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
+      </AppMissingInfoError>
+      <AppMissingInfoError v-if="!areAllCertificateInitialsUnique(allUpdatedCertificates)">
+        {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
+      </AppMissingInfoError>
+      <AppMissingInfoError v-if="!areAllCertificateNumbersUnique(allUpdatedCertificates)">
+        {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
+      </AppMissingInfoError>
     </div>
     <v-card id="employee-section" class="my-6 pa-4">
       <v-row no-gutters>
@@ -309,10 +343,20 @@ export default {
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
 
     totalFullTimePosition() {
-      return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime
+      return (
+        this.model.staffingInfantECEducatorFullTime +
+        this.model.staffingECEducatorFullTime +
+        this.model.staffingECEducatorAssistantFullTime +
+        this.model.staffingResponsibleAdultFullTime
+      )
     },
     totalPartTimePosition() {
-      return this.model.staffingInfantECEducatorPartTime + this.model.staffingECEducatorPartTime + this.model.staffingECEducatorAssistantPartTime + this.model.staffingResponsibleAdultPartTime
+      return (
+        this.model.staffingInfantECEducatorPartTime +
+        this.model.staffingECEducatorPartTime +
+        this.model.staffingECEducatorAssistantPartTime +
+        this.model.staffingResponsibleAdultPartTime
+      )
     },
     totalInfantECEducatorStaff() {
       return Number(this.model.staffingInfantECEducatorFullTime) + Number(this.model.staffingInfantECEducatorPartTime)
@@ -321,21 +365,29 @@ export default {
       return Number(this.model.staffingECEducatorFullTime) + Number(this.model.staffingECEducatorPartTime)
     },
     totalECEducatorAssistantStaff() {
-      return Number(this.model.staffingECEducatorAssistantFullTime) + Number(this.model.staffingECEducatorAssistantPartTime)
+      return (
+        Number(this.model.staffingECEducatorAssistantFullTime) + Number(this.model.staffingECEducatorAssistantPartTime)
+      )
     },
 
     allUpdatedCertificates() {
       return this.updatedECECertificates.concat(this.updatedECEACertificates, this.updatedITECertificates)
     },
     certificatesToCreate() {
-      return this.allUpdatedCertificates?.filter((certificate) => !certificate.providerEmployeeId && (certificate.initials || certificate.certificateNumber))
+      return this.allUpdatedCertificates?.filter(
+        (certificate) => !certificate.providerEmployeeId && (certificate.initials || certificate.certificateNumber),
+      )
     },
     certificatesToUpdate() {
-      return this.allUpdatedCertificates?.filter((certificate) => certificate.providerEmployeeId && certificate.isUpdated)
+      return this.allUpdatedCertificates?.filter(
+        (certificate) => certificate.providerEmployeeId && certificate.isUpdated,
+      )
     },
     certificatesToDelete() {
       return this.currentApplication?.providerEmployees?.filter((certificate) => {
-        const index = this.allUpdatedCertificates?.findIndex((updatedCertificate) => updatedCertificate.providerEmployeeId === certificate.providerEmployeeId)
+        const index = this.allUpdatedCertificates?.findIndex(
+          (updatedCertificate) => updatedCertificate.providerEmployeeId === certificate.providerEmployeeId,
+        )
         return index === -1
       })
     },
@@ -365,7 +417,10 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.OPERATING_COSTS,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -375,7 +430,10 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.REVIEW,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },
@@ -430,10 +488,18 @@ export default {
         this.$emit('process', true)
         this.processing = true
         const applicationPayload = cloneDeep(this.model)
-        applicationPayload.unions = applicationPayload?.isUnionized === 1 && this.model.unions?.length > 0 ? convertArrayToString(this.model.unions, ',') : null
-        applicationPayload.unionDescription = this.isOtherUnionSelected(applicationPayload) ? applicationPayload.unionDescription : null
+        applicationPayload.unions =
+          applicationPayload?.isUnionized === 1 && this.model.unions?.length > 0
+            ? convertArrayToString(this.model.unions, ',')
+            : null
+        applicationPayload.unionDescription = this.isOtherUnionSelected(applicationPayload)
+          ? applicationPayload.unionDescription
+          : null
         const isApplicationUpdated = ApplicationService.isApplicationUpdated(applicationPayload)
-        const isCertificatesUpdated = this.certificatesToCreate?.length > 0 || this.certificatesToUpdate?.length > 0 || this.certificatesToDelete?.length > 0
+        const isCertificatesUpdated =
+          this.certificatesToCreate?.length > 0 ||
+          this.certificatesToUpdate?.length > 0 ||
+          this.certificatesToDelete?.length > 0
         if (isApplicationUpdated || isCertificatesUpdated) {
           if (isApplicationUpdated) {
             await ApplicationService.updateApplication(this.$route.params.applicationGuid, applicationPayload)
@@ -490,9 +556,21 @@ export default {
     },
 
     cloneSavedCertificates() {
-      this.updatedECECertificates = cloneDeep(this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE))
-      this.updatedECEACertificates = cloneDeep(this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA))
-      this.updatedITECertificates = cloneDeep(this.currentApplication?.providerEmployees?.filter((certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE))
+      this.updatedECECertificates = cloneDeep(
+        this.currentApplication?.providerEmployees?.filter(
+          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE,
+        ),
+      )
+      this.updatedECEACertificates = cloneDeep(
+        this.currentApplication?.providerEmployees?.filter(
+          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA,
+        ),
+      )
+      this.updatedITECertificates = cloneDeep(
+        this.currentApplication?.providerEmployees?.filter(
+          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE,
+        ),
+      )
     },
 
     updateITECertificates(certificates) {

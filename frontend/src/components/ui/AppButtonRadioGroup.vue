@@ -1,6 +1,13 @@
 <template>
   <v-btn-toggle v-model="internalSelection" mandatory @change="emitSelection">
-    <v-btn v-for="option in options" :key="option.value" :value="option.value" :class="{ 'active-button': internalSelection === option.value, 'inactive-button': internalSelection !== option.value }">
+    <v-btn
+      v-for="option in options"
+      :key="option.value"
+      :value="option.value"
+      :class="{
+        'active-button': internalSelection === option.value,
+        'inactive-button': internalSelection !== option.value,
+      }">
       {{ option.label }}
     </v-btn>
   </v-btn-toggle>
@@ -14,7 +21,10 @@ export default {
       type: Array,
       required: true,
       validator: function (array) {
-        return array.every((item) => Object.prototype.hasOwnProperty.call(item, 'value') && Object.prototype.hasOwnProperty.call(item, 'label'))
+        return array.every(
+          (item) =>
+            Object.prototype.hasOwnProperty.call(item, 'value') && Object.prototype.hasOwnProperty.call(item, 'label'),
+        )
       },
     },
     defaultOption: {

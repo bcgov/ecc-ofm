@@ -1,5 +1,9 @@
 <template>
-  <v-card v-for="model in indigenousProgrammingModels" :key="model.indigenousProgrammingModels ? model.indigenousProgrammingModels : model.id" fluid class="pb-0 my-5">
+  <v-card
+    v-for="model in indigenousProgrammingModels"
+    :key="model.indigenousProgrammingModels ? model.indigenousProgrammingModels : model.id"
+    fluid
+    class="pb-0 my-5">
     <AppAlertBanner v-if="model.isNextTerm" type="info">This Allowance application is for next year</AppAlertBanner>
     <div class="px-5">
       <div class="mt-2">
@@ -16,7 +20,12 @@
           {{ model.indigenousOtherDescription }}
         </p>
         <p v-else>
-          <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid }, query: { nextTerm: model.isNextTerm } }">
+          <AppMissingInfoError
+            :to="{
+              name: 'supp-allowances-form',
+              params: { applicationGuid: $route.params.applicationGuid },
+              query: { nextTerm: model.isNextTerm },
+            }">
             {{ APPLICATION_ERROR_MESSAGES.SUPP_OTHER }}
           </AppMissingInfoError>
         </p>
@@ -48,7 +57,9 @@ export default {
   },
   methods: {
     isOtherBoxDisplayed(model) {
-      return model.indigenousFundingModel?.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
+      return model.indigenousFundingModel?.includes(
+        this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+      )
     },
     selectedFunding(model) {
       return this.INDIG_CHECKBOX_LABELS.filter((item) => model.indigenousFundingModel.includes(item.value))

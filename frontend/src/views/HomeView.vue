@@ -1,6 +1,11 @@
 <template>
   <v-row v-if="showReportsAlertBanner" no-gutters class="blue-background justify-center pa-2">
-    <v-banner bg-color="#f9f1c6" :lines="$vuetify.display.smAndUp ? 'one' : 'two'" max-width="700px" rounded class="alert-banner">
+    <v-banner
+      bg-color="#f9f1c6"
+      :lines="$vuetify.display.smAndUp ? 'one' : 'two'"
+      max-width="700px"
+      rounded
+      class="alert-banner">
       <template #text>
         <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
         <strong>You have one or more monthly reports that are due or overdue.</strong>
@@ -15,7 +20,10 @@
   <v-container v-bind="$attrs">
     <v-row>
       <v-col class="pa-1">
-        <p class="home-overview page-overview">Welcome to your Management Portal - Connect with the program, view and manage accounts, applications, and reports</p>
+        <p class="home-overview page-overview">
+          Welcome to your Management Portal - Connect with the program, view and manage accounts, applications, and
+          reports
+        </p>
       </v-col>
     </v-row>
     <v-row v-if="isLoading">
@@ -25,32 +33,66 @@
     </v-row>
     <v-row v-else>
       <v-col v-if="hasPermission(PERMISSIONS.SEARCH_VIEW_REPORTS)" cols="12" md="6" lg="4">
-        <v-card id="reporting-card" class="basic-card" prepend-icon="mdi-file-chart-outline" title="Reporting" @click="$router.push({ name: 'reporting' })">
+        <v-card
+          id="reporting-card"
+          class="basic-card"
+          prepend-icon="mdi-file-chart-outline"
+          title="Reporting"
+          @click="$router.push({ name: 'reporting' })">
           <v-card-text>Complete or view current or past Monthly Reports and submit financial reports.</v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="hasPermission([PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS])" cols="12" md="6" lg="4">
-        <v-card id="funding-card" class="basic-card" prepend-icon="mdi-currency-usd" title="Funding" @click="$router.push({ name: 'funding-overview' })">
+      <v-col
+        v-if="hasPermission([PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS])"
+        cols="12"
+        md="6"
+        lg="4">
+        <v-card
+          id="funding-card"
+          class="basic-card"
+          prepend-icon="mdi-currency-usd"
+          title="Funding"
+          @click="$router.push({ name: 'funding-overview' })">
           <v-card-text>Review operational funding details by month or funding envelopes.</v-card-text>
         </v-card>
       </v-col>
       <v-col v-if="hasPermission([PERMISSIONS.MANAGE_NOTIFICATIONS])" cols="12" md="6" lg="4">
-        <v-card id="assistance-card" class="basic-card" prepend-icon="mdi-message-text-outline" title="Assistance Request" @click="toggleAssistanceRequestDialog">
+        <v-card
+          id="assistance-card"
+          class="basic-card"
+          prepend-icon="mdi-message-text-outline"
+          title="Assistance Request"
+          @click="toggleAssistanceRequestDialog">
           <v-card-text>Have Questions? Send us a message.</v-card-text>
         </v-card>
       </v-col>
       <v-col v-if="hasPermission(PERMISSIONS.VIEW_APPLICATIONS)" cols="12" md="6" lg="4">
-        <v-card id="applications-card" class="basic-card" prepend-icon="mdi-file-document-multiple-outline" title="Applications" @click="$router.push({ name: 'applications-history' })">
+        <v-card
+          id="applications-card"
+          class="basic-card"
+          prepend-icon="mdi-file-document-multiple-outline"
+          title="Applications"
+          @click="$router.push({ name: 'applications-history' })">
           <v-card-text>Submit new or view applications for $10 a Day funding or Allowances.</v-card-text>
         </v-card>
       </v-col>
       <v-col v-if="hasPermission(PERMISSIONS.VIEW_ORG_FACILITY, PERMISSIONS.MANAGE_USERS_VIEW)" cols="12" md="6" lg="4">
-        <v-card id="account-mgmt-card" class="basic-card" prepend-icon="mdi-cog-outline" title="Account Management" @click="$router.push({ name: 'account-mgmt' })">
+        <v-card
+          id="account-mgmt-card"
+          class="basic-card"
+          prepend-icon="mdi-cog-outline"
+          title="Account Management"
+          @click="$router.push({ name: 'account-mgmt' })">
           <v-card-text>Maintain or edit organization or facility information and request a change.</v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card id="help-card" class="basic-card" prepend-icon="mdi-help-circle-outline" title="Help and Resources" @click="$router.push({ name: 'help' })">
+        <v-card
+          id="help-card"
+          class="basic-card"
+          prepend-icon="mdi-help-circle-outline"
+          title="Help and Resources"
+          @click="$router.push({ name: 'help' })">
           <v-card-text>Need support? Find program training tools, resources and technical help.</v-card-text>
         </v-card>
       </v-col>
@@ -58,7 +100,10 @@
   </v-container>
 
   <SignFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setLoadingFA" />
-  <NewRequestDialog v-if="hasPermission(PERMISSIONS.MANAGE_NOTIFICATIONS)" :show="showAssistanceRequestDialog" @close="toggleAssistanceRequestDialog" />
+  <NewRequestDialog
+    v-if="hasPermission(PERMISSIONS.MANAGE_NOTIFICATIONS)"
+    :show="showAssistanceRequestDialog"
+    @close="toggleAssistanceRequestDialog" />
 </template>
 
 <script>

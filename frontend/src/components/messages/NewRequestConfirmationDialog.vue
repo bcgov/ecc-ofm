@@ -12,10 +12,14 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="return-button" :primary="false" size="large" min-width="250px" @click="returnPage()">Return to {{ returnTo }}</AppButton>
+          <AppButton id="return-button" :primary="false" size="large" min-width="250px" @click="returnPage()">
+            Return to {{ returnTo }}
+          </AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="view-messages-button" size="large" min-width="250px" @click="viewMessages()">View messages</AppButton>
+          <AppButton id="view-messages-button" size="large" min-width="250px" @click="viewMessages()">
+            View messages
+          </AppButton>
         </v-col>
       </v-row>
     </template>

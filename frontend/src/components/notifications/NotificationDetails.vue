@@ -8,7 +8,12 @@
           &nbsp;$10 a Day Funding Program
         </v-col>
         <v-col cols="5" md="4" lg="3" class="pa-0 d-flex justify-end mt-1">
-          <AppButton v-if="notification?.isRead" size="small" class="notifications-button" :primary="false" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
+          <AppButton
+            v-if="notification?.isRead"
+            size="small"
+            class="notifications-button"
+            :primary="false"
+            @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
             <v-icon class="mr-1" left>mdi-email-outline</v-icon>
             <span>Mark Unread</span>
           </AppButton>

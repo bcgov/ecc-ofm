@@ -3,7 +3,12 @@
     <h1>Account Management</h1>
     <v-row>
       <v-col v-if="hasPermission(PERMISSIONS.VIEW_ORG_FACILITY)" cols="12" md="6" lg="4">
-        <v-card id="org-facilities-card" class="account-card" prepend-icon="mdi-office-building" title="Manage Organizations/Facilities" @click="$router.push({ name: 'manage-organization' })">
+        <v-card
+          id="org-facilities-card"
+          class="account-card"
+          prepend-icon="mdi-office-building"
+          title="Manage Organizations/Facilities"
+          @click="$router.push({ name: 'manage-organization' })">
           <v-card-text>
             <p>View and update organization/facility details</p>
             <ul>
@@ -17,7 +22,12 @@
         </v-card>
       </v-col>
       <v-col v-if="hasPermission(PERMISSIONS.MANAGE_USERS_VIEW)" cols="12" md="6" lg="4">
-        <v-card id="manage-users-card" class="account-card" prepend-icon="mdi-account-group" title="Manage Facility Users" @click="$router.push({ name: 'manage-users' })">
+        <v-card
+          id="manage-users-card"
+          class="account-card"
+          prepend-icon="mdi-account-group"
+          title="Manage Facility Users"
+          @click="$router.push({ name: 'manage-users' })">
           <v-card-text>
             <p>Manage facility users</p>
             <ul>

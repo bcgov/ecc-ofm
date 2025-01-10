@@ -1,10 +1,15 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
     <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
-      <template v-slot:item="{ item }">
+      <template #item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
-            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
+            <SurveyQuestion
+              :question="question"
+              :response="getQuestionResponse(item, question?.questionId)"
+              :validation="false"
+              :readonly="readonly"
+              @update="updateResponses" />
           </td>
           <td v-if="!readonly && !hasValueInheritanceChildQuestions && updatedResponses?.length > 1">
             <v-btn variant="text" @click="deleteResponse(item, question?.questionId)">
@@ -13,10 +18,19 @@
           </td>
         </tr>
       </template>
-      <template v-slot:bottom><!-- no paging --></template>
+      <template #bottom><!-- no paging --></template>
     </v-data-table>
     <div v-if="validation && required && isTableEmpty" class="error-message mt-2">This field is required</div>
-    <AppButton v-if="showAddButton" id="add-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
+    <AppButton
+      v-if="showAddButton"
+      id="add-button"
+      class="mt-4 mb-12"
+      :primary="false"
+      size="large"
+      width="125px"
+      @click="addRow">
+      Add Row
+    </AppButton>
   </v-container>
 </template>
 
@@ -159,7 +173,8 @@ export default {
         const lastIndex = this.updatedResponses?.length - 1
         if (
           this.isRowBlank(this.updatedResponses[lastIndex]?.headers) ||
-          (!isEmpty(this.valueInheritanceParentsQuestion) && isEmpty(this.updatedResponses[lastIndex]?.headers[this.valueInheritanceParentsQuestion?.questionId]))
+          (!isEmpty(this.valueInheritanceParentsQuestion) &&
+            isEmpty(this.updatedResponses[lastIndex]?.headers[this.valueInheritanceParentsQuestion?.questionId]))
         )
           return
       }

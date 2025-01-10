@@ -11,10 +11,14 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="keep-change-button" :primary="false" size="large" width="200px" @click="toggleCancelDialog()">Keep Changes</AppButton>
+          <AppButton id="keep-change-button" :primary="false" size="large" width="200px" @click="toggleCancelDialog()">
+            Keep Changes
+          </AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="cancel-change-button" size="large" width="200px" @click="cancelChanges()">Cancel Changes</AppButton>
+          <AppButton id="cancel-change-button" size="large" width="200px" @click="cancelChanges()">
+            Cancel Changes
+          </AppButton>
         </v-col>
       </v-row>
     </template>

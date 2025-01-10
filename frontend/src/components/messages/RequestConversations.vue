@@ -6,7 +6,13 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
-        <AppButton v-if="assistanceRequest.isRead" size="small" min-width="155px" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
+        <AppButton
+          v-if="assistanceRequest.isRead"
+          size="small"
+          min-width="155px"
+          :primary="false"
+          class="conversations-button"
+          @click="$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon left class="mr-1">mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
@@ -17,7 +23,12 @@
           text="Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).">
           <template #activator="{ props }">
             <div v-bind="props">
-              <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small" min-width="155px" @click="toggleReplyRequestDialog">
+              <AppButton
+                class="reply-button my-1"
+                :disabled="!isReplyButtonEnabled"
+                size="small"
+                min-width="155px"
+                @click="toggleReplyRequestDialog">
                 <v-icon left class="mr-1">mdi-reply</v-icon>
                 <span>Reply</span>
               </AppButton>
@@ -36,7 +47,9 @@
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0 pl-0">Topic:</v-col>
       <v-col cols="3" class="pt-0 pb-0" data-cy="topic">{{ assistanceRequest.categoryName }}</v-col>
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
-      <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
+      <v-col class="pt-0 pb-0">
+        {{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}
+      </v-col>
     </v-row>
     <v-row>
       <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center">
@@ -54,7 +67,12 @@
     <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table" data-cy="conversations-table">
+          <v-data-table-virtual
+            :headers="headers"
+            :items="assistanceRequestConversation"
+            item-key="messageId"
+            class="data-table"
+            data-cy="conversations-table">
             <template #headers></template>
             <template #item="{ item }">
               <v-row class="border-bottom ma-0">
@@ -135,16 +153,27 @@ export default {
       return !this.isReplyButtonEnabled && !this.isStatusClosed
     },
     showCloseRequestBanner() {
-      const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
+      const assistanceRequest = this.assistanceRequests.find(
+        (item) => item.assistanceRequestId === this.assistanceRequestId,
+      )
       return assistanceRequest?.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE
     },
     isReplyButtonEnabled() {
-      const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
-      return [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(assistanceRequest?.statusCode)
+      const assistanceRequest = this.assistanceRequests.find(
+        (item) => item.assistanceRequestId === this.assistanceRequestId,
+      )
+      return [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(
+        assistanceRequest?.statusCode,
+      )
     },
     isStatusClosed() {
-      const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
-      return [ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE, ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED].includes(assistanceRequest?.statusCode)
+      const assistanceRequest = this.assistanceRequests.find(
+        (item) => item.assistanceRequestId === this.assistanceRequestId,
+      )
+      return [
+        ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
+        ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED,
+      ].includes(assistanceRequest?.statusCode)
     },
   },
   watch: {
@@ -196,7 +225,9 @@ export default {
     async replySuccessEvent(isSuccess) {
       if (isSuccess) {
         // Assistance request status has been updated as part of reply, get the latest from store.
-        this.assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
+        this.assistanceRequest = this.assistanceRequests.find(
+          (item) => item.assistanceRequestId === this.assistanceRequestId,
+        )
         await this.getAssistanceRequestConversation(this.assistanceRequestId)
         this.sortConversation()
         this.setSuccessAlert('Reply sent successfully')

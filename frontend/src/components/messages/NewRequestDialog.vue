@@ -1,6 +1,12 @@
 <template>
   <v-container>
-    <AppDialog v-model="isDisplayed" title="New request" :is-loading="isLoading" persistent max-width="60%" @close="closeNewRequestDialog">
+    <AppDialog
+      v-model="isDisplayed"
+      title="New request"
+      :is-loading="isLoading"
+      persistent
+      max-width="60%"
+      @close="closeNewRequestDialog">
       <template #content>
         <v-form ref="newRequestForm" v-model="isFormComplete" class="px-lg-5 mx-lg-1">
           <v-row no-gutters class="mt-2">
@@ -46,14 +52,26 @@
               <v-col v-for="(item, index) in requestSubCategories" :key="index" class="v-col-12 v-col-md-6 v-col-lg-4">
                 <v-checkbox
                   :label="item.categoryName"
-                  :input-value="newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === item.subCategoryId)"
+                  :input-value="
+                    newRequestModel.subCategories.some(
+                      (subCategory) => subCategory.subCategoryId === item.subCategoryId,
+                    )
+                  "
                   density="compact"
                   :class="changeTypeClass"
                   hide-details
-                  @change="(val) => handleCheckboxChange(val, { subCategoryId: item.subCategoryId, subCategoryName: item.categoryName })"></v-checkbox>
+                  @change="
+                    (val) =>
+                      handleCheckboxChange(val, {
+                        subCategoryId: item.subCategoryId,
+                        subCategoryName: item.categoryName,
+                      })
+                  "></v-checkbox>
               </v-col>
             </v-row>
-            <div v-if="changeTypeClass" align="center" class="v-messages error-message pb-4">At least one Change type is required</div>
+            <div v-if="changeTypeClass" align="center" class="v-messages error-message pb-4">
+              At least one Change type is required
+            </div>
           </template>
           <v-row v-if="showFacility" no-gutters>
             <v-col class="v-col-12 v-col-md-3 v-col-xl-2 pt-2">
@@ -104,7 +122,8 @@
             <div v-if="showFacilityNotInOFMMessage" class="d-flex align-center mb-2">
               <v-icon size="large" class="alert-icon">mdi-alert-circle</v-icon>
               <p class="text-error ml-2">
-                The selected facility is not enrolled in the $10 a Day - Operating Funding Model and therefore cannot be updated using this method. Click
+                The selected facility is not enrolled in the $10 a Day - Operating Funding Model and therefore cannot be
+                updated using this method. Click
                 <a href="#" @click.prevent="toggleUnableToSubmitCrDialog">here</a>
                 for further instructions.
               </p>
@@ -213,11 +232,13 @@
               <AppLabel variant="modal">Request description:</AppLabel>
               <div v-if="isFundingEnvelopeRequest" class="mt-2 mb-4">
                 <div class="mb-2">
-                  Each Funding Envelope has restrictions for how the funding can be used and if or how it can be re-allocated between the Funding Envelopes and between line items within the Funding
-                  Envelopes, as applicable. Please see the Policy and Procedures Manual for detailed information.
+                  Each Funding Envelope has restrictions for how the funding can be used and if or how it can be
+                  re-allocated between the Funding Envelopes and between line items within the Funding Envelopes, as
+                  applicable. Please see the Policy and Procedures Manual for detailed information.
                 </div>
                 <div>
-                  In the box below, please outline your request to re-allocate funds, including the amount and the envelopes you are moving funds between. Please also attach any relevant documents.
+                  In the box below, please outline your request to re-allocate funds, including the amount and the
+                  envelopes you are moving funds between. Please also attach any relevant documents.
                 </div>
               </div>
             </v-col>
@@ -236,11 +257,22 @@
           <v-row v-if="isIrregularExpenseRequest" class="my-3">
             <v-col cols="12">
               <h5>You must complete and attach an Irregular Expense application form with your request.</h5>
-              <p>Download the application below, and attach the completed form to this request using the Add File button.</p>
+              <p>
+                Download the application below, and attach the completed form to this request using the Add File button.
+              </p>
             </v-col>
             <v-row>
               <v-col cols="12" class="ml-3">
-                <AppButton id="download-irregular-expense-form" :href="expenseFormURL" target="_blank" size="large" width="200px" :disabled="isDisabled" :loading="isLoading">Download Form</AppButton>
+                <AppButton
+                  id="download-irregular-expense-form"
+                  :href="expenseFormURL"
+                  target="_blank"
+                  size="large"
+                  width="200px"
+                  :disabled="isDisabled"
+                  :loading="isLoading">
+                  Download Form
+                </AppButton>
               </v-col>
             </v-row>
           </v-row>
@@ -256,7 +288,9 @@
               :disabled="isDisabled"
               :loading="isLoading"
               @validate-documents-to-upload="validateDocumentsToUpload"></AppDocumentUpload>
-            <AppMissingInfoError v-if="isIrregularExpenseRequest && !documentsToUpload.length">Document upload required</AppMissingInfoError>
+            <AppMissingInfoError v-if="isIrregularExpenseRequest && !documentsToUpload.length">
+              Document upload required
+            </AppMissingInfoError>
           </v-row>
           <template v-if="showContactMethods">
             <v-row no-gutters class="mt-4">
@@ -264,7 +298,12 @@
                 <AppLabel variant="modal">Preferred method of contact:</AppLabel>
               </v-col>
               <v-col class="v-col-12">
-                <v-radio-group v-model="newRequestModel.contactMethod" :rules="rules.required" :disabled="isLoading" inline color="primary">
+                <v-radio-group
+                  v-model="newRequestModel.contactMethod"
+                  :rules="rules.required"
+                  :disabled="isLoading"
+                  inline
+                  color="primary">
                   <v-radio label="Phone" value="2"></v-radio>
                   <v-radio label="Portal message" value="1"></v-radio>
                 </v-radio-group>
@@ -275,7 +314,11 @@
                 <AppLabel variant="modal">Business phone:</AppLabel>
               </v-col>
               <v-col class="v-col-12 v-col-md-9 v-col-xl-10">
-                <v-text-field v-model="newRequestModel.phone" variant="outlined" :rules="[...rules.required, rules.phone]" :disabled="isLoading" />
+                <v-text-field
+                  v-model="newRequestModel.phone"
+                  variant="outlined"
+                  :rules="[...rules.required, rules.phone]"
+                  :disabled="isLoading" />
               </v-col>
             </v-row>
           </template>
@@ -284,16 +327,39 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center pt-2">
-            <AppButton id="cancel-new-request" :primary="false" size="large" width="200px" :loading="isLoading" @click="closeNewRequestDialog()">Cancel</AppButton>
+            <AppButton
+              id="cancel-new-request"
+              :primary="false"
+              size="large"
+              width="200px"
+              :loading="isLoading"
+              @click="closeNewRequestDialog()">
+              Cancel
+            </AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center pt-2">
-            <AppButton id="submit-new-request" size="large" width="200px" :disabled="isDisabled" :loading="isLoading" @click="submit()">Submit</AppButton>
+            <AppButton
+              id="submit-new-request"
+              size="large"
+              width="200px"
+              :disabled="isDisabled"
+              :loading="isLoading"
+              @click="submit()">
+              Submit
+            </AppButton>
           </v-col>
         </v-row>
       </template>
     </AppDialog>
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
-    <NewRequestConfirmationDialog :reference-number="referenceNumber" :show="showNewRequestConfirmationDialog" :return-to="returnTo" @close="toggleNewRequestConfirmationDialog" />
+    <UnableToSubmitCrDialog
+      :show="showUnableToSubmitCrDialog"
+      :display-type="preventChangeRequestType"
+      @close="toggleUnableToSubmitCrDialog" />
+    <NewRequestConfirmationDialog
+      :reference-number="referenceNumber"
+      :show="showNewRequestConfirmationDialog"
+      :return-to="returnTo"
+      @close="toggleNewRequestConfirmationDialog" />
   </v-container>
 </template>
 
@@ -321,12 +387,33 @@ import FacilityService from '@/services/facilityService'
 import MessageService from '@/services/messageService'
 import OrganizationService from '@/services/organizationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
-import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE, FUNDING_AGREEMENT_STATUS_CODES, PROVIDER_TYPE_CODES } from '@/utils/constants'
+import {
+  ASSISTANCE_REQUEST_STATUS_CODES,
+  CRM_STATE_CODES,
+  OFM_PROGRAM_CODES,
+  PREVENT_CHANGE_REQUEST_TYPES,
+} from '@/utils/constants'
+import {
+  REQUEST_CATEGORY_NAMES,
+  REQUEST_SUB_CATEGORY_NAMES,
+  PHONE_FORMAT,
+  EMAIL_FORMAT,
+  VIRUS_SCAN_ERROR_MESSAGE,
+  FUNDING_AGREEMENT_STATUS_CODES,
+  PROVIDER_TYPE_CODES,
+} from '@/utils/constants'
 
 export default {
   name: 'NewRequestDialog',
-  components: { AppButton, AppDialog, AppLabel, AppDocumentUpload, NewRequestConfirmationDialog, UnableToSubmitCrDialog, AppMissingInfoError },
+  components: {
+    AppButton,
+    AppDialog,
+    AppLabel,
+    AppDocumentUpload,
+    NewRequestConfirmationDialog,
+    UnableToSubmitCrDialog,
+    AppMissingInfoError,
+  },
   mixins: [alertMixin, permissionsMixin],
   props: {
     show: {
@@ -388,7 +475,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAppStore, ['requestCategories', 'requestSubCategories', 'getRequestCategoryIdByName', 'getRequestSubCategoryIdByName']),
+    ...mapState(useAppStore, [
+      'requestCategories',
+      'requestSubCategories',
+      'getRequestCategoryIdByName',
+      'getRequestSubCategoryIdByName',
+    ]),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     permittedRequestCategories() {
@@ -418,16 +510,27 @@ export default {
       return this.newRequestModel.facilities.length > 0
     },
     isAccountMaintenanceRequest() {
-      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      return (
+        this.newRequestModel.requestCategoryId ===
+        this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)
+      )
     },
     isIrregularExpenseRequest() {
-      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
+      return (
+        this.newRequestModel.requestCategoryId ===
+        this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.IRREGULAR_EXPENSES)
+      )
     },
     isReportingRequest() {
-      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)
+      return (
+        this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.REPORTING)
+      )
     },
     isFundingEnvelopeRequest() {
-      return this.newRequestModel.requestCategoryId === this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.FUNDING_ENVELOPE_CR)
+      return (
+        this.newRequestModel.requestCategoryId ===
+        this.getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.FUNDING_ENVELOPE_CR)
+      )
     },
     isAnySubCategoryChecked() {
       return this.newRequestModel.subCategories.length > 0
@@ -448,7 +551,8 @@ export default {
     },
     isOnlyPhoneEmailChecked() {
       return (
-        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) &&
+        ((this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ||
+          this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) &&
           this.newRequestModel.subCategories.length === 1) ||
         (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) &&
           this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) &&
@@ -468,7 +572,10 @@ export default {
       return (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || !this.isAccountMaintenanceRequest
     },
     showSupportingDocuments() {
-      return (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) || (!this.isAccountMaintenanceRequest && !this.isReportingRequest)
+      return (
+        (this.isAccountMaintenanceRequest && this.isAnyDetailOrChangeChecked) ||
+        (!this.isAccountMaintenanceRequest && !this.isReportingRequest)
+      )
     },
     showContactMethods() {
       return !this.isAccountMaintenanceRequest && !this.isReportingRequest
@@ -504,7 +611,9 @@ export default {
         if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
           return []
         }
-        return this.facilities.filter((fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId) && fac?.isUnionized === 0)
+        return this.facilities.filter(
+          (fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId) && fac?.isUnionized === 0,
+        )
       }
       return this.facilities
     },
@@ -515,7 +624,12 @@ export default {
       return this.documentsToUpload.length
     },
     isMultipleFacilities() {
-      return !(this.isAccountMaintenanceRequest || this.isFundingEnvelopeRequest || this.isIrregularExpenseRequest || this.isReportingRequest)
+      return !(
+        this.isAccountMaintenanceRequest ||
+        this.isFundingEnvelopeRequest ||
+        this.isIrregularExpenseRequest ||
+        this.isReportingRequest
+      )
     },
     facilityLabel() {
       return `Facility${this.isMultipleFacilities ? '(s)' : ''}:`
@@ -538,7 +652,9 @@ export default {
     },
     defaultFacility: {
       handler(value) {
-        this.newRequestModel.facilities = [this.facilities?.find((facility) => facility.facilityId === value?.facilityId)]
+        this.newRequestModel.facilities = [
+          this.facilities?.find((facility) => facility.facilityId === value?.facilityId),
+        ]
       },
     },
     defaultSubject: {
@@ -559,7 +675,10 @@ export default {
         }
         this.resetModelData(this.isAccountMaintenanceRequest)
         // Reset the Selected Facility if not allowed
-        if (!isEmpty(this.newRequestModel.facilities) && !this.filteredFacilties?.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)) {
+        if (
+          !isEmpty(this.newRequestModel.facilities) &&
+          !this.filteredFacilties?.some((fac) => fac.facilityId === this.newRequestModel.facilities[0]?.facilityId)
+        ) {
           this.newRequestModel.facilities = []
           //then shorten the facility model to 1 item if going from multi-select to single select
         } else if (this.newRequestModel.facilities?.length > 1 && !this.isMultipleFacilities) {
@@ -598,18 +717,25 @@ export default {
     //it is only available to Account Managers and should only be called if the correct checkbox(es) are selected
     async validateOfmProgram() {
       //on load newRequestModel.facilites is sometimes an array because of multi-select. however AM requests will only have one item selected.
-      const selectedFacility = this.newRequestModel?.facilities.length > 0 ? this.newRequestModel?.facilities[0] : this.newRequestModel?.facilities
+      const selectedFacility =
+        this.newRequestModel?.facilities.length > 0
+          ? this.newRequestModel?.facilities[0]
+          : this.newRequestModel?.facilities
 
       if (this.facilityValidInOFM.has(selectedFacility.facilityId)) {
         return this.facilityValidInOFM.get(selectedFacility.facilityId)
       }
 
-      const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(selectedFacility?.programCode)
+      const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(
+        selectedFacility?.programCode,
+      )
       const isTDADProgram = OFM_PROGRAM_CODES.TDAD === selectedFacility?.programCode
       const hasApprovedApplication = await ApplicationService.hasApprovedApplication([selectedFacility])
       if ((isCCOForMultipleProgram || isTDADProgram) && !hasApprovedApplication) {
         this.facilityValidInOFM.set(selectedFacility.facilityId, false)
-        this.preventChangeRequestType = isCCOForMultipleProgram ? PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM : PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM
+        this.preventChangeRequestType = isCCOForMultipleProgram
+          ? PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM
+          : PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM
         this.showFacilityNotInOFMMessage = true
         this.disabled = true
         return false
@@ -633,9 +759,12 @@ export default {
     facilityChangeTypesChecked(subCategories) {
       return subCategories.some(
         (subCategory) =>
-          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
-          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
-          subCategory.subCategoryId === this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE),
+          subCategory.subCategoryId ===
+            this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_DETAILS) ||
+          subCategory.subCategoryId ===
+            this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
+          subCategory.subCategoryId ===
+            this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE),
       )
     },
 
@@ -709,7 +838,13 @@ export default {
     async submit() {
       const isFormValid = await this.$refs.newRequestForm?.validate()
 
-      if (isFormValid && this.validateChangeTypeSelection() && this.isFormComplete && this.areValidFilesUploaded && this.documentsComplete) {
+      if (
+        isFormValid &&
+        this.validateChangeTypeSelection() &&
+        this.isFormComplete &&
+        this.areValidFilesUploaded &&
+        this.documentsComplete
+      ) {
         try {
           this.isLoading = true
           this.setAssistanceRequestDescription()
@@ -729,7 +864,10 @@ export default {
           this.toggleNewRequestConfirmationDialog()
 
           // Emit an event so the parent can refresh its data
-          if (this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) || this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)) {
+          if (
+            this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.ORGANIZATION_PHONE_EMAIL) ||
+            this.isSubCategoryChecked(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL)
+          ) {
             this.$emit('submitPhoneEmail')
           }
         } catch (error) {
@@ -750,7 +888,9 @@ export default {
     },
 
     handleCheckboxChange(val, subCategory) {
-      const index = this.newRequestModel.subCategories.findIndex((item) => item.subCategoryId === subCategory.subCategoryId)
+      const index = this.newRequestModel.subCategories.findIndex(
+        (item) => item.subCategoryId === subCategory.subCategoryId,
+      )
       if (index > -1) {
         this.newRequestModel.subCategories.splice(index, 1)
       } else if (val) {
@@ -820,7 +960,9 @@ export default {
     },
 
     isSubCategoryChecked(categoryName) {
-      return this.newRequestModel.subCategories.some((subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName))
+      return this.newRequestModel.subCategories.some(
+        (subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName),
+      )
     },
 
     resetModelData(isAccountMaintenanceRequest) {
@@ -836,7 +978,10 @@ export default {
       try {
         await Promise.all(
           this.facilities?.map(async (facility) => {
-            const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
+            const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(
+              facility.facilityId,
+              FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
+            )
             if (fa) {
               this.fundingAgreements.push(fa)
             }

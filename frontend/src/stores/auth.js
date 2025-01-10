@@ -86,14 +86,19 @@ export const useAuthStore = defineStore('auth', {
           */
           this.userInfo?.facilities?.forEach((facility) => {
             facility.intakeWindowCheckForAddApplication = appStore.applicationIntakes?.some((intake) => {
-              const isWithinApplicationIntakeWindow = moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
+              const isWithinApplicationIntakeWindow =
+                moment().isSameOrAfter(moment(intake.startDate)) && moment().isSameOrBefore(moment(intake.endDate))
               const isOpenIntake = intake.type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE
               const limitedIntakeFacilities = intake?.facilities?.map((facility) => facility.facilityId)
-              return isWithinApplicationIntakeWindow && (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
+              return (
+                isWithinApplicationIntakeWindow &&
+                (isOpenIntake || limitedIntakeFacilities?.includes(facility.facilityId))
+              )
             })
             const isCCOFProgram = facility?.programCode === OFM_PROGRAM_CODES.CCOF
             const isMultipleProgram = facility?.programCode === OFM_PROGRAM_CODES.MULTIPLE
-            facility.ccofEnrolmentCheckForAddApplication = !isCCOFProgram && (!isMultipleProgram || (isMultipleProgram && facility?.ccofOneYearEnrolment))
+            facility.ccofEnrolmentCheckForAddApplication =
+              !isCCOFProgram && (!isMultipleProgram || (isMultipleProgram && facility?.ccofOneYearEnrolment))
           })
 
           this.isUserInfoLoaded = true

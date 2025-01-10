@@ -1,13 +1,15 @@
 <template>
   <v-form ref="form">
-    <v-container fluid class="pt-0" id="top">
+    <v-container id="top" fluid class="pt-0">
       <v-row no-gutters>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="mr-2 my-2">
             <v-col cols="12" sm="6" class="pr-2 mt-1">
               <AppLabel>CCOF Facility ID:</AppLabel>
             </v-col>
-            <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofFacilityId ? licence?.ccofFacilityId : BLANK_FIELD }}</v-col>
+            <v-col cols="12" sm="6" class="mt-1">
+              {{ licence?.ccofFacilityId ? licence?.ccofFacilityId : BLANK_FIELD }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -15,7 +17,9 @@
             <v-col cols="12" sm="6" class="pr-2 mt-1">
               <AppLabel>CCOF Organization ID:</AppLabel>
             </v-col>
-            <v-col cols="12" sm="6" class="mt-1">{{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : BLANK_FIELD }}</v-col>
+            <v-col cols="12" sm="6" class="mt-1">
+              {{ licence?.ccofOrganizationId ? licence?.ccofOrganizationId : BLANK_FIELD }}
+            </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="6">
@@ -56,7 +60,10 @@
         <v-row no-gutters>
           <v-col class="pt-0">
             <v-expansion-panels v-model="panel" multiple>
-              <v-expansion-panel v-for="licenceDetail in licence.licenceDetails" :key="licenceDetail.licenceDetailId" :value="licenceDetail.licenceDetailId">
+              <v-expansion-panel
+                v-for="licenceDetail in licence.licenceDetails"
+                :key="licenceDetail.licenceDetailId"
+                :value="licenceDetail.licenceDetailId">
                 <v-expansion-panel-title>
                   <AppLabel>{{ getLicenceTypeNameById(licenceDetail.licenceType) }}</AppLabel>
                 </v-expansion-panel-title>
@@ -85,7 +92,7 @@
                             :rules="[...rules.required, rules.max(1000)]"
                             :hide-details="readOnly"
                             :disabled="readOnly"
-                            @update:modelValue="update(licenceDetail)" />
+                            @update:model-value="update(licenceDetail)" />
                           <span v-else>{{ licenceDetail?.operationalSpaces }}</span>
                         </v-col>
                       </v-row>
@@ -105,7 +112,7 @@
                             :rules="[...rules.required, rules.max(1000)]"
                             :hide-details="readOnly"
                             :disabled="readOnly"
-                            @update:modelValue="update(licenceDetail)" />
+                            @update:model-value="update(licenceDetail)" />
                           <span v-else>{{ licenceDetail?.enrolledSpaces }}</span>
                         </v-col>
                       </v-row>
@@ -127,7 +134,7 @@
                             :rules="[...rules.required, rules.max(52)]"
                             :hide-details="readOnly"
                             :disabled="readOnly"
-                            @update:modelValue="update(licenceDetail)" />
+                            @update:model-value="update(licenceDetail)" />
                           <span v-else>{{ licenceDetail?.weeksInOperation }}</span>
                         </v-col>
                       </v-row>
@@ -154,7 +161,10 @@
                                 <template #prepend>
                                   <v-checkbox-btn
                                     :color="someDaysSelected(licenceDetail?.weekDays) ? '#003366' : undefined"
-                                    :indeterminate="someDaysSelected(licenceDetail?.weekDays) && !allDaysSelected(licenceDetail?.weekDays)"
+                                    :indeterminate="
+                                      someDaysSelected(licenceDetail?.weekDays) &&
+                                      !allDaysSelected(licenceDetail?.weekDays)
+                                    "
                                     :model-value="someDaysSelected(licenceDetail?.weekDays)"></v-checkbox-btn>
                                 </template>
                               </v-list-item>
@@ -171,7 +181,7 @@
                           <AppLabel>Hours:</AppLabel>
                         </v-col>
                         <v-col cols="12" sm="7" lg="8" xl="9">
-                          <v-row no-gutters v-if="editable">
+                          <v-row v-if="editable" no-gutters>
                             <AppTimeInput
                               v-model="licenceDetail.operationFromTime"
                               :rules="rules.required"
@@ -181,7 +191,7 @@
                               min-width="150px"
                               max-width="150px"
                               class="pr-2"
-                              @update:modelValue="update(licenceDetail)" />
+                              @update:model-value="update(licenceDetail)" />
                             <AppTimeInput
                               v-model="licenceDetail.operationToTime"
                               :rules="[...rules.required, rules.validHourTo(licenceDetail.operationFromTime)]"
@@ -191,9 +201,11 @@
                               min-width="150px"
                               max-width="150px"
                               class="pr-2"
-                              @update:modelValue="update(licenceDetail)" />
+                              @update:model-value="update(licenceDetail)" />
                           </v-row>
-                          <span v-else>{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</span>
+                          <span v-else>
+                            {{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}
+                          </span>
                         </v-col>
                       </v-row>
                     </v-col>
@@ -204,7 +216,9 @@
                         <v-col cols="12" sm="5" lg="7">
                           <AppLabel>Care Type:</AppLabel>
                         </v-col>
-                        <v-col cols="12" sm="7" lg="5">{{ licenceDetail?.careType === 1 ? 'Full-Time' : 'Part-Time' }}</v-col>
+                        <v-col cols="12" sm="7" lg="5">
+                          {{ licenceDetail?.careType === 1 ? 'Full-Time' : 'Part-Time' }}
+                        </v-col>
                       </v-row>
                     </v-col>
                     <v-col cols="12" lg="6" class="px-lg-4">
@@ -224,13 +238,17 @@
                         max-width="300px"
                         text="A situation where children are divided into different rooms due to physical limitations of the building and child-to-staff ratio requirements. This can affect the staffing ratio compared to keeping the group together in one room."
                         top>
-                        <template v-slot:activator="{ props }">
+                        <template #activator="{ props }">
                           <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                         </template>
                       </v-tooltip>
                       :
                     </div>
-                    <AppYesNoInput v-model="licenceDetail.applyRoomSplitCondition" :disabled="readOnly" class="ml-sm-2" @input="update(licenceDetail)" />
+                    <AppYesNoInput
+                      v-model="licenceDetail.applyRoomSplitCondition"
+                      :disabled="readOnly"
+                      class="ml-sm-2"
+                      @input="update(licenceDetail)" />
                   </v-row>
                   <v-row>
                     <v-col cols="12" lg="8">
@@ -335,21 +353,22 @@ export default {
 
   updated() {
     if (this.editable) {
-      this.licence?.licenceDetails?.forEach((licenceDetail) => (licenceDetail.weekDays = this.convertStringDaysToArray(licenceDetail.weekDays)))
+      this.licence?.licenceDetails?.forEach(
+        (licenceDetail) => (licenceDetail.weekDays = this.convertStringDaysToArray(licenceDetail.weekDays)),
+      )
     }
   },
 
   methods: {
     getDayNames(days) {
       const dayNames = DAYS_OF_WEEK.map((day) => day.title)
-      /* eslint-disable indent */
+
       return typeof days === 'string'
         ? days
             ?.split(',')
             ?.map((day) => dayNames[Number(day) - 1])
             ?.join(', ')
         : days
-      /* eslint-enable indent */
     },
 
     convertStringDaysToArray(days) {

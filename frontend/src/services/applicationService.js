@@ -15,7 +15,9 @@ export default {
   async getActiveApplicationsByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)
@@ -26,7 +28,9 @@ export default {
   async getApprovedApplicationsCountByFacilityId(facilityId) {
     try {
       if (!facilityId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}/applications-count?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.APPLICATIONS}/applications-count?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`,
+      )
       return response?.data[0]?.count
     } catch (error) {
       console.log(`Failed to get the list of approved applications by facility id - ${error}`)
@@ -40,7 +44,8 @@ export default {
       await Promise.all(
         facilities?.map(async (facility) => {
           const response = await ApiService.apiAxios.get(
-            `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`,
+            `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}` +
+              `&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`,
           )
           applications = applications?.concat(response?.data)
         }),
@@ -96,7 +101,9 @@ export default {
   isApplicationUpdated(updatedApplication) {
     const applicationsStore = useApplicationsStore()
     const currentApplication = applicationsStore?.currentApplication
-    const index = Object.entries(updatedApplication)?.findIndex(([key, value]) => key in currentApplication && currentApplication[key] != value)
+    const index = Object.entries(updatedApplication)?.findIndex(
+      ([key, value]) => key in currentApplication && currentApplication[key] != value,
+    )
     return index > -1
   },
 
@@ -139,7 +146,9 @@ export default {
 
   async getSupplementaryApplicationById(supplementaryApplicationId) {
     try {
-      const response = await ApiService.apiAxios.get(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/details')
+      const response = await ApiService.apiAxios.get(
+        ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/details',
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the supp application by supplementary id  - ${error}`)
@@ -208,7 +217,10 @@ export default {
   async updateSupplementaryApplication(applicationId, payload) {
     try {
       if (!applicationId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.patch(ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId, payload)
+      const response = await ApiService.apiAxios.patch(
+        ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId,
+        payload,
+      )
       return response
     } catch (error) {
       console.log(`Failed to update the application - ${error}`)
@@ -241,7 +253,9 @@ export default {
   async getApprovedSupplementaryPDF(applicationId) {
     try {
       if (!applicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/approved-pdf`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/approved-pdf`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the approved supp application PDF by application id - ${error}`)
@@ -298,7 +312,10 @@ export default {
         initials: certificate?.initials,
         certificateNumber: certificate?.certificateNumber,
       }
-      const response = await ApiService.apiAxios.patch(`${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`, payload)
+      const response = await ApiService.apiAxios.patch(
+        `${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`,
+        payload,
+      )
       return response
     } catch (error) {
       console.log(`Failed to update the employee certificate - ${error}`)
@@ -309,7 +326,9 @@ export default {
   async deleteEmployeeCertificate(certificate) {
     try {
       if (!certificate?.providerEmployeeId) return
-      const response = await ApiService.apiAxios.delete(`${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`)
+      const response = await ApiService.apiAxios.delete(
+        `${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to delete the employee certificate - ${error}`)

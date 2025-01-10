@@ -1,6 +1,6 @@
 <template>
   <v-list-item class="menu-item" base-color="#003366" color="white" link active-class="menu-item-active">
-    <v-icon class="menu-icon" :icon="icon" v-if="icon" size="30" />
+    <v-icon v-if="icon" class="menu-icon" :icon="icon" size="30" />
     <slot />
   </v-list-item>
 </template>

@@ -1,7 +1,9 @@
 <template>
   <AppHeroImage />
   <v-container class="login-container" fluid v-bind="$attrs">
-    <AppAlertBanner v-for="message in systemMessages" :key="message.id" type="info">{{ message.content }}</AppAlertBanner>
+    <AppAlertBanner v-for="message in systemMessages" :key="message.id" type="info">
+      {{ message.content }}
+    </AppAlertBanner>
     <v-row>
       <v-col cols="12" class="pt-5">
         <p>
@@ -10,9 +12,11 @@
           <i>Freedom of Information and Protection of Privacy Act (FOIPPA)</i>
           and the
           <i>Early Learning and Child Care Act (ELCCA)</i>
-          and will be used for the purpose of administering the $10 a Day ChildCareBC program for successfully enrolled applicants. Personal information is protected from unauthorized use and
-          disclosure in accordance with FOIPPA. Any questions or concerns about the collection of this information can be directed to the Director, $10 a Day ChildCareBC program, PO Box 9788 Stn Prov
-          Govt, Victoria BC V8W 9S5. Phone: in Greater Victoria: 250 356-6501; outside of Greater Victoria, Toll Free: 1 888 338-6622 (option 7).
+          and will be used for the purpose of administering the $10 a Day ChildCareBC program for successfully enrolled
+          applicants. Personal information is protected from unauthorized use and disclosure in accordance with FOIPPA.
+          Any questions or concerns about the collection of this information can be directed to the Director, $10 a Day
+          ChildCareBC program, PO Box 9788 Stn Prov Govt, Victoria BC V8W 9S5. Phone: in Greater Victoria: 250 356-6501;
+          outside of Greater Victoria, Toll Free: 1 888 338-6622 (option 7).
         </p>
       </v-col>
     </v-row>
@@ -25,7 +29,15 @@
           </v-card-title>
           <v-card-text>Log in with your primary Business BCeID</v-card-text>
           <v-card-actions class="mt-auto">
-            <AppButton id="bceid-login" icon="mdi-login" :href="authRoutes.LOGIN" :loading="loading" width="250px" @click="clearStorage">BCeID Log In</AppButton>
+            <AppButton
+              id="bceid-login"
+              icon="mdi-login"
+              :href="authRoutes.LOGIN"
+              :loading="loading"
+              width="250px"
+              @click="clearStorage">
+              BCeID Log In
+            </AppButton>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -46,7 +58,12 @@
             You must register for a Business BCeID before you can log in - it only takes a few minutes.
           </v-card-text>
           <v-card-actions>
-            <AppButton icon="mdi-login" href="//www.bceid.ca/register/business/getting_started/getting_started.aspx" :loading="loading" width="300px" @click="clearStorage">
+            <AppButton
+              icon="mdi-login"
+              href="//www.bceid.ca/register/business/getting_started/getting_started.aspx"
+              :loading="loading"
+              width="300px"
+              @click="clearStorage">
               Register for a BCeID
             </AppButton>
           </v-card-actions>

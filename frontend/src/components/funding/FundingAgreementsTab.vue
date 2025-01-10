@@ -26,7 +26,9 @@
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
             <AppButton v-if="showSign(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Sign</AppButton>
-            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Open</AppButton>
+            <AppButton v-else-if="showOpen(item)" :primary="false" size="small" @click="goToPDFViewer(item)">
+              Open
+            </AppButton>
           </v-row>
         </template>
       </v-data-table>
@@ -43,10 +45,20 @@ import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES } from '@/utils/constants'
+import {
+  FUNDING_AGREEMENT_STATUS_CODES,
+  SUPPLEMENTARY_APPLICATION_STATUS_CODES,
+  BLANK_FIELD,
+  APPLICATION_TYPES,
+  IRREGULAR_EXPENSE_STATUS_CODES,
+} from '@/utils/constants'
 import format from '@/utils/format'
 
-const IN_PROGRESS_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA]
+const IN_PROGRESS_STATUSES = [
+  FUNDING_AGREEMENT_STATUS_CODES.DRAFT,
+  FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW,
+  FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
+]
 
 export default {
   name: 'FundingAgreementsTab',
@@ -85,12 +97,20 @@ export default {
     //JB TODO: show expired (but approved) supp apps... that functionality does not exist in CRM yet. to come after MVP?
     async loadApprovedSuppApps(searchQueries) {
       try {
-        const applications = this.applications?.filter((application) => searchQueries?.facilities?.some((facility) => facility?.facilityId === application?.facilityId))
+        const applications = this.applications?.filter((application) =>
+          searchQueries?.facilities?.some((facility) => facility?.facilityId === application?.facilityId),
+        )
 
         this.supplementaryApplications = (
           await Promise.all(
             applications?.map((application) =>
-              ApplicationService.getSupplementaryApplicationsByDate(application.applicationId, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED, searchQueries?.dateFrom, searchQueries?.dateTo, true),
+              ApplicationService.getSupplementaryApplicationsByDate(
+                application.applicationId,
+                SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED,
+                searchQueries?.dateFrom,
+                searchQueries?.dateTo,
+                true,
+              ),
             ),
           )
         ).flat()
@@ -118,7 +138,11 @@ export default {
         this.fundingAgreements = []
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
-            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
+            const facilityFas = await FundingAgreementService.getFAsByFacilityId(
+              facility.facilityId,
+              searchQueries?.dateFrom,
+              searchQueries?.dateTo,
+            )
             if (facilityFas) {
               facilityFas.forEach((fa) => {
                 fa.fundingAgreementType = APPLICATION_TYPES.OFM
@@ -144,7 +168,11 @@ export default {
       }
     },
     async loadIrregularExpenses(activeFA) {
-      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(activeFA.applicationId, IRREGULAR_EXPENSE_STATUS_CODES.APPROVED, true)
+      const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(
+        activeFA.applicationId,
+        IRREGULAR_EXPENSE_STATUS_CODES.APPROVED,
+        true,
+      )
       expenseApplications?.forEach((app) => {
         this.fundingAgreements.push({
           startDate: app.startDate,
@@ -161,13 +189,18 @@ export default {
     },
 
     showSign(fundingAgreement) {
-      return fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && this.isExpenseAuthority(fundingAgreement)
+      return (
+        fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING &&
+        this.isExpenseAuthority(fundingAgreement)
+      )
     },
 
     showOpen(item) {
       if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
         return (
-          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
+          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(
+            item?.statusCode,
+          ) ||
           (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
         )
       }
@@ -175,7 +208,9 @@ export default {
     },
 
     isExpenseAuthority(fundingAgreement) {
-      return this.userInfo?.facilities?.some((facility) => facility.facilityId === fundingAgreement?.facilityId && facility.isExpenseAuthority)
+      return this.userInfo?.facilities?.some(
+        (facility) => facility.facilityId === fundingAgreement?.facilityId && facility.isExpenseAuthority,
+      )
     },
 
     goToPDFViewer(item) {

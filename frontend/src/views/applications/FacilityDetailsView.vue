@@ -15,7 +15,11 @@
           class="mt-3" />
       </v-row>
     </div>
-    <FacilityLocationAttributes id="location-attributes" :facility="currentApplication?.facility" :readonly="readonly" @update="updateFacilityLocationAttributes" />
+    <FacilityLocationAttributes
+      id="location-attributes"
+      :facility="currentApplication?.facility"
+      :readonly="readonly"
+      @update="updateFacilityLocationAttributes" />
     <div id="primary-contact" class="mt-8">
       <h4>Primary Contact</h4>
       <p>
@@ -185,12 +189,15 @@ export default {
     },
     isFacilityLocationAttributesUpdated() {
       return (
-        this.updatedFacilityLocationAttributes?.k12SchoolGrounds !== this.currentApplication?.facility?.k12SchoolGrounds ||
-        this.updatedFacilityLocationAttributes?.municipalCommunity !== this.currentApplication?.facility?.municipalCommunity ||
+        this.updatedFacilityLocationAttributes?.k12SchoolGrounds !==
+          this.currentApplication?.facility?.k12SchoolGrounds ||
+        this.updatedFacilityLocationAttributes?.municipalCommunity !==
+          this.currentApplication?.facility?.municipalCommunity ||
         this.updatedFacilityLocationAttributes?.onReserve !== this.currentApplication?.facility?.onReserve ||
         this.updatedFacilityLocationAttributes?.yppDesignation !== this.currentApplication?.facility?.yppDesignation ||
         this.updatedFacilityLocationAttributes?.yppEnrolled !== this.currentApplication?.facility?.yppEnrolled ||
-        this.updatedFacilityLocationAttributes?.personalResidence !== this.currentApplication?.facility?.personalResidence
+        this.updatedFacilityLocationAttributes?.personalResidence !==
+          this.currentApplication?.facility?.personalResidence
       )
     },
   },
@@ -215,7 +222,10 @@ export default {
       async handler() {
         await this.$refs.form?.validate()
         if (!this.isFormComplete) return
-        this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: APPLICATION_ROUTES.ELIGIBILITY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     primaryContact: {
@@ -229,9 +239,15 @@ export default {
   created() {
     this.$emit('process', false)
     this.fiscalYearEndDate = this.currentApplication?.fiscalYearEndDate
-    this.primaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
-    this.secondaryContact = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.secondaryContactId)
-    this.expenseAuthority = this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
+    this.primaryContact = this.contacts?.find(
+      (contact) => contact.contactId === this.currentApplication?.primaryContactId,
+    )
+    this.secondaryContact = this.contacts?.find(
+      (contact) => contact.contactId === this.currentApplication?.secondaryContactId,
+    )
+    this.expenseAuthority = this.contacts?.find(
+      (contact) => contact.contactId === this.currentApplication?.expenseAuthorityId,
+    )
   },
 
   async mounted() {
@@ -257,7 +273,10 @@ export default {
         }
         if (this.isFacilityLocationAttributesUpdated) {
           reloadApplication = true
-          await FacilityService.updateFacility(this.currentApplication?.facility?.facilityId, this.updatedFacilityLocationAttributes)
+          await FacilityService.updateFacility(
+            this.currentApplication?.facility?.facilityId,
+            this.updatedFacilityLocationAttributes,
+          )
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           reloadApplication = true

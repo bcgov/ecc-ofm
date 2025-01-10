@@ -17,7 +17,11 @@
           <AppDateInput
             id="end-date"
             v-model="model.rentLeaseEndDate"
-            :rules="isMonthToMonthRentLease ? [] : [...rules.required, rules.MMDDYYYY, rules.validEndDate(model.rentLeaseStartDate)]"
+            :rules="
+              isMonthToMonthRentLease
+                ? []
+                : [...rules.required, rules.MMDDYYYY, rules.validEndDate(model.rentLeaseStartDate)]
+            "
             :disabled="readonly"
             :hide-details="readonly || isMonthToMonthRentLease"
             label="End"
@@ -36,10 +40,19 @@
         <template #label>My facility's rent/lease is on a month-to-month basis.</template>
       </v-checkbox>
       <div id="arm-length" class="d-flex mt-2">
-        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :rules="rules.required" :disabled="readonly" :hide-details="readonly">
+        <v-checkbox
+          v-model="model.armsLength"
+          color="primary"
+          :true-value="YES_NO_CHOICE_CRM_MAPPING.YES"
+          :rules="rules.required"
+          :disabled="readonly"
+          :hide-details="readonly">
           <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
         </v-checkbox>
-        <v-tooltip content-class="tooltip" max-width="300px" text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
+        <v-tooltip
+          content-class="tooltip"
+          max-width="300px"
+          text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
           <template #activator="{ props }">
             <v-icon size="large" v-bind="props" class="ml-2 pt-7">mdi-information-slab-circle-outline</v-icon>
           </template>
@@ -81,7 +94,10 @@ export default {
     model: {
       handler() {
         this.model.rentLeaseStartDate = this.model.rentLeaseStartDate ? this.model.rentLeaseStartDate : null
-        this.model.rentLeaseEndDate = this.model.rentLeaseEndDate && this.model.rentLeaseEndDate > this.model.rentLeaseStartDate ? this.model.rentLeaseEndDate : null
+        this.model.rentLeaseEndDate =
+          this.model.rentLeaseEndDate && this.model.rentLeaseEndDate > this.model.rentLeaseStartDate
+            ? this.model.rentLeaseEndDate
+            : null
         this.model.armsLength = this.model.armsLength ? this.model.armsLength : null
         this.$emit('update', this.model)
       },

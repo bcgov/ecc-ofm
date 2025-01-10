@@ -65,7 +65,11 @@
                   <AppLabel>Street Address 1:</AppLabel>
                 </v-col>
                 <v-col cols="12" sm="7" xl="8">
-                  {{ organization?.isMailingAddressDifferent ? organization?.mailingStreetAddress1 : organization?.streetAddress1 }}
+                  {{
+                    organization?.isMailingAddressDifferent
+                      ? organization?.mailingStreetAddress1
+                      : organization?.streetAddress1
+                  }}
                 </v-col>
               </v-row>
               <v-row no-gutters class="my-2">
@@ -73,7 +77,11 @@
                   <AppLabel>Street Address 2:</AppLabel>
                 </v-col>
                 <v-col cols="12" sm="7" xl="8">
-                  {{ organization?.isMailingAddressDifferent ? organization?.mailingStreetAddress2 : organization?.streetAddress2 }}
+                  {{
+                    organization?.isMailingAddressDifferent
+                      ? organization?.mailingStreetAddress2
+                      : organization?.streetAddress2
+                  }}
                 </v-col>
               </v-row>
               <v-row no-gutters>
@@ -93,7 +101,9 @@
                       <AppLabel>Province:</AppLabel>
                     </v-col>
                     <v-col cols="12" sm="7" xl="8" xxl="9">
-                      {{ organization?.isMailingAddressDifferent ? organization?.mailingProvince : organization?.province }}
+                      {{
+                        organization?.isMailingAddressDifferent ? organization?.mailingProvince : organization?.province
+                      }}
                     </v-col>
                   </v-row>
                 </v-col>
@@ -103,7 +113,11 @@
                       <AppLabel>Postal Code:</AppLabel>
                     </v-col>
                     <v-col cols="12" sm="7" xxl="8">
-                      {{ organization?.isMailingAddressDifferent ? organization?.mailingPostalCode : organization?.postalCode }}
+                      {{
+                        organization?.isMailingAddressDifferent
+                          ? organization?.mailingPostalCode
+                          : organization?.postalCode
+                      }}
                     </v-col>
                   </v-row>
                 </v-col>
@@ -202,7 +216,8 @@
                         :uploaded-documents="uploadedDocumentsEdit"
                         @delete-uploaded-document="deleteUploadedDocument" />
                       <v-alert v-if="showUploadDocumentsAlert" density="compact" type="error" class="mt-1">
-                        Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to upload. Then 'Save' to complete the process.
+                        Please upload at least one document. To proceed, invoke 'Add File' button, 'Select a file' to
+                        upload. Then 'Save' to complete the process.
                       </v-alert>
                     </v-col>
                     <v-col v-else class="pt-0">
@@ -211,8 +226,25 @@
                     </v-col>
                   </template>
                   <v-col v-if="editMode" class="d-flex justify-end pt-0">
-                    <AppButton id="cancel-edit" :primary="false" size="large" width="100px" :loading="loadingInclusionPolicy" class="mr-6" @click="toggleEditMode()">Cancel</AppButton>
-                    <AppButton id="save" size="large" width="100px" :loading="loadingInclusionPolicy" :disabled="invalidInclusionPolicy" @click="save()">Save</AppButton>
+                    <AppButton
+                      id="cancel-edit"
+                      :primary="false"
+                      size="large"
+                      width="100px"
+                      :loading="loadingInclusionPolicy"
+                      class="mr-6"
+                      @click="toggleEditMode()">
+                      Cancel
+                    </AppButton>
+                    <AppButton
+                      id="save"
+                      size="large"
+                      width="100px"
+                      :loading="loadingInclusionPolicy"
+                      :disabled="invalidInclusionPolicy"
+                      @click="save()">
+                      Save
+                    </AppButton>
                   </v-col>
                 </v-col>
               </v-row>
@@ -307,7 +339,13 @@ export default {
         this.documentsToDelete = this.uploadedDocuments.map((document) => document.documentId)
       }
       this.loadingInclusionPolicy = true
-      this.$emit('saveInclusionPolicyData', this.organizationEdit?.hasInclusionPolicy, this.documentsToUpload, this.documentsToDelete, this.onSaveCompleteCallBack)
+      this.$emit(
+        'saveInclusionPolicyData',
+        this.organizationEdit?.hasInclusionPolicy,
+        this.documentsToUpload,
+        this.documentsToDelete,
+        this.onSaveCompleteCallBack,
+      )
     },
 
     onSaveCompleteCallBack() {

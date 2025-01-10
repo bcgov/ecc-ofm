@@ -10,8 +10,17 @@
       <h2 class="mb-8 text-center">Funding Agreement Signed</h2>
 
       <v-row justify="space-around" no-gutters class="mt-10">
-        <AppBackButton id="back-home-button" :primary="false" width="250px" :to="{ name: 'home' }" class="text-cemter">Home</AppBackButton>
-        <AppButton id="view-applications-button" size="large" width="250px" :to="{ name: 'funding-overview' }" class="mt-2 text-center">View All Fundings</AppButton>
+        <AppBackButton id="back-home-button" :primary="false" width="250px" :to="{ name: 'home' }" class="text-cemter">
+          Home
+        </AppBackButton>
+        <AppButton
+          id="view-applications-button"
+          size="large"
+          width="250px"
+          :to="{ name: 'funding-overview' }"
+          class="mt-2 text-center">
+          View All Fundings
+        </AppButton>
       </v-row>
     </div>
   </v-container>

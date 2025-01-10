@@ -7,11 +7,18 @@
         <h2>Report Details</h2>
       </v-col>
       <v-col cols="12" md="7">
-        <FacilityFilter v-if="!isEmpty(submittedReports)" :loading="loading" :default-show-input="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
+        <FacilityFilter
+          v-if="!isEmpty(submittedReports)"
+          :loading="loading"
+          :default-show-input="true"
+          justify="end"
+          @facility-filter-changed="facilityFilterChanged" />
       </v-col>
     </v-row>
     <v-skeleton-loader :loading="loading" type="table-tbody">
-      <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">You have no submitted reports.</AppAlertBanner>
+      <AppAlertBanner v-if="isEmpty(submittedReports)" type="info" class="mt-4">
+        You have no submitted reports.
+      </AppAlertBanner>
       <v-data-table
         v-else
         id="reporting-history-table"
@@ -30,8 +37,12 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">Update</AppButton>
-            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">View</AppButton>
+            <AppButton v-if="showUpdate(item)" :primary="false" size="small" @click="openSurveyResponse(item)">
+              Update
+            </AppButton>
+            <AppButton v-else-if="showView()" :primary="false" size="small" @click="openSurveyResponse(item)">
+              View
+            </AppButton>
             <AppButton
               v-if="showUnlock(item)"
               :primary="false"
@@ -97,17 +108,23 @@ export default {
 
   computed: {
     filteredSubmittedReports() {
-      return isEmpty(this.facilityNameFilter) ? this.submittedReports : this.submittedReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
+      return isEmpty(this.facilityNameFilter)
+        ? this.submittedReports
+        : this.submittedReports?.filter((report) => this.filteredFacilityIds?.includes(report.facilityId))
     },
     filteredFacilityIds() {
-      const filteredFacilities = this.userInfo?.facilities?.filter((facility) => facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()))
+      const filteredFacilities = this.userInfo?.facilities?.filter((facility) =>
+        facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()),
+      )
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
     defaultAssistanceRequestSubject() {
       return `Unlock ${this.surveyResponseToUnlock?.surveyResponseReferenceNumber} ${this.surveyResponseToUnlock?.title}`
     },
     defaultAssistanceRequestFacility() {
-      return this.userInfo?.facilities?.find((facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId)
+      return this.userInfo?.facilities?.find(
+        (facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId,
+      )
     },
   },
 
@@ -124,7 +141,11 @@ export default {
         this.searchQueries = searchQueries
         await Promise.all(
           this.userInfo?.facilities?.map(async (facility) => {
-            const response = await ReportsService.getSubmittedSurveyResponsesByFacility(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
+            const response = await ReportsService.getSubmittedSurveyResponsesByFacility(
+              facility.facilityId,
+              searchQueries?.dateFrom,
+              searchQueries?.dateTo,
+            )
             if (!isEmpty(response)) {
               this.submittedReports = this.submittedReports?.concat(response)
             }
@@ -134,7 +155,9 @@ export default {
           report.title = this.getReportTitle(report)
           report.status = this.getStatusText(report)
         })
-        this.submittedReports = this.submittedReports?.filter((report) => this.searchQueries?.statuses?.includes(this.getStatusText(report)))
+        this.submittedReports = this.submittedReports?.filter((report) =>
+          this.searchQueries?.statuses?.includes(this.getStatusText(report)),
+        )
         this.sortSubmittedReports()
       } catch (error) {
         this.setFailureAlert('Failed to get submitted reports for facilities ', error)
@@ -160,7 +183,9 @@ export default {
       if (surveyResponse?.isSubmittedLate) {
         return SURVEY_RESPONSE_STATUSES.COMPLETED_LATE
       }
-      return this.isActiveReportResponse(surveyResponse) ? SURVEY_RESPONSE_STATUSES.COMPLETED : SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED
+      return this.isActiveReportResponse(surveyResponse)
+        ? SURVEY_RESPONSE_STATUSES.COMPLETED
+        : SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED
     },
 
     getStatusClass(surveyResponse) {

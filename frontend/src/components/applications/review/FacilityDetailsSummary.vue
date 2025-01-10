@@ -9,7 +9,13 @@
           <AppLabel class="mr-2">What is the end date of your fiscal year?</AppLabel>
           <span>{{ format.formatDate(currentApplication?.fiscalYearEndDate) }}</span>
         </v-row>
-        <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#fiscal-year-end-date', params: { applicationGuid: $route.params.applicationGuid } }">
+        <AppMissingInfoError
+          v-else-if="!readonly"
+          :to="{
+            name: APPLICATION_ROUTES.FACILITY_DETAILS,
+            hash: '#fiscal-year-end-date',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.FISCAL_YEAR_END_DATE }}
         </AppMissingInfoError>
       </div>
@@ -18,7 +24,9 @@
     <v-card variant="outlined" class="my-6 pa-4">
       <div v-if="isFacilityLocationAttributesComplete(currentApplication?.facility)">
         <v-row no-gutters>
-          <AppLabel class="mr-2">Is your facility located on K-12 school grounds or affiliated with a Board of Education?</AppLabel>
+          <AppLabel class="mr-2">
+            Is your facility located on K-12 school grounds or affiliated with a Board of Education?
+          </AppLabel>
           <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.k12SchoolGrounds) }}</div>
         </v-row>
         <v-row no-gutters>
@@ -42,29 +50,59 @@
           <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.personalResidence) }}</div>
         </v-row>
       </div>
-      <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#location-attributes', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError
+        v-else-if="!readonly"
+        :to="{
+          name: APPLICATION_ROUTES.FACILITY_DETAILS,
+          hash: '#location-attributes',
+          params: { applicationGuid: $route.params.applicationGuid },
+        }">
         {{ APPLICATION_ERROR_MESSAGES.FACILITY_LOCATION_ATTRIBUTES }}
       </AppMissingInfoError>
     </v-card>
 
     <div class="mt-4 mb-0">
       <h4 class="text-decoration-underline">Primary Contact</h4>
-      <ContactInfo v-if="currentApplication?.primaryContactId" :contact="primaryContact" variant="flat" class="mt-0 pb-0" />
-      <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#primary-contact', params: { applicationGuid: $route.params.applicationGuid } }">
+      <ContactInfo
+        v-if="currentApplication?.primaryContactId"
+        :contact="primaryContact"
+        variant="flat"
+        class="mt-0 pb-0" />
+      <AppMissingInfoError
+        v-else-if="!readonly"
+        :to="{
+          name: APPLICATION_ROUTES.FACILITY_DETAILS,
+          hash: '#primary-contact',
+          params: { applicationGuid: $route.params.applicationGuid },
+        }">
         {{ APPLICATION_ERROR_MESSAGES.PRIMARY_CONTACT }}
       </AppMissingInfoError>
     </div>
     <hr class="my-4" />
     <div>
       <h4 class="text-decoration-underline">Secondary Contact</h4>
-      <ContactInfo v-if="currentApplication?.secondaryContactId" :contact="secondaryContact" variant="flat" class="mt-0 pb-0" />
+      <ContactInfo
+        v-if="currentApplication?.secondaryContactId"
+        :contact="secondaryContact"
+        variant="flat"
+        class="mt-0 pb-0" />
       <div v-else class="ma-6">No contact selected</div>
     </div>
     <hr class="my-4" />
     <div>
       <h4 class="text-decoration-underline">Expense Authority</h4>
-      <ContactInfo v-if="currentApplication?.expenseAuthorityId" :contact="expenseAuthority" variant="flat" class="mt-0 pb-0" />
-      <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#expense-authority', params: { applicationGuid: $route.params.applicationGuid } }">
+      <ContactInfo
+        v-if="currentApplication?.expenseAuthorityId"
+        :contact="expenseAuthority"
+        variant="flat"
+        class="mt-0 pb-0" />
+      <AppMissingInfoError
+        v-else-if="!readonly"
+        :to="{
+          name: APPLICATION_ROUTES.FACILITY_DETAILS,
+          hash: '#expense-authority',
+          params: { applicationGuid: $route.params.applicationGuid },
+        }">
         {{ APPLICATION_ERROR_MESSAGES.EXPENSE_AUTHORITY }}
       </AppMissingInfoError>
     </div>

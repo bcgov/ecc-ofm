@@ -5,7 +5,12 @@
     </div>
     <div v-else>
       <v-row v-if="loading" justify="center">
-        <v-progress-circular indeterminate size="100" :width="6" color="#003366" class="min-screen-height"></v-progress-circular>
+        <v-progress-circular
+          indeterminate
+          size="100"
+          :width="6"
+          color="#003366"
+          class="min-screen-height"></v-progress-circular>
       </v-row>
       <v-row v-else no-gutters>
         <v-col cols="12" md="3" lg="2" xxl="1">
@@ -13,7 +18,16 @@
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
           <ApplicationHeader v-if="!isSelectFacilityPage" />
-          <router-view class="min-screen-height" :readonly="readonly" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
+          <router-view
+            class="min-screen-height"
+            :readonly="readonly"
+            :cancel="cancel"
+            :back="back"
+            :next="next"
+            :save="save"
+            :submit="submit"
+            :contacts="contacts"
+            @process="process" />
           <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
             :loading="processing"
@@ -82,7 +96,12 @@ export default {
       if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
-      return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return (
+        this.loading ||
+        this.processing ||
+        this.isApplicationReadonly ||
+        !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      )
     },
     showBack() {
       return [
@@ -165,7 +184,12 @@ export default {
       return this.$route.name === APPLICATION_ROUTES.CONFIRMATION
     },
     isPageAccessible() {
-      return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
+      return (
+        this.isSelectFacilityPage ||
+        this.isFacilityDetailsPage ||
+        (this.isEligibilityPage && this.isFacilityDetailsComplete) ||
+        (this.isFacilityDetailsComplete && this.isEligibilityComplete)
+      )
     },
   },
 

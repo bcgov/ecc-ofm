@@ -2,11 +2,17 @@
   <v-container fluid class="pa-2 pb-0">
     <AppMissingInfoError
       v-if="!readonly && !currentApplication?.facilityType"
-      :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#select-facility-types', params: { applicationGuid: $route.params.applicationGuid } }">
+      :to="{
+        name: APPLICATION_ROUTES.OPERATING_COSTS,
+        hash: '#select-facility-types',
+        params: { applicationGuid: $route.params.applicationGuid },
+      }">
       {{ APPLICATION_ERROR_MESSAGES.FACILITY_TYPE }}
     </AppMissingInfoError>
     <div v-else>
-      <h4 class="mb-4 text-decoration-underline">Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}</h4>
+      <h4 class="mb-4 text-decoration-underline">
+        Facility Type: {{ getFacilityTypeNameById(currentApplication?.facilityType) }}
+      </h4>
 
       <!-- RENT/LEASE INFORMATION -->
       <div v-if="isRentLease" class="my-4">
@@ -14,27 +20,51 @@
         <v-card class="my-1 px-4 py-1" variant="outlined">
           <div>
             <div>
-              <v-row v-if="currentApplication?.rentLeaseStartDate && currentApplication?.rentLeaseEndDate" no-gutters class="px-2 mt-4">
+              <v-row
+                v-if="currentApplication?.rentLeaseStartDate && currentApplication?.rentLeaseEndDate"
+                no-gutters
+                class="px-2 mt-4">
                 <AppLabel class="mr-2">Rent/Lease Date Range:</AppLabel>
-                <span>{{ format.formatDate(currentApplication?.rentLeaseStartDate) }} to {{ format.formatDate(currentApplication?.rentLeaseEndDate) }}</span>
+                <span>
+                  {{ format.formatDate(currentApplication?.rentLeaseStartDate) }} to
+                  {{ format.formatDate(currentApplication?.rentLeaseEndDate) }}
+                </span>
               </v-row>
               <AppMissingInfoError
                 v-else-if="!readonly && currentApplication.monthToMonthRentLease !== 1"
-                :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#rent-lease-info', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{
+                  name: APPLICATION_ROUTES.OPERATING_COSTS,
+                  hash: '#rent-lease-info',
+                  params: { applicationGuid: $route.params.applicationGuid },
+                }">
                 {{ APPLICATION_ERROR_MESSAGES.RENT_LEASE_DATE_RANGE }}
               </AppMissingInfoError>
             </div>
-            <v-checkbox v-if="currentApplication.monthToMonthRentLease" v-model="currentApplication.monthToMonthRentLease" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
+            <v-checkbox
+              v-if="currentApplication.monthToMonthRentLease"
+              v-model="currentApplication.monthToMonthRentLease"
+              :true-value="YES_NO_CHOICE_CRM_MAPPING.YES"
+              disabled
+              hide-details>
               <template #label>My facility's rent/lease is on a month-to-month basis.</template>
             </v-checkbox>
           </div>
           <div>
             <AppMissingInfoError
               v-if="!readonly && currentApplication.armsLength !== YES_NO_CHOICE_CRM_MAPPING.YES"
-              :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
+              :to="{
+                name: APPLICATION_ROUTES.OPERATING_COSTS,
+                hash: '#arm-length',
+                params: { applicationGuid: $route.params.applicationGuid },
+              }">
               {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
             </AppMissingInfoError>
-            <v-checkbox v-else v-model="currentApplication.armsLength" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
+            <v-checkbox
+              v-else
+              v-model="currentApplication.armsLength"
+              :true-value="YES_NO_CHOICE_CRM_MAPPING.YES"
+              disabled
+              hide-details>
               <template #label>I attest that the rent/lease agreement is at Arm's Length.</template>
             </v-checkbox>
           </div>
@@ -45,7 +75,11 @@
       <div>
         <AppMissingInfoError
           v-if="!readonly && totalOperationalCost === 0"
-          :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{
+            name: APPLICATION_ROUTES.OPERATING_COSTS,
+            hash: '#yearly-operating-cost',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
         </AppMissingInfoError>
         <div v-else>
@@ -59,28 +93,51 @@
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
           <v-card class="mt-2 mb-3 pa-3">
-            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
+            <AppDocumentUpload
+              :readonly="true"
+              :document-type="DOCUMENT_TYPES.INCOME_STATEMENT"
+              :uploaded-documents="documentsFinancialStatements">
               <AppMissingInfoError
                 v-if="!readonly && !documentsFinancialStatements.length"
-                :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{
+                  name: 'operating-costs',
+                  hash: '#financial-document-upload',
+                  params: { applicationGuid: $route.params.applicationGuid },
+                }">
                 {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
           </v-card>
           <v-card class="pl-3">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
+            <AppDocumentUpload
+              class="pt-4 pa-3"
+              :readonly="true"
+              :document-type="DOCUMENT_TYPES.BALANCE_SHEET"
+              :uploaded-documents="documentsBalanceSheets">
               <AppMissingInfoError
                 v-if="!readonly && !documentsBalanceSheets.length"
-                :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{
+                  name: 'operating-costs',
+                  hash: '#balance-sheet-document-upload',
+                  params: { applicationGuid: $route.params.applicationGuid },
+                }">
                 {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
           </v-card>
           <v-card class="pl-3 mt-3 pt-0">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploaded-documents="documentsSupporting">
+            <AppDocumentUpload
+              class="pt-4 pa-3"
+              :readonly="true"
+              :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS"
+              :uploaded-documents="documentsSupporting">
               <AppMissingInfoError
                 v-if="!readonly && isRentLease && !documentsSupporting.length"
-                :to="{ name: 'operating-costs', hash: '#supporting-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{
+                  name: 'operating-costs',
+                  hash: '#supporting-document-upload',
+                  params: { applicationGuid: $route.params.applicationGuid },
+                }">
                 {{ DOCUMENT_TYPES.SUPPORTING_DOCS }} upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
@@ -101,10 +158,22 @@ import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFa
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import format from '@/utils/format'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
+import {
+  FACILITY_TYPES,
+  APPLICATION_ERROR_MESSAGES,
+  APPLICATION_ROUTES,
+  DOCUMENT_TYPES,
+  YES_NO_CHOICE_CRM_MAPPING,
+} from '@/utils/constants'
 
 export default {
-  components: { AppLabel, AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
+  components: {
+    AppLabel,
+    AppMissingInfoError,
+    YearlyOperatingCostSummary,
+    YearlyFacilityCostSummary,
+    AppDocumentUpload,
+  },
   props: {
     readonly: {
       type: Boolean,

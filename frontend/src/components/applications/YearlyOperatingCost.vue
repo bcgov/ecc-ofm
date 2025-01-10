@@ -8,7 +8,10 @@
             <v-col cols="12" sm="7" class="pt-2">
               <p>
                 Maintenance and Minor Repairs
-                <v-tooltip content-class="tooltip" text="Costs directly related to third-party labour costs, property insurance, utilities and garbage disposal." max-width="300px">
+                <v-tooltip
+                  content-class="tooltip"
+                  text="Costs directly related to third-party labour costs, property insurance, utilities and garbage disposal."
+                  max-width="300px">
                   <template #activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -16,7 +19,13 @@
               </p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.insuranceCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.insuranceCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -25,7 +34,10 @@
             <v-col cols="12" sm="7" class="pt-2">
               <p>
                 Upkeep
-                <v-tooltip content-class="tooltip" text="Costs may include garbage removal, recycling charges, applicable supplies." max-width="300px">
+                <v-tooltip
+                  content-class="tooltip"
+                  text="Costs may include garbage removal, recycling charges, applicable supplies."
+                  max-width="300px">
                   <template #activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -33,7 +45,13 @@
               </p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.upkeepLabourCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.upkeepLabourCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -44,7 +62,10 @@
             <v-col cols="12" sm="7" class="pt-2">
               <p>
                 Office Furniture and Equipment
-                <v-tooltip content-class="tooltip" text="Costs may include laptops, tablets, cell phones used for the operation of the business, desks, chairs, tables." max-width="300px">
+                <v-tooltip
+                  content-class="tooltip"
+                  text="Costs may include laptops, tablets, cell phones used for the operation of the business, desks, chairs, tables."
+                  max-width="300px">
                   <template #activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -52,7 +73,13 @@
               </p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.furnitureEquipmentsCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.furnitureEquipmentsCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -61,7 +88,10 @@
             <v-col cols="12" sm="7" class="pt-2">
               <p>
                 Facility Maintenance and Minor Improvements
-                <v-tooltip content-class="tooltip" text="Costs may include repairs, appliance/furniture replacement, snow removal." max-width="300px">
+                <v-tooltip
+                  content-class="tooltip"
+                  text="Costs may include repairs, appliance/furniture replacement, snow removal."
+                  max-width="300px">
                   <template #activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -69,7 +99,13 @@
               </p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.maintenanceRepairsCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.maintenanceRepairsCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -88,7 +124,13 @@
               </p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.suppliesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.suppliesCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -97,7 +139,10 @@
             <v-col cols="12" sm="7" class="pt-2">
               <p>
                 Utilities
-                <v-tooltip content-class="tooltip" text="Costs may include gas, electricity, water, phone, internet." max-width="300px">
+                <v-tooltip
+                  content-class="tooltip"
+                  text="Costs may include gas, electricity, water, phone, internet."
+                  max-width="300px">
                   <template #activator="{ props }">
                     <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                   </template>
@@ -105,7 +150,13 @@
               </p>
             </v-col>
             <v-col cols="12" sm="5" align="center" class="px-sm-2">
-              <AppNumberInput v-model.lazy="model.utilitiesCost" :format="fieldNumberFormat" :disabled="readonly" prefix="$" maxlength="12" :rules="[rules.max(5000000)]"></AppNumberInput>
+              <AppNumberInput
+                v-model.lazy="model.utilitiesCost"
+                :format="fieldNumberFormat"
+                :disabled="readonly"
+                prefix="$"
+                maxlength="12"
+                :rules="[rules.max(5000000)]"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -117,7 +168,12 @@
               <AppLabel>Total Yearly Costs</AppLabel>
             </v-col>
             <v-col cols="12" sm="5" class="pl-sm-6">
-              <AppNumberInput :value="totalYearlyCost" :format="totalNumberFormat" variant="plain" readonly class="totalYearlyCost"></AppNumberInput>
+              <AppNumberInput
+                :value="totalYearlyCost"
+                :format="totalNumberFormat"
+                variant="plain"
+                readonly
+                class="totalYearlyCost"></AppNumberInput>
             </v-col>
           </v-row>
         </v-col>
@@ -177,12 +233,22 @@ export default {
   },
   created() {
     this.model = {
-      insuranceCost: this.currentApplication?.insuranceCost ? this.currentApplication?.insuranceCost?.toFixed(2) : '0.00',
-      upkeepLabourCost: this.currentApplication?.upkeepLabourCost ? this.currentApplication?.upkeepLabourCost?.toFixed(2) : '0.00',
+      insuranceCost: this.currentApplication?.insuranceCost
+        ? this.currentApplication?.insuranceCost?.toFixed(2)
+        : '0.00',
+      upkeepLabourCost: this.currentApplication?.upkeepLabourCost
+        ? this.currentApplication?.upkeepLabourCost?.toFixed(2)
+        : '0.00',
       suppliesCost: this.currentApplication?.suppliesCost ? this.currentApplication?.suppliesCost?.toFixed(2) : '0.00',
-      utilitiesCost: this.currentApplication?.utilitiesCost ? this.currentApplication?.utilitiesCost?.toFixed(2) : '0.00',
-      maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost ? this.currentApplication?.maintenanceRepairsCost?.toFixed(2) : '0.00',
-      furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost ? this.currentApplication?.furnitureEquipmentsCost?.toFixed(2) : '0.00',
+      utilitiesCost: this.currentApplication?.utilitiesCost
+        ? this.currentApplication?.utilitiesCost?.toFixed(2)
+        : '0.00',
+      maintenanceRepairsCost: this.currentApplication?.maintenanceRepairsCost
+        ? this.currentApplication?.maintenanceRepairsCost?.toFixed(2)
+        : '0.00',
+      furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost
+        ? this.currentApplication?.furnitureEquipmentsCost?.toFixed(2)
+        : '0.00',
     }
   },
 }

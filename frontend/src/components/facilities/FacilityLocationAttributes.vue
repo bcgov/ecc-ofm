@@ -3,31 +3,63 @@
     <AppLabel>Select all that apply for your facility:</AppLabel>
     <div class="mt-4">
       <div>Is your facility located on K-12 school grounds or affiliated with a Board of Education?</div>
-      <AppYesNoRadioGroup id="k12-school-grounds" v-model="model.k12SchoolGrounds" :rules="rules.required" :hide-details="readonly" :disabled="readonly" />
+      <AppYesNoRadioGroup
+        id="k12-school-grounds"
+        v-model="model.k12SchoolGrounds"
+        :rules="rules.required"
+        :hide-details="readonly"
+        :disabled="readonly" />
     </div>
     <div>
       <div>Is your facility located in a municipal community center?</div>
-      <AppYesNoRadioGroup id="municipal-community" v-model="model.municipalCommunity" :rules="rules.required" :hide-details="readonly" :disabled="readonly" />
+      <AppYesNoRadioGroup
+        id="municipal-community"
+        v-model="model.municipalCommunity"
+        :rules="rules.required"
+        :hide-details="readonly"
+        :disabled="readonly" />
     </div>
     <div>
       <div>Is your facility located on Reserve?</div>
-      <AppYesNoRadioGroup id="on-reserve" v-model="model.onReserve" :rules="rules.required" :hide-details="readonly" :disabled="readonly" />
+      <AppYesNoRadioGroup
+        id="on-reserve"
+        v-model="model.onReserve"
+        :rules="rules.required"
+        :hide-details="readonly"
+        :disabled="readonly" />
     </div>
     <div>
       <div>
         Is your facility designated as a
-        <a href="https://www2.gov.bc.ca/gov/content?id=41CD55C0B3ED4F51A0274EDE85E886F5" target="_blank">Young Parent Program</a>
+        <a href="https://www2.gov.bc.ca/gov/content?id=41CD55C0B3ED4F51A0274EDE85E886F5" target="_blank">
+          Young Parent Program
+        </a>
         (YPP) facility?
       </div>
-      <AppYesNoRadioGroup id="ypp-designation" v-model="model.yppDesignation" :rules="rules.required" :hide-details="readonly" :disabled="readonly" />
+      <AppYesNoRadioGroup
+        id="ypp-designation"
+        v-model="model.yppDesignation"
+        :rules="rules.required"
+        :hide-details="readonly"
+        :disabled="readonly" />
     </div>
     <div v-if="model.yppDesignation">
       <div>Do you currently have YPP families enrolled?</div>
-      <AppYesNoRadioGroup id="ypp-enrolled" v-model="model.yppEnrolled" :rules="rules.required" :hide-details="readonly" :disabled="readonly" />
+      <AppYesNoRadioGroup
+        id="ypp-enrolled"
+        v-model="model.yppEnrolled"
+        :rules="rules.required"
+        :hide-details="readonly"
+        :disabled="readonly" />
     </div>
     <div>
       <div>Does your facility operate in a personal residence?</div>
-      <AppYesNoRadioGroup id="personal-residence" v-model="model.personalResidence" :rules="rules.required" :hide-details="readonly" :disabled="readonly" />
+      <AppYesNoRadioGroup
+        id="personal-residence"
+        v-model="model.personalResidence"
+        :rules="rules.required"
+        :hide-details="readonly"
+        :disabled="readonly" />
     </div>
   </v-card>
 </template>

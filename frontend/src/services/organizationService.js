@@ -16,7 +16,9 @@ export default {
   async getOrganizationFacilities(organizationId) {
     try {
       if (!organizationId) return
-      const response = await ApiService.apiAxios.get(ApiRoutes.ORGANIZATIONS_FACILITIES.replace(':organizationId', organizationId))
+      const response = await ApiService.apiAxios.get(
+        ApiRoutes.ORGANIZATIONS_FACILITIES.replace(':organizationId', organizationId),
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the organization's facilities by organization/account id - ${error}`)
@@ -27,7 +29,9 @@ export default {
   async getOrganizationUsers(organizationId, firstName, lastName, email) {
     try {
       if (!organizationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the organization's users by organizationid - ${error}`)

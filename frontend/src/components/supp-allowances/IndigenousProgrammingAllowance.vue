@@ -1,17 +1,21 @@
 <template>
-  <AppAlertBanner v-if="isWarningDisplayed" type="info">You have already received the Indigenous Programming Allowance for the current year.</AppAlertBanner>
+  <AppAlertBanner v-if="isWarningDisplayed" type="info">
+    You have already received the Indigenous Programming Allowance for the current year.
+  </AppAlertBanner>
   <v-row no-gutters class="mr-2 my-4">
     <v-col cols="12">
       <AppLabel>Purpose of the fund:</AppLabel>
 
-      To provide additional funds to support the delivery of Indigenous curriculum in collaboration with Indigenous Peoples in their community.
+      To provide additional funds to support the delivery of Indigenous curriculum in collaboration with Indigenous
+      Peoples in their community.
     </v-col>
   </v-row>
   <br />
   <v-row no-gutters class="mr-2 my-2">
     <v-col cols="12">
       <AppLabel>Eligible expenses:</AppLabel>
-      Eligible expenses: Expenses to enhance the participant's delivery of Indigenous curriculum in collaboration with Indigenous Peoples in their communities.
+      Eligible expenses: Expenses to enhance the participant's delivery of Indigenous curriculum in collaboration with
+      Indigenous Peoples in their communities.
     </v-col>
   </v-row>
   <br />
@@ -47,7 +51,14 @@
   </v-row>
 
   <v-row v-for="item in INDIG_CHECKBOX_LABELS" :key="item.value" no-gutters>
-    <v-checkbox v-model="model.indigenousFundingModel" density="compact" :disabled="readOnly" class="pl-8" prepend-icon :label="item.label" :value="item.value"></v-checkbox>
+    <v-checkbox
+      v-model="model.indigenousFundingModel"
+      density="compact"
+      :disabled="readOnly"
+      class="pl-8"
+      prepend-icon
+      :label="item.label"
+      :value="item.value"></v-checkbox>
   </v-row>
 
   <v-row v-if="isOtherBoxDisplayed" no-gutters class="ml-10 mr-2 my-0">
@@ -93,7 +104,9 @@ export default {
   },
   computed: {
     isOtherBoxDisplayed() {
-      return this.model?.indigenousFundingModel?.includes(this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
+      return this.model?.indigenousFundingModel?.includes(
+        this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+      )
     },
     readOnly() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode) || this.formDisabled

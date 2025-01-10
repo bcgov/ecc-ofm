@@ -120,7 +120,9 @@ export default {
      * Include isRead in the payload if its value changes
      */
     async updateMessageReadUnread(isRead, assistanceRequestId) {
-      let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
+      let selectedAssistanceRequest = this.assistanceRequests?.find(
+        (item) => item.assistanceRequestId === assistanceRequestId,
+      )
       let payload = {}
       if (selectedAssistanceRequest?.isRead != isRead) {
         selectedAssistanceRequest.isRead = isRead

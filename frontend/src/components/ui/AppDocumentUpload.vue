@@ -5,9 +5,21 @@
         <v-col v-if="documentLabel || documentType" cols="12" sm="7" class="pb-0">
           <AppLabel>{{ documentLabel ?? documentType }}</AppLabel>
         </v-col>
-        <v-col cols="12" :sm="documentType ? '5' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
+        <v-col
+          cols="12"
+          :sm="documentType ? '5' : '12'"
+          :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
           <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-          <AppButton v-if="showAddFileButton" id="add-new-file" :disabled="disabled" :primary="false" size="large" class="add-file-button" @click="addFile">Add File</AppButton>
+          <AppButton
+            v-if="showAddFileButton"
+            id="add-new-file"
+            :disabled="disabled"
+            :primary="false"
+            size="large"
+            class="add-file-button"
+            @click="addFile">
+            Add File
+          </AppButton>
         </v-col>
       </v-row>
       <div v-if="documents.length > 0" class="mt-6">
@@ -23,7 +35,14 @@
               @update:model-value="validateFile(item.id)"></v-file-input>
           </v-col>
           <v-col cols="11" md="7" class="pr-4">
-            <v-text-field v-model.trim="item.description" :disabled="loading" placeholder="Enter a description (Optional)" counter maxlength="1000" dense clearable></v-text-field>
+            <v-text-field
+              v-model.trim="item.description"
+              :disabled="loading"
+              placeholder="Enter a description (Optional)"
+              counter
+              maxlength="1000"
+              dense
+              clearable></v-text-field>
           </v-col>
           <v-col v-if="!loading && !readonly" cols="1" class="pt-3">
             <v-icon small @click="deleteFile(item.id)">mdi-delete</v-icon>
@@ -32,9 +51,19 @@
       </div>
       <div v-if="uploadedDocuments.length > 0" class="mt-6 mx-4 mx-md-8 mx-lg-12">
         <AppLabel v-if="!documentType">Uploaded Documents</AppLabel>
-        <v-data-table :headers="headersUploadedDocuments" :items="uploadedDocuments" item-key="documentId" items-per-page="-1" density="compact">
+        <v-data-table
+          :headers="headersUploadedDocuments"
+          :items="uploadedDocuments"
+          item-key="documentId"
+          items-per-page="-1"
+          density="compact">
           <template #item.actionButtons="{ item }">
-            <v-icon v-if="!loading && !readonly" small @click="$emit('deleteUploadedDocument', item.documentId, documentType)">mdi-delete</v-icon>
+            <v-icon
+              v-if="!loading && !readonly"
+              small
+              @click="$emit('deleteUploadedDocument', item.documentId, documentType)">
+              mdi-delete
+            </v-icon>
           </template>
           <template #bottom><!-- no paging --></template>
         </v-data-table>
@@ -132,10 +161,20 @@ export default {
     this.fileFormats = 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX'
     this.fileRules = [
       (value) => {
-        return !value || !value.length || value[0].size < this.MAX_FILE_SIZE || `The maximum file size is ${humanFileSize(this.MAX_FILE_SIZE)} for each document.`
+        return (
+          !value ||
+          !value.length ||
+          value[0].size < this.MAX_FILE_SIZE ||
+          `The maximum file size is ${humanFileSize(this.MAX_FILE_SIZE)} for each document.`
+        )
       },
       (value) => {
-        return !value || !value.length || this.fileExtensionAccept.includes(getFileExtensionWithDot(value[0].name)?.toLowerCase()) || `Accepted file types are ${this.fileFormats}.`
+        return (
+          !value ||
+          !value.length ||
+          this.fileExtensionAccept.includes(getFileExtensionWithDot(value[0].name)?.toLowerCase()) ||
+          `Accepted file types are ${this.fileFormats}.`
+        )
       },
     ]
     this.headersUploadedDocuments = [
@@ -149,7 +188,12 @@ export default {
   },
   methods: {
     addFile() {
-      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
+      this.documents.push({
+        id: uuid.v1(),
+        entityName: this.entityName,
+        isValidFile: true,
+        documentType: this.documentType,
+      })
     },
 
     deleteFile(deletedItemId) {
@@ -172,7 +216,9 @@ export default {
       const file = document?.file
       if (file) {
         const isLessThanMaxSize = file.size < this.MAX_FILE_SIZE
-        const isFileExtensionAccepted = this.fileExtensionAccept.includes(getFileExtensionWithDot(file.name)?.toLowerCase())
+        const isFileExtensionAccepted = this.fileExtensionAccept.includes(
+          getFileExtensionWithDot(file.name)?.toLowerCase(),
+        )
         document.isValidFile = isLessThanMaxSize && isFileExtensionAccepted
       } else {
         document.isValidFile = true

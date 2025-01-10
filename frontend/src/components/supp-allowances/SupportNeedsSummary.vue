@@ -1,8 +1,13 @@
 <template>
-  <v-card v-for="model in supportModels" :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id" fluid class="pb-0 my-5">
+  <v-card
+    v-for="model in supportModels"
+    :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
+    fluid
+    class="pb-0 my-5">
     <AppAlertBanner v-if="model.isNextTerm" type="info">This Allowance application is for next year</AppAlertBanner>
     <AppAlertBanner v-if="!hasInclusionPolicy" type="warning">
-      You must have an inclusion policy to apply for Support Needs Allowance. Your organization account manager can update inclusion policy details in
+      You must have an inclusion policy to apply for Support Needs Allowance. Your organization account manager can
+      update inclusion policy details in
       <router-link :to="{ name: 'manage-organization' }">Account Management.</router-link>
     </AppAlertBanner>
     <div class="px-5">
@@ -20,7 +25,12 @@
           {{ model.supportOtherDescription }}
         </p>
         <p v-else>
-          <AppMissingInfoError :to="{ name: 'supp-allowances-form', params: { applicationGuid: $route.params.applicationGuid }, query: { nextTerm: model.isNextTerm } }">
+          <AppMissingInfoError
+            :to="{
+              name: 'supp-allowances-form',
+              params: { applicationGuid: $route.params.applicationGuid },
+              query: { nextTerm: model.isNextTerm },
+            }">
             {{ APPLICATION_ERROR_MESSAGES.SUPP_OTHER }}
           </AppMissingInfoError>
         </p>
@@ -63,7 +73,9 @@ export default {
       return this.SUPPORT_CHECKBOX_LABELS.filter((item) => model.supportFundingModel.includes(item.value))
     },
     isOtherBoxDisplayed(model) {
-      return model.supportFundingModel.includes(this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value)
+      return model.supportFundingModel.includes(
+        this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+      )
     },
   },
 }

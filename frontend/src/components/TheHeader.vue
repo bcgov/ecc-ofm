@@ -15,13 +15,33 @@
             </v-row>
           </v-row>
         </v-col>
-        <v-col v-if="showMenu" cols="12" sm="6" md="5" lg="4" class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3" :class="iconsClass">
+        <v-col
+          v-if="showMenu"
+          cols="12"
+          sm="6"
+          md="5"
+          lg="4"
+          class="d-flex align-center justify-center justify-sm-end px-2 py-2 py-sm-3"
+          :class="iconsClass">
           <div>
             <v-row class="align-center">
               <v-col v-if="showMessagingIcon" style="width: 70px">
                 <div>
-                  <v-btn v-if="!isNaN(messageNotificationCount)" id="mail_box_button" aria-label="Messages/Notifications" rounded @click="$router.push({ name: 'messaging' })">
-                    <v-badge color="error" class="pt-0" :content="messageNotificationCount" bottom right overlap offset-x="8" offset-y="28">
+                  <v-btn
+                    v-if="!isNaN(messageNotificationCount)"
+                    id="mail_box_button"
+                    aria-label="Messages/Notifications"
+                    rounded
+                    @click="$router.push({ name: 'messaging' })">
+                    <v-badge
+                      color="error"
+                      class="pt-0"
+                      :content="messageNotificationCount"
+                      bottom
+                      right
+                      overlap
+                      offset-x="8"
+                      offset-y="28">
                       <v-icon aria-hidden="false" icon="mdi-email-outline" size="40" color="white" />
                     </v-badge>
                   </v-btn>
@@ -47,7 +67,12 @@
                     </v-chip>
                   </template>
                   <v-list style="background-color: #003366; color: white">
-                    <v-list-item v-if="isMinistryUser" id="impersonate_button" class="user-link" :to="{ name: 'impersonate' }" title="Impersonate" />
+                    <v-list-item
+                      v-if="isMinistryUser"
+                      id="impersonate_button"
+                      class="user-link"
+                      :to="{ name: 'impersonate' }"
+                      title="Impersonate" />
                     <v-list-item id="logout_button" class="user-link" :href="logoutPath" title="Log Out" />
                   </v-list>
                 </v-menu>
@@ -86,7 +111,9 @@ export default {
     },
     // count of requests that are unread or are in the status of “Action required”
     actionRequiredAndUnreadMessageCount() {
-      const readActionRequiredMessagesCount = this.assistanceRequests?.filter((message) => message.status === 'Action required' && message.isRead)?.length
+      const readActionRequiredMessagesCount = this.assistanceRequests?.filter(
+        (message) => message.status === 'Action required' && message.isRead,
+      )?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
     showMenu() {

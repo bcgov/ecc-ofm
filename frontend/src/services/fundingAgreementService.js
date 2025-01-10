@@ -5,7 +5,9 @@ export default {
   async getActiveFundingAgreementByApplicationId(applicationId, ignoreMODAgreements = false) {
     try {
       if (!applicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`,
+      )
 
       //Backend will order FA's so newest one (newest MOD agreement) will always be first
       //in the case of Supp Apps - we will need the start date of the ORIGINAL funding agreement - so take the last FA in the list
@@ -56,7 +58,9 @@ export default {
   async getActiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
     try {
       if (!facilityId && !statusCode) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`,
+      )
       return response?.data[0]
     } catch (error) {
       console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
@@ -77,7 +81,9 @@ export default {
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
-      console.log(`Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`)
+      console.log(
+        `Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`,
+      )
       throw error
     }
   },
@@ -98,7 +104,9 @@ export default {
   async getFundingReallocationRequestsByFundingAgreementId(fundingAgreementId) {
     try {
       if (!fundingAgreementId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}/funding-reallocation-requests`)
+      const response = await ApiService.apiAxios.get(
+        `${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}/funding-reallocation-requests`,
+      )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the funding reallocation requests by funding agreement id - ${error}`)

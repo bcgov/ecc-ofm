@@ -11,8 +11,12 @@
     at any time.
   </p>
 
-  <AppAlertBanner v-if="isFundingTermComplete" type="warning">Your current year funding is ending and you are no longer able to make changes.</AppAlertBanner>
-  <AppAlertBanner v-else-if="currentTermDisabled" type="warning">Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year</AppAlertBanner>
+  <AppAlertBanner v-if="isFundingTermComplete" type="warning">
+    Your current year funding is ending and you are no longer able to make changes.
+  </AppAlertBanner>
+  <AppAlertBanner v-else-if="currentTermDisabled" type="warning">
+    Your current year funding is ending and you are no longer able to make changes. Please apply for Next Year
+  </AppAlertBanner>
 
   <v-form ref="form">
     <v-row no-gutters class="mb-2">
@@ -22,10 +26,27 @@
 
       <!-- These buttons should always be enabled/disabled with FA dates as we might not have a supp app date to go off of-->
       <v-col cols="6" lg="2" class="d-flex flex-column align-end">
-        <AppButton id="current-year-button" class="mr-1" :active="!nextTermActive" :primary="false" size="large" width="200px" @click="setActiveTerm(false)">Current Year</AppButton>
+        <AppButton
+          id="current-year-button"
+          class="mr-1"
+          :active="!nextTermActive"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="setActiveTerm(false)">
+          Current Year
+        </AppButton>
       </v-col>
       <v-col cols="6" lg="2">
-        <AppButton v-if="!isFundingTermComplete" id="next-year-button" :active="nextTermActive" :primary="false" :disabled="!isNextTermEnabled" size="large" width="200px" @click="setActiveTerm(true)">
+        <AppButton
+          v-if="!isFundingTermComplete"
+          id="next-year-button"
+          :active="nextTermActive"
+          :primary="false"
+          :disabled="!isNextTermEnabled"
+          size="large"
+          width="200px"
+          @click="setActiveTerm(true)">
           Next Year
         </AppButton>
       </v-col>
@@ -33,12 +54,21 @@
 
     <v-row v-if="fundingExpiryDate != 'Invalid Date'">
       <v-col cols="12">
-        <div v-if="!nextTermActive">If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToUTC(fundingExpiryDate) }}</div>
+        <div v-if="!nextTermActive">
+          If you apply for and receive funding in the current year of your funding agreement, the funds must be used by
+          {{ format.formatDateToUTC(fundingExpiryDate) }}
+        </div>
       </v-col>
     </v-row>
     <v-row no-gutters class="mb-2">
       <v-col cols="12" class="d-flex flex-column align-end">
-        <AppButton v-if="isEmpty(panel)" id="expand-button" :primary="false" size="large" width="200px" @click="togglePanel">
+        <AppButton
+          v-if="isEmpty(panel)"
+          id="expand-button"
+          :primary="false"
+          size="large"
+          width="200px"
+          @click="togglePanel">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Expand All
         </AppButton>
@@ -48,7 +78,13 @@
         </AppButton>
       </v-col>
     </v-row>
-    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :isLoading="loading" persistent max-width="40%" @close="toggleCancelDialog">
+    <AppDialog
+      v-model="showCancelDialog"
+      title="Cancel Changes"
+      :is-loading="loading"
+      persistent
+      max-width="40%"
+      @close="toggleCancelDialog">
       <template #content>
         <v-row class="mb-2">
           <v-col class="text-center">
@@ -60,10 +96,19 @@
       <template #button>
         <v-row justify="space-around">
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="go-back-button" :primary="false" size="large" width="200px" :to="{ name: 'applications-history' }">Cancel Changes</AppButton>
+            <AppButton
+              id="go-back-button"
+              :primary="false"
+              size="large"
+              width="200px"
+              :to="{ name: 'applications-history' }">
+              Cancel Changes
+            </AppButton>
           </v-col>
           <v-col cols="12" md="6" class="d-flex justify-center">
-            <AppButton id="cancel-button" size="large" width="200px" @click="toggleCancelDialog()">Stay on page</AppButton>
+            <AppButton id="cancel-button" size="large" width="200px" @click="toggleCancelDialog()">
+              Stay on page
+            </AppButton>
           </v-col>
         </v-row>
       </template>
@@ -79,7 +124,10 @@
           <p class="supplementary-header-label">Core Services Allowance</p>
         </div>
         <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+          <v-expansion-panel
+            v-for="panelComponent in CORE_SERVICES_PANELS"
+            :key="panelComponent.id"
+            :value="panelComponent.id">
             <v-expansion-panel-title>
               <span class="supplementary-header-label">{{ panelComponent.title }}</span>
               <span v-if="isFundingActive(panelComponent.id, renewalTerm)" class="active-label ml-9">Active</span>
@@ -87,14 +135,14 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance
                 v-if="panelComponent.id === INDIGENOUS"
-                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
-                :formDisabled="currentTermDisabled || formDisabled"
+                :indigenous-programming-model="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
+                :form-disabled="currentTermDisabled || formDisabled"
                 @update="updateModel" />
               <SupportNeedsProgrammingAllowance
                 v-if="panelComponent.id === SUPPORT_NEEDS"
-                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
-                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-                :formDisabled="currentTermDisabled || formDisabled"
+                :support-model="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
+                :has-inclusion-policy="currentOrg.hasInclusionPolicy"
+                :form-disabled="currentTermDisabled || formDisabled"
                 @update="updateModel" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -111,10 +159,10 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <TransportationAllowance
-                :transportModels="getTransportModels(renewalTerm)"
-                :formDisabled="currentTermDisabled || formDisabled"
-                :renewalTerm="renewalTerm"
-                :startDate="getStartDate(renewalTerm)"
+                :transport-models="getTransportModels(renewalTerm)"
+                :form-disabled="currentTermDisabled || formDisabled"
+                :renewal-term="renewalTerm"
+                :start-date="getStartDate(renewalTerm)"
                 @update="updateModel"
                 @add-model="addBlankTransportModel"
                 @delete-model="deleteTransportModel"
@@ -132,7 +180,10 @@
           <p class="supplementary-header-label">Core Services Allowance</p>
         </div>
         <v-expansion-panels v-model="panel" multiple>
-          <v-expansion-panel v-for="panelComponent in CORE_SERVICES_PANELS" :key="panelComponent.id" :value="panelComponent.id">
+          <v-expansion-panel
+            v-for="panelComponent in CORE_SERVICES_PANELS"
+            :key="panelComponent.id"
+            :value="panelComponent.id">
             <v-expansion-panel-title>
               <span class="supplementary-header-label">{{ panelComponent.title }}</span>
               <span v-if="isFundingActive(panelComponent.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
@@ -140,14 +191,14 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance
                 v-if="panelComponent.id === INDIGENOUS"
-                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
-                :formDisabled="formDisabled"
+                :indigenous-programming-model="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
+                :form-disabled="formDisabled"
                 @update="updateModel" />
               <SupportNeedsProgrammingAllowance
                 v-if="panelComponent.id === SUPPORT_NEEDS"
-                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
-                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-                :formDisabled="formDisabled"
+                :support-model="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
+                :has-inclusion-policy="currentOrg.hasInclusionPolicy"
+                :form-disabled="formDisabled"
                 @update="updateModel" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -160,14 +211,16 @@
           <v-expansion-panel :value="DISCRETIONARY_PANEL.id">
             <v-expansion-panel-title>
               <span class="supplementary-header-label">{{ DISCRETIONARY_PANEL.title }}</span>
-              <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, nextRenewalTerm)" class="active-label ml-9">Active</span>
+              <span v-if="isFundingActive(DISCRETIONARY_PANEL.id, nextRenewalTerm)" class="active-label ml-9">
+                Active
+              </span>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <TransportationAllowance
-                :transportModels="getTransportModels(nextRenewalTerm)"
-                :formDisabled="formDisabled"
-                :renewalTerm="nextRenewalTerm"
-                :startDate="getStartDate(nextRenewalTerm)"
+                :transport-models="getTransportModels(nextRenewalTerm)"
+                :form-disabled="formDisabled"
+                :renewal-term="nextRenewalTerm"
+                :start-date="getStartDate(nextRenewalTerm)"
                 @update="updateModel"
                 @add-model="addBlankTransportModel"
                 @delete-model="deleteTransportModel"
@@ -193,7 +246,13 @@ import TransportationAllowance from '@/components/supp-allowances/Transportation
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
-import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
+import {
+  SUPPLEMENTARY_TYPES,
+  VIRUS_SCAN_ERROR_MESSAGE,
+  GOOD_STANDING_STATUS_CODES,
+  SUPPLEMENTARY_APPLICATION_STATUS_CODES,
+  NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
+} from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
@@ -208,7 +267,15 @@ const TWO_YEARS = 732
 
 export default {
   name: 'SupplementaryFormView',
-  components: { AppAlertBanner, AppButton, AppDialog, AppLabel, IndigenousProgrammingAllowance, SupportNeedsProgrammingAllowance, TransportationAllowance },
+  components: {
+    AppAlertBanner,
+    AppButton,
+    AppDialog,
+    AppLabel,
+    IndigenousProgrammingAllowance,
+    SupportNeedsProgrammingAllowance,
+    TransportationAllowance,
+  },
   mixins: [alertMixin, permissionsMixin],
   props: {
     applicationId: {
@@ -277,7 +344,10 @@ export default {
     transportAppsHaveZero() {
       return this.models
         .filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
-        ?.some((el) => el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0')
+        ?.some(
+          (el) =>
+            el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0',
+        )
     },
   },
   watch: {
@@ -338,7 +408,9 @@ export default {
         if (this.$route?.query?.nextTerm === 'true') {
           this.setActiveTerm(true)
         }
-        this.setUpDefaultNewRequestModel(await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId))
+        this.setUpDefaultNewRequestModel(
+          await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId),
+        )
       } catch (error) {
         this.setFailureAlert('Failed to load Allowances applications', error)
       }
@@ -375,7 +447,10 @@ export default {
           }
 
           if (applicationModel.supplementaryApplicationId) {
-            await ApplicationService.updateSupplementaryApplication(applicationModel.supplementaryApplicationId, payload)
+            await ApplicationService.updateSupplementaryApplication(
+              applicationModel.supplementaryApplicationId,
+              payload,
+            )
           } else {
             const response = await ApplicationService.createSupplementaryApplication(payload)
             applicationModel.supplementaryApplicationId = response.supplementaryApplicationId
@@ -389,7 +464,10 @@ export default {
           }
           if (applicationModel.documentsToUpload) {
             try {
-              await DocumentService.createDocuments(applicationModel.documentsToUpload, applicationModel.supplementaryApplicationId)
+              await DocumentService.createDocuments(
+                applicationModel.documentsToUpload,
+                applicationModel.supplementaryApplicationId,
+              )
             } catch (error) {
               if (error?.response?.data?.status === 422) {
                 this.setFailureAlert(VIRUS_SCAN_ERROR_MESSAGE, error)
@@ -425,9 +503,14 @@ export default {
         supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
       }
 
-      this.models = [{ ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) }, { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) }]
+      this.models = [
+        { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) },
+        { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) },
+      ]
 
-      const transportApplications = suppApplications.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
+      const transportApplications = suppApplications.filter(
+        (el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT,
+      )
 
       this.updateTransportModel(transportApplications, this.renewalTerm)
 
@@ -443,7 +526,9 @@ export default {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
           application.documentsToUpload = []
-          application.retroactiveDate = application.retroactiveDate ? this.format.formatTwoMonthDate(application.retroactiveDate) : null
+          application.retroactiveDate = application.retroactiveDate
+            ? this.format.formatTwoMonthDate(application.retroactiveDate)
+            : null
         }
         this.models = [...this.models, ...transportApplications]
       }
@@ -453,7 +538,13 @@ export default {
       this.$emit('process', false)
     },
     updateModel(updatedModel) {
-      let index = this.models.indexOf(this.models.find((el) => updatedModel.supplementaryApplicationId && el.supplementaryApplicationId == updatedModel.supplementaryApplicationId))
+      let index = this.models.indexOf(
+        this.models.find(
+          (el) =>
+            updatedModel.supplementaryApplicationId &&
+            el.supplementaryApplicationId == updatedModel.supplementaryApplicationId,
+        ),
+      )
 
       if (index === -1) {
         index = this.models.indexOf(this.models.find((el) => el.id === updatedModel.id))
@@ -477,10 +568,15 @@ export default {
       return this.models?.find((el) => el.supplementaryType === type && el.renewalTerm === currentTerm)
     },
     getTransportModels(term) {
-      return this.models?.filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm === term)
+      return this.models?.filter(
+        (el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm === term,
+      )
     },
     findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
-      const foundApp = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
+      const foundApp = suppApplications.find(
+        (application) =>
+          application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm,
+      )
       modelToUpdate.renewalTerm = renewalTerm
       modelToUpdate.id = uuid.v4()
       return foundApp ?? modelToUpdate
@@ -531,7 +627,11 @@ export default {
     deleteTransportModel(model) {
       //application exists in Dynamics, so flag it to get deleted on save
       if (model.supplementaryApplicationId) {
-        this.models[this.models.indexOf(this.models.find((el) => el.supplementaryApplicationId == model.supplementaryApplicationId))].toDelete = true
+        this.models[
+          this.models.indexOf(
+            this.models.find((el) => el.supplementaryApplicationId == model.supplementaryApplicationId),
+          )
+        ].toDelete = true
       } else {
         //remove it from the list because we have nothing to delete from dynamics
         this.models.splice(this.models.indexOf(this.models.find((el) => el.id === model.id)), 1)
@@ -631,9 +731,15 @@ export default {
           return models.some((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED)
         }
         case this.SUPPORT_NEEDS:
-          return this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+          return (
+            this.getModel(SUPPLEMENTARY_TYPES.SUPPORT, term)?.statusCode ==
+            SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+          )
         case this.INDIGENOUS:
-          return this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term)?.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+          return (
+            this.getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, term)?.statusCode ==
+            SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED
+          )
       }
     },
     getStartDate(term) {

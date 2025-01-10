@@ -192,7 +192,9 @@
                     <AppLabel>Street address 1:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress1 : facility?.streetAddress1 }}
+                    {{
+                      facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress1 : facility?.streetAddress1
+                    }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -202,7 +204,9 @@
                     <AppLabel>Street address 2:</AppLabel>
                   </v-col>
                   <v-col cols="12" md="6" lg="7" xl="8">
-                    {{ facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress2 : facility?.streetAddress2 }}
+                    {{
+                      facility?.isMailingAddressDifferent ? facility?.mailingStreetAddress2 : facility?.streetAddress2
+                    }}
                   </v-col>
                 </v-row>
               </v-col>

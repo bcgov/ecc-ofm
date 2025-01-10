@@ -1,7 +1,15 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <div @mouseover="pause = true" @mouseleave="pause = false">
-    <v-snackbar v-model="showSnackBar" :timeout="timeout" elevation="24" location="top" centered :color="colour" transition="slide-y-transition" class="snackbar">
+    <v-snackbar
+      v-model="showSnackBar"
+      :timeout="timeout"
+      elevation="24"
+      location="top"
+      centered
+      :color="colour"
+      transition="slide-y-transition"
+      class="snackbar">
       <div v-html="alertNotificationText" />
       <template #action="{ attrs }">
         <v-btn text color="white" v-bind="attrs" @click="showSnackBar = false">

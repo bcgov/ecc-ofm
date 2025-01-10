@@ -3,15 +3,25 @@
     <template v-if="!readonly">
       <AppMissingInfoError
         v-if="isEmpty(currentApplication?.licences) || !isCCOFMissingDetailComplete()"
-        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
+        :to="{
+          name: APPLICATION_ROUTES.SERVICE_DELIVERY,
+          hash: '#account-management',
+          params: { applicationGuid: $route.params.applicationGuid },
+        }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
       </AppMissingInfoError>
-      <AppMissingInfoError v-else-if="!isSplitClassroomComplete()" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError
+        v-else-if="!isSplitClassroomComplete()"
+        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
       </AppMissingInfoError>
       <AppMissingInfoError
         v-else-if="!currentApplication?.licenceDeclaration"
-        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
+        :to="{
+          name: APPLICATION_ROUTES.SERVICE_DELIVERY,
+          hash: '#confirmation',
+          params: { applicationGuid: $route.params.applicationGuid },
+        }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
       </AppMissingInfoError>
     </template>
@@ -25,10 +35,19 @@
             <LicenceDetails :licence="licence" :read-only="true" />
           </v-card>
           <v-card class="mt-4">
-            <AppDocumentUpload class="pa-4" :readonly="true" :document-label="DOCUMENT_LABELS.LICENCE" :document-type="`Licence ${licence.licence}`" :uploaded-documents="getLicenceDocument(licence)">
+            <AppDocumentUpload
+              class="pa-4"
+              :readonly="true"
+              :document-label="DOCUMENT_LABELS.LICENCE"
+              :document-type="`Licence ${licence.licence}`"
+              :uploaded-documents="getLicenceDocument(licence)">
               <AppMissingInfoError
                 v-if="!readonly && !getLicenceDocument(licence)?.length"
-                :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: `#${licence.licenceId}`, params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{
+                  name: APPLICATION_ROUTES.SERVICE_DELIVERY,
+                  hash: `#${licence.licenceId}`,
+                  params: { applicationGuid: $route.params.applicationGuid },
+                }">
                 {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_LICENCE_UPLOAD }}
               </AppMissingInfoError>
             </AppDocumentUpload>
@@ -46,7 +65,11 @@
         :uploaded-documents="healthAuthorityReportDocument">
         <AppMissingInfoError
           v-if="!readonly && !isHealthAuthorityReportUploaded()"
-          :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#health-authority-report-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{
+            name: APPLICATION_ROUTES.SERVICE_DELIVERY,
+            hash: '#health-authority-report-upload',
+            params: { applicationGuid: $route.params.applicationGuid },
+          }">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
         </AppMissingInfoError>
       </AppDocumentUpload>
@@ -91,7 +114,9 @@ export default {
       return !isEmpty(this.currentApplication?.licences) && (this.readonly || this.isLicenceDetailComplete())
     },
     healthAuthorityReportDocument() {
-      return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
+      return this.currentApplication?.uploadedDocuments?.filter((document) =>
+        document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT),
+      )
     },
   },
   async created() {
@@ -102,10 +127,17 @@ export default {
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['isCCOFMissingDetailComplete', 'isSplitClassroomComplete', 'isLicenceDetailComplete', 'isHealthAuthorityReportUploaded']),
+    ...mapActions(useApplicationsStore, [
+      'isCCOFMissingDetailComplete',
+      'isSplitClassroomComplete',
+      'isLicenceDetailComplete',
+      'isHealthAuthorityReportUploaded',
+    ]),
     isEmpty,
     getLicenceDocument(licence) {
-      return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(licence?.licence))
+      return this.currentApplication?.uploadedDocuments?.filter((document) =>
+        document.documentType?.includes(licence?.licence),
+      )
     },
   },
 }

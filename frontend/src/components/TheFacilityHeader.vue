@@ -11,7 +11,10 @@
             <v-btn id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>
-            <v-list-item v-for="facility in userInfo.facilities" :key="facility.facilityId" @click="changeFacility(facility)">
+            <v-list-item
+              v-for="facility in userInfo.facilities"
+              :key="facility.facilityId"
+              @click="changeFacility(facility)">
               <v-list-item-title>{{ facility.facilityName }}</v-list-item-title>
             </v-list-item>
           </v-list>
