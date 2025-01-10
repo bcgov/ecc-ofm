@@ -82,7 +82,7 @@
         class="soft-outline"
         density="compact">
         <template #item.status="{ item }">
-          <span :class="getStatusClass(item.statusCode)">{{ item.status }}</span>
+          <span :class="getStatusClass(item.statusCode)">{{ getStatusLabel(item) }}</span>
         </template>
 
         <template #item.actions="{ item }">
@@ -222,8 +222,15 @@ export default {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
     filteredApplicationItems() {
+      const hiddenCodes = [APPLICATION_STATUS_CODES.EXPIRED, APPLICATION_STATUS_CODES.REDIRECTED]
       return this.sortApplicationItems(
-        this.applicationItems.filter((application) => !this.facilityNameFilter || application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase())),
+        this.applicationItems
+          .filter(
+            (application) =>
+              !this.facilityNameFilter ||
+              application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase()),
+          )
+          .filter((application) => !hiddenCodes.includes(application.statusCode)),
       )
     },
     ofmApplicationCardText() {
@@ -301,7 +308,16 @@ export default {
     },
 
     showPDFDownloadButton(application) {
-      if (application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE || application.statusCode === APPLICATION_STATUS_CODES.REDIRECTED) {
+      const invalidAppCodes = [
+        APPLICATION_STATUS_CODES.INELIGIBLE,
+        APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY,
+        APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
+      ]
+
+      if (
+        application.applicationType === APPLICATION_TYPES.IRREGULAR_EXPENSE ||
+        invalidAppCodes.includes(application.statusCode)
+      ) {
         return false
         //OFM core generates PDF upon submit - Supp App generates PDF only once approved
       } else if (application.applicationType === APPLICATION_TYPES.OFM) {
@@ -336,15 +352,22 @@ export default {
     },
 
     async getApplicationsAndFundingAgreement() {
-      this.applications = await ApplicationService.getActiveApplications()
-      // Applications' funding agreements are used in applications validation to enable the Add Supplementary Application button
+      let applications = await ApplicationService.getApplications()
+      // Applications' funding agreements are used in applications validation to enable the Add SupplementaryApplication
+      // Application button
       await Promise.all(
-        this.applications?.map(async (application) => {
-          application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          //we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user from applying for Irreg Expense funding
-          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
+        applications.map(async (application) => {
+          application.status =
+            application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
+          // we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user
+          // from applying for Irreg Expense funding
+          application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
+            application.applicationId,
+            true,
+          )
         }),
       )
+      this.applications = applications
     },
 
     async getSupplementaryApplications() {
@@ -422,9 +445,26 @@ export default {
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(this.supplementaryApplications, applicationItemsMap)
       this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregularExpenses]
     },
-
+    getStatusLabel(applicationItem) {
+      if (
+        [APPLICATION_STATUS_CODES.CANCELLED_BY_SP, APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY].includes(
+          applicationItem.statusCode,
+        )
+      ) {
+        return 'Cancelled'
+      }
+      return applicationItem.status
+    },
     getStatusClass(statusCode) {
-      if (this.DRAFT_STATUS_CODES.includes(statusCode) || statusCode === APPLICATION_STATUS_CODES.REDIRECTED) {
+      if (
+        this.DRAFT_STATUS_CODES.includes(statusCode) ||
+        [
+          APPLICATION_STATUS_CODES.REDIRECTED,
+          APPLICATION_STATUS_CODES.INELIGIBLE,
+          APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY,
+          APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
+        ].includes(statusCode)
+      ) {
         return 'status-gray'
       } else if (
         [
