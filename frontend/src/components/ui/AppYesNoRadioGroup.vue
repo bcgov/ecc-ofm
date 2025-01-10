@@ -13,29 +13,29 @@ export default {
   props: {
     modelValue: {
       type: Number,
-      default: null,
+      default: null
     },
     allowNotApplicable: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['update:modelValue'],
   data() {
     return {
-      updatedValue: null,
+      updatedValue: null
     }
   },
   watch: {
     updatedValue: {
       handler(value) {
         this.$emit('update:modelValue', value)
-      },
-    },
+      }
+    }
   },
   created() {
     this.updatedValue = this.modelValue
-  },
+  }
 }
 </script>
 <style scoped>

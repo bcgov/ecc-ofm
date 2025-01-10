@@ -81,18 +81,18 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     assistanceRequestId: {
       type: String,
       required: true,
-      default: '',
+      default: ''
     },
     referenceNumber: {
       type: String,
       required: true,
-      default: '',
-    },
+      default: ''
+    }
   },
   emits: ['close', 'reply-success-event'],
   data() {
@@ -104,15 +104,15 @@ export default {
       isLoading: false,
       showReplyRequestConfirmationDialog: false,
       areValidFilesUploaded: true,
-      documentsToUpload: [],
+      documentsToUpload: []
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     ...mapActions(useMessagesStore, ['updateAssistanceRequestInStore']),
@@ -165,7 +165,7 @@ export default {
       try {
         const payload = {
           assistanceRequestId: assistanceRequestId,
-          message: this.message,
+          message: this.message
         }
         await MessageService.createAssistanceRequestConversation(payload)
       } catch (error) {
@@ -180,7 +180,7 @@ export default {
     async updateStatusToAssigned(assistanceRequestId) {
       try {
         const payload = {
-          statusCode: ASSISTANCE_REQUEST_STATUS_CODES.ASSIGNED,
+          statusCode: ASSISTANCE_REQUEST_STATUS_CODES.ASSIGNED
         }
         await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
       } catch (error) {
@@ -203,7 +203,7 @@ export default {
 
     validateDocumentsToUpload(value) {
       this.areValidFilesUploaded = value
-    },
-  },
+    }
+  }
 }
 </script>

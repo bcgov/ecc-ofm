@@ -11,5 +11,5 @@ export default {
       console.log(`Failed to get file - ${error}`)
       throw error
     }
-  },
+  }
 }

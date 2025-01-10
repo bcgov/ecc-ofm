@@ -32,18 +32,18 @@ export default {
   props: {
     showFacility: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   computed: {
     ...mapState(useAuthStore, ['isActingProvider', 'userInfo']),
-    ...mapWritableState(useAuthStore, ['currentFacility']),
+    ...mapWritableState(useAuthStore, ['currentFacility'])
   },
   methods: {
     changeFacility(facility) {
       this.currentFacility = facility
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

@@ -121,12 +121,12 @@ export default {
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['update', 'deleteDocument', 'documentsComplete'],
   data() {
@@ -134,7 +134,7 @@ export default {
       choice: undefined,
       selectedDate: undefined,
       model: undefined,
-      todayDate: new Date().toISOString().slice(0, 10),
+      todayDate: new Date().toISOString().slice(0, 10)
     }
   },
   computed: {
@@ -148,7 +148,7 @@ export default {
         return !isEmpty(this.model.documentsToUpload) || !isEmpty(this.model.uploadedDocuments)
       }
       return true
-    },
+    }
   },
   watch: {
     model: {
@@ -156,8 +156,8 @@ export default {
         this.$emit('update', value)
         this.$emit('documentsComplete', this.areDocumentsComplete)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   async created() {
     this.rules = rules
@@ -174,7 +174,7 @@ export default {
         this.$emit('update', this.model)
         this.$emit('deleteDocument', documentId)
       }
-    },
-  },
+    }
+  }
 }
 </script>

@@ -108,39 +108,39 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     title: {
       type: String,
-      required: true,
+      required: true
     },
     titleInfo: {
       type: String,
-      required: true,
+      required: true
     },
     contacts: {
       type: Array,
-      required: true,
+      required: true
     },
     contactsForAdd: {
       type: Array,
-      required: true,
+      required: true
     },
     atLeastOneContactMandatory: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     parentInEditMode: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     editable: {
       type: Boolean,
       required: false,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['save-contact-updates', 'edit-mode-changed'],
   data() {
@@ -156,10 +156,10 @@ export default {
       headers: [
         { title: 'Name', value: 'name', width: '20%' },
         { title: 'Role', value: 'role', width: '30%' },
-        { title: '', value: 'actions', width: '50%' },
+        { title: '', value: 'actions', width: '50%' }
       ],
       errorMessage: '',
-      atLeastOneContactRules: [(v) => !!v || 'At least one expense authority is required for a facility.'],
+      atLeastOneContactRules: [(v) => !!v || 'At least one expense authority is required for a facility.']
     }
   },
   computed: {
@@ -171,21 +171,21 @@ export default {
     },
     sortedContacts() {
       return this.sortContacts(this.contactsToDisplay)
-    },
+    }
   },
   watch: {
     contacts: {
       handler: function (val) {
         this.contactsToDisplay = [...val]
       },
-      deep: true,
+      deep: true
     },
     contactsForAdd: {
       handler: function (val) {
         this.contactsAvailableForAdd = [...val]
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
     this.facilityId = this.$route.params.facilityId
@@ -225,10 +225,10 @@ export default {
       this.contactsToDisplay.push(contactToAdd)
       this.updatedContactsToAdd.push(contactToAdd)
       this.contactsAvailableForAdd = this.contactsAvailableForAdd.filter(
-        (obj) => obj.contactId !== contactToAdd.contactId,
+        (obj) => obj.contactId !== contactToAdd.contactId
       )
       this.updatedContactsToRemove = this.updatedContactsToRemove.filter(
-        (obj) => obj.contactId !== contactToAdd.contactId,
+        (obj) => obj.contactId !== contactToAdd.contactId
       )
       this.contactId = null
       this.removeFocus()
@@ -282,7 +282,7 @@ export default {
       return contacts.sort((a, b) => {
         return a.firstName?.localeCompare(b.firstName)
       })
-    },
-  },
+    }
+  }
 }
 </script>

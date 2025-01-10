@@ -79,7 +79,7 @@ export default {
     AppCancelDialog,
     SurveyNavBar,
     SurveySection,
-    SurveySubmitConfirmationDialog,
+    SurveySubmitConfirmationDialog
   },
   mixins: [alertMixin, reportMixin],
   data() {
@@ -94,7 +94,7 @@ export default {
       sections: [],
       currentSection: undefined,
       originalResponses: [],
-      clonedResponses: [],
+      clonedResponses: []
     }
   },
 
@@ -129,7 +129,7 @@ export default {
     showIncompleteSurveyErrorAlert() {
       const index = this.sections?.findIndex((section) => !this.isLastSection(section) && !section.isComplete)
       return !this.readonly && this.isLastSection(this.currentSection) && index > -1
-    },
+    }
   },
 
   watch: {
@@ -146,8 +146,8 @@ export default {
         } finally {
           this.processing = false
         }
-      },
-    },
+      }
+    }
   },
 
   async created() {
@@ -170,9 +170,9 @@ export default {
           this.sections?.map(async (section) => {
             section.questions = await ReportsService.getSectionQuestions(
               section?.sectionId,
-              this.surveyResponse?.facilityId,
+              this.surveyResponse?.facilityId
             )
-          }),
+          })
         )
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()
@@ -212,7 +212,7 @@ export default {
       try {
         this.processing = true
         const responsesToDelete = this.clonedResponses?.filter(
-          (response) => response.questionResponseId && this.isHiddenOrDeleted(response),
+          (response) => response.questionResponseId && this.isHiddenOrDeleted(response)
         )
         let callGetQuestionsResponses = responsesToDelete?.length > 0
         await Promise.all(
@@ -220,7 +220,7 @@ export default {
             const originalResponse = this.getOriginalQuestionResponse(response)
             await ReportsService.deleteQuestionResponse(originalResponse?.questionResponseId)
             originalResponse.rowId = null
-          }),
+          })
         )
         await Promise.all(
           this.clonedResponses?.map(async (response) => {
@@ -236,7 +236,7 @@ export default {
               await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
               callGetQuestionsResponses = true
             }
-          }),
+          })
         )
         if (callGetQuestionsResponses) {
           await this.getQuestionsResponses()
@@ -262,7 +262,7 @@ export default {
       try {
         const payload = {
           statusCode: SURVEY_RESPONSE_STATUS_CODES.COMPLETED,
-          submittedBy: this.userInfo?.contactId,
+          submittedBy: this.userInfo?.contactId
         }
         await this.save()
         this.processing = true
@@ -291,7 +291,7 @@ export default {
               !this.isHiddenOrDeleted(item) &&
               item.questionId === updatedResponse?.questionId &&
               item.tableQuestionId === updatedResponse?.tableQuestionId &&
-              item.rowId === updatedResponse?.rowId,
+              item.rowId === updatedResponse?.rowId
           )
         : this.clonedResponses.findIndex((item) => item.questionId === updatedResponse?.questionId)
 
@@ -395,7 +395,7 @@ export default {
         const question = this.currentSection?.questions?.find(
           (item) =>
             item.questionId === response.questionId ||
-            (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId),
+            (this.isTableQuestionResponse(response) && item.questionId === response.tableQuestionId)
         )
         response.hide = question?.hide
         response.value = question?.hide ? null : response.value
@@ -419,14 +419,14 @@ export default {
         (item) =>
           !this.isHiddenOrDeleted(item) &&
           item.questionId === parentsQuestion.questionId &&
-          item.tableQuestionId === parentsQuestion.tableQuestionId,
+          item.tableQuestionId === parentsQuestion.tableQuestionId
       )
       parentsResponses = parentsResponses.sort((response1, response2) => {
         return response1.rowId - response2.rowId
       })
       parentsQuestion?.businessRules?.forEach((rule) => {
         const childQuestion = section?.questions?.find(
-          (item) => item.questionId === rule.valueInheritanceChildQuestionId,
+          (item) => item.questionId === rule.valueInheritanceChildQuestionId
         )
         if (childQuestion) {
           childQuestion.inheritanceValues = parentsResponses?.map((response) => response.value)
@@ -444,7 +444,7 @@ export default {
               !response.delete &&
               response.questionId === question.questionId &&
               response.tableQuestionId === question.tableQuestionId &&
-              response.rowId === index,
+              response.rowId === index
           )
           // Update existing row
           if (response) {
@@ -458,7 +458,7 @@ export default {
               tableQuestionId: question.tableQuestionId,
               surveyResponseId: this.$route.params.surveyResponseGuid,
               rowId: index,
-              value: inheritedValue,
+              value: inheritedValue
             })
           }
         })
@@ -472,7 +472,7 @@ export default {
     verifySectionComplete(section) {
       if (!section) return
       const responseRequiredQuestions = section?.questions?.filter(
-        (question) => !question.hide && question.responseRequired,
+        (question) => !question.hide && question.responseRequired
       )
       const isComplete = responseRequiredQuestions?.every((question) => {
         return this.clonedResponses.some(
@@ -481,7 +481,7 @@ export default {
             ((this.isLastSection(section) && response.value === 'Yes') ||
               (!this.isLastSection(section) && !isEmpty(response.value))) &&
             (response.questionId === question.questionId ||
-              (this.isTableQuestion(question) && response.tableQuestionId === question.questionId)),
+              (this.isTableQuestion(question) && response.tableQuestionId === question.questionId))
         )
       })
       section.isComplete = isComplete
@@ -516,8 +516,8 @@ export default {
       if (isEmpty(this.sections)) return
       const index = this.sections?.findIndex((item) => item?.sectionId === section?.sectionId)
       return index === 0
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

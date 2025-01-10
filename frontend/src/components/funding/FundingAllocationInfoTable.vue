@@ -65,7 +65,7 @@
 
 <script>
 export default {
-  name: 'FundingAllocationInfoTable',
+  name: 'FundingAllocationInfoTable'
 }
 </script>
 

@@ -14,5 +14,5 @@ export const ALERT_NOTIFICATION_TYPES = Object.freeze({
   /**
    * INFO value type.
    */
-  INFO: 'primary',
+  INFO: 'primary'
 })

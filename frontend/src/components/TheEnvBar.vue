@@ -14,9 +14,9 @@ export default {
   data() {
     return {
       bannerEnvironment: StaticConfig.BANNER_ENVIRONMENT,
-      bannerColor: StaticConfig.BANNER_COLOR,
+      bannerColor: StaticConfig.BANNER_COLOR
     }
-  },
+  }
 }
 </script>
 <style scoped>

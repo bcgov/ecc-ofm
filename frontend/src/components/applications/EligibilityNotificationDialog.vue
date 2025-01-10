@@ -53,26 +53,26 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     applicationId: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   emits: ['close', 'cancel'],
   data() {
     return {
       isLoading: false,
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     closeDialog() {
@@ -83,7 +83,7 @@ export default {
         this.isLoading = true
         const payload = {
           statusCode: APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
-          stateCode: CRM_STATE_CODES.INACTIVE,
+          stateCode: CRM_STATE_CODES.INACTIVE
         }
         await ApplicationService.updateApplication(this.applicationId, payload)
         this.$emit('cancel')
@@ -94,7 +94,7 @@ export default {
         this.isLoading = false
         this.closeDialog()
       }
-    },
-  },
+    }
+  }
 }
 </script>

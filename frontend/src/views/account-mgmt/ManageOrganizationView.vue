@@ -117,7 +117,7 @@ import {
   OFM_PROGRAM_CODES,
   PREVENT_CHANGE_REQUEST_TYPES,
   VIRUS_SCAN_ERROR_MESSAGE,
-  DOCUMENT_TYPES,
+  DOCUMENT_TYPES
 } from '@/utils/constants'
 
 export default {
@@ -134,7 +134,7 @@ export default {
       uploadedDocuments: [],
       showChangeRequestDialog: false,
       showUnableToSubmitCrDialog: false,
-      preventChangeRequestType: undefined,
+      preventChangeRequestType: undefined
     }
   },
   computed: {
@@ -145,12 +145,12 @@ export default {
     },
     otherFacilities() {
       return this.facilities.filter(
-        (f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId),
+        (f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId)
       )
     },
     hasAnOFMFacility() {
       return this.facilities.some((facility) => facility.programCode === OFM_PROGRAM_CODES.OFM)
-    },
+    }
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
@@ -241,7 +241,7 @@ export default {
         const updatedHasInclusionPolicy = this.uploadedDocuments?.length > 0 ? hasInclusionPolicy : false
         if (updatedHasInclusionPolicy !== this.organization.hasInclusionPolicy) {
           const payload = {
-            hasInclusionPolicy: updatedHasInclusionPolicy,
+            hasInclusionPolicy: updatedHasInclusionPolicy
           }
           await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
           this.organization.hasInclusionPolicy = updatedHasInclusionPolicy
@@ -262,7 +262,7 @@ export default {
           await Promise.all(
             documentsToDelete.map(async (documentId) => {
               await DocumentService.deleteDocument(documentId)
-            }),
+            })
           )
         }
       } catch (error) {
@@ -271,7 +271,7 @@ export default {
         } else {
           this.setFailureAlert(
             `Failed Inclusion Policy Document(s) update on Organization: ${this.organization.organizationId}`,
-            error,
+            error
           )
         }
       }
@@ -279,8 +279,8 @@ export default {
 
     toggleUnableToSubmitCrDialog() {
       this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
-    },
-  },
+    }
+  }
 }
 </script>
 

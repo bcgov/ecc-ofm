@@ -77,21 +77,21 @@ export default {
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     validate: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['update'],
   data() {
     return {
-      model: {},
+      model: {}
     }
   },
   watch: {
@@ -100,8 +100,8 @@ export default {
         this.model.yppEnrolled = this.model.yppDesignation ? this.model.yppEnrolled : null
         this.$emit('update', this.model)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
     this.rules = rules
@@ -111,8 +111,8 @@ export default {
       onReserve: this.facility?.onReserve,
       yppDesignation: this.facility?.yppDesignation,
       yppEnrolled: this.facility?.yppEnrolled,
-      personalResidence: this.facility?.personalResidence,
+      personalResidence: this.facility?.personalResidence
     }
-  },
+  }
 }
 </script>

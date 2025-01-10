@@ -50,29 +50,29 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     user: {
       type: Object,
       required: true,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   emits: ['close', 'deactivate'],
   data() {
     return {
       isLoading: false,
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     closeDialog() {
@@ -87,9 +87,9 @@ export default {
           facilities: this.user?.facilities?.map((facility) => {
             return {
               bceidFacilityId: facility.bceidFacilityId,
-              ofmPortalAccess: false,
+              ofmPortalAccess: false
             }
-          }),
+          })
         }
         await UserService.updateUser(payload)
         this.$emit('deactivate')
@@ -100,7 +100,7 @@ export default {
         this.isLoading = false
         this.closeDialog()
       }
-    },
-  },
+    }
+  }
 }
 </script>

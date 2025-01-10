@@ -26,8 +26,8 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   computed: {
@@ -39,12 +39,12 @@ export default {
       'isOperatingCostsComplete',
       'isStaffingComplete',
       'isDeclareSubmitComplete',
-      'isApplicationComplete',
+      'isApplicationComplete'
     ]),
 
     isSelectFacilityPage() {
       return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
-    },
+    }
   },
 
   created() {
@@ -52,38 +52,38 @@ export default {
       facilityDetails: {
         id: 1,
         title: 'Facility Details',
-        routeName: APPLICATION_ROUTES.FACILITY_DETAILS,
+        routeName: APPLICATION_ROUTES.FACILITY_DETAILS
       },
       eligibility: {
         id: 2,
         title: 'Eligibility',
-        routeName: APPLICATION_ROUTES.ELIGIBILITY,
+        routeName: APPLICATION_ROUTES.ELIGIBILITY
       },
       serviceDelivery: {
         id: 3,
         title: 'Service Delivery',
-        routeName: APPLICATION_ROUTES.SERVICE_DELIVERY,
+        routeName: APPLICATION_ROUTES.SERVICE_DELIVERY
       },
       operatingCosts: {
         id: 4,
         title: 'Operating Costs',
-        routeName: APPLICATION_ROUTES.OPERATING_COSTS,
+        routeName: APPLICATION_ROUTES.OPERATING_COSTS
       },
       staffing: {
         id: 5,
         title: 'Staffing',
-        routeName: APPLICATION_ROUTES.STAFFING,
+        routeName: APPLICATION_ROUTES.STAFFING
       },
       review: {
         id: 6,
         title: 'Review',
-        routeName: APPLICATION_ROUTES.REVIEW,
+        routeName: APPLICATION_ROUTES.REVIEW
       },
       submit: {
         id: 7,
         title: 'Declare & Submit',
-        routeName: APPLICATION_ROUTES.SUBMIT,
-      },
+        routeName: APPLICATION_ROUTES.SUBMIT
+      }
     }
   },
 
@@ -159,8 +159,8 @@ export default {
         (this.isRouteNameEqual(item, APPLICATION_ROUTES.REVIEW) && this.isApplicationComplete) ||
         (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && this.isDeclareSubmitComplete)
       return isComplete ? 'mdi-check-circle' : 'mdi-circle'
-    },
-  },
+    }
+  }
 }
 </script>
 

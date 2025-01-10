@@ -7,11 +7,11 @@ import { AuthRoutes } from '@/utils/constants'
 export default {
   name: 'BackendSessionExpiredView',
   computed: {
-    ...mapState(useAuthStore, ['isMinistryUser']),
+    ...mapState(useAuthStore, ['isMinistryUser'])
   },
   mounted() {
     const logoutPath = this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT
     window.location = `${logoutPath}?sessionExpired=true`
-  },
+  }
 }
 </script>

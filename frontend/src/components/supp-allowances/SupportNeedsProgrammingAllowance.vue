@@ -144,32 +144,32 @@ export default {
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     hasInclusionPolicy: {
       type: Boolean,
       required: true,
       default: () => {
         return false
-      },
+      }
     },
     formDisabled: {
       type: Boolean,
-      required: true,
-    },
+      required: true
+    }
   },
   emits: ['update'],
   data() {
     return {
       model: {},
       rules,
-      showMore: false,
+      showMore: false
     }
   },
   computed: {
     isOtherBoxDisplayed() {
       return this.model?.supportFundingModel?.includes(
-        this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+        this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value
       )
     },
     readOnly() {
@@ -177,15 +177,15 @@ export default {
     },
     isWarningDisplayed() {
       return isApplicationLocked(this.supportModel?.statusCode)
-    },
+    }
   },
   watch: {
     model: {
       handler(value) {
         this.$emit('update', value)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   async created() {
     this.model = { ...this.supportModel }
@@ -194,8 +194,8 @@ export default {
   methods: {
     toggleInclusionPolicyDiv() {
       this.showMore = !this.showMore
-    },
-  },
+    }
+  }
 }
 </script>
 

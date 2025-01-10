@@ -37,22 +37,22 @@ export default {
     show: {
       type: Boolean,
       default: false,
-      required: true,
+      required: true
     },
     referenceNumber: {
       type: String,
       default: '',
-      required: true,
+      required: true
     },
     returnTo: {
       type: String,
-      default: 'home',
-    },
+      default: 'home'
+    }
   },
   emits: ['close'],
   data() {
     return {
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   computed: {},
@@ -60,8 +60,8 @@ export default {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     closeDialog() {
@@ -78,7 +78,7 @@ export default {
       if (!this.$route.path?.includes(this.returnTo)) {
         this.$router.push({ name: this.returnTo })
       }
-    },
-  },
+    }
+  }
 }
 </script>

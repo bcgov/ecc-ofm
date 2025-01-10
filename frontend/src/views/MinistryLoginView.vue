@@ -38,18 +38,18 @@ export default {
   components: { AppButton, AppHeroImage },
   data() {
     return {
-      authRoutes: AuthRoutes,
+      authRoutes: AuthRoutes
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['isAuthenticated']),
+    ...mapState(useAuthStore, ['isAuthenticated'])
   },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
       this.setJwtToken()
-    },
-  },
+    }
+  }
 }
 </script>
 

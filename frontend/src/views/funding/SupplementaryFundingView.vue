@@ -34,13 +34,13 @@ export default {
       pdfFile: undefined,
       pdfDownloadLink: undefined,
       application: undefined,
-      loading: false,
+      loading: false
     }
   },
   computed: {
     downloadFileName() {
       return `Approval_Notification_${this.application?.fundingAgreementNumber}`
-    },
+    }
   },
 
   async created() {
@@ -54,7 +54,7 @@ export default {
         this.application = await ApplicationService.getSupplementaryApplicationById(this.$route.params.fundingGuid)
         const resp = await ApplicationService.getApprovedSupplementaryPDF(this.$route.params.fundingGuid)
         this.pdfFile = {
-          data: atob(resp),
+          data: atob(resp)
         }
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
       } catch (ignoreError) {
@@ -62,7 +62,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-  },
+    }
+  }
 }
 </script>

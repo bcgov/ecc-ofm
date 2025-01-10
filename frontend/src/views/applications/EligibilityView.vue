@@ -187,20 +187,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['process'],
@@ -209,13 +209,13 @@ export default {
     return {
       model: {},
       processing: false,
-      showEligibilityNotificationDialog: false,
+      showEligibilityNotificationDialog: false
     }
   },
 
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
-    ...mapWritableState(useApplicationsStore, ['isEligibilityComplete']),
+    ...mapWritableState(useApplicationsStore, ['isEligibilityComplete'])
   },
 
   watch: {
@@ -223,14 +223,14 @@ export default {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.FACILITY_DETAILS,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     next: {
       async handler() {
@@ -238,10 +238,10 @@ export default {
         if (!this.checkEligibilityComplete(this.model)) return
         this.$router.push({
           name: APPLICATION_ROUTES.SERVICE_DELIVERY,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
-    },
+      }
+    }
   },
 
   created() {
@@ -261,7 +261,7 @@ export default {
       economicAnalysisParticipation: this.currentApplication?.economicAnalysisParticipation,
       operateSeparateBankAccount: this.isOperateInPersonalResidence()
         ? this.currentApplication?.operateSeparateBankAccount
-        : null,
+        : null
     }
   },
 
@@ -276,7 +276,7 @@ export default {
       'getApplication',
       'checkEligibilityComplete',
       'isMultipleProgram',
-      'isOperateInPersonalResidence',
+      'isOperateInPersonalResidence'
     ]),
     async saveApplication(showAlert = false) {
       try {
@@ -310,7 +310,7 @@ export default {
 
     goToApplicationHistory() {
       this.$router.push({ name: 'applications-history' })
-    },
-  },
+    }
+  }
 }
 </script>

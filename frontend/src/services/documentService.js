@@ -19,7 +19,7 @@ function mapDocumentFileObjectForBack(documents) {
       ofm_category: document.documentType ?? '',
       ofm_description: document.description ?? '',
       entity_name_set: document.entityName,
-      regardingid: document.entityId,
+      regardingid: document.entityId
     })
     formData.append(`file${index}`, file)
   })
@@ -87,5 +87,5 @@ export default {
       console.log(`Failed to delete document - ${error}`)
       throw error
     }
-  },
+  }
 }

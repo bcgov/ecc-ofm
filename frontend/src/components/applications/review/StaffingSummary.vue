@@ -41,7 +41,7 @@
           :to="{
             name: APPLICATION_ROUTES.STAFFING,
             hash: '#employee-section',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
         </AppMissingInfoError>
@@ -50,7 +50,7 @@
           :to="{
             name: APPLICATION_ROUTES.STAFFING,
             hash: '#employee-section',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
         </AppMissingInfoError>
@@ -59,7 +59,7 @@
           :to="{
             name: APPLICATION_ROUTES.STAFFING,
             hash: '#employee-section',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
         </AppMissingInfoError>
@@ -68,7 +68,7 @@
           :to="{
             name: APPLICATION_ROUTES.STAFFING,
             hash: '#employee-section',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
         </AppMissingInfoError>
@@ -196,8 +196,8 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   computed: {
@@ -221,22 +221,22 @@ export default {
     },
     eceCertificates() {
       return this.currentApplication?.providerEmployees?.filter(
-        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE,
+        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE
       )
     },
     eceaCertificates() {
       return this.currentApplication?.providerEmployees?.filter(
-        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA,
+        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA
       )
     },
     iteCertificates() {
       return this.currentApplication?.providerEmployees?.filter(
-        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE,
+        (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE
       )
     },
     unionsNames() {
       const names = convertStringToArray(this.currentApplication?.unions)?.map((item) =>
-        this.getUnionNameById(Number(item)),
+        this.getUnionNameById(Number(item))
       )
       return convertArrayToString(names)
     },
@@ -245,7 +245,7 @@ export default {
         this.isThereAtLeastOneEmployee(this.currentApplication) &&
         this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
       )
-    },
+    }
   },
 
   created() {
@@ -262,9 +262,9 @@ export default {
       'areAllEmployeeCertificatesEntered',
       'areAllCertificateInitialsUnique',
       'areAllCertificateNumbersUnique',
-      'areEmployeeCertificatesComplete',
-    ]),
-  },
+      'areEmployeeCertificatesComplete'
+    ])
+  }
 }
 </script>
 

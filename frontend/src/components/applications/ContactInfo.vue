@@ -76,16 +76,16 @@ export default {
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     vCardVariant: {
       type: String,
-      default: 'outlined',
-    },
-  },
+      default: 'outlined'
+    }
+  }
 }
 </script>

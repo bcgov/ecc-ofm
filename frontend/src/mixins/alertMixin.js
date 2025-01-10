@@ -6,7 +6,7 @@ import { ALERT_NOTIFICATION_TYPES } from '@/utils/constants/AlertNotificationTyp
 export default {
   data() {
     return {
-      alertType: null,
+      alertType: null
     }
   },
   methods: {
@@ -20,6 +20,6 @@ export default {
     },
     setWarningAlert(message) {
       this.addAlertNotification({ text: message, alertType: ALERT_NOTIFICATION_TYPES.WARN })
-    },
-  },
+    }
+  }
 }

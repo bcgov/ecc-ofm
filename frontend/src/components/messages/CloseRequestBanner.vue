@@ -65,13 +65,13 @@ export default {
     assistanceRequestId: {
       type: String,
       required: true,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
       showConfirmDialog: false,
-      isLoading: false,
+      isLoading: false
     }
   },
   methods: {
@@ -85,7 +85,7 @@ export default {
         this.isLoading = true
         const payload = {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
-          stateCode: CRM_STATE_CODES.INACTIVE,
+          stateCode: CRM_STATE_CODES.INACTIVE
         }
         await MessageService.updateAssistanceRequest(this.assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(this.assistanceRequestId)
@@ -96,8 +96,8 @@ export default {
         this.toggleConfirmDialog()
         this.isLoading = false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

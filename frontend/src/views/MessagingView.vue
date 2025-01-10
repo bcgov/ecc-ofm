@@ -44,12 +44,12 @@ export default {
   components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
   data() {
     return {
-      tab: 1,
+      tab: 1
     }
   },
   computed: {
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
-    ...mapState(useMessagesStore, ['unreadMessageCount']),
-  },
+    ...mapState(useMessagesStore, ['unreadMessageCount'])
+  }
 }
 </script>

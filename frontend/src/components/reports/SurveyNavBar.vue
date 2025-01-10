@@ -19,14 +19,14 @@ export default {
   props: {
     sections: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     currentSection: {
       type: Object,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   emits: ['update'],
   methods: {
@@ -44,8 +44,8 @@ export default {
 
     updateCurrentSection(section) {
       this.$emit('update', section)
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

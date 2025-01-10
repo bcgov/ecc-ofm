@@ -95,7 +95,7 @@
             :to="{
               name: 'supp-allowances-form',
               params: { applicationGuid: $route.params.applicationGuid },
-              query: { nextTerm: model.isNextTerm },
+              query: { nextTerm: model.isNextTerm }
             }">
             <template v-if="!model.VIN || !model.odometer || !model.estimatedMileage">
               {{ APPLICATION_ERROR_MESSAGES.SUPP_TRANSPORT }}
@@ -135,15 +135,15 @@ export default {
       default: () => {
         return []
       },
-      required: true,
+      required: true
     },
     allTransportModels: {
       type: Array,
       default: () => {
         return []
       },
-      required: true,
-    },
+      required: true
+    }
   },
   created() {
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
@@ -165,8 +165,8 @@ export default {
         !this.areDocumentsMissing(model) &&
         !hasDuplicateVIN(model, this.allTransportModels)
       )
-    },
-  },
+    }
+  }
 }
 </script>
 

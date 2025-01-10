@@ -293,28 +293,28 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     licence: {
       type: Object,
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     readOnly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     editable: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['update', 'setDetailsComplete'],
   data() {
     return {
-      panel: [],
+      panel: []
     }
   },
 
@@ -327,7 +327,7 @@ export default {
 
     healthAuthority() {
       return this.getHealthAuthorityNameById(this.licence?.healthAuthorityId)
-    },
+    }
   },
 
   created() {
@@ -337,12 +337,12 @@ export default {
     this.SPACES_NUMBER_FORMAT = {
       min: 0,
       separator: ',',
-      precision: 0,
+      precision: 0
     }
     this.WEEK_NUMBER_FORMAT = {
       min: 1,
       separator: ',',
-      precision: 0,
+      precision: 0
     }
     this.rules = rules
   },
@@ -354,7 +354,7 @@ export default {
   updated() {
     if (this.editable) {
       this.licence?.licenceDetails?.forEach(
-        (licenceDetail) => (licenceDetail.weekDays = this.convertStringDaysToArray(licenceDetail.weekDays)),
+        (licenceDetail) => (licenceDetail.weekDays = this.convertStringDaysToArray(licenceDetail.weekDays))
       )
     }
   },
@@ -398,7 +398,7 @@ export default {
       } else {
         licenceDetail.weekDays = DAYS_OF_WEEK.map((day) => day.value)
       }
-    },
-  },
+    }
+  }
 }
 </script>

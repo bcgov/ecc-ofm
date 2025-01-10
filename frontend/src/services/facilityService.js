@@ -45,7 +45,7 @@ export default {
     try {
       if (!facilityId || !primaryContactId) return
       const payload = {
-        primaryContactId: primaryContactId,
+        primaryContactId: primaryContactId
       }
       const response = await ApiService.apiAxios.put(`${ApiRoutes.FACILITIES}/${facilityId}`, payload)
       return response?.data
@@ -60,7 +60,7 @@ export default {
       if (!facilityId) return
       const response = await ApiService.apiAxios.patch(
         `${ApiRoutes.USER_PERMISSIONS_FACILITIES}/${contact.bceidFacilityId}`,
-        contact,
+        contact
       )
       return response?.data
     } catch (error) {
@@ -78,5 +78,5 @@ export default {
       console.log(`Failed to update facility by facility id - ${error}`)
       throw error
     }
-  },
+  }
 }

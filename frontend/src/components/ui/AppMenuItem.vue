@@ -9,9 +9,9 @@ export default {
   props: {
     icon: {
       type: String,
-      required: false,
-    },
-  },
+      required: false
+    }
+  }
 }
 </script>
 

@@ -137,12 +137,12 @@ export default {
     ...mapState(useApplicationsStore, ['currentApplication']),
     facilityType() {
       return this.currentApplication?.facilityType
-    },
+    }
   },
   created() {
     this.FACILITY_TYPES = FACILITY_TYPES
     this.format = format
-  },
+  }
 }
 </script>
 <style scoped>

@@ -6,7 +6,7 @@ export default {
     try {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`,
+        `${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`
       )
 
       //Backend will order FA's so newest one (newest MOD agreement) will always be first
@@ -59,7 +59,7 @@ export default {
     try {
       if (!facilityId && !statusCode) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`,
+        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`
       )
       return response?.data[0]
     } catch (error) {
@@ -82,7 +82,7 @@ export default {
       return response?.data
     } catch (error) {
       console.log(
-        `Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`,
+        `Failed to get the list of active funding agreements by facility id and start date threshold - ${error}`
       )
       throw error
     }
@@ -92,7 +92,7 @@ export default {
     try {
       if (!facilityId && !statusCode) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}&includeFundingEnvelopes=true`,
+        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}&includeFundingEnvelopes=true`
       )
       return response?.data[0]
     } catch (error) {
@@ -105,12 +105,12 @@ export default {
     try {
       if (!fundingAgreementId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}/funding-reallocation-requests`,
+        `${ApiRoutes.FUNDING_AGREEMENTS}/${fundingAgreementId}/funding-reallocation-requests`
       )
       return response?.data
     } catch (error) {
       console.log(`Failed to get the funding reallocation requests by funding agreement id - ${error}`)
       throw error
     }
-  },
+  }
 }

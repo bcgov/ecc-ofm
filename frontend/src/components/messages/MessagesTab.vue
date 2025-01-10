@@ -56,14 +56,14 @@ export default {
       selectedAssistanceRequestId: '',
       markReadButtonState: false,
       markUnreadButtonInMessageTableState: false,
-      markUnreadButtonInConversationThreadState: false,
+      markUnreadButtonInConversationThreadState: false
     }
   },
   computed: {
     ...mapState(useMessagesStore, ['assistanceRequests']),
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
-    },
+    }
   },
   methods: {
     toggleNewRequestDialog() {
@@ -80,8 +80,8 @@ export default {
     },
     openRequestConversation(assistanceRequestId) {
       this.selectedAssistanceRequestId = assistanceRequestId
-    },
-  },
+    }
+  }
 }
 </script>
 

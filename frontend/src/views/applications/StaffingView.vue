@@ -309,20 +309,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['process'],
@@ -333,7 +333,7 @@ export default {
       updatedECECertificates: [],
       updatedECEACertificates: [],
       updatedITECertificates: [],
-      processing: false,
+      processing: false
     }
   },
 
@@ -375,18 +375,18 @@ export default {
     },
     certificatesToCreate() {
       return this.allUpdatedCertificates?.filter(
-        (certificate) => !certificate.providerEmployeeId && (certificate.initials || certificate.certificateNumber),
+        (certificate) => !certificate.providerEmployeeId && (certificate.initials || certificate.certificateNumber)
       )
     },
     certificatesToUpdate() {
       return this.allUpdatedCertificates?.filter(
-        (certificate) => certificate.providerEmployeeId && certificate.isUpdated,
+        (certificate) => certificate.providerEmployeeId && certificate.isUpdated
       )
     },
     certificatesToDelete() {
       return this.currentApplication?.providerEmployees?.filter((certificate) => {
         const index = this.allUpdatedCertificates?.findIndex(
-          (updatedCertificate) => updatedCertificate.providerEmployeeId === certificate.providerEmployeeId,
+          (updatedCertificate) => updatedCertificate.providerEmployeeId === certificate.providerEmployeeId
         )
         return index === -1
       })
@@ -406,36 +406,36 @@ export default {
         this.isUnionSectionComplete(this.model) &&
         this.isCSSEASectionComplete(this.model)
       )
-    },
+    }
   },
 
   watch: {
     isFormComplete: {
       handler(value) {
         this.isStaffingComplete = value
-      },
+      }
     },
     back: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.OPERATING_COSTS,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     next: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.REVIEW,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
-    },
+      }
+    }
   },
 
   created() {
@@ -463,7 +463,7 @@ export default {
       'areEmployeeCertificatesComplete',
       'areAllEmployeeCertificatesEntered',
       'areAllCertificateInitialsUnique',
-      'areAllCertificateNumbersUnique',
+      'areAllCertificateNumbersUnique'
     ]),
 
     initializeApplicationModel() {
@@ -479,7 +479,7 @@ export default {
         isUnionized: this.currentApplication?.isUnionized,
         unions: convertStringToArray(this.currentApplication?.unions)?.map((item) => Number(item)),
         unionDescription: this.currentApplication?.unionDescription,
-        cssea: this.currentApplication?.cssea,
+        cssea: this.currentApplication?.cssea
       }
     },
 
@@ -528,21 +528,21 @@ export default {
           await Promise.all(
             this.certificatesToCreate?.map(async (certificate) => {
               await ApplicationService.createEmployeeCertificate(certificate)
-            }),
+            })
           )
         }
         if (this.certificatesToUpdate?.length > 0) {
           await Promise.all(
             this.certificatesToUpdate?.map(async (certificate) => {
               await ApplicationService.updateEmployeeCertificate(certificate)
-            }),
+            })
           )
         }
         if (this.certificatesToDelete?.length > 0) {
           await Promise.all(
             this.certificatesToDelete?.map(async (certificate) => {
               await ApplicationService.deleteEmployeeCertificate(certificate)
-            }),
+            })
           )
         }
       } catch (error) {
@@ -558,18 +558,18 @@ export default {
     cloneSavedCertificates() {
       this.updatedECECertificates = cloneDeep(
         this.currentApplication?.providerEmployees?.filter(
-          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE,
-        ),
+          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECE
+        )
       )
       this.updatedECEACertificates = cloneDeep(
         this.currentApplication?.providerEmployees?.filter(
-          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA,
-        ),
+          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ECEA
+        )
       )
       this.updatedITECertificates = cloneDeep(
         this.currentApplication?.providerEmployees?.filter(
-          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE,
-        ),
+          (certificate) => certificate.employeeType === APPLICATION_PROVIDER_EMPLOYEE_TYPES.ITE
+        )
       )
     },
 
@@ -591,8 +591,8 @@ export default {
       } else {
         this.model.unions = this.unions?.map((item) => item.id)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

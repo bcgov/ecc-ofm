@@ -27,7 +27,7 @@ export default {
     try {
       if (!facilityId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`,
+        `${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}`
       )
       return response?.data
     } catch (error) {
@@ -40,7 +40,7 @@ export default {
     try {
       if (!facilityId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.APPLICATIONS}/applications-count?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`,
+        `${ApiRoutes.APPLICATIONS}/applications-count?facilityId=${facilityId}&statusCode=${APPLICATION_STATUS_CODES.APPROVED}`
       )
       return response?.data[0]?.count
     } catch (error) {
@@ -56,10 +56,10 @@ export default {
         facilities?.map(async (facility) => {
           const response = await ApiService.apiAxios.get(
             `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}` +
-              `&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`,
+              `&statusCode=${APPLICATION_STATUS_CODES.REDIRECTED}`
           )
           applications = applications?.concat(response?.data)
-        }),
+        })
       )
       return applications
     } catch (error) {
@@ -77,7 +77,7 @@ export default {
         facilities?.map(async (facility) => {
           const response = await this.getApplicationsByFacilityId(facility.facilityId)
           applications = applications?.concat(response)
-        }),
+        })
       )
       sortApplications(applications)
       return applications
@@ -96,7 +96,7 @@ export default {
         facilities?.map(async (facility) => {
           const response = await this.getActiveApplicationsByFacilityId(facility.facilityId)
           applications = applications?.concat(response)
-        }),
+        })
       )
       sortApplications(applications)
       return applications
@@ -132,7 +132,7 @@ export default {
     const applicationsStore = useApplicationsStore()
     const currentApplication = applicationsStore?.currentApplication
     const index = Object.entries(updatedApplication)?.findIndex(
-      ([key, value]) => key in currentApplication && currentApplication[key] != value,
+      ([key, value]) => key in currentApplication && currentApplication[key] != value
     )
     return index > -1
   },
@@ -177,7 +177,7 @@ export default {
   async getSupplementaryApplicationById(supplementaryApplicationId) {
     try {
       const response = await ApiService.apiAxios.get(
-        ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/details',
+        ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + supplementaryApplicationId + '/details'
       )
       return response?.data
     } catch (error) {
@@ -249,7 +249,7 @@ export default {
       if (!applicationId || isEmpty(payload)) return
       const response = await ApiService.apiAxios.patch(
         ApiRoutes.SUPPLEMENTARY_APPLICATIONS + '/' + applicationId,
-        payload,
+        payload
       )
       return response
     } catch (error) {
@@ -284,7 +284,7 @@ export default {
     try {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/approved-pdf`,
+        `${ApiRoutes.SUPPLEMENTARY_APPLICATIONS}/${applicationId}/approved-pdf`
       )
       return response?.data
     } catch (error) {
@@ -304,7 +304,7 @@ export default {
       APPLICATION_STATUS_CODES.IN_REVIEW,
       APPLICATION_STATUS_CODES.APPROVED,
       APPLICATION_STATUS_CODES.AWAITING_PROVIDER,
-      APPLICATION_STATUS_CODES.VERIFIED,
+      APPLICATION_STATUS_CODES.VERIFIED
     ].includes(application?.statusCode)
     return isActive && hasCorrectStatus
   },
@@ -319,7 +319,7 @@ export default {
       facilities.map(async (facility) => {
         const approvedApplicationsCount = await this.getApprovedApplicationsCountByFacilityId(facility.facilityId)
         return approvedApplicationsCount > 0
-      }),
+      })
     )
     return results.some((result) => result)
   },
@@ -340,11 +340,11 @@ export default {
       if (!certificate?.providerEmployeeId) return
       const payload = {
         initials: certificate?.initials,
-        certificateNumber: certificate?.certificateNumber,
+        certificateNumber: certificate?.certificateNumber
       }
       const response = await ApiService.apiAxios.patch(
         `${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`,
-        payload,
+        payload
       )
       return response
     } catch (error) {
@@ -357,12 +357,12 @@ export default {
     try {
       if (!certificate?.providerEmployeeId) return
       const response = await ApiService.apiAxios.delete(
-        `${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`,
+        `${ApiRoutes.APPLICATIONS}/employeeCertificate/${certificate?.providerEmployeeId}`
       )
       return response?.data
     } catch (error) {
       console.log(`Failed to delete the employee certificate - ${error}`)
       throw error
     }
-  },
+  }
 }

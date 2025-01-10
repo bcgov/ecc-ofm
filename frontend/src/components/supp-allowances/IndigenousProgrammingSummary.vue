@@ -24,7 +24,7 @@
             :to="{
               name: 'supp-allowances-form',
               params: { applicationGuid: $route.params.applicationGuid },
-              query: { nextTerm: model.isNextTerm },
+              query: { nextTerm: model.isNextTerm }
             }">
             {{ APPLICATION_ERROR_MESSAGES.SUPP_OTHER }}
           </AppMissingInfoError>
@@ -48,8 +48,8 @@ export default {
       default: () => {
         return []
       },
-      required: true,
-    },
+      required: true
+    }
   },
   created() {
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
@@ -58,12 +58,12 @@ export default {
   methods: {
     isOtherBoxDisplayed(model) {
       return model.indigenousFundingModel?.includes(
-        this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+        this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value
       )
     },
     selectedFunding(model) {
       return this.INDIG_CHECKBOX_LABELS.filter((item) => model.indigenousFundingModel.includes(item.value))
-    },
-  },
+    }
+  }
 }
 </script>

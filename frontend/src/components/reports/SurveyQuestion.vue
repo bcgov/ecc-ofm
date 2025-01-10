@@ -131,22 +131,22 @@ export default {
       type: Object,
       default: () => {
         return {}
-      },
+      }
     },
     response: {
       type: Object,
       default: () => {
         return {}
-      },
+      }
     },
     readonly: {
       type: Boolean,
-      required: true,
+      required: true
     },
     validation: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['update'],
@@ -154,7 +154,7 @@ export default {
   data() {
     return {
       rules,
-      updatedResponse: {},
+      updatedResponse: {}
     }
   },
 
@@ -174,7 +174,7 @@ export default {
     },
     someItemsSelected() {
       return this.updatedResponse?.value?.length > 0
-    },
+    }
   },
 
   watch: {
@@ -185,7 +185,7 @@ export default {
             ? convertStringToArray(this.response.value, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
             : this.response.value
       },
-      deep: true,
+      deep: true
     },
     'updatedResponse.value': {
       handler() {
@@ -196,8 +196,8 @@ export default {
           return
         this.$emit('update', cloneDeep(this.updatedResponse))
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   created() {
@@ -206,13 +206,13 @@ export default {
       nullValue: '0.00',
       min: 0,
       decimal: '.',
-      separator: ',',
+      separator: ','
     }
     this.NUMBER_FORMAT = {
       nullValue: '0',
       separator: ',',
       decimal: '.',
-      precision: 2,
+      precision: 2
     }
   },
 
@@ -232,7 +232,7 @@ export default {
       if (this.question?.type === this.SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE) {
         this.updatedResponse.value = convertStringToArray(
           this.updatedResponse.value,
-          SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR,
+          SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR
         )
       } else if (
         [this.SURVEY_QUESTION_TYPES.NUMBER, this.SURVEY_QUESTION_TYPES.CURRENCY].includes(this.question?.type) &&
@@ -254,7 +254,7 @@ export default {
     async validateQuestionResponse() {
       if (!this.validation || this.readonly) return
       await this.$refs.form?.validate()
-    },
-  },
+    }
+  }
 }
 </script>

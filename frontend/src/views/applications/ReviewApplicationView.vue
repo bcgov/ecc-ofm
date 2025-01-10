@@ -83,7 +83,7 @@ export default {
     EligibilitySummary,
     ServiceDeliverySummary,
     OperatingCostsSummary,
-    StaffingSummary,
+    StaffingSummary
   },
   mixins: [alertMixin],
 
@@ -95,20 +95,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     contacts: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
 
   emits: ['process'],
@@ -116,7 +116,7 @@ export default {
   data() {
     return {
       panel: [],
-      loading: false,
+      loading: false
     }
   },
 
@@ -127,12 +127,12 @@ export default {
       'isEligibilityComplete',
       'isServiceDeliveryComplete',
       'isOperatingCostsComplete',
-      'isStaffingComplete',
+      'isStaffingComplete'
     ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
-    },
+    }
   },
 
   watch: {
@@ -140,18 +140,18 @@ export default {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.STAFFING,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     next: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.SUBMIT,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
-    },
+      }
+    }
   },
 
   async created() {
@@ -159,24 +159,24 @@ export default {
     this.PAGES = [
       {
         title: 'Facility',
-        id: APPLICATION_ROUTES.FACILITY_DETAILS,
+        id: APPLICATION_ROUTES.FACILITY_DETAILS
       },
       {
         title: 'Eligibility',
-        id: APPLICATION_ROUTES.ELIGIBILITY,
+        id: APPLICATION_ROUTES.ELIGIBILITY
       },
       {
         title: 'Service Delivery Details',
-        id: APPLICATION_ROUTES.SERVICE_DELIVERY,
+        id: APPLICATION_ROUTES.SERVICE_DELIVERY
       },
       {
         title: 'Operating Costs',
-        id: APPLICATION_ROUTES.OPERATING_COSTS,
+        id: APPLICATION_ROUTES.OPERATING_COSTS
       },
       {
         title: 'Staffing',
-        id: APPLICATION_ROUTES.STAFFING,
-      },
+        id: APPLICATION_ROUTES.STAFFING
+      }
     ]
     await this.loadData()
     this.panel = this.allPageIDs
@@ -216,8 +216,8 @@ export default {
         case APPLICATION_ROUTES.STAFFING:
           return this.isStaffingComplete
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -14,7 +14,7 @@
           :to="{
             name: APPLICATION_ROUTES.FACILITY_DETAILS,
             hash: '#fiscal-year-end-date',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.FISCAL_YEAR_END_DATE }}
         </AppMissingInfoError>
@@ -55,7 +55,7 @@
         :to="{
           name: APPLICATION_ROUTES.FACILITY_DETAILS,
           hash: '#location-attributes',
-          params: { applicationGuid: $route.params.applicationGuid },
+          params: { applicationGuid: $route.params.applicationGuid }
         }">
         {{ APPLICATION_ERROR_MESSAGES.FACILITY_LOCATION_ATTRIBUTES }}
       </AppMissingInfoError>
@@ -73,7 +73,7 @@
         :to="{
           name: APPLICATION_ROUTES.FACILITY_DETAILS,
           hash: '#primary-contact',
-          params: { applicationGuid: $route.params.applicationGuid },
+          params: { applicationGuid: $route.params.applicationGuid }
         }">
         {{ APPLICATION_ERROR_MESSAGES.PRIMARY_CONTACT }}
       </AppMissingInfoError>
@@ -101,7 +101,7 @@
         :to="{
           name: APPLICATION_ROUTES.FACILITY_DETAILS,
           hash: '#expense-authority',
-          params: { applicationGuid: $route.params.applicationGuid },
+          params: { applicationGuid: $route.params.applicationGuid }
         }">
         {{ APPLICATION_ERROR_MESSAGES.EXPENSE_AUTHORITY }}
       </AppMissingInfoError>
@@ -125,12 +125,12 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     contacts: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
 
   computed: {
@@ -143,7 +143,7 @@ export default {
     },
     expenseAuthority() {
       return this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
-    },
+    }
   },
 
   created() {
@@ -153,7 +153,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(useApplicationsStore, ['isFacilityLocationAttributesComplete']),
-  },
+    ...mapActions(useApplicationsStore, ['isFacilityLocationAttributesComplete'])
+  }
 }
 </script>

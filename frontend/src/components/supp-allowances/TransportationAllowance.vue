@@ -221,20 +221,20 @@ export default {
       required: true,
       default: () => {
         return []
-      },
+      }
     },
     formDisabled: {
       type: Boolean,
-      required: true,
+      required: true
     },
     renewalTerm: {
       type: Number,
-      required: true,
+      required: true
     },
     startDate: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   emits: ['update', 'addModel', 'deleteModel', 'deleteDocument'],
   data() {
@@ -247,12 +247,12 @@ export default {
         min: 0,
         decimal: '.',
         separator: ',',
-        precision: 2,
+        precision: 2
       },
       wholeNumberFormat: {
         nullValue: '',
-        precision: 0,
-      },
+        precision: 0
+      }
     }
   },
   computed: {
@@ -268,7 +268,7 @@ export default {
     },
     formattedEndDate() {
       return format.formatTwoMonthDate(new Date())
-    },
+    }
   },
   async created() {
     this.hasDuplicateVIN = hasDuplicateVIN
@@ -302,7 +302,7 @@ export default {
         documentsToUpload: [],
         id: uuid.v1(),
         renewalTerm: this.renewalTerm,
-        retroactiveDate: null,
+        retroactiveDate: null
       }
 
       this.models.push(transportModel)
@@ -340,8 +340,8 @@ export default {
         return model.documentsToUpload?.length === 0 && model.uploadedDocuments?.length === 0
       }
       return model.documentsToUpload?.length + model.uploadedDocuments?.length < 2
-    },
-  },
+    }
+  }
 }
 </script>
 

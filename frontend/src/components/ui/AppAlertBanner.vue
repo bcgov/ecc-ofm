@@ -10,14 +10,14 @@ export default {
     type: {
       type: String,
       required: true,
-      default: '',
-    },
+      default: ''
+    }
   },
   computed: {
     alertClass() {
       return `bc-gov-alertbanner bc-gov-alertbanner-${this.type}`
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

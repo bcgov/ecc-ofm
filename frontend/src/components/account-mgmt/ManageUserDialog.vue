@@ -213,15 +213,15 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     updatingUser: {
       type: Object,
       required: true,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   emits: ['close', 'close-refresh', 'update-success-event'],
   data() {
@@ -238,7 +238,7 @@ export default {
       wasNewUserAdded: false,
       errorMessages: [],
       showDuplicateUserDialog: false,
-      continueSaveConfirmed: false,
+      continueSaveConfirmed: false
     }
   },
   computed: {
@@ -265,13 +265,13 @@ export default {
     },
     someFacilitiesSelected() {
       return this.selectedFacilityIds?.length > 0
-    },
+    }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
+      }
     },
     updatingUser: {
       handler(value) {
@@ -279,8 +279,8 @@ export default {
         this.selectedFacilityIds = value.facilities
         this.user = value
         if (!this.user.role) this.user.role = {}
-      },
-    },
+      }
+    }
   },
   async created() {
     this.ADD_USER_SUCCESS_MSG = 'User account created. Click "Next" to assign a facility to the new user.'
@@ -446,7 +446,7 @@ export default {
     getFacilitiesToAdd(selectedFacilities, userFacilities) {
       return selectedFacilities?.filter(
         (selectedFacility) =>
-          !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId),
+          !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId)
       )
     },
 
@@ -456,7 +456,7 @@ export default {
     getFacilitiesToRemove(selectedFacility, userFacilities) {
       return userFacilities?.filter(
         (userFacility) =>
-          !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId),
+          !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId)
       )
     },
 
@@ -503,7 +503,7 @@ export default {
           this.userInfo.organizationId,
           firstName ?? '',
           lastName,
-          email,
+          email
         )
 
         // No matches
@@ -530,7 +530,7 @@ export default {
      */
     toggleDuplicateUserDialog() {
       this.showDuplicateUserDialog = !this.showDuplicateUserDialog
-    },
-  },
+    }
+  }
 }
 </script>

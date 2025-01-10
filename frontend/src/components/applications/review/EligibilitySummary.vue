@@ -87,13 +87,13 @@ import format from '@/utils/format'
 export default {
   components: { AppLabel },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication', 'isEligibilityComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isEligibilityComplete'])
   },
   created() {
     this.format = format
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['isMultipleProgram', 'isOperateInPersonalResidence']),
-  },
+    ...mapActions(useApplicationsStore, ['isMultipleProgram', 'isOperateInPersonalResidence'])
+  }
 }
 </script>

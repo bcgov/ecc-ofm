@@ -130,7 +130,7 @@ import {
   VIRUS_SCAN_ERROR_MESSAGE,
   DOCUMENT_TYPES,
   SUPPORTED_DOCUMENTS_MESSAGE,
-  YES_NO_CHOICE_CRM_MAPPING,
+  YES_NO_CHOICE_CRM_MAPPING
 } from '@/utils/constants'
 
 export default {
@@ -141,7 +141,7 @@ export default {
     AppMissingInfoError,
     RentLeaseInformation,
     YearlyOperatingCost,
-    YearlyFacilityCost,
+    YearlyFacilityCost
   },
   mixins: [alertMixin],
 
@@ -155,20 +155,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['process'],
@@ -182,19 +182,19 @@ export default {
       financialStatement: {
         uploadedDocuments: [],
         documentsToUpload: [],
-        documentsToDelete: [],
+        documentsToDelete: []
       },
       balanceSheet: {
         uploadedDocuments: [],
         documentsToUpload: [],
-        documentsToDelete: [],
+        documentsToDelete: []
       },
       supporting: {
         uploadedDocuments: [],
         documentsToUpload: [],
-        documentsToDelete: [],
+        documentsToDelete: []
       },
-      processing: false,
+      processing: false
     }
   },
 
@@ -269,7 +269,7 @@ export default {
         default:
           return null
       }
-    },
+    }
   },
 
   watch: {
@@ -277,29 +277,29 @@ export default {
       handler(value) {
         if (this.processing) return
         this.isOperatingCostsComplete = value
-      },
+      }
     },
     back: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.SERVICE_DELIVERY,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     next: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.STAFFING,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
-    },
+      }
+    }
   },
 
   created() {
@@ -334,7 +334,7 @@ export default {
         const payload = {
           facilityType: this.facilityType,
           ...this.rentLeaseInfoModel,
-          ...this.sanitizedCostsModel,
+          ...this.sanitizedCostsModel
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
@@ -371,7 +371,7 @@ export default {
       const docTypeMapping = {
         [this.DOCUMENT_TYPES.INCOME_STATEMENT]: this.financialStatement,
         [this.DOCUMENT_TYPES.BALANCE_SHEET]: this.balanceSheet,
-        [this.DOCUMENT_TYPES.SUPPORTING_DOCS]: this.supporting,
+        [this.DOCUMENT_TYPES.SUPPORTING_DOCS]: this.supporting
       }
       const docTypeObj = docTypeMapping[documentType]
       if (docTypeObj) {
@@ -406,7 +406,7 @@ export default {
         await Promise.all(
           docTypeObj.documentsToDelete.map(async (documentId) => {
             await DocumentService.deleteDocument(documentId)
-          }),
+          })
         )
         docTypeObj.documentsToDelete = []
       }
@@ -426,15 +426,15 @@ export default {
 
     getUploadedDocuments(uploadedDocuments) {
       this.financialStatement.uploadedDocuments = uploadedDocuments?.filter(
-        (doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT,
+        (doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT
       )
       this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter(
-        (doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET,
+        (doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET
       )
       this.supporting.uploadedDocuments = uploadedDocuments?.filter(
-        (doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS,
+        (doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS
       )
-    },
-  },
+    }
+  }
 }
 </script>

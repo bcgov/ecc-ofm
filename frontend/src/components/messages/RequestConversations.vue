@@ -125,8 +125,8 @@ export default {
     assistanceRequestId: {
       type: String,
       required: true,
-      default: '',
-    },
+      default: ''
+    }
   },
   format: [format],
   emits: ['toggleMarkUnreadButtonInConversationThread'],
@@ -141,9 +141,9 @@ export default {
         {
           title: 'dateReceived',
           key: 'dateReceived',
-          sortable: true,
-        },
-      ],
+          sortable: true
+        }
+      ]
     }
   },
   computed: {
@@ -154,27 +154,27 @@ export default {
     },
     showCloseRequestBanner() {
       const assistanceRequest = this.assistanceRequests.find(
-        (item) => item.assistanceRequestId === this.assistanceRequestId,
+        (item) => item.assistanceRequestId === this.assistanceRequestId
       )
       return assistanceRequest?.statusCode === ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE
     },
     isReplyButtonEnabled() {
       const assistanceRequest = this.assistanceRequests.find(
-        (item) => item.assistanceRequestId === this.assistanceRequestId,
+        (item) => item.assistanceRequestId === this.assistanceRequestId
       )
       return [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(
-        assistanceRequest?.statusCode,
+        assistanceRequest?.statusCode
       )
     },
     isStatusClosed() {
       const assistanceRequest = this.assistanceRequests.find(
-        (item) => item.assistanceRequestId === this.assistanceRequestId,
+        (item) => item.assistanceRequestId === this.assistanceRequestId
       )
       return [
         ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
-        ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED,
+        ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_CANCELLED
       ].includes(assistanceRequest?.statusCode)
-    },
+    }
   },
   watch: {
     // When assistanceRequestId changes, get the conversation for the new assistance request.
@@ -185,7 +185,7 @@ export default {
       this.sortConversation()
       this.loading = false
       this.assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === newVal)
-    },
+    }
   },
   methods: {
     ...mapActions(useMessagesStore, ['getAssistanceRequestConversation']),
@@ -226,7 +226,7 @@ export default {
       if (isSuccess) {
         // Assistance request status has been updated as part of reply, get the latest from store.
         this.assistanceRequest = this.assistanceRequests.find(
-          (item) => item.assistanceRequestId === this.assistanceRequestId,
+          (item) => item.assistanceRequestId === this.assistanceRequestId
         )
         await this.getAssistanceRequestConversation(this.assistanceRequestId)
         this.sortConversation()
@@ -277,8 +277,8 @@ export default {
         // Update the message content
         conversation.message = document.documentElement.innerHTML
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -6,7 +6,7 @@
         :to="{
           name: APPLICATION_ROUTES.SERVICE_DELIVERY,
           hash: '#account-management',
-          params: { applicationGuid: $route.params.applicationGuid },
+          params: { applicationGuid: $route.params.applicationGuid }
         }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
       </AppMissingInfoError>
@@ -20,7 +20,7 @@
         :to="{
           name: APPLICATION_ROUTES.SERVICE_DELIVERY,
           hash: '#confirmation',
-          params: { applicationGuid: $route.params.applicationGuid },
+          params: { applicationGuid: $route.params.applicationGuid }
         }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
       </AppMissingInfoError>
@@ -46,7 +46,7 @@
                 :to="{
                   name: APPLICATION_ROUTES.SERVICE_DELIVERY,
                   hash: `#${licence.licenceId}`,
-                  params: { applicationGuid: $route.params.applicationGuid },
+                  params: { applicationGuid: $route.params.applicationGuid }
                 }">
                 {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_LICENCE_UPLOAD }}
               </AppMissingInfoError>
@@ -68,7 +68,7 @@
           :to="{
             name: APPLICATION_ROUTES.SERVICE_DELIVERY,
             hash: '#health-authority-report-upload',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
         </AppMissingInfoError>
@@ -93,16 +93,16 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     licences: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
-      panel: [],
+      panel: []
     }
   },
   computed: {
@@ -115,9 +115,9 @@ export default {
     },
     healthAuthorityReportDocument() {
       return this.currentApplication?.uploadedDocuments?.filter((document) =>
-        document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT),
+        document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT)
       )
-    },
+    }
   },
   async created() {
     this.panel = this.allLicenceIDs
@@ -131,14 +131,14 @@ export default {
       'isCCOFMissingDetailComplete',
       'isSplitClassroomComplete',
       'isLicenceDetailComplete',
-      'isHealthAuthorityReportUploaded',
+      'isHealthAuthorityReportUploaded'
     ]),
     isEmpty,
     getLicenceDocument(licence) {
       return this.currentApplication?.uploadedDocuments?.filter((document) =>
-        document.documentType?.includes(licence?.licence),
+        document.documentType?.includes(licence?.licence)
       )
-    },
-  },
+    }
+  }
 }
 </script>

@@ -77,7 +77,7 @@ export default {
       save: false,
       submit: false,
       showCancelDialog: false,
-      contacts: [],
+      contacts: []
     }
   },
 
@@ -89,7 +89,7 @@ export default {
       'isDeclareSubmitComplete',
       'isApplicationReadonly',
       'isFacilityDetailsComplete',
-      'isEligibilityComplete',
+      'isEligibilityComplete'
     ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
@@ -111,7 +111,7 @@ export default {
         APPLICATION_ROUTES.OPERATING_COSTS,
         APPLICATION_ROUTES.STAFFING,
         APPLICATION_ROUTES.REVIEW,
-        APPLICATION_ROUTES.SUBMIT,
+        APPLICATION_ROUTES.SUBMIT
       ].includes(this.$route.name)
     },
     showCancel() {
@@ -125,7 +125,7 @@ export default {
             APPLICATION_ROUTES.OPERATING_COSTS,
             APPLICATION_ROUTES.STAFFING,
             APPLICATION_ROUTES.REVIEW,
-            APPLICATION_ROUTES.SUBMIT,
+            APPLICATION_ROUTES.SUBMIT
           ].includes(this.$route.name))
       )
     },
@@ -137,7 +137,7 @@ export default {
         APPLICATION_ROUTES.SERVICE_DELIVERY,
         APPLICATION_ROUTES.OPERATING_COSTS,
         APPLICATION_ROUTES.STAFFING,
-        APPLICATION_ROUTES.REVIEW,
+        APPLICATION_ROUTES.REVIEW
       ].includes(this.$route.name)
     },
     showSave() {
@@ -149,7 +149,7 @@ export default {
           APPLICATION_ROUTES.SERVICE_DELIVERY,
           APPLICATION_ROUTES.OPERATING_COSTS,
           APPLICATION_ROUTES.STAFFING,
-          APPLICATION_ROUTES.SUBMIT,
+          APPLICATION_ROUTES.SUBMIT
         ].includes(this.$route.name)
       )
     },
@@ -190,15 +190,15 @@ export default {
         (this.isEligibilityPage && this.isFacilityDetailsComplete) ||
         (this.isFacilityDetailsComplete && this.isEligibilityComplete)
       )
-    },
+    }
   },
 
   watch: {
     '$route.params.applicationGuid': {
       async handler() {
         await this.loadApplication()
-      },
-    },
+      }
+    }
   },
 
   async created() {
@@ -270,8 +270,8 @@ export default {
     },
     process(value) {
       this.processing = value
-    },
-  },
+    }
+  }
 }
 </script>
 

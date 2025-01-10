@@ -11,8 +11,8 @@ export default {
   props: {
     primary: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   computed: {
     buttonClass() {
@@ -22,10 +22,10 @@ export default {
         'BC-Gov-SecondaryButton': !this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'BC-Gov-SecondaryButton-disabled': this.$attrs.disabled && this.$attrs.variant === undefined && !this.primary,
         'text-app-button': this.$attrs.variant !== '',
-        small: this.$attrs.size === 'small',
+        small: this.$attrs.size === 'small'
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

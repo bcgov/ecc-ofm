@@ -32,7 +32,7 @@ export default {
       colour: '',
       polling: null,
       timeout: 5000,
-      pause: false,
+      pause: false
     }
   },
   computed: {
@@ -46,8 +46,8 @@ export default {
       },
       set(val) {
         this.setAlertNotification(val)
-      },
-    },
+      }
+    }
   },
   watch: {
     showSnackBar() {
@@ -58,7 +58,7 @@ export default {
       } else {
         this.teardownSnackBar()
       }
-    },
+    }
   },
   methods: {
     ...mapActions(useAppStore, ['setAlertNotificationText', 'setAlertNotification']),
@@ -108,8 +108,8 @@ export default {
           this.timeout += 1
         }
       }, 1000)
-    },
-  },
+    }
+  }
 }
 </script>
 

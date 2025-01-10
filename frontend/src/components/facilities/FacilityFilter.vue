@@ -28,28 +28,28 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     defaultShowInput: {
       type: Boolean,
-      default: false,
+      default: false
     },
     justify: {
       type: String,
-      default: 'start',
-    },
+      default: 'start'
+    }
   },
   emits: ['facility-filter-changed'],
   data() {
     return {
       showFilterInput: this.defaultShowInput,
-      facilityNameFilter: '',
+      facilityNameFilter: ''
     }
   },
   watch: {
     facilityNameFilter(newVal) {
       this.$emit('facility-filter-changed', newVal)
-    },
+    }
   },
   methods: {
     toggleShowFilter() {
@@ -57,7 +57,7 @@ export default {
       if (!this.showFilterInput) {
         this.facilityNameFilter = ''
       }
-    },
-  },
+    }
+  }
 }
 </script>

@@ -40,12 +40,12 @@ export default {
       rules,
       businessBCeId: undefined,
       isValidForm: true,
-      processing: false,
+      processing: false
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapWritableState(useAuthStore, ['impersonateId', 'isUserInfoLoaded']),
+    ...mapWritableState(useAuthStore, ['impersonateId', 'isUserInfoLoaded'])
   },
   methods: {
     ...mapActions(useAuthStore, ['getUserInfo']),
@@ -68,8 +68,8 @@ export default {
           this.setFailureAlert('An error occurred while trying to load BCeID')
         }
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

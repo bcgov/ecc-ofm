@@ -39,5 +39,5 @@ export default {
       console.log(`Failed to get the supp application by supplementary id  - ${error}`)
       throw error
     }
-  },
+  }
 }

@@ -71,7 +71,7 @@ export default {
     return {
       loading: false,
       isDisplayed: false,
-      fundingAgreements: [],
+      fundingAgreements: []
     }
   },
 
@@ -80,7 +80,7 @@ export default {
 
     filteredFacilities() {
       return this.userInfo?.facilities?.filter((facility) => facility.isExpenseAuthority)
-    },
+    }
   },
 
   async created() {
@@ -104,7 +104,7 @@ export default {
         for (const fac of this.filteredFacilities) {
           const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(
             fac.facilityId,
-            FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
+            FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING
           )
 
           if (fa) {
@@ -123,7 +123,7 @@ export default {
         this.loading = false
         this.$emit('loading', this.loading)
       }
-    },
-  },
+    }
+  }
 }
 </script>

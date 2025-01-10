@@ -24,7 +24,7 @@ export default {
   computed: {
     loginPath() {
       return this.$route.query.internal ? AuthRoutes.LOGIN_IDIR : AuthRoutes.LOGIN
-    },
+    }
   },
   mounted() {
     this.setJwtToken()
@@ -33,7 +33,7 @@ export default {
     ...mapActions(useAuthStore, ['setJwtToken']),
     clearStorage() {
       this.setJwtToken()
-    },
-  },
+    }
+  }
 }
 </script>

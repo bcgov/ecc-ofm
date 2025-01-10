@@ -21,11 +21,11 @@ export default {
       type: Object,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   methods: {
-    isEmpty,
-  },
+    isEmpty
+  }
 }
 </script>

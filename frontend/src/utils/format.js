@@ -92,7 +92,7 @@ function formatDecimalNumber(decimalNumber, numberOfFractionDigits = 2) {
   const formattedNumber = isNaN(Number(decimalNumber)) ? 0 : Number(decimalNumber)
   return formattedNumber.toLocaleString('en-CA', {
     minimumFractionDigits: numberOfFractionDigits,
-    maximumFractionDigits: numberOfFractionDigits,
+    maximumFractionDigits: numberOfFractionDigits
   })
 }
 
@@ -106,5 +106,5 @@ export default {
   formatDateToUTC,
   formatTime12to24,
   formatTime24to12,
-  formatTwoMonthDate,
+  formatTwoMonthDate
 }

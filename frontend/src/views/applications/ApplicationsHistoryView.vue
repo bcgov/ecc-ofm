@@ -202,7 +202,7 @@ import {
   FUNDING_AGREEMENT_STATUS_CODES,
   PROVIDER_TYPE_CODES,
   UNION_TYPE_CODES,
-  CRM_STATE_CODES,
+  CRM_STATE_CODES
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -229,7 +229,7 @@ export default {
         { title: 'Actions', key: 'actions', sortable: false, width: '9%' },
         { title: 'Date submitted', key: 'submittedDate', width: '9%' },
         { title: 'Latest activity', key: 'latestActivityDate', width: '8%' },
-        { title: '', key: 'actionButtons', sortable: false, width: '3%' },
+        { title: '', key: 'actionButtons', sortable: false, width: '3%' }
       ],
       applicationItemModel: {},
       loading: false,
@@ -237,7 +237,7 @@ export default {
       cancelledApplicationId: undefined,
       facilityNameFilter: undefined,
       applicationTypeToCancel: undefined,
-      showChangeRequestDialog: false,
+      showChangeRequestDialog: false
     }
   },
 
@@ -253,7 +253,7 @@ export default {
       return this.applications?.some(
         (application) =>
           application.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE &&
-          application?.isUnionized === UNION_TYPE_CODES.NO,
+          application?.isUnionized === UNION_TYPE_CODES.NO
       )
     },
 
@@ -273,9 +273,9 @@ export default {
           .filter(
             (application) =>
               !this.facilityNameFilter ||
-              application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase()),
+              application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase())
           )
-          .filter((application) => !hiddenCodes.includes(application.statusCode)),
+          .filter((application) => !hiddenCodes.includes(application.statusCode))
       )
     },
     ofmApplicationCardText() {
@@ -293,7 +293,7 @@ export default {
           facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
           facility.intakeWindowCheckForAddApplication &&
           facility.ccofEnrolmentCheckForAddApplication &&
-          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId)
       )
     },
     isCCOFEnrolmentCheckSatisfied() {
@@ -310,9 +310,9 @@ export default {
         (application) =>
           application?.isUnionized === UNION_TYPE_CODES.NO &&
           application?.stateCode === CRM_STATE_CODES.ACTIVE &&
-          application?.statusCode !== APPLICATION_STATUS_CODES.DRAFT,
+          application?.statusCode !== APPLICATION_STATUS_CODES.DRAFT
       )
-    },
+    }
   },
 
   async created() {
@@ -364,7 +364,7 @@ export default {
       const invalidAppCodes = [
         APPLICATION_STATUS_CODES.INELIGIBLE,
         APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY,
-        APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
+        APPLICATION_STATUS_CODES.CANCELLED_BY_SP
       ]
 
       if (
@@ -424,9 +424,9 @@ export default {
           // from applying for Irreg Expense funding
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
             application.applicationId,
-            true,
+            true
           )
-        }),
+        })
       )
       this.applications = applications
     },
@@ -435,8 +435,8 @@ export default {
       this.supplementaryApplications = (
         await Promise.all(
           this.applications.map((application) =>
-            ApplicationService.getSupplementaryApplications(application?.applicationId),
-          ),
+            ApplicationService.getSupplementaryApplications(application?.applicationId)
+          )
         )
       )
         .filter((application) => application?.length > 0)
@@ -445,7 +445,7 @@ export default {
 
     async getRedirectedApplications() {
       this.redirectedApplications = await ApplicationService.getRedirectedApplications(
-        this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId)),
+        this.userInfo?.facilities.filter((fac) => !this.applications.some((el) => el.facilityId === fac.facilityId))
       )
       this.applications.push(...this.redirectedApplications)
     },
@@ -470,7 +470,7 @@ export default {
         return {
           ...item,
           applicationType: APPLICATION_TYPES.OFM,
-          statusCode: application.statusCode,
+          statusCode: application.statusCode
         }
       })
     },
@@ -500,7 +500,7 @@ export default {
           facilityName: correspondingApplicationItem ? correspondingApplicationItem.facilityName : '',
           submittedDate: supplementaryApplication.supplementaryApplicationSubmittedDate,
           latestActivityDate: supplementaryApplication.latestActivityDate,
-          statusCode: supplementaryApplication.statusCode,
+          statusCode: supplementaryApplication.statusCode
         }
       })
     },
@@ -514,14 +514,14 @@ export default {
       const applicationItemsMap = this.createApplicationItemsMap(this.applicationItems)
       const supplementaryApplicationItems = this.transformSupplementaryApplicationsToItems(
         this.supplementaryApplications,
-        applicationItemsMap,
+        applicationItemsMap
       )
       this.applicationItems = [...this.applicationItems, ...supplementaryApplicationItems, ...this.irregularExpenses]
     },
     getStatusLabel(applicationItem) {
       if (
         [APPLICATION_STATUS_CODES.CANCELLED_BY_SP, APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY].includes(
-          applicationItem.statusCode,
+          applicationItem.statusCode
         )
       ) {
         return 'Cancelled'
@@ -535,7 +535,7 @@ export default {
           APPLICATION_STATUS_CODES.REDIRECTED,
           APPLICATION_STATUS_CODES.INELIGIBLE,
           APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY,
-          APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
+          APPLICATION_STATUS_CODES.CANCELLED_BY_SP
         ].includes(statusCode)
       ) {
         return 'status-gray'
@@ -545,7 +545,7 @@ export default {
           APPLICATION_STATUS_CODES.IN_REVIEW,
           SUPPLEMENTARY_APPLICATION_STATUS_CODES.IN_REVIEW,
           APPLICATION_STATUS_CODES.SUBMITTED,
-          SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED,
+          SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
         ].includes(statusCode)
       ) {
         return 'status-green'
@@ -555,7 +555,7 @@ export default {
         return 'status-blue'
       } else if (
         [APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(
-          statusCode,
+          statusCode
         )
       ) {
         return 'status-yellow'
@@ -633,14 +633,14 @@ export default {
                 latestActivityDate: expense?.lastUpdatedTime,
                 statusCode: expense?.statusCode,
                 irregularExpenseId: expense?.irregularExpenseId,
-                assistanceRequestId: expense?.assistanceRequestId,
+                assistanceRequestId: expense?.assistanceRequestId
               })
             })
           }
-        }),
+        })
       )
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -212,7 +212,7 @@ export default {
     LicenceHeader,
     LicenceDetails,
     NewRequestDialog,
-    UnableToSubmitCrDialog,
+    UnableToSubmitCrDialog
   },
   mixins: [alertMixin, permissionsMixin],
   data() {
@@ -231,7 +231,7 @@ export default {
       isEmpty,
       showChangeRequestDialog: false,
       showUnableToSubmitCrDialog: false,
-      preventChangeRequestType: undefined,
+      preventChangeRequestType: undefined
     }
   },
   computed: {
@@ -264,7 +264,7 @@ export default {
       return contactsCopy.sort((a, b) => {
         return a.firstName?.localeCompare(b.firstName)
       })
-    },
+    }
   },
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
@@ -310,7 +310,7 @@ export default {
         await Promise.all(
           this.licences.map(async (licence) => {
             licence.licenceDetails = await LicenceService.getLicenceDetails(licence.licenceId)
-          }),
+          })
         )
       } catch (error) {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.facilityId, error)
@@ -438,11 +438,11 @@ export default {
 
     async validateOfmProgram() {
       const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(
-        this.facility?.programCode,
+        this.facility?.programCode
       )
       const isTDADProgram = OFM_PROGRAM_CODES.TDAD === this.facility?.programCode
       const hasApprovedApplication = await ApplicationService.hasApprovedApplication([
-        { facilityId: this.facility?.facilityId },
+        { facilityId: this.facility?.facilityId }
       ])
       if ((isCCOForMultipleProgram || isTDADProgram) && !hasApprovedApplication) {
         this.preventChangeRequestType = isCCOForMultipleProgram
@@ -456,7 +456,7 @@ export default {
 
     toggleUnableToSubmitCrDialog() {
       this.showUnableToSubmitCrDialog = !this.showUnableToSubmitCrDialog
-    },
-  },
+    }
+  }
 }
 </script>

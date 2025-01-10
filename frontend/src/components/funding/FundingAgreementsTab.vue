@@ -50,14 +50,14 @@ import {
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   BLANK_FIELD,
   APPLICATION_TYPES,
-  IRREGULAR_EXPENSE_STATUS_CODES,
+  IRREGULAR_EXPENSE_STATUS_CODES
 } from '@/utils/constants'
 import format from '@/utils/format'
 
 const IN_PROGRESS_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.DRAFT,
   FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW,
-  FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
+  FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA
 ]
 
 export default {
@@ -77,13 +77,13 @@ export default {
         { title: 'Start Date', key: 'startDate' },
         { title: 'End Date', key: 'endDate' },
         { title: 'Status', key: 'statusName' },
-        { title: 'Actions', key: 'actions', sortable: false },
-      ],
+        { title: 'Actions', key: 'actions', sortable: false }
+      ]
     }
   },
 
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAuthStore, ['userInfo'])
   },
 
   async created() {
@@ -98,7 +98,7 @@ export default {
     async loadApprovedSuppApps(searchQueries) {
       try {
         const applications = this.applications?.filter((application) =>
-          searchQueries?.facilities?.some((facility) => facility?.facilityId === application?.facilityId),
+          searchQueries?.facilities?.some((facility) => facility?.facilityId === application?.facilityId)
         )
 
         this.supplementaryApplications = (
@@ -109,9 +109,9 @@ export default {
                 SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED,
                 searchQueries?.dateFrom,
                 searchQueries?.dateTo,
-                true,
-              ),
-            ),
+                true
+              )
+            )
           )
         ).flat()
 
@@ -125,7 +125,7 @@ export default {
             facilityName: applications?.find((el) => app?.applicationId === el?.applicationId)?.facilityName,
             statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //use the FA code to highlight the statusName in green
             statusName: app.supplementaryApplicationStatus,
-            supplementaryApplicationId: app.supplementaryApplicationId,
+            supplementaryApplicationId: app.supplementaryApplicationId
           })
         })
       } catch (error) {
@@ -141,7 +141,7 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityId(
               facility.facilityId,
               searchQueries?.dateFrom,
-              searchQueries?.dateTo,
+              searchQueries?.dateTo
             )
             if (facilityFas) {
               facilityFas.forEach((fa) => {
@@ -157,7 +157,7 @@ export default {
               }
               this.fundingAgreements.push(...facilityFas)
             }
-          }),
+          })
         )
         await this.loadApprovedSuppApps(searchQueries)
         this.fundingAgreements?.sort((a, b) => b.priority - a.priority) // FA Signature Pending status at the top
@@ -171,7 +171,7 @@ export default {
       const expenseApplications = await IrregularExpenseService.getIrregularExpenseApplications(
         activeFA.applicationId,
         IRREGULAR_EXPENSE_STATUS_CODES.APPROVED,
-        true,
+        true
       )
       expenseApplications?.forEach((app) => {
         this.fundingAgreements.push({
@@ -183,7 +183,7 @@ export default {
           facilityName: activeFA.facilityName,
           statusCode: FUNDING_AGREEMENT_STATUS_CODES.ACTIVE, //Use FA code to match with styling since we only show approved
           statusName: app.statusName,
-          irregularExpenseId: app.irregularExpenseId,
+          irregularExpenseId: app.irregularExpenseId
         })
       })
     },
@@ -199,7 +199,7 @@ export default {
       if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
         return (
           [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(
-            item?.statusCode,
+            item?.statusCode
           ) ||
           (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
         )
@@ -209,7 +209,7 @@ export default {
 
     isExpenseAuthority(fundingAgreement) {
       return this.userInfo?.facilities?.some(
-        (facility) => facility.facilityId === fundingAgreement?.facilityId && facility.isExpenseAuthority,
+        (facility) => facility.facilityId === fundingAgreement?.facilityId && facility.isExpenseAuthority
       )
     },
 
@@ -234,9 +234,9 @@ export default {
         'status-blue': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
-        'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
+        'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED
       }
-    },
-  },
+    }
+  }
 }
 </script>

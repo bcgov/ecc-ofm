@@ -49,7 +49,7 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 
 export default {
   components: { AppBackButton },
-  mixins: [permissionsMixin],
+  mixins: [permissionsMixin]
 }
 </script>
 

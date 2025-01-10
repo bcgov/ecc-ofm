@@ -64,27 +64,27 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     employeeCount: {
       type: Number,
-      default: 0,
+      default: 0
     },
     employeeType: {
       type: Number,
-      required: true,
+      required: true
     },
     allCertificates: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
 
   emits: ['update'],
 
   data() {
     return {
-      certificates: [],
+      certificates: []
     }
   },
 
@@ -100,7 +100,7 @@ export default {
 
     filteredCertificates() {
       return this.allCertificates?.filter((certificate) => certificate.employeeType === this.employeeType)
-    },
+    }
   },
 
   watch: {
@@ -113,15 +113,15 @@ export default {
         } else if (this.certificates?.length > value) {
           this.removeRedundantBlankCertificates(value)
         }
-      },
+      }
     },
     filteredCertificates: {
       async handler() {
         this.initializeCertificates()
         await this.validateCertificates()
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   async created() {
@@ -163,7 +163,7 @@ export default {
         applicationId: this.$route.params.applicationGuid,
         initials: '',
         certificateNumber: '',
-        employeeType: this.employeeType,
+        employeeType: this.employeeType
       })
     },
 
@@ -211,7 +211,7 @@ export default {
 
     showTrash(certificate) {
       return !this.readonly && (certificate.initials || certificate.certificateNumber)
-    },
-  },
+    }
+  }
 }
 </script>

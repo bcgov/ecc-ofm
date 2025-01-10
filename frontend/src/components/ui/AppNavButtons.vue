@@ -74,44 +74,44 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showCancel: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showBack: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showNext: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showSave: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showSubmit: {
       type: Boolean,
-      default: false,
+      default: false
     },
     disableCancel: {
       type: Boolean,
-      default: false,
+      default: false
     },
     disableNext: {
       type: Boolean,
-      default: false,
+      default: false
     },
     disableSave: {
       type: Boolean,
-      default: false,
+      default: false
     },
     disableSubmit: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['cancel', 'back', 'next', 'save', 'submit'],
   methods: {
@@ -129,8 +129,8 @@ export default {
     },
     async submit() {
       this.$emit('submit')
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

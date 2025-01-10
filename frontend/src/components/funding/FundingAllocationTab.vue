@@ -59,7 +59,7 @@ export default {
     FundingAllocationInfoTable,
     FundingReallocationRequestsTable,
     FundingSearchCard,
-    NewRequestDialog,
+    NewRequestDialog
   },
   mixins: [alertMixin, permissionsMixin],
   data() {
@@ -68,12 +68,12 @@ export default {
       showAssistanceRequestDialog: false,
       selectedFacility: null,
       fundingDetails: {},
-      fundingReallocationRequests: [],
+      fundingReallocationRequests: []
     }
   },
 
   computed: {
-    ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapState(useAppStore, ['getRequestCategoryIdByName'])
   },
 
   created() {
@@ -87,11 +87,11 @@ export default {
         this.loading = true
         this.fundingDetails = await FundingAgreementService.getFundingEnvelopesByFacilityIdAndStatus(
           this.selectedFacility?.facilityId,
-          FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
+          FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
         )
         this.fundingReallocationRequests =
           await FundingAgreementService.getFundingReallocationRequestsByFundingAgreementId(
-            this.fundingDetails?.fundingId,
+            this.fundingDetails?.fundingId
           )
         this.sortFundingReallocationRequests()
       } catch (error) {
@@ -112,7 +112,7 @@ export default {
 
     toggleAssistanceRequestDialog() {
       this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
-    },
-  },
+    }
+  }
 }
 </script>

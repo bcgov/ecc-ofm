@@ -101,7 +101,7 @@ export default {
       applications: [],
       application: undefined,
       facilities: [],
-      facilityId: undefined,
+      facilityId: undefined
     }
   },
 
@@ -121,15 +121,15 @@ export default {
     },
     showSubmit() {
       return !isEmpty(this.application) && ['supp-allowances-submit'].includes(this.$route.name)
-    },
+    }
   },
 
   watch: {
     facilityId: {
       handler(facilityId) {
         this.application = this.getValidApplication(facilityId)
-      },
-    },
+      }
+    }
   },
 
   async created() {
@@ -153,25 +153,25 @@ export default {
           this.application = await ApplicationService.getApplication(this.$route.params.applicationGuid)
           this.application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
             this.$route.params.applicationGuid,
-            true,
+            true
           )
         }
         // navigate from the Application History page
         else {
           this.applications = await ApplicationService.getActiveApplications()
           this.applications = this.applications?.filter((application) =>
-            ApplicationService.checkApplicationStatus(application),
+            ApplicationService.checkApplicationStatus(application)
           )
           await Promise.all(
             this.applications?.map(async (application) => {
               application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
                 application.applicationId,
-                true,
+                true
               )
-            }),
+            })
           )
           this.facilities = this.userInfo?.facilities?.filter((facility) =>
-            this.getValidApplication(facility.facilityId),
+            this.getValidApplication(facility.facilityId)
           )
         }
       } catch (error) {
@@ -186,7 +186,7 @@ export default {
         (application) =>
           application.facilityId === facilityId &&
           ApplicationService.isValidApplication(application) &&
-          application?.isUnionized === UNION_TYPE_CODES.NO,
+          application?.isUnionized === UNION_TYPE_CODES.NO
       )
     },
 
@@ -217,8 +217,8 @@ export default {
     },
     setNext(value) {
       this.disableNext = value
-    },
-  },
+    }
+  }
 }
 </script>
 

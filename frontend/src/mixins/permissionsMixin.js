@@ -8,6 +8,6 @@ export default {
     this.PERMISSIONS = PERMISSIONS
   },
   methods: {
-    ...mapActions(useAuthStore, ['hasPermission']),
-  },
+    ...mapActions(useAuthStore, ['hasPermission'])
+  }
 }

@@ -12,7 +12,7 @@ export default {
       await Promise.all(
         licences?.map(async (licence) => {
           licence.licenceDetails = await this.getLicenceDetails(licence.licenceId)
-        }),
+        })
       )
       return licences
     } catch (error) {
@@ -53,5 +53,5 @@ export default {
   },
   isSplitClassRoomInfoValid(licenceDetail) {
     return !licenceDetail.applyRoomSplitCondition || !isEmpty(licenceDetail.roomSplitDetails)
-  },
+  }
 }

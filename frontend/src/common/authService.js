@@ -18,7 +18,7 @@ export default {
   async refreshAuthToken(token) {
     try {
       const response = await axios.post(AuthRoutes.REFRESH, {
-        refreshToken: token,
+        refreshToken: token
       })
 
       if (response.data.error) {
@@ -30,5 +30,5 @@ export default {
       console.log(`Failed to refresh JWT token - ${e}`)
       throw e
     }
-  },
+  }
 }

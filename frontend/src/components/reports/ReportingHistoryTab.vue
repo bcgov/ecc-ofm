@@ -94,7 +94,7 @@ export default {
         { title: 'Facility', key: 'facilityName' },
         { title: 'Status', key: 'status' },
         { title: 'Submitted Date', key: 'submittedDate' },
-        { title: 'Actions', key: 'actions', sortable: false },
+        { title: 'Actions', key: 'actions', sortable: false }
       ],
       loading: false,
       showAssistanceRequestDialog: false,
@@ -102,7 +102,7 @@ export default {
       facilities: [],
       submittedReports: [],
       facilityNameFilter: undefined,
-      searchQueries: {},
+      searchQueries: {}
     }
   },
 
@@ -114,7 +114,7 @@ export default {
     },
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) =>
-        facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()),
+        facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase())
       )
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
@@ -123,9 +123,9 @@ export default {
     },
     defaultAssistanceRequestFacility() {
       return this.userInfo?.facilities?.find(
-        (facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId,
+        (facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId
       )
-    },
+    }
   },
 
   created() {
@@ -144,19 +144,19 @@ export default {
             const response = await ReportsService.getSubmittedSurveyResponsesByFacility(
               facility.facilityId,
               searchQueries?.dateFrom,
-              searchQueries?.dateTo,
+              searchQueries?.dateTo
             )
             if (!isEmpty(response)) {
               this.submittedReports = this.submittedReports?.concat(response)
             }
-          }),
+          })
         )
         this.submittedReports?.forEach((report) => {
           report.title = this.getReportTitle(report)
           report.status = this.getStatusText(report)
         })
         this.submittedReports = this.submittedReports?.filter((report) =>
-          this.searchQueries?.statuses?.includes(this.getStatusText(report)),
+          this.searchQueries?.statuses?.includes(this.getStatusText(report))
         )
         this.sortSubmittedReports()
       } catch (error) {
@@ -202,7 +202,7 @@ export default {
     toggleAssistanceRequestDialog(surveyResponse) {
       this.surveyResponseToUnlock = surveyResponse ?? this.surveyResponseToUnlock
       this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
-    },
-  },
+    }
+  }
 }
 </script>

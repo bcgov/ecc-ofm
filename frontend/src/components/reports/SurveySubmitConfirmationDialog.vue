@@ -34,25 +34,25 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     closeDialog() {
       this.$router.push({ name: 'reporting' })
-    },
-  },
+    }
+  }
 }
 </script>

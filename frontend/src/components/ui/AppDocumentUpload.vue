@@ -91,43 +91,43 @@ export default {
     entityName: {
       type: String,
       required: false,
-      default: undefined,
+      default: undefined
     },
     documentLabel: {
       type: String,
-      default: undefined,
+      default: undefined
     },
     documentType: {
       type: String,
       required: false,
-      default: undefined,
+      default: undefined
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     uploadedDocuments: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     uploadLimit: {
       type: String,
-      default: undefined,
-    },
+      default: undefined
+    }
   },
   emits: ['update:modelValue', 'deleteUploadedDocument', 'validateDocumentsToUpload'],
   data() {
     return {
       documents: [],
-      isValidForm: false,
+      isValidForm: false
     }
   },
   computed: {
@@ -136,7 +136,7 @@ export default {
     },
     showAddFileButton() {
       return !this.loading && !this.readonly && !this.uploadLimitReached
-    },
+    }
   },
   watch: {
     documents: {
@@ -145,14 +145,14 @@ export default {
         const documentsToUpload = this.documents?.filter((document) => document.isValidFile && document.file)
         this.$emit('update:modelValue', documentsToUpload)
       },
-      deep: true,
+      deep: true
     },
     loading: {
       handler(value) {
         if (value) return
         this.documents = []
-      },
-    },
+      }
+    }
   },
   created() {
     this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
@@ -175,12 +175,12 @@ export default {
           this.fileExtensionAccept.includes(getFileExtensionWithDot(value[0].name)?.toLowerCase()) ||
           `Accepted file types are ${this.fileFormats}.`
         )
-      },
+      }
     ]
     this.headersUploadedDocuments = [
       { title: 'File Name', key: 'fileName', width: '34%' },
       { title: 'Description', key: 'description', width: '60%' },
-      { title: '', key: 'actionButtons', sortable: false, width: '6%' },
+      { title: '', key: 'actionButtons', sortable: false, width: '6%' }
     ]
     if (!this.disabled && !this.readonly && !this.uploadLimitReached) {
       this.addFile()
@@ -192,7 +192,7 @@ export default {
         id: uuid.v1(),
         entityName: this.entityName,
         isValidFile: true,
-        documentType: this.documentType,
+        documentType: this.documentType
       })
     },
 
@@ -206,7 +206,7 @@ export default {
     validateDocumentsToUpload() {
       this.$emit(
         'validateDocumentsToUpload',
-        this.documents?.every((file) => file.isValidFile),
+        this.documents?.every((file) => file.isValidFile)
       )
     },
 
@@ -217,7 +217,7 @@ export default {
       if (file) {
         const isLessThanMaxSize = file.size < this.MAX_FILE_SIZE
         const isFileExtensionAccepted = this.fileExtensionAccept.includes(
-          getFileExtensionWithDot(file.name)?.toLowerCase(),
+          getFileExtensionWithDot(file.name)?.toLowerCase()
         )
         document.isValidFile = isLessThanMaxSize && isFileExtensionAccepted
       } else {
@@ -227,8 +227,8 @@ export default {
 
     resetDocuments() {
       this.documents = []
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

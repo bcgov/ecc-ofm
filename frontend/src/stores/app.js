@@ -23,7 +23,7 @@ export const useAppStore = defineStore('app', {
     // reportTemplates: {},
     applicationIntakes: {},
     paymentTypes: {},
-    unions: {},
+    unions: {}
   }),
   getters: {
     getBusinessTypeNameById: (state) => {
@@ -59,7 +59,7 @@ export const useAppStore = defineStore('app', {
     getRequestCategoryIdByName: (state) => {
       return (categoryName) => {
         const requestCategory = state.requestCategories?.find(
-          (requestCategory) => requestCategory.categoryName === categoryName,
+          (requestCategory) => requestCategory.categoryName === categoryName
         )
         return requestCategory?.categoryId
       }
@@ -67,7 +67,7 @@ export const useAppStore = defineStore('app', {
     getRequestSubCategoryIdByName: (state) => {
       return (categoryName) => {
         const requestSubCategory = state.requestSubCategories?.find(
-          (requestSubCategory) => requestSubCategory.categoryName === categoryName,
+          (requestSubCategory) => requestSubCategory.categoryName === categoryName
         )
         return requestSubCategory?.subCategoryId
       }
@@ -83,7 +83,7 @@ export const useAppStore = defineStore('app', {
         const union = state.unions?.find((item) => item.description === name)
         return union?.id
       }
-    },
+    }
   },
   actions: {
     async getLookupInfo() {
@@ -114,6 +114,6 @@ export const useAppStore = defineStore('app', {
       if (!this.alertNotification) {
         this.alertNotification = true
       }
-    },
-  },
+    }
+  }
 })

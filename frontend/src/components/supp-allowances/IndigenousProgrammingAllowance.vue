@@ -88,24 +88,24 @@ export default {
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     formDisabled: {
       type: Boolean,
-      required: true,
-    },
+      required: true
+    }
   },
   emits: ['update'],
   data() {
     return {
       model: {},
-      rules,
+      rules
     }
   },
   computed: {
     isOtherBoxDisplayed() {
       return this.model?.indigenousFundingModel?.includes(
-        this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+        this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value
       )
     },
     readOnly() {
@@ -113,19 +113,19 @@ export default {
     },
     isWarningDisplayed() {
       return isApplicationLocked(this.indigenousProgrammingModel?.statusCode)
-    },
+    }
   },
   watch: {
     model: {
       handler(value) {
         this.$emit('update', value)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   async created() {
     this.model = { ...this.indigenousProgrammingModel }
     this.INDIG_CHECKBOX_LABELS = INDIG_CHECKBOX_LABELS
-  },
+  }
 }
 </script>

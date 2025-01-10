@@ -137,8 +137,8 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
 
   emits: ['search'],
@@ -150,7 +150,7 @@ export default {
       // selectedReportTypes: [],
       selectedStatuses: null,
       selectedDateFrom: null,
-      selectedDateTo: null,
+      selectedDateTo: null
     }
   },
 
@@ -190,7 +190,7 @@ export default {
     },
     someStatusesSelected() {
       return this.selectedStatuses?.length > 0
-    },
+    }
   },
 
   created() {
@@ -199,12 +199,12 @@ export default {
       { label: DATE_FILTER_TYPES.THREE_MONTHS, value: DATE_FILTER_TYPES.THREE_MONTHS },
       { label: DATE_FILTER_TYPES.SIX_MONTHS, value: DATE_FILTER_TYPES.SIX_MONTHS },
       { label: DATE_FILTER_TYPES.YTD, value: DATE_FILTER_TYPES.YTD },
-      { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM },
+      { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM }
     ]
     this.STATUS_FILTER_OPTIONS = [
       SURVEY_RESPONSE_STATUSES.COMPLETED,
       SURVEY_RESPONSE_STATUSES.COMPLETED_LATE,
-      SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED,
+      SURVEY_RESPONSE_STATUSES.COMPLETED_CLOSED
     ]
     this.resetFilter()
   },
@@ -230,7 +230,7 @@ export default {
         statuses: this.selectedStatuses,
         dateFilterType: this.selectedDateFilterType,
         dateFrom: this.dateFrom,
-        dateTo: this.dateTo,
+        dateTo: this.dateTo
       }
       this.$emit('search', searchQueries)
     },
@@ -243,7 +243,7 @@ export default {
 
     toggleAllStatuses() {
       this.selectedStatuses = this.allStatusesSelected ? [] : this.STATUS_FILTER_OPTIONS
-    },
-  },
+    }
+  }
 }
 </script>

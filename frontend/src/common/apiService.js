@@ -45,7 +45,7 @@ const intercept = apiAxios.interceptors.response.use(
           reject(e)
         })
     })
-  },
+  }
 )
 
 export default {
@@ -61,5 +61,5 @@ export default {
     } else {
       delete apiAxios.defaults.headers.common['Authorization']
     }
-  },
+  }
 }

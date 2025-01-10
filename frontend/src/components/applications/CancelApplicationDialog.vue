@@ -48,7 +48,7 @@ import {
   APPLICATION_STATUS_CODES,
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   CRM_STATE_CODES,
-  APPLICATION_TYPES,
+  APPLICATION_TYPES
 } from '@/utils/constants'
 import ApplicationService from '@/services/applicationService'
 
@@ -59,35 +59,35 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     applicationId: {
       type: String,
-      default: '',
+      default: ''
     },
     applicationType: {
       type: String,
-      default: APPLICATION_TYPES.OFM, // Default to OFM application type (as opposed to Supplementary/Allowances application types)
-    },
+      default: APPLICATION_TYPES.OFM // Default to OFM application type (as opposed to Supplementary/Allowances application types)
+    }
   },
   emits: ['close', 'cancel'],
   data() {
     return {
       isLoading: false,
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   computed: {
     isBaseFundingApplication() {
       return this.applicationType === APPLICATION_TYPES.OFM
-    },
+    }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     closeDialog() {
@@ -100,7 +100,7 @@ export default {
           statusCode: this.isBaseFundingApplication
             ? APPLICATION_STATUS_CODES.CANCELLED_BY_SP
             : SUPPLEMENTARY_APPLICATION_STATUS_CODES.CANCELLED,
-          stateCode: CRM_STATE_CODES.INACTIVE,
+          stateCode: CRM_STATE_CODES.INACTIVE
         }
         if (this.isBaseFundingApplication) {
           await ApplicationService.updateApplication(this.applicationId, payload)
@@ -115,7 +115,7 @@ export default {
         this.isLoading = false
         this.closeDialog()
       }
-    },
-  },
+    }
+  }
 }
 </script>

@@ -24,5 +24,5 @@ export default {
       console.log(`Failed to update existing Notification - ${error}`)
       throw error
     }
-  },
+  }
 }

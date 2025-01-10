@@ -5,7 +5,7 @@
       :to="{
         name: APPLICATION_ROUTES.OPERATING_COSTS,
         hash: '#select-facility-types',
-        params: { applicationGuid: $route.params.applicationGuid },
+        params: { applicationGuid: $route.params.applicationGuid }
       }">
       {{ APPLICATION_ERROR_MESSAGES.FACILITY_TYPE }}
     </AppMissingInfoError>
@@ -35,7 +35,7 @@
                 :to="{
                   name: APPLICATION_ROUTES.OPERATING_COSTS,
                   hash: '#rent-lease-info',
-                  params: { applicationGuid: $route.params.applicationGuid },
+                  params: { applicationGuid: $route.params.applicationGuid }
                 }">
                 {{ APPLICATION_ERROR_MESSAGES.RENT_LEASE_DATE_RANGE }}
               </AppMissingInfoError>
@@ -55,7 +55,7 @@
               :to="{
                 name: APPLICATION_ROUTES.OPERATING_COSTS,
                 hash: '#arm-length',
-                params: { applicationGuid: $route.params.applicationGuid },
+                params: { applicationGuid: $route.params.applicationGuid }
               }">
               {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
             </AppMissingInfoError>
@@ -78,7 +78,7 @@
           :to="{
             name: APPLICATION_ROUTES.OPERATING_COSTS,
             hash: '#yearly-operating-cost',
-            params: { applicationGuid: $route.params.applicationGuid },
+            params: { applicationGuid: $route.params.applicationGuid }
           }">
           {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
         </AppMissingInfoError>
@@ -102,7 +102,7 @@
                 :to="{
                   name: 'operating-costs',
                   hash: '#financial-document-upload',
-                  params: { applicationGuid: $route.params.applicationGuid },
+                  params: { applicationGuid: $route.params.applicationGuid }
                 }">
                 {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
               </AppMissingInfoError>
@@ -119,7 +119,7 @@
                 :to="{
                   name: 'operating-costs',
                   hash: '#balance-sheet-document-upload',
-                  params: { applicationGuid: $route.params.applicationGuid },
+                  params: { applicationGuid: $route.params.applicationGuid }
                 }">
                 {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
               </AppMissingInfoError>
@@ -136,7 +136,7 @@
                 :to="{
                   name: 'operating-costs',
                   hash: '#supporting-document-upload',
-                  params: { applicationGuid: $route.params.applicationGuid },
+                  params: { applicationGuid: $route.params.applicationGuid }
                 }">
                 {{ DOCUMENT_TYPES.SUPPORTING_DOCS }} upload required
               </AppMissingInfoError>
@@ -163,7 +163,7 @@ import {
   APPLICATION_ERROR_MESSAGES,
   APPLICATION_ROUTES,
   DOCUMENT_TYPES,
-  YES_NO_CHOICE_CRM_MAPPING,
+  YES_NO_CHOICE_CRM_MAPPING
 } from '@/utils/constants'
 
 export default {
@@ -172,17 +172,17 @@ export default {
     AppMissingInfoError,
     YearlyOperatingCostSummary,
     YearlyFacilityCostSummary,
-    AppDocumentUpload,
+    AppDocumentUpload
   },
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     documents: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
 
   computed: {
@@ -203,7 +203,7 @@ export default {
     },
     documentsSupporting() {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
-    },
+    }
   },
 
   created() {
@@ -212,6 +212,6 @@ export default {
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.YES_NO_CHOICE_CRM_MAPPING = YES_NO_CHOICE_CRM_MAPPING
-  },
+  }
 }
 </script>

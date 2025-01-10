@@ -12,19 +12,19 @@ export default {
   emits: ['update:modelValue'],
   data() {
     return {
-      updatedTime: null,
+      updatedTime: null
     }
   },
   watch: {
     updatedTime: {
       handler(value) {
         this.$emit('update:modelValue', value)
-      },
-    },
+      }
+    }
   },
   created() {
     this.updatedTime = this.modelValue ? format.formatTime12to24(this.modelValue) : null
-  },
+  }
 }
 </script>
 

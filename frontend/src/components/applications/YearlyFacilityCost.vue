@@ -196,12 +196,12 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     facilityType: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
   },
   emits: ['update'],
   data() {
@@ -212,14 +212,14 @@ export default {
         min: 0,
         decimal: '.',
         separator: ',',
-        precision: 2,
+        precision: 2
       },
       totalNumberFormat: {
         decimal: '.',
         separator: ',',
-        prefix: '$ ',
+        prefix: '$ '
       },
-      model: {},
+      model: {}
     }
   },
   computed: {
@@ -227,14 +227,14 @@ export default {
     totalYearlyCost() {
       const totalYearlyCost = Object.values(this.model)?.reduce((total, cost) => total + Number(cost), 0)
       return totalYearlyCost.toFixed(2)
-    },
+    }
   },
   watch: {
     model: {
       handler(value) {
         this.$emit('update', value)
       },
-      deep: true,
+      deep: true
     },
     facilityType: {
       handler() {
@@ -243,10 +243,10 @@ export default {
           mortgageCost: '0.00',
           propertyTax: '0.00',
           strataFee: '0.00',
-          applicableFee: '0.00',
+          applicableFee: '0.00'
         }
-      },
-    },
+      }
+    }
   },
   created() {
     this.model = {
@@ -258,10 +258,10 @@ export default {
       strataFee: this.currentApplication?.strataFee ? this.currentApplication?.strataFee?.toFixed(2) : '0.00',
       applicableFee: this.currentApplication?.applicableFee
         ? this.currentApplication?.applicableFee?.toFixed(2)
-        : '0.00',
+        : '0.00'
     }
     this.FACILITY_TYPES = FACILITY_TYPES
-  },
+  }
 }
 </script>
 <style scoped>

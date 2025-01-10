@@ -52,8 +52,8 @@ export default {
   mixins: [permissionsMixin],
   data() {
     return {
-      tab: null,
+      tab: null
     }
-  },
+  }
 }
 </script>

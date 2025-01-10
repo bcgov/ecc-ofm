@@ -50,12 +50,12 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: true,
+      default: true
     },
     fundingReallocationRequests: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
@@ -64,9 +64,9 @@ export default {
         { title: 'From', key: 'envelopeNameFrom' },
         { title: 'To', key: 'envelopeNameTo' },
         { title: 'Amount', key: 'amount' },
-        { title: 'Status', key: 'statusCode' },
+        { title: 'Status', key: 'statusCode' }
       ],
-      statusFilter: null,
+      statusFilter: null
     }
   },
   computed: {
@@ -74,9 +74,9 @@ export default {
       return isEmpty(this.statusFilter)
         ? this.fundingReallocationRequests
         : this.fundingReallocationRequests?.filter((request) =>
-            request?.statusName?.toUpperCase().includes(this.statusFilter?.toUpperCase()),
+            request?.statusName?.toUpperCase().includes(this.statusFilter?.toUpperCase())
           )
-    },
+    }
   },
   created() {
     this.format = format
@@ -99,8 +99,8 @@ export default {
     },
     statusFilterChanged(newVal) {
       this.statusFilter = newVal
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

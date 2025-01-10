@@ -89,19 +89,19 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: true,
+      default: true
     },
     fundingDetails: {
       type: Object,
       required: true,
       default: () => {
         return {}
-      },
-    },
+      }
+    }
   },
   created() {
     this.format = format
-  },
+  }
 }
 </script>
 <style scoped>

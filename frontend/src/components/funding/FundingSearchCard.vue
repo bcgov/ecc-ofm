@@ -162,28 +162,28 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: true,
+      default: true
     },
     showPaymentTypesFilter: {
       type: Boolean,
-      default: false,
+      default: false
     },
     defaultDateFilter: {
       type: String,
-      default: null,
+      default: null
     },
     showDateFilter: {
       type: Boolean,
-      default: true,
+      default: true
     },
     selectSingleFacility: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showResetButton: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
 
   emits: ['search'],
@@ -195,7 +195,7 @@ export default {
       selectedDateFilterType: null,
       selectedPaymentFilterTypes: [],
       selectedDateFrom: null,
-      selectedDateTo: null,
+      selectedDateTo: null
     }
   },
 
@@ -235,7 +235,7 @@ export default {
     },
     someFacilitiesSelected() {
       return this.selectedFacilities?.length > 0
-    },
+    }
   },
 
   created() {
@@ -244,7 +244,7 @@ export default {
       { label: DATE_FILTER_TYPES.THREE_MONTHS, value: DATE_FILTER_TYPES.THREE_MONTHS },
       { label: DATE_FILTER_TYPES.SIX_MONTHS, value: DATE_FILTER_TYPES.SIX_MONTHS },
       { label: DATE_FILTER_TYPES.YTD, value: DATE_FILTER_TYPES.YTD },
-      { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM },
+      { label: DATE_FILTER_TYPES.CUSTOM, value: DATE_FILTER_TYPES.CUSTOM }
     ]
     this.MAX_NUMBER_FACILITIES_DISPLAY = 4
     this.resetFilter()
@@ -270,7 +270,7 @@ export default {
         facilities: this.selectedFacilities,
         dateFilterType: this.selectedDateFilterType,
         dateFrom: this.dateFrom,
-        dateTo: this.dateTo,
+        dateTo: this.dateTo
       }
       if (this.showPaymentTypesFilter) {
         searchQueries.paymentFilterTypes = this.selectedPaymentFilterTypes?.map((paymentType) => paymentType.id)
@@ -284,8 +284,8 @@ export default {
 
     toggleAllFacilities() {
       this.selectedFacilities = this.allFacilitiesSelected ? [] : this.userInfo?.facilities
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

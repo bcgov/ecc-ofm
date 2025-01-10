@@ -161,13 +161,13 @@ export default {
         { title: 'BCeID', key: 'userName', width: '12%' },
         { title: 'Role', key: 'role', width: '12%' },
         { title: 'Expense Authority', key: 'isExpenseAuthority', width: '12%' },
-        { title: 'Status', key: 'stateCode', width: '16%' },
+        { title: 'Status', key: 'stateCode', width: '16%' }
       ],
       headersFacilities: [
         { title: 'Facility Name', key: 'facilityName', width: '35%' },
         { title: 'Address', key: 'address', width: '45%' },
-        { title: 'Expense Authority', key: 'isExpenseAuthority', width: '15%' },
-      ],
+        { title: 'Expense Authority', key: 'isExpenseAuthority', width: '15%' }
+      ]
     }
   },
   computed: {
@@ -179,15 +179,15 @@ export default {
         return this.sortUsers(
           this.usersAndFacilities.filter((user) =>
             user.facilities.some((facility) =>
-              facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase()),
-            ),
-          ),
+              facility.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLocaleLowerCase())
+            )
+          )
         )
       } catch (error) {
         this.setFailureAlert('Failed to filter users by facility name', error)
         return []
       }
-    },
+    }
   },
   async created() {
     await this.getUsersAndFacilities()
@@ -220,7 +220,7 @@ export default {
       } catch (error) {
         this.setFailureAlert(
           'Failed to get the list of users by organization id: ' + this.userInfo.organizationId,
-          error,
+          error
         )
       } finally {
         this.loading = false
@@ -319,7 +319,7 @@ export default {
       const facilityNames = this.getLastExpenseAuthoritiesForUser(user)
       if (facilityNames.length > 0) {
         this.setFailureAlert(
-          `Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`,
+          `Cannot deactivate user. They are the last expense authority for facilities: ${facilityNames.join(', ')}.`
         )
       } else {
         this.toggleDeactivateUserDialog(user)
@@ -343,7 +343,7 @@ export default {
         const hasOtherUserWithAuthority = this.usersAndFacilities.some(
           (userToCheck) =>
             userToCheck.contactId !== user.contactId &&
-            userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority),
+            userToCheck.facilities.some((f) => f.facilityId === facility.facilityId && f.isExpenseAuthority)
         )
         if (!hasOtherUserWithAuthority) {
           lastExpenseAuthorityFacilityNames.push(facility.facilityName)
@@ -357,8 +357,8 @@ export default {
      */
     facilityFilterChanged(newVal) {
       this.facilityNameFilter = newVal
-    },
-  },
+    }
+  }
 }
 </script>
 

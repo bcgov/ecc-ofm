@@ -54,7 +54,7 @@
                   :label="item.categoryName"
                   :input-value="
                     newRequestModel.subCategories.some(
-                      (subCategory) => subCategory.subCategoryId === item.subCategoryId,
+                      (subCategory) => subCategory.subCategoryId === item.subCategoryId
                     )
                   "
                   density="compact"
@@ -64,7 +64,7 @@
                     (val) =>
                       handleCheckboxChange(val, {
                         subCategoryId: item.subCategoryId,
-                        subCategoryName: item.categoryName,
+                        subCategoryName: item.categoryName
                       })
                   "></v-checkbox>
               </v-col>
@@ -391,7 +391,7 @@ import {
   ASSISTANCE_REQUEST_STATUS_CODES,
   CRM_STATE_CODES,
   OFM_PROGRAM_CODES,
-  PREVENT_CHANGE_REQUEST_TYPES,
+  PREVENT_CHANGE_REQUEST_TYPES
 } from '@/utils/constants'
 import {
   REQUEST_CATEGORY_NAMES,
@@ -400,7 +400,7 @@ import {
   EMAIL_FORMAT,
   VIRUS_SCAN_ERROR_MESSAGE,
   FUNDING_AGREEMENT_STATUS_CODES,
-  PROVIDER_TYPE_CODES,
+  PROVIDER_TYPE_CODES
 } from '@/utils/constants'
 
 export default {
@@ -412,43 +412,43 @@ export default {
     AppDocumentUpload,
     NewRequestConfirmationDialog,
     UnableToSubmitCrDialog,
-    AppMissingInfoError,
+    AppMissingInfoError
   },
   mixins: [alertMixin, permissionsMixin],
   props: {
     show: {
       type: Boolean,
       default: false,
-      required: true,
+      required: true
     },
     defaultRequestCategoryId: {
       type: String,
-      default: null,
+      default: null
     },
     defaultFacility: {
       type: Object,
-      default: null,
+      default: null
     },
     defaultSubject: {
       type: String,
-      default: null,
+      default: null
     },
     lockRequestCategory: {
       type: Boolean,
-      default: false,
+      default: false
     },
     lockFacility: {
       type: Boolean,
-      default: false,
+      default: false
     },
     lockSubject: {
       type: Boolean,
-      default: false,
+      default: false
     },
     returnTo: {
       type: String,
-      default: 'home',
-    },
+      default: 'home'
+    }
   },
   emits: ['close', 'submitPhoneEmail'],
   data() {
@@ -471,7 +471,7 @@ export default {
       preventChangeRequestType: undefined,
       fundingAgreements: undefined,
       facilityValidInOFM: new Map(),
-      expenseFormURL: StaticConfig.IRREGULAR_EXPENSE_FORM_URL,
+      expenseFormURL: StaticConfig.IRREGULAR_EXPENSE_FORM_URL
     }
   },
   computed: {
@@ -479,7 +479,7 @@ export default {
       'requestCategories',
       'requestSubCategories',
       'getRequestCategoryIdByName',
-      'getRequestSubCategoryIdByName',
+      'getRequestSubCategoryIdByName'
     ]),
     ...mapState(useAuthStore, ['currentFacility', 'userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
@@ -591,7 +591,7 @@ export default {
           !!this.organizationModel.phoneLandline ||
           !!this.organizationModel.phoneCell ||
           !!this.organizationModel.email ||
-          'A phone/cell or email is required when Organization phone/email checked',
+          'A phone/cell or email is required when Organization phone/email checked'
       ]
     },
     facilityPhoneEmailRule() {
@@ -602,7 +602,7 @@ export default {
           !!this.facilityModel.phoneLandline ||
           !!this.facilityModel.phoneCell ||
           !!this.facilityModel.email ||
-          'A phone/cell or email is required when Facility phone/email checked',
+          'A phone/cell or email is required when Facility phone/email checked'
       ]
     },
     filteredFacilties() {
@@ -612,7 +612,7 @@ export default {
           return []
         }
         return this.facilities.filter(
-          (fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId) && fac?.isUnionized === 0,
+          (fac) => this.fundingAgreements.some((app) => app?.facilityId === fac?.facilityId) && fac?.isUnionized === 0
         )
       }
       return this.facilities
@@ -633,13 +633,13 @@ export default {
     },
     facilityLabel() {
       return `Facility${this.isMultipleFacilities ? '(s)' : ''}:`
-    },
+    }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
+      }
     },
     'newRequestModel.subCategories': {
       handler(value) {
@@ -648,19 +648,19 @@ export default {
         }
         this.validateSubCategories(value)
       },
-      deep: true,
+      deep: true
     },
     defaultFacility: {
       handler(value) {
         this.newRequestModel.facilities = [
-          this.facilities?.find((facility) => facility.facilityId === value?.facilityId),
+          this.facilities?.find((facility) => facility.facilityId === value?.facilityId)
         ]
-      },
+      }
     },
     defaultSubject: {
       handler(value) {
         this.newRequestModel.subject = value
-      },
+      }
     },
 
     'newRequestModel.requestCategoryId': {
@@ -684,7 +684,7 @@ export default {
         } else if (this.newRequestModel.facilities?.length > 1 && !this.isMultipleFacilities) {
           this.newRequestModel.facilities = this.newRequestModel.facilities[0]
         }
-      },
+      }
     },
     'newRequestModel.facilities': {
       async handler() {
@@ -701,8 +701,8 @@ export default {
           }
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
@@ -727,7 +727,7 @@ export default {
       }
 
       const isCCOForMultipleProgram = [OFM_PROGRAM_CODES.CCOF, OFM_PROGRAM_CODES.MULTIPLE].includes(
-        selectedFacility?.programCode,
+        selectedFacility?.programCode
       )
       const isTDADProgram = OFM_PROGRAM_CODES.TDAD === selectedFacility?.programCode
       const hasApprovedApplication = await ApplicationService.hasApprovedApplication([selectedFacility])
@@ -764,7 +764,7 @@ export default {
           subCategory.subCategoryId ===
             this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.FACILITY_PHONE_EMAIL) ||
           subCategory.subCategoryId ===
-            this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE),
+            this.getRequestSubCategoryIdByName(REQUEST_SUB_CATEGORY_NAMES.ADD_CHANGE_LICENCE)
       )
     },
 
@@ -780,7 +780,7 @@ export default {
         contactId: this.userInfo?.contactId,
         facilities: [this.filteredFacilties?.find((facility) => facility.facilityId === facilityId)],
         contactMethod: '1',
-        phone: this.userInfo?.phone,
+        phone: this.userInfo?.phone
       }
     },
 
@@ -889,7 +889,7 @@ export default {
 
     handleCheckboxChange(val, subCategory) {
       const index = this.newRequestModel.subCategories.findIndex(
-        (item) => item.subCategoryId === subCategory.subCategoryId,
+        (item) => item.subCategoryId === subCategory.subCategoryId
       )
       if (index > -1) {
         this.newRequestModel.subCategories.splice(index, 1)
@@ -910,7 +910,7 @@ export default {
       try {
         const payload = {
           statusCode: ASSISTANCE_REQUEST_STATUS_CODES.CLOSED_COMPLETE,
-          stateCode: CRM_STATE_CODES.INACTIVE,
+          stateCode: CRM_STATE_CODES.INACTIVE
         }
         await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
         await this.updateAssistanceRequestInStore(assistanceRequestId)
@@ -924,7 +924,7 @@ export default {
       try {
         const payload = {
           assistanceRequestId: assistanceRequestId,
-          message: 'Your change request is complete.',
+          message: 'Your change request is complete.'
         }
         await MessageService.createAssistanceRequestConversation(payload)
       } catch (error) {
@@ -961,7 +961,7 @@ export default {
 
     isSubCategoryChecked(categoryName) {
       return this.newRequestModel.subCategories.some(
-        (subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName),
+        (subCategory) => subCategory.subCategoryId === this.getRequestSubCategoryIdByName(categoryName)
       )
     },
 
@@ -980,19 +980,19 @@ export default {
           this.facilities?.map(async (facility) => {
             const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(
               facility.facilityId,
-              FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
+              FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
             )
             if (fa) {
               this.fundingAgreements.push(fa)
             }
-          }),
+          })
         )
       } catch (error) {
         this.setFailureAlert('Failed to load Funding Agreements', error)
         throw error
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

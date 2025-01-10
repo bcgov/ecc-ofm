@@ -6,7 +6,7 @@
       :value="option.value"
       :class="{
         'active-button': internalSelection === option.value,
-        'inactive-button': internalSelection !== option.value,
+        'inactive-button': internalSelection !== option.value
       }">
       {{ option.label }}
     </v-btn>
@@ -23,32 +23,32 @@ export default {
       validator: function (array) {
         return array.every(
           (item) =>
-            Object.prototype.hasOwnProperty.call(item, 'value') && Object.prototype.hasOwnProperty.call(item, 'label'),
+            Object.prototype.hasOwnProperty.call(item, 'value') && Object.prototype.hasOwnProperty.call(item, 'label')
         )
-      },
+      }
     },
     defaultOption: {
       type: [Number, String],
       required: false,
-      default: undefined,
-    },
+      default: undefined
+    }
   },
   emits: ['input'],
   data() {
     return {
-      internalSelection: this.defaultOption,
+      internalSelection: this.defaultOption
     }
   },
   watch: {
     defaultOption(newValue) {
       this.internalSelection = newValue
-    },
+    }
   },
   methods: {
     emitSelection() {
       this.$emit('input', this.internalSelection)
-    },
-  },
+    }
+  }
 }
 </script>
 

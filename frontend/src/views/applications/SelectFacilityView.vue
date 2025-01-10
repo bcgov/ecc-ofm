@@ -76,7 +76,7 @@ import {
   BUSINESS_TYPE_CODES,
   CRM_STATE_CODES,
   DOCUMENT_TYPES,
-  VIRUS_SCAN_ERROR_MESSAGE,
+  VIRUS_SCAN_ERROR_MESSAGE
 } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
@@ -91,16 +91,16 @@ export default {
   props: {
     cancel: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['process'],
@@ -115,7 +115,7 @@ export default {
       loadedApplications: undefined,
       documentsToDelete: [],
       documentsComplete: true,
-      redirectedApplications: undefined,
+      redirectedApplications: undefined
     }
   },
 
@@ -129,21 +129,21 @@ export default {
           facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
           facility.intakeWindowCheckForAddApplication &&
           facility.ccofEnrolmentCheckForAddApplication &&
-          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId)
       )
-    },
+    }
   },
 
   watch: {
     isFormComplete: {
       handler() {
         this.checkFacilityComplete()
-      },
+      }
     },
     cancel: {
       handler() {
         this.$router.push({ name: 'applications-history' })
-      },
+      }
     },
 
     next: {
@@ -173,11 +173,11 @@ export default {
             activeApplications?.find((el) => el.statusCode === APPLICATION_STATUS_CODES.DRAFT) ?? activeApplications[0]
           this.$router.push({
             name: APPLICATION_ROUTES.FACILITY_DETAILS,
-            params: { applicationGuid: existingApplication?.applicationId },
+            params: { applicationGuid: existingApplication?.applicationId }
           })
         }
-      },
-    },
+      }
+    }
   },
 
   async created() {
@@ -191,9 +191,7 @@ export default {
 
     //get the redirected applications so we can prevent those facilities from starting another OFM app
     this.redirectedApplications = await ApplicationService.getRedirectedApplications(
-      this.userInfo?.facilities.filter(
-        (fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId),
-      ),
+      this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId))
     )
   },
 
@@ -238,13 +236,13 @@ export default {
           organizationId: this.organization?.organizationId,
           providerType: this.organization?.providerType,
           ownership: this.organization?.ownership,
-          createdBy: this.userInfo?.contactId,
+          createdBy: this.userInfo?.contactId
         }
         const response = await ApplicationService.createApplication(payload)
         this.setSuccessAlert('Started a new application successfully')
         this.$router.push({
           name: APPLICATION_ROUTES.FACILITY_DETAILS,
-          params: { applicationGuid: response?.applicationId },
+          params: { applicationGuid: response?.applicationId }
         })
       } catch (error) {
         this.setFailureAlert('Failed to start a new application', error)
@@ -258,7 +256,7 @@ export default {
         openMembership: this.updatedOrganization.openMembership,
         boardMembersElected: this.updatedOrganization.boardMembersElected,
         boardMembersSelectedMembership: this.updatedOrganization.boardMembersSelectedMembership,
-        boardMembersResidentsOfBC: this.updatedOrganization.boardMembersResidentsOfBC,
+        boardMembersResidentsOfBC: this.updatedOrganization.boardMembersResidentsOfBC
       }
       try {
         await OrganizationService.updateOrganization(this.organization?.organizationId, payload)
@@ -283,14 +281,14 @@ export default {
         if (!isEmpty(this.updatedOrganization?.documentsToUpload)) {
           await DocumentService.createDocuments(
             this.updatedOrganization.documentsToUpload,
-            this.updatedOrganization.organizationId,
+            this.updatedOrganization.organizationId
           )
         }
         if (!isEmpty(this.documentsToDelete)) {
           await Promise.all(
             this.documentsToDelete.map(async (documentId) => {
               await DocumentService.deleteDocument(documentId)
-            }),
+            })
           )
         }
       } catch (error) {
@@ -300,8 +298,8 @@ export default {
           this.setFailureAlert('Failed to process documents', error)
         }
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

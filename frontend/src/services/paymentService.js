@@ -36,5 +36,5 @@ export default {
       console.log(`Failed to get the list of payments by facility id and status and payment/invoice date - ${error}`)
       throw error
     }
-  },
+  }
 }

@@ -35,21 +35,21 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['close', 'cancel'],
   data() {
     return {
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     toggleCancelDialog() {
@@ -59,7 +59,7 @@ export default {
     cancelChanges() {
       this.$emit('cancel')
       this.toggleCancelDialog()
-    },
-  },
+    }
+  }
 }
 </script>

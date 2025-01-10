@@ -12,14 +12,14 @@ const rules = {
         return REQUIRED_MSG
       }
       return true
-    },
+    }
   ],
   notNullRequired: [(v) => v != null || REQUIRED_MSG], // value must be not null and not undefined
   postalCode: [
     (v) =>
       !v ||
       /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(v) ||
-      'A valid postal code is required',
+      'A valid postal code is required'
   ],
   MMDDYYYY: (v) => (!!v && !isNaN(new Date(v))) || 'Invalid date format',
   validEndDate(startDate) {
@@ -52,7 +52,7 @@ const rules = {
     !v ||
     /^\(?([0-9]{3})\)?-([0-9]{3})-([0-9]{4})$/.test(v) ||
     'Must be a valid phone number in the format ###-###-####',
-  listIsNotEmpty: [(v) => v.length > 0 || REQUIRED_MSG],
+  listIsNotEmpty: [(v) => v.length > 0 || REQUIRED_MSG]
 }
 
 export default rules

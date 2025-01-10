@@ -46,20 +46,20 @@ export default {
       type: Object,
       default: () => {
         return {}
-      },
+      }
     },
     responses: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     readonly: {
       type: Boolean,
-      required: true,
+      required: true
     },
     validation: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['update', 'deleteTableResponses'],
@@ -67,7 +67,7 @@ export default {
   computed: {
     questions() {
       return this.section?.questions?.filter((question) => !this.isTableQuestionHeader(question))
-    },
+    }
   },
 
   methods: {
@@ -77,7 +77,7 @@ export default {
 
     getTableQuestionHeaders(tableQuestion) {
       const headers = this.section?.questions?.filter(
-        (question) => question.tableQuestionId === tableQuestion?.questionId,
+        (question) => question.tableQuestionId === tableQuestion?.questionId
       )
       headers.forEach((header) => (header.hide = tableQuestion?.hide))
       return headers
@@ -85,7 +85,7 @@ export default {
 
     getTableQuestionResponses(tableQuestion) {
       return this.responses?.filter(
-        (response) => !this.isHiddenOrDeleted(response) && response.tableQuestionId === tableQuestion?.questionId,
+        (response) => !this.isHiddenOrDeleted(response) && response.tableQuestionId === tableQuestion?.questionId
       )
     },
 
@@ -99,8 +99,8 @@ export default {
 
     isInstructions(question) {
       return question?.type === this.SURVEY_QUESTION_TYPES.INSTRUCTIONS
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

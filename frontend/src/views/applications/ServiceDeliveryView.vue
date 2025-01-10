@@ -131,7 +131,7 @@ import {
   DOCUMENT_LABELS,
   DOCUMENT_TYPES,
   OFM_PROGRAM_CODES,
-  SUPPORTED_DOCUMENTS_MESSAGE,
+  SUPPORTED_DOCUMENTS_MESSAGE
 } from '@/utils/constants'
 import format from '@/utils/format'
 import rules from '@/utils/rules'
@@ -152,20 +152,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['process'],
@@ -182,8 +182,8 @@ export default {
       healthAuthorityReports: {
         uploadedDocuments: [],
         documentsToUpload: [],
-        documentsToDelete: [],
-      },
+        documentsToDelete: []
+      }
     }
   },
 
@@ -218,7 +218,7 @@ export default {
       return Object.keys(this.licenceDocuments)?.some(
         (licence) =>
           !isEmpty(this.licenceDocuments[licence]?.documentsToUpload) ||
-          !isEmpty(this.licenceDocuments[licence]?.documentsToDelete),
+          !isEmpty(this.licenceDocuments[licence]?.documentsToDelete)
       )
     },
 
@@ -227,36 +227,36 @@ export default {
         !isEmpty(this.healthAuthorityReports?.documentsToUpload) ||
         !isEmpty(this.healthAuthorityReports?.documentsToDelete)
       )
-    },
+    }
   },
 
   watch: {
     licenceDeclaration: {
       handler() {
         this.setFormComplete()
-      },
+      }
     },
     back: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.ELIGIBILITY,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     next: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.OPERATING_COSTS,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
-    },
+      }
+    }
   },
 
   created() {
@@ -288,7 +288,7 @@ export default {
           this.hasLicenceDocumentsToProcess ||
           this.hasHealthAuthorityReportDocumentsToProcess
         const payload = {
-          licenceDeclaration: this.licenceDeclaration,
+          licenceDeclaration: this.licenceDeclaration
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
           await ApplicationService.updateApplication(this.$route.params.applicationGuid, payload)
@@ -299,7 +299,7 @@ export default {
           this.changedLicences.map(async (licence) => {
             this.sanitizeLicenceDetailBeforeSave(licence)
             await LicenceService.updateLicenceDetails(licence.licenceDetailId, licence)
-          }),
+          })
         )
 
         if (this.hasLicenceDocumentsToProcess) {
@@ -381,7 +381,7 @@ export default {
     setFormComplete() {
       this.isServiceDeliveryComplete =
         this.currentApplication.licences.every(
-          (licence) => licence.isLicenceDetailsComplete && this.isLicenceDocumentUploaded(licence),
+          (licence) => licence.isLicenceDetailsComplete && this.isLicenceDocumentUploaded(licence)
         ) &&
         this.isHealthAuthorityReportsUploaded &&
         this.licenceDeclaration
@@ -392,25 +392,25 @@ export default {
         (licence) =>
           (this.licenceDocuments[licence?.licence] = {
             uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) =>
-              document.documentType?.includes(licence?.licence),
+              document.documentType?.includes(licence?.licence)
             ),
             documentsToUpload: [],
-            documentsToDelete: [],
-          }),
+            documentsToDelete: []
+          })
       )
       this.healthAuthorityReports = {
         uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) =>
-          document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT),
+          document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT)
         ),
         documentsToUpload: [],
-        documentsToDelete: [],
+        documentsToDelete: []
       }
     },
 
     deleteUploadedLicenceDocuments(documentId, documentType) {
       const licence = documentType?.substring(documentType?.indexOf(' ') + 1)
       const index = this.licenceDocuments[licence]?.uploadedDocuments?.findIndex(
-        (item) => item.documentId === documentId,
+        (item) => item.documentId === documentId
       )
       if (index > -1) {
         this.licenceDocuments[licence]?.documentsToDelete.push(documentId)
@@ -425,15 +425,15 @@ export default {
           if (!isEmpty(this.licenceDocuments[licence]?.documentsToUpload)) {
             await DocumentService.createDocuments(
               this.licenceDocuments[licence]?.documentsToUpload,
-              this.$route.params.applicationGuid,
+              this.$route.params.applicationGuid
             )
           }
           if (!isEmpty(this.licenceDocuments[licence]?.documentsToDelete)) {
             this.licenceDocuments[licence]?.documentsToDelete.map(
-              async (documentId) => await DocumentService.deleteDocument(documentId),
+              async (documentId) => await DocumentService.deleteDocument(documentId)
             )
           }
-        }),
+        })
       )
     },
 
@@ -447,12 +447,12 @@ export default {
     async processHealthAuthorityReportDocuments() {
       await DocumentService.createDocuments(
         this.healthAuthorityReports?.documentsToUpload,
-        this.$route.params.applicationGuid,
+        this.$route.params.applicationGuid
       )
       await Promise.all(
         this.healthAuthorityReports?.documentsToDelete.map(
-          async (documentId) => await DocumentService.deleteDocument(documentId),
-        ),
+          async (documentId) => await DocumentService.deleteDocument(documentId)
+        )
       )
     },
 
@@ -463,8 +463,8 @@ export default {
         this.healthAuthorityReports?.uploadedDocuments.splice(index, 1)
       }
       this.setFormComplete()
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -142,24 +142,24 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
+      default: false
     },
     contacts: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
 
   emits: ['process'],
@@ -173,7 +173,7 @@ export default {
       secondaryContact: undefined,
       expenseAuthority: undefined,
       fiscalYearEndDate: null,
-      updatedFacilityLocationAttributes: null,
+      updatedFacilityLocationAttributes: null
     }
   },
 
@@ -199,24 +199,24 @@ export default {
         this.updatedFacilityLocationAttributes?.personalResidence !==
           this.currentApplication?.facility?.personalResidence
       )
-    },
+    }
   },
 
   watch: {
     isFormComplete: {
       handler(value) {
         this.isFacilityDetailsComplete = value
-      },
+      }
     },
     back: {
       handler() {
         this.$router.push({ name: 'applications-history' })
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     next: {
       async handler() {
@@ -224,29 +224,29 @@ export default {
         if (!this.isFormComplete) return
         this.$router.push({
           name: APPLICATION_ROUTES.ELIGIBILITY,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     primaryContact: {
       handler() {
         if (this.secondaryContact?.contactId != this.primaryContact?.contactId) return
         this.secondaryContact = undefined
-      },
-    },
+      }
+    }
   },
 
   created() {
     this.$emit('process', false)
     this.fiscalYearEndDate = this.currentApplication?.fiscalYearEndDate
     this.primaryContact = this.contacts?.find(
-      (contact) => contact.contactId === this.currentApplication?.primaryContactId,
+      (contact) => contact.contactId === this.currentApplication?.primaryContactId
     )
     this.secondaryContact = this.contacts?.find(
-      (contact) => contact.contactId === this.currentApplication?.secondaryContactId,
+      (contact) => contact.contactId === this.currentApplication?.secondaryContactId
     )
     this.expenseAuthority = this.contacts?.find(
-      (contact) => contact.contactId === this.currentApplication?.expenseAuthorityId,
+      (contact) => contact.contactId === this.currentApplication?.expenseAuthorityId
     )
   },
 
@@ -269,13 +269,13 @@ export default {
           secondaryContactId: this.secondaryContact?.contactId ? this.secondaryContact?.contactId : null,
           expenseAuthorityId: this.expenseAuthority?.contactId ? this.expenseAuthority?.contactId : null,
           // XXX - CRM date object uses PST timezone, so we need to convert our date to PST before sending it to CRM
-          fiscalYearEndDate: this.fiscalYearEndDate ? format.convertUTCDatetoPSTDate(this.fiscalYearEndDate) : null,
+          fiscalYearEndDate: this.fiscalYearEndDate ? format.convertUTCDatetoPSTDate(this.fiscalYearEndDate) : null
         }
         if (this.isFacilityLocationAttributesUpdated) {
           reloadApplication = true
           await FacilityService.updateFacility(
             this.currentApplication?.facility?.facilityId,
-            this.updatedFacilityLocationAttributes,
+            this.updatedFacilityLocationAttributes
           )
         }
         if (ApplicationService.isApplicationUpdated(payload)) {
@@ -303,9 +303,9 @@ export default {
         onReserve: updatedFacility?.onReserve,
         yppDesignation: updatedFacility?.yppDesignation,
         yppEnrolled: updatedFacility?.yppDesignation ? updatedFacility?.yppEnrolled : null,
-        personalResidence: updatedFacility?.personalResidence,
+        personalResidence: updatedFacility?.personalResidence
       }
-    },
-  },
+    }
+  }
 }
 </script>

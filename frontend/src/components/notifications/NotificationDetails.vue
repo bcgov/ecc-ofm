@@ -47,25 +47,25 @@ export default {
     notificationId: {
       type: String,
       required: true,
-      default: '',
-    },
+      default: ''
+    }
   },
   emits: ['toggleMarkUnreadButtonInNotificationDetails'],
   data() {
     return {
       format,
-      notification: null,
+      notification: null
     }
   },
   computed: {
-    ...mapState(useNotificationsStore, ['notifications']),
+    ...mapState(useNotificationsStore, ['notifications'])
   },
   watch: {
     // When notificationId changes, get the details for that notification.
     notificationId(newVal) {
       this.notification = this.notifications.find((item) => item.notificationId === newVal)
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -18,7 +18,7 @@ describe('TheHeader', () => {
   authStore.currentFacility = { facilityName: 'UT Facility' }
   authStore.userInfo = {
     userName: 'ofmqa01',
-    organizationName: 'UT Org',
+    organizationName: 'UT Org'
   }
   const notificationsStore = useNotificationsStore()
   // Add 2 unread messages

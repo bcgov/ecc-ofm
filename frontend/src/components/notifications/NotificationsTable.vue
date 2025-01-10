@@ -43,16 +43,16 @@ export default {
   props: {
     markReadButtonState: {
       type: Boolean,
-      default: false,
+      default: false
     },
     markUnreadButtonInNotificationTableState: {
       type: Boolean,
-      default: false,
+      default: false
     },
     markUnreadButtonInNotificationDetailsState: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['openNotificationDetails'],
   data() {
@@ -64,46 +64,46 @@ export default {
           align: 'start',
           key: 'isRead',
           sortable: true,
-          width: '22%',
+          width: '22%'
         },
         {
           title: 'Subject',
           align: 'start',
           key: 'subject',
           sortable: true,
-          width: '50%',
+          width: '50%'
         },
         {
           title: 'Date Received',
           align: 'start',
           key: 'dateReceived',
           sortable: true,
-          width: '23%',
-        },
+          width: '23%'
+        }
       ],
       bodyCheckboxesSelected: [],
-      selectedNotificationId: null, // Used for displaying notification details
+      selectedNotificationId: null // Used for displaying notification details
     }
   },
   computed: {
-    ...mapState(useNotificationsStore, ['notifications']),
+    ...mapState(useNotificationsStore, ['notifications'])
   },
   watch: {
     markReadButtonState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(true)
-      },
+      }
     },
     markUnreadButtonInNotificationTableState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(false)
-      },
+      }
     },
     markUnreadButtonInNotificationDetailsState: {
       async handler() {
         await this.updateNotificationReadUnread(false, this.selectedNotificationId)
-      },
-    },
+      }
+    }
   },
   methods: {
     resetAllCheckboxes() {
@@ -118,7 +118,7 @@ export default {
       await Promise.all(
         selectedNotificationIds.map(async (notificationId) => {
           await this.updateNotificationReadUnread(isRead, notificationId)
-        }),
+        })
       )
     },
     /**
@@ -149,10 +149,10 @@ export default {
     getItemClass(item) {
       return {
         'unread-notification': !item?.isRead,
-        'highlighted-row': this.selectedNotificationId === item?.notificationId,
+        'highlighted-row': this.selectedNotificationId === item?.notificationId
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

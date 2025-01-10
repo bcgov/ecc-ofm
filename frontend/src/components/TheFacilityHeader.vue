@@ -31,21 +31,21 @@ export default {
   props: {
     showFacility: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   computed: {
     ...mapState(useAuthStore, ['isAuthenticated', 'userInfo']),
     ...mapWritableState(useAuthStore, ['currentFacility']),
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'flex-start' : 'flex-end'
-    },
+    }
   },
   methods: {
     changeFacility(facility) {
       this.currentFacility = facility
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

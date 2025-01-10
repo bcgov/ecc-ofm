@@ -127,7 +127,7 @@ export default {
       loading: false,
       loadingFA: false,
       showAssistanceRequestDialog: false,
-      pendingReportsCount: 0,
+      pendingReportsCount: 0
     }
   },
   computed: {
@@ -137,7 +137,7 @@ export default {
     },
     showReportsAlertBanner() {
       return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS) && this.pendingReportsCount > 0
-    },
+    }
   },
   async created() {
     await this.loadPendingReportsCount()
@@ -158,15 +158,15 @@ export default {
           this.userInfo?.facilities?.map(async (facility) => {
             const count = await ReportsService.getDraftSurveyResponsesCountByFacility(facility.facilityId)
             this.pendingReportsCount += count
-          }),
+          })
         )
       } catch (error) {
         this.setFailureAlert('Failed to get pending reports count for facilities ', error)
       } finally {
         this.loading = false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

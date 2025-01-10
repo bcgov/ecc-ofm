@@ -37,8 +37,8 @@ export default {
         default:
           return null
       }
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

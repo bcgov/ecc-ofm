@@ -112,7 +112,7 @@ export default {
     // count of requests that are unread or are in the status of “Action required”
     actionRequiredAndUnreadMessageCount() {
       const readActionRequiredMessagesCount = this.assistanceRequests?.filter(
-        (message) => message.status === 'Action required' && message.isRead,
+        (message) => message.status === 'Action required' && message.isRead
       )?.length
       return this.unreadMessageCount + readActionRequiredMessagesCount
     },
@@ -127,15 +127,15 @@ export default {
     },
     iconsClass() {
       return this.$vuetify.display.xs ? 'icons-border' : ''
-    },
+    }
   },
   watch: {
     userInfo: {
       handler(_value) {
         this.loadUserInfo()
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     ...mapActions(useMessagesStore, ['getAssistanceRequests']),
@@ -149,8 +149,8 @@ export default {
       } catch (error) {
         console.log(error)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

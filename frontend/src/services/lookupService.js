@@ -21,5 +21,5 @@ export default {
       console.log(`Failed to get system messages - ${error}`)
       throw error
     }
-  },
+  }
 }

@@ -7,7 +7,7 @@ import { directive as VNumber } from '@coders-tm/vue-number-format'
 export default {
   name: 'AppNumberInput',
   directives: {
-    number: VNumber,
+    number: VNumber
   },
   inheritAttrs: true,
   props: {
@@ -17,10 +17,10 @@ export default {
         return {
           decimal: '.',
           separator: ',',
-          precision: 2,
+          precision: 2
         }
-      },
-    },
+      }
+    }
   },
   emits: ['update:modelValue'],
   methods: {
@@ -30,7 +30,7 @@ export default {
     },
     blur(value) {
       this.$emit('update:modelValue', Number(value?.target?.unmasked).toFixed(this.format?.precision))
-    },
-  },
+    }
+  }
 }
 </script>

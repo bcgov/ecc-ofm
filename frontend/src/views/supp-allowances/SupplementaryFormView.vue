@@ -251,7 +251,7 @@ import {
   VIRUS_SCAN_ERROR_MESSAGE,
   GOOD_STANDING_STATUS_CODES,
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
-  NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
+  NOT_IN_GOOD_STANDING_WARNING_MESSAGE
 } from '@/utils/constants'
 import { uuid } from 'vue-uuid'
 import { mapState } from 'pinia'
@@ -274,41 +274,41 @@ export default {
     AppLabel,
     IndigenousProgrammingAllowance,
     SupportNeedsProgrammingAllowance,
-    TransportationAllowance,
+    TransportationAllowance
   },
   mixins: [alertMixin, permissionsMixin],
   props: {
     applicationId: {
       type: String,
-      default: undefined,
+      default: undefined
     },
     fundingAgreement: {
       type: Object,
       default: () => {
         return {}
       },
-      required: true,
+      required: true
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     cancel: {
       type: Boolean,
-      default: false,
+      default: false
     },
     submit: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['process', 'setSubmit', 'setNext'],
   data() {
@@ -325,7 +325,7 @@ export default {
       currentTermDisabled: false,
       nextTermActive: false,
       fundingExpiryDate: undefined,
-      isFundingTermComplete: false,
+      isFundingTermComplete: false
     }
   },
   computed: {
@@ -346,9 +346,9 @@ export default {
         .filter((el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT)
         ?.some(
           (el) =>
-            el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0',
+            el?.odometer === 0 || el?.odometer === '0' || el?.estimatedMileage === 0 || el?.estimatedMileage === '0'
         )
-    },
+    }
   },
   watch: {
     back: {
@@ -357,17 +357,17 @@ export default {
           await this.saveApplication()
         }
         this.$router.push({ name: 'applications-history' })
-      },
+      }
     },
     cancel: {
       handler() {
         this.toggleCancelDialog()
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     next: {
       async handler() {
@@ -379,8 +379,8 @@ export default {
         }
         const applicationId = this.applicationId ? this.applicationId : this.$route.params.applicationGuid
         this.$router.push({ name: 'supp-allowances-submit', params: { applicationGuid: applicationId } })
-      },
-    },
+      }
+    }
   },
   async created() {
     this.format = format
@@ -409,7 +409,7 @@ export default {
           this.setActiveTerm(true)
         }
         this.setUpDefaultNewRequestModel(
-          await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId),
+          await ApplicationService.getSupplementaryApplicationsForForm(this.applicationId)
         )
       } catch (error) {
         this.setFailureAlert('Failed to load Allowances applications', error)
@@ -439,7 +439,7 @@ export default {
 
           const payload = {
             ...applicationModel,
-            applicationId: this.applicationId,
+            applicationId: this.applicationId
           }
 
           if (payload.monthlyLease) {
@@ -449,7 +449,7 @@ export default {
           if (applicationModel.supplementaryApplicationId) {
             await ApplicationService.updateSupplementaryApplication(
               applicationModel.supplementaryApplicationId,
-              payload,
+              payload
             )
           } else {
             const response = await ApplicationService.createSupplementaryApplication(payload)
@@ -466,7 +466,7 @@ export default {
             try {
               await DocumentService.createDocuments(
                 applicationModel.documentsToUpload,
-                applicationModel.supplementaryApplicationId,
+                applicationModel.supplementaryApplicationId
               )
             } catch (error) {
               if (error?.response?.data?.status === 422) {
@@ -493,23 +493,23 @@ export default {
         indigenousFundingModel: [],
         indigenousOtherDescription: null,
         supplementaryApplicationId: undefined,
-        supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS,
+        supplementaryType: SUPPLEMENTARY_TYPES.INDIGENOUS
       }
 
       const supportModel = {
         supportFundingModel: [],
         supportOtherDescription: null,
         supplementaryApplicationId: undefined,
-        supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT,
+        supplementaryType: SUPPLEMENTARY_TYPES.SUPPORT
       }
 
       this.models = [
         { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.renewalTerm) },
-        { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) },
+        { ...this.findAndUpdateModel(suppApplications, supportModel, this.renewalTerm) }
       ]
 
       const transportApplications = suppApplications.filter(
-        (el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT,
+        (el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT
       )
 
       this.updateTransportModel(transportApplications, this.renewalTerm)
@@ -517,7 +517,7 @@ export default {
       if (this.isNextTermEnabled) {
         this.models.push(
           { ...this.findAndUpdateModel(suppApplications, indigenousProgrammingModel, this.nextRenewalTerm) },
-          { ...this.findAndUpdateModel(suppApplications, supportModel, this.nextRenewalTerm) },
+          { ...this.findAndUpdateModel(suppApplications, supportModel, this.nextRenewalTerm) }
         )
         this.updateTransportModel(transportApplications, this.nextRenewalTerm)
       }
@@ -542,8 +542,8 @@ export default {
         this.models.find(
           (el) =>
             updatedModel.supplementaryApplicationId &&
-            el.supplementaryApplicationId == updatedModel.supplementaryApplicationId,
-        ),
+            el.supplementaryApplicationId == updatedModel.supplementaryApplicationId
+        )
       )
 
       if (index === -1) {
@@ -561,7 +561,7 @@ export default {
           }
           return el.id === applicationModel.id
         }),
-        applicationModel,
+        applicationModel
       )
     },
     getModel(type, currentTerm) {
@@ -569,13 +569,13 @@ export default {
     },
     getTransportModels(term) {
       return this.models?.filter(
-        (el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm === term,
+        (el) => el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT && el.renewalTerm === term
       )
     },
     findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
       const foundApp = suppApplications.find(
         (application) =>
-          application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm,
+          application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm
       )
       modelToUpdate.renewalTerm = renewalTerm
       modelToUpdate.id = uuid.v4()
@@ -595,7 +595,7 @@ export default {
           documentsToUpload: [],
           id: uuid.v4(),
           renewalTerm: term,
-          retroactiveDate: null,
+          retroactiveDate: null
         })
       }
     },
@@ -629,7 +629,7 @@ export default {
       if (model.supplementaryApplicationId) {
         this.models[
           this.models.indexOf(
-            this.models.find((el) => el.supplementaryApplicationId == model.supplementaryApplicationId),
+            this.models.find((el) => el.supplementaryApplicationId == model.supplementaryApplicationId)
           )
         ].toDelete = true
       } else {
@@ -651,7 +651,7 @@ export default {
             return true
           }
           return this.isModelEmpty(el)
-        }),
+        })
       )
     },
     setSuppTermDates() {
@@ -756,8 +756,8 @@ export default {
         case term === SUPP_TERM_CODES.TERM_THREE:
           return this.format.formatTwoMonthDate(termThreeStartDate)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

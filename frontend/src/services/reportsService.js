@@ -9,7 +9,7 @@ export default {
     try {
       if (!surveyTemplateId) return []
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.REPORTS}/survey-sections?surveyTemplateId=${surveyTemplateId}`,
+        `${ApiRoutes.REPORTS}/survey-sections?surveyTemplateId=${surveyTemplateId}`
       )
       return response?.data
     } catch (error) {
@@ -22,7 +22,7 @@ export default {
     try {
       if (!sectionId || !facilityId) return []
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`,
+        `${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`
       )
       const questions = response?.data
       questions?.forEach((question) => {
@@ -30,12 +30,12 @@ export default {
           [
             SURVEY_QUESTION_TYPES.TWO_OPTION,
             SURVEY_QUESTION_TYPES.CHOICE,
-            SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE,
+            SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE
           ].includes(question?.type)
         ) {
           question.choices = convertStringToArray(
             question.choices?.slice(1, -1),
-            SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR,
+            SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR
           )
         }
       })
@@ -61,7 +61,7 @@ export default {
     try {
       if (!facilityId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=false`,
+        `${ApiRoutes.REPORTS}/survey-responses?facilityId=${facilityId}&isSubmitted=false`
       )
       return response?.data
     } catch (error) {
@@ -74,7 +74,7 @@ export default {
     try {
       if (!facilityId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.REPORTS}/survey-responses-count?facilityId=${facilityId}&isSubmitted=false`,
+        `${ApiRoutes.REPORTS}/survey-responses-count?facilityId=${facilityId}&isSubmitted=false`
       )
       return response?.data[0]?.count
     } catch (error) {
@@ -106,7 +106,7 @@ export default {
       if (!surveyResponseId || isEmpty(payload)) return
       const response = await ApiService.apiAxios.patch(
         `${ApiRoutes.REPORTS}/survey-responses/${surveyResponseId}`,
-        payload,
+        payload
       )
       return response?.data
     } catch (error) {
@@ -130,7 +130,7 @@ export default {
     try {
       if (!surveyResponseId) return []
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`,
+        `${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`
       )
       return response?.data
     } catch (error) {
@@ -155,7 +155,7 @@ export default {
       if (!questionResponseId || isEmpty(payload)) return
       const response = await ApiService.apiAxios.patch(
         `${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`,
-        payload,
+        payload
       )
       return response?.data
     } catch (error) {
@@ -173,5 +173,5 @@ export default {
       console.log(`Failed to delete question response - ${error}`)
       throw error
     }
-  },
+  }
 }

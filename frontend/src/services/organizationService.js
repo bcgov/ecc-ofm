@@ -17,7 +17,7 @@ export default {
     try {
       if (!organizationId) return
       const response = await ApiService.apiAxios.get(
-        ApiRoutes.ORGANIZATIONS_FACILITIES.replace(':organizationId', organizationId),
+        ApiRoutes.ORGANIZATIONS_FACILITIES.replace(':organizationId', organizationId)
       )
       return response?.data
     } catch (error) {
@@ -30,7 +30,7 @@ export default {
     try {
       if (!organizationId) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`,
+        `${ApiRoutes.ORGANIZATIONS_USERS.replace(':organizationId', organizationId)}?firstName=${firstName}&lastName=${lastName}&email=${email}`
       )
       return response?.data
     } catch (error) {
@@ -48,5 +48,5 @@ export default {
       console.log(`Failed to update organization by organization/account id - ${error}`)
       throw error
     }
-  },
+  }
 }

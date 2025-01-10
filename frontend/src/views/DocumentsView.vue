@@ -12,7 +12,7 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 
 export default {
   name: 'DocumentsView',
-  components: { AppBackButton, OrganizationHeader },
+  components: { AppBackButton, OrganizationHeader }
 }
 </script>
 

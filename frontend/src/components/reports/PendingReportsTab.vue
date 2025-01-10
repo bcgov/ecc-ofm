@@ -116,7 +116,7 @@ export default {
         { title: 'Title', key: 'title' },
         { title: 'Facility', key: 'facilityName' },
         { title: 'Status', key: 'statusName' },
-        { title: 'Actions', key: 'actions', sortable: false },
+        { title: 'Actions', key: 'actions', sortable: false }
       ],
       loading: false,
       showAssistanceRequestDialog: false,
@@ -124,7 +124,7 @@ export default {
       surveyResponseToUnlock: undefined,
       surveyResponseIdToDelete: undefined,
       facilityNameFilter: undefined,
-      pendingReports: [],
+      pendingReports: []
     }
   },
 
@@ -136,7 +136,7 @@ export default {
     },
     filteredFacilityIds() {
       const filteredFacilities = this.userInfo?.facilities?.filter((facility) =>
-        facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase()),
+        facility.facilityName?.toLowerCase().includes(this.facilityNameFilter?.toLowerCase())
       )
       return !isEmpty(filteredFacilities) ? filteredFacilities?.map((facility) => facility.facilityId) : []
     },
@@ -145,9 +145,9 @@ export default {
     },
     defaultAssistanceRequestFacility() {
       return this.userInfo?.facilities?.find(
-        (facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId,
+        (facility) => facility.facilityId === this.surveyResponseToUnlock?.facilityId
       )
-    },
+    }
   },
 
   async created() {
@@ -169,7 +169,7 @@ export default {
             if (!isEmpty(response)) {
               this.pendingReports = this.pendingReports?.concat(response)
             }
-          }),
+          })
         )
         this.pendingReports?.forEach((report) => {
           report.alert = this.isOverdue(report)
@@ -191,7 +191,7 @@ export default {
         const overDueComparison = isOverdueA - isOverdueB
         const facilityNameComparison = a.facilityName?.localeCompare(b.facilityName)
         const surveyResponseNumberComparison = a.surveyResponseReferenceNumber?.localeCompare(
-          b.surveyResponseReferenceNumber,
+          b.surveyResponseReferenceNumber
         )
         return overDueComparison || facilityNameComparison || surveyResponseNumberComparison
       })
@@ -224,7 +224,7 @@ export default {
     toggleAssistanceRequestDialog(surveyResponse) {
       this.surveyResponseToUnlock = surveyResponse ?? this.surveyResponseToUnlock
       this.showAssistanceRequestDialog = !this.showAssistanceRequestDialog
-    },
-  },
+    }
+  }
 }
 </script>

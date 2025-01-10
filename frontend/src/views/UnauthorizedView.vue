@@ -12,6 +12,6 @@ import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 
 export default {
   name: 'UnauthorizedView',
-  components: { AppSimpleCard },
+  components: { AppSimpleCard }
 }
 </script>

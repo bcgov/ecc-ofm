@@ -13,7 +13,7 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    ...mapState(useMessagesStore, ['assistanceRequests']),
+    ...mapState(useMessagesStore, ['assistanceRequests'])
   },
 
   created() {
@@ -37,7 +37,7 @@ export default {
             request.stateCode === CRM_STATE_CODES.ACTIVE &&
             request.statusCode !== ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE &&
             request.subject?.includes(surveyResponse?.title) &&
-            request.requestFacilities?.some((facility) => facility.facilityId === surveyResponse?.facilityId),
+            request.requestFacilities?.some((facility) => facility.facilityId === surveyResponse?.facilityId)
         )
       )
     },
@@ -74,6 +74,6 @@ export default {
 
     isTableQuestionResponse(response) {
       return !isEmpty(response?.tableQuestionId)
-    },
-  },
+    }
+  }
 }

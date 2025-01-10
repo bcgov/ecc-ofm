@@ -6,11 +6,11 @@ export const useMessagesStore = defineStore('messages', {
   namespaced: true,
   state: () => ({
     assistanceRequests: null,
-    assistanceRequestConversation: null,
+    assistanceRequestConversation: null
   }),
   getters: {
     unreadMessageCount: (state) =>
-      state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0,
+      state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0
   },
   actions: {
     async getAssistanceRequests(contactId) {
@@ -26,7 +26,7 @@ export const useMessagesStore = defineStore('messages', {
     async addNewAssistanceRequestToStore(assistanceRequestId) {
       const newAssistanceRequest = await MessageService.getAssistanceRequest(assistanceRequestId)
       const foundAssistanceRequestWithSameID = this.assistanceRequests?.find(
-        (item) => item.assistanceRequestId === newAssistanceRequest?.assistanceRequestId,
+        (item) => item.assistanceRequestId === newAssistanceRequest?.assistanceRequestId
       )
       if (!foundAssistanceRequestWithSameID) {
         this.assistanceRequests?.push(newAssistanceRequest)
@@ -37,7 +37,7 @@ export const useMessagesStore = defineStore('messages', {
     async updateAssistanceRequestInStore(assistanceRequestId) {
       const assistanceRequest = await MessageService.getAssistanceRequest(assistanceRequestId)
       const assistanceRequestIndex = this.assistanceRequests?.findIndex(
-        (item) => item.assistanceRequestId === assistanceRequest?.assistanceRequestId,
+        (item) => item.assistanceRequestId === assistanceRequest?.assistanceRequestId
       )
       if (assistanceRequestIndex !== -1) {
         this.assistanceRequests[assistanceRequestIndex] = assistanceRequest
@@ -60,6 +60,6 @@ export const useMessagesStore = defineStore('messages', {
         console.log(`Failed to get the list of assistance request conversations - ${error}`)
         throw error
       }
-    },
-  },
+    }
+  }
 })

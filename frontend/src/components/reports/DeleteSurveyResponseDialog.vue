@@ -47,26 +47,26 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     surveyResponseId: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   emits: ['close'],
   data() {
     return {
       loading: false,
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -87,7 +87,7 @@ export default {
         this.loading = false
         this.closeDialog()
       }
-    },
-  },
+    }
+  }
 }
 </script>

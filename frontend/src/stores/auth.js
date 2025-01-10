@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
     userInfo: null,
     impersonateId: null,
     currentFacility: {},
-    permissions: [],
+    permissions: []
   }),
   getters: {
     isActingProvider: (state) => !state.isMinistryUser || state.isImpersonating,
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
         permissions = [].concat(permissions)
         return state.permissions?.some((p) => permissions.includes(p))
       }
-    },
+    }
   },
   actions: {
     //sets Json web token and determines whether user is authenticated
@@ -127,6 +127,6 @@ export const useAuthStore = defineStore('auth', {
         await this.setJwtToken(response.jwtFrontend)
       }
       ApiService.setAuthHeader(response.jwtFrontend)
-    },
-  },
+    }
+  }
 })

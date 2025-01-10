@@ -108,5 +108,5 @@ export default {
       console.log(`Failed to get user info - ${e}`)
       throw e
     }
-  },
+  }
 }

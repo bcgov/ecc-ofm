@@ -12,7 +12,7 @@ import {
   FACILITY_TYPES,
   OFM_PROGRAM_CODES,
   YES_NO_CHOICE_CRM_MAPPING,
-  YES_NO_RADIO_GROUP_MAPPING,
+  YES_NO_RADIO_GROUP_MAPPING
 } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
@@ -26,7 +26,7 @@ export const useApplicationsStore = defineStore('applications', {
     isOperatingCostsComplete: false,
     isStaffingComplete: false,
     isDeclareSubmitComplete: false,
-    validation: false,
+    validation: false
   }),
   getters: {
     isApplicationComplete: (state) =>
@@ -35,7 +35,7 @@ export const useApplicationsStore = defineStore('applications', {
       state.isServiceDeliveryComplete &&
       state.isOperatingCostsComplete &&
       state.isStaffingComplete,
-    isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
+    isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT
   },
   actions: {
     checkApplicationComplete() {
@@ -54,7 +54,7 @@ export const useApplicationsStore = defineStore('applications', {
         const [uploadedDocuments, licences, facility] = await Promise.all([
           DocumentService.getDocuments(applicationId),
           LicenceService.getLicences(this.currentApplication?.facilityId),
-          FacilityService.getFacility(this.currentApplication?.facilityId),
+          FacilityService.getFacility(this.currentApplication?.facilityId)
         ])
         this.currentApplication.uploadedDocuments = uploadedDocuments
         this.currentApplication.licences = licences
@@ -144,21 +144,21 @@ export const useApplicationsStore = defineStore('applications', {
             LicenceService.isWeeksInOperationValid(detail.weeksInOperation) &&
             !isEmpty(detail.operationFromTime) &&
             !isEmpty(detail.operationToTime) &&
-            !isEmpty(detail.weekDays),
+            !isEmpty(detail.weekDays)
         )
       })
     },
 
     isSplitClassroomComplete() {
       return this.currentApplication?.licences.every((licence) =>
-        licence.licenceDetails?.every((detail) => LicenceService.isSplitClassRoomInfoValid(detail)),
+        licence.licenceDetails?.every((detail) => LicenceService.isSplitClassRoomInfoValid(detail))
       )
     },
 
     isLicenceDocumentUploaded() {
       return this.currentApplication.licences.every((licence) => {
         const uploadedDocument = this.currentApplication?.uploadedDocuments?.filter((document) =>
-          document.documentType?.includes(licence?.licence),
+          document.documentType?.includes(licence?.licence)
         )
         return !isEmpty(uploadedDocument)
       })
@@ -166,7 +166,7 @@ export const useApplicationsStore = defineStore('applications', {
 
     isHealthAuthorityReportUploaded() {
       const healthAuthorityReports = this.currentApplication?.uploadedDocuments?.filter((document) =>
-        document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT),
+        document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT)
       )
       return !isEmpty(healthAuthorityReports)
     },
@@ -177,7 +177,7 @@ export const useApplicationsStore = defineStore('applications', {
     checkOperatingCostsComplete() {
       const isRequiredFinancialDocsUploaded = this.checkRequiredDocsExist(this.currentApplication, [
         DOCUMENT_TYPES.INCOME_STATEMENT,
-        DOCUMENT_TYPES.BALANCE_SHEET,
+        DOCUMENT_TYPES.BALANCE_SHEET
       ])
       const isFacilityTypeRequiredDocsUploaded =
         !this.isRentLease(this.currentApplication) ||
@@ -202,7 +202,7 @@ export const useApplicationsStore = defineStore('applications', {
 
     checkRequiredDocsExist(application, requiredDocumentTypes) {
       return requiredDocumentTypes.every((type) =>
-        application.uploadedDocuments.some((doc) => doc.documentType === type),
+        application.uploadedDocuments.some((doc) => doc.documentType === type)
       )
     },
 
@@ -245,7 +245,7 @@ export const useApplicationsStore = defineStore('applications', {
 
     areAllEmployeeCertificatesEntered(certificates, application) {
       const filteredCertificates = certificates?.filter(
-        (certificate) => certificate.initials && certificate.certificateNumber,
+        (certificate) => certificate.initials && certificate.certificateNumber
       )
       const totalInfantECEducatorStaff =
         application?.staffingInfantECEducatorFullTime + application?.staffingInfantECEducatorPartTime
@@ -294,6 +294,6 @@ export const useApplicationsStore = defineStore('applications', {
     */
     checkDeclareSubmitComplete() {
       return this.currentApplication?.applicationDeclaration
-    },
-  },
+    }
+  }
 })

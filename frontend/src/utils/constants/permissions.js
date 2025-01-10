@@ -27,5 +27,5 @@ export const PERMISSIONS = Object.freeze({
   MANAGE_USERS_VIEW: 'Manage Users View',
 
   // Notifications and Messages
-  MANAGE_NOTIFICATIONS: 'Manage Notification and Messages',
+  MANAGE_NOTIFICATIONS: 'Manage Notification and Messages'
 })

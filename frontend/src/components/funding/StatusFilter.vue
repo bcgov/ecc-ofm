@@ -28,20 +28,20 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['status-filter-changed'],
   data() {
     return {
       showFilterInput: true,
-      statusFilter: '',
+      statusFilter: ''
     }
   },
   watch: {
     statusFilter(newVal) {
       this.$emit('status-filter-changed', newVal)
-    },
+    }
   },
   methods: {
     toggleShowFilter() {
@@ -49,7 +49,7 @@ export default {
       if (!this.showFilterInput) {
         this.statusFilter = ''
       }
-    },
-  },
+    }
+  }
 }
 </script>

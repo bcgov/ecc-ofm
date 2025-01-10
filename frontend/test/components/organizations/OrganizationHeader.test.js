@@ -16,7 +16,7 @@ describe('OrganizationHeader', () => {
   authStore.isAuthenticated = true
   authStore.currentFacility = { facilityName: 'UT Facility' }
   authStore.userInfo = {
-    organizationName: 'UT Org',
+    organizationName: 'UT Org'
   }
   test('init', async () => {
     const wrapper = mount(OrganizationHeader, global)

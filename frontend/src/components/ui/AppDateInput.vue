@@ -10,19 +10,19 @@ export default {
   emits: ['update:modelValue'],
   data() {
     return {
-      updatedDate: null,
+      updatedDate: null
     }
   },
   watch: {
     updatedDate: {
       handler(value) {
         this.$emit('update:modelValue', value)
-      },
-    },
+      }
+    }
   },
   created() {
     this.updatedDate = this.modelValue ? new Date(this.modelValue)?.toISOString()?.split('T')[0] : null
-  },
+  }
 }
 </script>
 

@@ -194,8 +194,8 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['update'],
   data() {
@@ -206,14 +206,14 @@ export default {
         min: 0,
         decimal: '.',
         separator: ',',
-        precision: 2,
+        precision: 2
       },
       totalNumberFormat: {
         decimal: '.',
         separator: ',',
-        prefix: '$ ',
+        prefix: '$ '
       },
-      model: {},
+      model: {}
     }
   },
   computed: {
@@ -221,15 +221,15 @@ export default {
     totalYearlyCost() {
       const totalYearlyCost = Object.values(this.model)?.reduce((total, cost) => total + Number(cost), 0)
       return totalYearlyCost.toFixed(2)
-    },
+    }
   },
   watch: {
     model: {
       handler(value) {
         this.$emit('update', value)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
     this.model = {
@@ -248,9 +248,9 @@ export default {
         : '0.00',
       furnitureEquipmentsCost: this.currentApplication?.furnitureEquipmentsCost
         ? this.currentApplication?.furnitureEquipmentsCost?.toFixed(2)
-        : '0.00',
+        : '0.00'
     }
-  },
+  }
 }
 </script>
 <style scoped>

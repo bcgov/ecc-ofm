@@ -13,28 +13,28 @@ const ofmLightTheme = {
   colors: {
     primary: '#003366',
     error: '#d8292f',
-    success: '#2e8540',
-  },
+    success: '#2e8540'
+  }
 }
 
 export default createVuetify({
   components,
   directives,
   display: {
-    mobileBreakpoint: 'md',
+    mobileBreakpoint: 'md'
   },
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
       mdi,
-      fa,
-    },
+      fa
+    }
   },
   theme: {
     defaultTheme: 'ofmLightTheme',
     themes: {
-      ofmLightTheme,
-    },
-  },
+      ofmLightTheme
+    }
+  }
 })

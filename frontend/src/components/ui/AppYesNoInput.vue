@@ -11,12 +11,12 @@ export default {
   props: {
     value: {
       type: Boolean,
-      required: false,
-    },
+      required: false
+    }
   },
   data() {
     return {
-      internalSelection: undefined,
+      internalSelection: undefined
     }
   },
   watch: {
@@ -25,13 +25,13 @@ export default {
     },
     internalSelection(newValue) {
       this.$emit('input', newValue)
-    },
+    }
   },
   methods: {
     emitValue() {
       this.$emit('input', this.internalSelection)
-    },
-  },
+    }
+  }
 }
 </script>
 

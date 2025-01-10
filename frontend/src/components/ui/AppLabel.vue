@@ -5,7 +5,7 @@
 </template>
 <script>
 export default {
-  inheritAttrs: true,
+  inheritAttrs: true
 }
 </script>
 

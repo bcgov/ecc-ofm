@@ -93,11 +93,11 @@ export default {
     return {
       authRoutes: AuthRoutes,
       loading: false,
-      systemMessages: [],
+      systemMessages: []
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['isAuthenticated']),
+    ...mapState(useAuthStore, ['isAuthenticated'])
   },
   async created() {
     await this.loadSystemMessages()
@@ -117,8 +117,8 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

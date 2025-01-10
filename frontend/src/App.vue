@@ -29,12 +29,12 @@ export default {
     TheEnvBar,
     TheHeader,
     TheSnackBar,
-    TheFooter,
+    TheFooter
   },
   methods: {
     ...mapActions(useAppStore, ['getLookupInfo']),
-    ...mapActions(useAuthStore, ['getJwtToken']),
-  },
+    ...mapActions(useAuthStore, ['getJwtToken'])
+  }
 }
 </script>
 

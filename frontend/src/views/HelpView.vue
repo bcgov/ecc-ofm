@@ -129,7 +129,7 @@ export default {
   data() {
     return {
       generalPanels: [],
-      testParticipantPanels: [],
+      testParticipantPanels: []
     }
   },
   computed: {
@@ -138,32 +138,32 @@ export default {
     },
     allTestParticipantPanelIDs() {
       return this.TEST_PARTICIPANT_PANELS.map((panel) => panel.id)
-    },
+    }
   },
   created() {
     this.GENERAL_PANELS = [
       {
         title: 'Frequently Asked Questions',
-        id: 'faq',
+        id: 'faq'
       },
       {
         title: 'Additional Resources',
-        id: 'additional',
-      },
+        id: 'additional'
+      }
     ]
     this.TEST_PARTICIPANT_PANELS = [
       {
         title: 'Supporting Materials',
-        id: 'manuals',
+        id: 'manuals'
       },
       {
         title: 'Training e-Modules',
-        id: 'training',
+        id: 'training'
       },
       {
         title: 'Other',
-        id: 'other',
-      },
+        id: 'other'
+      }
     ]
     this.generalPanels = this.allGeneralPanelIDs
     // OFMCC-6203 - Other section will be collapsed by default
@@ -175,7 +175,7 @@ export default {
       const isAllCollapsed = isEmpty(this.generalPanels) && isEmpty(this.testParticipantPanels)
       this.generalPanels = isAllCollapsed ? this.allGeneralPanelIDs : []
       this.testParticipantPanels = isAllCollapsed ? this.allTestParticipantPanelIDs : []
-    },
-  },
+    }
+  }
 }
 </script>

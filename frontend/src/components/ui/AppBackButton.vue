@@ -10,6 +10,6 @@ import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
   components: { AppButton },
-  inheritAttrs: true,
+  inheritAttrs: true
 }
 </script>

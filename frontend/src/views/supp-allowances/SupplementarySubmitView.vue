@@ -157,7 +157,7 @@ import {
   SUPPORT_CHECKBOX_LABELS,
   SUPP_TERM_CODES,
   CORE_SERVICES_PANELS,
-  DISCRETIONARY_PANEL,
+  DISCRETIONARY_PANEL
 } from '@/utils/constants/suppConstants'
 import { hasDuplicateVIN } from '@/utils/common'
 import { mapState } from 'pinia'
@@ -173,24 +173,24 @@ export default {
   props: {
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
+      default: false
     },
     next: {
       type: Boolean,
-      default: false,
+      default: false
     },
     cancel: {
       type: Boolean,
-      default: false,
+      default: false
     },
     submit: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['setSubmit', 'process'],
   data() {
@@ -210,8 +210,8 @@ export default {
         min: 0,
         decimal: '.',
         separator: ',',
-        precision: 2,
-      },
+        precision: 2
+      }
     }
   },
   computed: {
@@ -228,7 +228,7 @@ export default {
       }
       return (
         model?.indigenousFundingModel.includes(
-          this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+          this.INDIG_CHECKBOX_LABELS.find((item) => item.label === 'Other').value
         ) && !isEmpty(model.indigenousOtherDescription)
       )
     },
@@ -241,7 +241,7 @@ export default {
       }
       return (
         model?.supportFundingModel.includes(
-          this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value,
+          this.SUPPORT_CHECKBOX_LABELS.find((item) => item.label === 'Other').value
         ) && !isEmpty(model.supportOtherDescription)
       )
     },
@@ -290,7 +290,7 @@ export default {
         !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.SUPPORT)) ||
         !isEmpty(this.getModelsByType(SUPPLEMENTARY_TYPES.INDIGENOUS))
       )
-    },
+    }
   },
   watch: {
     back: {
@@ -300,25 +300,25 @@ export default {
         }
         this.$router.push({
           name: 'supp-allowances-form',
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     cancel: {
       handler() {
         this.toggleCancelDialog()
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     submit: {
       async handler() {
         await this.submitApplication()
-      },
-    },
+      }
+    }
   },
   async created() {
     this.SUPPLEMENTARY_TYPES = SUPPLEMENTARY_TYPES
@@ -345,7 +345,7 @@ export default {
         this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
         this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(
           this.$route.params.applicationGuid,
-          true,
+          true
         )
 
         this.setSuppTermDates()
@@ -354,7 +354,7 @@ export default {
         this.models = this.models.filter(
           (el) =>
             el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT ||
-            el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED,
+            el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED
         )
 
         for (const el of this.models) {
@@ -422,7 +422,7 @@ export default {
         'setSubmit',
         this.supplementaryDeclaration &&
           this.isApplicationComplete &&
-          this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING),
+          this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       )
     },
     async saveApplication(showAlert = false, isSubmit = false) {
@@ -431,7 +431,7 @@ export default {
         this.$emit('process', true)
         for (const applicationModel of this.models) {
           const payload = {
-            supplementaryDeclaration: this.supplementaryDeclaration,
+            supplementaryDeclaration: this.supplementaryDeclaration
           }
           if (isSubmit) {
             payload.statusCode = SUPPLEMENTARY_APPLICATION_STATUS_CODES.SUBMITTED
@@ -456,7 +456,7 @@ export default {
     },
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
-    },
-  },
+    }
+  }
 }
 </script>

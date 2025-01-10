@@ -67,5 +67,5 @@ export default {
       console.log(`Failed to create Assistance Request's conversations - ${error}`)
       throw error
     }
-  },
+  }
 }

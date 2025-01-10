@@ -132,7 +132,7 @@ const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
   FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
   FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
-  FUNDING_AGREEMENT_STATUS_CODES.CANCELLED,
+  FUNDING_AGREEMENT_STATUS_CODES.CANCELLED
 ]
 
 export default {
@@ -146,7 +146,7 @@ export default {
       fundingAgreement: undefined,
       licences: [],
       panel: [],
-      loading: false,
+      loading: false
     }
   },
 
@@ -154,7 +154,7 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     readonly() {
       const isExpenseAuthority = this.userInfo?.facilities?.some(
-        (facility) => facility.facilityId === this.fundingAgreement?.facilityId && facility.isExpenseAuthority,
+        (facility) => facility.facilityId === this.fundingAgreement?.facilityId && facility.isExpenseAuthority
       )
       return !isExpenseAuthority || LOCKED_STATUSES.includes(this.fundingAgreement?.statusCode)
     },
@@ -163,7 +163,7 @@ export default {
     },
     downloadFileName() {
       return `Funding_Agreement_${this.fundingAgreement?.fundingAgreementNumber}`
-    },
+    }
   },
 
   async created() {
@@ -178,7 +178,7 @@ export default {
         await this.getLicences()
         const resp = await FundingAgreementService.getFundingPDFById(this.$route.params.fundingGuid)
         this.pdfFile = {
-          data: atob(resp),
+          data: atob(resp)
         }
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
       } catch (ignoreError) {
@@ -194,7 +194,7 @@ export default {
         await Promise.all(
           this.licences.map(async (licence) => {
             licence.licenceDetails = await LicenceService.getLicenceDetails(licence?.licenceId)
-          }),
+          })
         )
       } catch (error) {
         this.setFailureAlert('Failed to licence(s) for facilityId = ' + this.fundingAgreement?.facilityId, error)
@@ -206,7 +206,7 @@ export default {
         agreeConsentCertify: this.fundingAgreement?.agreeConsentCertify,
         statusCode: FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         contactId: this.userInfo?.contactId,
-        signedOn: getMomentDate(new Date()),
+        signedOn: getMomentDate(new Date())
       }
 
       try {
@@ -220,7 +220,7 @@ export default {
     goToDeclaration() {
       const declarationElement = document.getElementById('declaration')
       declarationElement.scrollIntoView({ behavior: 'smooth' })
-    },
-  },
+    }
+  }
 }
 </script>

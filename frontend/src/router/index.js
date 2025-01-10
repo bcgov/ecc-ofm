@@ -54,7 +54,7 @@ const router = createRouter({
         setTimeout(() => {
           resolve({
             el: to.hash,
-            behavior: 'smooth',
+            behavior: 'smooth'
           })
         }, 700)
       })
@@ -68,40 +68,40 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
-        requiresAuth: true,
-      },
+        requiresAuth: true
+      }
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
       meta: {
-        requiresAuth: false,
-      },
+        requiresAuth: false
+      }
     },
     {
       path: '/internal',
       name: 'ministry-login',
       component: MinistryLoginView,
       meta: {
-        requiresAuth: false,
-      },
+        requiresAuth: false
+      }
     },
     {
       path: '/logout',
       name: 'logout',
       component: LogoutView,
       meta: {
-        requiresAuth: false,
-      },
+        requiresAuth: false
+      }
     },
     {
       path: '/impersonate',
       name: 'impersonate',
       component: ImpersonateView,
       meta: {
-        requiresAuth: true,
-      },
+        requiresAuth: true
+      }
     },
     {
       path: '/messaging',
@@ -109,8 +109,8 @@ const router = createRouter({
       component: MessagingView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.MANAGE_NOTIFICATIONS,
-      },
+        permission: PERMISSIONS.MANAGE_NOTIFICATIONS
+      }
     },
     {
       path: '/reporting/overview',
@@ -118,8 +118,8 @@ const router = createRouter({
       component: ReportingView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.SEARCH_VIEW_REPORTS,
-      },
+        permission: PERMISSIONS.SEARCH_VIEW_REPORTS
+      }
     },
     {
       path: '/reporting/:surveyResponseGuid',
@@ -127,8 +127,8 @@ const router = createRouter({
       component: SurveyView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.SEARCH_VIEW_REPORTS,
-      },
+        permission: PERMISSIONS.SEARCH_VIEW_REPORTS
+      }
     },
     {
       path: '/funding/overview',
@@ -136,8 +136,8 @@ const router = createRouter({
       component: FundingOverviewView,
       meta: {
         requiresAuth: true,
-        permission: [PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS],
-      },
+        permission: [PERMISSIONS.VIEW_FUNDING_AGREEMENT, PERMISSIONS.VIEW_FUNDING_AMOUNTS]
+      }
     },
     {
       path: '/funding/base/:fundingGuid',
@@ -145,8 +145,8 @@ const router = createRouter({
       component: BaseFundingView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
-      },
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT
+      }
     },
     {
       path: '/funding/supp-allowances/:fundingGuid',
@@ -154,8 +154,8 @@ const router = createRouter({
       component: SupplementaryFundingView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
-      },
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT
+      }
     },
     {
       path: '/funding/irregular/:fundingGuid',
@@ -163,8 +163,8 @@ const router = createRouter({
       component: IrregularFundingView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
-      },
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT
+      }
     },
     {
       path: '/funding/confirmation',
@@ -172,8 +172,8 @@ const router = createRouter({
       component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
-      },
+        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT
+      }
     },
 
     {
@@ -182,8 +182,8 @@ const router = createRouter({
       component: DocumentsView,
       meta: {
         requiresAuth: true,
-        hidden: true,
-      },
+        hidden: true
+      }
     },
     {
       path: '/applications/applications-history',
@@ -191,8 +191,8 @@ const router = createRouter({
       component: ApplicationsHistoryView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_APPLICATIONS,
-      },
+        permission: PERMISSIONS.VIEW_APPLICATIONS
+      }
     },
     {
       path: '/applications',
@@ -201,7 +201,7 @@ const router = createRouter({
       redirect: '/applications/select-facility',
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_APPLICATIONS,
+        permission: PERMISSIONS.VIEW_APPLICATIONS
       },
       children: [
         {
@@ -209,53 +209,53 @@ const router = createRouter({
           name: APPLICATION_ROUTES.SELECT_FACILITY,
           component: SelectFacilityView,
           meta: {
-            permission: PERMISSIONS.APPLY_FOR_FUNDING,
-          },
+            permission: PERMISSIONS.APPLY_FOR_FUNDING
+          }
         },
         {
           path: ':applicationGuid/facility-details',
           name: APPLICATION_ROUTES.FACILITY_DETAILS,
-          component: FacilityDetailsView,
+          component: FacilityDetailsView
         },
         {
           path: ':applicationGuid/eligibility',
           name: APPLICATION_ROUTES.ELIGIBILITY,
-          component: EligibilityView,
+          component: EligibilityView
         },
         {
           path: ':applicationGuid/service-delivery',
           name: APPLICATION_ROUTES.SERVICE_DELIVERY,
-          component: ServiceDeliveryView,
+          component: ServiceDeliveryView
         },
         {
           path: ':applicationGuid/operating-costs',
           name: APPLICATION_ROUTES.OPERATING_COSTS,
-          component: OperatingCostsView,
+          component: OperatingCostsView
         },
         {
           path: ':applicationGuid/staffing',
           name: APPLICATION_ROUTES.STAFFING,
-          component: StaffingView,
+          component: StaffingView
         },
         {
           path: ':applicationGuid/review',
           name: APPLICATION_ROUTES.REVIEW,
-          component: ReviewApplicationView,
+          component: ReviewApplicationView
         },
         {
           path: ':applicationGuid/declare-submit',
           name: APPLICATION_ROUTES.SUBMIT,
-          component: DeclareSubmitView,
+          component: DeclareSubmitView
         },
         {
           path: ':applicationGuid/confirmation',
           name: APPLICATION_ROUTES.CONFIRMATION,
           component: ApplicationConfirmationView,
           meta: {
-            permission: PERMISSIONS.APPLY_FOR_FUNDING,
-          },
-        },
-      ],
+            permission: PERMISSIONS.APPLY_FOR_FUNDING
+          }
+        }
+      ]
     },
     {
       path: '/supp-allowances',
@@ -264,21 +264,21 @@ const router = createRouter({
       redirect: { name: 'supp-allowances-form' },
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.VIEW_APPLICATIONS,
+        permission: PERMISSIONS.VIEW_APPLICATIONS
       },
       children: [
         {
           path: ':applicationGuid?',
           name: 'supp-allowances-form',
-          component: SupplementaryFormView,
+          component: SupplementaryFormView
         },
         {
           path: ':applicationGuid/declare-submit',
           name: 'supp-allowances-submit',
           component: SupplementarySubmitView,
-          permission: PERMISSIONS.APPLY_FOR_FUNDING,
-        },
-      ],
+          permission: PERMISSIONS.APPLY_FOR_FUNDING
+        }
+      ]
     },
     {
       path: '/supplementary-confirmation',
@@ -286,87 +286,87 @@ const router = createRouter({
       component: SupplementaryConfirmationView,
       meta: {
         requiresAuth: true,
-        permission: PERMISSIONS.APPLY_FOR_FUNDING,
-      },
+        permission: PERMISSIONS.APPLY_FOR_FUNDING
+      }
     },
     {
       path: '/help',
       name: 'help',
       component: HelpView,
       meta: {
-        requiresAuth: true,
-      },
+        requiresAuth: true
+      }
     },
     {
       path: '/account-mgmt',
       component: AccountMgmtHomeView,
       meta: {
-        requiresAuth: true,
+        requiresAuth: true
       },
       children: [
         {
           path: '',
           name: 'account-mgmt',
-          component: AccountMgmtView,
+          component: AccountMgmtView
         },
         {
           path: 'manage-organization',
           name: 'manage-organization',
-          component: ManageOrganizationView,
+          component: ManageOrganizationView
         },
         {
           path: 'manage-facility/:facilityId',
           name: 'manage-facility',
-          component: ManageFacilityView,
+          component: ManageFacilityView
         },
         {
           path: 'manage-users',
           name: 'manage-users',
           component: ManageUsersView,
           meta: {
-            permission: PERMISSIONS.MANAGE_USERS_VIEW,
-          },
-        },
-      ],
+            permission: PERMISSIONS.MANAGE_USERS_VIEW
+          }
+        }
+      ]
     },
     {
       path: '/session-expired',
       name: 'session-expired',
       component: SessionExpiredView,
       meta: {
-        requiresAuth: false,
-      },
+        requiresAuth: false
+      }
     },
     {
       path: '/unauthorized',
       name: 'unauthorized',
       component: UnauthorizedView,
       meta: {
-        requiresAuth: false,
-      },
+        requiresAuth: false
+      }
     },
     {
       path: '/error',
       name: 'error',
       component: ErrorView,
       meta: {
-        requiresAuth: false,
-      },
+        requiresAuth: false
+      }
     },
     {
       path: '/:catchAll(.*)',
       name: 'notfound',
       redirect: '/',
       meta: {
-        requiresAuth: true,
-      },
+        requiresAuth: true
+      }
     },
     {
       path: '/token-expired',
       name: 'backend-session-expired',
-      component: BackendSessionExpiredView,
-    },
-  ],
+      component: BackendSessionExpiredView
+    }
+  ]
 })
 
 router.beforeEach((to, _from, next) => {

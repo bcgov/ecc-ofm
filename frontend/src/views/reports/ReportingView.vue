@@ -39,8 +39,8 @@ export default {
   components: { AppBackButton, OrganizationHeader, PendingReportsTab, ReportingHistoryTab },
   data() {
     return {
-      tab: undefined,
+      tab: undefined
     }
-  },
+  }
 }
 </script>

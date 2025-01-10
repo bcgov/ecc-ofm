@@ -11,7 +11,7 @@
         <template
           v-if="
             [PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM, PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM].includes(
-              displayType,
+              displayType
             )
           ">
           <h3 class="mb-3">This facility is not enrolled in the $10 a Day - Operating Funding Model</h3>
@@ -59,7 +59,7 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
+      default: false
     },
     displayType: {
       type: String,
@@ -67,24 +67,24 @@ export default {
         return [
           PREVENT_CHANGE_REQUEST_TYPES.IN_CCOF_PROGRAM,
           PREVENT_CHANGE_REQUEST_TYPES.IN_TDAD_PROGRAM,
-          PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM,
+          PREVENT_CHANGE_REQUEST_TYPES.NO_FACILITIES_IN_OFM
         ].includes(value)
       },
-      default: null,
-    },
+      default: null
+    }
   },
   emits: ['close'],
   data() {
     return {
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   created() {
     this.PREVENT_CHANGE_REQUEST_TYPES = PREVENT_CHANGE_REQUEST_TYPES
@@ -93,7 +93,7 @@ export default {
   methods: {
     closeDialog() {
       this.$emit('close')
-    },
-  },
+    }
+  }
 }
 </script>

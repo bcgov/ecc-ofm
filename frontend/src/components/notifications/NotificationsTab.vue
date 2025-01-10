@@ -54,14 +54,14 @@ export default {
       selectedNotificationId: '',
       markReadButtonState: false,
       markUnreadButtonInNotificationTableState: false,
-      markUnreadButtonInNotificationDetailsState: false,
+      markUnreadButtonInNotificationDetailsState: false
     }
   },
   computed: {
     ...mapState(useNotificationsStore, ['notifications']),
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
-    },
+    }
   },
   methods: {
     ...mapActions(useNotificationsStore, ['getNotifications']),
@@ -76,8 +76,8 @@ export default {
     },
     openNotificationDetails(notificationId) {
       this.selectedNotificationId = notificationId
-    },
-  },
+    }
+  }
 }
 </script>
 

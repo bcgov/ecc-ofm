@@ -46,35 +46,35 @@ export default {
   props: {
     questions: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     responses: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     maxRows: {
       type: Number,
-      default: 0,
+      default: 0
     },
     readonly: {
       type: Boolean,
-      required: true,
+      required: true
     },
     required: {
       type: Boolean,
-      default: false,
+      default: false
     },
     validation: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['update', 'delete'],
 
   data() {
     return {
-      updatedResponses: [],
+      updatedResponses: []
     }
   },
 
@@ -88,7 +88,7 @@ export default {
         return {
           title: header.text,
           key: header.questionId,
-          sortable: false,
+          sortable: false
         }
       })
       if (!this.hasValueInheritanceChildQuestions) {
@@ -106,7 +106,7 @@ export default {
         const row = {
           rowId: rowResponses[0].rowId,
           tableQuestionId: this.tableQuestionId,
-          headers: {},
+          headers: {}
         }
         this.questions?.forEach((question) => {
           const cell = rowResponses.find((item) => item.questionId === question.questionId)
@@ -137,7 +137,7 @@ export default {
 
     showAddButton() {
       return !this.readonly && !this.isMaxRowsReached && !this.hasValueInheritanceChildQuestions
-    },
+    }
   },
 
   watch: {
@@ -148,8 +148,8 @@ export default {
           this.addRow()
         }
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
 
   created() {
@@ -182,7 +182,7 @@ export default {
       const row = {
         rowId: this.updatedResponses?.length ?? 0,
         tableQuestionId: this.tableQuestionId,
-        headers: {},
+        headers: {}
       }
       this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
       this.updatedResponses?.push(row)
@@ -193,7 +193,7 @@ export default {
       return {
         rowId: row?.rowId,
         tableQuestionId: this.tableQuestionId,
-        value: response?.headers[questionId],
+        value: response?.headers[questionId]
       }
     },
 
@@ -217,8 +217,8 @@ export default {
         isBlank = isBlank && isEmpty(row[header])
       }
       return isBlank
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

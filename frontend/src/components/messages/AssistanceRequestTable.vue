@@ -47,16 +47,16 @@ export default {
   props: {
     markReadButtonState: {
       type: Boolean,
-      default: false,
+      default: false
     },
     markUnreadButtonInMessageTableState: {
       type: Boolean,
-      default: false,
+      default: false
     },
     markUnreadButtonInConversationThreadState: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['openRequestConversation'],
   data() {
@@ -66,31 +66,31 @@ export default {
         { title: 'Status', align: 'start', key: 'status', sortable: true, width: '15%' },
         { title: 'Subject', align: 'start', key: 'subject', sortable: true, width: '40%' },
         { title: 'Topic', align: 'start', key: 'categoryName', sortable: true, width: '25%' },
-        { title: 'Last updated', align: 'start', key: 'lastConversationTime', sortable: true, width: '20%' },
+        { title: 'Last updated', align: 'start', key: 'lastConversationTime', sortable: true, width: '20%' }
       ],
       bodyCheckboxesSelected: [],
-      selectedRequestId: null,
+      selectedRequestId: null
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests']),
+    ...mapState(useMessagesStore, ['assistanceRequests'])
   },
   watch: {
     markReadButtonState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(true)
-      },
+      }
     },
     markUnreadButtonInMessageTableState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(false)
-      },
+      }
     },
     markUnreadButtonInConversationThreadState: {
       async handler() {
         await this.updateMessageReadUnread(false, this.selectedRequestId)
-      },
-    },
+      }
+    }
   },
   methods: {
     resetAllCheckboxes() {
@@ -105,7 +105,7 @@ export default {
       await Promise.all(
         selectedAssistanceRequestIds.map(async (assistanceRequestId) => {
           await this.updateMessageReadUnread(isRead, assistanceRequestId)
-        }),
+        })
       )
     },
     /**
@@ -121,7 +121,7 @@ export default {
      */
     async updateMessageReadUnread(isRead, assistanceRequestId) {
       let selectedAssistanceRequest = this.assistanceRequests?.find(
-        (item) => item.assistanceRequestId === assistanceRequestId,
+        (item) => item.assistanceRequestId === assistanceRequestId
       )
       let payload = {}
       if (selectedAssistanceRequest?.isRead != isRead) {
@@ -137,10 +137,10 @@ export default {
       return {
         'error-message': this.isActionRequiredMessage(item),
         'unread-message': !item?.isRead,
-        'highlighted-row': this.selectedRequestId === item?.assistanceRequestId,
+        'highlighted-row': this.selectedRequestId === item?.assistanceRequestId
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

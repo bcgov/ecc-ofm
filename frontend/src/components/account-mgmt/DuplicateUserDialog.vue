@@ -46,22 +46,22 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['proceed-confirmed', 'close'],
   data() {
     return {
       isLoading: false,
-      isDisplayed: false,
+      isDisplayed: false
     }
   },
   watch: {
     show: {
       handler(value) {
         this.isDisplayed = value
-      },
-    },
+      }
+    }
   },
   methods: {
     proceed() {
@@ -69,7 +69,7 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
-    },
-  },
+    }
+  }
 }
 </script>

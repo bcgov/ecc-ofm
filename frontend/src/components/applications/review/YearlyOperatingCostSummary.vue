@@ -93,11 +93,11 @@ import format from '@/utils/format'
 export default {
   components: { AppLabel },
   computed: {
-    ...mapState(useApplicationsStore, ['currentApplication']),
+    ...mapState(useApplicationsStore, ['currentApplication'])
   },
   created() {
     this.format = format
-  },
+  }
 }
 </script>
 

@@ -74,20 +74,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     back: {
       type: Boolean,
-      default: false,
+      default: false
     },
     save: {
       type: Boolean,
-      default: false,
+      default: false
     },
     submit: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   emits: ['process'],
@@ -98,47 +98,47 @@ export default {
       model: {},
       isFormComplete: false,
       processing: false,
-      loading: false,
+      loading: false
     }
   },
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete']),
-    ...mapWritableState(useApplicationsStore, ['isDeclareSubmitComplete']),
+    ...mapWritableState(useApplicationsStore, ['isDeclareSubmitComplete'])
   },
 
   watch: {
     isFormComplete: {
       handler(value) {
         this.isDeclareSubmitComplete = value
-      },
+      }
     },
     back: {
       handler() {
         this.$router.push({
           name: APPLICATION_ROUTES.REVIEW,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
-      },
+      }
     },
     save: {
       async handler() {
         await this.saveApplication(true)
-      },
+      }
     },
     submit: {
       async handler() {
         await this.submitApplication()
-      },
-    },
+      }
+    }
   },
 
   async created() {
     this.$emit('process', false)
     await this.loadData()
     this.model = {
-      applicationDeclaration: this.currentApplication?.applicationDeclaration,
+      applicationDeclaration: this.currentApplication?.applicationDeclaration
     }
   },
 
@@ -167,7 +167,7 @@ export default {
       if (this.currentApplication?.statusCode === APPLICATION_STATUS_CODES.SUBMITTED) {
         this.$router.push({
           name: APPLICATION_ROUTES.CONFIRMATION,
-          params: { applicationGuid: this.$route.params.applicationGuid },
+          params: { applicationGuid: this.$route.params.applicationGuid }
         })
       }
     },
@@ -189,8 +189,8 @@ export default {
         this.$emit('process', false)
         this.processing = false
       }
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>

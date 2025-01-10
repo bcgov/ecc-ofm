@@ -6,11 +6,11 @@ import NotificationService from '@/services/notificationService'
 export const useNotificationsStore = defineStore('notifications', {
   namespaced: true,
   state: () => ({
-    notifications: null,
+    notifications: null
   }),
   getters: {
     unreadNotificationCount: (state) =>
-      state.notifications ? state.notifications.filter((notification) => !notification.isRead).length : 0,
+      state.notifications ? state.notifications.filter((notification) => !notification.isRead).length : 0
   },
   actions: {
     async getNotifications(contactId) {
@@ -21,6 +21,6 @@ export const useNotificationsStore = defineStore('notifications', {
         console.log(`Failed to get notifications - ${error}`)
         throw error
       }
-    },
-  },
+    }
+  }
 })

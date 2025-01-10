@@ -271,29 +271,29 @@ export default {
   props: {
     editable: {
       type: Boolean,
-      default: false,
+      default: false
     },
     organization: {
       type: Object,
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     uploadedDocuments: {
       type: Array,
       default: () => {
         return []
-      },
+      }
     },
     showDocuments: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['saveInclusionPolicyData'],
   data() {
@@ -303,7 +303,7 @@ export default {
       uploadedDocumentsEdit: [],
       documentsToUpload: [],
       documentsToDelete: [],
-      loadingInclusionPolicy: false,
+      loadingInclusionPolicy: false
     }
   },
 
@@ -317,7 +317,7 @@ export default {
     },
     showUploadDocumentsAlert() {
       return this.editMode && this.invalidInclusionPolicy
-    },
+    }
   },
   created() {
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
@@ -344,7 +344,7 @@ export default {
         this.organizationEdit?.hasInclusionPolicy,
         this.documentsToUpload,
         this.documentsToDelete,
-        this.onSaveCompleteCallBack,
+        this.onSaveCompleteCallBack
       )
     },
 
@@ -375,8 +375,8 @@ export default {
       this.documentsToUpload = []
       this.documentsToDelete = []
       this.$refs.documentUpload?.resetDocuments()
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -7,7 +7,7 @@ export const AuthRoutes = Object.freeze({
   LOGOUT: authRoot + '/logout',
   LOGOUT_IDIR: authRoot + '/logout-idir',
   REFRESH: authRoot + '/refresh',
-  TOKEN: authRoot + '/token',
+  TOKEN: authRoot + '/token'
 })
 
 export const ApiRoutes = Object.freeze({
@@ -33,7 +33,7 @@ export const ApiRoutes = Object.freeze({
   IRREGULAR_APPLICATIONS: baseRoot + '/irregular',
   USER: baseRoot + '/user',
   USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
-  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
+  USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities'
 })
 
 export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
@@ -42,16 +42,16 @@ export const ASSISTANCE_REQUEST_STATUS_CODES = Object.freeze({
   WITH_PROVIDER: 3,
   READY_TO_RESOLVE: 4,
   CLOSED_COMPLETE: 5, // INACTIVE state
-  CLOSED_CANCELLED: 6, // INACTIVE state
+  CLOSED_CANCELLED: 6 // INACTIVE state
 })
 
 export const IRREGULAR_EXPENSE_STATUS_CODES = Object.freeze({
-  APPROVED: 6,
+  APPROVED: 6
 })
 
 export const CRM_STATE_CODES = Object.freeze({
   ACTIVE: 0,
-  INACTIVE: 1,
+  INACTIVE: 1
 })
 
 // Roles are just buckets for permissions and shouldn't have
@@ -59,7 +59,7 @@ export const CRM_STATE_CODES = Object.freeze({
 // a couple special cases so define them here
 export const ROLES = Object.freeze({
   ACCOUNT_MANAGER: 'Account Manager',
-  IMPERSONATE: 'Impersonate',
+  IMPERSONATE: 'Impersonate'
 })
 
 export const APPLICATION_STATUS_CODES = Object.freeze({
@@ -73,7 +73,7 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   CANCELLED_BY_SP: 8, // INACTIVE state
   EXPIRED: 9, // INACTIVE state
   VERIFIED: 10,
-  REDIRECTED: 11, // INACTIVE state
+  REDIRECTED: 11 // INACTIVE state
 })
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
@@ -86,14 +86,14 @@ export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
   //7 does not exist in CRM
   ACTIVE: 8,
   TERMINATED: 9,
-  CANCELLED: 10,
+  CANCELLED: 10
 })
 
 export const FUNDING_REALLOCATION_REQUEST_STATUS_CODES = Object.freeze({
   IN_PROGRESS: 1,
   APPROVED: 2,
   INELIGIBLE: 3,
-  CANCELLED: 4,
+  CANCELLED: 4
 })
 
 export const PAYMENT_STATUS_CODES = Object.freeze({
@@ -104,14 +104,14 @@ export const PAYMENT_STATUS_CODES = Object.freeze({
   PROCESSING_PAYMENT: 5,
   PROCESSING_ERROR: 6,
   CANCELLED: 7, // INACTIVE state
-  QR_APPROVED: 8,
+  QR_APPROVED: 8
 })
 
 export const DATE_FILTER_TYPES = Object.freeze({
   THREE_MONTHS: '3 Months',
   SIX_MONTHS: '6 Months',
   YTD: 'YTD',
-  CUSTOM: 'Custom',
+  CUSTOM: 'Custom'
 })
 
 export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({
@@ -122,27 +122,27 @@ export const SUPPLEMENTARY_APPLICATION_STATUS_CODES = Object.freeze({
   ACTION_REQUIRED: 5,
   APPROVED: 6,
   EXPIRED: 7, // INACTIVE state
-  CANCELLED: 8, // INACTIVE state
+  CANCELLED: 8 // INACTIVE state
 })
 
 export const FACILITY_TYPES = Object.freeze({
   RENT_LEASE: 1,
   OWNED_WITH_MORTGAGE: 2,
   OWNED_WITHOUT_MORTGAGE: 3,
-  PROVIDED_FREE_OF_CHARGE: 4,
+  PROVIDED_FREE_OF_CHARGE: 4
 })
 
 export const SUPPLEMENTARY_TYPES = Object.freeze({
   SUPPORT: 1,
   INDIGENOUS: 2,
-  TRANSPORT: 3,
+  TRANSPORT: 3
 })
 
 export const REQUEST_CATEGORY_NAMES = Object.freeze({
   ACCOUNT_MAINTENANCE: 'Account Maintenance',
   FUNDING_ENVELOPE_CR: 'Funding Envelope Change Request',
   REPORTING: 'Reporting',
-  IRREGULAR_EXPENSES: 'Irregular Expense',
+  IRREGULAR_EXPENSES: 'Irregular Expense'
 })
 
 export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
@@ -151,20 +151,20 @@ export const REQUEST_SUB_CATEGORY_NAMES = Object.freeze({
   ORGANIZATION_PHONE_EMAIL: 'Organization phone/email',
   FACILITY_PHONE_EMAIL: 'Facility phone/email',
   ADD_CHANGE_LICENCE: 'Add/change a licence',
-  OTHER: 'Other',
+  OTHER: 'Other'
 })
 
 export const GOOD_STANDING_STATUS_CODES = Object.freeze({
   GOOD: 1,
   NO_GOOD: 2,
-  INTEGRATION_ERROR: 3,
+  INTEGRATION_ERROR: 3
 })
 
 export const OFM_PROGRAM_CODES = Object.freeze({
   OFM: 1,
   CCOF: 2,
   TDAD: 3,
-  MULTIPLE: 4,
+  MULTIPLE: 4
 })
 
 export const APPLICATION_ROUTES = Object.freeze({
@@ -176,18 +176,18 @@ export const APPLICATION_ROUTES = Object.freeze({
   STAFFING: 'staffing',
   REVIEW: 'review-application',
   SUBMIT: 'declare-submit',
-  CONFIRMATION: 'application-confirmation',
+  CONFIRMATION: 'application-confirmation'
 })
 
 export const APPLICATION_INTAKE_TYPES = Object.freeze({
   OPEN_INTAKE: 1,
-  LIMITED_INTAKE: 2,
+  LIMITED_INTAKE: 2
 })
 
 export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({
   ECE: 1, // Early Childhood Educator
   ECEA: 2, // Early Childhood Educator Assistant
-  ITE: 3, // Infant/Toddler Early Childhood Educator
+  ITE: 3 // Infant/Toddler Early Childhood Educator
 })
 
 export const APPLICATION_ERROR_MESSAGES = Object.freeze({
@@ -216,27 +216,27 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   SPLIT_CLASSROOM_INFO: 'Description of split classrooms required',
   SUPP_TRANSPORT: 'Transportation information required',
   SUPP_OTHER: 'Description of other costs required',
-  SUPP_DUPLICATE_VIN: 'Unique VIN required',
+  SUPP_DUPLICATE_VIN: 'Unique VIN required'
 })
 
 export const PREVENT_CHANGE_REQUEST_TYPES = Object.freeze({
   IN_CCOF_PROGRAM: 'Facility in CCOF Program',
   IN_TDAD_PROGRAM: 'Facility in TDAD Program',
-  NO_FACILITIES_IN_OFM: 'No Facilities in OFM',
+  NO_FACILITIES_IN_OFM: 'No Facilities in OFM'
 })
 
 export const SURVEY_RESPONSE_STATUSES = Object.freeze({
   DRAFT: 'Draft',
   COMPLETED: 'Completed',
   COMPLETED_LATE: 'Completed - Late',
-  COMPLETED_CLOSED: 'Completed - Closed',
+  COMPLETED_CLOSED: 'Completed - Closed'
 })
 
 export const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
   ACTIVE: 1,
   INACTIVE: 2,
   COMPLETED: 3,
-  CLOSED: 4,
+  CLOSED: 4
 })
 
 export const SURVEY_QUESTION_TYPES = Object.freeze({
@@ -249,7 +249,7 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   CHOICE: 'Choice',
   MULTIPLE_CHOICE: 'Multiple Choice',
   TABLE: 'Table',
-  INSTRUCTIONS: 'Instructions',
+  INSTRUCTIONS: 'Instructions'
 })
 
 export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
@@ -260,30 +260,30 @@ export const DOCUMENT_TYPES = Object.freeze({
   SUPPORTING_DOCS: 'Supporting Documents',
   COMMUNITY_LETTER: 'Community Support Letter',
   HEALTH_AUTHORITY_REPORT: 'HA Compliance Rpt',
-  INCLUSION_POLICY: 'Inclusion Policy Document',
+  INCLUSION_POLICY: 'Inclusion Policy Document'
 })
 
 export const DOCUMENT_LABELS = Object.freeze({
   LICENCE: 'A copy of your current licence',
   HEALTH_AUTHORITY_REPORT: 'A copy of your most recent Health Authority compliance report',
-  COMMUNITY_LETTER: 'Letter of Reference for Community Support',
+  COMMUNITY_LETTER: 'Letter of Reference for Community Support'
 })
 
 export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({
   YES: 1,
   NO: 2,
-  NA: 3,
+  NA: 3
 })
 
 export const YES_NO_RADIO_GROUP_MAPPING = Object.freeze({
   YES: 1,
   NO: 0,
-  NA: 2,
+  NA: 2
 })
 
 export const YES_NO_CRM_MAPPING = Object.freeze({
   YES: 1,
-  NO: 0,
+  NO: 0
 })
 
 export const SUPPORTED_DOCUMENTS_MESSAGE =
@@ -302,38 +302,38 @@ export const BLANK_FIELD = '- - - -'
 
 export const APPLICATION_TYPES = Object.freeze({
   OFM: 'Base Funding',
-  IRREGULAR_EXPENSE: 'Irregular Expense',
+  IRREGULAR_EXPENSE: 'Irregular Expense'
 })
 
 export const DAYS_OF_WEEK = Object.freeze([
   {
     title: 'Monday',
-    value: 1,
+    value: 1
   },
   {
     title: 'Tuesday',
-    value: 2,
+    value: 2
   },
   {
     title: 'Wednesday',
-    value: 3,
+    value: 3
   },
   {
     title: 'Thursday',
-    value: 4,
+    value: 4
   },
   {
     title: 'Friday',
-    value: 5,
+    value: 5
   },
   {
     title: 'Saturday',
-    value: 6,
+    value: 6
   },
   {
     title: 'Sunday',
-    value: 7,
-  },
+    value: 7
+  }
 ])
 
 export const TIME_ZONE = 'America/Vancouver'
@@ -343,15 +343,15 @@ export const BUSINESS_TYPE_CODES = Object.freeze({
   NON_PROFIT_SOCIETY: 2,
   PUBLIC_INSTITUTION: 3,
   LOCAL_GOVERNMENT: 4,
-  SOLE_PROPRIETOR: 5,
+  SOLE_PROPRIETOR: 5
 })
 
 export const PROVIDER_TYPE_CODES = Object.freeze({
   GROUP: 1,
-  FAMILY: 2,
+  FAMILY: 2
 })
 
 export const UNION_TYPE_CODES = Object.freeze({
   NO: 0,
-  YES: 1,
+  YES: 1
 })

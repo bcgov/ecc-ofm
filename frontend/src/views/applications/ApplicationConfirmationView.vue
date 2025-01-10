@@ -77,7 +77,7 @@ import {
   GOOD_STANDING_STATUS_CODES,
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
   PROVIDER_TYPE_CODES,
-  UNION_TYPE_CODES,
+  UNION_TYPE_CODES
 } from '@/utils/constants'
 import { useOrgStore } from '@/stores/org'
 import { useAuthStore } from '@/stores/auth'
@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       loading: false,
-      facility: undefined,
+      facility: undefined
     }
   },
   computed: {
@@ -106,7 +106,7 @@ export default {
         return false
       }
       return this.currentApplication?.isUnionized === UNION_TYPE_CODES.NO
-    },
+    }
   },
   async created() {
     try {
@@ -131,8 +131,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useOrgStore, ['getOrganizationInfo']),
-  },
+    ...mapActions(useOrgStore, ['getOrganizationInfo'])
+  }
 }
 </script>
 <style scoped>

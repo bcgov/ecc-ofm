@@ -261,17 +261,17 @@ export default {
       required: true,
       default: () => {
         return {}
-      },
+      }
     },
     loading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   computed: {
     isApplicationPage() {
       return this.$route.path?.includes('/applications/')
-    },
-  },
+    }
+  }
 }
 </script>

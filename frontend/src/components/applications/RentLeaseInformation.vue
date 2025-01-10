@@ -75,20 +75,20 @@ export default {
   props: {
     readonly: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   emits: ['update'],
   data() {
     return {
-      model: {},
+      model: {}
     }
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
     isMonthToMonthRentLease() {
       return this.model.monthToMonthRentLease === YES_NO_CRM_MAPPING.YES
-    },
+    }
   },
   watch: {
     model: {
@@ -101,8 +101,8 @@ export default {
         this.model.armsLength = this.model.armsLength ? this.model.armsLength : null
         this.$emit('update', this.model)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   created() {
     this.rules = rules
@@ -112,8 +112,8 @@ export default {
       rentLeaseStartDate: this.currentApplication?.rentLeaseStartDate,
       rentLeaseEndDate: this.currentApplication?.rentLeaseEndDate,
       monthToMonthRentLease: this.currentApplication?.monthToMonthRentLease,
-      armsLength: this.currentApplication?.armsLength,
+      armsLength: this.currentApplication?.armsLength
     }
-  },
+  }
 }
 </script>

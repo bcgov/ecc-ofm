@@ -66,22 +66,22 @@ export default {
         { title: 'Payment Type', key: 'paymentTypeName' },
         { title: 'Facility Name', key: 'facilityName' },
         { title: 'Payment Date', key: 'invoiceDate' },
-        { title: 'Payment Amount', key: 'amount' },
+        { title: 'Payment Amount', key: 'amount' }
       ],
       scheduledPaymentsHeaders: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Payment Type', key: 'paymentTypeName' },
         { title: 'Facility Name', key: 'facilityName' },
         { title: 'Scheduled Payment Date', key: 'invoiceDate' },
-        { title: 'Projected Payment Amount', key: 'amount' },
-      ],
+        { title: 'Projected Payment Amount', key: 'amount' }
+      ]
     }
   },
 
   computed: {
     filteredPaymentHistory() {
       const filteredPayments = this.paymentHistory?.filter((payment) =>
-        this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode),
+        this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode)
       )
       filteredPayments?.sort((a, b) => {
         const dateA = new Date(a.invoiceDate)
@@ -92,7 +92,7 @@ export default {
     },
     filteredScheduledPayments() {
       const filteredPayments = this.scheduledPayments?.filter((payment) =>
-        this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode),
+        this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode)
       )
       filteredPayments?.sort((a, b) => {
         const dateA = new Date(a.invoiceDate)
@@ -100,7 +100,7 @@ export default {
         return dateA - dateB // ascending order (the most recent Scheduled/Future Payment at the top)
       })
       return filteredPayments
-    },
+    }
   },
 
   created() {
@@ -130,10 +130,10 @@ export default {
             facility.facilityId,
             PAYMENT_STATUS_CODES.PAID,
             this.searchQueries?.dateFrom,
-            this.searchQueries?.dateTo,
+            this.searchQueries?.dateTo
           )
           paymentHistory = paymentHistory?.concat(paidPaymentsForFacility)
-        }),
+        })
       )
       return paymentHistory
     },
@@ -162,13 +162,13 @@ export default {
           const scheduledPaymentsForFacility = await PaymentService.getActivePaymentsByFacilityId(
             facility.facilityId,
             dateFrom,
-            dateTo,
+            dateTo
           )
           scheduledPayments = scheduledPayments?.concat(scheduledPaymentsForFacility)
-        }),
+        })
       )
       return scheduledPayments
-    },
-  },
+    }
+  }
 }
 </script>

@@ -27,14 +27,14 @@ export default {
   props: {
     title: {
       type: String,
-      default: '',
+      default: ''
     },
     isLoading: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
-  emits: ['close'],
+  emits: ['close']
 }
 </script>
 <style scoped>
