@@ -12,6 +12,17 @@ function sortApplications(applications) {
 }
 
 export default {
+  async getApplicationsByFacilityId(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.APPLICATIONS}?facilityId=${facilityId}`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the list of applications by facility id - ${error}`)
+      throw error
+    }
+  },
+
   async getActiveApplicationsByFacilityId(facilityId) {
     try {
       if (!facilityId) return
@@ -53,6 +64,25 @@ export default {
       return applications
     } catch (error) {
       console.log(`Failed to get the list of applications by facility id - ${error}`)
+      throw error
+    }
+  },
+
+  async getApplications() {
+    try {
+      const authStore = useAuthStore()
+      const facilities = authStore?.userInfo?.facilities
+      let applications = []
+      await Promise.all(
+        facilities?.map(async (facility) => {
+          const response = await this.getApplicationsByFacilityId(facility.facilityId)
+          applications = applications?.concat(response)
+        }),
+      )
+      sortApplications(applications)
+      return applications
+    } catch (error) {
+      console.log(`Failed to get the applications - ${error}`)
       throw error
     }
   },
