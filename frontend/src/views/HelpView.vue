@@ -62,9 +62,9 @@
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/DD532A29A11B4BE1AF56FD0A1929FB26" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/C03595E2D4AC467D94D0464C52C7A907" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2023 - Funding Agreement Template</span>
+            <span>2024 - Funding Agreement Template</span>
           </a>
           <br />
           <br />
