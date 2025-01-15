@@ -31,6 +31,12 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2024 - OFM Core Discretionary Allowances Factsheet</span>
           </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/1BE4023D70984A41B0DC0DE7C87947E0" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>Portal Provider Guide</span>
+          </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
           <a href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres" target="_blank">
