@@ -52,6 +52,12 @@
             <span>Direct Deposit Application - FIN 312</span>
           </a>
           <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/3AA38815DECE4E15BB01798ED40FF17C" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>Funding Agreement Infographic</span>
+          </a>
+          <br />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
