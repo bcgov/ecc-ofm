@@ -202,6 +202,6 @@ jobs:
     environment: dev
     steps:
       - name: Run ZAP Scan
-        uses: zaproxy/action-full-scan@v0.10.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: 'https://${{ env.HOST_ROUTE }}'
