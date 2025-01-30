@@ -61,7 +61,7 @@
           <br />
           <a href="https://www2.gov.bc.ca/assets/download/118432D8D0A7481E96BA681CE174BA41">
             <v-icon size="18" icon="fa:fa-regular fa-file-excel" class="mr-1"></v-icon>
-            <span>Program Specific Statement of Operations Template </span>
+            <span>Program Specific Statement of Operations Template</span>
           </a>
           <br />
         </v-expansion-panel-text>
