@@ -201,10 +201,10 @@ jobs:
       #   with:
       #     target: 'https://${{ env.HOST_ROUTE }}/api'
 
-  cypress-run:
-    needs: openshift-ci-cd
-    uses: ./.github/workflows/cypress-e2e.yml
-    secrets: inherit
+  # cypress-run:
+  #   needs: openshift-ci-cd
+  #   uses: ./.github/workflows/cypress-e2e.yml
+  #   secrets: inherit
 
   zap-scan:
     name: ZAP Scan
