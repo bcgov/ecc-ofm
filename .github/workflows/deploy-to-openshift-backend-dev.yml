@@ -205,6 +205,7 @@ jobs:
   #   needs: openshift-ci-cd
   #   uses: ./.github/workflows/cypress-e2e.yml
   #   secrets: inherit
+  # FIXME: Look into why this usually never works in CI/CD
 
   zap-scan:
     name: ZAP Scan
