@@ -179,6 +179,7 @@ export default {
     },
 
     async next() {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       if (this.isLastSection(this.currentSection)) return
       await this.save()
       this.currentSection = this.sections[this.currentSectionIndex + 1]
