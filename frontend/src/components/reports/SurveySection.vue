@@ -3,7 +3,7 @@
     <div class="min-height-screen">
       <h2 class="pb-6">{{ section?.title }}</h2>
 
-      <AppAlertBanner v-if="section?.title === 'Human Resources'" type="info">
+      <AppAlertBanner v-if="section?.title === REPORT_SECTION_TITLES.HUMAN_RESOURCES" type="info">
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
@@ -38,6 +38,8 @@ import SurveyQuestion from '@/components/reports/SurveyQuestion.vue'
 import SurveyTableQuestion from '@/components/reports/SurveyTableQuestion.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
+import { REPORT_SECTION_TITLES } from '@/utils/constants'
+
 export default {
   components: { AppLabel, SurveyQuestion, SurveyTableQuestion, AppAlertBanner },
   mixins: [reportMixin],
@@ -68,6 +70,10 @@ export default {
     questions() {
       return this.section?.questions?.filter((question) => !this.isTableQuestionHeader(question))
     },
+  },
+
+  created() {
+    this.REPORT_SECTION_TITLES = REPORT_SECTION_TITLES
   },
 
   methods: {
