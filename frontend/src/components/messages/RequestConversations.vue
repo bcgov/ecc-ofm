@@ -218,15 +218,30 @@ export default {
           const matches = ID_REGEX.exec(img.getAttribute('src'))
           if (matches) {
             const fileId = matches[1]
-            const image = await FileService.getFile(fileId)
-            const imageType = deriveImageType(image)
-            img.setAttribute('src', `data:image/${imageType};base64,${image}`)
+            const imageFile = await FileService.getFile(fileId, true)
+            const imageType = deriveImageType(imageFile.fileData)
+            img.setAttribute('src', `data:image/${imageType};base64,${imageFile.fileData}`)
           } else {
             img.remove()
           }
         }
+
         // Remove CRM links for now until we can support them
-        document.querySelectorAll('a[href*="/api/data"]').forEach((link) => link.remove())
+        const fileLinks = document.querySelectorAll('a[href*="/api/data"]')
+
+        for (const fileLink of fileLinks) {
+          const matches = ID_REGEX.exec(fileLink.dataset.value)
+          if (matches) {
+            const fileId = matches[1]
+            const file = await FileService.getFile(fileId)
+            const dataLink = `data:${file.mimetype};base64,${file.fileData}`
+
+            fileLink.setAttribute('href', dataLink)
+            fileLink.setAttribute('download', file.filename)
+          } else {
+            fileLink.remove()
+          }
+        }
 
         // Update the message content
         conversation.message = document.documentElement.innerHTML

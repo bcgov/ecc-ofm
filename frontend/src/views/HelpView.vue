@@ -31,6 +31,12 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2024 - OFM Core Discretionary Allowances Factsheet</span>
           </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/1BE4023D70984A41B0DC0DE7C87947E0" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>Portal Provider Guide</span>
+          </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
           <a href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres" target="_blank">
@@ -46,6 +52,18 @@
             <span>Direct Deposit Application - FIN 312</span>
           </a>
           <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/3AA38815DECE4E15BB01798ED40FF17C" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>Funding Agreement Infographic</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/118432D8D0A7481E96BA681CE174BA41">
+            <v-icon size="18" icon="fa:fa-regular fa-file-excel" class="mr-1"></v-icon>
+            <span>Program Specific Statement of Operations Template</span>
+          </a>
+          <br />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -56,15 +74,15 @@
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="panelComponent.id === 'manuals'">
-          <a href="https://www2.gov.bc.ca/assets/download/46A19E72A2C94FA19A8A5CA2131A1B91" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/2215735D9D5540079294C5B032864123" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2023 - Policy and Procedure Manual</span>
+            <span>2024 - Policy and Procedure Manual</span>
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/DD532A29A11B4BE1AF56FD0A1929FB26" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/C03595E2D4AC467D94D0464C52C7A907" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2023 - Funding Agreement Template</span>
+            <span>2024 - Funding Agreement Template</span>
           </a>
           <br />
           <br />
