@@ -90,7 +90,6 @@
             <v-col cols="12" md="9">
               <v-select
                 v-model="selectedFacilityIds"
-                chips
                 :items="facilitiesToAdminister"
                 item-title="facilityName"
                 item-value="facilityId"
@@ -100,6 +99,11 @@
                 :disabled="isLoading || isSameUser"
                 density="compact"
                 variant="outlined">
+                <template #selection="{ item }">
+                  <v-chip v-if="facilitiesToAdminister.some((facility) => facility.facilityId === item.value)">
+                    {{ item.title }}
+                  </v-chip>
+                </template>
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilitiesToAdminister">
                     <template #prepend>
