@@ -27,6 +27,12 @@
         <h4>Facilities</h4>
       </v-col>
     </v-row>
+
+    <!-- <div v-if="!loading">
+      <p>{{ userFacilities[0].contactList.length }}</p>
+      <pre>{{ userFacilities[0] }} </pre>
+    </div> -->
+
     <v-row>
       <v-col cols="12">
         <v-card class="pa-6" variant="outlined">
@@ -39,7 +45,38 @@
                       <h4>Your Facilities</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in userFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card>
+                      <FacilityFilter v-if="!loading" class="mb-10" :default-show-input="true" justify="end" @facility-filter-changed="false" />
+
+                      <v-data-table
+                        v-if="!loading"
+                        id="funding-agreements-table"
+                        :headers="headers"
+                        :items="userFacilities"
+                        item-key="index"
+                        :items-per-page="10"
+                        density="compact"
+                        :mobile="null"
+                        mobile-breakpoint="md"
+                        class="soft-outline">
+                        <template #[`item.contactId`]="{ item }">
+                          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
+                            <AppButton :primary="false" size="small" @click="navigateToFacility(item.facilityId)">Open</AppButton>
+                          </v-row>
+                        </template>
+                        <template #[`item.primaryContactName`]="{ item }">
+                          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
+                            <v-icon v-if="!item.primaryContactName" color="warning" class="mr-2">mdi-alert</v-icon>
+                            <p v-else>{{ item.primaryContactName }}</p>
+                          </v-row>
+                        </template>
+                        <template #[`item.expenseAuthorityName`]="{ item }">
+                          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
+                            <v-icon v-if="!item.expenseAuthorityName || item.expenseAuthorityName === ''" color="warning" class="mr-2">mdi-alert</v-icon>
+                            <p v-else>{{ item.expenseAuthorityName }}</p>
+                          </v-row>
+                        </template>
+                      </v-data-table>
+                      <!-- <v-card v-for="item in userFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card> -->
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -87,13 +124,15 @@ import DocumentService from '@/services/documentService'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
+import FacilityService from '@/services/facilityService'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog },
+  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog, FacilityFilter },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -106,14 +145,23 @@ export default {
       showChangeRequestDialog: false,
       showUnableToSubmitCrDialog: false,
       preventChangeRequestType: undefined,
+      userFacilities: [],
+      headers: [
+        { title: 'Facility Name', key: 'facilityName' },
+        { title: 'Facility Address', key: 'address1' },
+        { title: 'Primary Contact', key: 'primaryContactName' },
+        { title: 'Expense Authority', key: 'expenseAuthorityName' },
+
+        { title: 'Actions', key: 'contactId', sortable: false },
+      ],
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    userFacilities() {
-      return this.userInfo.facilities
-    },
+    // userFacilities() {
+    //   return this.userInfo.facilities
+    // },
     otherFacilities() {
       return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
@@ -146,6 +194,38 @@ export default {
     async loadFacilities() {
       try {
         this.facilities = await OrganizationService.getOrganizationFacilities(this.userInfo.organizationId)
+
+        this.userFacilities = this.userInfo.facilities
+
+        this.userFacilities = await Promise.all(
+          this.userFacilities.map(async (fac) => {
+            const contacts = await FacilityService.getContacts(fac.facilityId)
+
+            //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name :)
+            const contactList = contacts
+              .filter((f) => f.isExpenseAuthority)
+              .sort((a, b) => {
+                return a.firstName?.localeCompare(b.firstName)
+              })
+
+            let expenseAuthorityName = undefined
+            if (contactList.length > 0) {
+              expenseAuthorityName = `${contactList[0].firstName ?? ''} ${contactList[0].lastName ?? ''}  + ${contactList.length + 1}  more`
+            }
+
+            console.log('wat ', expenseAuthorityName)
+
+            let primaryContactName = contacts.find((f) => f.contactId === f.primaryContactId)
+
+            if (primaryContactName) {
+              primaryContactName = `${primaryContactName.firstName ?? ''} ${primaryContactName.lastName}`
+            }
+
+            return { ...fac, address1: contacts[0].address1, primaryContactName: primaryContactName, expenseAuthorityName: expenseAuthorityName }
+          }),
+        )
+
+        console.log(this.userFacilities)
       } catch (error) {
         this.setFailureAlert('Failed to get facilities for organizationId = ' + this.userInfo.organizationId, error)
       }
