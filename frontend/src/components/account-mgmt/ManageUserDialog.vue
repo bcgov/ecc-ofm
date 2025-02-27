@@ -403,8 +403,8 @@ export default {
 
       return userFacilities?.filter(
         (userFacility) =>
-          // Only remove if its not selected and in facility to Administer list
-          !selectedFacilities?.some((selected) => selected.facilityId === userFacility.facilityId) && adminFacilityIds.has(userFacility.facilityId),
+          // Only remove if it's not selected and is in the facilityToAdminister list
+          !selectedFacilities?.some((selected) => selected.facilityId === userFacility.facilityId) && adminFacilityIds.includes(userFacility.facilityId),
       )
     },
 
