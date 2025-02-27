@@ -59,7 +59,7 @@
                   <v-row>
                     <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table :headers="headersFacilities" :items="item.facilities" item-key="facilityId" items-per-page="-1" density="compact">
+                      <v-data-table :headers="headersFacilities" :items="getActiveFacilities(item.facilities)" item-key="facilityId" items-per-page="-1" density="compact">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
 
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
@@ -151,6 +151,10 @@ export default {
     await this.getUsersAndFacilities()
   },
   methods: {
+    getActiveFacilities(facilities) {
+      return facilities.filter((facility) => facility.facilityStateCode == 0)
+    },
+
     isDeactivatedUser(user) {
       return user?.facilities?.length === 0
     },
