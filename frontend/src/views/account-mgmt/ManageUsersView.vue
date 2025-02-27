@@ -154,8 +154,9 @@ export default {
   },
   methods: {
     getFilteredAndSortedFacilities(facilities) {
-      return facilities.filter((facility) => this.facilitiesToAdminister.some((adminFacility) => adminFacility.facilityName === facility.facilityName))
+      return facilities.filter((facility) => facility.facilityStateCode !== 1)
     },
+
     isDeactivatedUser(user) {
       return user?.facilities?.length === 0
     },

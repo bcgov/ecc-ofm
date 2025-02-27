@@ -90,6 +90,7 @@
             <v-col cols="12" md="9">
               <v-select
                 v-model="selectedFacilityIds"
+                chips
                 :items="facilitiesToAdminister"
                 item-title="facilityName"
                 item-value="facilityId"
@@ -99,11 +100,6 @@
                 :disabled="isLoading || isSameUser"
                 density="compact"
                 variant="outlined">
-                <template #selection="{ item }">
-                  <v-chip v-if="facilitiesToAdminister.some((facility) => facility.facilityId === item.value)">
-                    {{ item.title }}
-                  </v-chip>
-                </template>
                 <template #prepend-item>
                   <v-list-item title="Select All" @click="toggleFacilitiesToAdminister">
                     <template #prepend>
@@ -227,7 +223,7 @@ export default {
     updatingUser: {
       handler(value) {
         this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update'
-        this.selectedFacilityIds = value.facilities.map((fac) => fac.facilityId)
+        this.selectedFacilityIds = value.facilities?.filter((fac) => this.facilitiesToAdminister.some((adminFac) => adminFac.facilityId === fac.facilityId)).map((fac) => fac.facilityId)
         this.user = value
         if (!this.user.role) this.user.role = {}
       },
@@ -402,7 +398,14 @@ export default {
      * Get facilities to remove.
      */
     getFacilitiesToRemove(selectedFacility, userFacilities) {
-      return userFacilities?.filter((userFacility) => !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId))
+      // Get facility IDs that the admin can administer
+      const adminFacilityIds = new Set(this.facilitiesToAdminister.map((fac) => fac.facilityId))
+
+      return userFacilities?.filter(
+        (userFacility) =>
+          // Only remove if its not selected and in facility to Administer list
+          !selectedFacility?.some((selected) => selected.facilityId === userFacility.facilityId) && adminFacilityIds.has(userFacility.facilityId),
+      )
     },
 
     /**
