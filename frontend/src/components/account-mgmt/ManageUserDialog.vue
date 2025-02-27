@@ -391,20 +391,20 @@ export default {
      * Get facilities to add.
      */
     getFacilitiesToAdd(selectedFacilities, userFacilities) {
-      return selectedFacilities?.filter((selectedFacility) => !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId))
+      return selectedFacilities?.filter((selectedFacilities) => !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacilities.facilityId))
     },
 
     /**
      * Get facilities to remove.
      */
-    getFacilitiesToRemove(selectedFacility, userFacilities) {
+    getFacilitiesToRemove(selectedFacilities, userFacilities) {
       // Get facility IDs that the admin can administer
-      const adminFacilityIds = new Set(this.facilitiesToAdminister.map((fac) => fac.facilityId))
+      const adminFacilityIds = this.facilitiesToAdminister.map((fac) => fac.facilityId)
 
       return userFacilities?.filter(
         (userFacility) =>
           // Only remove if its not selected and in facility to Administer list
-          !selectedFacility?.some((selected) => selected.facilityId === userFacility.facilityId) && adminFacilityIds.has(userFacility.facilityId),
+          !selectedFacilities?.some((selected) => selected.facilityId === userFacility.facilityId) && adminFacilityIds.has(userFacility.facilityId),
       )
     },
 
