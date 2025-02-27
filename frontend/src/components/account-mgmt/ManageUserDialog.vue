@@ -227,7 +227,7 @@ export default {
     updatingUser: {
       handler(value) {
         this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update'
-        this.selectedFacilityIds = value.facilities
+        this.selectedFacilityIds = value.facilities.map((fac) => fac.facilityId)
         this.user = value
         if (!this.user.role) this.user.role = {}
       },
