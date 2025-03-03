@@ -202,6 +202,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
     usersPermissionsFacilities.facilities = usersPermissionsFacilities.facilities.map((facility) => {
       const facilityData = new MappableObjectForFront(facility, UsersPermissionsFacilityMappings).toJSON()
       facilityData.accountNumber = facilityData.address?.accountnumber
+      facilityData.facilityStateCode = facilityData.address?.statecode
       facilityData.city = facilityData.address?.address1_city
       facilityData.address = facilityData.address?.address1_line1
       return facilityData
@@ -219,7 +220,7 @@ function mapUsersPermissionsFacilitiesObjectForFront(data) {
 async function getUsersPermissionsFacilities(req, res) {
   try {
     let usersPermissionsFacilities = []
-    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})&pageSize=1000`
+    const operation = `contacts?$select=ccof_userid,ccof_username,contactid,emailaddress1,ofm_first_name,ofm_last_name,statecode,telephone1&$expand=ofm_facility_business_bceid($select=_ofm_bceid_value,ofm_bceid_facilityid,_ofm_facility_value,ofm_name,ofm_portal_access,ofm_is_expense_authority,statecode,statuscode;$expand=ofm_facility($select=address1_city,address1_line1,address1_line2,address1_line3,statecode);$filter=(ofm_portal_access eq true and statecode eq 0)),ofm_portal_role_id($select=ofm_portal_role_number,ofm_name)&$filter=(_parentcustomerid_value eq ${req.params.organizationId})&pageSize=1000`
     const response = await getOperation(operation)
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
