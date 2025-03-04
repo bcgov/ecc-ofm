@@ -1,3 +1,4 @@
+const log = require('../components/logger')
 const { getRoles } = require('../components/lookup')
 
 /**
@@ -7,6 +8,8 @@ const { getRoles } = require('../components/lookup')
  */
 module.exports = function (...requiredPermissions) {
   return async function (req, res, next) {
+    log.verbose(`validating permission ${requiredPermissions}`)
+
     const userRole = req.session?.passport?.user?.role
 
     if (!userRole) {
