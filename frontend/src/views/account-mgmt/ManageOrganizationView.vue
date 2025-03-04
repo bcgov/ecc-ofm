@@ -45,38 +45,7 @@
                       <h4>Your Facilities</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <FacilityFilter v-if="!loading" class="mb-10" :default-show-input="true" justify="end" @facility-filter-changed="false" />
-
-                      <v-data-table
-                        v-if="!loading"
-                        id="funding-agreements-table"
-                        :headers="headers"
-                        :items="userFacilities"
-                        item-key="index"
-                        :items-per-page="10"
-                        density="compact"
-                        :mobile="null"
-                        mobile-breakpoint="md"
-                        class="soft-outline">
-                        <template #[`item.contactId`]="{ item }">
-                          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-                            <AppButton :primary="false" size="small" @click="navigateToFacility(item.facilityId)">Open</AppButton>
-                          </v-row>
-                        </template>
-                        <template #[`item.primaryContactName`]="{ item }">
-                          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-                            <v-icon v-if="!item.primaryContactName" color="warning" class="mr-2">mdi-alert</v-icon>
-                            <p v-else>{{ item.primaryContactName }}</p>
-                          </v-row>
-                        </template>
-                        <template #[`item.expenseAuthorityName`]="{ item }">
-                          <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-                            <v-icon v-if="!item.expenseAuthorityName || item.expenseAuthorityName === ''" color="warning" class="mr-2">mdi-alert</v-icon>
-                            <p v-else>{{ item.expenseAuthorityName }}</p>
-                          </v-row>
-                        </template>
-                      </v-data-table>
-                      <!-- <v-card v-for="item in userFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card> -->
+                      <ManageFacilityTable :facilities="userFacilities"></ManageFacilityTable>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -86,13 +55,13 @@
                       <h4>Other Facilities (read-only)</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in otherFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                      <ManageFacilityTable :facilities="otherFacilities"></ManageFacilityTable>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
               </v-col>
               <v-col v-else>
-                <v-card v-for="item in facilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                <ManageFacilityTable :facilities="facilities" :show-action="false"></ManageFacilityTable>
               </v-col>
             </v-row>
           </v-skeleton-loader>
@@ -127,12 +96,13 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 import FacilityService from '@/services/facilityService'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
+
+import ManageFacilityTable from '@/components/account-mgmt/ManageFacilityTable.vue'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog, FacilityFilter },
+  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog, ManageFacilityTable },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -146,22 +116,11 @@ export default {
       showUnableToSubmitCrDialog: false,
       preventChangeRequestType: undefined,
       userFacilities: [],
-      headers: [
-        { title: 'Facility Name', key: 'facilityName' },
-        { title: 'Facility Address', key: 'address1' },
-        { title: 'Primary Contact', key: 'primaryContactName' },
-        { title: 'Expense Authority', key: 'expenseAuthorityName' },
-
-        { title: 'Actions', key: 'contactId', sortable: false },
-      ],
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    // userFacilities() {
-    //   return this.userInfo.facilities
-    // },
     otherFacilities() {
       return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
@@ -191,41 +150,45 @@ export default {
     /**
      * Loads the facilities for the organization
      */
+
+    async populateContacts(facilityArray) {
+      return await Promise.all(
+        facilityArray.map(async (fac) => {
+          const contacts = await FacilityService.getContacts(fac.facilityId)
+
+          //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name :)
+          const contactList = contacts
+            .filter((f) => f.isExpenseAuthority)
+            .sort((a, b) => {
+              return a.firstName?.localeCompare(b.firstName)
+            })
+
+          let expenseAuthorityName = null
+          if (contactList.length > 0) {
+            const str = contactList.length > 1 ? `(+${contactList.length - 1} more)` : ''
+            expenseAuthorityName = `${contactList[0].firstName ?? ''} ${contactList[0].lastName ?? ''} ${str}`
+          }
+
+          let primaryContactName = contacts.find((f) => f.contactId === f.primaryContactId)
+
+          if (primaryContactName) {
+            primaryContactName = `${primaryContactName.firstName ?? ''} ${primaryContactName.lastName}`
+          }
+
+          return {
+            ...fac,
+            address1: contacts[0].address1,
+            primaryContactName: primaryContactName,
+            expenseAuthorityName: expenseAuthorityName,
+            facilityName: fac.facilityName ? fac.facilityName : fac.name,
+          }
+        }),
+      )
+    },
     async loadFacilities() {
       try {
-        this.facilities = await OrganizationService.getOrganizationFacilities(this.userInfo.organizationId)
-
-        this.userFacilities = this.userInfo.facilities
-
-        this.userFacilities = await Promise.all(
-          this.userFacilities.map(async (fac) => {
-            const contacts = await FacilityService.getContacts(fac.facilityId)
-
-            //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name :)
-            const contactList = contacts
-              .filter((f) => f.isExpenseAuthority)
-              .sort((a, b) => {
-                return a.firstName?.localeCompare(b.firstName)
-              })
-
-            let expenseAuthorityName = undefined
-            if (contactList.length > 0) {
-              expenseAuthorityName = `${contactList[0].firstName ?? ''} ${contactList[0].lastName ?? ''}  + ${contactList.length + 1}  more`
-            }
-
-            console.log('wat ', expenseAuthorityName)
-
-            let primaryContactName = contacts.find((f) => f.contactId === f.primaryContactId)
-
-            if (primaryContactName) {
-              primaryContactName = `${primaryContactName.firstName ?? ''} ${primaryContactName.lastName}`
-            }
-
-            return { ...fac, address1: contacts[0].address1, primaryContactName: primaryContactName, expenseAuthorityName: expenseAuthorityName }
-          }),
-        )
-
-        console.log(this.userFacilities)
+        this.facilities = await this.populateContacts(await OrganizationService.getOrganizationFacilities(this.userInfo.organizationId))
+        this.userFacilities = await this.populateContacts(this.userInfo.facilities)
       } catch (error) {
         this.setFailureAlert('Failed to get facilities for organizationId = ' + this.userInfo.organizationId, error)
       }
@@ -247,13 +210,6 @@ export default {
         this.setFailureAlert("Failed to get organization's Inclusion Policy Document(s)", error)
         return
       }
-    },
-
-    /**
-     * Navigates to the Manage Facility page
-     */
-    navigateToFacility(facilityId) {
-      this.$router.push({ name: 'manage-facility', params: { facilityId } })
     },
 
     /**
