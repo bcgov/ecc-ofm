@@ -51,16 +51,11 @@ async function getFacility(req, res) {
   }
 }
 
-//ofm_primarycontact
-
 async function getFacilityContacts(req, res) {
   try {
-    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,emailaddress1,telephone1,ccof_username;$expand=ofm_portal_role_id($select=ofm_portal_role_number,ofm_name);),ofm_facility($select=_ofm_primarycontact_value,_ofm_primarycontact_value,address1_line1)&$filter=(_ofm_facility_value eq ${req?.params?.facilityId}) and (ofm_portal_access eq true) and (statecode eq 0)`
-    log.info('GET OPERATION: ', operation)
+    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,emailaddress1,telephone1,ccof_username;$expand=ofm_portal_role_id($select=ofm_portal_role_number,ofm_name);),ofm_facility($select=_ofm_primarycontact_value,_ofm_primarycontact_value,address1_line1,address1_city,address1_postalcode)&$filter=(_ofm_facility_value eq ${req?.params?.facilityId}) and (ofm_portal_access eq true) and (statecode eq 0)`
     const response = await getOperation(operation)
     const contacts = []
-    log.info('resp')
-    log.info(response)
 
     response?.value?.forEach((item) => {
       const user = new MappableObjectForFront(item.ofm_bceid, UserMappings).toJSON()
@@ -69,13 +64,15 @@ async function getFacilityContacts(req, res) {
         user.role = role
       }
 
-      log.info('hello', item.ofm_facility)
+      const address = new MappableObjectForFront(item.ofm_facility, FacilityMappings).toJSON()
+      const facilityInfo =  new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON()
+      delete facilityInfo.address
+
+      //ofmcc-6916 map basic address info here to avoid additional calls to Dynamics
       contacts.push({
-        ...new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON(),
+        ...facilityInfo,
         ...user,
-        primaryContactName: item.ofm_facility['_ofm_primarycontact_value@OData.Community.Display.V1.FormattedValue'] ?? null,
-        primaryContactId: item.ofm_facility['_ofm_primarycontact_value'] ?? null,
-        address1: item.ofm_facility['address1_line1'] ?? null
+        ...address
       })
     })
     return res.status(HttpStatus.OK).json(contacts)

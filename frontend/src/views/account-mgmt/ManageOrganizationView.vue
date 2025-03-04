@@ -27,12 +27,6 @@
         <h4>Facilities</h4>
       </v-col>
     </v-row>
-
-    <!-- <div v-if="!loading">
-      <p>{{ userFacilities[0].contactList.length }}</p>
-      <pre>{{ userFacilities[0] }} </pre>
-    </div> -->
-
     <v-row>
       <v-col cols="12">
         <v-card class="pa-6" variant="outlined">
@@ -61,7 +55,7 @@
                 </v-expansion-panels>
               </v-col>
               <v-col v-else>
-                <ManageFacilityTable :facilities="facilities" :show-action="false"></ManageFacilityTable>
+                <ManageFacilityTable :facilities="facilities"></ManageFacilityTable>
               </v-col>
             </v-row>
           </v-skeleton-loader>
@@ -152,35 +146,33 @@ export default {
      */
 
     async populateContacts(facilityArray) {
-      return await Promise.all(
+      return Promise.all(
         facilityArray.map(async (fac) => {
           const contacts = await FacilityService.getContacts(fac.facilityId)
+          const address = contacts.length ? [contacts[0].streetAddress1, contacts[0].city, contacts[0].postalCode].filter(Boolean).join(', ') : null
 
-          //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name :)
-          const contactList = contacts
+          //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name
+          const expenseContactList = contacts
             .filter((f) => f.isExpenseAuthority)
             .sort((a, b) => {
               return a.firstName?.localeCompare(b.firstName)
             })
 
           let expenseAuthorityName = null
-          if (contactList.length > 0) {
-            const str = contactList.length > 1 ? `(+${contactList.length - 1} more)` : ''
-            expenseAuthorityName = `${contactList[0].firstName ?? ''} ${contactList[0].lastName ?? ''} ${str}`
+          if (expenseContactList.length > 0) {
+            const str = expenseContactList.length > 1 ? `(+${expenseContactList.length - 1} more)` : ''
+            expenseAuthorityName = `${expenseContactList[0].firstName ?? ''} ${expenseContactList[0].lastName ?? ''} ${str}`
           }
 
-          let primaryContactName = contacts.find((f) => f.contactId === f.primaryContactId)
-
-          if (primaryContactName) {
-            primaryContactName = `${primaryContactName.firstName ?? ''} ${primaryContactName.lastName}`
-          }
+          const primaryContact = contacts.find((f) => f.contactId === f.primaryContactId)
+          const primaryContactName = primaryContact ? `${primaryContact.firstName ?? ''} ${primaryContact.lastName ?? ''}` : null
 
           return {
             ...fac,
-            address1: contacts[0].address1,
+            address: address,
             primaryContactName: primaryContactName,
             expenseAuthorityName: expenseAuthorityName,
-            facilityName: fac.facilityName ? fac.facilityName : fac.name,
+            facilityName: fac.facilityName || fac.name,
           }
         }),
       )

@@ -1,7 +1,16 @@
 <template>
   <FacilityFilter class="mb-8" :default-show-input="true" justify="end" @facility-filter-changed="facilityFilterChanged" />
-  <v-data-table :headers="headers" :items="filteredFacilities" item-key="facilityId" :items-per-page="10" density="compact" :mobile="null" mobile-breakpoint="md" class="soft-outline">
-    <template v-if="showAction" #[`item.contactId`]="{ item }">
+  <v-data-table
+    v-model:sort-by="sortBy"
+    :headers="headers"
+    :items="filteredFacilities"
+    item-key="facilityId"
+    :items-per-page="10"
+    density="compact"
+    :mobile="null"
+    mobile-breakpoint="md"
+    class="soft-outline">
+    <template #[`item.contactId`]="{ item }">
       <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
         <AppButton :primary="false" size="small" @click="navigateToFacility(item.facilityId)">Open</AppButton>
       </v-row>
@@ -36,17 +45,16 @@ export default {
       type: Array,
       default: () => [],
     },
-    showAction: {
-      type: Boolean,
-      default: true,
-    },
   },
-  emits: ['update:modelValue'],
   data() {
     return {
+      sortBy: [
+        { key: 'primaryContactName', order: 'asc' },
+        { key: 'expenseAuthorityName', order: 'asc' },
+      ],
       headers: [
         { title: 'Facility Name', key: 'facilityName' },
-        { title: 'Facility Address', key: 'address1' },
+        { title: 'Facility Address', key: 'address' },
         { title: 'Primary Contact', key: 'primaryContactName' },
         { title: 'Expense Authority', key: 'expenseAuthorityName' },
         { title: 'Actions', key: 'contactId', sortable: false },
