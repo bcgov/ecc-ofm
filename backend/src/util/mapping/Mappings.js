@@ -115,7 +115,6 @@ const UsersPermissionsFacilityMappings = [
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
   { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
-
 ]
 
 const ApplicationIntakeMappings = [

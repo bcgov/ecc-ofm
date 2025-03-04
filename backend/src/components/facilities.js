@@ -65,14 +65,14 @@ async function getFacilityContacts(req, res) {
       }
 
       const address = new MappableObjectForFront(item.ofm_facility, FacilityMappings).toJSON()
-      const facilityInfo =  new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON()
+      const facilityInfo = new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON()
       delete facilityInfo.address
 
       //ofmcc-6916 map basic address info here to avoid additional calls to Dynamics
       contacts.push({
         ...facilityInfo,
         ...user,
-        ...address
+        ...address,
       })
     })
     return res.status(HttpStatus.OK).json(contacts)
