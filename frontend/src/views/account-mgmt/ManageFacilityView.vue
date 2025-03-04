@@ -247,7 +247,6 @@ export default {
         this.contacts?.forEach((contact) => {
           contact.fullName = `${contact.firstName ?? ''} ${contact.lastName}`
         })
-        console.log(this.contacts)
       } catch (error) {
         this.setFailureAlert('Failed to get contacts for facilityId = ' + this.facilityId, error)
       }
@@ -275,8 +274,6 @@ export default {
     async getFacility() {
       try {
         this.facility = await FacilityService.getFacility(this.facilityId)
-
-        console.log(this.facility)
       } catch (error) {
         this.setFailureAlert('Failed to get Facility information for facilityId = ' + this.facilityId, error)
       }

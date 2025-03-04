@@ -222,7 +222,6 @@ export default {
     },
     updatingUser: {
       handler(value) {
-        console.log('val ', value)
         this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update'
         this.selectedFacilityIds = value.facilities?.filter((fac) => this.facilitiesToAdminister.some((adminFac) => adminFac.facilityId === fac.facilityId)).map((fac) => fac.facilityId)
         this.user = value
