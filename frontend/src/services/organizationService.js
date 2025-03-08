@@ -24,6 +24,17 @@ export default {
     }
   },
 
+  async getOrganizationFacilitiesAndContacts(organizationId) {
+    try {
+      if (!organizationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.ORGANIZATIONS_FACILITIES.replace(':organizationId', organizationId)}?includeContacts=true`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the organization's facilities by organization/account id - ${error}`)
+      throw error
+    }
+  },
+
   async getOrganizationUsers(organizationId, firstName, lastName, email) {
     try {
       if (!organizationId) return

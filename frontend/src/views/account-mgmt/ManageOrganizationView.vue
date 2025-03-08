@@ -87,7 +87,7 @@ import DocumentService from '@/services/documentService'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import FacilityService from '@/services/facilityService'
+
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 
@@ -145,50 +145,60 @@ export default {
      * Loads the facilities for the organization
      */
 
-    async populateContacts(facilityArray) {
-      return Promise.all(
-        facilityArray.map(async (fac) => {
-          const contacts = await FacilityService.getContacts(fac.facilityId)
-          const address = contacts.length ? [contacts[0].streetAddress1, contacts[0].city, contacts[0].postalCode].filter(Boolean).join(', ') : null
+    populateContacts(facilityArray) {
+      return facilityArray.map((fac) => {
+        const contacts = fac.contacts
+        const address = [fac.streetAddress1, fac.city, fac.postalCode].filter(Boolean).join(', ')
 
-          //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name
-          const expenseContactList = contacts
-            .filter((f) => f.isExpenseAuthority)
-            .sort((a, b) => {
-              return a.firstName?.localeCompare(b.firstName)
-            })
+        //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name
+        const expenseContactList = contacts
+          ?.filter((f) => f.isExpenseAuthority)
+          .sort((a, b) => {
+            return a.firstName?.localeCompare(b.firstName)
+          })
 
-          let expenseAuthorityName = null
-          if (expenseContactList.length > 0) {
-            const str = expenseContactList.length > 1 ? `(+${expenseContactList.length - 1} more)` : ''
-            expenseAuthorityName = `${expenseContactList[0].firstName ?? ''} ${expenseContactList[0].lastName ?? ''} ${str}`
-          }
+        let expenseAuthorityName = null
+        if (expenseContactList?.length > 0) {
+          const str = expenseContactList?.length > 1 ? `(+${expenseContactList.length - 1} more)` : ''
+          expenseAuthorityName = `${expenseContactList[0].firstName ?? ''} ${expenseContactList[0].lastName ?? ''} ${str}`
+        }
 
-          const primaryContact = contacts.find((f) => f.contactId === f.primaryContactId)
-          const primaryContactName = primaryContact ? `${primaryContact.firstName ?? ''} ${primaryContact.lastName ?? ''}` : null
+        const primaryContact = contacts?.find((f) => f.contactId === fac.primaryContactId)
+        const primaryContactName = primaryContact ? `${primaryContact.firstName ?? ''} ${primaryContact.lastName ?? ''}` : null
 
-          return {
-            ...fac,
-            address: address,
-            primaryContactName: primaryContactName,
-            expenseAuthorityName: expenseAuthorityName,
-            facilityName: fac.facilityName || fac.name,
-          }
-        }),
-      )
+        return {
+          ...fac,
+          address: address,
+          primaryContactName: primaryContactName,
+          expenseAuthorityName: expenseAuthorityName,
+          facilityName: fac.facilityName || fac.name,
+        }
+      })
     },
     async loadFacilities() {
       try {
-        this.facilities = await this.populateContacts(await OrganizationService.getOrganizationFacilities(this.userInfo.organizationId))
-        this.userFacilities = await this.populateContacts(this.userInfo.facilities)
+        this.facilities = this.populateContacts(await OrganizationService.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId))
+
+        console.log(this.facilities)
+
+        this.userFacilities = this.populateContacts(
+          this.userInfo.facilities.map((fac) => {
+            const currentFacility = this.facilities?.find((el) => el.facilityId === fac.facilityId)
+            return { ...fac, ...currentFacility }
+          }),
+        )
+
+        console.log(this.userFacilities)
       } catch (error) {
-        this.setFailureAlert('Failed to get facilities for organizationId = ' + this.userInfo.organizationId, error)
+        console.log(error)
+        this.setFailureAlert(`Failed to get facilities for organizationId = ${this.userInfo.organizationId}`, error)
       }
     },
 
     async getOrganization() {
       try {
         this.organization = await OrganizationService.getOrganization(this.userInfo.organizationId)
+        console.log(this.organization)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       }

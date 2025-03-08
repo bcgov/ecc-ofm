@@ -53,7 +53,16 @@ async function getFacility(req, res) {
 
 async function getFacilityContacts(req, res) {
   try {
-    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,emailaddress1,telephone1,ccof_username;$expand=ofm_portal_role_id($select=ofm_portal_role_number,ofm_name);),ofm_facility($select=_ofm_primarycontact_value,_ofm_primarycontact_value,address1_line1,address1_city,address1_postalcode)&$filter=(_ofm_facility_value eq ${req?.params?.facilityId}) and (ofm_portal_access eq true) and (statecode eq 0)`
+    const contacts = await getRawFacilityContacts(req?.params?.facilityId)
+    return res.status(HttpStatus.OK).json(contacts)
+  } catch (e) {
+    log.error(e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
+async function getRawFacilityContacts(facilityId){
+    const operation = `ofm_bceid_facilities?$select=_ofm_facility_value,ofm_is_additional_contact,ofm_is_expense_authority,statuscode,statecode&$expand=ofm_bceid($select=ofm_first_name,ofm_last_name,emailaddress1,telephone1,ccof_username;$expand=ofm_portal_role_id($select=ofm_portal_role_number,ofm_name);)&$filter=(_ofm_facility_value eq ${facilityId}) and (ofm_portal_access eq true) and (statecode eq 0)`
     const response = await getOperation(operation)
     const contacts = []
 
@@ -63,24 +72,15 @@ async function getFacilityContacts(req, res) {
         const role = new MappableObjectForFront(user?.role, RoleMappings).toJSON()
         user.role = role
       }
-
-      const address = new MappableObjectForFront(item.ofm_facility, FacilityMappings).toJSON()
       const facilityInfo = new MappableObjectForFront(item, UsersPermissionsFacilityMappings).toJSON()
-      delete facilityInfo.address
 
-      //ofmcc-6916 map basic address info here to avoid additional calls to Dynamics
       contacts.push({
         ...facilityInfo,
         ...user,
-        ...address,
       })
     })
-    return res.status(HttpStatus.OK).json(contacts)
-  } catch (e) {
-    log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    return contacts
   }
-}
 
 async function getFacilityLicences(req, res) {
   try {
@@ -115,4 +115,5 @@ module.exports = {
   getFacilityContacts,
   getFacilityLicences,
   updateFacility,
+  getRawFacilityContacts
 }
