@@ -16,10 +16,10 @@
           :loading="loading"
           :editable="hasPermission(PERMISSIONS.UPDATE_ORG_FACILITY)"
           :organization="organization"
-          :showDocuments="true"
-          :uploadedDocuments="uploadedDocuments"
-          @saveInclusionPolicyData="saveInclusionPolicyData"
-          class="mt-1" />
+          :show-documents="true"
+          :uploaded-documents="uploadedDocuments"
+          class="mt-1"
+          @save-inclusion-policy-data="saveInclusionPolicyData" />
       </v-col>
     </v-row>
     <v-row>
@@ -27,6 +27,11 @@
         <h4>Facilities</h4>
       </v-col>
     </v-row>
+    <v-row class="ml-1">
+      <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
+      <p>Important information missing</p>
+    </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-card class="pa-6" variant="outlined">
