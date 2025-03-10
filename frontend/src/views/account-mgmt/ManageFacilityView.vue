@@ -140,7 +140,7 @@
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -161,6 +161,8 @@ import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 import rules from '@/utils/rules'
+
+import { useOrgStore } from '@/stores/org'
 
 export default {
   name: 'ManageFacilityView',
@@ -226,6 +228,7 @@ export default {
     this.primaryContactLastSaved = this.primaryContact
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationFacilitiesAndContacts']),
     /**
      * Load the data for the page
      */
@@ -302,6 +305,7 @@ export default {
         this.primaryContactLastSaved = this.primaryContact
         this.editModePrimaryContact = false
         this.editMode = false
+        await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
         this.setSuccessAlert('Primary contact updated successfully')
       } catch (error) {
         this.setFailureAlert('Failed to update Primary Contact', error)
@@ -345,6 +349,7 @@ export default {
      */
     async saveExpenseAuthorityUpdates(contactsToAdd, contactsToRemove) {
       await this.saveContactUpdates('isExpenseAuthority', 'Expense Authority', contactsToAdd, contactsToRemove)
+      await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
     },
 
     /**

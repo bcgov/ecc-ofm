@@ -123,7 +123,7 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    ...mapState(useOrgStore, ['organizationAndContacts']),
+    ...mapState(useOrgStore, ['facilitiesWithContacts']),
     otherFacilities() {
       return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
@@ -187,10 +187,10 @@ export default {
     },
     async loadFacilities() {
       try {
-        if (!this.organizationAndContacts) {
+        if (!this.facilitiesWithContacts) {
           await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
         }
-        this.facilities = this.populateContacts(this.organizationAndContacts)
+        this.facilities = this.populateContacts(this.facilitiesWithContacts)
         this.userFacilities = this.populateContacts(
           this.userInfo.facilities.map((fac) => {
             const currentFacility = this.facilities?.find((el) => el.facilityId === fac.facilityId)
