@@ -179,10 +179,10 @@ export default {
       })
     },
     async loadFacilities() {
-      if (!this.organizationAndContacts) {
-        await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
-      }
       try {
+        if (!this.organizationAndContacts) {
+          await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
+        }
         this.facilities = this.populateContacts(this.organizationAndContacts)
         this.userFacilities = this.populateContacts(
           this.userInfo.facilities.map((fac) => {

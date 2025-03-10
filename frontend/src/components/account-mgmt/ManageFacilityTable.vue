@@ -32,7 +32,6 @@
 
 <script>
 import { isEmpty } from 'lodash'
-
 import AppButton from '@/components/ui/AppButton.vue'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 
