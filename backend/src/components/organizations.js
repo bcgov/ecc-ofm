@@ -32,18 +32,18 @@ async function getOrganizationFacilities(req, res) {
 
 async function getRawOrganizationFacilities(organizationId, includeContacts = false) {
   const operation = `accounts?$select=accountid,address1_city,address1_line1,address1_postalcode,_ofm_primarycontact_value,accountnumber,name,ofm_program,ccof_accounttype&$filter=(_parentaccountid_value eq ${organizationId}) and (statecode eq 0) and (ofm_program ne null and ofm_program ne ${OFM_PROGRAM_CODES.CCOF})&pageSize=500`;
-  const response = await getOperation(operation);
+  const response = await getOperation(operation)
 
   if (!response?.value) return [];
 
   const facilityPromises = response.value.map(async (item) => {
-    const contacts = includeContacts ? await getRawFacilityContacts(item.accountid) : null;
-    const org = new MappableObjectForFront(item, FacilityMappings).toJSON();
+    const contacts = includeContacts ? await getRawFacilityContacts(item.accountid) : null
+    const org = new MappableObjectForFront(item, FacilityMappings).toJSON()
 
-    return { ...org, contacts };
+    return { ...org, contacts }
   });
 
-  return Promise.all(facilityPromises);
+  return Promise.all(facilityPromises)
 }
 
 async function updateOrganization(req, res) {
