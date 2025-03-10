@@ -4,7 +4,7 @@
       <v-col cols="12" lg="6" class="pb-0">
         <h4>Organization Details</h4>
       </v-col>
-      <v-col cols="12" lg="6" v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" class="pb-0">
+      <v-col v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" cols="12" lg="6" class="pb-0">
         <v-row no-gutters justify="end">
           <AppButton :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
@@ -63,13 +63,15 @@
       </v-col>
     </v-row>
     <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading" class="mt-4">Account Management</AppBackButton>
-    <NewRequestDialog
-      class="pa-0"
-      :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
-      @close="toggleChangeRequestDialog"
-      @submit-phone-email="handleCRSubmit" />
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    <template v-if="hasPermission(PERMISSIONS.VIEW_APPLICATIONS)">
+      <NewRequestDialog
+        class="pa-0"
+        :show="showChangeRequestDialog"
+        :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+        @close="toggleChangeRequestDialog"
+        @submit-phone-email="handleCRSubmit" />
+      <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    </template>
   </v-container>
 </template>
 
