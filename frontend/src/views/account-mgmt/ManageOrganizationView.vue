@@ -75,7 +75,7 @@
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -90,6 +90,7 @@ import permissionsMixin from '@/mixins/permissionsMixin'
 
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
 
 import ManageFacilityTable from '@/components/account-mgmt/ManageFacilityTable.vue'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
@@ -115,6 +116,7 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapState(useOrgStore, ['organizationAndContacts']),
     otherFacilities() {
       return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
@@ -129,6 +131,7 @@ export default {
     await this.loadData()
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationFacilitiesAndContacts']),
     /**
      * Load the data for the page
      */
@@ -176,21 +179,18 @@ export default {
       })
     },
     async loadFacilities() {
+      if (!this.organizationAndContacts) {
+        await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
+      }
       try {
-        this.facilities = this.populateContacts(await OrganizationService.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId))
-
-        console.log(this.facilities)
-
+        this.facilities = this.populateContacts(this.organizationAndContacts)
         this.userFacilities = this.populateContacts(
           this.userInfo.facilities.map((fac) => {
             const currentFacility = this.facilities?.find((el) => el.facilityId === fac.facilityId)
             return { ...fac, ...currentFacility }
           }),
         )
-
-        console.log(this.userFacilities)
       } catch (error) {
-        console.log(error)
         this.setFailureAlert(`Failed to get facilities for organizationId = ${this.userInfo.organizationId}`, error)
       }
     },
@@ -198,7 +198,6 @@ export default {
     async getOrganization() {
       try {
         this.organization = await OrganizationService.getOrganization(this.userInfo.organizationId)
-        console.log(this.organization)
       } catch (error) {
         this.setFailureAlert('Failed to get your organization information', error)
       }

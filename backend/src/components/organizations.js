@@ -21,7 +21,6 @@ async function getOrganization(req, res) {
 }
 
 async function getOrganizationFacilities(req, res) {
-  log.info('called1')
   try {
     const orgFacilities = await getRawOrganizationFacilities(req.params.organizationId, req.query?.includeContacts)
     return res.status(HttpStatus.OK).json(orgFacilities)
