@@ -38,9 +38,9 @@ async function getRawOrganizationFacilities(organizationId, includeContacts = fa
 
   const facilityPromises = response.value.map(async (item) => {
     const contacts = includeContacts ? await getRawFacilityContacts(item.accountid) : null
-    const org = new MappableObjectForFront(item, FacilityMappings).toJSON()
+    const facility = new MappableObjectForFront(item, FacilityMappings).toJSON()
 
-    return { ...org, contacts }
+    return { ...facility, contacts }
   })
 
   return Promise.all(facilityPromises)
