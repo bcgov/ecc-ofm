@@ -28,7 +28,7 @@
             Overdue
           </template>
           <template v-else>
-            <v-icon color="warning">mdi-alert</v-icon>
+            <v-icon color="amber">mdi-alert</v-icon>
             Due
           </template>
         </template>

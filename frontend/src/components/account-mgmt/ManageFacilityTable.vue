@@ -58,7 +58,6 @@ export default {
         { title: 'Expense Authority', key: 'expenseAuthorityName' },
         { title: 'Actions', key: 'contactId', sortable: false },
       ],
-      updatedValue: null,
       facilityNameFilter: undefined,
     }
   },

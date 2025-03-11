@@ -81,7 +81,7 @@
               </v-row>
               <v-row>
                 <v-col cols="10" sm="11">
-                  <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
+                  <ContactInfo v-card-variant="flat" :loading="loading" :contact="primaryContact" class="mt-0" />
                 </v-col>
                 <v-col cols="2" sm="1">
                   <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
@@ -159,10 +159,9 @@ import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 import rules from '@/utils/rules'
-
-import { useOrgStore } from '@/stores/org'
 
 export default {
   name: 'ManageFacilityView',
