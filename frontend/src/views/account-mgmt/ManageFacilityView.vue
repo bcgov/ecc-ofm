@@ -81,7 +81,7 @@
               </v-row>
               <v-row>
                 <v-col cols="10" sm="11">
-                  <ContactInfo :loading="loading" :contact="primaryContact" vCardVariant="flat" class="mt-0" />
+                  <ContactInfo v-card-variant="flat" :loading="loading" :contact="primaryContact" class="mt-0" />
                 </v-col>
                 <v-col cols="2" sm="1">
                   <v-row v-if="editable && !editModePrimaryContact" no-gutters justify="end">
@@ -140,7 +140,7 @@
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -159,6 +159,7 @@ import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
@@ -226,6 +227,7 @@ export default {
     this.primaryContactLastSaved = this.primaryContact
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationFacilitiesAndContacts']),
     /**
      * Load the data for the page
      */
@@ -302,6 +304,7 @@ export default {
         this.primaryContactLastSaved = this.primaryContact
         this.editModePrimaryContact = false
         this.editMode = false
+        await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
         this.setSuccessAlert('Primary contact updated successfully')
       } catch (error) {
         this.setFailureAlert('Failed to update Primary Contact', error)
@@ -345,6 +348,7 @@ export default {
      */
     async saveExpenseAuthorityUpdates(contactsToAdd, contactsToRemove) {
       await this.saveContactUpdates('isExpenseAuthority', 'Expense Authority', contactsToAdd, contactsToRemove)
+      await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
     },
 
     /**
