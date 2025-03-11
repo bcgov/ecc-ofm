@@ -17,13 +17,13 @@
     </template>
     <template #[`item.primaryContactName`]="{ item }">
       <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-        <v-icon v-if="!item.primaryContactName" color="warning" class="mr-2">mdi-alert</v-icon>
+        <v-icon v-if="!item.primaryContactName" color="amber" class="mr-2">mdi-alert</v-icon>
         <p v-else>{{ item.primaryContactName }}</p>
       </v-row>
     </template>
     <template #[`item.expenseAuthorityName`]="{ item }">
       <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-        <v-icon v-if="!item.expenseAuthorityName" color="warning" class="mr-2">mdi-alert</v-icon>
+        <v-icon v-if="!item.expenseAuthorityName" color="amber" class="mr-2">mdi-alert</v-icon>
         <p v-else>{{ item.expenseAuthorityName }}</p>
       </v-row>
     </template>

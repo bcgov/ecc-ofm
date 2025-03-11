@@ -28,7 +28,7 @@
       </v-col>
     </v-row>
     <v-row class="ml-1">
-      <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
+      <v-icon color="amber" class="mr-2">mdi-alert</v-icon>
       <p>Important information missing</p>
     </v-row>
 
