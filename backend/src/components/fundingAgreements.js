@@ -1,15 +1,15 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
-const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
+const { buildDateFilterQuery, buildFilterQuery, getMappingString } = require('../util/common')
+const { FundingAgreementMappings, FundingReallocationRequestMappings, TopUpMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 const { isEmpty } = require('lodash')
 
 async function getFundingAgreements(req, res) {
   try {
-    const fundingAgreements = []
+    let fundingAgreements = []
     let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
     if (req.query?.includeFundingEnvelopes) {
       operation +=
@@ -27,16 +27,46 @@ async function getFundingAgreements(req, res) {
         const ea = funding.ofm_application?.ofm_expense_authority
         fa.expenseAuthority = ea ? `${ea.ofm_first_name ?? ''} ${ea.ofm_last_name}` : ''
       }
-
       fundingAgreements.push(fa)
     })
+
     if (isEmpty(fundingAgreements)) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
+
+    if(req.query?.includeTopUp){
+      const topUps = await getTopUpFundingByFas(fundingAgreements)
+      fundingAgreements = [...topUps, ...fundingAgreements]
+    }
+
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
     handleError(res, e)
   }
+}
+
+//how do the top up dates work??
+async function getTopUpFundingByFas(fundingAgreements){
+  const filterQuery = fundingAgreements.map(el => `_ofm_funding_value eq ${el.fundingId}`).join(" or ")
+
+  //do we need to check for status? Or do they sign these FA as well?
+  const operation =  `ofm_top_up_funds?$select=${getMappingString(TopUpMappings)}&$filter=${filterQuery}`
+
+  log.info('op' , operation)
+  const response = (await getOperation(operation))?.value
+
+  log.info (response)
+  if (isEmpty(response)){
+    return null
+  }
+
+  const topUps = []
+
+  response.forEach(item => {
+    topUps.push(new MappableObjectForFront(item, TopUpMappings).toJSON())
+  })
+
+  return topUps
 }
 
 async function getFundingAgreementById(req, res) {

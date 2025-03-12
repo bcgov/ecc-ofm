@@ -95,6 +95,8 @@ export default {
           )
         ).flat()
 
+        console.log(this.supplementaryApplications)
+
         this.supplementaryApplications?.forEach((app) => {
           this.fundingAgreements.push({
             startDate: app.startDate,
@@ -118,12 +120,22 @@ export default {
         this.fundingAgreements = []
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
-            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
+            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo, true, true)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = APPLICATION_TYPES.OFM
-                fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
-                fa.statusName = this.getStatusName(fa)
+                /* ofmcc-7026 - top ups get returned with the FA request,
+                  because I can map them all together nicely in the backend resulting in only one extra call.
+                  Additionally, it will work with the selected date queries by default. */
+                if (fa.topUpFundingAmount) {
+                  fa.fundingAgreementType = APPLICATION_TYPES.TOP_UP
+                  fa.expenseAuthority = BLANK_FIELD
+                  fa.statusCode = FUNDING_AGREEMENT_STATUS_CODES.ACTIVE //TODO - we will require a map function to get the right colors to the topup status.
+                  //todo- I think we will sign these agreements too? so show sign will work differently also.
+                } else {
+                  fa.fundingAgreementType = APPLICATION_TYPES.OFM
+                  fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
+                  fa.statusName = this.getStatusName(fa)
+                }
               })
 
               //by adding irregular expense here it will also search within the user entered date params

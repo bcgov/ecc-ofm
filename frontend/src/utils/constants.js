@@ -302,6 +302,7 @@ export const BLANK_FIELD = '- - - -'
 export const APPLICATION_TYPES = Object.freeze({
   OFM: 'Base Funding',
   IRREGULAR_EXPENSE: 'Irregular Expense',
+  TOP_UP: 'Top Up',
 })
 
 export const DAYS_OF_WEEK = Object.freeze([

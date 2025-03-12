@@ -31,7 +31,10 @@ function buildDateFilterQuery(query, crmDateFieldName) {
  * Use this function to generate a list of fields based on mappings
  */
 function getMappingString(mappings) {
-  return mappings.map((item) => item.back).join(',')
+  return mappings
+    .map((item) => item.back)
+    .filter((field) => !field.includes('@'))
+    .join(',');
 }
 
 module.exports = {
