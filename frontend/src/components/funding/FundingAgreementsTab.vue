@@ -95,8 +95,6 @@ export default {
           )
         ).flat()
 
-        console.log(this.supplementaryApplications)
-
         this.supplementaryApplications?.forEach((app) => {
           this.fundingAgreements.push({
             startDate: app.startDate,

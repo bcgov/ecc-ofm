@@ -19,6 +19,8 @@ async function getFundingAgreements(req, res) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
+    log.info('fa filter :')
+    log.info(filter)
     operation += `&$filter=(${filter})&pageSize=500&$orderby=ofm_version_number desc`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
@@ -30,14 +32,16 @@ async function getFundingAgreements(req, res) {
       fundingAgreements.push(fa)
     })
 
+    if(req.query?.includeTopUp){
+      const topUps = await getTopUpFundingByCurrentFacility(filter)
+      fundingAgreements = [...topUps, ...fundingAgreements]
+    }
+
     if (isEmpty(fundingAgreements)) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
 
-    if(req.query?.includeTopUp){
-      const topUps = await getTopUpFundingByFas(fundingAgreements)
-      fundingAgreements = [...topUps, ...fundingAgreements]
-    }
+
 
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
@@ -46,19 +50,11 @@ async function getFundingAgreements(req, res) {
 }
 
 //how do the top up dates work??
-async function getTopUpFundingByFas(fundingAgreements){
-  const filterQuery = fundingAgreements.map(el => `_ofm_funding_value eq ${el.fundingId}`).join(" or ")
-
-  //do we need to check for status? Or do they sign these FA as well?
-  const operation =  `ofm_top_up_funds?$select=${getMappingString(TopUpMappings)}&$filter=${filterQuery}`
-
-  log.info('op' , operation)
+async function getTopUpFundingByCurrentFacility(facilityFilter){
+  const operation =  `ofm_top_up_funds?$select=${getMappingString(TopUpMappings)}&$filter=${facilityFilter}`
   const response = (await getOperation(operation))?.value
 
-  log.info (response)
-  if (isEmpty(response)){
-    return null
-  }
+  if (isEmpty(response)) return []
 
   const topUps = []
 
