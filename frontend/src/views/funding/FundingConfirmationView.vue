@@ -24,21 +24,15 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 export default {
   name: 'FundingConfirmationView',
   components: { AppButton, AppBackButton },
-  props: {
-    type: {
-      type: String,
-      default: 'signed',
-    },
-  },
   computed: {
     confirmationMessage() {
-      return this.type === 'declined' ? 'Funding Agreement Declined' : 'Funding Agreement Signed'
+      return this.$route.name === 'funding-declined' ? 'Funding Agreement Declined' : 'Funding Agreement Signed'
     },
     icon() {
-      return this.type === 'declined' ? 'mdi-close-circle' : 'mdi-check-circle'
+      return this.$route.name === 'funding-declined' ? 'mdi-close-circle' : 'mdi-check-circle'
     },
     iconColor() {
-      return this.type === 'declined' ? 'error' : 'success'
+      return this.$route.name === 'funding-declined' ? 'error' : 'success'
     },
   },
 }

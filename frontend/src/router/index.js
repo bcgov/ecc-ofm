@@ -174,7 +174,6 @@ const router = createRouter({
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
-      props: { type: 'signed' },
     },
     {
       path: '/funding/declined',
@@ -184,7 +183,6 @@ const router = createRouter({
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
-      props: { type: 'declined' },
     },
 
     {

@@ -21,7 +21,7 @@
           {{ format.formatDate(item?.endDate) }}
         </template>
         <template #[`item.statusName`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)" style="white-space: nowrap">{{ item?.statusName }}</span>
+          <span :class="getStatusClass(item?.statusCode)" class="text-no-wrap">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
