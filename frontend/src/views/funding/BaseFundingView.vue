@@ -220,14 +220,17 @@ export default {
       }
     },
     async decline() {
-      const payload = {
-        stateCode: FUNDING_AGREEMENT_STATE_CODES.INACTIVE,
-        statusCode: FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
+      const payload_decliner = {
         ofm_provider_decliner: this.userInfo?.contactId,
         ofm_provider_decline_date: getMomentDate(new Date()),
       }
+      const payload = {
+        stateCode: FUNDING_AGREEMENT_STATE_CODES.INACTIVE,
+        statusCode: FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
+      }
 
       try {
+        await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload_decliner)
         await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
         this.setSuccessAlert('Funding Agreement declined')
         this.$router.push({ name: 'funding-declined' })

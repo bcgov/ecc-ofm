@@ -75,6 +75,12 @@ async function updateFundingAgreement(req, res) {
         ofm_provider_approval_date: req.body?.signedOn,
         ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
       }
+    } else if (req?.body.ofm_provider_decliner) {
+      payload = {
+        'ofm_provider_decliner@odata.bind': `/contacts(${req.body?.ofm_provider_decliner})`, // Bind decliner's contact ID
+        ofm_provider_decline_date: req.body?.ofm_provider_decline_date,
+        ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
+      }
     } else {
       payload = new MappableObjectForBack(req.body, FundingAgreementMappings).toJSON()
     }
