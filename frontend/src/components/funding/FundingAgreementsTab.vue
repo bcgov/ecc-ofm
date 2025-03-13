@@ -21,7 +21,7 @@
           {{ format.formatDate(item?.endDate) }}
         </template>
         <template #[`item.statusName`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
+          <span :class="getStatusClass(item?.statusCode)" style="white-space: nowrap">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
@@ -199,7 +199,7 @@ export default {
         'status-blue': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
-        'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
+        'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED || statusCode === FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
       }
     },
   },

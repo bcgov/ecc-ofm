@@ -81,10 +81,34 @@
     </v-row>
 
     <v-row v-if="!loading" class="justify-center justify-sm-space-between mx-md-7 my-3">
-      <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
-      <AppButton id="submit-funding-agreement" size="large" width="240px" class="mt-2" :disabled="submitDisabled" :loading="loading" @click="submit()">Submit</AppButton>
+      <v-col cols="auto">
+        <div class="d-flex" style="gap: 28px">
+          <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
+          <AppButton id="decline-funding-agreement" :primary="false" size="large" width="240px" class="mt-2" :disabled="declineDisabled" :loading="loading" @click="showDeclineDialog = true">
+            Decline
+          </AppButton>
+        </div>
+      </v-col>
+      <v-col cols="auto">
+        <AppButton id="submit-funding-agreement" size="large" width="240px" height="52px" class="mt-2" :disabled="submitDisabled" :loading="loading" @click="submit()">Submit</AppButton>
+      </v-col>
     </v-row>
   </v-container>
+  <AppDialog v-model="showDeclineDialog" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
+    <template #content>
+      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to decline this Funding Agreement?</div>
+    </template>
+    <template #button>
+      <v-row justify="space-around">
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go Back</AppButton>
+        </v-col>
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="decline()">Decline</AppButton>
+        </v-col>
+      </v-row>
+    </template>
+  </AppDialog>
 </template>
 
 <script>
@@ -100,8 +124,9 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import LicenceService from '@/services/licenceService'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, FUNDING_AGREEMENT_STATE_CODES } from '@/utils/constants'
 import AppPDFViewer from '@/components/ui/AppPDFViewer.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
 
 const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
@@ -112,7 +137,7 @@ const LOCKED_STATUSES = [
 
 export default {
   name: 'FundingView',
-  components: { AppBackButton, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, AppPDFViewer },
+  components: { AppBackButton, AppDialog, AppButton, OrganizationHeader, LicenceDetails, LicenceHeader, AppPDFViewer },
   mixins: [alertMixin],
   data() {
     return {
@@ -122,6 +147,7 @@ export default {
       licences: [],
       panel: [],
       loading: false,
+      showDeclineDialog: false,
     }
   },
 
@@ -133,6 +159,9 @@ export default {
     },
     submitDisabled() {
       return this.readonly || !this.fundingAgreement.agreeConsentCertify
+    },
+    declineDisabled() {
+      return this.readonly || this.fundingAgreement.agreeConsentCertify
     },
     downloadFileName() {
       return `Funding_Agreement_${this.fundingAgreement?.fundingAgreementNumber}`
@@ -188,6 +217,22 @@ export default {
         this.$router.push({ name: 'funding-confirmation' })
       } catch (error) {
         this.setFailureAlert('Failed to submit funding agreement', error)
+      }
+    },
+    async decline() {
+      const payload = {
+        stateCode: FUNDING_AGREEMENT_STATE_CODES.INACTIVE,
+        statusCode: FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
+        ofm_provider_decliner: this.userInfo?.contactId,
+        ofm_provider_decline_date: getMomentDate(new Date()),
+      }
+
+      try {
+        await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
+        this.setSuccessAlert('Funding Agreement declined')
+        this.$router.push({ name: 'funding-declined' })
+      } catch (error) {
+        this.setFailureAlert('Failed to decline funding agreement', error)
       }
     },
     goToDeclaration() {
