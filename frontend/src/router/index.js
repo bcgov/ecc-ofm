@@ -167,22 +167,14 @@ const router = createRouter({
       },
     },
     {
-      path: '/funding/confirmation',
+      path: '/funding/confirmation/:result',
       name: 'funding-confirmation',
       component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
-    },
-    {
-      path: '/funding/declined',
-      name: 'funding-declined',
-      component: FundingConfirmationView,
-      meta: {
-        requiresAuth: true,
-        permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
-      },
+      props: true,
     },
 
     {

@@ -218,7 +218,7 @@ export default {
       try {
         await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
         this.setSuccessAlert('Funding Agreement submitted')
-        this.$router.push({ name: 'funding-confirmation' })
+        this.$router.push({ name: 'funding-confirmation', params: { result: 'accepted' } })
       } catch (error) {
         this.setFailureAlert('Failed to submit funding agreement', error)
       }
@@ -233,7 +233,7 @@ export default {
       try {
         await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
         this.setSuccessAlert('Funding Agreement declined')
-        this.$router.push({ name: 'funding-declined' })
+        this.$router.push({ name: 'funding-confirmation', params: { result: 'declined' } })
       } catch (error) {
         this.setFailureAlert('Failed to decline funding agreement', error)
       }
