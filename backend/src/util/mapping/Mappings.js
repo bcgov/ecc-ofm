@@ -511,6 +511,7 @@ const TopUpMappings = [
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_programming_amount', front: 'topUpFundingAmount' },
+  { back: 'ofm_top_up_fundid', front: 'topUpFundingId' },
 ]
 
 module.exports = {
