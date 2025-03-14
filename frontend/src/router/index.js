@@ -1,49 +1,49 @@
-import HttpStatus from 'http-status-codes'
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
 import { APPLICATION_ROUTES } from '@/utils/constants'
-import { PERMISSIONS } from '@/utils/constants/permissions.js'
-import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
-import DocumentsView from '@/views/DocumentsView.vue'
-import ErrorView from '@/views/ErrorView.vue'
-import HelpView from '@/views/HelpView.vue'
-import HomeView from '@/views/HomeView.vue'
-import ImpersonateView from '@/views/ImpersonateView.vue'
-import LoginView from '@/views/LoginView.vue'
-import LogoutView from '@/views/LogoutView.vue'
-import MessagingView from '@/views/MessagingView.vue'
-import MinistryLoginView from '@/views/MinistryLoginView.vue'
-import SessionExpiredView from '@/views/SessionExpiredView.vue'
-import UnauthorizedView from '@/views/UnauthorizedView.vue'
 import AccountMgmtHomeView from '@/views/account-mgmt/AccountMgmtHomeView.vue'
 import AccountMgmtView from '@/views/account-mgmt/AccountMgmtView.vue'
-import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
-import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
-import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
 import ApplicationConfirmationView from '@/views/applications/ApplicationConfirmationView.vue'
 import ApplicationView from '@/views/applications/ApplicationView.vue'
 import ApplicationsHistoryView from '@/views/applications/ApplicationsHistoryView.vue'
+import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
+import BaseFundingView from '@/views/funding/BaseFundingView.vue'
 import DeclareSubmitView from '@/views/applications/DeclareSubmitView.vue'
+import DocumentsView from '@/views/DocumentsView.vue'
 import EligibilityView from '@/views/applications/EligibilityView.vue'
+import ErrorView from '@/views/ErrorView.vue'
 import FacilityDetailsView from '@/views/applications/FacilityDetailsView.vue'
+import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
+import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
+import HelpView from '@/views/HelpView.vue'
+import HomeView from '@/views/HomeView.vue'
+import HttpStatus from 'http-status-codes'
+import ImpersonateView from '@/views/ImpersonateView.vue'
+import IrregularFundingView from '@/views/funding/IrregularFundingView.vue'
+import LoginView from '@/views/LoginView.vue'
+import LogoutView from '@/views/LogoutView.vue'
+import ManageFacilityView from '@/views/account-mgmt/ManageFacilityView.vue'
+import ManageOrganizationView from '@/views/account-mgmt/ManageOrganizationView.vue'
+import ManageUsersView from '@/views/account-mgmt/ManageUsersView.vue'
+import MessagingView from '@/views/MessagingView.vue'
+import MinistryLoginView from '@/views/MinistryLoginView.vue'
 import OperatingCostsView from '@/views/applications/OperatingCostsView.vue'
+import { PERMISSIONS } from '@/utils/constants/permissions.js'
+import ReportingView from '@/views/reports/ReportingView.vue'
 import ReviewApplicationView from '@/views/applications/ReviewApplicationView.vue'
 import SelectFacilityView from '@/views/applications/SelectFacilityView.vue'
 import ServiceDeliveryView from '@/views/applications/ServiceDeliveryView.vue'
+import SessionExpiredView from '@/views/SessionExpiredView.vue'
 import StaffingView from '@/views/applications/StaffingView.vue'
-import BaseFundingView from '@/views/funding/BaseFundingView.vue'
-import FundingConfirmationView from '@/views/funding/FundingConfirmationView.vue'
-import FundingOverviewView from '@/views/funding/FundingOverviewView.vue'
-import IrregularFundingView from '@/views/funding/IrregularFundingView.vue'
-import SupplementaryFundingView from '@/views/funding/SupplementaryFundingView.vue'
-import ReportingView from '@/views/reports/ReportingView.vue'
-import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
 import SupplementaryConfirmationView from '@/views/supp-allowances/SupplementaryConfirmation.vue'
 import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
+import SupplementaryFundingView from '@/views/funding/SupplementaryFundingView.vue'
 import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmitView.vue'
+import SurveyView from '@/views/reports/SurveyView.vue'
+import UnauthorizedView from '@/views/UnauthorizedView.vue'
+import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -167,13 +167,14 @@ const router = createRouter({
       },
     },
     {
-      path: '/funding/confirmation',
+      path: '/funding/confirmation/:result',
       name: 'funding-confirmation',
       component: FundingConfirmationView,
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_FUNDING_AGREEMENT,
       },
+      props: true,
     },
 
     {

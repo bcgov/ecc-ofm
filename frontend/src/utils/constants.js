@@ -87,6 +87,12 @@ export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
   ACTIVE: 8,
   TERMINATED: 9,
   CANCELLED: 10,
+  PROVIDER_DECLINED: 11,
+})
+
+export const FUNDING_AGREEMENT_STATE_CODES = Object.freeze({
+  ACTIVE: 0,
+  INACTIVE: 1,
 })
 
 export const FUNDING_REALLOCATION_REQUEST_STATUS_CODES = Object.freeze({

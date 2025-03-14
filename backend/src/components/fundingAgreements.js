@@ -69,10 +69,16 @@ async function updateFundingAgreement(req, res) {
   try {
     let payload
     //we are signing the FA, the logged in contact will be bound in CRM
-    if (req?.body.contactId) {
+    if (req?.body.agreeConsentCertify) {
       payload = {
         'ofm_provider_approver@odata.bind': `/contacts(${req.body?.contactId})`,
         ofm_provider_approval_date: req.body?.signedOn,
+        ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
+      }
+    } else if (req?.body.stateCode) {
+      payload = {
+        'ofm_provider_decliner@odata.bind': `/contacts(${req.body?.contactId})`, // Bind decliner's contact ID
+        ofm_provider_decline_date: req.body?.signedOn,
         ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
       }
     } else {
