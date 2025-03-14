@@ -332,8 +332,6 @@ const FundingAgreementMappings = [
   { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
-  { back: 'ofm_provider_decliner', front: 'providerDecliner' },
-  { back: 'ofm_provider_decline_date', front: 'declineDate' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
 
   // Annual Base Funding

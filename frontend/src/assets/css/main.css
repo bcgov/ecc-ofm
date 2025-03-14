@@ -130,6 +130,12 @@ input[type='number'] {
   padding: 2px 6px 2px 6px;
 }
 
+.status-pink {
+  background-color: #eeaaad;
+  border-radius: 5px;
+  padding: 2px 6px 2px 6px;
+}
+
 /** Shared classes */
 .alert-icon {
   color: #d8292f !important;

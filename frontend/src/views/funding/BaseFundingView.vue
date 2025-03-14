@@ -96,15 +96,18 @@
   </v-container>
   <AppDialog v-model="showDeclineDialog" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to decline this Funding Agreement?</div>
+      <div class="confirm-dialog-text d-flex flex-column align-center">
+        <strong>Are you sure you want to decline this funding agreement?</strong>
+        <p class="mt-4 text-center">By choosing to decline, you are declining funding from the Ministry and terminating your $10 a Day application.</p>
+      </div>
     </template>
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go Back</AppButton>
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="closeDialog">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="decline()">Decline</AppButton>
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="decline()">Decline Funding Agreement</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -131,6 +134,7 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 const LOCKED_STATUSES = [
   FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
   FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
+  FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
   FUNDING_AGREEMENT_STATUS_CODES.ACTIVE,
   FUNDING_AGREEMENT_STATUS_CODES.CANCELLED,
 ]
@@ -220,17 +224,13 @@ export default {
       }
     },
     async decline() {
-      const payload_decliner = {
-        ofm_provider_decliner: this.userInfo?.contactId,
-        ofm_provider_decline_date: getMomentDate(new Date()),
-      }
       const payload = {
+        contactId: this.userInfo?.contactId,
+        signedOn: getMomentDate(new Date()),
         stateCode: FUNDING_AGREEMENT_STATE_CODES.INACTIVE,
         statusCode: FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
       }
-
       try {
-        await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload_decliner)
         await FundingAgreementService.updateFundingAgreement(this.fundingAgreement?.fundingId, payload)
         this.setSuccessAlert('Funding Agreement declined')
         this.$router.push({ name: 'funding-declined' })
