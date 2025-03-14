@@ -355,3 +355,7 @@ export const UNION_TYPE_CODES = Object.freeze({
   NO: 0,
   YES: 1,
 })
+
+export const REPORT_SECTION_TITLES = Object.freeze({
+  HUMAN_RESOURCES: 'Human Resources',
+})
