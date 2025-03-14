@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildDateFilterQuery, buildFilterQuery, getMappingString } = require('../util/common')
+const { getTopUpFundingByCurrentFacility } = require('./topups')
 const { FundingAgreementMappings, FundingReallocationRequestMappings, TopUpMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
@@ -49,21 +50,7 @@ async function getFundingAgreements(req, res) {
   }
 }
 
-//how do the top up dates work??
-async function getTopUpFundingByCurrentFacility(facilityFilter){
-  const operation =  `ofm_top_up_funds?$select=${getMappingString(TopUpMappings)}&$filter=${facilityFilter}`
-  const response = (await getOperation(operation))?.value
 
-  if (isEmpty(response)) return []
-
-  const topUps = []
-
-  response.forEach(item => {
-    topUps.push(new MappableObjectForFront(item, TopUpMappings).toJSON())
-  })
-
-  return topUps
-}
 
 async function getFundingAgreementById(req, res) {
   try {
