@@ -34,7 +34,7 @@ function getMappingString(mappings) {
   return mappings
     .map((item) => item.back)
     .filter((field) => !field.includes('@'))
-    .join(',');
+    .join(',')
 }
 
 module.exports = {

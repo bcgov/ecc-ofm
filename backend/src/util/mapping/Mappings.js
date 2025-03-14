@@ -499,7 +499,6 @@ const IrregularExpenseMappings = [
   { back: 'ofm_pcm_validated', front: 'pcmValidated' },
 ]
 
-
 const TopUpMappings = [
   { back: '_ofm_funding_value', front: 'fundingId' },
   { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
@@ -552,5 +551,5 @@ module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   IrregularExpenseMappings,
-  TopUpMappings
+  TopUpMappings,
 }
