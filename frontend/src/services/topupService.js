@@ -27,8 +27,7 @@ export default {
 
   async getTopUpFundingById(topUpFundingId) {
     try {
-      let url = `${ApiRoutes.TOP_UP_APPLICATIONS}/${topUpFundingId}`
-      const response = await ApiService.apiAxios.get(url)
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.TOP_UP_APPLICATIONS}/${topUpFundingId}`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the Top-Up Funding application by ID - ${error}`)

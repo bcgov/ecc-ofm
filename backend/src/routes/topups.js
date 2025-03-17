@@ -32,10 +32,10 @@ router.get(
   '/:topUpFundingId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  //validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
+  validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
   [param('topUpFundingId', 'URL param: [topUpFundingId] is required').notEmpty().isUUID()],
   (req, res) => {
-    //validationResult(req).throw()
+    validationResult(req).throw()
     return getTopUpFundingByID(req, res)
   },
 )
