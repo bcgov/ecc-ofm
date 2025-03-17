@@ -22,7 +22,7 @@ import alertMixin from '@/mixins/alertMixin'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
-import IrregularExpenseService from '@/services/irregularExpenseService'
+import TopUpService from '@/services/topupService'
 import AppPDFViewer from '@/components/ui/AppPDFViewer.vue'
 
 export default {
@@ -51,8 +51,9 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.application = await IrregularExpenseService.getIrregularExpenseById(this.$route.params.fundingGuid)
-        const resp = await IrregularExpenseService.getIrregularExpensePDF(this.$route.params.fundingGuid)
+        this.application = await TopUpService.getTopUpFundingById(this.$route.params.fundingGuid)
+        const resp = await TopUpService.getTopUpFundingPDF(this.$route.params.fundingGuid)
+
         this.pdfFile = {
           data: atob(resp),
         }

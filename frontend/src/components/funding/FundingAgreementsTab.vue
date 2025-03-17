@@ -198,9 +198,10 @@ export default {
           fundingGuid = item.fundingId
           break
         case APPLICATION_TYPES.TOP_UP:
-          console.log(item)
+          console.log('Top-Up Item:', item)
           routeName = 'topup-funding'
           fundingGuid = item.topUpFundingId
+          console.log('Navigating to:', routeName, 'with fundingGuid:', fundingGuid)
           break
         case APPLICATION_TYPES.IRREGULAR_EXPENSE:
           routeName = 'approved-irregular-funding'
@@ -210,7 +211,6 @@ export default {
           routeName = 'approved-supp-funding'
           fundingGuid = item.supplementaryApplicationId
       }
-
       this.$router.push({ name: routeName, params: { fundingGuid } })
     },
 
