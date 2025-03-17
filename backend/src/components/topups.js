@@ -1,7 +1,7 @@
 'use strict'
 const { getOperation, handleError } = require('./utils')
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
-const { buildFilterQuery, getMappingString } = require('../util/common')
+const { getMappingString } = require('../util/common')
 const { TopUpMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
@@ -43,7 +43,6 @@ async function getTopUpFundingByID(req, res) {
 
 module.exports = {
   getTopUpFundingByCurrentFacility,
-  getTopUpFundingApplications,
   getTopUpFundingPDF,
   getTopUpFundingByID,
 }
