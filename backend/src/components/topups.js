@@ -1,10 +1,9 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
-const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { buildDateFilterQuery, buildFilterQuery, getMappingString } = require('../util/common')
+const { getOperation, handleError } = require('./utils')
+const { MappableObjectForFront } = require('../util/mapping/MappableObject')
+const { buildFilterQuery, getMappingString } = require('../util/common')
 const { TopUpMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
-const log = require('./logger')
 const { isEmpty } = require('lodash')
 
 async function getTopUpFundingByCurrentFacility(facilityFilter) {
@@ -20,21 +19,6 @@ async function getTopUpFundingByCurrentFacility(facilityFilter) {
   })
 
   return topUps
-}
-async function getTopUpFundingApplications(req, res) {
-  try {
-    const topUps = []
-    const operation = `ofm_top_up_funds?$filter=(${buildFilterQuery(req?.query, TopUpMappings)})`
-    const response = (await getOperation(operation))?.value
-
-    response.forEach((item) => {
-      topUps.push(new MappableObjectForFront(item, TopUpMappings).toJSON())
-    })
-
-    return topUps
-  } catch (e) {
-    handleError(res, e)
-  }
 }
 
 async function getTopUpFundingPDF(req, res) {
