@@ -52,7 +52,6 @@ export default {
       try {
         this.loading = true
         this.application = await TopUpService.getTopUpFundingById(this.$route.params.fundingGuid)
-        console.log(this.application)
         const resp = await TopUpService.getTopUpFundingPDF(this.$route.params.fundingGuid)
 
         this.pdfFile = {
