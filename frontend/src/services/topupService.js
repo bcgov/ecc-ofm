@@ -2,10 +2,10 @@ import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
 
 export default {
-  async getTopUpFundingApplications(fundingApplicationId) {
+  async getTopUpFundingApplications(topUpFundingId) {
     try {
-      if (!fundingApplicationId) return
-      let url = `${ApiRoutes.TOP_UP_APPLICATIONS}?topUpFundingId=${fundingApplicationId}`
+      if (!topUpFundingId) return
+      let url = `${ApiRoutes.TOP_UP_APPLICATIONS}/${topUpFundingId}`
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
@@ -14,10 +14,10 @@ export default {
     }
   },
 
-  async getTopUpFundingPDF(fundingApplicationId) {
+  async getTopUpFundingPDF(topUpFundingId) {
     try {
-      if (!fundingApplicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.TOP_UP_APPLICATIONS}/${fundingApplicationId}/pdf`)
+      if (!topUpFundingId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.TOP_UP_APPLICATIONS}/${topUpFundingId}/pdf`)
       return response?.data
     } catch (error) {
       console.log(`Failed to get the approved PDF by fundingGuid - ${error}`)
@@ -25,9 +25,9 @@ export default {
     }
   },
 
-  async getTopUpFundingById(fundingApplicationId) {
+  async getTopUpFundingById(topUpFundingId) {
     try {
-      let url = `${ApiRoutes.TOP_UP_APPLICATIONS}?topUpFundingId=${fundingApplicationId}`
+      let url = `${ApiRoutes.TOP_UP_APPLICATIONS}/${topUpFundingId}`
       const response = await ApiService.apiAxios.get(url)
       return response?.data
     } catch (error) {
