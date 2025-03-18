@@ -90,6 +90,12 @@ export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
   CANCELLED: 10,
 })
 
+export const TOP_UP_FUNDING_STATUS_CODES = Object.freeze({
+  DRAFT: 1,
+  IN_REVIEW: 2,
+  APPROVED: 3,
+})
+
 export const FUNDING_REALLOCATION_REQUEST_STATUS_CODES = Object.freeze({
   IN_PROGRESS: 1,
   APPROVED: 2,

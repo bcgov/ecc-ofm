@@ -1,9 +1,9 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { buildDateFilterQuery, buildFilterQuery, getMappingString } = require('../util/common')
+const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { getTopUpFundingByCurrentFacility } = require('./topups')
-const { FundingAgreementMappings, FundingReallocationRequestMappings, TopUpMappings } = require('../util/mapping/Mappings')
+const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 const { isEmpty } = require('lodash')
@@ -33,7 +33,7 @@ async function getFundingAgreements(req, res) {
       fundingAgreements.push(fa)
     })
 
-    if(req.query?.includeTopUp){
+    if (req.query?.includeTopUp){
       const topUps = await getTopUpFundingByCurrentFacility(filter)
       fundingAgreements = [...topUps, ...fundingAgreements]
     }
@@ -42,15 +42,11 @@ async function getFundingAgreements(req, res) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
 
-
-
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
     handleError(res, e)
   }
 }
-
-
 
 async function getFundingAgreementById(req, res) {
   try {

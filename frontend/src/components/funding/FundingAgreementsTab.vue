@@ -21,7 +21,8 @@
           {{ format.formatDate(item?.endDate) }}
         </template>
         <template #[`item.statusName`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
+          <span v-if="item.topUpFundingAmount" :class="getStatusClassTopUp(item?.statusCode)">{{ item?.statusName }}</span>
+          <span v-else :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
@@ -43,7 +44,7 @@ import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES, TOP_UP_FUNDING_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
 const IN_PROGRESS_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA]
@@ -127,8 +128,7 @@ export default {
                 if (fa.topUpFundingAmount) {
                   fa.fundingAgreementType = APPLICATION_TYPES.TOP_UP
                   fa.expenseAuthority = BLANK_FIELD
-                  fa.statusCode = FUNDING_AGREEMENT_STATUS_CODES.ACTIVE //TODO - we will require a map function to get the right colors to the topup status.
-                  //todo- I think we will sign these agreements too? so show sign will work differently also.
+                  fa.priority = 0
                 } else {
                   fa.fundingAgreementType = APPLICATION_TYPES.OFM
                   fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
@@ -224,6 +224,14 @@ export default {
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
+      }
+    },
+
+    getStatusClassTopUp(statusCode) {
+      return {
+        'status-gray': statusCode === TOP_UP_FUNDING_STATUS_CODES.DRAFT,
+        'status-blue': statusCode === TOP_UP_FUNDING_STATUS_CODES.IN_REVIEW,
+        'status-green': statusCode === TOP_UP_FUNDING_STATUS_CODES.APPROVED,
       }
     },
   },
