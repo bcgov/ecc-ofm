@@ -23,7 +23,7 @@ async function getTopUpFundingByCurrentFacility(facilityFilter) {
 
 async function getTopUpFundingPDF(req, res) {
   try {
-    const operation = `ofm_top_up_funds(${req.params.topUpFundingId})/ofm_top_up_pdf`
+    const operation = `ofm_top_up_funds(${req?.params?.topUpFundingId})/ofm_top_up_pdf`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(response?.value)
   } catch (e) {
@@ -33,7 +33,7 @@ async function getTopUpFundingPDF(req, res) {
 
 async function getTopUpFundingByID(req, res) {
   try {
-    const operation = `ofm_top_up_funds(${req.params.topUpFundingId})`
+    const operation = `ofm_top_up_funds(${req?.params?.topUpFundingId})`
     const response = await getOperation(operation)
     return res.status(HttpStatus.OK).json(new MappableObjectForFront(response, TopUpMappings).toJSON())
   } catch (e) {

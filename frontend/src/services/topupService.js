@@ -1,5 +1,5 @@
-import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
+import { ApiRoutes } from '@/utils/constants'
 
 export default {
   async getTopUpFundingPDF(topUpFundingId) {
@@ -14,6 +14,7 @@ export default {
   },
 
   async getTopUpFundingById(topUpFundingId) {
+    if (!topUpFundingId) return
     try {
       const response = await ApiService.apiAxios.get(`${ApiRoutes.TOP_UP_APPLICATIONS}/${topUpFundingId}`)
       return response?.data

@@ -20,8 +20,6 @@ async function getFundingAgreements(req, res) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
     }
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
-    log.info('fa filter :')
-    log.info(filter)
     operation += `&$filter=(${filter})&pageSize=500&$orderby=ofm_version_number desc`
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
