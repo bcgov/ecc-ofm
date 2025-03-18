@@ -33,7 +33,7 @@ async function getFundingAgreements(req, res) {
       fundingAgreements.push(fa)
     })
 
-    if (req.query?.includeTopUp){
+    if (req.query?.includeTopUp) {
       const topUps = await getTopUpFundingByCurrentFacility(filter)
       fundingAgreements = [...topUps, ...fundingAgreements]
     }
