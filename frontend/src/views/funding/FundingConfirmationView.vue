@@ -3,11 +3,11 @@
     <div class="mt-16">
       <v-row>
         <v-col class="text-center">
-          <v-icon size="xxx-large" color="success">mdi-check-circle</v-icon>
+          <v-icon size="xxx-large" :color="iconColor">{{ icon }}</v-icon>
         </v-col>
       </v-row>
 
-      <h2 class="mb-8 text-center">Funding Agreement Signed</h2>
+      <h2 class="mb-8 text-center">{{ confirmationMessage }}</h2>
 
       <v-row justify="space-around" no-gutters class="mt-10">
         <AppBackButton id="back-home-button" :primary="false" width="250px" :to="{ name: 'home' }" class="text-cemter">Home</AppBackButton>
@@ -24,5 +24,23 @@ import AppBackButton from '@/components/ui/AppBackButton.vue'
 export default {
   name: 'FundingConfirmationView',
   components: { AppButton, AppBackButton },
+  props: {
+    result: {
+      type: String,
+      required: true,
+      validator: (value) => ['accepted', 'declined'].includes(value),
+    },
+  },
+  computed: {
+    confirmationMessage() {
+      return this.result === 'declined' ? 'Funding Agreement Declined' : 'Funding Agreement Signed'
+    },
+    icon() {
+      return this.result === 'declined' ? 'mdi-close-circle' : 'mdi-check-circle'
+    },
+    iconColor() {
+      return this.result === 'declined' ? 'error' : 'success'
+    },
+  },
 }
 </script>

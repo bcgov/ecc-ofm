@@ -26,7 +26,7 @@
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showSign(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Sign</AppButton>
+            <AppButton v-if="showSign(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Review for Signature</AppButton>
             <AppButton v-else-if="showOpen(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Open</AppButton>
           </v-row>
         </template>
@@ -177,7 +177,7 @@ export default {
     showOpen(item) {
       if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
         return (
-          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
+          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
           (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
         )
       }
@@ -223,6 +223,7 @@ export default {
         'status-blue': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
+        'status-pink': statusCode === FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
       }
     },
