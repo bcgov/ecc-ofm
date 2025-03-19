@@ -23,30 +23,30 @@
         If your contact is not on this list, Account Managers can add them in
         <router-link :to="{ name: 'manage-organization' }">Account Management - Manage Organizations/Facilities</router-link>
         . If you don't have access contact your organization Account Manager
-        <v-card class="mt-2 pa-4" variant="outlined">
-          <v-row no-gutters class="mt-4">
-            <v-col cols="12" md="6" lg="5" xl="4" class="mb-4 pr-4">
-              <AppLabel>Choose a primary contact for this application:</AppLabel>
-            </v-col>
-            <v-col cols="12" md="6" lg="7" xl="8">
-              <v-select
-                id="select-primary-contact"
-                v-model="primaryContact"
-                :items="contacts"
-                :disabled="readonly"
-                :hide-details="readonly"
-                item-title="fullName"
-                item-value="contactId"
-                label="Select Primary Contact"
-                :rules="rules.required"
-                density="compact"
-                variant="outlined"
-                return-object></v-select>
-            </v-col>
-          </v-row>
-          <ContactInfo v-if="primaryContact" :contact="primaryContact" />
-        </v-card>
       </p>
+      <v-card class="mt-2 pa-4" variant="outlined">
+        <v-row no-gutters class="mt-4">
+          <v-col cols="12" md="6" lg="5" xl="4" class="mb-4 pr-4">
+            <AppLabel>Choose a primary contact for this application:</AppLabel>
+          </v-col>
+          <v-col cols="12" md="6" lg="7" xl="8">
+            <v-select
+              id="select-primary-contact"
+              v-model="primaryContact"
+              :items="contacts"
+              :disabled="readonly"
+              :hide-details="readonly"
+              item-title="fullName"
+              item-value="contactId"
+              label="Select Primary Contact"
+              :rules="rules.required"
+              density="compact"
+              variant="outlined"
+              return-object></v-select>
+          </v-col>
+        </v-row>
+        <ContactInfo v-if="primaryContact" :contact="primaryContact" />
+      </v-card>
     </div>
     <div id="secondary-contact" class="mt-8">
       <h4>Secondary Contact (Recommended)</h4>
