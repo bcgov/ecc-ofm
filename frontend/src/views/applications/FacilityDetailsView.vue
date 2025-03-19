@@ -22,7 +22,7 @@
         <v-icon>mdi-information-slab-circle-outline</v-icon>
         If your contact is not on this list, Account Managers can add them in
         <router-link :to="{ name: 'manage-organization' }">Account Management - Manage Organizations/Facilities</router-link>
-        . If you don't have access contact your organization Account Manager
+        . If you don't have access, contact your organization's Account Manager
       </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">
@@ -83,7 +83,7 @@
         <v-icon>mdi-information-slab-circle-outline</v-icon>
         If your contact is not on this list, Account Managers can add them in
         <router-link :to="{ name: 'manage-organization' }">Account Management - Manage Organizations/Facilities</router-link>
-        . If you don't have access contact your organization Account Manager
+        . If you don't have access, contact your organization's Account Manager
       </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">
