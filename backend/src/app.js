@@ -41,6 +41,7 @@ const licencesRouter = require('./routes/licences')
 const paymentsRouter = require('./routes/payments')
 const publicRouter = require('./routes/public')
 const reportsRouter = require('./routes/reports')
+const topUpRouter = require('./routes/topups')
 const { MappableObjectForBack } = require('./util/mapping/MappableObject')
 const { RoleMappings } = require('./util/mapping/Mappings')
 const { getRedisDbSession } = require('./util/redis/redis-client')
@@ -276,6 +277,7 @@ apiRouter.use('/payments', paymentsRouter)
 apiRouter.use('/public', publicRouter)
 apiRouter.use('/reports', reportsRouter)
 apiRouter.use('/user', userRouter)
+apiRouter.use('/topups', topUpRouter)
 
 //Handle 500 error
 app.use((err, _req, res, next) => {
