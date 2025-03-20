@@ -31,7 +31,7 @@
 
     <AppPDFViewer :pdf-file="pdfFile" />
 
-    <a style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
+    <a v-if="pdfFile" style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
       <AppButton size="medium" width="240px" class="mt-2" :loading="loading">Download PDF</AppButton>
     </a>
 
@@ -94,7 +94,7 @@
       </v-col>
     </v-row>
   </v-container>
-  <AppDialog v-model="showDeclineDialog" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="showDeclineDialog = false">
+  <AppDialog v-model="showDeclineDialog" title="Confirm" :isLoading="loading" persistent max-width="50%" @close="showDeclineDialog = false">
     <template #content>
       <div class="confirm-dialog-text d-flex flex-column align-center">
         <strong>Are you sure you want to decline this funding agreement?</strong>
@@ -104,10 +104,10 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="isLoading" @click="showDeclineDialog = false">Go back</AppButton>
+          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="showDeclineDialog = false">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="isLoading" @click="decline()">Decline Funding Agreement</AppButton>
+          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="loading" @click="decline()">Decline Funding Agreement</AppButton>
         </v-col>
       </v-row>
     </template>

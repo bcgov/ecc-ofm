@@ -31,6 +31,7 @@ export const ApiRoutes = Object.freeze({
   SUPPLEMENTARY_APPLICATIONS: baseRoot + '/applications/supplementary',
   SYSTEM_MESSAGES: baseRoot + '/public/system-messages',
   IRREGULAR_APPLICATIONS: baseRoot + '/irregular',
+  TOP_UP_APPLICATIONS: baseRoot + '/topups',
   USER: baseRoot + '/user',
   USER_FACILITIES: baseRoot + '/user/:contactId/facilities',
   USER_PERMISSIONS_FACILITIES: baseRoot + '/user/permissions-facilities',
@@ -93,6 +94,12 @@ export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
 export const FUNDING_AGREEMENT_STATE_CODES = Object.freeze({
   ACTIVE: 0,
   INACTIVE: 1,
+})
+
+export const TOP_UP_FUNDING_STATUS_CODES = Object.freeze({
+  DRAFT: 1,
+  IN_REVIEW: 2,
+  APPROVED: 3,
 })
 
 export const FUNDING_REALLOCATION_REQUEST_STATUS_CODES = Object.freeze({
@@ -308,6 +315,7 @@ export const BLANK_FIELD = '- - - -'
 export const APPLICATION_TYPES = Object.freeze({
   OFM: 'Base Funding',
   IRREGULAR_EXPENSE: 'Irregular Expense',
+  TOP_UP: 'Top Up',
 })
 
 export const DAYS_OF_WEEK = Object.freeze([
