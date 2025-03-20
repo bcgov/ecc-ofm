@@ -56,8 +56,6 @@ export default {
         this.pdfFile = {
           data: atob(resp),
         }
-
-        console.log(this.pdfFile)
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
       } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
