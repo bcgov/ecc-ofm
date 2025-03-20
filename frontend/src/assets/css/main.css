@@ -233,3 +233,7 @@ html body .v-theme--ofmLightTheme {
 .transaction-icon {
   font-size: 1.5em !important;
 }
+/* Adjust the size of the Review for signature button*/
+.v-long-btn {
+  min-width: 210px !important;
+}
