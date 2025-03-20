@@ -119,7 +119,7 @@ export default {
         this.fundingAgreements = []
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
-            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo, true, true)
+            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
                 /* ofmcc-7026 - top ups get returned with the FA request,

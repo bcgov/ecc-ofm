@@ -6,8 +6,8 @@ const { TopUpMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 
-async function getTopUpFundingByCurrentFacility(facilityFilter) {
-  const operation = `ofm_top_up_funds?$select=${getMappingString(TopUpMappings)}&$filter=${facilityFilter}`
+async function getTopUpFundingByFilter(filter) {
+  const operation = `ofm_top_up_funds?$select=${getMappingString(TopUpMappings)}&$filter=${filter}`
   const response = (await getOperation(operation))?.value
 
   if (isEmpty(response)) return []
@@ -42,7 +42,7 @@ async function getTopUpFundingByID(req, res) {
 }
 
 module.exports = {
-  getTopUpFundingByCurrentFacility,
+  getTopUpFundingByFilter,
   getTopUpFundingPDF,
   getTopUpFundingByID,
 }

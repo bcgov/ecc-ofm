@@ -2,7 +2,7 @@
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
-const { getTopUpFundingByCurrentFacility } = require('./topups')
+const { getTopUpFundingByFilter } = require('./topups')
 const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
@@ -32,7 +32,7 @@ async function getFundingAgreements(req, res) {
     })
 
     if (req.query?.includeTopUp) {
-      const topUps = await getTopUpFundingByCurrentFacility(filter)
+      const topUps = await getTopUpFundingByFilter(filter)
       fundingAgreements = [...topUps, ...fundingAgreements]
     }
 
