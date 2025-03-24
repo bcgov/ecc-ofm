@@ -75,6 +75,7 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   EXPIRED: 9, // INACTIVE state
   VERIFIED: 10,
   REDIRECTED: 11, // INACTIVE state
+  PROVIDER_DECLINED: 12, // INACTIVE state
 })
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
