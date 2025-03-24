@@ -435,11 +435,18 @@ export default {
         return 'Cancelled'
       }
       return applicationItem.status
+      // agar CRM side bhi naam unsuccessful hai to yahan kuch nhi krna hai - status wahi show hoga
     },
     getStatusClass(statusCode) {
       if (
         this.DRAFT_STATUS_CODES.includes(statusCode) ||
-        [APPLICATION_STATUS_CODES.REDIRECTED, APPLICATION_STATUS_CODES.INELIGIBLE, APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY, APPLICATION_STATUS_CODES.CANCELLED_BY_SP].includes(statusCode)
+        [
+          APPLICATION_STATUS_CODES.REDIRECTED,
+          APPLICATION_STATUS_CODES.UNSUCCESSFUL,
+          APPLICATION_STATUS_CODES.INELIGIBLE,
+          APPLICATION_STATUS_CODES.CANCELLED_BY_MINISTRY,
+          APPLICATION_STATUS_CODES.CANCELLED_BY_SP,
+        ].includes(statusCode)
       ) {
         return 'status-gray'
       } else if (
