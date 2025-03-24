@@ -305,12 +305,11 @@ export default {
     },
     setSuppTermDates() {
       const today = new Date()
-      const formattedEndDate = new Date(this.fundingAgreement.endDate)
+      const formattedEndDate = new Date(this.fundingAgreement?.endDate)
       const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
       const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
-
       switch (true) {
-        case today < termOneEndDate:
+        case today < termOneEndDate || !this.fundingAgreement?.endDate:
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           break
 
