@@ -610,14 +610,23 @@ export default {
       this.setIsNearTermEndDate(formattedEndDate, today)
     },
     setIsCurrentTermDisabled(termEndDate, today) {
+      if (isEmpty(this.fundingAgreement)) {
+        return
+      }
       const priorDate = moment(termEndDate).subtract(DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.currentTermDisabled = today > priorDate
     },
     setIsNextTermEnabled(termEndDate, today) {
+      if (isEmpty(this.fundingAgreement)) {
+        return
+      }
       const priorDate = moment(termEndDate).subtract(DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
     },
     setIsNearTermEndDate(formattedEndDate, today) {
+      if (isEmpty(this.fundingAgreement)) {
+        return
+      }
       const priorDate = moment(formattedEndDate).subtract(DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.isFundingTermComplete = today > priorDate || today > formattedEndDate
     },
