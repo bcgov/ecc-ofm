@@ -12,14 +12,14 @@ objects:
       annotations:
         openshift.io/generated-by: OpenShiftNewApp
       labels:
-        app: '${APP_NAME}-frontend-${ENVIRONMENT}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${ENVIRONMENT}'
         branch: '${BRANCH}'
       name: '${APP_NAME}-frontend-${ENVIRONMENT}'
     spec:
       replicas: ${{MIN_REPLICAS}}
       selector:
         matchLabels:
-          app: '${APP_NAME}-frontend-${ENVIRONMENT}-${BRANCH}'
+          app: '${APP_NAME}-frontend-${ENVIRONMENT}'
       strategy:
         type: RollingUpdate
         rollingUpdate:
@@ -30,7 +30,7 @@ objects:
           annotations:
             openshift.io/generated-by: OpenShiftNewApp
           labels:
-            app: '${APP_NAME}-frontend-${ENVIRONMENT}-${BRANCH}'
+            app: '${APP_NAME}-frontend-${ENVIRONMENT}'
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/${NAMESPACE}/${REPO_NAME}-frontend:${TAG}
@@ -79,7 +79,7 @@ objects:
         service.alpha.openshift.io/serving-cert-secret-name: 'ofm-frontend-cert'
         openshift.io/generated-by: OpenShiftNewApp
       labels:
-        app: '${APP_NAME}-frontend-${ENVIRONMENT}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${ENVIRONMENT}'
       name: '${APP_NAME}-frontend-${ENVIRONMENT}'
     spec:
       ports:
@@ -88,13 +88,13 @@ objects:
           protocol: TCP
           targetPort: 2015
       selector:
-        app: '${APP_NAME}-frontend-${ENVIRONMENT}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${ENVIRONMENT}'
   - apiVersion: v1
     kind: Route
     metadata:
       name: '${APP_NAME}-frontend-${ENVIRONMENT}'
       labels:
-        app: '${APP_NAME}-frontend-${ENVIRONMENT}-${BRANCH}'
+        app: '${APP_NAME}-frontend-${ENVIRONMENT}'
       annotations:
         openshift.io/host.generated: 'true'
         router.openshift.io/cookie-same-site: 'Strict'
