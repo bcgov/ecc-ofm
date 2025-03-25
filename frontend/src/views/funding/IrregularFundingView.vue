@@ -9,7 +9,7 @@
 
     <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
 
-    <v-row v-if="!loading" class="justify-end mx-5 my-3">
+    <v-row v-if="!loading && pdfFile" class="justify-end mx-5 my-3">
       <a style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
         <AppButton size="medium" width="240px" class="mt-2 justify-end" :loading="loading">Download PDF</AppButton>
       </a>

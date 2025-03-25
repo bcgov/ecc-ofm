@@ -114,6 +114,7 @@ const UsersPermissionsFacilityMappings = [
   { back: 'ofm_portal_access', front: 'ofmPortalAccess' },
   { back: 'ofm_is_expense_authority', front: 'isExpenseAuthority' },
   { back: 'ofm_is_additional_contact', front: 'isAdditionalContact' },
+  { back: '_ofm_primarycontact_value', front: 'primaryContactId' },
 ]
 
 const ApplicationIntakeMappings = [
@@ -498,6 +499,20 @@ const IrregularExpenseMappings = [
   { back: 'ofm_pcm_validated', front: 'pcmValidated' },
 ]
 
+const TopUpMappings = [
+  { back: '_ofm_funding_value', front: 'fundingId' },
+  { back: 'ofm_funding_number', front: 'fundingAgreementNumber' },
+  { back: '_ofm_facility_value', front: 'facilityId' },
+  { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+  { back: 'ofm_start_date', front: 'startDate' },
+  { back: 'ofm_end_date', front: 'endDate' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+  { back: 'statecode', front: 'stateCode' },
+  { back: 'ofm_programming_amount', front: 'topUpFundingAmount' },
+  { back: 'ofm_top_up_fundid', front: 'topUpFundingId' },
+]
+
 module.exports = {
   ApplicationIntakeMappings,
   ApplicationMappings,
@@ -536,4 +551,5 @@ module.exports = {
   UserProfileMappings,
   UserProfileOrganizationMappings,
   IrregularExpenseMappings,
+  TopUpMappings,
 }

@@ -2,7 +2,7 @@
   <v-row v-if="showReportsAlertBanner" no-gutters class="blue-background justify-center pa-2">
     <v-banner bg-color="#f9f1c6" :lines="$vuetify.display.smAndUp ? 'one' : 'two'" max-width="700px" rounded class="alert-banner">
       <template #text>
-        <v-icon color="warning" class="mr-2">mdi-alert</v-icon>
+        <v-icon color="amber" class="mr-2">mdi-alert</v-icon>
         <strong>You have one or more monthly reports that are due or overdue.</strong>
       </template>
       <template #actions>

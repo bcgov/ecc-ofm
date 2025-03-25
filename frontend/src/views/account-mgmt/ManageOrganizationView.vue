@@ -4,7 +4,7 @@
       <v-col cols="12" lg="6" class="pb-0">
         <h4>Organization Details</h4>
       </v-col>
-      <v-col cols="12" lg="6" v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" class="pb-0">
+      <v-col v-if="hasPermission(PERMISSIONS.SUBMIT_CHANGE_REQUEST)" cols="12" lg="6" class="pb-0">
         <v-row no-gutters justify="end">
           <AppButton :loading="loading" @click="validateOfmProgram()">Submit a Change Request</AppButton>
         </v-row>
@@ -16,10 +16,10 @@
           :loading="loading"
           :editable="hasPermission(PERMISSIONS.UPDATE_ORG_FACILITY)"
           :organization="organization"
-          :showDocuments="true"
-          :uploadedDocuments="uploadedDocuments"
-          @saveInclusionPolicyData="saveInclusionPolicyData"
-          class="mt-1" />
+          :show-documents="true"
+          :uploaded-documents="uploadedDocuments"
+          class="mt-1"
+          @save-inclusion-policy-data="saveInclusionPolicyData" />
       </v-col>
     </v-row>
     <v-row>
@@ -27,6 +27,11 @@
         <h4>Facilities</h4>
       </v-col>
     </v-row>
+    <v-row class="ml-1">
+      <v-icon color="amber" class="mr-2">mdi-alert</v-icon>
+      <p>Important information missing</p>
+    </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-card class="pa-6" variant="outlined">
@@ -39,7 +44,7 @@
                       <h4>Your Facilities</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in userFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.facilityName }}</v-card>
+                      <ManageFacilityTable :facilities="userFacilities"></ManageFacilityTable>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
@@ -49,13 +54,13 @@
                       <h4>Other Facilities (read-only)</h4>
                     </v-expansion-panel-title>
                     <v-expansion-panel-text>
-                      <v-card v-for="item in otherFacilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                      <ManageFacilityTable :facilities="otherFacilities"></ManageFacilityTable>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
               </v-col>
               <v-col v-else>
-                <v-card v-for="item in facilities" :key="item.facilityId" @click="navigateToFacility(item.facilityId)" class="facility-card mr-4">{{ item.name }}</v-card>
+                <ManageFacilityTable :facilities="facilities"></ManageFacilityTable>
               </v-col>
             </v-row>
           </v-skeleton-loader>
@@ -63,19 +68,21 @@
       </v-col>
     </v-row>
     <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading" class="mt-4">Account Management</AppBackButton>
-    <NewRequestDialog
-      class="pa-0"
-      :show="showChangeRequestDialog"
-      :defaultRequestCategoryId="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
-      @close="toggleChangeRequestDialog"
-      @submit-phone-email="handleCRSubmit" />
-    <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :displayType="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    <template v-if="hasPermission(PERMISSIONS.VIEW_APPLICATIONS)">
+      <NewRequestDialog
+        class="pa-0"
+        :show="showChangeRequestDialog"
+        :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.ACCOUNT_MAINTENANCE)"
+        @close="toggleChangeRequestDialog"
+        @submit-phone-email="handleCRSubmit" />
+      <UnableToSubmitCrDialog :show="showUnableToSubmitCrDialog" :display-type="preventChangeRequestType" @close="toggleUnableToSubmitCrDialog" />
+    </template>
   </v-container>
 </template>
 
 <script>
 import { isEmpty } from 'lodash'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 
 import UnableToSubmitCrDialog from '@/components/account-mgmt/UnableToSubmitCrDialog.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -87,13 +94,17 @@ import DocumentService from '@/services/documentService'
 import OrganizationService from '@/services/organizationService'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
+
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { useOrgStore } from '@/stores/org'
+
+import ManageFacilityTable from '@/components/account-mgmt/ManageFacilityTable.vue'
 import { REQUEST_CATEGORY_NAMES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
 
 export default {
   name: 'ManageOrganizationView',
-  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog },
+  components: { AppButton, AppBackButton, OrganizationInfo, NewRequestDialog, UnableToSubmitCrDialog, ManageFacilityTable },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -106,14 +117,13 @@ export default {
       showChangeRequestDialog: false,
       showUnableToSubmitCrDialog: false,
       preventChangeRequestType: undefined,
+      userFacilities: [],
     }
   },
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
-    userFacilities() {
-      return this.userInfo.facilities
-    },
+    ...mapState(useOrgStore, ['facilitiesWithContacts']),
     otherFacilities() {
       return this.facilities.filter((f) => !this.userFacilities.some((facility) => facility.facilityId === f.facilityId))
     },
@@ -128,6 +138,7 @@ export default {
     await this.loadData()
   },
   methods: {
+    ...mapActions(useOrgStore, ['getOrganizationFacilitiesAndContacts']),
     /**
      * Load the data for the page
      */
@@ -143,11 +154,51 @@ export default {
     /**
      * Loads the facilities for the organization
      */
+
+    populateContacts(facilityArray) {
+      return facilityArray.map((fac) => {
+        const contacts = fac.contacts
+        const address = [fac.streetAddress1, fac.city, fac.postalCode].filter(Boolean).join(', ')
+
+        //can be more than one EA. Sort by some order so the results are always consistant. I picked alphabetical by first name
+        const expenseContactList = contacts
+          ?.filter((f) => f.isExpenseAuthority)
+          .sort((a, b) => {
+            return a.firstName?.localeCompare(b.firstName)
+          })
+
+        let expenseAuthorityName = null
+        if (expenseContactList?.length > 0) {
+          const str = expenseContactList?.length > 1 ? `(+${expenseContactList.length - 1} more)` : ''
+          expenseAuthorityName = `${expenseContactList[0].firstName ?? ''} ${expenseContactList[0].lastName ?? ''} ${str}`
+        }
+
+        const primaryContact = contacts?.find((f) => f.contactId === fac.primaryContactId)
+        const primaryContactName = primaryContact ? `${primaryContact.firstName ?? ''} ${primaryContact.lastName ?? ''}` : null
+
+        return {
+          ...fac,
+          address: address,
+          primaryContactName: primaryContactName,
+          expenseAuthorityName: expenseAuthorityName,
+          facilityName: fac.facilityName || fac.name,
+        }
+      })
+    },
     async loadFacilities() {
       try {
-        this.facilities = await OrganizationService.getOrganizationFacilities(this.userInfo.organizationId)
+        if (!this.facilitiesWithContacts) {
+          await this.getOrganizationFacilitiesAndContacts(this.userInfo.organizationId)
+        }
+        this.facilities = this.populateContacts(this.facilitiesWithContacts)
+        this.userFacilities = this.populateContacts(
+          this.userInfo.facilities.map((fac) => {
+            const currentFacility = this.facilities?.find((el) => el.facilityId === fac.facilityId)
+            return { ...fac, ...currentFacility }
+          }),
+        )
       } catch (error) {
-        this.setFailureAlert('Failed to get facilities for organizationId = ' + this.userInfo.organizationId, error)
+        this.setFailureAlert(`Failed to get facilities for organizationId = ${this.userInfo.organizationId}`, error)
       }
     },
 
@@ -167,13 +218,6 @@ export default {
         this.setFailureAlert("Failed to get organization's Inclusion Policy Document(s)", error)
         return
       }
-    },
-
-    /**
-     * Navigates to the Manage Facility page
-     */
-    navigateToFacility(facilityId) {
-      this.$router.push({ name: 'manage-facility', params: { facilityId } })
     },
 
     /**

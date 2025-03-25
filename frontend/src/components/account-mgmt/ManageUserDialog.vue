@@ -223,7 +223,7 @@ export default {
     updatingUser: {
       handler(value) {
         this.userOperationType = Object.keys(value).length === 0 ? 'add' : 'update'
-        this.selectedFacilityIds = value.facilities
+        this.selectedFacilityIds = value.facilities?.filter((fac) => this.facilitiesToAdminister.some((adminFac) => adminFac.facilityId === fac.facilityId)).map((fac) => fac.facilityId)
         this.user = value
         if (!this.user.role) this.user.role = {}
       },
@@ -391,14 +391,21 @@ export default {
      * Get facilities to add.
      */
     getFacilitiesToAdd(selectedFacilities, userFacilities) {
-      return selectedFacilities?.filter((selectedFacility) => !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacility.facilityId))
+      return selectedFacilities?.filter((selectedFacilities) => !userFacilities?.some((userFacility) => userFacility.facilityId === selectedFacilities.facilityId))
     },
 
     /**
      * Get facilities to remove.
      */
-    getFacilitiesToRemove(selectedFacility, userFacilities) {
-      return userFacilities?.filter((userFacility) => !selectedFacility?.some((selectedFacility) => selectedFacility.facilityId === userFacility.facilityId))
+    getFacilitiesToRemove(selectedFacilities, userFacilities) {
+      // Get facility IDs that the admin can administer
+      const adminFacilityIds = this.facilitiesToAdminister.map((fac) => fac.facilityId)
+
+      return userFacilities?.filter(
+        (userFacility) =>
+          // Only remove if it's not selected and is in the facilityToAdminister list
+          !selectedFacilities?.some((selected) => selected.facilityId === userFacility.facilityId) && adminFacilityIds.includes(userFacility.facilityId),
+      )
     },
 
     /**
