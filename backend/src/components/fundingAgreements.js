@@ -3,6 +3,7 @@ const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, hand
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { getTopUpFundingByFilter } = require('./topups')
+const { TOP_UP_FUNDING_STATUS_CODES } = require('../util/constants')
 const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
@@ -32,7 +33,8 @@ async function getFundingAgreements(req, res) {
     })
 
     if (req.query?.includeTopUp) {
-      const topUps = await getTopUpFundingByFilter(filter)
+      const topUpFilter = filter + ` and statuscode ne ${TOP_UP_FUNDING_STATUS_CODES.DRAFT}`
+      const topUps = await getTopUpFundingByFilter(topUpFilter)
       fundingAgreements = [...topUps, ...fundingAgreements]
     }
 
