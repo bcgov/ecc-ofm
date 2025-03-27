@@ -1,5 +1,6 @@
-import ApiService from '@/common/apiService'
 import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
+
+import ApiService from '@/common/apiService'
 
 export default {
   async getActiveFundingAgreementByApplicationId(applicationId, ignoreMODAgreements = false) {
@@ -89,7 +90,7 @@ export default {
     try {
       if (!facilityId && !statusCode) return
       const response = await ApiService.apiAxios.get(
-        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}&includeFundingEnvelopes=true`,
+        `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}&includeFundingEnvelopes=true&includeTopupFundingEnvelopes=true`,
       )
       return response?.data[0]
     } catch (error) {
