@@ -321,12 +321,10 @@ export default {
 
       switch (true) {
         case today < termOneEndDate || !this.fundingAgreement?.endDate:
-          console.log('year 1')
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           break
 
         case today < termTwoEndDate:
-          console.log('year 2')
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           break
 
