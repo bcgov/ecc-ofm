@@ -10,7 +10,7 @@ const { isEmpty } = require('lodash')
 async function getFundingAgreements(req, res) {
   try {
     const fundingAgreements = []
-    let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode'
+    let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number'
     if (req.query?.includeFundingEnvelopes) {
       operation +=
         ',ofm_envelope_hr_total,ofm_envelope_hr_wages_paidtimeoff,ofm_envelope_hr_benefits,ofm_envelope_hr_employerhealthtax,ofm_envelope_hr_prodevhours,ofm_envelope_hr_prodevexpenses,ofm_envelope_programming,ofm_envelope_administrative,ofm_envelope_operational,ofm_envelope_facility'
@@ -33,6 +33,12 @@ async function getFundingAgreements(req, res) {
     if (isEmpty(fundingAgreements)) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
+
+    fundingAgreements.sort((a, b) =>
+      a.versionNumber === 0 ? 1 :
+      b.versionNumber === 0 ? -1 :
+      b.versionNumber - a.versionNumber
+    );
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
     handleError(res, e)

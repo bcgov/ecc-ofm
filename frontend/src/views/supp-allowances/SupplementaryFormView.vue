@@ -198,13 +198,12 @@ import { uuid } from 'vue-uuid'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
-import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
+import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL, TWO_YEARS } from '@/utils/constants/suppConstants'
 import format from '@/utils/format'
 import moment from 'moment'
 
 const DAYS_BEFORE_TERM_EXPIRES = 1
 const DAYS_BEFORE_NEXT_TERM_ENABLED = 120
-const TWO_YEARS = 732
 
 export default {
   name: 'SupplementaryFormView',
