@@ -124,7 +124,7 @@ import SupportNeedsSummary from '@/components/supp-allowances/SupportNeedsSummar
 import TransportationSummary from '@/components/supp-allowances/TransportationSummary.vue'
 import { SUPPLEMENTARY_TYPES, SUPPLEMENTARY_APPLICATION_STATUS_CODES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
-import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
+import { INDIG_CHECKBOX_LABELS, SUPPORT_CHECKBOX_LABELS, SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL, TWO_YEARS } from '@/utils/constants/suppConstants'
 import { hasDuplicateVIN } from '@/utils/common'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
@@ -305,16 +305,28 @@ export default {
     },
     setSuppTermDates() {
       const today = new Date()
-      const formattedEndDate = new Date(this.fundingAgreement?.endDate)
-      const termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').toDate()
-      const termOneEndDate = moment(formattedEndDate).subtract(2, 'years').toDate()
+      const formattedEndDate = moment(this.fundingAgreement?.endDate).endOf('day').toDate()
+      const formattedStartDate = new Date(this.fundingAgreement.startDate)
+      const daysOfTerm = Math.floor(moment.duration(moment(formattedEndDate).diff(moment(formattedStartDate))).asDays())
+      let termTwoEndDate
+      let termOneEndDate
+
+      if (daysOfTerm > TWO_YEARS) {
+        termTwoEndDate = moment(formattedEndDate).subtract(1, 'years').endOf('day').toDate()
+        termOneEndDate = moment(formattedEndDate).subtract(2, 'years').endOf('day').toDate()
+      } else {
+        termTwoEndDate = formattedEndDate
+        termOneEndDate = moment(formattedEndDate).subtract(1, 'years').endOf('day').toDate()
+      }
 
       switch (true) {
         case today < termOneEndDate || !this.fundingAgreement?.endDate:
+          console.log('year 1')
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           break
 
         case today < termTwoEndDate:
+          console.log('year 2')
           this.renewalTerm = SUPP_TERM_CODES.TERM_TWO
           break
 
