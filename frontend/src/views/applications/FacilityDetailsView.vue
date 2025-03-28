@@ -20,7 +20,9 @@
       <h4>Primary Contact</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
-        If your contact is not on this list, contact your organization Account Manager.
+        If your contact is not on this list, Account Managers can add them in
+        <router-link :to="{ name: 'manage-organization' }">Account Management - Manage Organizations/Facilities.</router-link>
+        If you don't have access, contact your organization's Account Manager.
       </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">
@@ -79,7 +81,9 @@
       <h4>Expense Authority</h4>
       <p>
         <v-icon>mdi-information-slab-circle-outline</v-icon>
-        This person may be the same as your primary or secondary contact.
+        If your contact is not on this list, Account Managers can add them in
+        <router-link :to="{ name: 'manage-organization' }">Account Management - Manage Organizations/Facilities.</router-link>
+        If you don't have access, contact your organization's Account Manager.
       </p>
       <v-card class="mt-2 pa-4" variant="outlined">
         <v-row no-gutters class="mt-4">

@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId, getOperationWithObjectId, handleError } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
+const { getTopUpFundingByFilter } = require('./topups')
 const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
@@ -9,7 +10,7 @@ const { isEmpty } = require('lodash')
 
 async function getFundingAgreements(req, res) {
   try {
-    const fundingAgreements = []
+    let fundingAgreements = []
     let operation = 'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number'
     if (req.query?.includeFundingEnvelopes) {
       operation +=
@@ -27,9 +28,14 @@ async function getFundingAgreements(req, res) {
         const ea = funding.ofm_application?.ofm_expense_authority
         fa.expenseAuthority = ea ? `${ea.ofm_first_name ?? ''} ${ea.ofm_last_name}` : ''
       }
-
       fundingAgreements.push(fa)
     })
+
+    if (req.query?.includeTopUp) {
+      const topUps = await getTopUpFundingByFilter(filter)
+      fundingAgreements = [...topUps, ...fundingAgreements]
+    }
+
     if (isEmpty(fundingAgreements)) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
@@ -75,10 +81,16 @@ async function updateFundingAgreement(req, res) {
   try {
     let payload
     //we are signing the FA, the logged in contact will be bound in CRM
-    if (req?.body.contactId) {
+    if (req?.body.agreeConsentCertify) {
       payload = {
         'ofm_provider_approver@odata.bind': `/contacts(${req.body?.contactId})`,
         ofm_provider_approval_date: req.body?.signedOn,
+        ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
+      }
+    } else if (req?.body.stateCode) {
+      payload = {
+        'ofm_provider_decliner@odata.bind': `/contacts(${req.body?.contactId})`, // Bind decliner's contact ID
+        ofm_provider_decline_date: req.body?.signedOn,
         ...new MappableObjectForBack(req.body, FundingAgreementMappings).data,
       }
     } else {

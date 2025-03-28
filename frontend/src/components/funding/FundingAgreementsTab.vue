@@ -21,11 +21,12 @@
           {{ format.formatDate(item?.endDate) }}
         </template>
         <template #[`item.statusName`]="{ item }">
-          <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
+          <span v-if="item.topUpFundingAmount" :class="getStatusClassTopUp(item?.statusCode)">{{ item?.statusName }}</span>
+          <span v-else :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
         </template>
         <template #[`item.actions`]="{ item }">
           <v-row no-gutters class="my-2 align-center justify-end justify-md-start">
-            <AppButton v-if="showSign(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Sign</AppButton>
+            <AppButton v-if="showSign(item)" :primary="false" class="v-long-btn" size="small" @click="goToPDFViewer(item)">Review for Signature</AppButton>
             <AppButton v-else-if="showOpen(item)" :primary="false" size="small" @click="goToPDFViewer(item)">Open</AppButton>
           </v-row>
         </template>
@@ -43,7 +44,7 @@ import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import alertMixin from '@/mixins/alertMixin.js'
 import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES } from '@/utils/constants'
+import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES, TOP_UP_FUNDING_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
 const IN_PROGRESS_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA]
@@ -121,9 +122,18 @@ export default {
             const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
               facilityFas.forEach((fa) => {
-                fa.fundingAgreementType = APPLICATION_TYPES.OFM
-                fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
-                fa.statusName = this.getStatusName(fa)
+                /* ofmcc-7026 - top ups get returned with the FA request,
+                  because I can map them all together nicely in the backend resulting in only one extra call.
+                  Additionally, it will work with the selected date queries by default. */
+                if (fa.topUpFundingAmount) {
+                  fa.fundingAgreementType = APPLICATION_TYPES.TOP_UP
+                  fa.expenseAuthority = BLANK_FIELD
+                  fa.priority = 0
+                } else {
+                  fa.fundingAgreementType = APPLICATION_TYPES.OFM
+                  fa.priority = fa.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING ? 1 : 0
+                  fa.statusName = this.getStatusName(fa)
+                }
               })
 
               //by adding irregular expense here it will also search within the user entered date params
@@ -167,7 +177,7 @@ export default {
     showOpen(item) {
       if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
         return (
-          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
+          [FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED, FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(item?.statusCode) ||
           (item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING && !this.isExpenseAuthority(item))
         )
       }
@@ -179,13 +189,27 @@ export default {
     },
 
     goToPDFViewer(item) {
-      if (item.fundingAgreementType === APPLICATION_TYPES.OFM) {
-        this.$router.push({ name: 'approved-base-funding', params: { fundingGuid: item.fundingId } })
-      } else if (item.fundingAgreementType === APPLICATION_TYPES.IRREGULAR_EXPENSE) {
-        this.$router.push({ name: 'approved-irregular-funding', params: { fundingGuid: item.irregularExpenseId } })
-      } else {
-        this.$router.push({ name: 'approved-supp-funding', params: { fundingGuid: item.supplementaryApplicationId } })
+      let routeName
+      let fundingGuid
+
+      switch (item.fundingAgreementType) {
+        case APPLICATION_TYPES.OFM:
+          routeName = 'approved-base-funding'
+          fundingGuid = item.fundingId
+          break
+        case APPLICATION_TYPES.TOP_UP:
+          routeName = 'topup-funding'
+          fundingGuid = item.topUpFundingId
+          break
+        case APPLICATION_TYPES.IRREGULAR_EXPENSE:
+          routeName = 'approved-irregular-funding'
+          fundingGuid = item.irregularExpenseId
+          break
+        default:
+          routeName = 'approved-supp-funding'
+          fundingGuid = item.supplementaryApplicationId
       }
+      this.$router.push({ name: routeName, params: { fundingGuid } })
     },
 
     getStatusName(item) {
@@ -199,7 +223,16 @@ export default {
         'status-blue': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
         'status-purple': statusCode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED,
+        'status-pink': statusCode === FUNDING_AGREEMENT_STATUS_CODES.PROVIDER_DECLINED,
         'status-red': statusCode === FUNDING_AGREEMENT_STATUS_CODES.TERMINATED,
+      }
+    },
+
+    getStatusClassTopUp(statusCode) {
+      return {
+        'status-gray': statusCode === TOP_UP_FUNDING_STATUS_CODES.DRAFT,
+        'status-blue': statusCode === TOP_UP_FUNDING_STATUS_CODES.IN_REVIEW,
+        'status-green': statusCode === TOP_UP_FUNDING_STATUS_CODES.APPROVED,
       }
     },
   },

@@ -64,10 +64,13 @@ export default {
     }
   },
 
+  /*  this function is only used by the FundingAgreementTab currently.
+    however I changed this function to take the queries as paramenters,
+    in case we would like to reuse this function differently in the future. */
   async getFAsByFacilityId(facilityId, startDateFrom = null, startDateTo = null) {
     try {
       if (!facilityId) return
-      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&includeEA=true`
+      let url = `${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&includeEA=true&includeTopUp=true`
       if (startDateFrom) {
         url += `&dateFrom=${startDateFrom}`
       }

@@ -3,17 +3,16 @@
   <v-container fluid v-bind="$attrs" class="px-md-16">
     <p>Carefully review your funding</p>
 
-    <h4 class="my-10">Approval Notification For {{ application?.supplementaryTypeDescription }} Allowance</h4>
+    <h4 class="my-10">Notification For TOP UP Expense</h4>
 
     <AppPDFViewer :pdf-file="pdfFile" />
-
-    <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
 
     <v-row v-if="!loading && pdfFile" class="justify-end mx-5 my-3">
       <a style="text-decoration: none" :download="downloadFileName" :href="pdfDownloadLink">
         <AppButton size="medium" width="240px" class="mt-2 justify-end" :loading="loading">Download PDF</AppButton>
       </a>
     </v-row>
+    <AppBackButton id="back-button" width="240px" :to="{ name: 'funding-overview' }">Funding</AppBackButton>
   </v-container>
 </template>
 
@@ -22,11 +21,11 @@ import alertMixin from '@/mixins/alertMixin'
 import AppButton from '@/components/ui/AppButton.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
-import ApplicationService from '@/services/applicationService'
+import TopUpService from '@/services/topupService'
 import AppPDFViewer from '@/components/ui/AppPDFViewer.vue'
 
 export default {
-  name: 'ApprovedFundingView',
+  name: 'TopupFundingView',
   components: { AppBackButton, AppButton, OrganizationHeader, AppPDFViewer },
   mixins: [alertMixin],
   data() {
@@ -39,7 +38,7 @@ export default {
   },
   computed: {
     downloadFileName() {
-      return `Approval_Notification_${this.application?.fundingAgreementNumber}`
+      return `TopUp_Notification_${this.application?.fundingAgreementNumber}`
     },
   },
 
@@ -51,8 +50,9 @@ export default {
     async loadData() {
       try {
         this.loading = true
-        this.application = await ApplicationService.getSupplementaryApplicationById(this.$route.params.fundingGuid)
-        const resp = await ApplicationService.getApprovedSupplementaryPDF(this.$route.params.fundingGuid)
+        this.application = await TopUpService.getTopUpFundingById(this.$route.params.fundingGuid)
+        const resp = await TopUpService.getTopUpFundingPDF(this.$route.params.fundingGuid)
+
         this.pdfFile = {
           data: atob(resp),
         }
