@@ -10,7 +10,9 @@
     <FundingAllocationInfoTable class="pa-2" />
     <FundingSearchCard :loading="loading" :select-single-facility="true" :show-date-filter="false" :show-reset-button="false" class="my-10" @search="loadFundingDetails" />
     <BaseFundingCard :loading="loading" :funding-details="fundingDetails" />
-    <TopupFundingCard :loading="loading" :funding-details="fundingDetails" />
+    <div v-if="shouldShowCard">
+      <TopupFundingCard :loading="loading" :funding-details="fundingDetails" />
+    </div>
     <FundingReallocationRequestsTable :loading="loading" :funding-reallocation-requests="fundingReallocationRequests" class="mt-8" />
     <NewRequestDialog
       class="pa-0"
@@ -54,6 +56,10 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+
+    shouldShowCard() {
+      return Number(this.fundingDetails?.topupEnvelopeProgramming) > 0
+    },
   },
 
   created() {
