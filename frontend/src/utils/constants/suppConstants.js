@@ -43,3 +43,5 @@ export const DISCRETIONARY_PANEL = Object.freeze({
   id: 'transportation',
   supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
 })
+
+export const TWO_YEARS = 732

@@ -333,6 +333,7 @@ const FundingAgreementMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
+  { back: 'ofm_version_number', front: 'versionNumber' },
 
   // Annual Base Funding
   { back: 'ofm_envelope_hr_total', front: 'envelopeHRTotal' },
