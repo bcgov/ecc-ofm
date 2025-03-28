@@ -222,7 +222,7 @@ export default {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
     filteredApplicationItems() {
-      const hiddenCodes = [APPLICATION_STATUS_CODES.EXPIRED, APPLICATION_STATUS_CODES.REDIRECTED]
+      const hiddenCodes = [APPLICATION_STATUS_CODES.REDIRECTED]
       return this.sortApplicationItems(
         this.applicationItems
           .filter((application) => !this.facilityNameFilter || application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase()))
@@ -456,6 +456,10 @@ export default {
         return 'status-blue'
       } else if ([APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(statusCode)) {
         return 'status-yellow'
+      } else if ([APPLICATION_STATUS_CODES.PROVIDER_DECLINED].includes(statusCode)) {
+        return 'status-pink'
+      } else if ([APPLICATION_STATUS_CODES.EXPIRED].includes(statusCode)) {
+        return 'status-purple'
       }
     },
 
