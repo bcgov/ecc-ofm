@@ -12,7 +12,7 @@ async function getFundingAgreements(req, res) {
   try {
     let fundingAgreements = []
     let operation =
-     'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number'
+      'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number'
 
     if (req.query?.includeFundingEnvelopes) {
       operation +=
@@ -42,7 +42,7 @@ async function getFundingAgreements(req, res) {
       return res.status(HttpStatus.NO_CONTENT).json()
     }
 
-    fundingAgreements.sort((a, b) => a.versionNumber === 0 ? 1 : b.versionNumber === 0 ? -1 : b.versionNumber - a.versionNumber);
+    fundingAgreements.sort((a, b) => (a.versionNumber === 0 ? 1 : b.versionNumber === 0 ? -1 : b.versionNumber - a.versionNumber))
     return res.status(HttpStatus.OK).json(fundingAgreements)
   } catch (e) {
     handleError(res, e)
