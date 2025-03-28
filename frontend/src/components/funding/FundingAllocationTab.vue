@@ -25,7 +25,7 @@
 import { mapState } from 'pinia'
 
 import BaseFundingCard from '@/components/funding/BaseFundingCard.vue'
-import TopupFundingCard from './TopupFundingCard.vue'
+import TopupFundingCard from '@/components/funding/TopupFundingCard.vue'
 import FundingAllocationInfoTable from '@/components/funding/FundingAllocationInfoTable.vue'
 import FundingReallocationRequestsTable from '@/components/funding/FundingReallocationRequestsTable.vue'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
