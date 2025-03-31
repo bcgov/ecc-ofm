@@ -33,7 +33,7 @@ async function getFundingAgreements(req, res) {
     })
 
     if (req.query?.includeTopUp) {
-      const topUpFilter = filter + ` and statuscode ne ${TOP_UP_FUNDING_STATUS_CODES.DRAFT}`
+      const topUpFilter = `${filter} and statuscode ne ${TOP_UP_FUNDING_STATUS_CODES.DRAFT}`
       const topUps = await getTopUpFundingByFilter(topUpFilter)
       fundingAgreements = [...topUps, ...fundingAgreements]
     }
