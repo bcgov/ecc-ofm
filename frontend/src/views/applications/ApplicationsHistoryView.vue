@@ -222,11 +222,10 @@ export default {
       return this.applications?.some((application) => ApplicationService.isValidApplication(application)) && this.hasGoodStanding
     },
     filteredApplicationItems() {
-      const hiddenCodes = [APPLICATION_STATUS_CODES.REDIRECTED]
       return this.sortApplicationItems(
         this.applicationItems
           .filter((application) => !this.facilityNameFilter || application.facilityName?.toLowerCase().includes(this.facilityNameFilter.toLowerCase()))
-          .filter((application) => !hiddenCodes.includes(application.statusCode)),
+          .filter((application) => application.statusCode !== APPLICATION_STATUS_CODES.REDIRECTED),
       )
     },
     ofmApplicationCardText() {
