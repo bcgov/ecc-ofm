@@ -44,7 +44,7 @@ jobs:
             github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{ github.event.inputs.rc_version }}',
+              ref: 'tags/${{ github.event.inputs.rc_version }}',
             })
       - name: Echo tag
         run: |
