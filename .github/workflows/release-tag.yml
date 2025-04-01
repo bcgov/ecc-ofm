@@ -1,32 +1,62 @@
-# This is a basic workflow that is manually triggered
+name: Release Tag
 
-name: Manual workflow
+env:
+  OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_NAMESPACE: ${{ secrets.OFM_NAMESPACE_NO_ENV }}-dev
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
+  REPO_NAME: 'ecc-ofm'
+  BRANCH: ${{ github.ref_name }}
+  APP_NAME_FRONTEND: 'frontend'
+  APP_NAME_BACKEND: 'backend'
+
 on:
+  # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
   workflow_dispatch:
-    # Inputs the workflow accepts.
     inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
-        # Default value if no value is explicitly provided
-        default: 'World'
-        # Input has to be provided for the workflow to run
+      rc_version:
+        description: 'Release Candidate Version'
         required: true
-        # The data type of the input
-        type: string
+      release_version:
+        description: 'Final Release Version'
+        required: true
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
-  greet:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  openshift-ci-cd:
+    name: Tag Image
+    # ubuntu-20.04 can also be used.
+    runs-on: ubuntu-24.04
+    environment: dev
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+      - name: Print Workflow Dispatch Inputs and Env Vars
+        uses: shayki5/print-workflow-dispatch-inputs@v1
+        with:
+          add_to_summary: 'true'
+          print_env_vars: 'false'
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Get tag
+        id: get-tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ github.event.inputs.rc_version }}',
+            })
+      - name: Echo tag
+        run: |
+          echo "getRef result ${{ steps.get-tag.outputs.result }}"
+
+      #- name: Create tag
+      #  uses: actions/github-script@v6
+      #  with:
+      #    script: |
+      #      github.rest.git.getRef({
+      #        owner: context.repo.owner,
+      #        repo: context.repo.repo,
+      #        ref: 'refs/tags/${{ github.event.inputs.version }}',
+      #        sha: ${{ steps.get-tag.outputs.result.object.sha }}
+      #      })
