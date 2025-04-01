@@ -58,7 +58,7 @@ jobs:
 #              owner: context.repo.owner,
 #              repo: context.repo.repo,
 #              ref: 'refs/tags/${{ github.event.inputs.release_version }}',
-#              sha: ${{ steps.get-tag.outputs.result.data.object.sha }}
+#              sha: ${{ fromJSON(steps.get-tag.outputs.result).data.object.sha }}
 #            })
 
 #      - name: Install oc
