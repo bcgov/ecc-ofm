@@ -48,15 +48,31 @@ jobs:
             })
       - name: Echo tag
         run: |
-          echo "getRef result ${{ steps.get-tag.outputs.result }}"
+          echo "getRef sha ${{ steps.get-tag.outputs.result.data.object.sha }}"
 
-      #- name: Create tag
-      #  uses: actions/github-script@v6
-      #  with:
-      #    script: |
-      #      github.rest.git.getRef({
-      #        owner: context.repo.owner,
-      #        repo: context.repo.repo,
-      #        ref: 'refs/tags/${{ github.event.inputs.version }}',
-      #        sha: ${{ steps.get-tag.outputs.result.object.sha }}
-      #      })
+#      - name: Create tag
+#        uses: actions/github-script@v6
+#        with:
+#          script: |
+#            github.rest.git.getRef({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              ref: 'refs/tags/${{ github.event.inputs.release_version }}',
+#              sha: ${{ steps.get-tag.outputs.result.data.object.sha }}
+#            })
+
+#      - name: Install oc
+#        uses: redhat-actions/openshift-tools-installer@v1
+#        with:
+#          oc: 4.16
+#
+#      - uses: actions/checkout@v3
+#      - name: Tag in OpenShift
+#        run: |
+#          set -eux
+#          # Login to OpenShift and select project
+#          oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER }}
+#          oc project ${{ env.OPENSHIFT_NAMESPACE }}
+#
+#          oc tag ${{ env.OPENSHIFT_NAMESPACE }}/${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}:latest ${{ env.OPENSHIFT_NAMESPACE }}/${{ env.REPO_NAME }}-${{ env.APP_NAME_FRONTEND }}:${{ github.event.inputs.release_version }}
+#          oc tag ${{ env.OPENSHIFT_NAMESPACE }}/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:latest ${{ env.OPENSHIFT_NAMESPACE }}/${{ env.REPO_NAME }}-${{ env.APP_NAME_BACKEND }}:${{ github.event.inputs.release_version }}
