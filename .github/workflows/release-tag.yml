@@ -48,7 +48,7 @@ jobs:
             })
       - name: Echo tag
         run: |
-          echo "getRef result ${{ steps.get-tag.outputs.result.object.sha }}"
+          echo "getRef result ${{ steps.get-tag.outputs.result }}"
 
       #- name: Create tag
       #  uses: actions/github-script@v6
