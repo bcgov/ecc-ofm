@@ -41,14 +41,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            github.rest.git.getRef({
+            return github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: 'tags/${{ github.event.inputs.rc_version }}',
             })
       - name: Echo tag
         run: |
-          echo "getRef result ${{ steps.get-tag.outputs.result }}"
+          echo "getRef result ${{ steps.get-tag.outputs.result.object.sha }}"
 
       #- name: Create tag
       #  uses: actions/github-script@v6
