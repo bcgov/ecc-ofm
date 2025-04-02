@@ -453,7 +453,7 @@ export default {
         return 'status-green'
       } else if ([APPLICATION_STATUS_CODES.APPROVED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED].includes(statusCode)) {
         return 'status-blue'
-      } else if ([APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(statusCode)) {
+      } else if ([APPLICATION_STATUS_CODES.UNSUCCESSFUL, APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(statusCode)) {
         return 'status-yellow'
       } else if ([APPLICATION_STATUS_CODES.PROVIDER_DECLINED].includes(statusCode)) {
         return 'status-pink'
