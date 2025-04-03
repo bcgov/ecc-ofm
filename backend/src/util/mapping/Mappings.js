@@ -345,7 +345,6 @@ const FundingAgreementMappings = [
   { back: 'ofm_envelope_administrative', front: 'envelopeAdministrative' },
   { back: 'ofm_envelope_operational', front: 'envelopeOperational' },
   { back: 'ofm_envelope_facility', front: 'envelopeFacility' },
-
   // Top Up Funding
   { back: 'ofm_envelope_hr_total_topup', front: 'topupEnvelopeHRTotal' },
   { back: 'ofm_envelope_hr_wages_paidtimeoff_topup', front: 'topupEnvelopeHRWagePaidTimeOff' },
