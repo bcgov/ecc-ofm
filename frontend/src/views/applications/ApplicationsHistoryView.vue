@@ -79,7 +79,7 @@
         item-key="applicationId"
         :mobile="null"
         mobile-breakpoint="md"
-        class="soft-outline"
+        class="soft-outline text-no-wrap"
         density="compact">
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)">{{ getStatusLabel(item) }}</span>
