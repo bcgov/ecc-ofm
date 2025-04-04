@@ -57,6 +57,7 @@
     </v-row>
   </v-container>
 
+  <RenewFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setLoadingFA" />
   <SignFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setLoadingFA" />
   <NewRequestDialog v-if="hasPermission(PERMISSIONS.MANAGE_NOTIFICATIONS)" :show="showAssistanceRequestDialog" @close="toggleAssistanceRequestDialog" />
 </template>
@@ -65,6 +66,7 @@
 import { mapState } from 'pinia'
 
 import SignFundingPopup from '@/components/funding/SignFundingPopup.vue'
+import RenewFundingPopup from '@/components/funding/RenewFundingPopup.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
@@ -75,7 +77,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'HomeView',
-  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, SignFundingPopup },
+  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, SignFundingPopup, RenewFundingPopup },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
