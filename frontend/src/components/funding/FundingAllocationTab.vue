@@ -10,6 +10,9 @@
     <FundingAllocationInfoTable class="pa-2" />
     <FundingSearchCard :loading="loading" :select-single-facility="true" :show-date-filter="false" :show-reset-button="false" class="my-10" @search="loadFundingDetails" />
     <BaseFundingCard :loading="loading" :funding-details="fundingDetails" />
+    <div v-if="showTopupCard">
+      <TopupFundingCard :loading="loading" :funding-details="fundingDetails" />
+    </div>
     <FundingReallocationRequestsTable :loading="loading" :funding-reallocation-requests="fundingReallocationRequests" class="mt-8" />
     <NewRequestDialog
       class="pa-0"
@@ -24,6 +27,7 @@
 import { mapState } from 'pinia'
 
 import BaseFundingCard from '@/components/funding/BaseFundingCard.vue'
+import TopupFundingCard from '@/components/funding/TopupFundingCard.vue'
 import FundingAllocationInfoTable from '@/components/funding/FundingAllocationInfoTable.vue'
 import FundingReallocationRequestsTable from '@/components/funding/FundingReallocationRequestsTable.vue'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
@@ -38,7 +42,7 @@ import { FUNDING_AGREEMENT_STATUS_CODES, REQUEST_CATEGORY_NAMES } from '@/utils/
 
 export default {
   name: 'FundingAllocationTab',
-  components: { AppAlertBanner, AppButton, BaseFundingCard, FundingAllocationInfoTable, FundingReallocationRequestsTable, FundingSearchCard, NewRequestDialog },
+  components: { AppAlertBanner, AppButton, BaseFundingCard, TopupFundingCard, FundingAllocationInfoTable, FundingReallocationRequestsTable, FundingSearchCard, NewRequestDialog },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -52,6 +56,10 @@ export default {
 
   computed: {
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+
+    showTopupCard() {
+      return Number(this.fundingDetails?.topupEnvelopeProgramming) > 0
+    },
   },
 
   created() {

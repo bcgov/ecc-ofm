@@ -1,5 +1,6 @@
-import ApiService from '@/common/apiService'
 import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
+
+import ApiService from '@/common/apiService'
 
 export default {
   async getActiveFundingAgreementByApplicationId(applicationId, ignoreMODAgreements = false) {
