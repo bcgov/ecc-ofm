@@ -79,7 +79,7 @@
         item-key="applicationId"
         :mobile="null"
         mobile-breakpoint="md"
-        class="soft-outline no-wrap"
+        class="soft-outline text-no-wrap"
         density="compact">
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)">{{ getStatusLabel(item) }}</span>
@@ -546,9 +546,5 @@ export default {
 <style scoped>
 .soft-outline {
   border: 1px solid #dee2e6 !important;
-}
-
-.no-wrap {
-  text-wrap: nowrap;
 }
 </style>
