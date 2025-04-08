@@ -64,6 +64,16 @@ export default {
       throw error
     }
   },
+  async getInactiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
+    try {
+      if (!facilityId && !statusCode) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${statusCode}`)
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      throw error
+    }
+  },
 
   /*  this function is only used by the FundingAgreementTab currently.
     however I changed this function to take the queries as paramenters,
