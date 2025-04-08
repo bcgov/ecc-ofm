@@ -120,4 +120,24 @@ export default {
       throw error
     }
   },
+  async getExpiringSoonFundingAgreementsByFacilityId(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/facility/${facilityId}/expiring-soon-funding-agreements`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get upcoming funding agreements by facility ID - ${error}`)
+      throw error
+    }
+  },
+  async getRecentlyExpiredFundingAgreementsByFacilityId(facilityId) {
+    try {
+      if (!facilityId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/facility/${facilityId}/recently-expired-funding-agreements`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get recently expired funding agreements by facility ID - ${error}`)
+      throw error
+    }
+  },
 }

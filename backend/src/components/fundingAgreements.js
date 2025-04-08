@@ -115,6 +115,38 @@ async function getFundingReallocationRequests(req, res) {
     handleError(res, e)
   }
 }
+async function getExpiringSoonFundingAgreementsByFacility(facilityId) {
+  const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number
+    &$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))
+    &$filter=(_ofm_facility_value eq ${facilityId} and Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=120))
+    &pageSize=500&$orderby=ofm_version_number desc`
+
+  const response = await getOperation(operation)
+  const fundingAgreements = []
+
+  response?.value?.forEach((funding) => {
+    const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
+
+    fundingAgreements.push(fa)
+  })
+
+  return fundingAgreements
+}
+async function getRecentlyExpiredFundingAgreementsByFacility(facilityId) {
+  const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number
+    &$filter=(_ofm_facility_value eq ${facilityId} and Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=30))
+    &pageSize=500&$orderby=ofm_version_number desc`
+
+  const response = await getOperation(operation)
+  const fundingAgreements = []
+
+  response?.value?.forEach((funding) => {
+    const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
+    fundingAgreements.push(fa)
+  })
+
+  return fundingAgreements
+}
 
 module.exports = {
   getFundingAgreements,
@@ -123,4 +155,6 @@ module.exports = {
   getFundingPDFById,
   getRawFundingAgreementById,
   updateFundingAgreement,
+  getExpiringSoonFundingAgreementsByFacility,
+  getRecentlyExpiredFundingAgreementsByFacility,
 }

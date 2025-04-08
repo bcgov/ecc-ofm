@@ -65,38 +65,37 @@ export default {
       this.$router.push({ name: 'applications-history' })
     },
     async loadFundingAgreements() {
-      const now = new Date()
-
       for (const fac of this.filteredFacilities) {
-        console.log(fac)
         try {
-          const activeFA = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-          console.log('Active FA:', activeFA)
-          if (activeFA && activeFA.endDate) {
-            const endDate = new Date(activeFA.endDate)
-            const daysUntilEnd = (endDate - now) / (1000 * 60 * 60 * 24)
+          console.log(fac)
 
-            if (daysUntilEnd <= 120) {
-              this.isDisplayed = true
-              console.log('Active FA within next 120 days:', activeFA)
-              break // Active FA within next 120 days found
-            }
+          // Step 1: Check for FAs expiring in the next 120 days
+          const upcomingFAs = await FundingAgreementService.getExpiringSoonFundingAgreementsByFacilityId(fac.facilityId)
+          console.log('FA expiring in next 120 days:', upcomingFAs)
 
-            continue // Active FA exists but not expiring soon, skip expired FA check
+          if (upcomingFAs && upcomingFAs.length > 0) {
+            this.isDisplayed = true
+            console.log('FA expiring in next 120 days:', upcomingFAs[0])
+            break
           }
 
-          // No active FA, check expired
-          const expiredFA = await FundingAgreementService.getInactiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)
-          console.log('Expired FA:', expiredFA)
-          if (expiredFA && expiredFA.endDate) {
-            const endDate = new Date(expiredFA.endDate)
-            const daysSinceEnd = (now - endDate) / (1000 * 60 * 60 * 24)
+          // Step 2: No upcoming — check if any active FA exists
+          const activeFA = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
+          console.log('Active FA:', activeFA)
 
-            if (daysSinceEnd <= 30) {
-              this.isDisplayed = true
-              console.log('Expired FA within last 30 days:', expiredFA)
-              break // Recent expired FA found, expired in last 30 days
-            }
+          if (activeFA) {
+            console.log('Active FA exists but not expiring soon — no popup.')
+            continue // don't check expired
+          }
+
+          // Step 3: No active FA — check recently expired
+          const expiredFAs = await FundingAgreementService.getRecentlyExpiredFundingAgreementsByFacilityId(fac.facilityId)
+          console.log('Recently expired FAs:', expiredFAs)
+
+          if (expiredFAs && expiredFAs.length > 0) {
+            this.isDisplayed = true
+            console.log('FA expired within last 30 days:', expiredFAs[0])
+            break
           }
         } catch (error) {
           console.error(`Error processing facility ${fac.facilityId}:`, error)
