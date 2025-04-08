@@ -65,13 +65,10 @@ export default {
       this.$router.push({ name: 'applications-history' })
     },
     async loadFundingAgreements() {
-      this.isDisplayed = false // Default value
       const now = new Date()
 
       for (const fac of this.filteredFacilities) {
         console.log(fac)
-        //const expiredFA = await FundingAgreementService.getInactiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)
-        //console.log('Expired FA:', expiredFA)
         try {
           const activeFA = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
           console.log('Active FA:', activeFA)
@@ -98,7 +95,7 @@ export default {
             if (daysSinceEnd <= 30) {
               this.isDisplayed = true
               console.log('Expired FA within last 30 days:', expiredFA)
-              break // Recent expired FA found
+              break // Recent expired FA found, expired in last 30 days
             }
           }
         } catch (error) {
