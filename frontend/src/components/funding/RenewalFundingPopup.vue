@@ -67,34 +67,21 @@ export default {
     async loadFundingAgreements() {
       for (const fac of this.filteredFacilities) {
         try {
-          console.log(fac)
-
-          // Step 1: Check for FAs expiring in the next 120 days
+          // Check for FAs expiring in the next 120 days
           const upcomingFAs = await FundingAgreementService.getExpiringSoonFundingAgreementsByFacilityId(fac.facilityId)
-          console.log('FA expiring in next 120 days:', upcomingFAs)
-
           if (upcomingFAs && upcomingFAs.length > 0) {
             this.isDisplayed = true
-            console.log('FA expiring in next 120 days:', upcomingFAs[0])
             break
           }
-
-          // Step 2: No upcoming — check if any active FA exists
+          // check if any active FA exists but not expiring soon
           const activeFA = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-          console.log('Active FA:', activeFA)
-
           if (activeFA) {
-            console.log('Active FA exists but not expiring soon — no popup.')
             continue // don't check expired
           }
-
-          // Step 3: No active FA — check recently expired
+          // No active FA — check recently expired
           const expiredFAs = await FundingAgreementService.getRecentlyExpiredFundingAgreementsByFacilityId(fac.facilityId)
-          console.log('Recently expired FAs:', expiredFAs)
-
           if (expiredFAs && expiredFAs.length > 0) {
             this.isDisplayed = true
-            console.log('FA expired within last 30 days:', expiredFAs[0])
             break
           }
         } catch (error) {
