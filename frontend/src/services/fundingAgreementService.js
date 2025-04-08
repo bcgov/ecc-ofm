@@ -1,5 +1,6 @@
-import ApiService from '@/common/apiService'
 import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
+
+import ApiService from '@/common/apiService'
 
 export default {
   async getActiveFundingAgreementByApplicationId(applicationId, ignoreMODAgreements = false) {
@@ -57,6 +58,16 @@ export default {
     try {
       if (!facilityId && !statusCode) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&statusCode=${statusCode}`)
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      throw error
+    }
+  },
+  async getInactiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
+    try {
+      if (!facilityId && !statusCode) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${statusCode}`)
       return response?.data[0]
     } catch (error) {
       console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
