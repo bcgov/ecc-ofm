@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="mx-4">
-    <h1>Begin a $10 a Day Funding application</h1>
+    <!-- <h1 v-if="!isRenewal">Begin a $10 a Day Funding application</h1>
+    <h1 v-else>RENEW a $10 a Day Funding application</h1> -->
     <div class="mt-8">
       <h4>Organization information</h4>
       <div>
@@ -22,7 +23,7 @@
           @delete-document="deleteDocument"></NotForProfitQuestions>
       </div>
 
-      <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
+      <v-checkbox :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
 
     <div class="mb-6">
@@ -35,6 +36,8 @@
         <v-col cols="12" md="4" lg="2">
           <div>Select your facility:</div>
         </v-col>
+        {{ filteredFacilities }}
+
         <v-col cols="12" md="8" lg="10">
           <v-select
             id="select-facility"
@@ -45,6 +48,7 @@
             :rules="rules.required"
             placeholder="Select facility"
             density="compact"
+            @clicked="console.log('clocked')"
             variant="outlined"></v-select>
         </v-col>
       </v-row>
@@ -72,7 +76,6 @@ export default {
   name: 'SelectFacilityView',
   components: { OrganizationInfo, NotForProfitQuestions },
   mixins: [alertMixin],
-
   props: {
     cancel: {
       type: Boolean,
@@ -107,7 +110,9 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
-
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     filteredFacilities() {
       return this.userInfo?.facilities?.filter(
         (facility) =>
@@ -160,6 +165,7 @@ export default {
   },
 
   async created() {
+    console.log('is renew fac', this.isRenewal)
     this.isSelectFacilityComplete = false
     this.BUSINESS_TYPE_CODES = BUSINESS_TYPE_CODES
     if (this.userInfo?.facilities?.length === 1) {
@@ -167,9 +173,12 @@ export default {
     }
     await this.getOrganization()
     this.loadedApplications = await ApplicationService.getActiveApplications()
+    console.log(this.loadedApplications)
 
     //get the redirected applications so we can prevent those facilities from starting another OFM app
     this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)))
+
+    console.log('is laod')
   },
 
   methods: {

@@ -22,6 +22,21 @@
           </v-card>
         </v-col>
 
+        <v-col cols="12" md="6">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              RENEW
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              {{ ofmApplicationCardText }}
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="renew-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: 'applications-renwals' }" class="ma-2 mt-8">RENEW NOW</AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
         <v-col v-if="hasNonUnionFacilityGroupOrg" cols="12" md="6">
           <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">

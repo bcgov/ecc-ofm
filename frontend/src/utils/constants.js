@@ -195,9 +195,26 @@ export const APPLICATION_ROUTES = Object.freeze({
   CONFIRMATION: 'application-confirmation',
 })
 
+export const RENEWAL_ROUTES = Object.freeze({
+  SELECT_FACILITY: 'renew-select-facility',
+  FACILITY_DETAILS: 'renew-facility-details',
+  ELIGIBILITY: 'renew-eligibility',
+  SERVICE_DELIVERY: 'renew-service-delivery',
+  OPERATING_COSTS: 'renew-operating-costs',
+  STAFFING: 'renew-staffing',
+  REVIEW: 'renew-review-application',
+  SUBMIT: 'renew-declare-submit',
+  CONFIRMATION: 'renew-application-confirmation',
+})
+
 export const APPLICATION_INTAKE_TYPES = Object.freeze({
   OPEN_INTAKE: 1,
   LIMITED_INTAKE: 2,
+})
+
+export const APPLICATION_RENEWAL_TYPES = Object.freeze({
+  NEW: 1,
+  RENEWAL: 2,
 })
 
 export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({

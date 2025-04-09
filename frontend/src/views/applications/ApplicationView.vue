@@ -13,7 +13,7 @@
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
           <ApplicationHeader v-if="!isSelectFacilityPage" />
-          <router-view class="min-screen-height" :readonly="readonly" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
+          <router-view class="min-screen-height" :readonly="false" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
           <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
             :loading="processing"
@@ -39,13 +39,13 @@
 import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
 import FacilityService from '@/services/facilityService'
-import AppCancelDialog from '../../components/ui/AppCancelDialog.vue'
+import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
 import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -79,7 +79,7 @@ export default {
     ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
-      if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
+      if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY || this.$route.name === RENEWAL_ROUTES.SELECT_FACILITY) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
       return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
@@ -179,6 +179,7 @@ export default {
 
   async created() {
     await this.loadApplication()
+    console.log('am I a renew: ', this.isRenewal)
   },
 
   methods: {
