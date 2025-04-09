@@ -41,7 +41,9 @@ export default {
       'isDeclareSubmitComplete',
       'isApplicationComplete',
     ]),
-
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     isSelectFacilityPage() {
       return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
     },
@@ -50,41 +52,42 @@ export default {
   created() {
     this.navBarItems = {
       facilityDetails: {
-        id: 1,
         title: 'Facility Details',
         routeName: APPLICATION_ROUTES.FACILITY_DETAILS,
       },
-      eligibility: {
-        id: 2,
-        title: 'Eligibility',
-        routeName: APPLICATION_ROUTES.ELIGIBILITY,
-      },
+      ...(this.isRenewal
+        ? {}
+        : {
+            eligibility: {
+              title: 'Eligibility',
+              routeName: APPLICATION_ROUTES.ELIGIBILITY,
+            },
+          }),
       serviceDelivery: {
-        id: 3,
         title: 'Service Delivery',
         routeName: APPLICATION_ROUTES.SERVICE_DELIVERY,
       },
       operatingCosts: {
-        id: 4,
         title: 'Operating Costs',
         routeName: APPLICATION_ROUTES.OPERATING_COSTS,
       },
       staffing: {
-        id: 5,
         title: 'Staffing',
         routeName: APPLICATION_ROUTES.STAFFING,
       },
       review: {
-        id: 6,
         title: 'Review',
         routeName: APPLICATION_ROUTES.REVIEW,
       },
       submit: {
-        id: 7,
         title: 'Declare & Submit',
         routeName: APPLICATION_ROUTES.SUBMIT,
       },
     }
+
+    Object.entries(this.navBarItems).forEach(([_, item], index) => {
+      item.id = index + 1 // Assign the ID based on its position
+    })
   },
 
   methods: {

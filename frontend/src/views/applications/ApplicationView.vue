@@ -93,6 +93,12 @@ export default {
         APPLICATION_ROUTES.STAFFING,
         APPLICATION_ROUTES.REVIEW,
         APPLICATION_ROUTES.SUBMIT,
+        RENEWAL_ROUTES.FACILITY_DETAILS,
+        RENEWAL_ROUTES.SERVICE_DELIVERY,
+        RENEWAL_ROUTES.OPERATING_COSTS,
+        RENEWAL_ROUTES.STAFFING,
+        RENEWAL_ROUTES.REVIEW,
+        RENEWAL_ROUTES.SUBMIT,
       ].includes(this.$route.name)
     },
     showCancel() {
@@ -107,6 +113,12 @@ export default {
             APPLICATION_ROUTES.STAFFING,
             APPLICATION_ROUTES.REVIEW,
             APPLICATION_ROUTES.SUBMIT,
+            RENEWAL_ROUTES.FACILITY_DETAILS,
+            RENEWAL_ROUTES.SERVICE_DELIVERY,
+            RENEWAL_ROUTES.OPERATING_COSTS,
+            RENEWAL_ROUTES.STAFFING,
+            RENEWAL_ROUTES.REVIEW,
+            RENEWAL_ROUTES.SUBMIT,
           ].includes(this.$route.name))
       )
     },
@@ -119,6 +131,12 @@ export default {
         APPLICATION_ROUTES.OPERATING_COSTS,
         APPLICATION_ROUTES.STAFFING,
         APPLICATION_ROUTES.REVIEW,
+        RENEWAL_ROUTES.SELECT_FACILITY,
+        RENEWAL_ROUTES.FACILITY_DETAILS,
+        RENEWAL_ROUTES.SERVICE_DELIVERY,
+        RENEWAL_ROUTES.OPERATING_COSTS,
+        RENEWAL_ROUTES.STAFFING,
+        RENEWAL_ROUTES.REVIEW,
       ].includes(this.$route.name)
     },
     showSave() {
@@ -131,11 +149,16 @@ export default {
           APPLICATION_ROUTES.OPERATING_COSTS,
           APPLICATION_ROUTES.STAFFING,
           APPLICATION_ROUTES.SUBMIT,
+          RENEWAL_ROUTES.FACILITY_DETAILS,
+          RENEWAL_ROUTES.SERVICE_DELIVERY,
+          RENEWAL_ROUTES.OPERATING_COSTS,
+          RENEWAL_ROUTES.STAFFING,
+          RENEWAL_ROUTES.SUBMIT,
         ].includes(this.$route.name)
       )
     },
     showSubmit() {
-      return !this.readonly && APPLICATION_ROUTES.SUBMIT === this.$route.name
+      return !this.readonly && (APPLICATION_ROUTES.SUBMIT === this.$route.name || RENEWAL_ROUTES.SUBMIT === this.$route.name)
     },
     disableNext() {
       if (this.isSelectFacilityPage) {
@@ -150,19 +173,19 @@ export default {
       return this.readonly || !this.isApplicationComplete || !this.isDeclareSubmitComplete
     },
     isSelectFacilityPage() {
-      return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
+      return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY || this.$route.name === RENEWAL_ROUTES.SELECT_FACILITY
     },
     isFacilityDetailsPage() {
-      return this.$route.name === APPLICATION_ROUTES.FACILITY_DETAILS
+      return this.$route.name === APPLICATION_ROUTES.FACILITY_DETAILS || this.$route.name === RENEWAL_ROUTES.FACILITY_DETAILS
     },
     isEligibilityPage() {
       return this.$route.name === APPLICATION_ROUTES.ELIGIBILITY
     },
     isReviewApplicationPage() {
-      return this.$route.name === APPLICATION_ROUTES.REVIEW
+      return this.$route.name === APPLICATION_ROUTES.REVIEW || this.$route.name === RENEWAL_ROUTES.REVIEW
     },
     isApplicationConfirmationPage() {
-      return this.$route.name === APPLICATION_ROUTES.CONFIRMATION
+      return this.$route.name === APPLICATION_ROUTES.CONFIRMATION || this.$route.name === RENEWAL_ROUTES.CONFIRMATION
     },
     isPageAccessible() {
       return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)

@@ -32,7 +32,9 @@
               {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="renew-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: 'applications-renwals' }" class="ma-2 mt-8">RENEW NOW</AppButton>
+              <AppButton id="renew-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: RENEWAL_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
+                RENEW NOW
+              </AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -171,6 +173,7 @@ import { createPDFDownloadLink } from '@/utils/common'
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
+  RENEWAL_ROUTES,
   GOOD_STANDING_STATUS_CODES,
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
@@ -283,6 +286,7 @@ export default {
       this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
+      this.RENEWAL_ROUTES = RENEWAL_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
