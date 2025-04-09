@@ -27,7 +27,7 @@ import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
-import FundingAgreementService from '@/services/fundingAgreementService'
+import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin.js'
 
@@ -66,7 +66,7 @@ export default {
     async loadRenewalFacilities() {
       try {
         const facilityIds = this.filteredFacilities.map((f) => f.facilityId)
-        const renewalFacilities = await FundingAgreementService.getRenewalFacilities(facilityIds)
+        const renewalFacilities = await FacilityService.getRenewalFacilities(facilityIds)
 
         const authStore = useAuthStore()
         authStore.setFacilitiesForRenewal(renewalFacilities)

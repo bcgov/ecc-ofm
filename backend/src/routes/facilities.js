@@ -3,8 +3,8 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility } = require('../components/facilities')
-const { param, validationResult } = require('express-validator')
+const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility, getFacilitiesWithExpiringOrRecentlyExpiredFAs } = require('../components/facilities')
+const { param, body, validationResult } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
@@ -72,5 +72,16 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getFacilityLicences(req, res)
+  },
+)
+router.post(
+  '/expiring-or-recently-expired',
+  //passport.authenticate('jwt', { session: true }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  [body('facilityIds', 'Request body [facilityIds] is required and must be an array').isArray({ min: 1 })],
+  (req, res) => {
+    validationResult(req).throw()
+    return getFacilitiesWithExpiringOrRecentlyExpiredFAs(req, res)
   },
 )

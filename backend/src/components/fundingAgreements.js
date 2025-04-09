@@ -115,37 +115,6 @@ async function getFundingReallocationRequests(req, res) {
     handleError(res, e)
   }
 }
-async function getFacilitiesWithExpiringOrRecentlyExpiredFAs(req, res) {
-  try {
-    const facilityIds = req.body?.facilityIds || []
-    if (!facilityIds.length) return res.status(HttpStatus.OK).json([])
-
-    const facilityFilter = facilityIds.map((id) => `_ofm_facility_value eq ${id}`).join(' or ')
-
-    const filter = `(${facilityFilter} and 
-      (Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=120) or 
-       Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=30)))`
-
-    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
-
-    log.info('[RenewalFA] 🔎 OData operation:', operation)
-
-    const response = await getOperation(operation)
-
-    const facilityList = []
-    response?.value?.forEach((fa) => {
-      if (fa._ofm_facility_value && fa.ofm_version_number === 0 && (fa.statuscode === 2 || fa.statuscode === 8)) {
-        facilityList.push(fa._ofm_facility_value)
-      }
-    })
-
-    log.info('[RenewalFA] ✅ Facilities returned:', facilityList)
-    return res.status(HttpStatus.OK).json(facilityList)
-  } catch (e) {
-    log.error('[RenewalFA] ❌ Error caught:', e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
-  }
-}
 
 module.exports = {
   getFundingAgreements,
@@ -154,5 +123,4 @@ module.exports = {
   getFundingPDFById,
   getRawFundingAgreementById,
   updateFundingAgreement,
-  getFacilitiesWithExpiringOrRecentlyExpiredFAs,
 }

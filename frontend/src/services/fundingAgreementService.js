@@ -120,16 +120,4 @@ export default {
       throw error
     }
   },
-  async getRenewalFacilities(facilityIds) {
-    try {
-      if (!facilityIds?.length) return []
-
-      const response = await ApiService.apiAxios.post(`${ApiRoutes.FUNDING_AGREEMENTS}/facilities/expiring-or-recently-expired`, { facilityIds })
-
-      return response?.data || []
-    } catch (error) {
-      console.log(`Failed to get renewal facilities - ${error}`)
-      throw error
-    }
-  },
 }

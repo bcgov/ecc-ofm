@@ -1,5 +1,5 @@
-import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
+import ApiService from '@/common/apiService'
 
 function sortContactsByName(contacts) {
   return contacts?.sort(function (a, b) {
@@ -73,6 +73,18 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to update facility by facility id - ${error}`)
+      throw error
+    }
+  },
+  async getRenewalFacilities(facilityIds) {
+    try {
+      if (!facilityIds?.length) return []
+
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.FACILITIES}/expiring-or-recently-expired`, { facilityIds })
+
+      return response?.data || []
+    } catch (error) {
+      console.log(`Failed to get renewal facilities - ${error}`)
       throw error
     }
   },

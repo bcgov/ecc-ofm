@@ -109,6 +109,38 @@ async function updateFacility(req, res) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
+async function getFacilitiesWithExpiringOrRecentlyExpiredFAs(req, res) {
+  try {
+    const facilityIds = req.body?.facilityIds || []
+    if (!facilityIds.length) return res.status(HttpStatus.OK).json([])
+
+    const facilityFilter = facilityIds.map((id) => `_ofm_facility_value eq ${id}`).join(' or ')
+    const filter = `(${facilityFilter} and 
+      (Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=120) or 
+       Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=30)))`
+    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
+    const response = await getOperation(operation)
+
+    const facilityList = []
+    response?.value?.forEach((fa) => {
+      if (fa._ofm_facility_value && fa.ofm_version_number === 0 && (fa.statuscode === 2 || fa.statuscode === 8)) {
+        facilityList.push(fa._ofm_facility_value)
+      }
+    })
+
+    // Now query for renewal applications submitted in the last 150 days and  we will remove those facilities that have a renewal application submitted in the last (120+30)= 150 days
+    const renewalFilter = "Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=150) and ofm_application_type eq 2 and ofm_summary_submittedon ne null"
+    const renewalOperation = `ofm_applications?$select=_ofm_facility_value&$filter=${renewalFilter}&pageSize=500`
+    const renewalResponse = await getOperation(renewalOperation)
+    const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value)
+
+    const finalList = facilityList.filter((facId) => !renewalFacilityIds.includes(facId))
+
+    return res.status(HttpStatus.OK).json(finalList)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
 
 module.exports = {
   getFacility,
@@ -116,4 +148,5 @@ module.exports = {
   getFacilityLicences,
   updateFacility,
   getRawFacilityContacts,
+  getFacilitiesWithExpiringOrRecentlyExpiredFAs,
 }
