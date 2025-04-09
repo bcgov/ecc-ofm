@@ -9,10 +9,9 @@ const {
   getFundingAgreementById,
   getFundingPDFById,
   getFundingReallocationRequests,
-  getExpiringSoonFundingAgreementsByFacility,
-  getRecentlyExpiredFundingAgreementsByFacility,
+  getFacilitiesWithExpiringOrRecentlyExpiredFAs,
 } = require('../components/fundingAgreements')
-const { param, query, validationResult, oneOf } = require('express-validator')
+const { param, query, body, validationResult, oneOf } = require('express-validator')
 const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
@@ -101,41 +100,14 @@ router.get(
   },
 )
 
-router.get(
-  '/facility/:facilityId/expiring-soon-funding-agreements',
-  passport.authenticate('jwt', { session: false }),
+router.post(
+  '/facilities/expiring-or-recently-expired',
+  //passport.authenticate('jwt', { session: true }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
-  async (req, res) => {
+  [body('facilityIds', 'Request body [facilityIds] is required and must be an array').isArray({ min: 1 })],
+  (req, res) => {
     validationResult(req).throw()
-    try {
-      const results = await getExpiringSoonFundingAgreementsByFacility(req.params.facilityId)
-      if (!results || results.length === 0) {
-        return res.status(204).json() // No Content
-      }
-      return res.status(200).json(results)
-    } catch {
-      return res.status(500).json({ error: 'Internal Server Error' })
-    }
-  },
-)
-router.get(
-  '/facility/:facilityId/recently-expired-funding-agreements',
-  passport.authenticate('jwt', { session: false }),
-  isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
-  async (req, res) => {
-    validationResult(req).throw()
-    try {
-      const results = await getRecentlyExpiredFundingAgreementsByFacility(req.params.facilityId)
-      if (!results || results.length === 0) {
-        return res.status(204).json() // No Content
-      }
-      return res.status(200).json(results)
-    } catch {
-      return res.status(500).json({ error: 'Internal Server Error' })
-    }
+    return getFacilitiesWithExpiringOrRecentlyExpiredFAs(req, res)
   },
 )

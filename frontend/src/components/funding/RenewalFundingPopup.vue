@@ -25,7 +25,6 @@
 <script>
 import { mapState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { FUNDING_AGREEMENT_STATUS_CODES } from '@/utils/constants'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import FundingAgreementService from '@/services/fundingAgreementService'
@@ -54,7 +53,7 @@ export default {
   },
 
   async created() {
-    await this.loadFundingAgreements()
+    await this.loadRenewalFacilities()
   },
 
   methods: {
@@ -64,29 +63,20 @@ export default {
     goToApplications() {
       this.$router.push({ name: 'applications-history' })
     },
-    async loadFundingAgreements() {
-      for (const fac of this.filteredFacilities) {
-        try {
-          // Check for FAs expiring in the next 120 days
-          const upcomingFAs = await FundingAgreementService.getExpiringSoonFundingAgreementsByFacilityId(fac.facilityId)
-          if (upcomingFAs && upcomingFAs.length > 0) {
-            this.isDisplayed = true
-            break
-          }
-          // check if any active FA exists but not expiring soon
-          const activeFA = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(fac.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-          if (activeFA) {
-            continue // don't check expired
-          }
-          // No active FA — check recently expired
-          const expiredFAs = await FundingAgreementService.getRecentlyExpiredFundingAgreementsByFacilityId(fac.facilityId)
-          if (expiredFAs && expiredFAs.length > 0) {
-            this.isDisplayed = true
-            break
-          }
-        } catch (error) {
-          console.error(`Error processing facility ${fac.facilityId}:`, error)
+    async loadRenewalFacilities() {
+      try {
+        const facilityIds = this.filteredFacilities.map((f) => f.facilityId)
+        const renewalFacilities = await FundingAgreementService.getRenewalFacilities(facilityIds)
+
+        const authStore = useAuthStore()
+        authStore.setFacilitiesForRenewal(renewalFacilities)
+
+        if (renewalFacilities.length > 0) {
+          this.isDisplayed = true
+          console.log('Facilities needing renewal:', renewalFacilities)
         }
+      } catch (error) {
+        console.error('Error loading funding agreements for renewal:', error)
       }
     },
   },
