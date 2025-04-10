@@ -45,7 +45,7 @@ import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES, REVIEW_PAGES, CONFIRMATION_PAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -182,10 +182,10 @@ export default {
       return this.$route.name === APPLICATION_ROUTES.ELIGIBILITY
     },
     isReviewApplicationPage() {
-      return this.$route.name === APPLICATION_ROUTES.REVIEW || this.$route.name === RENEWAL_ROUTES.REVIEW
+      return REVIEW_PAGES.includes(this.$route.name)
     },
     isApplicationConfirmationPage() {
-      return this.$route.name === APPLICATION_ROUTES.CONFIRMATION || this.$route.name === RENEWAL_ROUTES.CONFIRMATION
+      return CONFIRMATION_PAGES.includes(this.$route.name)
     },
     isPageAccessible() {
       return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)

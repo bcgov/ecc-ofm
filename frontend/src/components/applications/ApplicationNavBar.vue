@@ -1,16 +1,6 @@
 <template>
   <v-container fluid class="sticky-top">
-    is select : {{ isSelectFacilityPage }}is disabled : {{ isDisabled() }}
-    hi
-    {{ isFacilityDetailsPage }}
     <div v-for="item in navBarItems" :key="item.id">
-      <pre v-if="item.id == 1">
-        item 1
-        {{ item }}
-        {{ getNavIconClass(item) }}
-        {{ getNavTextClass(item) }}
-        {{ getNavTextClass(item) }}
-      </pre>
       <v-row no-gutters @click="navigateToPage(item)">
         <v-icon :class="getNavIconClass(item)" class="mr-3">{{ getNavIcon(item) }}</v-icon>
         <span :class="getNavTextClass(item)">{{ item.title }}</span>
@@ -28,7 +18,18 @@
 <script>
 import { mapState } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES, SUBMIT_PAGES } from '@/utils/constants'
+import {
+  APPLICATION_ROUTES,
+  RENEWAL_ROUTES,
+  FACILITY_DETAILS_PAGES,
+  SELECT_FACILITY_PAGES,
+  SERVICE_DELIVERY_PAGES,
+  OPERATING_COSTS_PAGES,
+  STAFFING_PAGES,
+  REVIEW_PAGES,
+  SUBMIT_PAGES,
+  CONFIRMATION_PAGES,
+} from '@/utils/constants'
 
 export default {
   name: 'ApplicationNavBar',
@@ -62,9 +63,6 @@ export default {
     isRenewal() {
       return !!this.$route.meta.isRenewal
     },
-    // isSelectFacilityPage() {
-    //   return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
-    // },
   },
 
   created() {
@@ -151,13 +149,6 @@ export default {
         (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isRenewal && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
         (SUBMIT_PAGES.includes(item?.routeName) && !this.isApplicationComplete)
       )
-      // return (
-      //   this.loading ||
-      //   (this.isSelectFacilityPage && !this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS)) ||
-      //   (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isFacilityDetailsComplete) ||
-      //   (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
-      //   (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && !this.isApplicationComplete)
-      // )
     },
 
     isCurrent(item) {
@@ -212,13 +203,13 @@ export default {
         return 'mdi-circle'
       }
       const isComplete =
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && this.isFacilityDetailsComplete) ||
+        (FACILITY_DETAILS_PAGES.includes(item?.routeName) && this.isFacilityDetailsComplete) ||
         (this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && this.isEligibilityComplete) ||
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.SERVICE_DELIVERY) && this.isServiceDeliveryComplete) ||
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.OPERATING_COSTS) && this.isOperatingCostsComplete) ||
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.STAFFING) && this.isStaffingComplete) ||
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.REVIEW) && this.isApplicationComplete) ||
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && this.isDeclareSubmitComplete)
+        (SERVICE_DELIVERY_PAGES.includes(item?.routeName) && this.isServiceDeliveryComplete) ||
+        (OPERATING_COSTS_PAGES.includes(item?.routeName) && this.isOperatingCostsComplete) ||
+        (STAFFING_PAGES.includes(item?.routeName) && this.isStaffingComplete) ||
+        (REVIEW_PAGES.includes(item?.routeName) && this.isApplicationComplete) ||
+        (CONFIRMATION_PAGES.includes(item?.routeName) && this.isDeclareSubmitComplete)
       return isComplete ? 'mdi-check-circle' : 'mdi-circle'
     },
   },
