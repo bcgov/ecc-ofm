@@ -9,7 +9,7 @@
       </v-row>
       <v-row v-else no-gutters>
         <v-col cols="12" md="3" lg="2" xxl="1">
-          <ApplicationNavBar />
+          <ApplicationNavBar :is-select-facility-page="isSelectFacilityPage" :is-facility-details-page="isFacilityDetailsPage" />
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
           <ApplicationHeader v-if="!isSelectFacilityPage" />
@@ -45,7 +45,7 @@ import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -173,10 +173,10 @@ export default {
       return this.readonly || !this.isApplicationComplete || !this.isDeclareSubmitComplete
     },
     isSelectFacilityPage() {
-      return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY || this.$route.name === RENEWAL_ROUTES.SELECT_FACILITY
+      return SELECT_FACILITY_PAGES.includes(this.$route.name)
     },
     isFacilityDetailsPage() {
-      return this.$route.name === APPLICATION_ROUTES.FACILITY_DETAILS || this.$route.name === RENEWAL_ROUTES.FACILITY_DETAILS
+      return FACILITY_DETAILS_PAGES.includes(this.$route.name)
     },
     isEligibilityPage() {
       return this.$route.name === APPLICATION_ROUTES.ELIGIBILITY
@@ -202,7 +202,6 @@ export default {
 
   async created() {
     await this.loadApplication()
-    console.log('am I a renew: ', this.isRenewal)
   },
 
   methods: {

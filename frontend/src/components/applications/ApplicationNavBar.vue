@@ -1,6 +1,16 @@
 <template>
   <v-container fluid class="sticky-top">
+    is select : {{ isSelectFacilityPage }}is disabled : {{ isDisabled() }}
+    hi
+    {{ isFacilityDetailsPage }}
     <div v-for="item in navBarItems" :key="item.id">
+      <pre v-if="item.id == 1">
+        item 1
+        {{ item }}
+        {{ getNavIconClass(item) }}
+        {{ getNavTextClass(item) }}
+        {{ getNavTextClass(item) }}
+      </pre>
       <v-row no-gutters @click="navigateToPage(item)">
         <v-icon :class="getNavIconClass(item)" class="mr-3">{{ getNavIcon(item) }}</v-icon>
         <span :class="getNavTextClass(item)">{{ item.title }}</span>
@@ -18,7 +28,7 @@
 <script>
 import { mapState } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES, SUBMIT_PAGES } from '@/utils/constants'
 
 export default {
   name: 'ApplicationNavBar',
@@ -27,6 +37,14 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    isSelectFacilityPage: {
+      type: Boolean,
+      required: true,
+    },
+    isFacilityDetailsPage: {
+      type: Boolean,
+      required: true,
     },
   },
 
@@ -44,65 +62,108 @@ export default {
     isRenewal() {
       return !!this.$route.meta.isRenewal
     },
-    isSelectFacilityPage() {
-      return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
-    },
+    // isSelectFacilityPage() {
+    //   return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
+    // },
   },
 
   created() {
-    this.navBarItems = {
-      facilityDetails: {
-        title: 'Facility Details',
-        routeName: APPLICATION_ROUTES.FACILITY_DETAILS,
-      },
-      ...(this.isRenewal
-        ? {}
-        : {
-            eligibility: {
-              title: 'Eligibility',
-              routeName: APPLICATION_ROUTES.ELIGIBILITY,
-            },
-          }),
-      serviceDelivery: {
-        title: 'Service Delivery',
-        routeName: APPLICATION_ROUTES.SERVICE_DELIVERY,
-      },
-      operatingCosts: {
-        title: 'Operating Costs',
-        routeName: APPLICATION_ROUTES.OPERATING_COSTS,
-      },
-      staffing: {
-        title: 'Staffing',
-        routeName: APPLICATION_ROUTES.STAFFING,
-      },
-      review: {
-        title: 'Review',
-        routeName: APPLICATION_ROUTES.REVIEW,
-      },
-      submit: {
-        title: 'Declare & Submit',
-        routeName: APPLICATION_ROUTES.SUBMIT,
-      },
+    if (this.isRenewal) {
+      this.navBarItems = {
+        facilityDetails: {
+          id: 1,
+          title: 'Facility Details',
+          routeName: RENEWAL_ROUTES.FACILITY_DETAILS,
+        },
+        serviceDelivery: {
+          id: 2,
+          title: 'Service Delivery',
+          routeName: RENEWAL_ROUTES.SERVICE_DELIVERY,
+        },
+        operatingCosts: {
+          id: 3,
+          title: 'Operating Costs',
+          routeName: RENEWAL_ROUTES.OPERATING_COSTS,
+        },
+        staffing: {
+          id: 4,
+          title: 'Staffing',
+          routeName: RENEWAL_ROUTES.STAFFING,
+        },
+        review: {
+          id: 5,
+          title: 'Review',
+          routeName: RENEWAL_ROUTES.REVIEW,
+        },
+        submit: {
+          id: 6,
+          title: 'Declare & Submit',
+          routeName: RENEWAL_ROUTES.SUBMIT,
+        },
+      }
+    } else {
+      this.navBarItems = {
+        facilityDetails: {
+          id: 1,
+          title: 'Facility Details',
+          routeName: APPLICATION_ROUTES.FACILITY_DETAILS,
+        },
+        eligibility: {
+          id: 2,
+          title: 'Eligibility',
+          routeName: APPLICATION_ROUTES.ELIGIBILITY,
+        },
+        serviceDelivery: {
+          id: 3,
+          title: 'Service Delivery',
+          routeName: APPLICATION_ROUTES.SERVICE_DELIVERY,
+        },
+        operatingCosts: {
+          id: 4,
+          title: 'Operating Costs',
+          routeName: APPLICATION_ROUTES.OPERATING_COSTS,
+        },
+        staffing: {
+          id: 5,
+          title: 'Staffing',
+          routeName: APPLICATION_ROUTES.STAFFING,
+        },
+        review: {
+          id: 6,
+          title: 'Review',
+          routeName: APPLICATION_ROUTES.REVIEW,
+        },
+        submit: {
+          id: 7,
+          title: 'Declare & Submit',
+          routeName: APPLICATION_ROUTES.SUBMIT,
+        },
+      }
     }
-
-    Object.entries(this.navBarItems).forEach(([_, item], index) => {
-      item.id = index + 1 // Assign the ID based on its position
-    })
   },
 
   methods: {
     isDisabled(item) {
       return (
         this.loading ||
-        (this.isSelectFacilityPage && !this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS)) ||
-        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isFacilityDetailsComplete) ||
-        (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
-        (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && !this.isApplicationComplete)
+        (this.isSelectFacilityPage && !FACILITY_DETAILS_PAGES.includes(item?.routeName)) ||
+        (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isFacilityDetailsComplete) ||
+        (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isRenewal && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
+        (SUBMIT_PAGES.includes(item?.routeName) && !this.isApplicationComplete)
       )
+      // return (
+      //   this.loading ||
+      //   (this.isSelectFacilityPage && !this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS)) ||
+      //   (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isFacilityDetailsComplete) ||
+      //   (!this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS) && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
+      //   (this.isRouteNameEqual(item, APPLICATION_ROUTES.SUBMIT) && !this.isApplicationComplete)
+      // )
     },
 
     isCurrent(item) {
-      return this.isRouteNameEqual(item, this.$route.name) || (this.isSelectFacilityPage && this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS))
+      //I think mine is better but I don't quite get why it was the other way
+      return this.isRouteNameEqual(item, this.$route.name) || this.isSelectFacilityPage
+      //return this.isRouteNameEqual(item, this.$route.name) || (this.isSelectFacilityPage && this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS))
     },
 
     isRouteNameEqual(item, routeName) {
@@ -111,7 +172,9 @@ export default {
 
     navigateToPage(item) {
       if (this.isDisabled(item)) return
-      if (this.isSelectFacilityPage) {
+      if (this.isSelectFacilityPage && this.isRenewal) {
+        this.$router.push({ name: RENEWAL_ROUTES.SELECT_FACILITY })
+      } else if (this.isSelectFacilityPage) {
         this.$router.push({ name: APPLICATION_ROUTES.SELECT_FACILITY })
       } else {
         this.$router.push({ name: item.routeName, params: { applicationGuid: this.$route.params.applicationGuid } })
