@@ -45,7 +45,7 @@ import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES, REVIEW_PAGES, CONFIRMATION_PAGES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES, REVIEW_PAGES, CONFIRMATION_PAGES, SUBMIT_PAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -79,7 +79,7 @@ export default {
     ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
     readonly() {
-      if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY || this.$route.name === RENEWAL_ROUTES.SELECT_FACILITY) {
+      if (this.isSelectFacilityPage) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
       return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
@@ -158,7 +158,7 @@ export default {
       )
     },
     showSubmit() {
-      return !this.readonly && (APPLICATION_ROUTES.SUBMIT === this.$route.name || RENEWAL_ROUTES.SUBMIT === this.$route.name)
+      return !this.readonly && SUBMIT_PAGES.includes(this.$route.name)
     },
     disableNext() {
       if (this.isSelectFacilityPage) {
