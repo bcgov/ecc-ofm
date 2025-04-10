@@ -358,7 +358,7 @@ export default {
       await Promise.all(
         facilities?.map(async (facility) => {
           const response = await ApiService.apiAxios.get(
-            `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&applicationType=${APPLICATION_RENEWAL_TYPES.RENEWAL}`,
+            `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&applicationRenewalType=${APPLICATION_RENEWAL_TYPES.RENEWAL}`,
           )
           applications = applications?.concat(response?.data)
         }),

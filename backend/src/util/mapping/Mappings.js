@@ -192,7 +192,7 @@ const ApplicationMappings = [
   { back: 'ofm_month_to_month', front: 'monthToMonthRentLease' },
   { back: 'ofm_costs_lease_start_date', front: 'rentLeaseStartDate' },
   { back: 'ofm_costs_lease_end_date', front: 'rentLeaseEndDate' },
-  { back: 'ofm_application_type', front: 'applicationType' },
+  { back: 'ofm_application_type', front: 'applicationRenewalType' },
 ]
 
 const ApplicationProviderEmployeeMappings = [

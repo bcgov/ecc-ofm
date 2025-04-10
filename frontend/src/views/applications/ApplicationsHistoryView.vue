@@ -22,23 +22,6 @@
           </v-card>
         </v-col>
 
-        <v-col cols="12" md="6">
-          <v-card class="basic-card justify-center">
-            <v-card-title class="text-center text-wrap">
-              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-              RENEW
-            </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
-              {{ ofmApplicationCardText }}
-            </v-card-text>
-            <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="renew-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: RENEWAL_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
-                RENEW NOW
-              </AppButton>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-
         <v-col v-if="hasNonUnionFacilityGroupOrg" cols="12" md="6">
           <div v-if="!hasAValidApplicationAndGoodStanding && !loading">
             <AppAlertBanner v-if="!hasGoodStanding" type="warning">
@@ -73,6 +56,23 @@
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
               <AppButton id="irregular-expense-button" :loading="loading" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">Add Irregular Expenses Funding Application</AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              $10 a Day Funding Agreement Renewal
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              Before starting a renewal, verify your organization and facility details in Account Management
+              <br />
+              <br />
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="renew-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: RENEWAL_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">Renew</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -183,6 +183,7 @@ import {
   PROVIDER_TYPE_CODES,
   UNION_TYPE_CODES,
   CRM_STATE_CODES,
+  APPLICATION_RENEWAL_TYPES,
 } from '@/utils/constants'
 import { mapState, mapActions } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -403,6 +404,7 @@ export default {
         return {
           ...item,
           applicationType: APPLICATION_TYPES.OFM,
+          applicationRenewalType: application.applicationRenewalType ?? null,
           statusCode: application.statusCode,
         }
       })
@@ -482,7 +484,15 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      let routeName
+      if (item.applicationType !== APPLICATION_TYPES.OFM) {
+        routeName = 'supp-allowances-form'
+      } else if (item.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL) {
+        routeName = RENEWAL_ROUTES.FACILITY_DETAILS
+      } else {
+        routeName = APPLICATION_ROUTES.FACILITY_DETAILS
+      }
+
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 
