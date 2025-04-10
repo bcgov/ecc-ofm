@@ -142,6 +142,9 @@ export default {
 
   methods: {
     isDisabled(item) {
+      //If the user is on the select facility page, only allow navigation to Facility Details. All other routes are disabled at this point.
+      //If the item is not Facility Details, and the user hasn't completed the Facility Details step, disable the rest of the path.
+      //only allow submit page if application is complete
       return (
         this.loading ||
         (this.isSelectFacilityPage && !FACILITY_DETAILS_PAGES.includes(item?.routeName)) ||

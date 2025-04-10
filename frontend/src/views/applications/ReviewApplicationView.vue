@@ -54,7 +54,7 @@ import ServiceDeliverySummary from '@/components/applications/review/ServiceDeli
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -98,6 +98,9 @@ export default {
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isEligibilityComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
     },
@@ -106,7 +109,11 @@ export default {
   watch: {
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
+        }
       },
     },
     next: {

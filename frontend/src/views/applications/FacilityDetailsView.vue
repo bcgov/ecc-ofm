@@ -210,7 +210,11 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'applications-history' })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.SELECT_FACILITY })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.SELECT_FACILITY })
+        }
       },
     },
     save: {
