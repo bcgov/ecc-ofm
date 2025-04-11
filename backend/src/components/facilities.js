@@ -109,7 +109,7 @@ async function updateFacility(req, res) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
-async function getFacilitiesWithExpiringOrRecentlyExpiredFAs(req, res) {
+async function getFacilitiesForRenewal(req, res) {
   try {
     const facilityIds = req.body?.facilityIds || []
     if (!facilityIds.length) return res.status(HttpStatus.OK).json([])
@@ -129,10 +129,13 @@ async function getFacilitiesWithExpiringOrRecentlyExpiredFAs(req, res) {
     })
 
     // Now query for renewal applications submitted in the last 150 days and  we will remove those facilities that have a renewal application submitted in the last (120+30)= 150 days
-    const renewalFilter = "Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=150) and ofm_application_type eq 2 and ofm_summary_submittedon ne null"
+    //Notes for Panika: Ask Jen if we wnat to handle this here....
+    const renewalFacilityFilter = facilityList.map((id) => `_ofm_facility_value eq ${id}`).join(' or ')
+    const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=150) and ofm_application_type eq 2 and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
     const renewalOperation = `ofm_applications?$select=_ofm_facility_value&$filter=${renewalFilter}&pageSize=500`
+
     const renewalResponse = await getOperation(renewalOperation)
-    const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value)
+    const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value) || []
 
     const finalList = facilityList.filter((facId) => !renewalFacilityIds.includes(facId))
 
@@ -148,5 +151,5 @@ module.exports = {
   getFacilityLicences,
   updateFacility,
   getRawFacilityContacts,
-  getFacilitiesWithExpiringOrRecentlyExpiredFAs,
+  getFacilitiesForRenewal,
 }

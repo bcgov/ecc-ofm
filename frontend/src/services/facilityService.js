@@ -80,7 +80,7 @@ export default {
     try {
       if (!facilityIds?.length) return []
 
-      const response = await ApiService.apiAxios.post(`${ApiRoutes.FACILITIES}/expiring-or-recently-expired`, { facilityIds })
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.FACILITIES}/renewalFacilities`, { facilityIds })
 
       return response?.data || []
     } catch (error) {
