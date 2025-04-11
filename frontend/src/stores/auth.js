@@ -1,11 +1,11 @@
-import moment from 'moment'
-import { defineStore } from 'pinia'
+import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES, ROLES } from '@/utils/constants'
 
 import ApiService from '@/common/apiService'
 import AuthService from '@/common/authService'
 import UserService from '@/services/userService'
+import { defineStore } from 'pinia'
+import moment from 'moment'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_INTAKE_TYPES, OFM_PROGRAM_CODES, ROLES } from '@/utils/constants'
 
 export const useAuthStore = defineStore('auth', {
   namespaced: true,
@@ -122,6 +122,11 @@ export const useAuthStore = defineStore('auth', {
         await this.setJwtToken(response.jwtFrontend)
       }
       ApiService.setAuthHeader(response.jwtFrontend)
+    },
+    setFacilitiesForRenewal(facilityIds) {
+      if (this.userInfo) {
+        this.userInfo.facilitiesForRenewal = facilityIds
+      }
     },
   },
 })
