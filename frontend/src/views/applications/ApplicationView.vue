@@ -13,7 +13,7 @@
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
           <ApplicationHeader v-if="!isSelectFacilityPage" />
-          <router-view class="min-screen-height" :readonly="false" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
+          <router-view class="min-screen-height" :readonly="readonly" :cancel="cancel" :back="back" :next="next" :save="save" :submit="submit" :contacts="contacts" @process="process" />
           <AppCancelDialog :show="showCancelDialog" @close="toggleCancelDialog" @cancel="cancelChanges" />
           <AppNavButtons
             :loading="processing"

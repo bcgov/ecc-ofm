@@ -202,14 +202,18 @@ export default {
     isPageComplete(page) {
       switch (page.id) {
         case APPLICATION_ROUTES.FACILITY_DETAILS:
+        case RENEWAL_ROUTES.FACILITY_DETAILS:
           return this.isFacilityDetailsComplete
         case APPLICATION_ROUTES.ELIGIBILITY:
           return this.isEligibilityComplete
         case APPLICATION_ROUTES.SERVICE_DELIVERY:
+        case RENEWAL_ROUTES.SERVICE_DELIVERY:
           return this.isServiceDeliveryComplete
         case APPLICATION_ROUTES.OPERATING_COSTS:
+        case RENEWAL_ROUTES.OPERATING_COSTS:
           return this.isOperatingCostsComplete
         case APPLICATION_ROUTES.STAFFING:
+        case RENEWAL_ROUTES.STAFFING:
           return this.isStaffingComplete
       }
     },

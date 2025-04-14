@@ -1,5 +1,6 @@
-import LookupService from '@/services/lookupService'
 import { defineStore } from 'pinia'
+
+import LookupService from '@/services/lookupService'
 
 export const useAppStore = defineStore('app', {
   namespaced: true,
@@ -19,7 +20,7 @@ export const useAppStore = defineStore('app', {
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
-    facilitiesForRenewal: {},
+    facilitiesForRenewal: null,
     // reportTemplates: {},
     applicationIntakes: {},
     paymentTypes: {},

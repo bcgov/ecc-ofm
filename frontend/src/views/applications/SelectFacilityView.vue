@@ -65,6 +65,7 @@
 
 <script>
 import { useApplicationsStore } from '@/stores/applications'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { mapState, mapWritableState } from 'pinia'
 import rules from '@/utils/rules'
@@ -72,6 +73,7 @@ import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import DocumentService from '@/services/documentService'
+import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
 import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, CRM_STATE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE, RENEWAL_ROUTES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
@@ -117,15 +119,15 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
     isRenewal() {
       return !!this.$route.meta.isRenewal
     },
     filteredFacilities() {
       //TODO - check this logic. Right now we are just looking if there is an eligible application for a facility.
-      //might need to change as we check if facilities are eligible to renew but don't have app yet.
       if (this.isRenewal) {
         return this.userInfo?.facilities?.filter((facility) => {
-          return this.loadedApplications?.some((app) => app.facilityId === facility.facilityId)
+          return this.loadedApplications?.some((app) => app.facilityId === facility.facilityId) || this.facilitiesForRenewal?.some((fac) => fac.facilityId === facility.facilityId)
         })
       }
 
@@ -194,6 +196,9 @@ export default {
     await this.getOrganization()
 
     if (this.isRenewal) {
+      if (this.facilitiesForRenewal === null) {
+        this.facilitiesForRenewal = await FacilityService.getRenewalFacilities()
+      }
       this.loadedApplications = await ApplicationService.getActiveRenewalApplications()
     } else {
       this.loadedApplications = await ApplicationService.getActiveApplications()

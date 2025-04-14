@@ -60,7 +60,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="12" md="6">
+        <v-col v-if="!isEmpty(facilitiesForRenewal)" cols="12" md="6">
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
@@ -158,6 +158,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
+import FacilityService from '@/services/facilityService'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 import format from '@/utils/format'
@@ -185,7 +186,7 @@ import {
   CRM_STATE_CODES,
   APPLICATION_RENEWAL_TYPES,
 } from '@/utils/constants'
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { useAppStore } from '@/stores/app'
@@ -226,6 +227,7 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
 
     showIrregularExpenseCard() {
       if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
@@ -299,6 +301,9 @@ export default {
 
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
+      }
+      if (this.facilitiesForRenewal === null) {
+        this.facilitiesForRenewal = await FacilityService.getRenewalFacilities()
       }
     } catch (error) {
       this.setFailureAlert('Failed to get the list of applications', error)
