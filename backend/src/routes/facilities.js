@@ -78,7 +78,7 @@ router.post(
   '/renewalFacilities',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
   [body('facilityIds', 'Request body [facilityIds] is required and must be an array').isArray({ min: 1 })],
   (req, res) => {
     validationResult(req).throw()

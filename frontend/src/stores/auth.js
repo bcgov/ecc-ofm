@@ -123,10 +123,5 @@ export const useAuthStore = defineStore('auth', {
       }
       ApiService.setAuthHeader(response.jwtFrontend)
     },
-    setFacilitiesForRenewal(facilityIds) {
-      if (this.userInfo) {
-        this.userInfo.facilitiesForRenewal = facilityIds
-      }
-    },
   },
 })

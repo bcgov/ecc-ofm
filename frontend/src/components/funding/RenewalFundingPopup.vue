@@ -23,13 +23,15 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
+import { mapActions, mapState } from 'pinia'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
 import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin.js'
+import { isEmpty } from 'lodash'
 
 export default {
   name: 'HomeView',
@@ -46,10 +48,6 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-
-    filteredFacilities() {
-      return this.userInfo?.facilities
-    },
   },
 
   async created() {
@@ -57,6 +55,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useAppStore, ['setFacilitiesForRenewal']),
     closeDialog() {
       this.isDisplayed = false
     },
@@ -65,13 +64,11 @@ export default {
     },
     async loadRenewalFacilities() {
       try {
-        const facilityIds = this.filteredFacilities.map((f) => f.facilityId)
+        const facilityIds = this.userInfo?.facilities.map((f) => f.facilityId)
         const renewalFacilities = await FacilityService.getRenewalFacilities(facilityIds)
 
-        const authStore = useAuthStore()
-        authStore.setFacilitiesForRenewal(renewalFacilities)
-
-        if (renewalFacilities.length > 0) {
+        this.setFacilitiesForRenewal(renewalFacilities)
+        if (!isEmpty(renewalFacilities)) {
           this.isDisplayed = true
           console.log('Facilities needing renewal:', renewalFacilities)
         }

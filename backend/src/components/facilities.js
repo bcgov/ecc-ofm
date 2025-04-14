@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
+const { FUNDING_AGREEMENT_STATUS_CODES } = require('../util/constants')
 const { getMappingString } = require('../util/common')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
@@ -10,6 +11,9 @@ const HttpStatus = require('http-status-codes')
 //is the typical mailing / physical address fields.
 const FIRST_ADDITIONAL_ADDRESS_NUMBER = 3
 const LAST_ADDITIONAL_ADDRESS_NUMBER = 13
+const FA_EXPIRING_DAYS = 120
+const FA_EXPIRED_DAYS = 30
+const RENEWAL_SUBMITTED_DAYS = 150
 
 function formatPayload(response) {
   const addressArr = []
@@ -111,33 +115,36 @@ async function updateFacility(req, res) {
 }
 async function getFacilitiesForRenewal(req, res) {
   try {
-    const facilityIds = req.body?.facilityIds || []
+    const facilityIds = req.body?.facilityIds
     if (!facilityIds.length) return res.status(HttpStatus.OK).json([])
 
-    const facilityFilter = (facilityIds.map(id => `(_ofm_facility_value eq ${id})`)).join(' or ')
+    const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
 
-    const filter = `(${facilityFilter}) and ofm_version_number eq 0 and (Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=120) or Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=30))`
+    const filter = `(${facilityFilter}) and ofm_version_number eq 0 and (Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=${FA_EXPIRING_DAYS}) or Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=${FA_EXPIRED_DAYS}))`
 
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
     const response = await getOperation(operation)
 
     const facilityList = []
     response?.value?.forEach((fa) => {
-      if (fa._ofm_facility_value && fa.ofm_version_number === 0 && (fa.statuscode === 2 || fa.statuscode === 8)) {
-        facilityList.push(fa._ofm_facility_value)
+      if (fa._ofm_facility_value && fa.ofm_version_number === 0 && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
+        facilityList.push({
+          facilityId: fa._ofm_facility_value,
+          fundingId: fa.ofm_fundingid,
+          facilityName: fa['_ofm_facility_value@OData.Community.Display.V1.FormattedValue'] || null,
+        })
       }
     })
 
-    // Now query for renewal applications submitted in the last 150 days and  we will remove those facilities that have a renewal application submitted in the last (120+30)= 150 days
-    //Notes for Panika: Ask Jen if we wnat to handle this here....
-    const renewalFacilityFilter = facilityList.map((id) => `_ofm_facility_value eq ${id}`).join(' or ')
-    const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=150) and ofm_application_type eq 2 and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
+    const renewalFacilityFilter = facilityList.map((f) => `_ofm_facility_value eq ${f.facilityId}`).join(' or ')
+
+    const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=${RENEWAL_SUBMITTED_DAYS}) and ofm_application_type eq 2 and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
     const renewalOperation = `ofm_applications?$select=_ofm_facility_value&$filter=${renewalFilter}&pageSize=500`
 
     const renewalResponse = await getOperation(renewalOperation)
     const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value) || []
 
-    const finalList = facilityList.filter((facId) => !renewalFacilityIds.includes(facId))
+    const finalList = facilityList.filter((f) => !renewalFacilityIds.includes(f.facilityId))
 
     return res.status(HttpStatus.OK).json(finalList)
   } catch (e) {
