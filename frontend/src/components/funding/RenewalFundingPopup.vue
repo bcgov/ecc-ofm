@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
+import { mapState, mapWritableState } from 'pinia'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -48,7 +48,7 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useAppStore, ['facilitiesForRenewal']),
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
   },
 
   async created() {
@@ -66,8 +66,8 @@ export default {
       try {
         const facilityIds = this.userInfo?.facilities.map((f) => f.facilityId)
         const renewalFacilities = await FacilityService.getRenewalFacilities(facilityIds)
-        const appStore = useAppStore()
-        appStore.facilitiesForRenewal = renewalFacilities
+
+        this.facilitiesForRenewal = renewalFacilities
         this.isDisplayed = !isEmpty(renewalFacilities)
       } catch (error) {
         console.error('Error loading facilities for renewal:', error)
