@@ -2,6 +2,7 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
+const { FUNDING_AGREEMENT_STATUS_CODES, APPLICATION_RENEWAL_TYPES } = require('../util/constants')
 const { getMappingString } = require('../util/common')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
@@ -10,6 +11,9 @@ const HttpStatus = require('http-status-codes')
 //is the typical mailing / physical address fields.
 const FIRST_ADDITIONAL_ADDRESS_NUMBER = 3
 const LAST_ADDITIONAL_ADDRESS_NUMBER = 13
+const FA_EXPIRING_DAYS = 120
+const FA_EXPIRED_DAYS = 30
+const RENEWAL_SUBMITTED_DAYS = 150
 
 function formatPayload(response) {
   const addressArr = []
@@ -109,6 +113,44 @@ async function updateFacility(req, res) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
+async function getFacilitiesForRenewal(req, res) {
+  try {
+    const facilityIds = req.body?.facilityIds
+    const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
+    const filter = `(${facilityFilter}) and ofm_version_number eq 0 and (Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=${FA_EXPIRING_DAYS}) or Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=${FA_EXPIRED_DAYS}))`
+
+    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
+    const response = await getOperation(operation)
+
+    const facilityList = []
+    response?.value?.forEach((fa) => {
+      if (fa._ofm_facility_value && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
+        facilityList.push({
+          facilityId: fa._ofm_facility_value,
+          fundingId: fa.ofm_fundingid,
+          facilityName: fa['_ofm_facility_value@OData.Community.Display.V1.FormattedValue'] || null,
+        })
+      }
+    })
+
+    const renewalFacilityFilter = facilityList.map((fac) => `_ofm_facility_value eq ${fac.facilityId}`).join(' or ')
+    if (!renewalFacilityFilter) {
+      return res.status(HttpStatus.OK).json([])
+    }
+
+    const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=${RENEWAL_SUBMITTED_DAYS}) and ofm_application_type eq ${APPLICATION_RENEWAL_TYPES.RENEWAL} and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
+    const renewalOperation = `ofm_applications?$select=_ofm_facility_value&$filter=${renewalFilter}&pageSize=500`
+
+    const renewalResponse = await getOperation(renewalOperation)
+    const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value) || []
+
+    const finalList = facilityList.filter((fac) => !renewalFacilityIds.includes(fac.facilityId))
+
+    return res.status(HttpStatus.OK).json(finalList)
+  } catch (e) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
 
 module.exports = {
   getFacility,
@@ -116,4 +158,5 @@ module.exports = {
   getFacilityLicences,
   updateFacility,
   getRawFacilityContacts,
+  getFacilitiesForRenewal,
 }
