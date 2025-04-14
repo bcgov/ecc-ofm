@@ -76,6 +76,13 @@ export default {
       throw error
     }
   },
+  /**
+   * Sends facilityIds to the backend to fetch funding agreements that need renewal.
+   * Although this is a read-only operation, we use POST instead of GET
+   * because we need to send a list of IDs in the request body.
+   * Using GET would require stuffing the array into a query string,
+   * which is not reliable or clean for large arrays.
+   */
   async getRenewalFacilities(facilityIds) {
     try {
       if (!facilityIds?.length) return []

@@ -74,6 +74,12 @@ router.get(
     return getFacilityLicences(req, res)
   },
 )
+/**
+ * Note: Although this endpoint only retrieves data (like a GET), we are using POST here because
+ * we need to send a list of facilityIds in the request body, which is not supported in GET requests.
+ * Refactoring this into a proper REST-style GET with query params would
+ * either hit URL length limits (YMCA!) or complicate parsing, so POST is the best option here.
+ */
 router.post(
   '/renewalFacilities',
   passport.authenticate('jwt', { session: false }),

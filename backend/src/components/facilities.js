@@ -116,9 +116,7 @@ async function updateFacility(req, res) {
 async function getFacilitiesForRenewal(req, res) {
   try {
     const facilityIds = req.body?.facilityIds
-
     const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
-
     const filter = `(${facilityFilter}) and ofm_version_number eq 0 and (Microsoft.Dynamics.CRM.NextXDays(PropertyName='ofm_end_date',PropertyValue=${FA_EXPIRING_DAYS}) or Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_end_date',PropertyValue=${FA_EXPIRED_DAYS}))`
 
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
