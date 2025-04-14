@@ -137,6 +137,9 @@ async function getFacilitiesForRenewal(req, res) {
     })
 
     const renewalFacilityFilter = facilityList.map((f) => `_ofm_facility_value eq ${f.facilityId}`).join(' or ')
+    if (!renewalFacilityFilter) {
+      return res.status(HttpStatus.OK).json(facilityList)
+    }
 
     const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=${RENEWAL_SUBMITTED_DAYS}) and ofm_application_type eq 2 and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
     const renewalOperation = `ofm_applications?$select=_ofm_facility_value&$filter=${renewalFilter}&pageSize=500`
