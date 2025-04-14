@@ -68,11 +68,9 @@ export default {
         const renewalFacilities = await FacilityService.getRenewalFacilities(facilityIds)
         const appStore = useAppStore()
         appStore.facilitiesForRenewal = renewalFacilities
-        if (!isEmpty(renewalFacilities)) {
-          this.isDisplayed = true
-        }
+        this.isDisplayed = !isEmpty(renewalFacilities)
       } catch (error) {
-        console.error('Error loading funding agreements for renewal:', error)
+        console.error('Error loading facilities for renewal:', error)
       }
     },
   },
