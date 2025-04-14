@@ -116,7 +116,6 @@ async function updateFacility(req, res) {
 async function getFacilitiesForRenewal(req, res) {
   try {
     const facilityIds = req.body?.facilityIds
-    if (!facilityIds.length) return res.status(HttpStatus.OK).json([])
 
     const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
 
@@ -138,7 +137,7 @@ async function getFacilitiesForRenewal(req, res) {
 
     const renewalFacilityFilter = facilityList.map((f) => `_ofm_facility_value eq ${f.facilityId}`).join(' or ')
     if (!renewalFacilityFilter) {
-      return res.status(HttpStatus.OK).json(facilityList)
+      return res.status(HttpStatus.OK).json([])
     }
 
     const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=${RENEWAL_SUBMITTED_DAYS}) and ofm_application_type eq 2 and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
