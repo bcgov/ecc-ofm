@@ -31,11 +31,11 @@
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :contacts="contacts" />
+              <FacilityDetailsSummary v-if="FACILITY_DETAILS_PAGES.includes(page.id)" :readonly="readonly" :contacts="contacts" />
               <EligibilitySummary v-if="page.id === APPLICATION_ROUTES.ELIGIBILITY" />
-              <ServiceDeliverySummary v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY" :readonly="readonly" :licences="currentApplication?.licences" />
-              <OperatingCostsSummary v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
-              <StaffingSummary v-if="page.id === APPLICATION_ROUTES.STAFFING" :readonly="readonly" />
+              <ServiceDeliverySummary v-if="SERVICE_DELIVERY_PAGES.includes(page.id)" :readonly="readonly" :licences="currentApplication?.licences" />
+              <OperatingCostsSummary v-if="OPERATING_COSTS_PAGES.includes(page.id)" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
+              <StaffingSummary v-if="STAFFING_PAGES.includes(page.id)" :readonly="readonly" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -54,7 +54,7 @@ import ServiceDeliverySummary from '@/components/applications/review/ServiceDeli
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SERVICE_DELIVERY_PAGES, OPERATING_COSTS_PAGES, STAFFING_PAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -125,28 +125,55 @@ export default {
 
   async created() {
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
-    this.PAGES = [
-      {
-        title: 'Facility',
-        id: APPLICATION_ROUTES.FACILITY_DETAILS,
-      },
-      {
-        title: 'Eligibility',
-        id: APPLICATION_ROUTES.ELIGIBILITY,
-      },
-      {
-        title: 'Service Delivery Details',
-        id: APPLICATION_ROUTES.SERVICE_DELIVERY,
-      },
-      {
-        title: 'Operating Costs',
-        id: APPLICATION_ROUTES.OPERATING_COSTS,
-      },
-      {
-        title: 'Staffing',
-        id: APPLICATION_ROUTES.STAFFING,
-      },
-    ]
+    this.FACILITY_DETAILS_PAGES = FACILITY_DETAILS_PAGES
+    this.SERVICE_DELIVERY_PAGES = SERVICE_DELIVERY_PAGES
+    this.OPERATING_COSTS_PAGES = OPERATING_COSTS_PAGES
+    this.STAFFING_PAGES = STAFFING_PAGES
+    if (this.isRenewal) {
+      this.PAGES = [
+        {
+          title: 'Facility',
+          id: RENEWAL_ROUTES.FACILITY_DETAILS,
+        },
+
+        {
+          title: 'Service Delivery Details',
+          id: RENEWAL_ROUTES.SERVICE_DELIVERY,
+        },
+        {
+          title: 'Operating Costs',
+          id: RENEWAL_ROUTES.OPERATING_COSTS,
+        },
+        {
+          title: 'Staffing',
+          id: RENEWAL_ROUTES.STAFFING,
+        },
+      ]
+    } else {
+      this.PAGES = [
+        {
+          title: 'Facility',
+          id: APPLICATION_ROUTES.FACILITY_DETAILS,
+        },
+        {
+          title: 'Eligibility',
+          id: APPLICATION_ROUTES.ELIGIBILITY,
+        },
+        {
+          title: 'Service Delivery Details',
+          id: APPLICATION_ROUTES.SERVICE_DELIVERY,
+        },
+        {
+          title: 'Operating Costs',
+          id: APPLICATION_ROUTES.OPERATING_COSTS,
+        },
+        {
+          title: 'Staffing',
+          id: APPLICATION_ROUTES.STAFFING,
+        },
+      ]
+    }
+
     await this.loadData()
     this.panel = this.allPageIDs
   },
