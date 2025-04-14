@@ -118,12 +118,17 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
+        }
       },
     },
   },
 
   async created() {
+    console.log(this.readonly)
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
     this.FACILITY_DETAILS_PAGES = FACILITY_DETAILS_PAGES
     this.SERVICE_DELIVERY_PAGES = SERVICE_DELIVERY_PAGES

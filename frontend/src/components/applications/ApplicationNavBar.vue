@@ -58,6 +58,7 @@ export default {
       'isStaffingComplete',
       'isDeclareSubmitComplete',
       'isApplicationComplete',
+      'isRenewalApplicationComplete',
     ]),
     isRenewal() {
       return !!this.$route.meta.isRenewal
@@ -149,7 +150,7 @@ export default {
         (this.isSelectFacilityPage && !FACILITY_DETAILS_PAGES.includes(item?.routeName)) ||
         (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isFacilityDetailsComplete) ||
         (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isRenewal && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
-        (SUBMIT_PAGES.includes(item?.routeName) && !this.isApplicationComplete)
+        (SUBMIT_PAGES.includes(item?.routeName) && !this.isApplicationComplete && !this.isRenewalApplicationComplete)
       )
     },
 
@@ -211,6 +212,7 @@ export default {
         (OPERATING_COSTS_PAGES.includes(item?.routeName) && this.isOperatingCostsComplete) ||
         (STAFFING_PAGES.includes(item?.routeName) && this.isStaffingComplete) ||
         (REVIEW_PAGES.includes(item?.routeName) && this.isApplicationComplete) ||
+        (REVIEW_PAGES.includes(item?.routeName) && this.isRenewalApplicationComplete) ||
         (CONFIRMATION_PAGES.includes(item?.routeName) && this.isDeclareSubmitComplete)
       return isComplete ? 'mdi-check-circle' : 'mdi-circle'
     },

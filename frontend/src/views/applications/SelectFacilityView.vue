@@ -75,7 +75,16 @@ import OrganizationService from '@/services/organizationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, CRM_STATE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE, RENEWAL_ROUTES } from '@/utils/constants'
+import {
+  APPLICATION_ROUTES,
+  APPLICATION_STATUS_CODES,
+  BUSINESS_TYPE_CODES,
+  CRM_STATE_CODES,
+  DOCUMENT_TYPES,
+  VIRUS_SCAN_ERROR_MESSAGE,
+  RENEWAL_ROUTES,
+  APPLICATION_RENEWAL_TYPES,
+} from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 import { isEqual, cloneDeep } from 'lodash'
@@ -124,7 +133,6 @@ export default {
       return !!this.$route.meta.isRenewal
     },
     filteredFacilities() {
-      //TODO - check this logic. Right now we are just looking if there is an eligible application for a facility.
       if (this.isRenewal) {
         return this.userInfo?.facilities?.filter((facility) => {
           return this.loadedApplications?.some((app) => app.facilityId === facility.facilityId) || this.facilitiesForRenewal?.some((fac) => fac.facilityId === facility.facilityId)
@@ -252,10 +260,15 @@ export default {
           providerType: this.organization?.providerType,
           ownership: this.organization?.ownership,
           createdBy: this.userInfo?.contactId,
+          applicationRenewalType: this.isRenewal ? APPLICATION_RENEWAL_TYPES.RENEWAL : APPLICATION_RENEWAL_TYPES.NEW,
         }
         const response = await ApplicationService.createApplication(payload)
         this.setSuccessAlert('Started a new application successfully')
-        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        }
       } catch (error) {
         this.setFailureAlert('Failed to start a new application', error)
       } finally {

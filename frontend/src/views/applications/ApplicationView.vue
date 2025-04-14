@@ -71,6 +71,7 @@ export default {
     ...mapState(useApplicationsStore, [
       'currentApplication',
       'isApplicationComplete',
+      'isRenewalApplicationComplete',
       'isSelectFacilityComplete',
       'isDeclareSubmitComplete',
       'isApplicationReadonly',
@@ -78,6 +79,9 @@ export default {
       'isEligibilityComplete',
     ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     readonly() {
       if (this.isSelectFacilityPage) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
@@ -165,12 +169,15 @@ export default {
         return false
       }
       if (this.isReviewApplicationPage) {
+        if (this.isRenewal) {
+          return !this.isRenewalApplicationComplete
+        }
         return !this.isApplicationComplete
       }
       return false
     },
     disableSubmit() {
-      return this.readonly || !this.isApplicationComplete || !this.isDeclareSubmitComplete
+      return this.readonly || !this.isDeclareSubmitComplete || (!this.isApplicationComplete && !this.isRenewalApplicationComplete)
     },
     isSelectFacilityPage() {
       return SELECT_FACILITY_PAGES.includes(this.$route.name)
