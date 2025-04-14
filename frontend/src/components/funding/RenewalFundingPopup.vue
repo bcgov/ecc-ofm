@@ -70,7 +70,6 @@ export default {
         this.setFacilitiesForRenewal(renewalFacilities)
         if (!isEmpty(renewalFacilities)) {
           this.isDisplayed = true
-          console.log('Facilities needing renewal:', renewalFacilities)
         }
       } catch (error) {
         console.error('Error loading funding agreements for renewal:', error)
