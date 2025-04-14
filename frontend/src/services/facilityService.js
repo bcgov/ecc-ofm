@@ -1,5 +1,5 @@
-import ApiService from '@/common/apiService'
 import { ApiRoutes } from '@/utils/constants'
+import ApiService from '@/common/apiService'
 
 function sortContactsByName(contacts) {
   return contacts?.sort(function (a, b) {
@@ -73,6 +73,25 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to update facility by facility id - ${error}`)
+      throw error
+    }
+  },
+  /**
+   * Sends facilityIds to the backend to fetch funding agreements that need renewal.
+   * Although this is a read-only operation, we use POST instead of GET
+   * because we need to send a list of IDs in the request body.
+   * Using GET would require stuffing the array into a query string,
+   * which is not reliable or clean for large arrays.
+   */
+  async getRenewalFacilities(facilityIds) {
+    try {
+      if (!facilityIds?.length) return []
+
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.FACILITIES}/renewalFacilities`, { facilityIds })
+
+      return response?.data || []
+    } catch (error) {
+      console.log(`Failed to get renewal facilities - ${error}`)
       throw error
     }
   },
