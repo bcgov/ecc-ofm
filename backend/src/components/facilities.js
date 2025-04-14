@@ -2,7 +2,7 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
-const { FUNDING_AGREEMENT_STATUS_CODES } = require('../util/constants')
+const { FUNDING_AGREEMENT_STATUS_CODES, APPLICATION_RENEWAL_TYPES } = require('../util/constants')
 const { getMappingString } = require('../util/common')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
@@ -124,7 +124,7 @@ async function getFacilitiesForRenewal(req, res) {
 
     const facilityList = []
     response?.value?.forEach((fa) => {
-      if (fa._ofm_facility_value && fa.ofm_version_number === 0 && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
+      if (fa._ofm_facility_value && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
         facilityList.push({
           facilityId: fa._ofm_facility_value,
           fundingId: fa.ofm_fundingid,
@@ -133,18 +133,18 @@ async function getFacilitiesForRenewal(req, res) {
       }
     })
 
-    const renewalFacilityFilter = facilityList.map((f) => `_ofm_facility_value eq ${f.facilityId}`).join(' or ')
+    const renewalFacilityFilter = facilityList.map((fac) => `_ofm_facility_value eq ${fac.facilityId}`).join(' or ')
     if (!renewalFacilityFilter) {
       return res.status(HttpStatus.OK).json([])
     }
 
-    const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=${RENEWAL_SUBMITTED_DAYS}) and ofm_application_type eq 2 and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
+    const renewalFilter = `(Microsoft.Dynamics.CRM.LastXDays(PropertyName='ofm_summary_submittedon',PropertyValue=${RENEWAL_SUBMITTED_DAYS}) and ofm_application_type eq ${APPLICATION_RENEWAL_TYPES.RENEWAL} and ofm_summary_submittedon ne null and (${renewalFacilityFilter}))`
     const renewalOperation = `ofm_applications?$select=_ofm_facility_value&$filter=${renewalFilter}&pageSize=500`
 
     const renewalResponse = await getOperation(renewalOperation)
     const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value) || []
 
-    const finalList = facilityList.filter((f) => !renewalFacilityIds.includes(f.facilityId))
+    const finalList = facilityList.filter((fac) => !renewalFacilityIds.includes(fac.facilityId))
 
     return res.status(HttpStatus.OK).json(finalList)
   } catch (e) {

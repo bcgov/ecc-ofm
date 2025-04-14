@@ -60,8 +60,12 @@ const TOP_UP_FUNDING_STATUS_CODES = Object.freeze({
   APPROVED: 3,
 })
 const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
-  ACTIVE: 8,
   EXPIRED: 2,
+  ACTIVE: 8,
+})
+const APPLICATION_RENEWAL_TYPES = Object.freeze({
+  NEW: 1,
+  RENEWAL: 2,
 })
 
 module.exports = {
@@ -72,4 +76,5 @@ module.exports = {
   PERMISSIONS,
   TOP_UP_FUNDING_STATUS_CODES,
   FUNDING_AGREEMENT_STATUS_CODES,
+  APPLICATION_RENEWAL_TYPES,
 }
