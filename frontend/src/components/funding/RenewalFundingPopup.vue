@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia'
+import { mapState } from 'pinia'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -34,7 +34,7 @@ import permissionsMixin from '@/mixins/permissionsMixin.js'
 import { isEmpty } from 'lodash'
 
 export default {
-  name: 'HomeView',
+  name: 'RenewalFundingPopup',
   components: { AppButton, AppDialog },
   mixins: [alertMixin, permissionsMixin],
   emits: ['loading'],
@@ -48,6 +48,7 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAppStore, ['facilitiesForRenewal']),
   },
 
   async created() {
@@ -55,7 +56,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(useAppStore, ['setFacilitiesForRenewal']),
     closeDialog() {
       this.isDisplayed = false
     },
@@ -66,8 +66,8 @@ export default {
       try {
         const facilityIds = this.userInfo?.facilities.map((f) => f.facilityId)
         const renewalFacilities = await FacilityService.getRenewalFacilities(facilityIds)
-
-        this.setFacilitiesForRenewal(renewalFacilities)
+        const appStore = useAppStore()
+        appStore.facilitiesForRenewal = renewalFacilities
         if (!isEmpty(renewalFacilities)) {
           this.isDisplayed = true
         }

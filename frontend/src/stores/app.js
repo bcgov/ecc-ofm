@@ -111,8 +111,5 @@ export const useAppStore = defineStore('app', {
         this.alertNotification = true
       }
     },
-    setFacilitiesForRenewal(facilitiesForRenewal) {
-      this.facilitiesForRenewal = facilitiesForRenewal
-    },
   },
 })
