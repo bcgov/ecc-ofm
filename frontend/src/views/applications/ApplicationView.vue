@@ -195,7 +195,11 @@ export default {
       return CONFIRMATION_PAGES.includes(this.$route.name)
     },
     isPageAccessible() {
-      return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
+      if (this.isRenewal) {
+        return this.isSelectFacilityPage || this.isFacilityDetailsPage || this.isFacilityDetailsComplete
+      } else {
+        return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
+      }
     },
   },
 
