@@ -2,7 +2,12 @@
   <v-form ref="form" v-model="isFormComplete">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div>
-        <p class="mb-5">I hereby confirm that the information I have provided in this application is complete and accurate. I certify that I have read and understand the following requirements:</p>
+        <p v-if="isRenewal" class="mb-5">
+          I hereby confirm that the information I have provided in this renewal is complete and accurate. I certify that I have read and understand the following requirements:
+        </p>
+        <p v-else class="mb-5">
+          I hereby confirm that the information I have provided in this application is complete and accurate. I certify that I have read and understand the following requirements:
+        </p>
         <ul class="pl-6">
           <li>Each facility must be licensed under the Community Care and Assisted Living Act;</li>
           <li>Each facility must be in compliance with the Community Care and Assisted Living Act and Child Care Licensing Regulation;</li>

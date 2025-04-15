@@ -1,7 +1,7 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="mx-4">
     <h1 v-if="!isRenewal">Begin a $10 a Day Funding application</h1>
-    <h1 v-else>Begin a $10 a Day Funding Agreement renewal</h1>
+    <h1 v-else>Begin a $10 a Day Funding Agreement Renewal</h1>
     <div class="mt-8">
       <h4>Organization information</h4>
       <div>
