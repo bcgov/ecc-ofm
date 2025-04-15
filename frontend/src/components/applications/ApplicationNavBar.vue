@@ -155,9 +155,7 @@ export default {
     },
 
     isCurrent(item) {
-      //I think mine is better but I don't quite get why it was the other way
       return this.isRouteNameEqual(item, this.$route.name) || this.isSelectFacilityPage
-      //return this.isRouteNameEqual(item, this.$route.name) || (this.isSelectFacilityPage && this.isRouteNameEqual(item, APPLICATION_ROUTES.FACILITY_DETAILS))
     },
 
     isRouteNameEqual(item, routeName) {
