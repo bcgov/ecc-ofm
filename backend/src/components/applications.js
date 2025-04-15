@@ -116,7 +116,7 @@ async function createApplication(req, res) {
       ofm_provider_type: req.body?.providerType,
       ofm_summary_ownership: req.body?.ownership,
       'ofm_createdby@odata.bind': `/contacts(${req.body?.createdBy})`,
-      ofm_application_type: req.body?.applicationRenewalType
+      ofm_application_type: req.body?.applicationRenewalType,
     }
     const response = await postOperation('ofm_applications', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())
