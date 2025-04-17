@@ -9,7 +9,7 @@
     <AppAlertBanner type="info" class="ma-2 mb-4">Note: Total funds re-allocated cannot be more than the base funding for each envelope.</AppAlertBanner>
     <FundingAllocationInfoTable class="pa-2" />
     <h2 class="ma-2">Facility Search</h2>
-    <AppAlertBanner v-if="!showfacilitySearchCard" type="info" class="ma-2 mb-4">
+    <AppAlertBanner v-if="!showFacilitySearchCard" type="info" class="ma-2 mb-4">
       No Active Funding Agreement Found: This organization currently does not have an active signed OFM funding agreement.
     </AppAlertBanner>
     <div v-else>
@@ -61,7 +61,7 @@ export default {
       selectedFacility: null,
       fundingDetails: {},
       fundingReallocationRequests: [],
-      showfacilitySearchCard: true,
+      showFacilitySearchCard: true,
     }
   },
 
@@ -90,7 +90,7 @@ export default {
           return
         }
       }
-      this.showfacilitySearchCard = false
+      this.showFacilitySearchCard = false
     },
     async loadFundingDetails(searchQueries) {
       this.selectedFacility = searchQueries?.facilities
