@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
     <v-card class="mb-4 pa-4">
-      <AppMissingInfoError v-if="!readonly && !isUnionSectionComplete(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-if="!readonly && !isUnionSectionComplete(currentApplication)" :to="{ name: routeName, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.UNION }}
       </AppMissingInfoError>
       <div v-else>
@@ -20,7 +20,7 @@
       </div>
     </v-card>
     <v-card class="my-4 pa-4">
-      <AppMissingInfoError v-if="!readonly && !isCSSEASectionComplete(currentApplication)" :to="{ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-if="!readonly && !isCSSEASectionComplete(currentApplication)" :to="{ name: routeName, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.CSSEA }}
       </AppMissingInfoError>
       <div v-else>
@@ -32,24 +32,22 @@
     </v-card>
     <v-card class="pa-4">
       <div v-if="!readonly && !isEmployeeInformationComplete">
-        <AppMissingInfoError
-          v-if="!isThereAtLeastOneEmployee(currentApplication)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+        <AppMissingInfoError v-if="!isThereAtLeastOneEmployee(currentApplication)" :to="{ name: routeName, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.STAFFING }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllEmployeeCertificatesEntered(currentApplication?.providerEmployees, currentApplication)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: routeName, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.MISMATCH_NUMBER_STAFF_CERTIFICATE }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllCertificateInitialsUnique(currentApplication?.providerEmployees)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: routeName, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_INITIALS }}
         </AppMissingInfoError>
         <AppMissingInfoError
           v-if="!areAllCertificateNumbersUnique(currentApplication?.providerEmployees)"
-          :to="{ name: APPLICATION_ROUTES.STAFFING, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: routeName, hash: '#employee-section', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DUPLICATE_CERTIFICATE_NUMBERS }}
         </AppMissingInfoError>
       </div>
@@ -167,7 +165,7 @@ import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, APPLICATION_PROVIDER_EMPLOYEE_TYPES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, APPLICATION_PROVIDER_EMPLOYEE_TYPES, RENEWAL_ROUTES } from '@/utils/constants'
 import { convertArrayToString, convertStringToArray } from '@/utils/common'
 
 export default {
@@ -183,6 +181,9 @@ export default {
   computed: {
     ...mapState(useAppStore, ['getUnionNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     totalFullTimePosition() {
       return (
         this.currentApplication?.staffingInfantECEducatorFullTime +
@@ -214,6 +215,12 @@ export default {
     },
     isEmployeeInformationComplete() {
       return this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
+    },
+    routeName() {
+      if (this.isRenewal) {
+        return RENEWAL_ROUTES.STAFFING
+      }
+      return APPLICATION_ROUTES.STAFFING
     },
   },
 

@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form" v-model="isFormComplete" class="mx-4">
-    <h1>Begin a $10 a Day Funding application</h1>
+    <h1 v-if="!isRenewal">Begin a $10 a Day Funding application</h1>
+    <h1 v-else>Begin a $10 a Day Funding Agreement Renewal</h1>
     <div class="mt-8">
       <h4>Organization information</h4>
       <div>
@@ -22,15 +23,25 @@
           @delete-document="deleteDocument"></NotForProfitQuestions>
       </div>
 
-      <v-checkbox id="confirm-info" :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
+      <v-checkbox :value="1" :rules="rules.required" color="primary" label="I confirm that Organization information is correct."></v-checkbox>
     </div>
 
     <div class="mb-6">
-      <h4>To start your application, select a facility</h4>
-      <div>
-        <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
-        <span>If your facility is not listed, contact your Account Manager.</span>
-      </div>
+      <template v-if="isRenewal">
+        <h4>To start your renewal, select a facility</h4>
+        <div>
+          <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+          <span>Only facilities with funding agreements expiriring within 120 days will be listed below.</span>
+        </div>
+      </template>
+      <template v-else>
+        <h4>To start your application, select a facility</h4>
+        <div>
+          <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+          <span>If your facility is not listed, contact your Account Manager.</span>
+        </div>
+      </template>
+
       <v-row no-gutters class="mt-4">
         <v-col cols="12" md="4" lg="2">
           <div>Select your facility:</div>
@@ -54,6 +65,7 @@
 
 <script>
 import { useApplicationsStore } from '@/stores/applications'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { mapState, mapWritableState } from 'pinia'
 import rules from '@/utils/rules'
@@ -61,8 +73,18 @@ import OrganizationInfo from '@/components/organizations/OrganizationInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import OrganizationService from '@/services/organizationService'
 import DocumentService from '@/services/documentService'
+import FacilityService from '@/services/facilityService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_STATUS_CODES, BUSINESS_TYPE_CODES, CRM_STATE_CODES, DOCUMENT_TYPES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import {
+  APPLICATION_ROUTES,
+  APPLICATION_STATUS_CODES,
+  BUSINESS_TYPE_CODES,
+  CRM_STATE_CODES,
+  DOCUMENT_TYPES,
+  VIRUS_SCAN_ERROR_MESSAGE,
+  RENEWAL_ROUTES,
+  APPLICATION_RENEWAL_TYPES,
+} from '@/utils/constants'
 import { isEmpty } from 'lodash'
 import NotForProfitQuestions from '@/components/organizations/NotForProfitQuestions.vue'
 import { isEqual, cloneDeep } from 'lodash'
@@ -72,7 +94,6 @@ export default {
   name: 'SelectFacilityView',
   components: { OrganizationInfo, NotForProfitQuestions },
   mixins: [alertMixin],
-
   props: {
     cancel: {
       type: Boolean,
@@ -107,8 +128,17 @@ export default {
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapWritableState(useApplicationsStore, ['isSelectFacilityComplete']),
-
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     filteredFacilities() {
+      if (this.isRenewal) {
+        return this.userInfo?.facilities?.filter((facility) => {
+          return this.loadedApplications?.some((app) => app.facilityId === facility.facilityId) || this.facilitiesForRenewal?.some((fac) => fac.facilityId === facility.facilityId)
+        })
+      }
+
       return this.userInfo?.facilities?.filter(
         (facility) =>
           facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
@@ -132,6 +162,7 @@ export default {
     },
 
     next: {
+      //TODO - this will change more as we create the renewal application
       async handler() {
         this.$refs.form?.validate()
         if (!this.isFormComplete || !this.documentsComplete) return
@@ -153,7 +184,12 @@ export default {
             return dateB - dateA // descending order (the most recent submitted application at the top)
           })
           const existingApplication = activeApplications?.find((el) => el.statusCode === APPLICATION_STATUS_CODES.DRAFT) ?? activeApplications[0]
-          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: existingApplication?.applicationId } })
+
+          if (this.isRenewal) {
+            this.$router.push({ name: RENEWAL_ROUTES.FACILITY_DETAILS, params: { applicationGuid: existingApplication?.applicationId } })
+          } else {
+            this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: existingApplication?.applicationId } })
+          }
         }
       },
     },
@@ -166,10 +202,20 @@ export default {
       this.facilityId = this.userInfo?.facilities[0].facilityId
     }
     await this.getOrganization()
-    this.loadedApplications = await ApplicationService.getActiveApplications()
 
-    //get the redirected applications so we can prevent those facilities from starting another OFM app
-    this.redirectedApplications = await ApplicationService.getRedirectedApplications(this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)))
+    if (this.isRenewal) {
+      if (this.facilitiesForRenewal === null) {
+        this.facilitiesForRenewal = await FacilityService.getRenewalFacilities()
+      }
+      this.loadedApplications = await ApplicationService.getActiveRenewalApplications()
+    } else {
+      this.loadedApplications = await ApplicationService.getActiveApplications()
+
+      //get the redirected applications so we can prevent those facilities from starting another OFM app
+      this.redirectedApplications = await ApplicationService.getRedirectedApplications(
+        this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)),
+      )
+    }
   },
 
   methods: {
@@ -214,10 +260,15 @@ export default {
           providerType: this.organization?.providerType,
           ownership: this.organization?.ownership,
           createdBy: this.userInfo?.contactId,
+          applicationRenewalType: this.isRenewal ? APPLICATION_RENEWAL_TYPES.RENEWAL : APPLICATION_RENEWAL_TYPES.NEW,
         }
         const response = await ApplicationService.createApplication(payload)
         this.setSuccessAlert('Started a new application successfully')
-        this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.FACILITY_DETAILS, params: { applicationGuid: response?.applicationId } })
+        }
       } catch (error) {
         this.setFailureAlert('Failed to start a new application', error)
       } finally {

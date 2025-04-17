@@ -256,7 +256,7 @@ import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES, APPLICATION_PROVIDER_EMPLOYEE_TYPES, APPLICATION_ERROR_MESSAGES } from '@/utils/constants'
+import { APPLICATION_ROUTES, APPLICATION_PROVIDER_EMPLOYEE_TYPES, APPLICATION_ERROR_MESSAGES, RENEWAL_ROUTES } from '@/utils/constants'
 import { convertArrayToString, convertStringToArray, sanitizeWholeNumberInput } from '@/utils/common'
 import rules from '@/utils/rules'
 
@@ -307,7 +307,9 @@ export default {
     ...mapState(useAppStore, ['unions']),
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isStaffingComplete']),
-
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     totalFullTimePosition() {
       return this.model.staffingInfantECEducatorFullTime + this.model.staffingECEducatorFullTime + this.model.staffingECEducatorAssistantFullTime + this.model.staffingResponsibleAdultFullTime
     },
@@ -365,7 +367,11 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        }
       },
     },
     save: {
@@ -375,7 +381,11 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
+        if (this.isRenewal) {
+          this.$router.push({ name: RENEWAL_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
+        } else {
+          this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
+        }
       },
     },
   },
