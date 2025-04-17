@@ -27,7 +27,7 @@
         <h4>Facilities</h4>
       </v-col>
     </v-row>
-    <v-row class="ml-1">
+    <v-row v-if="isInformationMissing" class="ml-1">
       <v-icon color="amber" class="mr-2">mdi-alert</v-icon>
       <p>Important information missing</p>
     </v-row>
@@ -129,6 +129,14 @@ export default {
     },
     hasAnOFMFacility() {
       return this.facilities.some((facility) => facility.programCode === OFM_PROGRAM_CODES.OFM)
+    },
+    isInformationMissing() {
+      return (
+        this.facilities?.some((facility) => !facility.primaryContactName) ||
+        this.facilities?.some((facility) => !facility.expenseAuthorityName) ||
+        this.userFacilities?.some((facility) => !facility.primaryContactName) ||
+        this.userFacilities?.some((facility) => !facility.expenseAuthorityName)
+      )
     },
   },
   async created() {
