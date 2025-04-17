@@ -44,7 +44,7 @@ function getKcBaseClientMap(envVars) {
     redirectUris = [
       ...redirectUris,
       "http://localhost*",
-      `https://ofm-frontend-qa-e1800b-${env}.apps.silver.devops.gov.bc.ca/*`
+      `https://ofm-frontend-test-e1800b-${env}.apps.silver.devops.gov.bc.ca/*`
     ];
   } else if (env === "test") {
     redirectUris = [
