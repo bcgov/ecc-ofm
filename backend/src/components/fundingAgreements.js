@@ -122,7 +122,7 @@ async function fundingAgreementExists(req, res) {
     const facilityIds = req.body?.facilityIds
     const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
     const filter = `(${facilityFilter}) and statuscode eq ${FUNDING_AGREEMENT_STATUS_CODES.ACTIVE} and statecode eq ${FUNDING_AGREEMENT_STATE_CODES.ACTIVE}`
-    const operation = `ofm_fundings?$select=ofm_fundingid&$filter=${encodeURIComponent(filter)}&$top=1`
+    const operation = `ofm_fundings?$select=ofm_fundingid&$filter=${filter}&$top=1`
 
     const response = await getOperation(operation)
 
