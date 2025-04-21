@@ -122,18 +122,11 @@ async function fundingAgreementExists(req, res) {
     const facilityIds = req.body?.facilityIds
     const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
     const filter = `(${facilityFilter}) and statuscode eq ${FUNDING_AGREEMENT_STATUS_CODES.ACTIVE} and statecode eq ${FUNDING_AGREEMENT_STATE_CODES.ACTIVE}`
-    const operation = `ofm_fundings?$select=ofm_fundingid&$filter=${encodeURIComponent(filter)}&$top=500`
+    const operation = `ofm_fundings?$select=ofm_fundingid&$filter=${encodeURIComponent(filter)}&$top=1`
 
     const response = await getOperation(operation)
-    const activeFAs = []
-    response?.value?.forEach((fa) => {
-      if (fa.ofm_fundingid) {
-        activeFAs.push({
-          fundingId: fa.ofm_fundingid,
-        })
-      }
-    })
-    return res.status(HttpStatus.OK).json({ exists: !isEmpty(activeFAs) })
+
+    return res.status(HttpStatus.OK).json({ exists: !isEmpty(response.value) })
   } catch (e) {
     log.error('Error in fundingAgreementExists:', e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
