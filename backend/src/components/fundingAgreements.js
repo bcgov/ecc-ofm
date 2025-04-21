@@ -120,12 +120,14 @@ async function getFundingReallocationRequests(req, res) {
 async function fundingAgreementExists(req, res) {
   try {
     const facilityIds = req.body?.facilityIds
-    const filter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
-    const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${encodeURIComponent(filter)}&$top=500`
+    const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
+    const filter = `(${facilityFilter}) and statuscode eq ${FUNDING_AGREEMENT_STATUS_CODES.ACTIVE} and statecode eq ${FUNDING_AGREEMENT_STATE_CODES.ACTIVE}`
+    const operation = `ofm_fundings?$select=ofm_fundingid&$filter=${encodeURIComponent(filter)}&$top=500`
+
     const response = await getOperation(operation)
     const activeFAs = []
     response?.value?.forEach((fa) => {
-      if (fa._ofm_facility_value && fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE && fa.statecode === FUNDING_AGREEMENT_STATE_CODES.ACTIVE) {
+      if (fa.ofm_fundingid) {
         activeFAs.push({
           fundingId: fa.ofm_fundingid,
         })
