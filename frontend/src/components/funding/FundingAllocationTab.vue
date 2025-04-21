@@ -49,6 +49,7 @@ import { useAuthStore } from '@/stores/auth'
 import alertMixin from '@/mixins/alertMixin.js'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES, REQUEST_CATEGORY_NAMES } from '@/utils/constants'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   name: 'FundingAllocationTab',
@@ -61,7 +62,7 @@ export default {
       selectedFacility: null,
       fundingDetails: {},
       fundingReallocationRequests: [],
-      hasActiveFundingAgreements: true,
+      hasActiveFundingAgreements: false,
     }
   },
 
@@ -76,21 +77,16 @@ export default {
 
   async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
-    const facilityList = this.userInfo?.facilities || []
-    if (facilityList.length) {
-      await this.checkActiveFAs(facilityList)
+    const facilityIds = this.userInfo?.facilities.map((f) => f.facilityId) || []
+    if (!isEmpty(facilityIds)) {
+      await this.checkActiveFAs(facilityIds)
     }
   },
 
   methods: {
-    async checkActiveFAs(facilityList) {
-      for (const facility of facilityList) {
-        const fa = await FundingAgreementService.getActiveFundingAgreementByFacilityIdAndStatus(facility.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-        if (fa) {
-          return
-        }
-      }
-      this.hasActiveFundingAgreements = false
+    async checkActiveFAs(facilityIds) {
+      const response = await FundingAgreementService.fundingAgreementExists(facilityIds)
+      this.hasActiveFundingAgreements = response.exists
     },
     async loadFundingDetails(searchQueries) {
       this.selectedFacility = searchQueries?.facilities
