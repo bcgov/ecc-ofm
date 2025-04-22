@@ -31,11 +31,11 @@
               </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <FacilityDetailsSummary v-if="page.id === APPLICATION_ROUTES.FACILITY_DETAILS" :readonly="readonly" :contacts="contacts" />
+              <FacilityDetailsSummary v-if="FACILITY_DETAILS_PAGES.includes(page.id)" :readonly="readonly" :contacts="contacts" />
               <EligibilitySummary v-if="page.id === APPLICATION_ROUTES.ELIGIBILITY" />
-              <ServiceDeliverySummary v-if="page.id === APPLICATION_ROUTES.SERVICE_DELIVERY" :readonly="readonly" :licences="currentApplication?.licences" />
-              <OperatingCostsSummary v-if="page.id === APPLICATION_ROUTES.OPERATING_COSTS" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
-              <StaffingSummary v-if="page.id === APPLICATION_ROUTES.STAFFING" :readonly="readonly" />
+              <ServiceDeliverySummary v-if="SERVICE_DELIVERY_PAGES.includes(page.id)" :readonly="readonly" :licences="currentApplication?.licences" />
+              <OperatingCostsSummary v-if="OPERATING_COSTS_PAGES.includes(page.id)" :readonly="readonly" :documents="currentApplication?.uploadedDocuments" />
+              <StaffingSummary v-if="STAFFING_PAGES.includes(page.id)" :readonly="readonly" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -54,7 +54,7 @@ import ServiceDeliverySummary from '@/components/applications/review/ServiceDeli
 import OperatingCostsSummary from '@/components/applications/review/OperatingCostsSummary.vue'
 import StaffingSummary from '@/components/applications/review/StaffingSummary.vue'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SERVICE_DELIVERY_PAGES, OPERATING_COSTS_PAGES, STAFFING_PAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -98,6 +98,9 @@ export default {
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'isFacilityDetailsComplete', 'isEligibilityComplete', 'isServiceDeliveryComplete', 'isOperatingCostsComplete', 'isStaffingComplete']),
     ...mapWritableState(useApplicationsStore, ['validation']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     allPageIDs() {
       return this.PAGES?.map((page) => page.id)
     },
@@ -106,40 +109,34 @@ export default {
   watch: {
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.STAFFING : APPLICATION_ROUTES.STAFFING,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.SUBMIT : APPLICATION_ROUTES.SUBMIT,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },
 
   async created() {
     this.APPLICATION_ROUTES = APPLICATION_ROUTES
-    this.PAGES = [
-      {
-        title: 'Facility',
-        id: APPLICATION_ROUTES.FACILITY_DETAILS,
-      },
-      {
-        title: 'Eligibility',
-        id: APPLICATION_ROUTES.ELIGIBILITY,
-      },
-      {
-        title: 'Service Delivery Details',
-        id: APPLICATION_ROUTES.SERVICE_DELIVERY,
-      },
-      {
-        title: 'Operating Costs',
-        id: APPLICATION_ROUTES.OPERATING_COSTS,
-      },
-      {
-        title: 'Staffing',
-        id: APPLICATION_ROUTES.STAFFING,
-      },
-    ]
+    this.FACILITY_DETAILS_PAGES = FACILITY_DETAILS_PAGES
+    this.SERVICE_DELIVERY_PAGES = SERVICE_DELIVERY_PAGES
+    this.OPERATING_COSTS_PAGES = OPERATING_COSTS_PAGES
+    this.STAFFING_PAGES = STAFFING_PAGES
+    if (this.isRenewal) {
+      this.initRenewalPages()
+    } else {
+      this.initApplicationPages()
+    }
+
     await this.loadData()
     this.panel = this.allPageIDs
   },
@@ -160,6 +157,51 @@ export default {
         this.$emit('process', false)
       }
     },
+    initRenewalPages() {
+      this.PAGES = [
+        {
+          title: 'Facility',
+          id: RENEWAL_ROUTES.FACILITY_DETAILS,
+        },
+
+        {
+          title: 'Service Delivery Details',
+          id: RENEWAL_ROUTES.SERVICE_DELIVERY,
+        },
+        {
+          title: 'Operating Costs',
+          id: RENEWAL_ROUTES.OPERATING_COSTS,
+        },
+        {
+          title: 'Staffing',
+          id: RENEWAL_ROUTES.STAFFING,
+        },
+      ]
+    },
+    initApplicationPages() {
+      this.PAGES = [
+        {
+          title: 'Facility',
+          id: APPLICATION_ROUTES.FACILITY_DETAILS,
+        },
+        {
+          title: 'Eligibility',
+          id: APPLICATION_ROUTES.ELIGIBILITY,
+        },
+        {
+          title: 'Service Delivery Details',
+          id: APPLICATION_ROUTES.SERVICE_DELIVERY,
+        },
+        {
+          title: 'Operating Costs',
+          id: APPLICATION_ROUTES.OPERATING_COSTS,
+        },
+        {
+          title: 'Staffing',
+          id: APPLICATION_ROUTES.STAFFING,
+        },
+      ]
+    },
 
     togglePanel() {
       this.panel = isEmpty(this.panel) ? this.allPageIDs : []
@@ -168,14 +210,18 @@ export default {
     isPageComplete(page) {
       switch (page.id) {
         case APPLICATION_ROUTES.FACILITY_DETAILS:
+        case RENEWAL_ROUTES.FACILITY_DETAILS:
           return this.isFacilityDetailsComplete
         case APPLICATION_ROUTES.ELIGIBILITY:
           return this.isEligibilityComplete
         case APPLICATION_ROUTES.SERVICE_DELIVERY:
+        case RENEWAL_ROUTES.SERVICE_DELIVERY:
           return this.isServiceDeliveryComplete
         case APPLICATION_ROUTES.OPERATING_COSTS:
+        case RENEWAL_ROUTES.OPERATING_COSTS:
           return this.isOperatingCostsComplete
         case APPLICATION_ROUTES.STAFFING:
+        case RENEWAL_ROUTES.STAFFING:
           return this.isStaffingComplete
       }
     },

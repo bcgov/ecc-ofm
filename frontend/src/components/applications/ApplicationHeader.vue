@@ -13,7 +13,7 @@
 <script>
 import { mapState } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 
 export default {
   computed: {
@@ -21,18 +21,24 @@ export default {
     pageTitle() {
       switch (this.$route.name) {
         case APPLICATION_ROUTES.FACILITY_DETAILS:
+        case RENEWAL_ROUTES.FACILITY_DETAILS:
           return 'Facility Details'
         case APPLICATION_ROUTES.ELIGIBILITY:
           return 'Eligibility'
         case APPLICATION_ROUTES.SERVICE_DELIVERY:
+        case RENEWAL_ROUTES.SERVICE_DELIVERY:
           return 'Service Delivery Details'
         case APPLICATION_ROUTES.OPERATING_COSTS:
+        case RENEWAL_ROUTES.OPERATING_COSTS:
           return 'Operating Costs'
         case APPLICATION_ROUTES.STAFFING:
+        case RENEWAL_ROUTES.STAFFING:
           return 'Staffing'
         case APPLICATION_ROUTES.REVIEW:
+        case RENEWAL_ROUTES.REVIEW:
           return 'Review'
         case APPLICATION_ROUTES.SUBMIT:
+        case RENEWAL_ROUTES.SUBMIT:
           return 'Declaration'
         default:
           return null

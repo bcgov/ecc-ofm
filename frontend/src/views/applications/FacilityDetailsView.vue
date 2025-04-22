@@ -122,7 +122,7 @@ import ContactInfo from '@/components/applications/ContactInfo.vue'
 import ApplicationService from '@/services/applicationService'
 import FacilityService from '@/services/facilityService'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 import format from '@/utils/format'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
@@ -180,6 +180,9 @@ export default {
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isFacilityDetailsComplete']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     // The primary contact cannot be the same as the secondary contact
     availableSecondaryContacts() {
       return this.contacts?.filter((contact) => contact?.contactId != this.primaryContact?.contactId)
@@ -207,7 +210,7 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: 'applications-history' })
+        this.$router.push({ name: this.isRenewal ? RENEWAL_ROUTES.SELECT_FACILITY : APPLICATION_ROUTES.SELECT_FACILITY })
       },
     },
     save: {
@@ -219,7 +222,10 @@ export default {
       async handler() {
         await this.$refs.form?.validate()
         if (!this.isFormComplete) return
-        this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.ELIGIBILITY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     primaryContact: {

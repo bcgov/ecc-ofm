@@ -24,6 +24,7 @@ async function getFundingAgreements(req, res) {
     }
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
     operation += `&$filter=(${filter})&pageSize=500&$orderby=ofm_version_number desc`
+
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
       const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()

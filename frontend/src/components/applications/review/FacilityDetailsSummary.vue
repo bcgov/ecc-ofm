@@ -42,7 +42,7 @@
           <div>{{ format.formatBooleanToYesNo(currentApplication?.facility?.personalResidence) }}</div>
         </v-row>
       </div>
-      <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#location-attributes', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-else-if="!readonly" :to="{ name: routeName, hash: '#location-attributes', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.FACILITY_LOCATION_ATTRIBUTES }}
       </AppMissingInfoError>
     </v-card>
@@ -50,7 +50,7 @@
     <div class="mt-4 mb-0">
       <h4 class="text-decoration-underline">Primary Contact</h4>
       <ContactInfo v-if="currentApplication?.primaryContactId" :contact="primaryContact" variant="flat" class="mt-0 pb-0" />
-      <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#primary-contact', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-else-if="!readonly" :to="{ name: routeName, hash: '#primary-contact', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.PRIMARY_CONTACT }}
       </AppMissingInfoError>
     </div>
@@ -64,7 +64,7 @@
     <div>
       <h4 class="text-decoration-underline">Expense Authority</h4>
       <ContactInfo v-if="currentApplication?.expenseAuthorityId" :contact="expenseAuthority" variant="flat" class="mt-0 pb-0" />
-      <AppMissingInfoError v-else-if="!readonly" :to="{ name: APPLICATION_ROUTES.FACILITY_DETAILS, hash: '#expense-authority', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-else-if="!readonly" :to="{ name: routeName, hash: '#expense-authority', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.EXPENSE_AUTHORITY }}
       </AppMissingInfoError>
     </div>
@@ -78,7 +78,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import FacilityInfo from '@/components/facilities/FacilityInfo.vue'
 import ContactInfo from '@/components/applications/ContactInfo.vue'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 import format from '@/utils/format'
 
 export default {
@@ -97,6 +97,9 @@ export default {
 
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     primaryContact() {
       return this.contacts?.find((contact) => contact.contactId === this.currentApplication?.primaryContactId)
     },
@@ -106,8 +109,10 @@ export default {
     expenseAuthority() {
       return this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
     },
+    routeName() {
+      return this.isRenewal ? RENEWAL_ROUTES.FACILITY_DETAILS : APPLICATION_ROUTES.FACILITY_DETAILS
+    },
   },
-
   created() {
     this.format = format
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES
