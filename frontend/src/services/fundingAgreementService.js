@@ -120,4 +120,13 @@ export default {
       throw error
     }
   },
+  async fundingAgreementExists(facilityIds) {
+    try {
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.FUNDING_AGREEMENTS}/exists`, { facilityIds })
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get funding agreements for facilities - ${error}`)
+      throw error
+    }
+  },
 }
