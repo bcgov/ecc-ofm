@@ -406,7 +406,6 @@ export default {
           obj[key] = application[key]
           return obj
         }, {})
-        console.log(application.applicationRenewalType)
         return {
           ...item,
           applicationType: APPLICATION_TYPES.OFM,
