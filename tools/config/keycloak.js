@@ -28,38 +28,33 @@ function getKcAdminUrl(baseUrl, realmId) {
   return `${baseUrl}/auth/admin/realms/${realmId}`;
 }
 
+function getExplicitRedirectEndpoints(rootUrl) {
+  return [
+    `${rootUrl}/api/auth/callback`,
+    `${rootUrl}/api/auth/callback_idir`,
+    `${rootUrl}/logout`,
+    `${rootUrl}/session-expired`
+  ]
+}
+
 function getKcBaseClientMap(envVars) {
   const env = envVars.env;
   const app = envVars.appName;
 
-  let rootUrl = `https://ofm-frontend-${env}-e1800b-${env}.apps.silver.devops.gov.bc.ca`;
-  if (env === "prod") {
-    rootUrl = "https://ofm.mychildcareservices.gov.bc.ca";
-  } else if (env === "test") {
-    rootUrl = `https://ofm-frontend-uat-e1800b-${env}.apps.silver.devops.gov.bc.ca`;
-  }
-
-  let redirectUris = [`${rootUrl}/*`];
+  let redirectUris = [];
   if (env === "dev") {
     redirectUris = [
-      ...redirectUris,
+      "https://ofm-frontend-dev-e1800b-dev.apps.silver.devops.gov.bc.ca/*",
       "http://localhost*",
-      `https://ofm-frontend-test-e1800b-${env}.apps.silver.devops.gov.bc.ca/*`
+      ...getExplicitRedirectEndpoints("https://ofm-frontend-test-e1800b-dev.apps.silver.devops.gov.bc.ca"),
     ];
   } else if (env === "test") {
     redirectUris = [
-      ...redirectUris,
-      `https://ofm-frontend-efx-e1800b-${env}.apps.silver.devops.gov.bc.ca/*`
+      ...getExplicitRedirectEndpoints("https://ofm-frontend-uat-e1800b-test.apps.silver.devops.gov.bc.ca"),
+      ...getExplicitRedirectEndpoints("https://ofm-frontend-efx-e1800b-test.apps.silver.devops.gov.bc.ca"),
     ];
   } else if (env === "prod") {
-    redirectUris = [
-      `${rootUrl}/api/auth/callback`,
-      `${rootUrl}/api/auth/callback_idir`,
-      `${rootUrl}/logout`,
-      `${rootUrl}/session-expired`
-    ]
-  } else {
-    redirectUris = [];
+    redirectUris = getExplicitRedirectEndpoints("https://ofm.mychildcareservices.gov.bc.ca");
   }
 
   return {
@@ -105,7 +100,7 @@ function getKcBaseClientMap(envVars) {
     surrogateAuthRequired: false,
     serviceAccountsEnabled: false,
     name: app.toUpperCase(),
-    rootUrl,
+    rootUrl: "",
     clientAuthenticatorType: "client-secret",
     baseUrl: "",
     notBefore: 0,
