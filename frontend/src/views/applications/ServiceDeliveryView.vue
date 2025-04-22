@@ -207,11 +207,10 @@ export default {
     },
     back: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.FACILITY_DETAILS, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.FACILITY_DETAILS : APPLICATION_ROUTES.ELIGIBILITY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -221,11 +220,10 @@ export default {
     },
     next: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },

@@ -169,10 +169,7 @@ export default {
         return false
       }
       if (this.isReviewApplicationPage) {
-        if (this.isRenewal) {
-          return !this.isRenewalApplicationComplete
-        }
-        return !this.isApplicationComplete
+        return this.isRenewal ? !this.isRenewalApplicationComplete : !this.isApplicationComplete
       }
       return false
     },
@@ -197,9 +194,8 @@ export default {
     isPageAccessible() {
       if (this.isRenewal) {
         return this.isSelectFacilityPage || this.isFacilityDetailsPage || this.isFacilityDetailsComplete
-      } else {
-        return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
       }
+      return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
     },
   },
 

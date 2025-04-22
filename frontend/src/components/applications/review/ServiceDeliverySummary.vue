@@ -95,10 +95,7 @@ export default {
       return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
     },
     routeName() {
-      if (this.isRenewal) {
-        return RENEWAL_ROUTES.SERVICE_DELIVERY
-      }
-      return APPLICATION_ROUTES.SERVICE_DELIVERY
+      return this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.SERVICE_DELIVERY
     },
   },
   async created() {

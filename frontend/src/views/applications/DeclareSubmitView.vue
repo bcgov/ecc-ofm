@@ -113,11 +113,10 @@ export default {
     },
     back: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.REVIEW : APPLICATION_ROUTES.REVIEW,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -166,10 +165,12 @@ export default {
         if (this.isRenewal && this.facilitiesForRenewal !== null) {
           //don't bother updating the store if facilitiesForRenewal is null. The list will automatically get refreshed on the Application History View.
           this.facilitiesForRenewal = this.facilitiesForRenewal.filter((fac) => fac.facilityId !== this.currentApplication?.facilityId)
-          this.$router.push({ name: RENEWAL_ROUTES.CONFIRMATION, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.CONFIRMATION, params: { applicationGuid: this.$route.params.applicationGuid } })
         }
+
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.CONFIRMATION : APPLICATION_ROUTES.CONFIRMATION,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       }
     },
 

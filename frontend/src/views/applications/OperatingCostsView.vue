@@ -252,11 +252,10 @@ export default {
     },
     back: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.SERVICE_DELIVERY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -266,11 +265,10 @@ export default {
     },
     next: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.STAFFING : APPLICATION_ROUTES.STAFFING,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },

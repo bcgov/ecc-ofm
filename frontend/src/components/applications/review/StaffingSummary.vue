@@ -217,10 +217,7 @@ export default {
       return this.isThereAtLeastOneEmployee(this.currentApplication) && this.areEmployeeCertificatesComplete(this.currentApplication?.providerEmployees, this.currentApplication)
     },
     routeName() {
-      if (this.isRenewal) {
-        return RENEWAL_ROUTES.STAFFING
-      }
-      return APPLICATION_ROUTES.STAFFING
+      return this.isRenewal ? RENEWAL_ROUTES.STAFFING : APPLICATION_ROUTES.STAFFING
     },
   },
 

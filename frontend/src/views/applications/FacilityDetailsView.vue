@@ -210,11 +210,7 @@ export default {
     },
     back: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.SELECT_FACILITY })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.SELECT_FACILITY })
-        }
+        this.$router.push({ name: this.isRenewal ? RENEWAL_ROUTES.SELECT_FACILITY : APPLICATION_ROUTES.SELECT_FACILITY })
       },
     },
     save: {
@@ -226,11 +222,10 @@ export default {
       async handler() {
         await this.$refs.form?.validate()
         if (!this.isFormComplete) return
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.ELIGIBILITY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     primaryContact: {

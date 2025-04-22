@@ -350,13 +350,12 @@ export default {
   async getActiveRenewalApplications() {
     try {
       const authStore = useAuthStore()
-      const facilities = authStore?.userInfo?.facilities
       let applications = []
 
       //first check if we have any active renwal applications.
       //then - we should check our store / reload store to see if we have eligible applications up ready to get renewed.
       await Promise.all(
-        facilities?.map(async (facility) => {
+        authStore?.userInfo?.facilities?.map(async (facility) => {
           const response = await ApiService.apiAxios.get(
             `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&applicationRenewalType=${APPLICATION_RENEWAL_TYPES.RENEWAL}`,
           )

@@ -135,10 +135,7 @@ export default {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
     },
     routeName() {
-      if (this.isRenewal) {
-        return RENEWAL_ROUTES.OPERATING_COSTS
-      }
-      return APPLICATION_ROUTES.OPERATING_COSTS
+      return this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS
     },
   },
 

@@ -109,20 +109,18 @@ export default {
   watch: {
     back: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.STAFFING : APPLICATION_ROUTES.STAFFING,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     next: {
       handler() {
-        if (this.isRenewal) {
-          this.$router.push({ name: RENEWAL_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
-        } else {
-          this.$router.push({ name: APPLICATION_ROUTES.SUBMIT, params: { applicationGuid: this.$route.params.applicationGuid } })
-        }
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.SUBMIT : APPLICATION_ROUTES.SUBMIT,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },
@@ -134,6 +132,32 @@ export default {
     this.OPERATING_COSTS_PAGES = OPERATING_COSTS_PAGES
     this.STAFFING_PAGES = STAFFING_PAGES
     if (this.isRenewal) {
+      this.initRenewalPages()
+    } else {
+      this.initApplicationPages()
+    }
+
+    await this.loadData()
+    this.panel = this.allPageIDs
+  },
+
+  methods: {
+    ...mapActions(useApplicationsStore, ['getApplication']),
+    isEmpty,
+    async loadData() {
+      if (this.readonly) return
+      try {
+        this.$emit('process', true)
+        this.loading = true
+        await this.getApplication(this.$route.params.applicationGuid)
+      } catch (error) {
+        this.setFailureAlert('Failed to load the application', error)
+      } finally {
+        this.loading = false
+        this.$emit('process', false)
+      }
+    },
+    initRenewalPages() {
       this.PAGES = [
         {
           title: 'Facility',
@@ -153,7 +177,8 @@ export default {
           id: RENEWAL_ROUTES.STAFFING,
         },
       ]
-    } else {
+    },
+    initApplicationPages() {
       this.PAGES = [
         {
           title: 'Facility',
@@ -176,27 +201,6 @@ export default {
           id: APPLICATION_ROUTES.STAFFING,
         },
       ]
-    }
-
-    await this.loadData()
-    this.panel = this.allPageIDs
-  },
-
-  methods: {
-    ...mapActions(useApplicationsStore, ['getApplication']),
-    isEmpty,
-    async loadData() {
-      if (this.readonly) return
-      try {
-        this.$emit('process', true)
-        this.loading = true
-        await this.getApplication(this.$route.params.applicationGuid)
-      } catch (error) {
-        this.setFailureAlert('Failed to load the application', error)
-      } finally {
-        this.loading = false
-        this.$emit('process', false)
-      }
     },
 
     togglePanel() {

@@ -110,13 +110,9 @@ export default {
       return this.contacts?.find((contact) => contact.contactId === this.currentApplication?.expenseAuthorityId)
     },
     routeName() {
-      if (this.isRenewal) {
-        return RENEWAL_ROUTES.FACILITY_DETAILS
-      }
-      return APPLICATION_ROUTES.FACILITY_DETAILS
+      return this.isRenewal ? RENEWAL_ROUTES.FACILITY_DETAILS : APPLICATION_ROUTES.FACILITY_DETAILS
     },
   },
-
   created() {
     this.format = format
     this.APPLICATION_ERROR_MESSAGES = APPLICATION_ERROR_MESSAGES

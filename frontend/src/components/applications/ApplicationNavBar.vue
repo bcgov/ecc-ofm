@@ -67,6 +67,26 @@ export default {
 
   created() {
     if (this.isRenewal) {
+      this.initRenewalNavBar()
+    } else {
+      this.initApplicationNavBar()
+    }
+  },
+
+  methods: {
+    isDisabled(item) {
+      //If the user is on the select facility page, only allow navigation to Facility Details. All other routes are disabled at this point.
+      //If the item is not Facility Details, and the user hasn't completed the Facility Details step, disable the rest of the path.
+      //only allow submit page if application is complete
+      return (
+        this.loading ||
+        (this.isSelectFacilityPage && !FACILITY_DETAILS_PAGES.includes(item?.routeName)) ||
+        (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isFacilityDetailsComplete) ||
+        (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isRenewal && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
+        (SUBMIT_PAGES.includes(item?.routeName) && !this.isApplicationComplete && !this.isRenewalApplicationComplete)
+      )
+    },
+    initRenewalNavBar() {
       this.navBarItems = {
         facilityDetails: {
           id: 1,
@@ -99,7 +119,8 @@ export default {
           routeName: RENEWAL_ROUTES.SUBMIT,
         },
       }
-    } else {
+    },
+    initApplicationNavBar() {
       this.navBarItems = {
         facilityDetails: {
           id: 1,
@@ -137,23 +158,7 @@ export default {
           routeName: APPLICATION_ROUTES.SUBMIT,
         },
       }
-    }
-  },
-
-  methods: {
-    isDisabled(item) {
-      //If the user is on the select facility page, only allow navigation to Facility Details. All other routes are disabled at this point.
-      //If the item is not Facility Details, and the user hasn't completed the Facility Details step, disable the rest of the path.
-      //only allow submit page if application is complete
-      return (
-        this.loading ||
-        (this.isSelectFacilityPage && !FACILITY_DETAILS_PAGES.includes(item?.routeName)) ||
-        (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isFacilityDetailsComplete) ||
-        (!FACILITY_DETAILS_PAGES.includes(item?.routeName) && !this.isRenewal && !this.isRouteNameEqual(item, APPLICATION_ROUTES.ELIGIBILITY) && !this.isEligibilityComplete) ||
-        (SUBMIT_PAGES.includes(item?.routeName) && !this.isApplicationComplete && !this.isRenewalApplicationComplete)
-      )
     },
-
     isCurrent(item) {
       return this.isRouteNameEqual(item, this.$route.name) || this.isSelectFacilityPage
     },
