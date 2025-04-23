@@ -55,35 +55,27 @@
       </div>
 
       <!-- UPLOAD DOCUMENTS -->
-      <div class="mt-4">
+      <div v-if="showUploadedDocs" class="mt-4">
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
-          <v-card class="mt-2 mb-3 pa-3">
-            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
-              <AppMissingInfoError
-                v-if="!readonly && !documentsFinancialStatements.length"
-                :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
-                {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
-              </AppMissingInfoError>
-            </AppDocumentUpload>
+          <v-card v-if="isRentLease" class="mt-2 mb-3 pa-3">
+            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.RENT_LEASE_AGREEMENT" :uploaded-documents="documentsRentLease" />
+            <AppMissingInfoError
+              v-if="!readonly && !documentsRentLease.length"
+              :to="{ name: 'operating-costs', hash: '#rent-lease-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+              {{ DOCUMENT_TYPES.RENT_LEASE_AGREEMENT }} document upload required
+            </AppMissingInfoError>
           </v-card>
-          <v-card class="pl-3">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
-              <AppMissingInfoError
-                v-if="!readonly && !documentsBalanceSheets.length"
-                :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
-                {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
-              </AppMissingInfoError>
-            </AppDocumentUpload>
+          <v-card v-if="isOwnedWithMortgage" class="pl-3 mt-2 mb-3 pa-3">
+            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.MORTGAGE_STATEMENT" :uploaded-documents="documentsMortgage" />
+            <AppMissingInfoError
+              v-if="!readonly && !documentsMortgage.length"
+              :to="{ name: 'operating-costs', hash: '#mortgage-statement-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+              {{ DOCUMENT_TYPES.MORTGAGE_STATEMENT }} document upload required
+            </AppMissingInfoError>
           </v-card>
-          <v-card class="pl-3 mt-3 pt-0">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploaded-documents="documentsSupporting">
-              <AppMissingInfoError
-                v-if="!readonly && isRentLease && !documentsSupporting.length"
-                :to="{ name: 'operating-costs', hash: '#supporting-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
-                {{ DOCUMENT_TYPES.SUPPORTING_DOCS }} upload required
-              </AppMissingInfoError>
-            </AppDocumentUpload>
+          <v-card v-if="showSupportingDocs" class="pl-3 mt-3 pt-0">
+            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploaded-documents="documentsSupporting" />
           </v-card>
         </v-card>
       </div>
@@ -102,6 +94,7 @@ import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import format from '@/utils/format'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
+import { isEmpty } from 'lodash'
 
 export default {
   components: { AppLabel, AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
@@ -123,17 +116,26 @@ export default {
     isRentLease() {
       return this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE
     },
+    isOwnedWithMortgage() {
+      return this.currentApplication?.facilityType === FACILITY_TYPES.OWNED_WITH_MORTGAGE
+    },
     totalOperationalCost() {
       return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
     },
-    documentsFinancialStatements() {
-      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT)
+    documentsRentLease() {
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.RENT_LEASE_AGREEMENT)
     },
-    documentsBalanceSheets() {
-      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
+    documentsMortgage() {
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.MORTGAGE_STATEMENT)
     },
     documentsSupporting() {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
+    },
+    showSupportingDocs() {
+      return !isEmpty(this.documentsSupporting)
+    },
+    showUploadedDocs() {
+      return this.isRentLease || this.isOwnedWithMortgage || this.showSupportingDocs
     },
   },
 
