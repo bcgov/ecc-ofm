@@ -59,6 +59,23 @@
             </v-card-actions>
           </v-card>
         </v-col>
+
+        <v-col v-if="!isEmpty(facilitiesForRenewal)" cols="12" md="6">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              $10 a Day Funding Agreement Renewal
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              Before starting a renewal, verify your organization and facility details in Account Management
+              <br />
+              <br />
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="renew-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: RENEWAL_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">Renew</AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
     </template>
     <v-row class="mt-8 mb-2">
@@ -141,6 +158,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
+import FacilityService from '@/services/facilityService'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty } from 'lodash'
 import format from '@/utils/format'
@@ -156,6 +174,7 @@ import { createPDFDownloadLink } from '@/utils/common'
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
+  RENEWAL_ROUTES,
   GOOD_STANDING_STATUS_CODES,
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
@@ -165,8 +184,9 @@ import {
   PROVIDER_TYPE_CODES,
   UNION_TYPE_CODES,
   CRM_STATE_CODES,
+  APPLICATION_RENEWAL_TYPES,
 } from '@/utils/constants'
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { useAppStore } from '@/stores/app'
@@ -207,6 +227,7 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
 
     showIrregularExpenseCard() {
       if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
@@ -268,6 +289,7 @@ export default {
       this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
+      this.RENEWAL_ROUTES = RENEWAL_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
@@ -279,6 +301,9 @@ export default {
 
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
+      }
+      if (this.facilitiesForRenewal === null) {
+        this.facilitiesForRenewal = await FacilityService.getRenewalFacilities()
       }
     } catch (error) {
       this.setFailureAlert('Failed to get the list of applications', error)
@@ -384,6 +409,7 @@ export default {
         return {
           ...item,
           applicationType: APPLICATION_TYPES.OFM,
+          applicationRenewalType: application.applicationRenewalType,
           statusCode: application.statusCode,
         }
       })
@@ -463,7 +489,15 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      let routeName
+      if (item.applicationType !== APPLICATION_TYPES.OFM) {
+        routeName = 'supp-allowances-form'
+      } else if (item.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL) {
+        routeName = RENEWAL_ROUTES.FACILITY_DETAILS
+      } else {
+        routeName = APPLICATION_ROUTES.FACILITY_DETAILS
+      }
+
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 

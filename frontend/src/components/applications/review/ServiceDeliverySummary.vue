@@ -3,15 +3,13 @@
     <template v-if="!readonly">
       <AppMissingInfoError
         v-if="isEmpty(currentApplication?.licences) || !isCCOFMissingDetailComplete()"
-        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
+        :to="{ name: routeName, hash: '#account-management', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_INFO }}
       </AppMissingInfoError>
-      <AppMissingInfoError v-else-if="!isSplitClassroomComplete()" :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-else-if="!isSplitClassroomComplete()" :to="{ name: routeName, params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.SPLIT_CLASSROOM_INFO }}
       </AppMissingInfoError>
-      <AppMissingInfoError
-        v-else-if="!currentApplication?.licenceDeclaration"
-        :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
+      <AppMissingInfoError v-else-if="!currentApplication?.licenceDeclaration" :to="{ name: routeName, hash: '#confirmation', params: { applicationGuid: $route.params.applicationGuid } }">
         {{ APPLICATION_ERROR_MESSAGES.LICENCE_CONFIRMATION }}
       </AppMissingInfoError>
     </template>
@@ -28,7 +26,7 @@
             <AppDocumentUpload class="pa-4" :readonly="true" :document-label="DOCUMENT_LABELS.LICENCE" :document-type="`Licence ${licence.licence}`" :uploaded-documents="getLicenceDocument(licence)">
               <AppMissingInfoError
                 v-if="!readonly && !getLicenceDocument(licence)?.length"
-                :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: `#${licence.licenceId}`, params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{ name: routeName, hash: `#${licence.licenceId}`, params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_LICENCE_UPLOAD }}
               </AppMissingInfoError>
             </AppDocumentUpload>
@@ -46,7 +44,7 @@
         :uploaded-documents="healthAuthorityReportDocument">
         <AppMissingInfoError
           v-if="!readonly && !isHealthAuthorityReportUploaded()"
-          :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#health-authority-report-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: routeName, hash: '#health-authority-report-upload', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
         </AppMissingInfoError>
       </AppDocumentUpload>
@@ -63,7 +61,7 @@ import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
 import { useApplicationsStore } from '@/stores/applications'
 import LicenceHeader from '@/components/licences/LicenceHeader.vue'
 import LicenceDetails from '@/components/licences/LicenceDetails.vue'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_LABELS, DOCUMENT_TYPES } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_LABELS, DOCUMENT_TYPES, RENEWAL_ROUTES } from '@/utils/constants'
 
 export default {
   components: { AppDocumentUpload, AppMissingInfoError, LicenceHeader, LicenceDetails },
@@ -84,6 +82,9 @@ export default {
   },
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     allLicenceIDs() {
       return this.licences?.map((licence) => licence.licenceId)
     },
@@ -92,6 +93,9 @@ export default {
     },
     healthAuthorityReportDocument() {
       return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
+    },
+    routeName() {
+      return this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.SERVICE_DELIVERY
     },
   },
   async created() {

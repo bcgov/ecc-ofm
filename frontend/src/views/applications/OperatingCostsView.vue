@@ -109,7 +109,16 @@ import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import RentLeaseInformation from '@/components/applications/RentLeaseInformation.vue'
 import YearlyOperatingCost from '@/components/applications/YearlyOperatingCost.vue'
 import YearlyFacilityCost from '@/components/applications/YearlyFacilityCost.vue'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES, SUPPORTED_DOCUMENTS_MESSAGE, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
+import {
+  FACILITY_TYPES,
+  APPLICATION_ERROR_MESSAGES,
+  APPLICATION_ROUTES,
+  VIRUS_SCAN_ERROR_MESSAGE,
+  DOCUMENT_TYPES,
+  SUPPORTED_DOCUMENTS_MESSAGE,
+  YES_NO_CHOICE_CRM_MAPPING,
+  RENEWAL_ROUTES,
+} from '@/utils/constants'
 
 export default {
   name: 'OperatingCostsView',
@@ -173,6 +182,9 @@ export default {
     ...mapState(useAppStore, ['facilityTypes']),
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isOperatingCostsComplete']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     sanitizedCostsModel() {
       const sanitizedModel = {}
       Object.keys(this.costsModel)?.forEach((key) => {
@@ -240,7 +252,10 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.SERVICE_DELIVERY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.SERVICE_DELIVERY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -250,7 +265,10 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.STAFFING, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.STAFFING : APPLICATION_ROUTES.STAFFING,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },

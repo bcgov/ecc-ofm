@@ -3,8 +3,8 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getFundingAgreements, updateFundingAgreement, getFundingAgreementById, getFundingPDFById, getFundingReallocationRequests } = require('../components/fundingAgreements')
-const { param, query, validationResult, oneOf } = require('express-validator')
+const { fundingAgreementExists, getFundingAgreements, getFundingAgreementById, getFundingPDFById, getFundingReallocationRequests, updateFundingAgreement } = require('../components/fundingAgreements')
+const { body, param, query, validationResult, oneOf } = require('express-validator')
 const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
@@ -90,5 +90,16 @@ router.get(
   (req, res) => {
     validationResult(req).throw()
     return getFundingReallocationRequests(req, res)
+  },
+)
+router.post(
+  '/exists',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  [body('facilityIds', 'Request body [facilityIds] is required and must be an array').isArray({ min: 1 })],
+  (req, res) => {
+    validationResult(req).throw()
+    return fundingAgreementExists(req, res)
   },
 )

@@ -9,7 +9,7 @@
       </v-row>
       <v-row v-else no-gutters>
         <v-col cols="12" md="3" lg="2" xxl="1">
-          <ApplicationNavBar />
+          <ApplicationNavBar :is-select-facility-page="isSelectFacilityPage" :is-facility-details-page="isFacilityDetailsPage" />
         </v-col>
         <v-col cols="12" md="9" lg="10" xxl="11">
           <ApplicationHeader v-if="!isSelectFacilityPage" />
@@ -39,13 +39,13 @@
 import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useApplicationsStore } from '@/stores/applications'
 import FacilityService from '@/services/facilityService'
-import AppCancelDialog from '../../components/ui/AppCancelDialog.vue'
+import AppCancelDialog from '@/components/ui/AppCancelDialog.vue'
 import ApplicationNavBar from '@/components/applications/ApplicationNavBar.vue'
 import AppNavButtons from '@/components/ui/AppNavButtons.vue'
 import ApplicationHeader from '@/components/applications/ApplicationHeader.vue'
 import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES, FACILITY_DETAILS_PAGES, SELECT_FACILITY_PAGES, REVIEW_PAGES, CONFIRMATION_PAGES, SUBMIT_PAGES } from '@/utils/constants'
 import { isEmpty } from 'lodash'
 
 export default {
@@ -71,6 +71,7 @@ export default {
     ...mapState(useApplicationsStore, [
       'currentApplication',
       'isApplicationComplete',
+      'isRenewalApplicationComplete',
       'isSelectFacilityComplete',
       'isDeclareSubmitComplete',
       'isApplicationReadonly',
@@ -78,8 +79,11 @@ export default {
       'isEligibilityComplete',
     ]),
     ...mapWritableState(useApplicationsStore, ['validation']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     readonly() {
-      if (this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY) {
+      if (this.isSelectFacilityPage) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
       return this.loading || this.processing || this.isApplicationReadonly || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
@@ -93,6 +97,12 @@ export default {
         APPLICATION_ROUTES.STAFFING,
         APPLICATION_ROUTES.REVIEW,
         APPLICATION_ROUTES.SUBMIT,
+        RENEWAL_ROUTES.FACILITY_DETAILS,
+        RENEWAL_ROUTES.SERVICE_DELIVERY,
+        RENEWAL_ROUTES.OPERATING_COSTS,
+        RENEWAL_ROUTES.STAFFING,
+        RENEWAL_ROUTES.REVIEW,
+        RENEWAL_ROUTES.SUBMIT,
       ].includes(this.$route.name)
     },
     showCancel() {
@@ -107,6 +117,12 @@ export default {
             APPLICATION_ROUTES.STAFFING,
             APPLICATION_ROUTES.REVIEW,
             APPLICATION_ROUTES.SUBMIT,
+            RENEWAL_ROUTES.FACILITY_DETAILS,
+            RENEWAL_ROUTES.SERVICE_DELIVERY,
+            RENEWAL_ROUTES.OPERATING_COSTS,
+            RENEWAL_ROUTES.STAFFING,
+            RENEWAL_ROUTES.REVIEW,
+            RENEWAL_ROUTES.SUBMIT,
           ].includes(this.$route.name))
       )
     },
@@ -119,6 +135,12 @@ export default {
         APPLICATION_ROUTES.OPERATING_COSTS,
         APPLICATION_ROUTES.STAFFING,
         APPLICATION_ROUTES.REVIEW,
+        RENEWAL_ROUTES.SELECT_FACILITY,
+        RENEWAL_ROUTES.FACILITY_DETAILS,
+        RENEWAL_ROUTES.SERVICE_DELIVERY,
+        RENEWAL_ROUTES.OPERATING_COSTS,
+        RENEWAL_ROUTES.STAFFING,
+        RENEWAL_ROUTES.REVIEW,
       ].includes(this.$route.name)
     },
     showSave() {
@@ -131,40 +153,48 @@ export default {
           APPLICATION_ROUTES.OPERATING_COSTS,
           APPLICATION_ROUTES.STAFFING,
           APPLICATION_ROUTES.SUBMIT,
+          RENEWAL_ROUTES.FACILITY_DETAILS,
+          RENEWAL_ROUTES.SERVICE_DELIVERY,
+          RENEWAL_ROUTES.OPERATING_COSTS,
+          RENEWAL_ROUTES.STAFFING,
+          RENEWAL_ROUTES.SUBMIT,
         ].includes(this.$route.name)
       )
     },
     showSubmit() {
-      return !this.readonly && APPLICATION_ROUTES.SUBMIT === this.$route.name
+      return !this.readonly && SUBMIT_PAGES.includes(this.$route.name)
     },
     disableNext() {
       if (this.isSelectFacilityPage) {
         return false
       }
       if (this.isReviewApplicationPage) {
-        return !this.isApplicationComplete
+        return this.isRenewal ? !this.isRenewalApplicationComplete : !this.isApplicationComplete
       }
       return false
     },
     disableSubmit() {
-      return this.readonly || !this.isApplicationComplete || !this.isDeclareSubmitComplete
+      return this.readonly || !this.isDeclareSubmitComplete || (!this.isApplicationComplete && !this.isRenewalApplicationComplete)
     },
     isSelectFacilityPage() {
-      return this.$route.name === APPLICATION_ROUTES.SELECT_FACILITY
+      return SELECT_FACILITY_PAGES.includes(this.$route.name)
     },
     isFacilityDetailsPage() {
-      return this.$route.name === APPLICATION_ROUTES.FACILITY_DETAILS
+      return FACILITY_DETAILS_PAGES.includes(this.$route.name)
     },
     isEligibilityPage() {
       return this.$route.name === APPLICATION_ROUTES.ELIGIBILITY
     },
     isReviewApplicationPage() {
-      return this.$route.name === APPLICATION_ROUTES.REVIEW
+      return REVIEW_PAGES.includes(this.$route.name)
     },
     isApplicationConfirmationPage() {
-      return this.$route.name === APPLICATION_ROUTES.CONFIRMATION
+      return CONFIRMATION_PAGES.includes(this.$route.name)
     },
     isPageAccessible() {
+      if (this.isRenewal) {
+        return this.isSelectFacilityPage || this.isFacilityDetailsPage || this.isFacilityDetailsComplete
+      }
       return this.isSelectFacilityPage || this.isFacilityDetailsPage || (this.isEligibilityPage && this.isFacilityDetailsComplete) || (this.isFacilityDetailsComplete && this.isEligibilityComplete)
     },
   },

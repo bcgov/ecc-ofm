@@ -108,7 +108,7 @@ import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import LicenceService from '@/services/licenceService'
 import { useApplicationsStore } from '@/stores/applications'
-import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_LABELS, DOCUMENT_TYPES, OFM_PROGRAM_CODES, SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
+import { APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_LABELS, DOCUMENT_TYPES, OFM_PROGRAM_CODES, SUPPORTED_DOCUMENTS_MESSAGE, RENEWAL_ROUTES } from '@/utils/constants'
 import format from '@/utils/format'
 import rules from '@/utils/rules'
 import alertMixin from '@/mixins/alertMixin'
@@ -166,6 +166,9 @@ export default {
   computed: {
     ...mapState(useApplicationsStore, ['currentApplication', 'validation']),
     ...mapWritableState(useApplicationsStore, ['isServiceDeliveryComplete']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
     showErrorMessage() {
       return !this.readonly && !this.processing && this.validation
     },
@@ -204,7 +207,10 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.ELIGIBILITY, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.FACILITY_DETAILS : APPLICATION_ROUTES.ELIGIBILITY,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -214,7 +220,10 @@ export default {
     },
     next: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.OPERATING_COSTS, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
   },

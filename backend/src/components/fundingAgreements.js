@@ -5,6 +5,7 @@ const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { getTopUpFundingByFilter } = require('./topups')
 const { TOP_UP_FUNDING_STATUS_CODES } = require('../util/constants')
 const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
+const { FUNDING_AGREEMENT_STATUS_CODES, FUNDING_AGREEMENT_STATE_CODES } = require('../util/constants')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
 const { isEmpty } = require('lodash')
@@ -23,6 +24,7 @@ async function getFundingAgreements(req, res) {
     }
     const filter = `${buildDateFilterQuery(req?.query, 'ofm_start_date')}${buildFilterQuery(req?.query, FundingAgreementMappings)}`
     operation += `&$filter=(${filter})&pageSize=500&$orderby=ofm_version_number desc`
+
     const response = await getOperation(operation)
     response?.value?.forEach((funding) => {
       const fa = new MappableObjectForFront(funding, FundingAgreementMappings).toJSON()
@@ -116,6 +118,22 @@ async function getFundingReallocationRequests(req, res) {
   }
 }
 
+async function fundingAgreementExists(req, res) {
+  try {
+    const facilityIds = req.body?.facilityIds
+    const facilityFilter = facilityIds.map((id) => `(_ofm_facility_value eq ${id})`).join(' or ')
+    const filter = `(${facilityFilter}) and statuscode eq ${FUNDING_AGREEMENT_STATUS_CODES.ACTIVE} and statecode eq ${FUNDING_AGREEMENT_STATE_CODES.ACTIVE}`
+    const operation = `ofm_fundings?$select=ofm_fundingid&$filter=${filter}&pageSize=1`
+
+    const response = await getOperation(operation)
+
+    return res.status(HttpStatus.OK).json({ exists: !isEmpty(response.value) })
+  } catch (e) {
+    log.error('Error in fundingAgreementExists:', e)
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+  }
+}
+
 module.exports = {
   getFundingAgreements,
   getFundingAgreementById,
@@ -123,4 +141,5 @@ module.exports = {
   getFundingPDFById,
   getRawFundingAgreementById,
   updateFundingAgreement,
+  fundingAgreementExists,
 }
