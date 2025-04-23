@@ -58,7 +58,7 @@
             <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.RENT_LEASE_AGREEMENT" :uploaded-documents="documentsRentLease" />
             <AppMissingInfoError
               v-if="!readonly && !documentsRentLease.length"
-              :to="{ name: 'operating-costs', hash: '#rent-lease-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+              :to="{ name: routeName, hash: '#rent-lease-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
               {{ DOCUMENT_TYPES.RENT_LEASE_AGREEMENT }} document upload required
             </AppMissingInfoError>
           </v-card>
@@ -66,7 +66,7 @@
             <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.MORTGAGE_STATEMENT" :uploaded-documents="documentsMortgage" />
             <AppMissingInfoError
               v-if="!readonly && !documentsMortgage.length"
-              :to="{ name: 'operating-costs', hash: '#mortgage-statement-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+              :to="{ name: routeName, hash: '#mortgage-statement-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
               {{ DOCUMENT_TYPES.MORTGAGE_STATEMENT }} document upload required
             </AppMissingInfoError>
           </v-card>

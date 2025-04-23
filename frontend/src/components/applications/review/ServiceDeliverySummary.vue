@@ -56,7 +56,7 @@
         :uploaded-documents="policyProcedureManualDocument">
         <AppMissingInfoError
           v-if="!readonly && !isPolicyProcedureManualUploaded()"
-          :to="{ name: APPLICATION_ROUTES.SERVICE_DELIVERY, hash: '#policy-and-procedure-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+          :to="{ name: routeName, hash: '#policy-and-procedure-upload', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_POLICY_PROCEDURE_UPLOAD }}
         </AppMissingInfoError>
       </AppDocumentUpload>
