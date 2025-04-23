@@ -1,5 +1,6 @@
-import { ApiRoutes } from '@/utils/constants'
 import ApiService from '@/common/apiService'
+import { useAuthStore } from '@/stores/auth'
+import { ApiRoutes } from '@/utils/constants'
 
 function sortContactsByName(contacts) {
   return contacts?.sort(function (a, b) {
@@ -83,12 +84,13 @@ export default {
    * Using GET would require stuffing the array into a query string,
    * which is not reliable or clean for large arrays.
    */
-  async getRenewalFacilities(facilityIds) {
+  async getRenewalFacilities() {
+    const authStore = useAuthStore()
+    const facilityIds = authStore?.userInfo?.facilities.map((f) => f.facilityId)
+
     try {
       if (!facilityIds?.length) return []
-
       const response = await ApiService.apiAxios.post(`${ApiRoutes.FACILITIES}/renewalFacilities`, { facilityIds })
-
       return response?.data || []
     } catch (error) {
       console.log(`Failed to get renewal facilities - ${error}`)

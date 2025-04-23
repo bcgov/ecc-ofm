@@ -23,6 +23,7 @@ export const useApplicationsStore = defineStore('applications', {
   }),
   getters: {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isEligibilityComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+    isRenewalApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
     isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
   },
   actions: {
@@ -106,7 +107,7 @@ export const useApplicationsStore = defineStore('applications', {
       return this.currentApplication?.facility?.personalResidence === YES_NO_RADIO_GROUP_MAPPING.YES
     },
 
-    /* 
+    /*
       Service Delivery page
      */
     checkServiceDeliveryComplete() {
@@ -182,7 +183,6 @@ export const useApplicationsStore = defineStore('applications', {
     isRentLease(application) {
       return application?.facilityType === FACILITY_TYPES.RENT_LEASE
     },
-
     isMortgageOwned(application) {
       return application?.facilityType === FACILITY_TYPES.OWNED_WITH_MORTGAGE
     },

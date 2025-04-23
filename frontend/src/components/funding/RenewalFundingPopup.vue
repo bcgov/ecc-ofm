@@ -64,8 +64,7 @@ export default {
     },
     async loadRenewalFacilities() {
       try {
-        const facilityIds = this.userInfo?.facilities.map((f) => f.facilityId)
-        const renewalFacilities = await FacilityService.getRenewalFacilities(facilityIds)
+        const renewalFacilities = await FacilityService.getRenewalFacilities()
 
         this.facilitiesForRenewal = renewalFacilities
         this.isDisplayed = !isEmpty(renewalFacilities)

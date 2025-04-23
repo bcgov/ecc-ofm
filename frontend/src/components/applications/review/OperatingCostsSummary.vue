@@ -1,8 +1,6 @@
 <template>
   <v-container fluid class="pa-2 pb-0">
-    <AppMissingInfoError
-      v-if="!readonly && !currentApplication?.facilityType"
-      :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#select-facility-types', params: { applicationGuid: $route.params.applicationGuid } }">
+    <AppMissingInfoError v-if="!readonly && !currentApplication?.facilityType" :to="{ name: routeName, hash: '#select-facility-types', params: { applicationGuid: $route.params.applicationGuid } }">
       {{ APPLICATION_ERROR_MESSAGES.FACILITY_TYPE }}
     </AppMissingInfoError>
     <div v-else>
@@ -20,7 +18,7 @@
               </v-row>
               <AppMissingInfoError
                 v-else-if="!readonly && currentApplication.monthToMonthRentLease !== 1"
-                :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#rent-lease-info', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{ name: routeName, hash: '#rent-lease-info', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ APPLICATION_ERROR_MESSAGES.RENT_LEASE_DATE_RANGE }}
               </AppMissingInfoError>
             </div>
@@ -31,7 +29,7 @@
           <div>
             <AppMissingInfoError
               v-if="!readonly && currentApplication.armsLength !== YES_NO_CHOICE_CRM_MAPPING.YES"
-              :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
+              :to="{ name: routeName, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
               {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
             </AppMissingInfoError>
             <v-checkbox v-else v-model="currentApplication.armsLength" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
@@ -43,9 +41,7 @@
 
       <!-- OPERATING COST / FACILITY COST -->
       <div>
-        <AppMissingInfoError
-          v-if="!readonly && totalOperationalCost === 0"
-          :to="{ name: APPLICATION_ROUTES.OPERATING_COSTS, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
+        <AppMissingInfoError v-if="!readonly && totalOperationalCost === 0" :to="{ name: routeName, hash: '#yearly-operating-cost', params: { applicationGuid: $route.params.applicationGuid } }">
           {{ APPLICATION_ERROR_MESSAGES.OPERATIONAL_COST }}
         </AppMissingInfoError>
         <div v-else>
@@ -93,8 +89,8 @@ import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFa
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import format from '@/utils/format'
-import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING } from '@/utils/constants'
 import { isEmpty } from 'lodash'
+import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING, RENEWAL_ROUTES } from '@/utils/constants'
 
 export default {
   components: { AppLabel, AppMissingInfoError, YearlyOperatingCostSummary, YearlyFacilityCostSummary, AppDocumentUpload },
@@ -112,6 +108,9 @@ export default {
   computed: {
     ...mapState(useAppStore, ['getFacilityTypeNameById']),
     ...mapState(useApplicationsStore, ['currentApplication']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
 
     isRentLease() {
       return this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE
@@ -136,6 +135,9 @@ export default {
     },
     showUploadedDocs() {
       return this.isRentLease || this.isOwnedWithMortgage || this.showSupportingDocs
+    },
+    routeName() {
+      return this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS
     },
   },
 

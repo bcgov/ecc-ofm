@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
-import { APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import BackendSessionExpiredView from '@/views/BackendSessionExpiredView.vue'
 import DocumentsView from '@/views/DocumentsView.vue'
@@ -213,6 +213,7 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
         permission: PERMISSIONS.VIEW_APPLICATIONS,
+        isRenewal: false,
       },
       children: [
         {
@@ -261,6 +262,66 @@ const router = createRouter({
         {
           path: ':applicationGuid/confirmation',
           name: APPLICATION_ROUTES.CONFIRMATION,
+          component: ApplicationConfirmationView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
+        },
+      ],
+    },
+    {
+      path: '/applications/renewals',
+      name: 'applications-renwals',
+      component: ApplicationView,
+      redirect: '/applications/renewals/select-facility',
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
+        isRenewal: true,
+      },
+
+      children: [
+        {
+          path: 'select-facility',
+          name: RENEWAL_ROUTES.SELECT_FACILITY,
+          component: SelectFacilityView,
+          meta: {
+            permission: PERMISSIONS.APPLY_FOR_FUNDING,
+          },
+        },
+        {
+          path: ':applicationGuid/facility-details',
+          name: RENEWAL_ROUTES.FACILITY_DETAILS,
+          component: FacilityDetailsView,
+        },
+        {
+          path: ':applicationGuid/service-delivery',
+          name: RENEWAL_ROUTES.SERVICE_DELIVERY,
+          component: ServiceDeliveryView,
+        },
+        {
+          path: ':applicationGuid/operating-costs',
+          name: RENEWAL_ROUTES.OPERATING_COSTS,
+          component: OperatingCostsView,
+        },
+        {
+          path: ':applicationGuid/staffing',
+          name: RENEWAL_ROUTES.STAFFING,
+          component: StaffingView,
+        },
+        {
+          path: ':applicationGuid/review',
+          name: RENEWAL_ROUTES.REVIEW,
+          component: ReviewApplicationView,
+        },
+        {
+          path: ':applicationGuid/declare-submit',
+          name: RENEWAL_ROUTES.SUBMIT,
+          component: DeclareSubmitView,
+        },
+        {
+          path: ':applicationGuid/confirmation',
+          name: RENEWAL_ROUTES.CONFIRMATION,
           component: ApplicationConfirmationView,
           meta: {
             permission: PERMISSIONS.APPLY_FOR_FUNDING,

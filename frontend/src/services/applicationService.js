@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import ApiService from '@/common/apiService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
-import { APPLICATION_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 function sortApplications(applications) {
   applications?.sort((app1, app2) => {
@@ -343,6 +343,29 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to delete the employee certificate - ${error}`)
+      throw error
+    }
+  },
+
+  async getActiveRenewalApplications() {
+    try {
+      const authStore = useAuthStore()
+      let applications = []
+
+      //first check if we have any active renwal applications.
+      //then - we should check our store / reload store to see if we have eligible applications up ready to get renewed.
+      await Promise.all(
+        authStore?.userInfo?.facilities?.map(async (facility) => {
+          const response = await ApiService.apiAxios.get(
+            `${ApiRoutes.APPLICATIONS}?facilityId=${facility?.facilityId}&stateCode=${CRM_STATE_CODES.ACTIVE}&applicationRenewalType=${APPLICATION_RENEWAL_TYPES.RENEWAL}`,
+          )
+          applications = applications?.concat(response?.data)
+        }),
+      )
+      sortApplications(applications)
+      return applications
+    } catch (error) {
+      console.log(`Failed to get the applications - ${error}`)
       throw error
     }
   },

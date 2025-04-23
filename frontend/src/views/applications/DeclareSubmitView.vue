@@ -2,7 +2,12 @@
   <v-form ref="form" v-model="isFormComplete">
     <v-skeleton-loader :loading="loading" type="table-tbody">
       <div>
-        <p class="mb-5">I hereby confirm that the information I have provided in this application is complete and accurate. I certify that I have read and understand the following requirements:</p>
+        <p v-if="isRenewal" class="mb-5">
+          I hereby confirm that the information I have provided in this renewal is complete and accurate. I certify that I have read and understand the following requirements:
+        </p>
+        <p v-else class="mb-5">
+          I hereby confirm that the information I have provided in this application is complete and accurate. I certify that I have read and understand the following requirements:
+        </p>
         <ul class="pl-6">
           <li>Each facility must be licensed under the Community Care and Assisted Living Act;</li>
           <li>Each facility must be in compliance with the Community Care and Assisted Living Act and Child Care Licensing Regulation;</li>
@@ -27,7 +32,7 @@
         v-model="model.applicationDeclaration"
         color="primary"
         :rules="rules.required"
-        :disabled="readonly || !isApplicationComplete"
+        :disabled="canUserSubmit"
         :hide-details="readonly"
         label="I certify that all of the information provided is true and complete to the best of my knowledge."
         class="my-5"></v-checkbox>
@@ -37,12 +42,13 @@
 
 <script>
 import { useAuthStore } from '@/stores/auth'
+import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import { mapState, mapWritableState, mapActions } from 'pinia'
 import rules from '@/utils/rules'
 import ApplicationService from '@/services/applicationService'
 import alertMixin from '@/mixins/alertMixin'
-import { APPLICATION_STATUS_CODES, APPLICATION_ROUTES } from '@/utils/constants'
+import { APPLICATION_STATUS_CODES, APPLICATION_ROUTES, RENEWAL_ROUTES } from '@/utils/constants'
 
 export default {
   name: 'DeclareSubmitView',
@@ -88,8 +94,15 @@ export default {
 
   computed: {
     ...mapState(useAuthStore, ['userInfo']),
-    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete']),
+    ...mapState(useApplicationsStore, ['currentApplication', 'isApplicationComplete', 'isRenewalApplicationComplete']),
     ...mapWritableState(useApplicationsStore, ['isDeclareSubmitComplete']),
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
+    canUserSubmit() {
+      return this.readonly || (!this.isApplicationComplete && !this.isRenewalApplicationComplete)
+    },
   },
 
   watch: {
@@ -100,7 +113,10 @@ export default {
     },
     back: {
       handler() {
-        this.$router.push({ name: APPLICATION_ROUTES.REVIEW, params: { applicationGuid: this.$route.params.applicationGuid } })
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.REVIEW : APPLICATION_ROUTES.REVIEW,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       },
     },
     save: {
@@ -146,7 +162,15 @@ export default {
       this.model.statusCode = APPLICATION_STATUS_CODES.SUBMITTED
       await this.saveApplication()
       if (this.currentApplication?.statusCode === APPLICATION_STATUS_CODES.SUBMITTED) {
-        this.$router.push({ name: APPLICATION_ROUTES.CONFIRMATION, params: { applicationGuid: this.$route.params.applicationGuid } })
+        if (this.isRenewal && this.facilitiesForRenewal !== null) {
+          //don't bother updating the store if facilitiesForRenewal is null. The list will automatically get refreshed on the Application History View.
+          this.facilitiesForRenewal = this.facilitiesForRenewal.filter((fac) => fac.facilityId !== this.currentApplication?.facilityId)
+        }
+
+        this.$router.push({
+          name: this.isRenewal ? RENEWAL_ROUTES.CONFIRMATION : APPLICATION_ROUTES.CONFIRMATION,
+          params: { applicationGuid: this.$route.params.applicationGuid },
+        })
       }
     },
 
