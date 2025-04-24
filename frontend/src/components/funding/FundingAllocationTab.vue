@@ -13,9 +13,6 @@
       No Active Funding Agreement Found: This organization currently does not have an active signed OFM funding agreement.
     </AppAlertBanner>
     <div v-else>
-      <AppAlertBanner type="info" class="ma-2 mb-4">
-        Note: If the facility you're looking for does not appear in the dropdown list, that facility may not have an active signed OFM funding agreement.
-      </AppAlertBanner>
       <FundingSearchCard :loading="loading" :select-single-facility="true" :show-date-filter="false" :show-reset-button="false" class="my-10" @search="loadFundingDetails" />
       <BaseFundingCard :loading="loading" :funding-details="fundingDetails" />
       <div v-if="showTopupCard">
