@@ -165,7 +165,9 @@ export const useApplicationsStore = defineStore('applications', {
     checkOperatingCostsComplete() {
       const isFacilityTypeRequiredDocsUploaded =
         (!this.isRentLease(this.currentApplication) && !this.isMortgageOwned(this.currentApplication)) ||
-        (this.isRentLease(this.currentApplication) && this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.RENT_LEASE_AGREEMENT])) ||
+        (this.isRentLease(this.currentApplication) &&
+          ((!this.isRenewal && this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.RENT_LEASE_AGREEMENT, DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])) ||
+            (this.isRenewal && this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.RENT_LEASE_AGREEMENT])))) ||
         (this.isMortgageOwned(this.currentApplication) && this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.MORTGAGE_STATEMENT]))
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
       const isRentLeaseInformationComplete =

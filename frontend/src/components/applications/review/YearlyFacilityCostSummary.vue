@@ -2,6 +2,7 @@
   <v-container fluid class="pa-0">
     <h4>Yearly Facility Cost</h4>
     <v-card class="my-1 px-4 py-2" variant="outlined">
+      <p>Enter the amount as indicated in your rent/lease agreement, excluding GST.</p>
       <!-- RENT/LEASE -->
       <v-row v-if="facilityType === FACILITY_TYPES.RENT_LEASE" no-gutters>
         <v-col cols="12" lg="6">

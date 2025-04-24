@@ -241,6 +241,7 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   FACILITY_LOCATION_ATTRIBUTES: 'Facility location information required',
   DOCUMENT_UPLOAD: 'Document upload required',
   DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'A letter of community support is required to continue',
+  DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
   DOCUMENT_RENT_LEASE_UPLOAD: 'Document upload of your Rent/Lease Agreement required',
   DOCUMENT_MORTGAGE_UPLOAD: 'Document upload of your Mortgage Statement required',
   DOCUMENT_LICENCE_UPLOAD: 'Document upload of your current licence required',
@@ -298,6 +299,8 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
 export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
 
 export const DOCUMENT_TYPES = Object.freeze({
+  INCOME_STATEMENT: 'Income Statement',
+  BALANCE_SHEET: 'Balance Sheet',
   MORTGAGE_STATEMENT: 'Mortgage Statement',
   RENT_LEASE_AGREEMENT: 'Rent/Lease Agreement',
   SUPPORTING_DOCS: 'Supporting Documents',

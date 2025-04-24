@@ -49,6 +49,9 @@
         <AppMissingInfoError v-if="showErrorMessage && isOwnedWithMortgage && !isMortgageDocsUploaded">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_MORTGAGE_UPLOAD }}
         </AppMissingInfoError>
+        <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isRenewal && (!isFinancialDocsUploaded || !isBalanceSheetUploaded)">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}
+        </AppMissingInfoError>
         <v-card class="mt-2 pa-4" variant="outlined">
           <div v-if="isRentLease || isOwnedWithMortgage" class="grey-card mt-2">
             <v-card v-if="isRentLease" class="mb-4 pa-4">
@@ -63,6 +66,28 @@
                 :uploaded-documents="rentLeaseAgreement.uploadedDocuments"
                 @delete-uploaded-document="deleteUploadedDocument" />
             </v-card>
+            <v-card v-if="isRentLease && !isRenewal" class="mb-4 pa-4">
+              <AppDocumentUpload
+                id="financial-document-upload"
+                v-model="financialStatement.documentsToUpload"
+                entity-name="ofm_applications"
+                :document-type="DOCUMENT_TYPES.INCOME_STATEMENT"
+                :loading="processing"
+                :readonly="readonly"
+                :uploaded-documents="financialStatement.uploadedDocuments"
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
+            </v-card>
+            <v-card v-if="isRentLease && !isRenewal" class="mb-4 pa-4">
+              <AppDocumentUpload
+                id="balance-sheet-document-upload"
+                v-model="balanceSheet.documentsToUpload"
+                entity-name="ofm_applications"
+                :document-type="DOCUMENT_TYPES.BALANCE_SHEET"
+                :loading="processing"
+                :readonly="readonly"
+                :uploaded-documents="balanceSheet.uploadedDocuments"
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
+            </v-card>
             <v-card v-if="isOwnedWithMortgage" class="mb-4 pa-4">
               <AppDocumentUpload
                 id="mortgage-statement-upload"
@@ -72,7 +97,7 @@
                 :loading="processing"
                 :readonly="readonly"
                 :uploaded-documents="mortgageStatement.uploadedDocuments"
-                @delete-uploaded-document="deleteUploadedDocument" />
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
           </div>
           <div class="grey-card mt-8">
@@ -159,6 +184,18 @@ export default {
       facilityType: null,
       costsModel: {},
       rentLeaseInfoModel: {},
+      financialStatement: {
+        mortgageStatement: {
+          uploadedDocuments: [],
+          documentsToUpload: [],
+          documentsToDelete: [],
+        },
+        balanceSheet: {
+          uploadedDocuments: [],
+          documentsToUpload: [],
+          documentsToDelete: [],
+        },
+      },
       mortgageStatement: {
         uploadedDocuments: [],
         documentsToUpload: [],
@@ -196,10 +233,12 @@ export default {
     },
     isFormComplete() {
       return (
-        this.facilityType &&
-        this.isRentLeaseInformationComplete &&
-        this.totalOperationalCost > 0 &&
-        ((this.isRentLease && this.isRentLeaseDocsUploaded) || (this.isOwnedWithMortgage && this.isMortgageDocsUploaded) || (!this.isRentLease && !this.isOwnedWithMortgage))
+        (this.facilityType &&
+          this.isRentLeaseInformationComplete &&
+          this.totalOperationalCost > 0 &&
+          ((!this.isRenewal && this.isRentLeaseDocsUploaded && this.financialDocsUploaded && this.isBalanceSheetUploaded) || (this.isRenewal && this.isRentLeaseDocsUploaded))) ||
+        (this.isOwnedWithMortgage && this.isMortgageDocsUploaded) ||
+        (!this.isRentLease && !this.isOwnedWithMortgage && !this.isRenewal && this.financialDocsUploaded)
       )
     },
     isRentLeaseInformationComplete() {
@@ -211,6 +250,11 @@ export default {
     },
     totalOperationalCost() {
       return Object.values(this.costsModel).reduce((total, cost) => total + Number(cost), 0)
+    },
+    isFinancialDocsUploaded() {
+      const isFinancialStatementUploaded = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments)
+      const isBalanceSheetUploaded = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments)
+      return isFinancialStatementUploaded && isBalanceSheetUploaded
     },
     isRentLease() {
       return this.facilityType === FACILITY_TYPES.RENT_LEASE
@@ -228,10 +272,12 @@ export default {
       return !isEmpty(this.mortgageStatement?.documentsToUpload) || !isEmpty(this.mortgageStatement?.uploadedDocuments)
     },
     isDocumentsToProcess() {
+      const isFinancialDocsToProcess = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.documentsToDelete)
+      const isBalanceSheetToProcess = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.documentsToDelete)
       const isRentLeaseAgreementToProcess = !isEmpty(this.rentLeaseAgreement?.documentsToUpload) || !isEmpty(this.rentLeaseAgreement?.documentsToDelete)
       const isMortgageStatementToProcess = !isEmpty(this.mortgageStatement?.documentsToUpload) || !isEmpty(this.mortgageStatement?.documentsToDelete)
       const isSupportingDocsToProcess = !isEmpty(this.supporting?.documentsToUpload) || !isEmpty(this.supporting?.documentsToDelete)
-      return isRentLeaseAgreementToProcess || isMortgageStatementToProcess || isSupportingDocsToProcess
+      return isRentLeaseAgreementToProcess || isMortgageStatementToProcess || isSupportingDocsToProcess || isFinancialDocsToProcess || isBalanceSheetToProcess
     },
     showErrorMessage() {
       return !this.readonly && !this.processing && this.validation
@@ -351,6 +397,8 @@ export default {
 
     deleteDocumentFromType(documentId, documentType) {
       const docTypeMapping = {
+        [this.DOCUMENT_TYPES.INCOME_STATEMENT]: this.financialStatement,
+        [this.DOCUMENT_TYPES.BALANCE_SHEET]: this.balanceSheet,
         [this.DOCUMENT_TYPES.MORTGAGE_STATEMENT]: this.mortgageStatement,
         [this.DOCUMENT_TYPES.RENT_LEASE_AGREEMENT]: this.rentLeaseAgreement,
         [this.DOCUMENT_TYPES.SUPPORTING_DOCS]: this.supporting,
@@ -368,7 +416,7 @@ export default {
     },
 
     async processDocuments() {
-      const documentTypes = [this.mortgageStatement, this.rentLeaseAgreement, this.supporting]
+      const documentTypes = [this.financialStatement, this.balanceSheet, this.mortgageStatement, this.rentLeaseAgreement, this.supporting]
       let atLeastOneDocumentProcessed = false
       for (const docType of documentTypes) {
         if (!isEmpty(docType.documentsToUpload) || !isEmpty(docType.documentsToDelete)) {
@@ -407,6 +455,8 @@ export default {
     },
 
     getUploadedDocuments(uploadedDocuments) {
+      this.financialStatement.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT)
+      this.balanceSheet.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
       this.mortgageStatement.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.MORTGAGE_STATEMENT)
       this.rentLeaseAgreement.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.RENT_LEASE_AGREEMENT)
       this.supporting.uploadedDocuments = uploadedDocuments?.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)

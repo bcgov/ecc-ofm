@@ -62,6 +62,24 @@
               {{ DOCUMENT_TYPES.RENT_LEASE_AGREEMENT }} document upload required
             </AppMissingInfoError>
           </v-card>
+          <v-card v-if="!isRenewal && isRentLease" class="mt-2 mb-3 pa-3">
+            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
+              <AppMissingInfoError
+                v-if="!readonly && !documentsFinancialStatements.length"
+                :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
+          </v-card>
+          <v-card v-if="!isRenewal && isRentLease" class="pl-3">
+            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
+              <AppMissingInfoError
+                v-if="!readonly && !documentsBalanceSheets.length"
+                :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
+              </AppMissingInfoError>
+            </AppDocumentUpload>
+          </v-card>
           <v-card v-if="isOwnedWithMortgage" class="pl-3 mt-2 mb-3 pa-3">
             <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.MORTGAGE_STATEMENT" :uploaded-documents="documentsMortgage" />
             <AppMissingInfoError
@@ -120,6 +138,12 @@ export default {
     },
     totalOperationalCost() {
       return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
+    },
+    documentsFinancialStatements() {
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.INCOME_STATEMENT)
+    },
+    documentsBalanceSheets() {
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
     },
     documentsRentLease() {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.RENT_LEASE_AGREEMENT)
