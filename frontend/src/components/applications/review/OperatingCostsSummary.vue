@@ -98,7 +98,9 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
+
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
@@ -107,7 +109,6 @@ import YearlyFacilityCostSummary from '@/components/applications/review/YearlyFa
 import { useAppStore } from '@/stores/app'
 import { useApplicationsStore } from '@/stores/applications'
 import format from '@/utils/format'
-import { isEmpty } from 'lodash'
 import { FACILITY_TYPES, APPLICATION_ERROR_MESSAGES, APPLICATION_ROUTES, DOCUMENT_TYPES, YES_NO_CHOICE_CRM_MAPPING, RENEWAL_ROUTES } from '@/utils/constants'
 
 export default {
