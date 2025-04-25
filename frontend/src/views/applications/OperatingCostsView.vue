@@ -99,8 +99,6 @@
                 :uploaded-documents="mortgageStatement.uploadedDocuments"
                 @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
-          </div>
-          <div class="grey-card mt-8">
             <v-card class="pa-4">
               <AppDocumentUpload
                 id="supporting-document-upload"
@@ -185,16 +183,14 @@ export default {
       costsModel: {},
       rentLeaseInfoModel: {},
       financialStatement: {
-        mortgageStatement: {
-          uploadedDocuments: [],
-          documentsToUpload: [],
-          documentsToDelete: [],
-        },
-        balanceSheet: {
-          uploadedDocuments: [],
-          documentsToUpload: [],
-          documentsToDelete: [],
-        },
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        documentsToDelete: [],
+      },
+      balanceSheet: {
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        documentsToDelete: [],
       },
       mortgageStatement: {
         uploadedDocuments: [],
@@ -233,12 +229,13 @@ export default {
     },
     isFormComplete() {
       return (
-        (this.facilityType &&
-          this.isRentLeaseInformationComplete &&
-          this.totalOperationalCost > 0 &&
-          ((!this.isRenewal && this.isRentLeaseDocsUploaded && this.financialDocsUploaded && this.isBalanceSheetUploaded) || (this.isRenewal && this.isRentLeaseDocsUploaded))) ||
-        (this.isOwnedWithMortgage && this.isMortgageDocsUploaded) ||
-        (!this.isRentLease && !this.isOwnedWithMortgage && !this.isRenewal && this.financialDocsUploaded)
+        this.facilityType &&
+        this.isRentLeaseInformationComplete &&
+        this.totalOperationalCost > 0 &&
+        ((this.isRentLease && !this.isRenewal && this.isRentLeaseDocsUploaded && this.isFinancialDocsUploaded && this.isBalanceSheetUploaded) ||
+          (this.isRentLease && this.isRenewal && this.isRentLeaseDocsUploaded) ||
+          (this.isOwnedWithMortgage && this.isMortgageDocsUploaded) ||
+          (!this.isRentLease && !this.isOwnedWithMortgage))
       )
     },
     isRentLeaseInformationComplete() {
@@ -252,9 +249,10 @@ export default {
       return Object.values(this.costsModel).reduce((total, cost) => total + Number(cost), 0)
     },
     isFinancialDocsUploaded() {
-      const isFinancialStatementUploaded = !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments)
-      const isBalanceSheetUploaded = !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments)
-      return isFinancialStatementUploaded && isBalanceSheetUploaded
+      return !isEmpty(this.financialStatement?.documentsToUpload) || !isEmpty(this.financialStatement?.uploadedDocuments)
+    },
+    isBalanceSheetUploaded() {
+      return !isEmpty(this.balanceSheet?.documentsToUpload) || !isEmpty(this.balanceSheet?.uploadedDocuments)
     },
     isRentLease() {
       return this.facilityType === FACILITY_TYPES.RENT_LEASE
@@ -350,7 +348,6 @@ export default {
     // Only service providers who rent, or lease space need to upload documents (i.e.: a copy of my rent/lease agreement).
     async saveApplication(showAlert = false) {
       try {
-        console.log('Reached saveApplication. Preparing to send payload...')
         let reloadApplication = false
         this.$emit('process', true)
         this.processing = true

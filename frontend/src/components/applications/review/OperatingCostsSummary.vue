@@ -66,7 +66,7 @@
             <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
               <AppMissingInfoError
                 v-if="!readonly && !documentsFinancialStatements.length"
-                :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{ name: routeName, hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
@@ -75,7 +75,7 @@
             <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
               <AppMissingInfoError
                 v-if="!readonly && !documentsBalanceSheets.length"
-                :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{ name: routeName, hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>

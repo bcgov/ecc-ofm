@@ -257,5 +257,8 @@ export const useApplicationsStore = defineStore('applications', {
     checkDeclareSubmitComplete() {
       return this.currentApplication?.applicationDeclaration
     },
+    isRenewal() {
+      return !!this.$route.meta.isRenewal
+    },
   },
 })
