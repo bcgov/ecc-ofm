@@ -1,12 +1,12 @@
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
+import { isEmpty } from 'lodash'
+import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
-import { defineStore } from 'pinia'
-import { isEmpty } from 'lodash'
 import { useAppStore } from '@/stores/app'
+import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
