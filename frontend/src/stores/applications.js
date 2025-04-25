@@ -1,12 +1,12 @@
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
+import { isEmpty } from 'lodash'
+import { defineStore } from 'pinia'
 
 import ApplicationService from '@/services/applicationService'
 import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
-import { defineStore } from 'pinia'
-import { isEmpty } from 'lodash'
 import { useAppStore } from '@/stores/app'
+import { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
@@ -25,6 +25,7 @@ export const useApplicationsStore = defineStore('applications', {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isEligibilityComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
     isRenewalApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
     isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
+    isRenewal: (state) => state.currentApplication?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL,
   },
   actions: {
     checkApplicationComplete() {
@@ -256,9 +257,6 @@ export const useApplicationsStore = defineStore('applications', {
     */
     checkDeclareSubmitComplete() {
       return this.currentApplication?.applicationDeclaration
-    },
-    isRenewal() {
-      return !!this.$route.meta.isRenewal
     },
   },
 })
