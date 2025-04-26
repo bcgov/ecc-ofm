@@ -173,12 +173,12 @@ export const useApplicationsStore = defineStore('applications', {
         DOCUMENT_TYPES.BALANCE_SHEET,
       ])
       const uploadedMortgageDocs = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.MORTGAGE_STATEMENT])
-      const noFacilityTypeDocsRequired = !isRentLease && !isMortgageOwned
 
-      const isFacilityTypeRequiredDocsUploaded =
-        noFacilityTypeDocsRequired ||
-        (isRentLease && ((!this.isRenewal && uploadedRentLeaseAndFinancialDocs) || (this.isRenewal && uploadedRentLeaseDocs))) ||
-        (isMortgageOwned && uploadedMortgageDocs)
+      const noFacilityTypeDocsRequired = !isRentLease && !isMortgageOwned
+      const rentLeaseRequiredDocsUploaded = isRentLease && ((!this.isRenewal && uploadedRentLeaseAndFinancialDocs) || (this.isRenewal && uploadedRentLeaseDocs))
+      const mortgageOwnedRequiredDocsUploaded = isMortgageOwned && uploadedMortgageDocs
+
+      const isFacilityTypeRequiredDocsUploaded = noFacilityTypeDocsRequired || rentLeaseRequiredDocsUploaded || mortgageOwnedRequiredDocsUploaded
 
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
       const isRentLeaseInformationComplete =
