@@ -6,27 +6,50 @@
     </div>
     <div v-else>
       <div class="min-height-screen my-4">
-        <v-row v-if="!$route.params.applicationGuid" no-gutters class="my-8">
-          <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
-            <AppLabel>To start your application, select a facility:</AppLabel>
-            <div>
-              <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
-              <span>If your facility is not listed, contact your Account Manager.</span>
-            </div>
-          </v-col>
-          <v-col cols="12" md="6" xl="4">
-            <v-select
-              id="select-facility"
-              v-model="facilityId"
-              :items="facilities"
-              item-title="facilityName"
-              item-value="facilityId"
-              :rules="rules.required"
-              placeholder="Select a facility"
-              density="compact"
-              variant="outlined"></v-select>
-          </v-col>
-        </v-row>
+        <template v-if="!$route.params.applicationGuid">
+          <v-row no-gutters class="my-8">
+            <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
+              <AppLabel>To start your application, select a facility:</AppLabel>
+              <div>
+                <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+                <span>If your facility is not listed, contact your Account Manager.</span>
+              </div>
+            </v-col>
+            <v-col cols="12" md="6" xl="4">
+              <v-select
+                id="select-facility"
+                v-model="facilityId"
+                :items="facilities"
+                item-title="facilityName"
+                item-value="facilityId"
+                :rules="rules.required"
+                placeholder="Select a facility"
+                density="compact"
+                variant="outlined"></v-select>
+            </v-col>
+          </v-row>
+          <v-row v-if="faSelectorActive" no-gutters class="my-8">
+            <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
+              <AppLabel>You have two funding agreements active. Which one do you want?</AppLabel>
+              <div>
+                <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+                <span>do we need a tooltip here?</span>
+              </div>
+            </v-col>
+            <v-col cols="12" md="6" xl="4">
+              <v-select
+                id="select-facility"
+                v-model="fundingAgreementId"
+                :items="facilityFundingAgreements"
+                item-title="fundingAgreementNumber"
+                item-value="fundingId"
+                :rules="rules.required"
+                placeholder="Select a funding agreement"
+                density="compact"
+                variant="outlined"></v-select>
+            </v-col>
+          </v-row>
+        </template>
         <div v-if="application">
           <span>You are applying for this allowance linked to your base funding &ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
@@ -97,6 +120,9 @@ export default {
       application: undefined,
       facilities: [],
       facilityId: undefined,
+      faSelectorActive: false,
+      fundingAgreementId: undefined,
+      facilityFundingAgreements: undefined,
     }
   },
 
@@ -122,7 +148,24 @@ export default {
   watch: {
     facilityId: {
       handler(facilityId) {
-        this.application = this.getValidApplication(facilityId)
+        const facilityApps = this.applications.filter((fac) => fac.facilityId === facilityId)
+        this.faSelectorActive = false
+        this.facilityFundingAgreements = null
+        this.fundingAgreementId = null
+        this.application = null
+        if (facilityApps.length === 1) {
+          this.application = this.getValidApplication(facilityId)
+        } else {
+          this.faSelectorActive = true
+          this.facilityFundingAgreements = facilityApps.map((app) => app.fundingAgreement)
+        }
+      },
+    },
+    fundingAgreementId: {
+      handler(fundingAgreementId) {
+        if (fundingAgreementId) {
+          this.application = this.applications.find((application) => application.fundingAgreement?.fundingId === fundingAgreementId)
+        }
       },
     },
   },

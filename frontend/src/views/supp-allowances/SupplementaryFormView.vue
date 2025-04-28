@@ -31,7 +31,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="fundingExpiryDate != 'Invalid Date'">
+    <v-row v-if="fundingExpiryDate">
       <v-col cols="12">
         <div v-if="!nextTermActive">If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToUTC(fundingExpiryDate) }}</div>
       </v-col>
@@ -561,6 +561,14 @@ export default {
       let termTwoEndDate
       let termOneEndDate
 
+      // console.log(formattedEndDate)
+      // console.log(this.fundingAgreement?.endDate)
+      // console.log('start', formattedStartDate)
+      // console.log(daysOfTerm)
+      // console.log(termOneEndDate)
+
+      // console.log(this.fundingAgreement)
+
       //ofmcc-6357- allow supp terms to work with both a FA term of 2 and 3 years in length
       //this will account for leap years as a standard non leap year term would be 729 days.
       if (daysOfTerm > TWO_YEARS) {
@@ -576,7 +584,7 @@ export default {
         //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
         //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
         case today < termOneEndDate || !this.fundingAgreement?.endDate:
-          this.fundingExpiryDate = termOneEndDate
+          this.fundingExpiryDate = this.fundingAgreement?.endDate ? termOneEndDate : null
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.setIsCurrentTermDisabled(termOneEndDate, today)
