@@ -51,35 +51,45 @@
       </div>
 
       <!-- UPLOAD DOCUMENTS -->
-      <div class="mt-4">
+      <div v-if="showUploadedDocs" class="mt-4">
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
-          <v-card class="mt-2 mb-3 pa-3">
+          <v-card v-if="isRentLease" class="mt-2 mb-3 pa-3">
+            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.RENT_LEASE_AGREEMENT" :uploaded-documents="documentsRentLease" />
+            <AppMissingInfoError
+              v-if="!readonly && !documentsRentLease.length"
+              :to="{ name: routeName, hash: '#rent-lease-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+              {{ DOCUMENT_TYPES.RENT_LEASE_AGREEMENT }} document upload required
+            </AppMissingInfoError>
+          </v-card>
+          <v-card v-if="!isRenewal" class="mt-2 mb-3 pa-3">
             <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
               <AppMissingInfoError
                 v-if="!readonly && !documentsFinancialStatements.length"
-                :to="{ name: 'operating-costs', hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{ name: routeName, hash: '#financial-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.INCOME_STATEMENT }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
           </v-card>
-          <v-card class="pl-3">
+          <v-card v-if="!isRenewal" class="pl-3">
             <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
               <AppMissingInfoError
                 v-if="!readonly && !documentsBalanceSheets.length"
-                :to="{ name: 'operating-costs', hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+                :to="{ name: routeName, hash: '#balance-sheet-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
                 {{ DOCUMENT_TYPES.BALANCE_SHEET }} document upload required
               </AppMissingInfoError>
             </AppDocumentUpload>
           </v-card>
-          <v-card class="pl-3 mt-3 pt-0">
-            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploaded-documents="documentsSupporting">
-              <AppMissingInfoError
-                v-if="!readonly && isRentLease && !documentsSupporting.length"
-                :to="{ name: 'operating-costs', hash: '#supporting-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
-                {{ DOCUMENT_TYPES.SUPPORTING_DOCS }} upload required
-              </AppMissingInfoError>
-            </AppDocumentUpload>
+          <v-card v-if="isOwnedWithMortgage" class="pl-3 mt-2 mb-3 pa-3">
+            <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.MORTGAGE_STATEMENT" :uploaded-documents="documentsMortgage" />
+            <AppMissingInfoError
+              v-if="!readonly && !documentsMortgage.length"
+              :to="{ name: routeName, hash: '#mortgage-statement-document-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+              {{ DOCUMENT_TYPES.MORTGAGE_STATEMENT }} document upload required
+            </AppMissingInfoError>
+          </v-card>
+          <v-card v-if="showSupportingDocs" class="pl-3 mt-3 pt-0">
+            <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.SUPPORTING_DOCS" :uploaded-documents="documentsSupporting" />
           </v-card>
         </v-card>
       </div>
@@ -88,7 +98,9 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
+
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import AppMissingInfoError from '@/components/ui/AppMissingInfoError.vue'
@@ -122,6 +134,9 @@ export default {
     isRentLease() {
       return this.currentApplication?.facilityType === FACILITY_TYPES.RENT_LEASE
     },
+    isOwnedWithMortgage() {
+      return this.currentApplication?.facilityType === FACILITY_TYPES.OWNED_WITH_MORTGAGE
+    },
     totalOperationalCost() {
       return this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts
     },
@@ -131,8 +146,20 @@ export default {
     documentsBalanceSheets() {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.BALANCE_SHEET)
     },
+    documentsRentLease() {
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.RENT_LEASE_AGREEMENT)
+    },
+    documentsMortgage() {
+      return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.MORTGAGE_STATEMENT)
+    },
     documentsSupporting() {
       return this.documents.filter((doc) => doc.documentType === DOCUMENT_TYPES.SUPPORTING_DOCS)
+    },
+    showSupportingDocs() {
+      return !isEmpty(this.documentsSupporting)
+    },
+    showUploadedDocs() {
+      return this.isRentLease || this.isOwnedWithMortgage || this.showSupportingDocs
     },
     routeName() {
       return this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS

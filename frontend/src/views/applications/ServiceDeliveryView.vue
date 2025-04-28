@@ -56,7 +56,13 @@
       <v-card class="my-4 pa-4">
         <h4>Upload Documents</h4>
         <div>{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-        <AppMissingInfoError v-if="showErrorMessage && !isHealthAuthorityReportsUploaded">{{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}</AppMissingInfoError>
+        <AppMissingInfoError v-if="showErrorMessage && !isHealthAuthorityReportsUploaded">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
+        </AppMissingInfoError>
+        <AppMissingInfoError v-if="showErrorMessage && !isPolicyProcedureManualUploaded">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_POLICY_PROCEDURE_UPLOAD }}
+        </AppMissingInfoError>
+
         <div class="grey-card mt-2">
           <v-card class="pa-4">
             <AppDocumentUpload
@@ -70,6 +76,18 @@
               :document-type="DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT"
               :uploaded-documents="healthAuthorityReports?.uploadedDocuments"
               @delete-uploaded-document="deleteUploadedHealthAuthorityReports"
+              @update:model-value="setFormComplete" />
+            <AppDocumentUpload
+              id="policy-and-procedure-upload"
+              v-model="policyProcedureManual.documentsToUpload"
+              entity-name="ofm_applications"
+              :loading="processing"
+              :readonly="readonly"
+              upload-limit="1"
+              :document-label="DOCUMENT_LABELS.POLICY_PROCEDURE_MANUAL"
+              :document-type="DOCUMENT_TYPES.POLICY_PROCEDURE_MANUAL"
+              :uploaded-documents="policyProcedureManual?.uploadedDocuments"
+              @delete-uploaded-document="deleteUploadedPolicyProcedureManual"
               @update:model-value="setFormComplete" />
           </v-card>
         </div>
@@ -160,6 +178,11 @@ export default {
         documentsToUpload: [],
         documentsToDelete: [],
       },
+      policyProcedureManual: {
+        uploadedDocuments: [],
+        documentsToUpload: [],
+        documentsToDelete: [],
+      },
     }
   },
 
@@ -189,6 +212,9 @@ export default {
     isHealthAuthorityReportsUploaded() {
       return !isEmpty(this.healthAuthorityReports?.documentsToUpload) || !isEmpty(this.healthAuthorityReports?.uploadedDocuments)
     },
+    isPolicyProcedureManualUploaded() {
+      return !isEmpty(this.policyProcedureManual?.documentsToUpload) || !isEmpty(this.policyProcedureManual?.uploadedDocuments)
+    },
 
     hasLicenceDocumentsToProcess() {
       return Object.keys(this.licenceDocuments)?.some((licence) => !isEmpty(this.licenceDocuments[licence]?.documentsToUpload) || !isEmpty(this.licenceDocuments[licence]?.documentsToDelete))
@@ -196,6 +222,9 @@ export default {
 
     hasHealthAuthorityReportDocumentsToProcess() {
       return !isEmpty(this.healthAuthorityReports?.documentsToUpload) || !isEmpty(this.healthAuthorityReports?.documentsToDelete)
+    },
+    hasPolicyProcedureManualDocumentsToProcess() {
+      return !isEmpty(this.policyProcedureManual?.documentsToUpload) || !isEmpty(this.policyProcedureManual?.documentsToDelete)
     },
   },
 
@@ -252,7 +281,8 @@ export default {
       try {
         this.$emit('process', true)
         this.processing = true
-        let reloadApplication = !isEmpty(this.changedLicences) || this.hasLicenceDocumentsToProcess || this.hasHealthAuthorityReportDocumentsToProcess
+        let reloadApplication =
+          !isEmpty(this.changedLicences) || this.hasLicenceDocumentsToProcess || this.hasHealthAuthorityReportDocumentsToProcess || this.hasPolicyProcedureManualDocumentsToProcess
         const payload = {
           licenceDeclaration: this.licenceDeclaration,
         }
@@ -274,6 +304,9 @@ export default {
 
         if (this.hasHealthAuthorityReportDocumentsToProcess) {
           await this.processHealthAuthorityReportDocuments()
+        }
+        if (this.hasPolicyProcedureManualDocumentsToProcess) {
+          await this.processPolicyProcedureManualDocuments()
         }
 
         if (reloadApplication) {
@@ -348,6 +381,7 @@ export default {
       this.isServiceDeliveryComplete =
         this.currentApplication.licences.every((licence) => licence.isLicenceDetailsComplete && this.isLicenceDocumentUploaded(licence)) &&
         this.isHealthAuthorityReportsUploaded &&
+        this.isPolicyProcedureManualUploaded &&
         this.licenceDeclaration
     },
 
@@ -362,6 +396,11 @@ export default {
       )
       this.healthAuthorityReports = {
         uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT)),
+        documentsToUpload: [],
+        documentsToDelete: [],
+      }
+      this.policyProcedureManual = {
+        uploadedDocuments: this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.POLICY_PROCEDURE_MANUAL)),
         documentsToUpload: [],
         documentsToDelete: [],
       }
@@ -404,6 +443,19 @@ export default {
       if (index > -1) {
         this.healthAuthorityReports?.documentsToDelete.push(documentId)
         this.healthAuthorityReports?.uploadedDocuments.splice(index, 1)
+      }
+      this.setFormComplete()
+    },
+    async processPolicyProcedureManualDocuments() {
+      await DocumentService.createDocuments(this.policyProcedureManual?.documentsToUpload, this.$route.params.applicationGuid)
+      await Promise.all(this.policyProcedureManual?.documentsToDelete.map(async (documentId) => await DocumentService.deleteDocument(documentId)))
+    },
+
+    deleteUploadedPolicyProcedureManual(documentId, _) {
+      const index = this.policyProcedureManual?.uploadedDocuments?.findIndex((item) => item.documentId === documentId)
+      if (index > -1) {
+        this.policyProcedureManual?.documentsToDelete.push(documentId)
+        this.policyProcedureManual?.uploadedDocuments.splice(index, 1)
       }
       this.setFormComplete()
     },
