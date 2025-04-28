@@ -260,7 +260,6 @@ export default {
       }
     },
     isAddCoreApplicationAllowed() {
-      console.log(this.userInfo?.facilities)
       const intakeWindowOpenAndValid = this.userInfo?.facilities?.some(
         (facility) =>
           facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
@@ -268,22 +267,17 @@ export default {
           facility.ccofEnrolmentCheckForAddApplication &&
           !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
       )
-      console.log('windowOpen ', intakeWindowOpenAndValid)
 
       const hasDraftApplication = this.applications?.some(
         (application) =>
           application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode === APPLICATION_STATUS_CODES.DRAFT && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
       )
-      console.log('draft? ', hasDraftApplication)
 
       const hasMissingApplication = this.userInfo?.facilities?.some((facility) => {
         return !this.applications?.some((application) => {
           return application?.facilityId === facility.facilityId && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW
         })
       })
-
-      console.log('is missing app', hasMissingApplication)
-
       return intakeWindowOpenAndValid && (hasDraftApplication || hasMissingApplication)
     },
     isCCOFEnrolmentCheckSatisfied() {
