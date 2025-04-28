@@ -166,19 +166,18 @@ export const useApplicationsStore = defineStore('applications', {
     checkOperatingCostsComplete() {
       const isRentLease = this.isRentLease(this.currentApplication)
       const isMortgageOwned = this.isMortgageOwned(this.currentApplication)
+
       const uploadedRentLeaseDocs = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.RENT_LEASE_AGREEMENT])
-      const uploadedRentLeaseAndFinancialDocs = this.checkRequiredDocsExist(this.currentApplication, [
-        DOCUMENT_TYPES.RENT_LEASE_AGREEMENT,
-        DOCUMENT_TYPES.INCOME_STATEMENT,
-        DOCUMENT_TYPES.BALANCE_SHEET,
-      ])
       const uploadedMortgageDocs = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.MORTGAGE_STATEMENT])
 
       const noFacilityTypeDocsRequired = !isRentLease && !isMortgageOwned
-      const rentLeaseRequiredDocsUploaded = isRentLease && ((!this.isRenewal && uploadedRentLeaseAndFinancialDocs) || (this.isRenewal && uploadedRentLeaseDocs))
+      const rentLeaseRequiredDocsUploaded = isRentLease && uploadedRentLeaseDocs
       const mortgageOwnedRequiredDocsUploaded = isMortgageOwned && uploadedMortgageDocs
 
-      const isFacilityTypeRequiredDocsUploaded = noFacilityTypeDocsRequired || rentLeaseRequiredDocsUploaded || mortgageOwnedRequiredDocsUploaded
+      // Financial docs are required for new Applications only
+      const applicationDocsUploaded = this.isRenewal ? true : this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
+
+      const isFacilityTypeRequiredDocsUploaded = applicationDocsUploaded && (noFacilityTypeDocsRequired || rentLeaseRequiredDocsUploaded || mortgageOwnedRequiredDocsUploaded)
 
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
       const isRentLeaseInformationComplete =

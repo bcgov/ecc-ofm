@@ -62,7 +62,7 @@
               {{ DOCUMENT_TYPES.RENT_LEASE_AGREEMENT }} document upload required
             </AppMissingInfoError>
           </v-card>
-          <v-card v-if="!isRenewal && isRentLease" class="mt-2 mb-3 pa-3">
+          <v-card v-if="!isRenewal" class="mt-2 mb-3 pa-3">
             <AppDocumentUpload :readonly="true" :document-type="DOCUMENT_TYPES.INCOME_STATEMENT" :uploaded-documents="documentsFinancialStatements">
               <AppMissingInfoError
                 v-if="!readonly && !documentsFinancialStatements.length"
@@ -71,7 +71,7 @@
               </AppMissingInfoError>
             </AppDocumentUpload>
           </v-card>
-          <v-card v-if="!isRenewal && isRentLease" class="pl-3">
+          <v-card v-if="!isRenewal" class="pl-3">
             <AppDocumentUpload class="pt-4 pa-3" :readonly="true" :document-type="DOCUMENT_TYPES.BALANCE_SHEET" :uploaded-documents="documentsBalanceSheets">
               <AppMissingInfoError
                 v-if="!readonly && !documentsBalanceSheets.length"

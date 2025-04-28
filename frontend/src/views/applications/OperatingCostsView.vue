@@ -53,7 +53,7 @@
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}
         </AppMissingInfoError>
         <v-card class="mt-2 pa-4" variant="outlined">
-          <div v-if="isRentLease || isOwnedWithMortgage" class="grey-card mt-2">
+          <div class="grey-card mt-2">
             <v-card v-if="isRentLease" class="mb-4 pa-4">
               <AppDocumentUpload
                 id="rent-lease-agreement-upload"
@@ -66,7 +66,18 @@
                 :uploaded-documents="rentLeaseAgreement.uploadedDocuments"
                 @delete-uploaded-document="deleteUploadedDocument" />
             </v-card>
-            <v-card v-if="isRentLease && !isRenewal" class="mb-4 pa-4">
+            <v-card v-if="isOwnedWithMortgage" class="mb-4 pa-4">
+              <AppDocumentUpload
+                id="mortgage-statement-upload"
+                v-model="mortgageStatement.documentsToUpload"
+                entity-name="ofm_applications"
+                :document-type="DOCUMENT_TYPES.MORTGAGE_STATEMENT"
+                :loading="processing"
+                :readonly="readonly"
+                :uploaded-documents="mortgageStatement.uploadedDocuments"
+                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
+            </v-card>
+            <v-card v-if="!isRenewal" class="mb-4 pa-4">
               <AppDocumentUpload
                 id="financial-document-upload"
                 v-model="financialStatement.documentsToUpload"
@@ -77,7 +88,7 @@
                 :uploaded-documents="financialStatement.uploadedDocuments"
                 @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
-            <v-card v-if="isRentLease && !isRenewal" class="mb-4 pa-4">
+            <v-card v-if="!isRenewal" class="mb-4 pa-4">
               <AppDocumentUpload
                 id="balance-sheet-document-upload"
                 v-model="balanceSheet.documentsToUpload"
@@ -86,17 +97,6 @@
                 :loading="processing"
                 :readonly="readonly"
                 :uploaded-documents="balanceSheet.uploadedDocuments"
-                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
-            </v-card>
-            <v-card v-if="isOwnedWithMortgage" class="mb-4 pa-4">
-              <AppDocumentUpload
-                id="mortgage-statement-upload"
-                v-model="mortgageStatement.documentsToUpload"
-                entity-name="ofm_applications"
-                :document-type="DOCUMENT_TYPES.MORTGAGE_STATEMENT"
-                :loading="processing"
-                :readonly="readonly"
-                :uploaded-documents="mortgageStatement.uploadedDocuments"
                 @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
             </v-card>
             <v-card class="pa-4">
@@ -228,14 +228,13 @@ export default {
       return sanitizedModel
     },
     isFormComplete() {
+      const applicationDocsUploaded = this.isRenewal ? true : this.isFinancialDocsUploaded && this.isBalanceSheetUploaded
       return (
         this.facilityType &&
         this.isRentLeaseInformationComplete &&
         this.totalOperationalCost > 0 &&
-        ((this.isRentLease && !this.isRenewal && this.isRentLeaseDocsUploaded && this.isFinancialDocsUploaded && this.isBalanceSheetUploaded) ||
-          (this.isRentLease && this.isRenewal && this.isRentLeaseDocsUploaded) ||
-          (this.isOwnedWithMortgage && this.isMortgageDocsUploaded) ||
-          (!this.isRentLease && !this.isOwnedWithMortgage))
+        applicationDocsUploaded &&
+        ((this.isRentLease && this.isRentLeaseDocsUploaded) || (this.isOwnedWithMortgage && this.isMortgageDocsUploaded) || (!this.isRentLease && !this.isOwnedWithMortgage))
       )
     },
     isRentLeaseInformationComplete() {
