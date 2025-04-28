@@ -230,7 +230,7 @@ export default {
     isFormComplete() {
       const applicationDocsUploaded = this.isRenewal ? true : this.isFinancialDocsUploaded && this.isBalanceSheetUploaded
       return (
-        this.facilityType &&
+        !!this.facilityType &&
         this.isRentLeaseInformationComplete &&
         this.totalOperationalCost > 0 &&
         applicationDocsUploaded &&
