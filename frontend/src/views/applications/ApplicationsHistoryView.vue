@@ -190,7 +190,6 @@ import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { useAppStore } from '@/stores/app'
-import { drop } from 'lodash'
 
 export default {
   components: { AppButton, AppBackButton, CancelApplicationDialog, FacilityFilter, AppAlertBanner, NewRequestDialog },
