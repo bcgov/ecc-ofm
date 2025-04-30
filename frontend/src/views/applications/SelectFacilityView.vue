@@ -139,13 +139,18 @@ export default {
         })
       }
 
-      return this.userInfo?.facilities?.filter(
-        (facility) =>
+      //ofm-7276: update filter to only show facilities eligible to add a brand new application, or continue a draft.
+      //we should prevent using this page to send a user down a read-only path of an application
+      return this.userInfo?.facilities?.filter((facility) => {
+        return (
           facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
           facility.intakeWindowCheckForAddApplication &&
           facility.ccofEnrolmentCheckForAddApplication &&
-          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
-      )
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId) &&
+          (!this.loadedApplications?.some((application) => application?.facilityId === facility.facilityId) ||
+            this.loadedApplications?.some((application) => application?.facilityId === facility.facilityId && application?.statusCode === APPLICATION_STATUS_CODES.DRAFT))
+        )
+      })
     },
   },
 
@@ -162,7 +167,6 @@ export default {
     },
 
     next: {
-      //TODO - this will change more as we create the renewal application
       async handler() {
         this.$refs.form?.validate()
         if (!this.isFormComplete || !this.documentsComplete) return
@@ -209,8 +213,7 @@ export default {
       }
       this.loadedApplications = await ApplicationService.getActiveRenewalApplications()
     } else {
-      this.loadedApplications = await ApplicationService.getActiveApplications()
-
+      this.loadedApplications = await ApplicationService.getActiveBaseApplications()
       //get the redirected applications so we can prevent those facilities from starting another OFM app
       this.redirectedApplications = await ApplicationService.getRedirectedApplications(
         this.userInfo?.facilities.filter((fac) => !this.loadedApplications.some((el) => el.facilityId === fac.facilityId)),
