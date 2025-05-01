@@ -159,7 +159,7 @@ export default {
       return !isEmpty(this.documentsSupporting)
     },
     showUploadedDocs() {
-      return this.isRentLease || this.isOwnedWithMortgage || this.showSupportingDocs
+      return !this.isRenewal || (this.isRenewal && (this.isRentLease || this.isOwnedWithMortgage || this.showSupportingDocs))
     },
     routeName() {
       return this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS
