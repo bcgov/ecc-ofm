@@ -36,7 +36,7 @@
             </v-card-title>
             <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-facility-select' }" class="ma-2 mt-8">
+              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-8">
                 Add Allowances Application
               </AppButton>
             </v-card-actions>
