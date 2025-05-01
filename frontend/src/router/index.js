@@ -43,6 +43,7 @@ import ReportingView from '@/views/reports/ReportingView.vue'
 import SurveyView from '@/views/reports/SurveyView.vue'
 import SupplementaryAllowanceView from '@/views/supp-allowances/SupplementaryAllowanceView.vue'
 import SupplementaryConfirmationView from '@/views/supp-allowances/SupplementaryConfirmation.vue'
+import SupplementaryFacilityView from '@/views/supp-allowances/SupplementaryFacilityView.vue'
 import SupplementaryFormView from '@/views/supp-allowances/SupplementaryFormView.vue'
 import SupplementarySubmitView from '@/views/supp-allowances/SupplementarySubmitView.vue'
 
@@ -328,6 +329,15 @@ const router = createRouter({
           },
         },
       ],
+    },
+    {
+      path: '/supp-facility-select',
+      name: 'supp-facility-select',
+      component: SupplementaryFacilityView,
+      meta: {
+        requiresAuth: true,
+        permission: PERMISSIONS.VIEW_APPLICATIONS,
+      },
     },
     {
       path: '/supp-allowances',
