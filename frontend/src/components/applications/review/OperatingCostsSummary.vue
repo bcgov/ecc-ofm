@@ -51,7 +51,7 @@
       </div>
 
       <!-- UPLOAD DOCUMENTS -->
-      <div class="mt-4">
+      <div v-if="showUploadedDocs || !isRenewal" class="mt-4">
         <h4>Uploaded Document(s)</h4>
         <v-card class="pa-3" variant="outlined">
           <v-card v-if="isRentLease" class="mt-2 mb-3 pa-3">
@@ -157,6 +157,9 @@ export default {
     },
     showSupportingDocs() {
       return !isEmpty(this.documentsSupporting)
+    },
+    showUploadedDocs() {
+      return this.isRenewal && (this.isRentLease || this.isOwnedWithMortgage || this.showSupportingDocs)
     },
     routeName() {
       return this.isRenewal ? RENEWAL_ROUTES.OPERATING_COSTS : APPLICATION_ROUTES.OPERATING_COSTS
