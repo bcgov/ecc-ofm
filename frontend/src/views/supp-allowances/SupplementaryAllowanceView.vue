@@ -6,7 +6,7 @@
     </div>
     <div v-else>
       <div class="min-height-screen my-4">
-        <template v-if="!$route.params.applicationGuid && !wasNextClicked">
+        <template v-if="showRouterView">
           <v-row no-gutters class="my-8">
             <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
               <AppLabel>To start your application, select a facility:</AppLabel>
@@ -50,7 +50,7 @@
             </v-col>
           </v-row>
         </template>
-        <div v-if="wasNextClicked">
+        <div v-if="wasNextClicked || $route.params.applicationGuid">
           <span>You are applying for this allowance linked to your base funding &ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
@@ -143,6 +143,9 @@ export default {
     },
     showSubmit() {
       return !isEmpty(this.application) && ['supp-allowances-submit'].includes(this.$route.name)
+    },
+    showRouterView() {
+      return !this.$route.params.applicationGuid && !this.wasNextClicked
     },
   },
 
