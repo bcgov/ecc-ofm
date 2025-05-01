@@ -43,13 +43,13 @@
       <v-card class="my-6 px-6 py-4">
         <h4>Upload Documents</h4>
         <div>{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
-        <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isRentLeaseDocsUploaded">
+        <AppMissingInfoError v-if="showRentLeaseErrorMessage">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_RENT_LEASE_UPLOAD }}
         </AppMissingInfoError>
-        <AppMissingInfoError v-if="showErrorMessage && isOwnedWithMortgage && !isMortgageDocsUploaded">
+        <AppMissingInfoError v-if="showMortgageErrorMessage">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_MORTGAGE_UPLOAD }}
         </AppMissingInfoError>
-        <AppMissingInfoError v-if="showErrorMessage && !isRenewal && (!isFinancialDocsUploaded || !isBalanceSheetUploaded)">
+        <AppMissingInfoError v-if="showFinancialDocsErrorMessage">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}
         </AppMissingInfoError>
         <v-card class="mt-2 pa-4" variant="outlined">
@@ -292,6 +292,15 @@ export default {
         default:
           return null
       }
+    },
+    showRentLeaseErrorMessage() {
+      return this.showErrorMessage && this.isRentLease && !this.isRentLeaseDocsUploaded
+    },
+    showMortgageErrorMessage() {
+      return this.showErrorMessage && this.isOwnedWithMortgage && !this.isMortgageDocsUploaded
+    },
+    showFinancialDocsErrorMessage() {
+      return this.showErrorMessage && !this.isRenewal && (!this.isFinancialDocsUploaded || !this.isBalanceSheetUploaded)
     },
   },
 
