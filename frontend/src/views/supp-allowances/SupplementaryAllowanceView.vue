@@ -6,7 +6,7 @@
     </div>
     <div v-else>
       <div class="min-height-screen my-4">
-        <template v-if="!$route.params.applicationGuid">
+        <template v-if="!$route.params.applicationGuid && !wasNextClicked">
           <v-row no-gutters class="my-8">
             <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
               <AppLabel>To start your application, select a facility:</AppLabel>
@@ -50,7 +50,7 @@
             </v-col>
           </v-row>
         </template>
-        <div v-if="application">
+        <div v-if="wasNextClicked">
           <span>You are applying for this allowance linked to your base funding &ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
@@ -123,6 +123,7 @@ export default {
       faSelectorActive: false,
       fundingAgreementId: undefined,
       facilityFundingAgreements: undefined,
+      wasNextClicked: false,
     }
   },
 
@@ -132,10 +133,10 @@ export default {
       return true
     },
     showCancel() {
-      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.wasNextClicked && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showSave() {
-      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.wasNextClicked && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showNext() {
       return !isEmpty(this.application) && ['supp-allowances-form'].includes(this.$route.name)
@@ -230,6 +231,7 @@ export default {
       this.save = !this.save
     },
     toggleNext() {
+      this.wasNextClicked = true
       this.next = !this.next
     },
     toggleSubmit() {
