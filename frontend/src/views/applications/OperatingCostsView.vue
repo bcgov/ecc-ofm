@@ -49,7 +49,7 @@
         <AppMissingInfoError v-if="showErrorMessage && isOwnedWithMortgage && !isMortgageDocsUploaded">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_MORTGAGE_UPLOAD }}
         </AppMissingInfoError>
-        <AppMissingInfoError v-if="showErrorMessage && isRentLease && !isRenewal && (!isFinancialDocsUploaded || !isBalanceSheetUploaded)">
+        <AppMissingInfoError v-if="showErrorMessage && !isRenewal && (!isFinancialDocsUploaded || !isBalanceSheetUploaded)">
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_FINANCIAL_UPLOAD }}
         </AppMissingInfoError>
         <v-card class="mt-2 pa-4" variant="outlined">
