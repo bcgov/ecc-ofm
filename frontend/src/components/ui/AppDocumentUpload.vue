@@ -4,6 +4,7 @@
       <v-row>
         <v-col v-if="documentLabel || documentType" cols="12" sm="7" class="pb-0">
           <AppLabel>{{ documentLabel ?? documentType }}</AppLabel>
+          <p v-if="documentHelpText" class="text-sm text-muted mt-1">{{ documentHelpText }}</p>
         </v-col>
         <v-col cols="12" :sm="documentType ? '5' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
           <div v-if="!documentType">{{ SUPPORTED_DOCUMENTS_MESSAGE }}</div>
@@ -72,6 +73,10 @@ export default {
       type: String,
       required: false,
       default: undefined,
+    },
+    documentHelpText: {
+      type: String,
+      default: '',
     },
     loading: {
       type: Boolean,

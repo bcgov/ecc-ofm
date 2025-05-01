@@ -374,9 +374,6 @@ export default {
     try {
       const authStore = useAuthStore()
       let applications = []
-
-      //first check if we have any active renewal applications.
-      //then - we should check our store / reload store to see if we have eligible applications up ready to get renewed.
       await Promise.all(
         authStore?.userInfo?.facilities?.map(async (facility) => {
           const response = await ApiService.apiAxios.get(
