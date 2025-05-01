@@ -48,6 +48,18 @@
           {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_HA_REPORT_UPLOAD }}
         </AppMissingInfoError>
       </AppDocumentUpload>
+      <AppDocumentUpload
+        class="pa-4"
+        :readonly="true"
+        :document-label="DOCUMENT_LABELS.POLICY_PROCEDURE_MANUAL"
+        :document-type="DOCUMENT_TYPES.POLICY_PROCEDURE_MANUAL"
+        :uploaded-documents="policyProcedureManualDocument">
+        <AppMissingInfoError
+          v-if="!readonly && !isPolicyProcedureManualUploaded()"
+          :to="{ name: routeName, hash: '#policy-and-procedure-upload', params: { applicationGuid: $route.params.applicationGuid } }">
+          {{ APPLICATION_ERROR_MESSAGES.DOCUMENT_POLICY_PROCEDURE_UPLOAD }}
+        </AppMissingInfoError>
+      </AppDocumentUpload>
     </v-card>
   </v-container>
 </template>
@@ -94,6 +106,9 @@ export default {
     healthAuthorityReportDocument() {
       return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
     },
+    policyProcedureManualDocument() {
+      return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.POLICY_PROCEDURE_MANUAL))
+    },
     routeName() {
       return this.isRenewal ? RENEWAL_ROUTES.SERVICE_DELIVERY : APPLICATION_ROUTES.SERVICE_DELIVERY
     },
@@ -106,7 +121,7 @@ export default {
     this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
   methods: {
-    ...mapActions(useApplicationsStore, ['isCCOFMissingDetailComplete', 'isSplitClassroomComplete', 'isLicenceDetailComplete', 'isHealthAuthorityReportUploaded']),
+    ...mapActions(useApplicationsStore, ['isCCOFMissingDetailComplete', 'isSplitClassroomComplete', 'isLicenceDetailComplete', 'isHealthAuthorityReportUploaded', 'isPolicyProcedureManualUploaded']),
     isEmpty,
     getLicenceDocument(licence) {
       return this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(licence?.licence))
