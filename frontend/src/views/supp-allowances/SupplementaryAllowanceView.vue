@@ -6,7 +6,7 @@
     </div>
     <div v-else>
       <div class="min-height-screen my-4">
-        <template v-if="showRouterView">
+        <template v-if="showDropdowns">
           <v-row no-gutters class="my-8">
             <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
               <AppLabel>To start your application, select a facility:</AppLabel>
@@ -144,8 +144,11 @@ export default {
     showSubmit() {
       return !isEmpty(this.application) && ['supp-allowances-submit'].includes(this.$route.name)
     },
-    showRouterView() {
+    showDropdowns() {
       return !this.$route.params.applicationGuid && !this.wasNextClicked
+    },
+    showRouterView() {
+      return thiss.wasNextClicked || this.$route.params.applicationGuid
     },
   },
 
