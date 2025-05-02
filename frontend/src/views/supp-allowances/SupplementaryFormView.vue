@@ -561,14 +561,6 @@ export default {
       let termTwoEndDate
       let termOneEndDate
 
-      // console.log(formattedEndDate)
-      // console.log(this.fundingAgreement?.endDate)
-      // console.log('start', formattedStartDate)
-      // console.log(daysOfTerm)
-      // console.log(termOneEndDate)
-
-      // console.log(this.fundingAgreement)
-
       //ofmcc-6357- allow supp terms to work with both a FA term of 2 and 3 years in length
       //this will account for leap years as a standard non leap year term would be 729 days.
       if (daysOfTerm > TWO_YEARS) {
