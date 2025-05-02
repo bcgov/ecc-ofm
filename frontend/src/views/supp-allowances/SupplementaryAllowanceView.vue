@@ -133,10 +133,10 @@ export default {
       return true
     },
     showCancel() {
-      return this.wasNextClicked && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.showRouterView && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showSave() {
-      return this.wasNextClicked && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.showRouterView && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showNext() {
       return !isEmpty(this.application) && ['supp-allowances-form'].includes(this.$route.name)
