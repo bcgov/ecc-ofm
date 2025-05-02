@@ -50,7 +50,7 @@
             </v-col>
           </v-row>
         </template>
-        <div v-if="wasNextClicked || $route.params.applicationGuid">
+        <div v-if="showRouterView">
           <span>You are applying for this allowance linked to your base funding &ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
@@ -148,7 +148,7 @@ export default {
       return !this.$route.params.applicationGuid && !this.wasNextClicked
     },
     showRouterView() {
-      return thiss.wasNextClicked || this.$route.params.applicationGuid
+      return this.wasNextClicked || this.$route.params.applicationGuid
     },
   },
 
