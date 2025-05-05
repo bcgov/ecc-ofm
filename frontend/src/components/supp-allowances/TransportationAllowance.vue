@@ -125,10 +125,10 @@
               id="application-document-upload"
               :key="model.supplementaryApplicationId ? model.supplementaryApplicationId : model.id"
               v-model="model.documentsToUpload"
-              entityName="ofm_allowances"
+              entity-name="ofm_allowances"
               :loading="readOnly(model)"
-              :uploadedDocuments="model.uploadedDocuments"
-              @deleteUploadedDocument="deleteUploadedDocument" />
+              :uploaded-documents="model.uploadedDocuments"
+              @delete-uploaded-document="deleteUploadedDocument" />
 
             <div v-if="areDocumentsMissing(model) && !readOnly">
               <v-row class="my-5">
@@ -159,7 +159,7 @@
             :max="formattedEndDate"
             label="From"
             clearable
-            @update:modelValue="updateDate(model)" />
+            @update:model-value="updateDate(model)" />
         </v-col>
       </v-row>
     </v-card>

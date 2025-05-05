@@ -1,13 +1,11 @@
-import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
-
 import ApiService from '@/common/apiService'
+import { ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 export default {
   async getActiveFundingAgreementByApplicationId(applicationId, ignoreMODAgreements = false) {
     try {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
-
       //Backend will order FA's so newest one (newest MOD agreement) will always be first
       //in the case of Supp Apps - we will need the start date of the ORIGINAL funding agreement - so take the last FA in the list
       if (ignoreMODAgreements) {
