@@ -123,7 +123,7 @@ export default {
       faSelectorActive: false,
       fundingAgreementId: undefined,
       facilityFundingAgreements: undefined,
-      wasNextClicked: false,
+      facilityOrFASelected: false,
     }
   },
 
@@ -145,10 +145,10 @@ export default {
       return !isEmpty(this.application) && ['supp-allowances-submit'].includes(this.$route.name)
     },
     showDropdowns() {
-      return !this.$route.params.applicationGuid && !this.wasNextClicked
+      return !this.$route.params.applicationGuid && !this.facilityOrFASelected
     },
     showRouterView() {
-      return this.wasNextClicked || this.$route.params.applicationGuid
+      return this.facilityOrFASelected || this.$route.params.applicationGuid
     },
   },
 
@@ -237,7 +237,11 @@ export default {
       this.save = !this.save
     },
     toggleNext() {
-      this.wasNextClicked = true
+      if (this.showDropdowns) {
+        // Flag when the user has confirmed their Facility or FA selection
+        // and clicked Next
+        this.facilityOrFASelected = true
+      }
       this.next = !this.next
     },
     toggleSubmit() {
