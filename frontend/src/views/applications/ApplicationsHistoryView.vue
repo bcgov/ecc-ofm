@@ -250,23 +250,17 @@ export default {
       )
     },
     ofmApplicationCardText() {
-      if (this.isAddCoreApplicationAllowed) {
+      if (!this.isIntakeWindowOpenAndValid) {
+        return 'The Application intake is currently closed.'
+      } else if (this.isAddCoreApplicationAllowed) {
         return 'Before starting an application, verify your organization and facility details in Account Management.'
       } else if (!this.isCCOFEnrolmentCheckSatisfied) {
         return 'Enrolment in CCOF for greater than 1 year is required to apply.'
       } else {
-        return 'The Application intake is currently closed.'
+        return 'You do not currently have any eligible facilities to apply to OFM. Please try again later. Thank you for your interest in the program.'
       }
     },
     isAddCoreApplicationAllowed() {
-      const intakeWindowOpenAndValid = this.userInfo?.facilities?.some(
-        (facility) =>
-          facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
-          facility.intakeWindowCheckForAddApplication &&
-          facility.ccofEnrolmentCheckForAddApplication &&
-          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
-      )
-
       const hasDraftApplication = this.applications?.some(
         (application) =>
           application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode === APPLICATION_STATUS_CODES.DRAFT && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
@@ -277,7 +271,16 @@ export default {
           return application?.facilityId === facility.facilityId && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW
         })
       })
-      return intakeWindowOpenAndValid && (hasDraftApplication || hasMissingApplication)
+      return this.isIntakeWindowOpenAndValid && (hasDraftApplication || hasMissingApplication)
+    },
+    isIntakeWindowOpenAndValid() {
+      return this.userInfo?.facilities?.some(
+        (facility) =>
+          facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
+          facility.intakeWindowCheckForAddApplication &&
+          facility.ccofEnrolmentCheckForAddApplication &&
+          !this.redirectedApplications?.some((el) => el.facilityId === facility.facilityId),
+      )
     },
     isCCOFEnrolmentCheckSatisfied() {
       return this.userInfo?.facilities?.some((facility) => facility.ccofEnrolmentCheckForAddApplication)
@@ -383,7 +386,7 @@ export default {
       await Promise.all(
         applications.map(async (application) => {
           application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          // we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user
+          // we should ignore MOD agreements below - if MOD FA is in status of not active - it will prevent the user
           // from applying for Irreg Expense funding
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
         }),
@@ -564,7 +567,7 @@ export default {
     async getIrregularExpenseApplications() {
       await Promise.all(
         this.applications?.map(async (application) => {
-          //you can only apply for Irreg Expesne if you have an active FA
+          //you can only apply for Irreg Expense if you have an active FA
           if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
             const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
             expenses?.forEach((expense) => {
