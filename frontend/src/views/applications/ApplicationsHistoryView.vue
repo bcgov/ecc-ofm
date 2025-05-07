@@ -257,7 +257,7 @@ export default {
       } else if (!this.isCCOFEnrolmentCheckSatisfied) {
         return 'Enrolment in CCOF for greater than 1 year is required to apply.'
       } else {
-        return 'You do not currently have any eligible facilities to apply to OFM. Please try again later. Thank you for your interest in the program.'
+        return 'Thank you for your interest in the $10 a Day program. At this time, your organization does not have facilities eligible for application.'
       }
     },
     isAddCoreApplicationAllowed() {
