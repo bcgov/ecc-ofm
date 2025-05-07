@@ -31,7 +31,7 @@
           <v-row v-if="faSelectorActive" no-gutters class="my-8">
             <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
               <AppLabel>Select an eligible funding agreement:</AppLabel>
-              <div>
+              <div class="d-flex align-start">
                 <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
                 <span>
                   There is more than one funding agreement eligible for Allowances. For more information about eligible funding agreements, please see the Policy and Procedure manual in the Help and
