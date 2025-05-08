@@ -382,7 +382,7 @@ const PaymentMappings = [
   { back: 'ofm_payment_type', front: 'paymentTypeCode' },
   { back: 'ofm_payment_type@OData.Community.Display.V1.FormattedValue', front: 'paymentTypeName' },
   { back: 'ofm_amount', front: 'amount' },
-  { back: 'ofm_invoice_date', front: 'invoiceDate' },
+  { back: 'ofm_invoice_received_date', front: 'invoiceReceivedDate' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
