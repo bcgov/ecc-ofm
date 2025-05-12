@@ -19,12 +19,8 @@
       </v-col>
     </v-row>
     <v-row v-if="isMinistryUserRequiredToImpersonate">
-      <v-col class="pa-1">
-        <v-alert density="compact" type="info" variant="tonal" border="left" class="ml-2 mr-2 mt-1 mb-2">
-          <div class="alert-info-text">
-            <strong>Note: To view the full portal, click your IDIR at the top right and select Impersonate from the dropdown menu.</strong>
-          </div>
-        </v-alert>
+      <v-col>
+        <AppAlertBanner type="info">Note: To view the full portal, click your IDIR at the top right and select Impersonate from the dropdown menu.</AppAlertBanner>
       </v-col>
     </v-row>
     <v-row v-if="isLoading">
@@ -83,10 +79,11 @@ import ReportsService from '@/services/reportsService'
 import RenewalFundingPopup from '@/components/funding/RenewalFundingPopup.vue'
 import SignFundingPopup from '@/components/funding/SignFundingPopup.vue'
 import { useAuthStore } from '@/stores/auth'
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
 export default {
   name: 'HomeView',
-  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, RenewalFundingPopup, SignFundingPopup },
+  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, RenewalFundingPopup, SignFundingPopup, AppAlertBanner },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -145,12 +142,6 @@ export default {
 }
 .alert-banner {
   border: 1px solid rgb(252, 186, 25);
-}
-
-.alert-info-text {
-  color: #000;
-  font-size: 0.85rem;
-  font-weight: 400;
 }
 
 a[id='help-card']:hover {
