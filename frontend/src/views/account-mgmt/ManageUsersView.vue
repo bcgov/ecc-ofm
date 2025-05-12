@@ -20,7 +20,16 @@
       <v-col class="pt-0 pb-0">
         <!-- Users Table -->
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded="expanded">
+          <v-data-table
+            :headers="headersUsers"
+            :items="filteredUserFacilities"
+            item-key="contactId"
+            item-value="contactId"
+            show-expand
+            density="compact"
+            :expanded="expanded"
+            :mobile="null"
+            mobile-breakpoint="md">
             <!-- Slot to customize expand row event -->
             <template v-slot:item.data-table-expand="{ item }">
               <AppButton @click.stop="toggleExpand(item)" variant="text">
@@ -59,7 +68,14 @@
                   <v-row>
                     <v-col cols="12" class="pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table :headers="headersFacilities" :items="getActiveFacilities(item.facilities)" item-key="facilityId" items-per-page="-1" density="compact">
+                      <v-data-table
+                        :headers="headersFacilities"
+                        :items="getActiveFacilities(item.facilities)"
+                        item-key="facilityId"
+                        items-per-page="-1"
+                        density="compact"
+                        :mobile="null"
+                        mobile-breakpoint="md">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
 
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>

@@ -54,7 +54,7 @@
     <v-row v-if="assistanceRequest" class="border-top">
       <v-col cols="12" class="border-right pa-0">
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table" data-cy="conversations-table">
+          <v-data-table-virtual :headers="headers" :items="assistanceRequestConversation" item-key="messageId" class="data-table" data-cy="conversations-table" :mobile="null" mobile-breakpoint="md">
             <template #headers></template>
             <template #item="{ item }">
               <v-row class="border-bottom ma-0">

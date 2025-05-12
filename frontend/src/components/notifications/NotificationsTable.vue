@@ -12,6 +12,8 @@
     fixed-header
     class="table"
     density="compact"
+    :mobile="null"
+    mobile-breakpoint="md"
     @click:row="rowClickHandler">
     <template #item.isRead="{ item }">
       <div :class="getItemClass(item)">
