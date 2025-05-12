@@ -70,6 +70,7 @@
 <script>
 import { mapState } from 'pinia'
 
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
 import alertMixin from '@/mixins/alertMixin'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -79,11 +80,10 @@ import ReportsService from '@/services/reportsService'
 import RenewalFundingPopup from '@/components/funding/RenewalFundingPopup.vue'
 import SignFundingPopup from '@/components/funding/SignFundingPopup.vue'
 import { useAuthStore } from '@/stores/auth'
-import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
 export default {
   name: 'HomeView',
-  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, RenewalFundingPopup, SignFundingPopup, AppAlertBanner },
+  components: { AppAlertBanner, AppHeroImage, NewRequestDialog, OrganizationHeader, RenewalFundingPopup, SignFundingPopup },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
