@@ -94,7 +94,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo', 'isMinistryUser', 'impersonateId', 'permissions']),
+    ...mapState(useAuthStore, ['userInfo', 'isMinistryUser', 'impersonateId']),
     isLoading() {
       return this.loading || this.loadingFA
     },
@@ -102,7 +102,7 @@ export default {
       return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS) && this.pendingReportsCount > 0
     },
     isMinistryUserRequiredToImpersonate() {
-      return this.isMinistryUser && !this.impersonatedId && (!Array.isArray(this.permissions) || this.permissions.length === 0)
+      return this.isMinistryUser && !this.impersonateId
     },
   },
   async created() {
