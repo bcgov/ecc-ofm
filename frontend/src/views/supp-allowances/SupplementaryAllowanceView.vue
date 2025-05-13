@@ -228,7 +228,7 @@ export default {
     },
 
     toggleBack() {
-      if (!this.application) {
+      if (this.showDropdowns) {
         this.$router.push({ name: 'applications-history' })
       }
       this.back = !this.back
