@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1" :mobile="null" mobile-breakpoint="md">
+    <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
       <template v-slot:item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">

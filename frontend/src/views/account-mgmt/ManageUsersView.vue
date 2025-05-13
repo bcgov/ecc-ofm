@@ -58,15 +58,20 @@
 
             <template v-slot:expanded-row="{ item }">
               <tr>
-                <td></td>
+                <td v-if="!isMobileMode"></td>
                 <td colspan="6" class="pl-0">
                   <v-row>
-                    <v-col cols="11" class="pt-5 pb-0">
-                      <h4>Current facility access</h4>
+                    <v-col cols="11" :class="facilityHeaderPaddingClass">
+                      <span v-if="isMobileMode">
+                        <h5>Current facility access</h5>
+                      </span>
+                      <span v-else>
+                        <h4>Current facility access</h4>
+                      </span>
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="12" class="pt-0 pb-0">
+                    <v-col cols="12" :class="facilityDetailPaddingClass">
                       <!-- Facilities table -->
                       <v-data-table
                         :headers="headersFacilities"
@@ -161,6 +166,18 @@ export default {
         this.setFailureAlert('Failed to filter users by facility name', error)
         return []
       }
+    },
+    isMobileMode() {
+      return this.$vuetify.display.xs || this.$vuetify.display.sm
+    },
+    facilityHeader() {
+      return this.isMobileMode ? '<h5>Current facility access</h5>' : '<h4>Current facility access</h4>'
+    },
+    facilityHeaderPaddingClass() {
+      return this.isMobileMode ? 'pl-8 pt-4 pb-0' : 'pt-5 pb-0'
+    },
+    facilityDetailPaddingClass() {
+      return this.isMobileMode ? 'pl-6 pt-0 pb-0' : 'pt-0 pb-0'
     },
   },
   async created() {
