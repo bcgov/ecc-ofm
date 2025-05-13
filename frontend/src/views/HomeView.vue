@@ -18,6 +18,11 @@
         <p class="home-overview page-overview">Welcome to your Management Portal - Connect with the program, view and manage accounts, applications, and reports</p>
       </v-col>
     </v-row>
+    <v-row v-if="isMinistryUserRequiredToImpersonate">
+      <v-col>
+        <AppAlertBanner type="info">Note: To view the full portal, click your IDIR at the top right and select Impersonate from the dropdown menu.</AppAlertBanner>
+      </v-col>
+    </v-row>
     <v-row v-if="isLoading">
       <v-col v-for="n in 6" :key="n" cols="12" md="6" lg="4">
         <v-skeleton-loader :loading="isLoading" type="card" />
@@ -65,6 +70,7 @@
 <script>
 import { mapState } from 'pinia'
 
+import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppHeroImage from '@/components/ui/AppHeroImage.vue'
 import alertMixin from '@/mixins/alertMixin'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
@@ -77,7 +83,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'HomeView',
-  components: { AppHeroImage, NewRequestDialog, OrganizationHeader, RenewalFundingPopup, SignFundingPopup },
+  components: { AppAlertBanner, AppHeroImage, NewRequestDialog, OrganizationHeader, RenewalFundingPopup, SignFundingPopup },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -88,12 +94,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(useAuthStore, ['userInfo']),
+    ...mapState(useAuthStore, ['userInfo', 'isMinistryUser', 'impersonateId']),
     isLoading() {
       return this.loading || this.loadingFA
     },
     showReportsAlertBanner() {
       return this.hasPermission(this.PERMISSIONS.SUBMIT_DRAFT_REPORTS) && this.pendingReportsCount > 0
+    },
+    isMinistryUserRequiredToImpersonate() {
+      return this.isMinistryUser && !this.impersonateId
     },
   },
   async created() {
