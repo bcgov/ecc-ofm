@@ -31,14 +31,14 @@
             :mobile="null"
             mobile-breakpoint="md">
             <!-- Slot to customize expand row event -->
-            <template v-slot:item.data-table-expand="{ item }">
-              <AppButton @click.stop="toggleExpand(item)" variant="text">
+            <template v-slot:item.dataTableExpand="{ item }">
+              <AppButton variant="text" @click.stop="toggleExpand(item)">
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
 
             <template v-slot:item.actions="{ item }">
-              <AppButton @click.stop="toggleDialog(item)" variant="text" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
+              <AppButton variant="text" @click.stop="toggleDialog(item)" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
 
@@ -138,7 +138,7 @@ export default {
       userToUpdate: {},
       userToDeactivate: {},
       headersUsers: [
-        { title: '', key: 'data-table-expand', width: '87px' },
+        { title: '', key: 'dataTableExpand', width: '30px' },
         { title: '', key: 'actions', width: '30px' },
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
