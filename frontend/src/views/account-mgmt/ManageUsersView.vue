@@ -61,17 +61,13 @@
                 <td v-if="!isMobileMode"></td>
                 <td colspan="6" class="pl-0">
                   <v-row>
-                    <v-col cols="11" :class="facilityHeaderPaddingClass">
-                      <span v-if="isMobileMode">
-                        <h5>Current facility access</h5>
-                      </span>
-                      <span v-else>
-                        <h4>Current facility access</h4>
-                      </span>
+                    <v-col cols="11" class="pl-8 pl-md-0 pt-4 pt-md-5 pb-0">
+                      <h5 v-if="isMobileMode">Current facility access</h5>
+                      <h4 v-else>Current facility access</h4>
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="12" :class="facilityDetailPaddingClass">
+                    <v-col cols="12" class="pl-6 pl-md-0 pt-0 pb-0">
                       <!-- Facilities table -->
                       <v-data-table
                         :headers="headersFacilities"
@@ -138,7 +134,7 @@ export default {
       userToUpdate: {},
       userToDeactivate: {},
       headersUsers: [
-        { title: '', key: 'dataTableExpand', width: '30px' },
+        { title: '', key: 'dataTableExpand', width: '87px' },
         { title: '', key: 'actions', width: '30px' },
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
@@ -169,15 +165,6 @@ export default {
     },
     isMobileMode() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm
-    },
-    facilityHeader() {
-      return this.isMobileMode ? '<h5>Current facility access</h5>' : '<h4>Current facility access</h4>'
-    },
-    facilityHeaderPaddingClass() {
-      return this.isMobileMode ? 'pl-8 pt-4 pb-0' : 'pt-5 pb-0'
-    },
-    facilityDetailPaddingClass() {
-      return this.isMobileMode ? 'pl-6 pt-0 pb-0' : 'pt-0 pb-0'
     },
   },
   async created() {
