@@ -21,13 +21,13 @@ import AppSimpleCard from '@/components/ui/AppSimpleCard.vue'
 export default {
   name: 'SessionExpiredView',
   components: { AppSimpleCard },
-  mounted() {
-    this.setJwtToken()
-  },
   computed: {
     loginPath() {
       return this.$route.query.internal ? AuthRoutes.LOGIN_IDIR : AuthRoutes.LOGIN
     },
+  },
+  mounted() {
+    this.setJwtToken()
   },
   methods: {
     ...mapActions(useAuthStore, ['setJwtToken']),
