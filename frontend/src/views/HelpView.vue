@@ -39,6 +39,12 @@
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
+          <a href="https://www.youtube.com/watch?v=dmtcxxuWrqo" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>$10 a Day Welcome Session 2025</span>
+          </a>
+          <br />
+          <br />
           <a href="https://www.youtube.com/watch?v=o8nPVa9xq8Q" target="_blank">
             <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
             <span>$10 a Day Application Information Session 2024</span>
