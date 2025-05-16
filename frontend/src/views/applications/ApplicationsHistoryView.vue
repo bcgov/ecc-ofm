@@ -6,16 +6,16 @@
       <h3 class="my-2">Add New Application</h3>
       <v-row class="align-end">
         <v-col cols="12" md="6">
-          <v-card class="basic-card justify-center">
+          <v-card class="basic-card justify-center" :class="cardClass">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               $10 a Day Funding Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+            <v-card-text class="text-center d-flex flex-column align-center pt-1 pb-0">
               {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
+              <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-3">
                 Add $10 a Day Application
               </AppButton>
             </v-card-actions>
@@ -29,14 +29,14 @@
             </AppAlertBanner>
             <AppAlertBanner v-else type="info">If there is no active OFM application, you will not be able to submit Allowances applications.</AppAlertBanner>
           </div>
-          <v-card class="basic-card justify-center">
+          <v-card class="basic-card justify-center" :class="cardClass">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               Allowances (Core and Discretionary Services) Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
+            <v-card-text class="text-center d-flex flex-column align-center pt-1 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-8">
+              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-3">
                 Add Allowances Application
               </AppButton>
             </v-card-actions>
@@ -44,18 +44,18 @@
         </v-col>
 
         <v-col v-if="showIrregularExpenseCard" cols="12" md="6">
-          <v-card class="basic-card justify-center">
+          <v-card class="basic-card justify-center" :class="cardClass">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               Irregular Expenses Funding Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+            <v-card-text class="text-center d-flex flex-column align-center pt-1 pb-0">
               To apply for Irregular Expenses, you must have an active Funding Agreement in place.
               <br />
               Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="irregular-expense-button" :loading="loading" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">Add Irregular Expenses Funding Application</AppButton>
+              <AppButton id="irregular-expense-button" :loading="loading" class="ma-2 mt-3 text-wrap" @click="toggleChangeRequestDialog">Add Irregular Expenses Funding Application</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -294,6 +294,12 @@ export default {
       return this.applications?.some(
         (application) => application?.isUnionized === UNION_TYPE_CODES.NO && application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode !== APPLICATION_STATUS_CODES.DRAFT,
       )
+    },
+    cardClass() {
+      return {
+        'application-card-lg': this.$vuetify.display.lg || this.$vuetify.display.xl,
+        'application-card-md': this.$vuetify.display.md,
+      }
     },
   },
 
@@ -595,5 +601,13 @@ export default {
 <style scoped>
 .soft-outline {
   border: 1px solid #dee2e6 !important;
+}
+
+.application-card-lg {
+  min-height: 190px;
+}
+
+.application-card-md {
+  min-height: 210px;
 }
 </style>
