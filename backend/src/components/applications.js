@@ -155,7 +155,7 @@ async function getSupplementaryApplicationById(req, res) {
 
 async function createSupplementaryApplication(req, res) {
   try {
-    const payload = formatSupplementaryApplication( new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON())
+    const payload = formatSupplementaryApplication(new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON())
 
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
     const response = await postOperation('ofm_allowances', payload)
@@ -168,7 +168,7 @@ async function createSupplementaryApplication(req, res) {
 
 async function updateSupplementaryApplication(req, res) {
   try {
-    const payload = formatSupplementaryApplication( new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON())
+    const payload = formatSupplementaryApplication(new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON())
 
     const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
@@ -178,20 +178,20 @@ async function updateSupplementaryApplication(req, res) {
   }
 }
 
-function formatSupplementaryApplication(payload){
- if (payload.ofm_indigenous_expenses) {
-      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
-    } else if (payload.ofm_needs_expenses) {
-      payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
-    }
+function formatSupplementaryApplication(payload) {
+  if (payload.ofm_indigenous_expenses) {
+    payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+  } else if (payload.ofm_needs_expenses) {
+    payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
+  }
 
-    if(payload.ofm_retroactive_date){
-      payload.ofm_retroactive_date = `${payload.ofm_retroactive_date}T08:00:00Z`
-    }
+  if (payload.ofm_retroactive_date) {
+    payload.ofm_retroactive_date = `${payload.ofm_retroactive_date}T08:00:00Z`
+  }
 
-    delete payload['_ofm_application_value']
+  delete payload['_ofm_application_value']
 
-    return payload
+  return payload
 }
 
 async function deleteSupplementaryApplication(req, res) {
