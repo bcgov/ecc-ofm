@@ -288,6 +288,13 @@ function handleError(res, e) {
   return res.status(e?.status ?? HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
 }
 
+function formatDateTimeForBack(date) {
+  //NOTE: date MUST be a string value. Do not try with a Date obj!
+  //Some date fields in Dynamics are actaully date/time fields. Set default time to noon PST, so associated time will always be
+  // 7/8 PM UTC. This time is totally arbitrary, but done to avoid time conversion issues between Portal and Dynamics.
+  return `${date}T12:00:00-07:00`
+}
+
 const utils = {
   getOidcDiscovery,
   prettyStringify: (obj, indent = 2) => JSON.stringify(obj, null, indent),
@@ -315,6 +322,7 @@ const utils = {
   postDocuments,
   splitUsername,
   handleError,
+  formatDateTimeForBack,
 }
 
 module.exports = utils

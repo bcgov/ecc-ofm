@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError, formatDateTimeForBack } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
@@ -186,7 +186,7 @@ function formatSupplementaryApplication(payload) {
   }
 
   if (payload.ofm_retroactive_date) {
-    payload.ofm_retroactive_date = `${payload.ofm_retroactive_date}T08:00:00Z`
+    payload.ofm_retroactive_date = formatDateTimeForBack(payload.ofm_retroactive_date)
   }
 
   delete payload['_ofm_application_value']
