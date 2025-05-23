@@ -32,8 +32,8 @@ function formatDateTime(date) {
   return moment(date).format('YYYY-MMM-DD hh:mm A')
 }
 
-function formatDateToUTC(date) {
-  return new Date(date).toLocaleString('en-CA', { timeZone: 'UTC', dateStyle: 'full' })
+function formatDateToLocale(date) {
+  return new Date(date).toLocaleString('en-CA', { dateStyle: 'full' })
 }
 
 function convertUTCDatetoPSTDate(date) {
@@ -100,8 +100,8 @@ export default {
   formatDate,
   formatDateTime,
   formatDecimalNumber,
-  formatDateToUTC,
   formatTime12to24,
   formatTime24to12,
   formatTwoMonthDate,
+  formatDateToLocale,
 }

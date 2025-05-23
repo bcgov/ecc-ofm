@@ -33,7 +33,9 @@
 
     <v-row v-if="fundingExpiryDate">
       <v-col cols="12">
-        <div v-if="!nextTermActive">If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToUTC(fundingExpiryDate) }}</div>
+        <div v-if="!nextTermActive">
+          If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToLocale(fundingExpiryDate) }}
+        </div>
       </v-col>
     </v-row>
     <v-row no-gutters class="mb-2">
@@ -442,7 +444,6 @@ export default {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
           application.documentsToUpload = []
-          application.retroactiveDate = application.retroactiveDate ? this.format.formatTwoMonthDate(application.retroactiveDate) : null
         }
         this.models = [...this.models, ...transportApplications]
       }
