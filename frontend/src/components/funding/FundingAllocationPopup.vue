@@ -38,7 +38,6 @@ export default {
   emits: ['close'],
   data() {
     return {
-      isLoading: false,
       isDisplayed: false,
       fundingRequestsHeaders: [
         { title: 'From', key: 'envelopeNameFrom' },
