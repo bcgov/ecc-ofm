@@ -115,7 +115,7 @@ export default {
     getEnvelopeString(allocations, key) {
       if (!allocations?.length) return ''
 
-      const uniqueNames = [...new Set(allocations.map((a) => a[key]))]
+      const uniqueNames = [...new Set(allocations.map((allocation) => allocation[key]))]
 
       return uniqueNames.length === 1 ? uniqueNames[0] : 'Multiple'
     },
