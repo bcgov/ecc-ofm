@@ -23,7 +23,7 @@ import AppDialog from '@/components/ui/AppDialog.vue'
 import format from '@/utils/format'
 
 export default {
-  name: 'EligibilityNotificationDialog',
+  name: 'FundingAllocationPopup',
   components: { AppButton, AppDialog },
   props: {
     show: {
@@ -43,7 +43,7 @@ export default {
       fundingRequestsHeaders: [
         { title: 'From', key: 'envelopeNameFrom' },
         { title: 'To', key: 'envelopeNameTo' },
-        { title: 'Amount', key: 'amount' },
+        { title: 'Amount', key: 'amount', align: 'end' },
       ],
     }
   },

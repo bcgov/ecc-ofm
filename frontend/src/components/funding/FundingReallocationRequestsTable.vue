@@ -20,8 +20,8 @@
         <template #[`item.date`]="{ item }">
           {{ format.formatDate(item?.date) }}
         </template>
-        <template #[`item.envelopeNameFrom`]="{ item }">{{ getEnvelopeString(item.fundingAllocations, 'envelopeNameFrom') }}</template>
-        <template #[`item.envelopeNameTo`]="{ item }">{{ getEnvelopeString(item.fundingAllocations, 'envelopeNameTo') }}</template>
+        <template #[`item.envelopeNameFrom`]="{ item }">{{ getEnvelopeName(item.fundingAllocations, 'envelopeNameFrom') }}</template>
+        <template #[`item.envelopeNameTo`]="{ item }">{{ getEnvelopeName(item.fundingAllocations, 'envelopeNameTo') }}</template>
         <template #[`item.amount`]="{ item }">$ {{ sumAmounts(item) }}</template>
         <template #[`item.statusCode`]="{ item }">
           <div class="min-width-column">
@@ -66,7 +66,7 @@ export default {
         { title: 'Date', key: 'date' },
         { title: 'From', key: 'envelopeNameFrom' },
         { title: 'To', key: 'envelopeNameTo' },
-        { title: 'Amount', key: 'amount' },
+        { title: 'Amount', key: 'amount', align: 'end' },
         { title: 'Status', key: 'statusCode' },
         { title: 'Actions', key: 'fundingAllocations' },
       ],
@@ -104,15 +104,15 @@ export default {
     statusFilterChanged(newVal) {
       this.statusFilter = newVal
     },
-    sumAmounts(allocation) {
+    sumAmounts(allocationRequest) {
       //ofmcc 7380- allocation requests can have multiple line items with dollar values. The table updates need to show the value of all line items together in the table.
-      return format.formatDecimalNumber(allocation.fundingAllocations.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0))
+      return format.formatDecimalNumber(allocationRequest.fundingAllocations.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0))
     },
-    toggleDialog(allocation = []) {
+    toggleDialog(allocations = []) {
       this.showDialog = !this.showDialog
-      this.activeAllocations = allocation
+      this.activeAllocations = allocations
     },
-    getEnvelopeString(allocations, key) {
+    getEnvelopeName(allocations, key) {
       if (!allocations?.length) return ''
 
       const uniqueNames = [...new Set(allocations.map((allocation) => allocation[key]))]
