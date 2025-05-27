@@ -20,6 +20,8 @@
         <template #[`item.date`]="{ item }">
           {{ format.formatDate(item?.date) }}
         </template>
+        <template #[`item.envelopeNameFrom`]="{ item }">{{ getEnvelopeString(item.fundingAllocations, 'envelopeNameFrom') }}</template>
+        <template #[`item.envelopeNameTo`]="{ item }">{{ getEnvelopeString(item.fundingAllocations, 'envelopeNameTo') }}</template>
         <template #[`item.amount`]="{ item }">$ {{ sumAmounts(item) }}</template>
         <template #[`item.statusCode`]="{ item }">
           <div class="min-width-column">
@@ -62,6 +64,8 @@ export default {
     return {
       fundingRequestsHeaders: [
         { title: 'Date', key: 'date' },
+        { title: 'From', key: 'envelopeNameFrom' },
+        { title: 'To', key: 'envelopeNameTo' },
         { title: 'Amount', key: 'amount' },
         { title: 'Status', key: 'statusCode' },
         { title: 'Actions', key: 'fundingAllocations' },
@@ -107,6 +111,13 @@ export default {
     toggleDialog(allocation = []) {
       this.showDialog = !this.showDialog
       this.activeAllocations = allocation
+    },
+    getEnvelopeString(allocations, key) {
+      if (!allocations?.length) return ''
+
+      const uniqueNames = [...new Set(allocations.map((a) => a[key]))]
+
+      return uniqueNames.length === 1 ? uniqueNames[0] : 'Multiple'
     },
   },
 }
