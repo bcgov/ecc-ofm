@@ -16,29 +16,38 @@
         <template #no-data>
           <span v-if="isEmpty(fundingReallocationRequests)">The selected facility has not submitted a funding re-allocation request.</span>
         </template>
+
         <template #[`item.date`]="{ item }">
           {{ format.formatDate(item?.date) }}
         </template>
-        <template #[`item.amount`]="{ item }">$ {{ format.formatDecimalNumber(item?.amount) }}</template>
+        <template #[`item.amount`]="{ item }">$ {{ sumAmounts(item) }}</template>
         <template #[`item.statusCode`]="{ item }">
           <div class="min-width-column">
             <span :class="getStatusClass(item?.statusCode)">{{ item?.statusName }}</span>
           </div>
         </template>
+        <template #[`item.fundingAllocations`]="{ item }">
+          <div class="min-width-column">
+            <AppButton :primary="false" size="small" @click="toggleDialog(item?.fundingAllocations)">View</AppButton>
+          </div>
+        </template>
       </v-data-table>
     </v-skeleton-loader>
+    <FundingAllocationPopup :allocations="activeAllocations" :show="showDialog" @close="toggleDialog()"></FundingAllocationPopup>
   </v-container>
 </template>
 
 <script>
+import AppButton from '@/components/ui/AppButton.vue'
 import { isEmpty } from 'lodash'
 import StatusFilter from '@/components/funding/StatusFilter.vue'
 import { FUNDING_REALLOCATION_REQUEST_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
+import FundingAllocationPopup from '@/components/funding/FundingAllocationPopup.vue'
 
 export default {
   name: 'FundingReallocationRequestsTable',
-  components: { StatusFilter },
+  components: { AppButton, FundingAllocationPopup, StatusFilter },
   props: {
     loading: {
       type: Boolean,
@@ -53,12 +62,13 @@ export default {
     return {
       fundingRequestsHeaders: [
         { title: 'Date', key: 'date' },
-        { title: 'From', key: 'envelopeNameFrom' },
-        { title: 'To', key: 'envelopeNameTo' },
         { title: 'Amount', key: 'amount' },
         { title: 'Status', key: 'statusCode' },
+        { title: 'Actions', key: 'fundingAllocations' },
       ],
       statusFilter: null,
+      showDialog: false,
+      activeAllocations: undefined,
     }
   },
   computed: {
@@ -89,6 +99,14 @@ export default {
     },
     statusFilterChanged(newVal) {
       this.statusFilter = newVal
+    },
+    sumAmounts(allocation) {
+      //ofmcc 7380- allocation requests can have multiple line items with dollar values. The table updates need to show the value of all line items together in the table.
+      return format.formatDecimalNumber(allocation.fundingAllocations.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0))
+    },
+    toggleDialog(allocation = []) {
+      this.showDialog = !this.showDialog
+      this.activeAllocations = allocation
     },
   },
 }

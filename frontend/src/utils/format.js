@@ -19,6 +19,7 @@ function formatBooleanToYesNo(value) {
 
 function formatDate(date) {
   if (!date) return BLANK_FIELD
+  //jb- I think we should remove .utc from here?
   return moment.utc(date).format('YYYY-MMM-DD')
 }
 

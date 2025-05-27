@@ -4,7 +4,7 @@ const { MappableObjectForFront, MappableObjectForBack } = require('../util/mappi
 const { buildDateFilterQuery, buildFilterQuery } = require('../util/common')
 const { getTopUpFundingByFilter } = require('./topups')
 const { TOP_UP_FUNDING_STATUS_CODES } = require('../util/constants')
-const { FundingAgreementMappings, FundingReallocationRequestMappings } = require('../util/mapping/Mappings')
+const { FundingAgreementMappings, FundingReallocationRequestMappings, FundingAllocationChangeMappings } = require('../util/mapping/Mappings')
 const { FUNDING_AGREEMENT_STATUS_CODES, FUNDING_AGREEMENT_STATE_CODES } = require('../util/constants')
 const HttpStatus = require('http-status-codes')
 const log = require('./logger')
@@ -107,11 +107,16 @@ async function updateFundingAgreement(req, res) {
 
 async function getFundingReallocationRequests(req, res) {
   try {
-    const fundingReallocationRequests = []
-    const operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode
-              &$filter=(_ofm_funding_value eq ${req?.params?.fundingAgreementId})&pageSize=500`
+    const operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode&$filter=(_ofm_funding_value eq ${req?.params?.fundingAgreementId})&$expand=ofm_funding_allocation_envelope_change($select=ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base)&pageSize=500`
     const response = await getOperation(operation)
-    response?.value?.forEach((reallocationRequest) => fundingReallocationRequests.push(new MappableObjectForFront(reallocationRequest, FundingReallocationRequestMappings).toJSON()))
+
+    const fundingReallocationRequests = response?.value.map((reallocationRequest) => {
+      const fundingAllocations = reallocationRequest.ofm_funding_allocation_envelope_change?.map((allocation) => new MappableObjectForFront(allocation, FundingAllocationChangeMappings).toJSON())
+      const fundingRequest = new MappableObjectForFront(reallocationRequest, FundingReallocationRequestMappings).toJSON()
+      fundingRequest.fundingAllocations = fundingAllocations
+      return fundingRequest
+    })
+
     return res.status(HttpStatus.OK).json(fundingReallocationRequests)
   } catch (e) {
     handleError(res, e)
