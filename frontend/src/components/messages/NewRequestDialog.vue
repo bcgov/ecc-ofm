@@ -252,6 +252,7 @@
             </div>
             <AppDocumentUpload
               v-model="documentsToUpload"
+              :document-type="DOCUMENT_TYPES.ASSISTANCE_REQUEST"
               entity-name="ofm_assistance_requests"
               :disabled="isDisabled"
               :loading="isLoading"
@@ -321,7 +322,7 @@ import FacilityService from '@/services/facilityService'
 import MessageService from '@/services/messageService'
 import OrganizationService from '@/services/organizationService'
 import FundingAgreementService from '@/services/fundingAgreementService'
-import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, CRM_STATE_CODES, OFM_PROGRAM_CODES, PREVENT_CHANGE_REQUEST_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { REQUEST_CATEGORY_NAMES, REQUEST_SUB_CATEGORY_NAMES, PHONE_FORMAT, EMAIL_FORMAT, VIRUS_SCAN_ERROR_MESSAGE, FUNDING_AGREEMENT_STATUS_CODES, PROVIDER_TYPE_CODES } from '@/utils/constants'
 
 export default {
@@ -588,6 +589,7 @@ export default {
   created() {
     this.PHONE_FORMAT = PHONE_FORMAT
     this.EMAIL_FORMAT = EMAIL_FORMAT
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
     this.setUpDefaultNewRequestModel()
   },
   methods: {

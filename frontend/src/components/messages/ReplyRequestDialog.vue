@@ -15,7 +15,12 @@
             <div class="mr-8">
               <AppLabel variant="modal">Supporting documents (optional):</AppLabel>
             </div>
-            <AppDocumentUpload v-model="documentsToUpload" entityName="ofm_assistance_requests" :loading="isLoading" @validateDocumentsToUpload="validateDocumentsToUpload"></AppDocumentUpload>
+            <AppDocumentUpload
+              v-model="documentsToUpload"
+              :document-type="DOCUMENT_TYPES.ASSISTANCE_REQUEST"
+              entity-name="ofm_assistance_requests"
+              :loading="isLoading"
+              @validate-documents-to-upload="validateDocumentsToUpload"></AppDocumentUpload>
           </v-row>
         </v-form>
       </template>
@@ -42,7 +47,7 @@ import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import AppLabel from '@/components/ui/AppLabel.vue'
 import alertMixin from '@/mixins/alertMixin'
 import rules from '@/utils/rules'
-import { ASSISTANCE_REQUEST_STATUS_CODES, VIRUS_SCAN_ERROR_MESSAGE } from '@/utils/constants'
+import { ASSISTANCE_REQUEST_STATUS_CODES, VIRUS_SCAN_ERROR_MESSAGE, DOCUMENT_TYPES } from '@/utils/constants'
 import DocumentService from '@/services/documentService'
 import MessageService from '@/services/messageService'
 
@@ -85,6 +90,9 @@ export default {
         this.isDisplayed = value
       },
     },
+  },
+  created() {
+    this.DOCUMENT_TYPES = DOCUMENT_TYPES
   },
   methods: {
     ...mapActions(useMessagesStore, ['updateAssistanceRequestInStore']),
