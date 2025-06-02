@@ -39,7 +39,7 @@
       <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
     </v-row>
     <v-row class="my-5">
-      <v-expansion-panels v-model="panel">
+      <v-expansion-panels v-if="assistanceRequest.hasDocuments" v-model="panel">
         <v-expansion-panel title="Attachments" @click="openAttachmentsPanel">
           <v-expansion-panel-text>
             <v-skeleton-loader :loading="!loadedAttachments" type="table-tbody">
