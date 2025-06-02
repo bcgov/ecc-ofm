@@ -169,7 +169,7 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import DocumentService from '@/services/documentService'
-import { createPDFDownloadLink } from '@/utils/common'
+import { createFileDownloadLink } from '@/utils/common'
 
 import {
   APPLICATION_STATUS_CODES,
@@ -530,7 +530,7 @@ export default {
       const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
 
       try {
-        createPDFDownloadLink(file, doc[0]?.fileName)
+        createFileDownloadLink(file, doc[0]?.fileName)
       } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
@@ -558,7 +558,7 @@ export default {
           resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
         }
 
-        createPDFDownloadLink(resp, application.referenceNumber)
+        createFileDownloadLink(resp, application.referenceNumber)
       } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }

@@ -27,9 +27,9 @@ export function sanitizeWholeNumberInput(input) {
   return input?.replace(/[^0-9]/g, '')
 }
 
-export function createPDFDownloadLink(file, fileName) {
+export function createFileDownloadLink(file, fileName) {
   const link = document.createElement('a')
-  link.href = `data:application/pdf;base64,${file}`
+  link.href = `data:base64,${file}`
   link.target = '_blank'
   link.download = fileName
 

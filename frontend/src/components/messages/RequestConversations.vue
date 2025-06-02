@@ -114,7 +114,7 @@ import { ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
 import { deriveImageType } from '@/utils/file'
 import format from '@/utils/format'
 import DocumentService from '@/services/documentService'
-import { createPDFDownloadLink } from '@/utils/common'
+import { createFileDownloadLink } from '@/utils/common'
 
 const ID_REGEX = /\(([^)]+)\)/
 
@@ -281,7 +281,7 @@ export default {
     async getFile(document) {
       try {
         const file = await DocumentService.getDocumentFileByID(document.documentId)
-        createPDFDownloadLink(file, document.fileName)
+        createFileDownloadLink(file, document.fileName)
       } catch (e) {
         console.error(e)
         this.setFailureAlert('Error downloading file. Please wait a few minutes before you try again.')
