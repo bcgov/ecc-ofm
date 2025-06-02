@@ -60,7 +60,7 @@
           </v-card>
         </v-col>
 
-        <v-col v-if="!isEmpty(facilitiesForRenewal)" cols="12" md="6">
+        <v-col v-if="showRenewalCard" cols="12" md="6">
           <v-card class="basic-card justify-center">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
@@ -154,13 +154,14 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
+
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin.js'
 import FacilityService from '@/services/facilityService'
-import permissionsMixin from '@/mixins/permissionsMixin'
-import { isEmpty } from 'lodash'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
@@ -301,6 +302,9 @@ export default {
         'application-card-md': this.$vuetify.display.md,
       }
     },
+    showRenewalCard() {
+      return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && !isEmpty(this.facilitiesForRenewal)
+    },
   },
 
   async created() {
@@ -323,7 +327,7 @@ export default {
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
       }
-      if (this.facilitiesForRenewal === null) {
+      if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && this.facilitiesForRenewal === null) {
         this.facilitiesForRenewal = await FacilityService.getRenewalFacilities()
       }
     } catch (error) {
