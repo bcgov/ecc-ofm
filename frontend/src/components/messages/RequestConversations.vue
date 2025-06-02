@@ -43,7 +43,7 @@
         <v-expansion-panel title="Attachments" @click="openAttachmentsPanel">
           <v-expansion-panel-text>
             <v-skeleton-loader :loading="!loadedAttachments" type="table-tbody">
-              <v-data-table v-if="loadedAttachments" hide-default-footer :headers="attachmentHeaders" :items="loadedAttachments" item-key="documentId" class="data-table">
+              <v-data-table v-if="loadedAttachments" hide-default-footer v-model:sort-by="sortBy" :headers="attachmentHeaders" :items="loadedAttachments" item-key="documentId" class="data-table">
                 <template #[`item.fileName`]="{ item }">
                   <a href="#" @click="getFile(item)">{{ item.fileName }}</a>
                 </template>
@@ -149,6 +149,7 @@ export default {
         { title: 'File Name', key: 'fileName' },
         { title: 'Uploaded On', key: 'lastUpdatedTime' },
       ],
+      sortBy: [{ key: 'lastUpdatedTime', order: 'desc' }],
       loadedAttachments: null,
     }
   },
@@ -177,7 +178,7 @@ export default {
       this.loading = true
       //close panel if open, so it re-renders properly
       this.closePanel()
-      this.loadedAttachments = undefined
+      this.loadedAttachments = null
       await this.getAssistanceRequestConversation(this.assistanceRequestId)
       await this.formatConversation()
       this.sortConversation()
