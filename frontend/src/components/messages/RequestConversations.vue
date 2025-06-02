@@ -38,6 +38,22 @@
       <v-col cols="auto" class="font-weight-bold pt-0 pb-0">Facility(s):</v-col>
       <v-col class="pt-0 pb-0">{{ assistanceRequest.requestFacilities.map((facility) => facility.facilityName).join(', ') }}</v-col>
     </v-row>
+    <v-row class="my-5">
+      <v-expansion-panels v-if="assistanceRequest.hasDocuments" v-model="panel">
+        <v-expansion-panel title="Attachments" @click="openAttachmentsPanel">
+          <v-expansion-panel-text>
+            <v-skeleton-loader :loading="!loadedAttachments" type="table-tbody">
+              <v-data-table v-if="loadedAttachments" hide-default-footer v-model:sort-by="sortBy" :headers="attachmentHeaders" :items="loadedAttachments" item-key="documentId" class="data-table">
+                <template #[`item.fileName`]="{ item }">
+                  <a href="#" @click="getFile(item)">{{ item.fileName }}</a>
+                </template>
+                <template #[`item.lastUpdatedTime`]="{ item }">{{ format.formatDateToLocale(item?.lastUpdatedTime) }}</template>
+              </v-data-table>
+            </v-skeleton-loader>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-row>
     <v-row>
       <v-col class="d-flex justify-end pt-0 pb-0 pr-0 w-100 align-center">
         <span class="font-weight-bold">Sort By:</span>
@@ -97,6 +113,8 @@ import { useMessagesStore } from '@/stores/messages'
 import { ASSISTANCE_REQUEST_STATUS_CODES, OFM_PROGRAM } from '@/utils/constants'
 import { deriveImageType } from '@/utils/file'
 import format from '@/utils/format'
+import DocumentService from '@/services/documentService'
+import { createFileDownloadLink } from '@/utils/common'
 
 const ID_REGEX = /\(([^)]+)\)/
 
@@ -126,6 +144,13 @@ export default {
           sortable: true,
         },
       ],
+      panel: [],
+      attachmentHeaders: [
+        { title: 'File Name', key: 'fileName' },
+        { title: 'Uploaded On', key: 'lastUpdatedTime' },
+      ],
+      sortBy: [{ key: 'lastUpdatedTime', order: 'desc' }],
+      loadedAttachments: null,
     }
   },
   computed: {
@@ -151,6 +176,9 @@ export default {
     // When assistanceRequestId changes, get the conversation for the new assistance request.
     assistanceRequestId: async function (newVal) {
       this.loading = true
+      //close panel if open, so it re-renders properly
+      this.closePanel()
+      this.loadedAttachments = null
       await this.getAssistanceRequestConversation(this.assistanceRequestId)
       await this.formatConversation()
       this.sortConversation()
@@ -246,6 +274,22 @@ export default {
         // Update the message content
         conversation.message = document.documentElement.innerHTML
       }
+    },
+    async openAttachmentsPanel() {
+      if (this.loadedAttachments) return
+      this.loadedAttachments = await DocumentService.getDocuments(this.assistanceRequestId)
+    },
+    async getFile(document) {
+      try {
+        const file = await DocumentService.getDocumentFileByID(document.documentId)
+        createFileDownloadLink(file, document.fileName)
+      } catch (e) {
+        console.error(e)
+        this.setFailureAlert('Error downloading file. Please wait a few minutes before you try again.')
+      }
+    },
+    closePanel() {
+      this.panel = []
     },
   },
 }
