@@ -147,7 +147,6 @@ export default {
       panel: [],
       attachmentHeaders: [
         { title: 'File Name', key: 'fileName' },
-        // { title: 'Description', key: 'description' }, unsure if needed
         { title: 'Uploaded On', key: 'lastUpdatedTime' },
       ],
       loadedAttachments: null,
