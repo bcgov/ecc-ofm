@@ -225,10 +225,10 @@ async function getUsersPermissionsFacilities(req, res) {
     response?.value?.forEach((item) => {
       usersPermissionsFacilities.push(mapUsersPermissionsFacilitiesObjectForFront(item))
     })
-    return res.status(HttpStatus.OK).json(usersPermissionsFacilities)
+    return res?.status(HttpStatus.OK).json(usersPermissionsFacilities)
   } catch (e) {
     log.error(e)
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
+    return res?.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 

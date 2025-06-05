@@ -51,6 +51,7 @@ const AssistanceRequestMappings = [
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
   { back: '_ofm_request_category_value@OData.Community.Display.V1.FormattedValue', front: 'categoryName' },
+  { back: '_ofm_request_category_value', front: 'categoryValue' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
   { back: 'ofm_is_read', front: 'isRead' },
 ]

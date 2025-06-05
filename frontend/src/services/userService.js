@@ -56,7 +56,12 @@ export default {
     try {
       if (!organizationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.USER_PERMISSIONS_FACILITIES}/${organizationId}`)
-      return response.data
+      console.log('resp', response)
+      if (!response) {
+        console.error('Missing response from API')
+        return
+      }
+      return response?.data
     } catch (error) {
       console.log(`Failed to get the list of users by organization id: ${organizationId}`, error)
       throw error
