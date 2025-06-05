@@ -4,29 +4,36 @@
       <div class="pa-10" :class="'text-h4'" v-text="`Welcome ${userInfo.displayName}`" />
     </v-row>
     <v-row>
-      <v-form ref="form" v-model="isValidForm" @submit.prevent>
-        <v-card class="impersonate-card">
-          <v-row>
-            <v-col>
-              <v-text-field id="businessBCeId-field" v-model.trim="businessBCeId" outlined required :rules="rules.required" label="Business BCeID" v-on:keydown.enter="setBCeID()" />
-            </v-col>
-            <v-col cols="4">
-              <v-btn @click="setBCeID()" :disabled="!businessBCeId" id="bceid-search">Search</v-btn>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-form>
+      <v-col cols="12" sm="8" md="6" lg="4">
+        <v-form ref="form" v-model="isValidForm" @submit.prevent>
+          <v-card class="basic-card">
+            <v-card-text>
+              <v-row>
+                <v-col>
+                  <v-text-field id="businessBCeId-field" v-model.trim="businessBCeId" outlined required :rules="rules.required" label="Business BCeID" @keydown.enter="setBCeID()" />
+                </v-col>
+                <v-col cols="4">
+                  <AppButton id="bceid-search" :disabled="!businessBCeId" :loading="processing" @click="setBCeID()">Search</AppButton>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-form>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
 import { mapActions, mapState, mapWritableState } from 'pinia'
+
+import AppButton from '@/components/ui/AppButton.vue'
+import alertMixin from '@/mixins/alertMixin'
 import { useAuthStore } from '@/stores/auth'
 import rules from '@/utils/rules'
-import alertMixin from '@/mixins/alertMixin'
 
 export default {
+  components: { AppButton },
   mixins: [alertMixin],
   data() {
     return {
@@ -65,11 +72,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.impersonate-card {
-  width: 350px;
-  margin: 10px;
-  padding: 10px;
-}
-</style>

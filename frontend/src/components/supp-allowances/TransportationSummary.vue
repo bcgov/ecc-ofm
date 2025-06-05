@@ -65,7 +65,7 @@
                 <p>Retroactive Date Selected:</p>
               </v-col>
               <v-col v-if="model.retroactiveDate" cols="6" xl="7" class="pt-2 text-center">
-                <p>{{ format.formatDateToUTC(model.retroactiveDate) }}</p>
+                <p>{{ format.formatDateToLocale(model.retroactiveDate) }}</p>
               </v-col>
               <v-col v-else cols="6" xl="7" class="pt-2 text-center">
                 <p>No date selected</p>

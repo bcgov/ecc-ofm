@@ -38,7 +38,7 @@
                   </v-row>
                   <v-row>
                     <v-col class="pt-2">
-                      <v-data-table :headers="headers" :items="sortedContacts" density="compact">
+                      <v-data-table :headers="headers" :items="sortedContacts" density="compact" :mobile="null" mobile-breakpoint="md">
                         <template #item.name="{ item }">
                           {{ item.fullName }}
                         </template>

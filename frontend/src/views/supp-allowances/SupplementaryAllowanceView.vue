@@ -6,28 +6,54 @@
     </div>
     <div v-else>
       <div class="min-height-screen my-4">
-        <v-row v-if="!$route.params.applicationGuid" no-gutters class="my-8">
-          <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
-            <AppLabel>To start your application, select a facility:</AppLabel>
-            <div>
-              <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
-              <span>If your facility is not listed, contact your Account Manager.</span>
-            </div>
-          </v-col>
-          <v-col cols="12" md="6" xl="4">
-            <v-select
-              id="select-facility"
-              v-model="facilityId"
-              :items="facilities"
-              item-title="facilityName"
-              item-value="facilityId"
-              :rules="rules.required"
-              placeholder="Select a facility"
-              density="compact"
-              variant="outlined"></v-select>
-          </v-col>
-        </v-row>
-        <div v-if="application">
+        <template v-if="showDropdowns">
+          <v-row no-gutters class="my-8">
+            <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
+              <AppLabel>To start your application, select a facility:</AppLabel>
+              <div>
+                <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+                <span>If your facility is not listed, contact your Account Manager.</span>
+              </div>
+            </v-col>
+            <v-col cols="12" md="6" xl="4">
+              <v-select
+                id="select-facility"
+                v-model="facilityId"
+                :items="facilities"
+                item-title="facilityName"
+                item-value="facilityId"
+                :rules="rules.required"
+                placeholder="Select a facility"
+                density="compact"
+                variant="outlined"></v-select>
+            </v-col>
+          </v-row>
+          <v-row v-if="faSelectorActive" no-gutters class="my-8">
+            <v-col cols="12" md="6" lg="4" xl="3" class="mr-md-4">
+              <AppLabel>Select an eligible funding agreement:</AppLabel>
+              <div class="d-flex align-start">
+                <v-icon class="mr-1">mdi-information-slab-circle-outline</v-icon>
+                <span>
+                  There is more than one funding agreement eligible for Allowances. For more information about eligible funding agreements, please see the Policy and Procedure manual in the Help and
+                  Resources tile on the home page.
+                </span>
+              </div>
+            </v-col>
+            <v-col cols="12" md="6" xl="4">
+              <v-select
+                id="select-facility"
+                v-model="fundingAgreementId"
+                :items="facilityFundingAgreements"
+                item-title="fundingAgreementNumber"
+                item-value="fundingId"
+                :rules="rules.required"
+                placeholder="Select a funding agreement"
+                density="compact"
+                variant="outlined"></v-select>
+            </v-col>
+          </v-row>
+        </template>
+        <div v-if="showRouterView">
           <span>You are applying for this allowance linked to your base funding &ensp;</span>
           <span class="application-number">{{ application?.referenceNumber }}</span>
           <router-view
@@ -97,6 +123,10 @@ export default {
       application: undefined,
       facilities: [],
       facilityId: undefined,
+      faSelectorActive: false,
+      fundingAgreementId: undefined,
+      facilityFundingAgreements: undefined,
+      facilityOrFASelected: false,
     }
   },
 
@@ -106,10 +136,10 @@ export default {
       return true
     },
     showCancel() {
-      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.showRouterView && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showSave() {
-      return !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
+      return this.showRouterView && !isEmpty(this.application) && this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
     },
     showNext() {
       return !isEmpty(this.application) && ['supp-allowances-form'].includes(this.$route.name)
@@ -117,12 +147,35 @@ export default {
     showSubmit() {
       return !isEmpty(this.application) && ['supp-allowances-submit'].includes(this.$route.name)
     },
+    showDropdowns() {
+      return !this.$route.params.applicationGuid && !this.facilityOrFASelected
+    },
+    showRouterView() {
+      return this.facilityOrFASelected || this.$route.params.applicationGuid
+    },
   },
 
   watch: {
     facilityId: {
       handler(facilityId) {
-        this.application = this.getValidApplication(facilityId)
+        const facilityApps = this.applications.filter((fac) => fac.facilityId === facilityId)
+        this.faSelectorActive = false
+        this.facilityFundingAgreements = null
+        this.fundingAgreementId = null
+        this.application = null
+        if (facilityApps.length === 1) {
+          this.application = this.getValidApplication(facilityId)
+        } else {
+          this.faSelectorActive = true
+          this.facilityFundingAgreements = facilityApps.map((app) => app.fundingAgreement)
+        }
+      },
+    },
+    fundingAgreementId: {
+      handler(fundingAgreementId) {
+        if (fundingAgreementId) {
+          this.application = this.applications.find((application) => application.fundingAgreement?.fundingId === fundingAgreementId)
+        }
       },
     },
   },
@@ -175,7 +228,7 @@ export default {
     },
 
     toggleBack() {
-      if (!this.application) {
+      if (this.showDropdowns) {
         this.$router.push({ name: 'applications-history' })
       }
       this.back = !this.back
@@ -187,6 +240,11 @@ export default {
       this.save = !this.save
     },
     toggleNext() {
+      if (this.showDropdowns) {
+        // Flag when the user has confirmed their Facility or FA selection
+        // and clicked Next
+        this.facilityOrFASelected = true
+      }
       this.next = !this.next
     },
     toggleSubmit() {

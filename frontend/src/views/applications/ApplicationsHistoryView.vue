@@ -6,16 +6,16 @@
       <h3 class="my-2">Add New Application</h3>
       <v-row class="align-end">
         <v-col cols="12" md="6">
-          <v-card class="basic-card justify-center">
+          <v-card class="basic-card justify-center" :class="cardClass">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               $10 a Day Funding Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+            <v-card-text class="text-center d-flex flex-column align-center pt-1 pb-0">
               {{ ofmApplicationCardText }}
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">
+              <AppButton id="core-application-button" :loading="loading" :disabled="!isAddCoreApplicationAllowed" :to="{ name: APPLICATION_ROUTES.SELECT_FACILITY }" class="ma-2 mt-3">
                 Add $10 a Day Application
               </AppButton>
             </v-card-actions>
@@ -29,14 +29,14 @@
             </AppAlertBanner>
             <AppAlertBanner v-else type="info">If there is no active OFM application, you will not be able to submit Allowances applications.</AppAlertBanner>
           </div>
-          <v-card class="basic-card justify-center">
+          <v-card class="basic-card justify-center" :class="cardClass">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               Allowances (Core and Discretionary Services) Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
+            <v-card-text class="text-center d-flex flex-column align-center pt-1 pb-0">You must have an active OFM application for the facility to apply for Allowances.</v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-8">
+              <AppButton id="supp-allowances-button" :loading="loading" :disabled="!hasAValidApplicationAndGoodStanding" :to="{ name: 'supp-allowances' }" class="ma-2 mt-3">
                 Add Allowances Application
               </AppButton>
             </v-card-actions>
@@ -44,18 +44,35 @@
         </v-col>
 
         <v-col v-if="showIrregularExpenseCard" cols="12" md="6">
-          <v-card class="basic-card justify-center">
+          <v-card class="basic-card justify-center" :class="cardClass">
             <v-card-title class="text-center text-wrap">
               <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
               Irregular Expenses Funding Application
             </v-card-title>
-            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+            <v-card-text class="text-center d-flex flex-column align-center pt-1 pb-0">
               To apply for Irregular Expenses, you must have an active Funding Agreement in place.
               <br />
               Funding requires approval before your facility incurs expenses, and you must demonstrate need for the funding.
             </v-card-text>
             <v-card-actions class="d-flex flex-column align-center">
-              <AppButton id="irregular-expense-button" :loading="loading" class="ma-2 mt-8 text-wrap" @click="toggleChangeRequestDialog">Add Irregular Expenses Funding Application</AppButton>
+              <AppButton id="irregular-expense-button" :loading="loading" class="ma-2 mt-3 text-wrap" @click="toggleChangeRequestDialog">Add Irregular Expenses Funding Application</AppButton>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+
+        <v-col v-if="showRenewalCard" cols="12" md="6">
+          <v-card class="basic-card justify-center">
+            <v-card-title class="text-center text-wrap">
+              <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+              $10 a Day Funding Agreement Renewal
+            </v-card-title>
+            <v-card-text class="text-center d-flex flex-column align-center pt-4 pb-0">
+              Before starting a renewal, verify your organization and facility details in Account Management
+              <br />
+              <br />
+            </v-card-text>
+            <v-card-actions class="d-flex flex-column align-center">
+              <AppButton id="renew-application-button" :loading="loading" :to="{ name: RENEWAL_ROUTES.SELECT_FACILITY }" class="ma-2 mt-8">Renew</AppButton>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -79,7 +96,7 @@
         item-key="applicationId"
         :mobile="null"
         mobile-breakpoint="md"
-        class="soft-outline"
+        class="soft-outline text-no-wrap"
         density="compact">
         <template #item.status="{ item }">
           <span :class="getStatusClass(item.statusCode)">{{ getStatusLabel(item) }}</span>
@@ -137,12 +154,14 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash'
+
 import AppButton from '@/components/ui/AppButton.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import alertMixin from '@/mixins/alertMixin'
-import permissionsMixin from '@/mixins/permissionsMixin'
-import { isEmpty } from 'lodash'
+import permissionsMixin from '@/mixins/permissionsMixin.js'
+import FacilityService from '@/services/facilityService'
 import format from '@/utils/format'
 import CancelApplicationDialog from '@/components/applications/CancelApplicationDialog.vue'
 import ApplicationService from '@/services/applicationService'
@@ -151,11 +170,12 @@ import FundingAgreementService from '@/services/fundingAgreementService'
 import FacilityFilter from '@/components/facilities/FacilityFilter.vue'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import DocumentService from '@/services/documentService'
-import { createPDFDownloadLink } from '@/utils/common'
+import { createFileDownloadLink } from '@/utils/common'
 
 import {
   APPLICATION_STATUS_CODES,
   APPLICATION_ROUTES,
+  RENEWAL_ROUTES,
   GOOD_STANDING_STATUS_CODES,
   SUPPLEMENTARY_APPLICATION_STATUS_CODES,
   NOT_IN_GOOD_STANDING_WARNING_MESSAGE,
@@ -165,8 +185,9 @@ import {
   PROVIDER_TYPE_CODES,
   UNION_TYPE_CODES,
   CRM_STATE_CODES,
+  APPLICATION_RENEWAL_TYPES,
 } from '@/utils/constants'
-import { mapState, mapActions } from 'pinia'
+import { mapState, mapActions, mapWritableState } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useOrgStore } from '@/stores/org'
 import { useAppStore } from '@/stores/app'
@@ -207,6 +228,7 @@ export default {
     ...mapState(useAuthStore, ['userInfo']),
     ...mapState(useOrgStore, ['currentOrg']),
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapWritableState(useAppStore, ['facilitiesForRenewal']),
 
     showIrregularExpenseCard() {
       if (this.currentOrg?.providerType === PROVIDER_TYPE_CODES.FAMILY) {
@@ -229,15 +251,30 @@ export default {
       )
     },
     ofmApplicationCardText() {
-      if (this.isAddCoreApplicationAllowed) {
+      if (!this.isIntakeWindowOpenAndValid) {
+        return 'The Application intake is currently closed.'
+      } else if (this.isAddCoreApplicationAllowed) {
         return 'Before starting an application, verify your organization and facility details in Account Management.'
       } else if (!this.isCCOFEnrolmentCheckSatisfied) {
         return 'Enrolment in CCOF for greater than 1 year is required to apply.'
       } else {
-        return 'The Application intake is currently closed.'
+        return 'Thank you for your interest in the $10 a Day program. At this time, your organization does not have facilities eligible for application.'
       }
     },
     isAddCoreApplicationAllowed() {
+      const hasDraftApplication = this.applications?.some(
+        (application) =>
+          application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode === APPLICATION_STATUS_CODES.DRAFT && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
+      )
+
+      const hasMissingApplication = this.userInfo?.facilities?.some((facility) => {
+        return !this.applications?.some((application) => {
+          return application?.facilityId === facility.facilityId && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW
+        })
+      })
+      return this.isIntakeWindowOpenAndValid && (hasDraftApplication || hasMissingApplication)
+    },
+    isIntakeWindowOpenAndValid() {
       return this.userInfo?.facilities?.some(
         (facility) =>
           facility.facilityStateCode === CRM_STATE_CODES.ACTIVE &&
@@ -259,6 +296,15 @@ export default {
         (application) => application?.isUnionized === UNION_TYPE_CODES.NO && application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode !== APPLICATION_STATUS_CODES.DRAFT,
       )
     },
+    cardClass() {
+      return {
+        'application-card-lg': this.$vuetify.display.lg || this.$vuetify.display.xl,
+        'application-card-md': this.$vuetify.display.md,
+      }
+    },
+    showRenewalCard() {
+      return this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && !isEmpty(this.facilitiesForRenewal)
+    },
   },
 
   async created() {
@@ -268,6 +314,7 @@ export default {
       this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
       this.APPLICATION_STATUS_CODES = APPLICATION_STATUS_CODES
       this.APPLICATION_ROUTES = APPLICATION_ROUTES
+      this.RENEWAL_ROUTES = RENEWAL_ROUTES
       this.GOOD_STANDING_STATUS_CODES = GOOD_STANDING_STATUS_CODES
       this.DRAFT_STATUS_CODES = [APPLICATION_STATUS_CODES.DRAFT, SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT]
       this.NOT_IN_GOOD_STANDING_WARNING_MESSAGE = NOT_IN_GOOD_STANDING_WARNING_MESSAGE
@@ -279,6 +326,9 @@ export default {
 
       if (!this.currentOrg) {
         await this.getOrganizationInfo(this.userInfo?.organizationId)
+      }
+      if (this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING) && this.facilitiesForRenewal === null) {
+        this.facilitiesForRenewal = await FacilityService.getRenewalFacilities()
       }
     } catch (error) {
       this.setFailureAlert('Failed to get the list of applications', error)
@@ -346,7 +396,7 @@ export default {
       await Promise.all(
         applications.map(async (application) => {
           application.status = application.statusCode === APPLICATION_STATUS_CODES.VERIFIED ? 'In Review' : application.status
-          // we should ignore MOD igreements below - if MOD FA is in status of not active - it will prevent the user
+          // we should ignore MOD agreements below - if MOD FA is in status of not active - it will prevent the user
           // from applying for Irreg Expense funding
           application.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(application.applicationId, true)
         }),
@@ -384,6 +434,7 @@ export default {
         return {
           ...item,
           applicationType: APPLICATION_TYPES.OFM,
+          applicationRenewalType: application.applicationRenewalType,
           statusCode: application.statusCode,
         }
       })
@@ -453,7 +504,7 @@ export default {
         return 'status-green'
       } else if ([APPLICATION_STATUS_CODES.APPROVED, SUPPLEMENTARY_APPLICATION_STATUS_CODES.APPROVED].includes(statusCode)) {
         return 'status-blue'
-      } else if ([APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(statusCode)) {
+      } else if ([APPLICATION_STATUS_CODES.UNSUCCESSFUL, APPLICATION_STATUS_CODES.AWAITING_PROVIDER, SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED].includes(statusCode)) {
         return 'status-yellow'
       } else if ([APPLICATION_STATUS_CODES.PROVIDER_DECLINED].includes(statusCode)) {
         return 'status-pink'
@@ -463,7 +514,15 @@ export default {
     },
 
     getActionsRoute(item) {
-      const routeName = item.applicationType === APPLICATION_TYPES.OFM ? APPLICATION_ROUTES.FACILITY_DETAILS : 'supp-allowances-form'
+      let routeName
+      if (item.applicationType !== APPLICATION_TYPES.OFM) {
+        routeName = 'supp-allowances-form'
+      } else if (item.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL) {
+        routeName = RENEWAL_ROUTES.FACILITY_DETAILS
+      } else {
+        routeName = APPLICATION_ROUTES.FACILITY_DETAILS
+      }
+
       return { name: routeName, params: { applicationGuid: item?.applicationId } }
     },
 
@@ -475,7 +534,7 @@ export default {
       const file = await DocumentService.getDocumentFileByID(doc[0]?.documentId)
 
       try {
-        createPDFDownloadLink(file, doc[0]?.fileName)
+        createFileDownloadLink(file, doc[0]?.fileName)
       } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
@@ -503,7 +562,7 @@ export default {
           resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
         }
 
-        createPDFDownloadLink(resp, application.referenceNumber)
+        createFileDownloadLink(resp, application.referenceNumber)
       } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
@@ -518,7 +577,7 @@ export default {
     async getIrregularExpenseApplications() {
       await Promise.all(
         this.applications?.map(async (application) => {
-          //you can only apply for Irreg Expesne if you have an active FA
+          //you can only apply for Irreg Expense if you have an active FA
           if (application?.fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE) {
             const expenses = await IrregularExpenseService.getIrregularExpenseApplications(application?.applicationId)
             expenses?.forEach((expense) => {
@@ -546,5 +605,13 @@ export default {
 <style scoped>
 .soft-outline {
   border: 1px solid #dee2e6 !important;
+}
+
+.application-card-lg {
+  min-height: 190px;
+}
+
+.application-card-md {
+  min-height: 210px;
 }
 </style>

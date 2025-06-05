@@ -20,6 +20,7 @@ export const useAppStore = defineStore('app', {
     healthAuthorities: {},
     facilityTypes: {},
     licenceTypes: {},
+    facilitiesForRenewal: null,
     // reportTemplates: {},
     applicationIntakes: {},
     paymentTypes: {},

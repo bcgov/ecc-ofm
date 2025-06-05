@@ -14,8 +14,8 @@
         :mobile="null"
         mobile-breakpoint="md"
         class="soft-outline">
-        <template #[`item.invoiceDate`]="{ item }">
-          {{ format.formatDate(item?.invoiceDate) }}
+        <template #[`item.invoiceReceivedDate`]="{ item }">
+          {{ format.formatDate(item?.invoiceReceivedDate) }}
         </template>
         <template #[`item.amount`]="{ item }">$ {{ format.formatDecimalNumber(item?.amount) }}</template>
       </v-data-table>
@@ -33,8 +33,8 @@
         :mobile="null"
         mobile-breakpoint="md"
         class="soft-outline">
-        <template #[`item.invoiceDate`]="{ item }">
-          {{ format.formatDate(item?.invoiceDate) }}
+        <template #[`item.invoiceReceivedDate`]="{ item }">
+          {{ format.formatDate(item?.invoiceReceivedDate) }}
         </template>
         <template #[`item.amount`]="{ item }">$ {{ format.formatDecimalNumber(item?.amount) }}</template>
       </v-data-table>
@@ -65,14 +65,14 @@ export default {
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Payment Type', key: 'paymentTypeName' },
         { title: 'Facility Name', key: 'facilityName' },
-        { title: 'Payment Date', key: 'invoiceDate' },
+        { title: 'Payment Date', key: 'invoiceReceivedDate' },
         { title: 'Payment Amount', key: 'amount' },
       ],
       scheduledPaymentsHeaders: [
         { title: 'Funding Agreement Number', key: 'fundingAgreementNumber' },
         { title: 'Payment Type', key: 'paymentTypeName' },
         { title: 'Facility Name', key: 'facilityName' },
-        { title: 'Scheduled Payment Date', key: 'invoiceDate' },
+        { title: 'Scheduled Payment Date', key: 'invoiceReceivedDate' },
         { title: 'Projected Payment Amount', key: 'amount' },
       ],
     }
@@ -82,8 +82,8 @@ export default {
     filteredPaymentHistory() {
       const filteredPayments = this.paymentHistory?.filter((payment) => this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode))
       filteredPayments?.sort((a, b) => {
-        const dateA = new Date(a.invoiceDate)
-        const dateB = new Date(b.invoiceDate)
+        const dateA = new Date(a.invoiceReceivedDate)
+        const dateB = new Date(b.invoiceReceivedDate)
         return dateB - dateA // descending order (the most recent Paid Payment at the top)
       })
       return filteredPayments
@@ -91,8 +91,8 @@ export default {
     filteredScheduledPayments() {
       const filteredPayments = this.scheduledPayments?.filter((payment) => this.searchQueries?.paymentFilterTypes?.includes(payment.paymentTypeCode))
       filteredPayments?.sort((a, b) => {
-        const dateA = new Date(a.invoiceDate)
-        const dateB = new Date(b.invoiceDate)
+        const dateA = new Date(a.invoiceReceivedDate)
+        const dateB = new Date(b.invoiceReceivedDate)
         return dateA - dateB // ascending order (the most recent Scheduled/Future Payment at the top)
       })
       return filteredPayments

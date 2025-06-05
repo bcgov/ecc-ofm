@@ -20,16 +20,25 @@
       <v-col class="pt-0 pb-0">
         <!-- Users Table -->
         <v-skeleton-loader :loading="loading" type="table-tbody">
-          <v-data-table :headers="headersUsers" :items="filteredUserFacilities" item-key="contactId" item-value="contactId" show-expand density="compact" :expanded="expanded">
+          <v-data-table
+            :headers="headersUsers"
+            :items="filteredUserFacilities"
+            item-key="contactId"
+            item-value="contactId"
+            show-expand
+            density="compact"
+            :expanded="expanded"
+            :mobile="null"
+            mobile-breakpoint="md">
             <!-- Slot to customize expand row event -->
-            <template v-slot:item.data-table-expand="{ item }">
-              <AppButton @click.stop="toggleExpand(item)" variant="text">
+            <template v-slot:item.dataTableExpand="{ item }">
+              <AppButton variant="text" @click.stop="toggleExpand(item)">
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
 
             <template v-slot:item.actions="{ item }">
-              <AppButton @click.stop="toggleDialog(item)" variant="text" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
+              <AppButton variant="text" @click.stop="toggleDialog(item)" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
 
@@ -49,17 +58,25 @@
 
             <template v-slot:expanded-row="{ item }">
               <tr>
-                <td></td>
+                <td v-if="!isMobileMode"></td>
                 <td colspan="6" class="pl-0">
                   <v-row>
-                    <v-col cols="11" class="pt-5 pb-0">
-                      <h4>Current facility access</h4>
+                    <v-col cols="11" class="pl-8 pl-md-0 pt-4 pt-md-5 pb-0">
+                      <h5 v-if="isMobileMode">Current facility access</h5>
+                      <h4 v-else>Current facility access</h4>
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="12" class="pt-0 pb-0">
+                    <v-col cols="12" class="pl-6 pl-md-0 pt-0 pb-0">
                       <!-- Facilities table -->
-                      <v-data-table :headers="headersFacilities" :items="getActiveFacilities(item.facilities)" item-key="facilityId" items-per-page="-1" density="compact">
+                      <v-data-table
+                        :headers="headersFacilities"
+                        :items="getActiveFacilities(item.facilities)"
+                        item-key="facilityId"
+                        items-per-page="-1"
+                        density="compact"
+                        :mobile="null"
+                        mobile-breakpoint="md">
                         <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
 
                         <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
@@ -117,7 +134,7 @@ export default {
       userToUpdate: {},
       userToDeactivate: {},
       headersUsers: [
-        { title: '', key: 'data-table-expand', width: '87px' },
+        { title: '', key: 'dataTableExpand', width: '87px' },
         { title: '', key: 'actions', width: '30px' },
         { title: 'First Name', key: 'firstName', width: '10%' },
         { title: 'Last Name', key: 'lastName', width: '10%' },
@@ -145,6 +162,9 @@ export default {
         this.setFailureAlert('Failed to filter users by facility name', error)
         return []
       }
+    },
+    isMobileMode() {
+      return this.$vuetify.display.xs || this.$vuetify.display.sm
     },
   },
   async created() {

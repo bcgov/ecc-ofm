@@ -6,7 +6,7 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
-import { APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
+import { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
   namespaced: true,
@@ -23,7 +23,9 @@ export const useApplicationsStore = defineStore('applications', {
   }),
   getters: {
     isApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isEligibilityComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
+    isRenewalApplicationComplete: (state) => state.isFacilityDetailsComplete && state.isServiceDeliveryComplete && state.isOperatingCostsComplete && state.isStaffingComplete,
     isApplicationReadonly: (state) => state.currentApplication?.statusCode != APPLICATION_STATUS_CODES.DRAFT,
+    isRenewal: (state) => state.currentApplication?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL,
   },
   actions: {
     checkApplicationComplete() {
@@ -106,7 +108,7 @@ export const useApplicationsStore = defineStore('applications', {
       return this.currentApplication?.facility?.personalResidence === YES_NO_RADIO_GROUP_MAPPING.YES
     },
 
-    /* 
+    /*
       Service Delivery page
      */
     checkServiceDeliveryComplete() {
@@ -115,7 +117,8 @@ export const useApplicationsStore = defineStore('applications', {
         !isEmpty(this.currentApplication?.licences) &&
         this.isLicenceDetailComplete() &&
         this.isLicenceDocumentUploaded() &&
-        this.isHealthAuthorityReportUploaded()
+        this.isHealthAuthorityReportUploaded() &&
+        this.isPolicyProcedureManualUploaded()
       )
     },
 
@@ -152,20 +155,37 @@ export const useApplicationsStore = defineStore('applications', {
       const healthAuthorityReports = this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.HEALTH_AUTHORITY_REPORT))
       return !isEmpty(healthAuthorityReports)
     },
+    isPolicyProcedureManualUploaded() {
+      const policyProcedureManual = this.currentApplication?.uploadedDocuments?.filter((document) => document.documentType?.includes(DOCUMENT_TYPES.POLICY_PROCEDURE_MANUAL))
+      return !isEmpty(policyProcedureManual)
+    },
 
     /*
       Operating Cost page
     */
     checkOperatingCostsComplete() {
-      const isRequiredFinancialDocsUploaded = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
-      const isFacilityTypeRequiredDocsUploaded = !this.isRentLease(this.currentApplication) || this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.SUPPORTING_DOCS])
+      const isRentLease = this.isRentLease(this.currentApplication)
+      const isMortgageOwned = this.isMortgageOwned(this.currentApplication)
+
+      const uploadedRentLeaseDocs = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.RENT_LEASE_AGREEMENT])
+      const uploadedMortgageDocs = this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.MORTGAGE_STATEMENT])
+
+      const noFacilityTypeDocsRequired = !isRentLease && !isMortgageOwned
+      const rentLeaseRequiredDocsUploaded = isRentLease && uploadedRentLeaseDocs
+      const mortgageOwnedRequiredDocsUploaded = isMortgageOwned && uploadedMortgageDocs
+
+      // Financial docs are required for new Applications only
+      const applicationDocsUploaded = this.isRenewal ? true : this.checkRequiredDocsExist(this.currentApplication, [DOCUMENT_TYPES.INCOME_STATEMENT, DOCUMENT_TYPES.BALANCE_SHEET])
+
+      const isFacilityTypeRequiredDocsUploaded = applicationDocsUploaded && (noFacilityTypeDocsRequired || rentLeaseRequiredDocsUploaded || mortgageOwnedRequiredDocsUploaded)
+
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
       const isRentLeaseInformationComplete =
         !this.isRentLease(this.currentApplication) ||
         (this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
           (this.currentApplication?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
             (this.currentApplication?.rentLeaseStartDate && this.currentApplication?.rentLeaseEndDate && this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)))
-      return this.currentApplication?.facilityType && isRentLeaseInformationComplete && isRequiredFinancialDocsUploaded && isFacilityTypeRequiredDocsUploaded && areCostsPositive
+      return this.currentApplication?.facilityType && isRentLeaseInformationComplete && isFacilityTypeRequiredDocsUploaded && areCostsPositive
     },
 
     checkRequiredDocsExist(application, requiredDocumentTypes) {
@@ -174,6 +194,9 @@ export const useApplicationsStore = defineStore('applications', {
 
     isRentLease(application) {
       return application?.facilityType === FACILITY_TYPES.RENT_LEASE
+    },
+    isMortgageOwned(application) {
+      return application?.facilityType === FACILITY_TYPES.OWNED_WITH_MORTGAGE
     },
 
     /* 

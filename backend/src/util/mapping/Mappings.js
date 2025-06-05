@@ -54,6 +54,7 @@ const AssistanceRequestMappings = [
   { back: '_ofm_request_category_value', front: 'categoryValue' },
   { back: 'modifiedon', front: 'lastUpdatedTime' },
   { back: 'ofm_is_read', front: 'isRead' },
+  { back: 'ofm_number_of_documents', front: 'hasDocuments' },
 ]
 
 const AssistanceRequestConversationMappings = [
@@ -193,6 +194,7 @@ const ApplicationMappings = [
   { back: 'ofm_month_to_month', front: 'monthToMonthRentLease' },
   { back: 'ofm_costs_lease_start_date', front: 'rentLeaseStartDate' },
   { back: 'ofm_costs_lease_end_date', front: 'rentLeaseEndDate' },
+  { back: 'ofm_application_type', front: 'applicationRenewalType' },
 ]
 
 const ApplicationProviderEmployeeMappings = [
@@ -334,7 +336,7 @@ const FundingAgreementMappings = [
   { back: 'statecode', front: 'stateCode' },
   { back: 'ofm_declaration', front: 'agreeConsentCertify' },
   { back: '_ofm_facility_value@OData.Community.Display.V1.FormattedValue', front: 'facilityName' },
-
+  { back: 'ofm_version_number', front: 'versionNumber' },
   // Annual Base Funding
   { back: 'ofm_envelope_hr_total', front: 'envelopeHRTotal' },
   { back: 'ofm_envelope_hr_wages_paidtimeoff', front: 'envelopeHRWagePaidTimeOff' },
@@ -346,19 +348,34 @@ const FundingAgreementMappings = [
   { back: 'ofm_envelope_administrative', front: 'envelopeAdministrative' },
   { back: 'ofm_envelope_operational', front: 'envelopeOperational' },
   { back: 'ofm_envelope_facility', front: 'envelopeFacility' },
+  // Top Up Funding
+  { back: 'ofm_envelope_hr_total_topup', front: 'topupEnvelopeHRTotal' },
+  { back: 'ofm_envelope_hr_wages_paidtimeoff_topup', front: 'topupEnvelopeHRWagePaidTimeOff' },
+  { back: 'ofm_envelope_hr_benefits_topup', front: 'topupEnvelopeHRBenefits' },
+  { back: 'ofm_envelope_hr_employerhealthtax_topup', front: 'topupEnvelopeHREmployerHealthTax' },
+  { back: 'ofm_envelope_hr_prodevhours_topup', front: 'topupEnvelopeHRProDevHours' },
+  { back: 'ofm_envelope_hr_prodevexpenses_topup', front: 'topupEnvelopeHRProDevExpenses' },
+  { back: 'ofm_envelope_programming_topup', front: 'topupEnvelopeProgramming' },
+  { back: 'ofm_envelope_administrative_topup', front: 'topupEnvelopeAdministrative' },
+  { back: 'ofm_envelope_operational_topup', front: 'topupEnvelopeOperational' },
+  { back: 'ofm_envelope_facility_topup', front: 'topupEnvelopeFacility' },
 ]
 
 const FundingReallocationRequestMappings = [
   { back: 'ofm_funding_envelope_changeid', front: 'fundingEnvelopeId' },
   { back: '_ofm_funding_value', front: 'fundingId' },
+  { back: 'createdon', front: 'date' },
+  { back: 'statuscode', front: 'statusCode' },
+  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
+]
+
+const FundingAllocationChangeMappings = [
+  { back: 'ofm_funding_allocationid', front: 'fundingAllocationId' },
   { back: 'ofm_funding_envelope_from', front: 'envelopeCodeFrom' },
   { back: 'ofm_funding_envelope_from@OData.Community.Display.V1.FormattedValue', front: 'envelopeNameFrom' },
   { back: 'ofm_funding_envelope_to', front: 'envelopeCodeTo' },
   { back: 'ofm_funding_envelope_to@OData.Community.Display.V1.FormattedValue', front: 'envelopeNameTo' },
   { back: 'ofm_amount_base', front: 'amount' },
-  { back: 'createdon', front: 'date' },
-  { back: 'statuscode', front: 'statusCode' },
-  { back: 'statuscode@OData.Community.Display.V1.FormattedValue', front: 'statusName' },
 ]
 
 const PaymentMappings = [
@@ -371,7 +388,7 @@ const PaymentMappings = [
   { back: 'ofm_payment_type', front: 'paymentTypeCode' },
   { back: 'ofm_payment_type@OData.Community.Display.V1.FormattedValue', front: 'paymentTypeName' },
   { back: 'ofm_amount', front: 'amount' },
-  { back: 'ofm_invoice_date', front: 'invoiceDate' },
+  { back: 'ofm_invoice_received_date', front: 'invoiceReceivedDate' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
@@ -553,4 +570,5 @@ module.exports = {
   UserProfileOrganizationMappings,
   IrregularExpenseMappings,
   TopUpMappings,
+  FundingAllocationChangeMappings,
 }

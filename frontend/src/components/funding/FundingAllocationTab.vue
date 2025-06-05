@@ -8,15 +8,24 @@
     <h2 class="ma-2">Funding Re-Allocation Rules</h2>
     <AppAlertBanner type="info" class="ma-2 mb-4">Note: Total funds re-allocated cannot be more than the base funding for each envelope.</AppAlertBanner>
     <FundingAllocationInfoTable class="pa-2" />
-    <FundingSearchCard :loading="loading" :select-single-facility="true" :show-date-filter="false" :show-reset-button="false" class="my-10" @search="loadFundingDetails" />
-    <BaseFundingCard :loading="loading" :funding-details="fundingDetails" />
-    <FundingReallocationRequestsTable :loading="loading" :funding-reallocation-requests="fundingReallocationRequests" class="mt-8" />
-    <NewRequestDialog
-      class="pa-0"
-      :show="showAssistanceRequestDialog"
-      :default-facility="selectedFacility"
-      :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.FUNDING_ENVELOPE_CR)"
-      @close="toggleAssistanceRequestDialog" />
+    <h2 class="ma-2">Facility Search</h2>
+    <AppAlertBanner v-if="!hasActiveFundingAgreements" type="info" class="ma-2 mb-4">
+      No Active Funding Agreement Found: This organization currently does not have an active signed OFM funding agreement.
+    </AppAlertBanner>
+    <div v-else>
+      <FundingSearchCard :loading="loading" :select-single-facility="true" :show-date-filter="false" :show-reset-button="false" class="my-10" @search="loadFundingDetails" />
+      <BaseFundingCard :loading="loading" :funding-details="fundingDetails" />
+      <div v-if="showTopupCard">
+        <TopupFundingCard :loading="loading" :funding-details="fundingDetails" />
+      </div>
+      <FundingReallocationRequestsTable :loading="loading" :funding-reallocation-requests="fundingReallocationRequests" class="mt-8" />
+      <NewRequestDialog
+        class="pa-0"
+        :show="showAssistanceRequestDialog"
+        :default-facility="selectedFacility"
+        :default-request-category-id="getRequestCategoryIdByName(REQUEST_CATEGORY_NAMES.FUNDING_ENVELOPE_CR)"
+        @close="toggleAssistanceRequestDialog" />
+    </div>
   </v-container>
 </template>
 
@@ -24,6 +33,7 @@
 import { mapState } from 'pinia'
 
 import BaseFundingCard from '@/components/funding/BaseFundingCard.vue'
+import TopupFundingCard from '@/components/funding/TopupFundingCard.vue'
 import FundingAllocationInfoTable from '@/components/funding/FundingAllocationInfoTable.vue'
 import FundingReallocationRequestsTable from '@/components/funding/FundingReallocationRequestsTable.vue'
 import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
@@ -32,13 +42,15 @@ import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import FundingAgreementService from '@/services/fundingAgreementService'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import alertMixin from '@/mixins/alertMixin.js'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES, REQUEST_CATEGORY_NAMES } from '@/utils/constants'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   name: 'FundingAllocationTab',
-  components: { AppAlertBanner, AppButton, BaseFundingCard, FundingAllocationInfoTable, FundingReallocationRequestsTable, FundingSearchCard, NewRequestDialog },
+  components: { AppAlertBanner, AppButton, BaseFundingCard, TopupFundingCard, FundingAllocationInfoTable, FundingReallocationRequestsTable, FundingSearchCard, NewRequestDialog },
   mixins: [alertMixin, permissionsMixin],
   data() {
     return {
@@ -47,18 +59,32 @@ export default {
       selectedFacility: null,
       fundingDetails: {},
       fundingReallocationRequests: [],
+      hasActiveFundingAgreements: false,
     }
   },
 
   computed: {
     ...mapState(useAppStore, ['getRequestCategoryIdByName']),
+    ...mapState(useAuthStore, ['userInfo']),
+
+    showTopupCard() {
+      return Number(this.fundingDetails?.topupEnvelopeProgramming) > 0
+    },
   },
 
-  created() {
+  async created() {
     this.REQUEST_CATEGORY_NAMES = REQUEST_CATEGORY_NAMES
+    const facilityIds = this.userInfo?.facilities.map((f) => f.facilityId) || []
+    if (!isEmpty(facilityIds)) {
+      await this.checkActiveFAs(facilityIds)
+    }
   },
 
   methods: {
+    async checkActiveFAs(facilityIds) {
+      const response = await FundingAgreementService.fundingAgreementExists(facilityIds)
+      this.hasActiveFundingAgreements = response.exists
+    },
     async loadFundingDetails(searchQueries) {
       this.selectedFacility = searchQueries?.facilities
       try {

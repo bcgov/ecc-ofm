@@ -31,9 +31,11 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="fundingExpiryDate != 'Invalid Date'">
+    <v-row v-if="fundingExpiryDate">
       <v-col cols="12">
-        <div v-if="!nextTermActive">If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToUTC(fundingExpiryDate) }}</div>
+        <div v-if="!nextTermActive">
+          If you apply for and receive funding in the current year of your funding agreement, the funds must be used by {{ format.formatDateToLocale(fundingExpiryDate) }}
+        </div>
       </v-col>
     </v-row>
     <v-row no-gutters class="mb-2">
@@ -48,7 +50,7 @@
         </AppButton>
       </v-col>
     </v-row>
-    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :isLoading="loading" persistent max-width="40%" @close="toggleCancelDialog">
+    <AppDialog v-model="showCancelDialog" title="Cancel Changes" :is-loading="loading" persistent max-width="40%" @close="toggleCancelDialog">
       <template #content>
         <v-row class="mb-2">
           <v-col class="text-center">
@@ -87,14 +89,14 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance
                 v-if="panelComponent.id === INDIGENOUS"
-                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
-                :formDisabled="currentTermDisabled || formDisabled"
+                :indigenous-programming-model="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, renewalTerm)"
+                :form-disabled="currentTermDisabled || formDisabled"
                 @update="updateModel" />
               <SupportNeedsProgrammingAllowance
                 v-if="panelComponent.id === SUPPORT_NEEDS"
-                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
-                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-                :formDisabled="currentTermDisabled || formDisabled"
+                :support-model="getModel(SUPPLEMENTARY_TYPES.SUPPORT, renewalTerm)"
+                :has-inclusion-policy="currentOrg.hasInclusionPolicy"
+                :form-disabled="currentTermDisabled || formDisabled"
                 @update="updateModel" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -111,10 +113,10 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <TransportationAllowance
-                :transportModels="getTransportModels(renewalTerm)"
-                :formDisabled="currentTermDisabled || formDisabled"
-                :renewalTerm="renewalTerm"
-                :startDate="getStartDate(renewalTerm)"
+                :transport-models="getTransportModels(renewalTerm)"
+                :form-disabled="currentTermDisabled || formDisabled"
+                :renewal-term="renewalTerm"
+                :start-date="getStartDate(renewalTerm)"
                 @update="updateModel"
                 @add-model="addBlankTransportModel"
                 @delete-model="deleteTransportModel"
@@ -140,14 +142,14 @@
             <v-expansion-panel-text>
               <IndigenousProgrammingAllowance
                 v-if="panelComponent.id === INDIGENOUS"
-                :indigenousProgrammingModel="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
-                :formDisabled="formDisabled"
+                :indigenous-programming-model="getModel(SUPPLEMENTARY_TYPES.INDIGENOUS, nextRenewalTerm)"
+                :form-disabled="formDisabled"
                 @update="updateModel" />
               <SupportNeedsProgrammingAllowance
                 v-if="panelComponent.id === SUPPORT_NEEDS"
-                :supportModel="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
-                :hasInclusionPolicy="currentOrg.hasInclusionPolicy"
-                :formDisabled="formDisabled"
+                :support-model="getModel(SUPPLEMENTARY_TYPES.SUPPORT, nextRenewalTerm)"
+                :has-inclusion-policy="currentOrg.hasInclusionPolicy"
+                :form-disabled="formDisabled"
                 @update="updateModel" />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -164,10 +166,10 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <TransportationAllowance
-                :transportModels="getTransportModels(nextRenewalTerm)"
-                :formDisabled="formDisabled"
-                :renewalTerm="nextRenewalTerm"
-                :startDate="getStartDate(nextRenewalTerm)"
+                :transport-models="getTransportModels(nextRenewalTerm)"
+                :form-disabled="formDisabled"
+                :renewal-term="nextRenewalTerm"
+                :start-date="getStartDate(nextRenewalTerm)"
                 @update="updateModel"
                 @add-model="addBlankTransportModel"
                 @delete-model="deleteTransportModel"
@@ -198,13 +200,12 @@ import { uuid } from 'vue-uuid'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
-import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL } from '@/utils/constants/suppConstants'
+import { SUPP_TERM_CODES, CORE_SERVICES_PANELS, DISCRETIONARY_PANEL, TWO_YEARS } from '@/utils/constants/suppConstants'
 import format from '@/utils/format'
 import moment from 'moment'
 
 const DAYS_BEFORE_TERM_EXPIRES = 1
 const DAYS_BEFORE_NEXT_TERM_ENABLED = 120
-const TWO_YEARS = 732
 
 export default {
   name: 'SupplementaryFormView',
@@ -443,7 +444,6 @@ export default {
         for (const application of transportApplications) {
           application.uploadedDocuments = await DocumentService.getDocuments(application.supplementaryApplicationId)
           application.documentsToUpload = []
-          application.retroactiveDate = application.retroactiveDate ? this.format.formatTwoMonthDate(application.retroactiveDate) : null
         }
         this.models = [...this.models, ...transportApplications]
       }
@@ -577,7 +577,7 @@ export default {
         //OFM core creation. They moved too quickly and the FA did not have time to generate in Dynamics before returning.
         //In this case, we can safely assume they are in term 1. Upon refresh, the FA will exist.
         case today < termOneEndDate || !this.fundingAgreement?.endDate:
-          this.fundingExpiryDate = termOneEndDate
+          this.fundingExpiryDate = this.fundingAgreement?.endDate ? termOneEndDate : null
           this.renewalTerm = SUPP_TERM_CODES.TERM_ONE
           this.nextRenewalTerm = SUPP_TERM_CODES.TERM_TWO
           this.setIsCurrentTermDisabled(termOneEndDate, today)
@@ -610,14 +610,23 @@ export default {
       this.setIsNearTermEndDate(formattedEndDate, today)
     },
     setIsCurrentTermDisabled(termEndDate, today) {
+      if (isEmpty(this.fundingAgreement)) {
+        return
+      }
       const priorDate = moment(termEndDate).subtract(DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.currentTermDisabled = today > priorDate
     },
     setIsNextTermEnabled(termEndDate, today) {
+      if (isEmpty(this.fundingAgreement)) {
+        return
+      }
       const priorDate = moment(termEndDate).subtract(DAYS_BEFORE_NEXT_TERM_ENABLED, 'days').toDate()
       this.isNextTermEnabled = today > priorDate
     },
     setIsNearTermEndDate(formattedEndDate, today) {
+      if (isEmpty(this.fundingAgreement)) {
+        return
+      }
       const priorDate = moment(formattedEndDate).subtract(DAYS_BEFORE_TERM_EXPIRES, 'days').toDate()
       this.isFundingTermComplete = today > priorDate || today > formattedEndDate
     },

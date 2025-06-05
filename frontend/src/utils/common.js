@@ -27,8 +27,10 @@ export function sanitizeWholeNumberInput(input) {
   return input?.replace(/[^0-9]/g, '')
 }
 
-export function createPDFDownloadLink(file, fileName) {
+export function createFileDownloadLink(file, fileName) {
   const link = document.createElement('a')
+  //this declares it as a PDF - but it works to download all file types.
+  //JB tried to change the mimetype, but this is the only method that I found that detected the extension automatically, and let you open the file correctly
   link.href = `data:application/pdf;base64,${file}`
   link.target = '_blank'
   link.download = fileName

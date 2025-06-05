@@ -77,6 +77,7 @@ export const APPLICATION_STATUS_CODES = Object.freeze({
   REDIRECTED: 11, // INACTIVE state
   PROVIDER_DECLINED: 12, // INACTIVE state
   EXPIRED: 13, // INACTIVE state
+  UNSUCCESSFUL: 14, // INACTIVE state
 })
 
 export const FUNDING_AGREEMENT_STATUS_CODES = Object.freeze({
@@ -194,9 +195,35 @@ export const APPLICATION_ROUTES = Object.freeze({
   CONFIRMATION: 'application-confirmation',
 })
 
+export const RENEWAL_ROUTES = Object.freeze({
+  SELECT_FACILITY: 'renew-select-facility',
+  FACILITY_DETAILS: 'renew-facility-details',
+  ELIGIBILITY: 'renew-eligibility',
+  SERVICE_DELIVERY: 'renew-service-delivery',
+  OPERATING_COSTS: 'renew-operating-costs',
+  STAFFING: 'renew-staffing',
+  REVIEW: 'renew-review-application',
+  SUBMIT: 'renew-declare-submit',
+  CONFIRMATION: 'renew-application-confirmation',
+})
+
+export const SELECT_FACILITY_PAGES = [APPLICATION_ROUTES.SELECT_FACILITY, RENEWAL_ROUTES.SELECT_FACILITY]
+export const FACILITY_DETAILS_PAGES = [APPLICATION_ROUTES.FACILITY_DETAILS, RENEWAL_ROUTES.FACILITY_DETAILS]
+export const SERVICE_DELIVERY_PAGES = [APPLICATION_ROUTES.SERVICE_DELIVERY, RENEWAL_ROUTES.SERVICE_DELIVERY]
+export const OPERATING_COSTS_PAGES = [APPLICATION_ROUTES.OPERATING_COSTS, RENEWAL_ROUTES.OPERATING_COSTS]
+export const STAFFING_PAGES = [APPLICATION_ROUTES.STAFFING, RENEWAL_ROUTES.STAFFING]
+export const REVIEW_PAGES = [APPLICATION_ROUTES.REVIEW, RENEWAL_ROUTES.REVIEW]
+export const SUBMIT_PAGES = [APPLICATION_ROUTES.SUBMIT, RENEWAL_ROUTES.SUBMIT]
+export const CONFIRMATION_PAGES = [APPLICATION_ROUTES.CONFIRMATION, RENEWAL_ROUTES.CONFIRMATION]
+
 export const APPLICATION_INTAKE_TYPES = Object.freeze({
   OPEN_INTAKE: 1,
   LIMITED_INTAKE: 2,
+})
+
+export const APPLICATION_RENEWAL_TYPES = Object.freeze({
+  NEW: 1,
+  RENEWAL: 2,
 })
 
 export const APPLICATION_PROVIDER_EMPLOYEE_TYPES = Object.freeze({
@@ -215,9 +242,11 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_UPLOAD: 'Document upload required',
   DOCUMENT_UPLOAD_COMMUNITY_LETTER: 'A letter of community support is required to continue',
   DOCUMENT_FINANCIAL_UPLOAD: 'Document upload for Income Statement and Balance Sheet required',
-  DOCUMENT_SUPPORTING_UPLOAD: 'Document upload of your Rent/Lease Agreement under Supporting Documents required',
+  DOCUMENT_RENT_LEASE_UPLOAD: 'Document upload of your Rent/Lease Agreement required',
+  DOCUMENT_MORTGAGE_UPLOAD: 'Document upload of your Mortgage Statement required',
   DOCUMENT_LICENCE_UPLOAD: 'Document upload of your current licence required',
   DOCUMENT_HA_REPORT_UPLOAD: 'Document upload of your most recent Health Authority compliance report required',
+  DOCUMENT_POLICY_PROCEDURE_UPLOAD: 'Document upload of your most recent Policy and Procedure Manual required',
   FACILITY_TYPE: 'Facility type required',
   ARM_LENGTH: "Arm's Length agreement checkbox required",
   RENT_LEASE_DATE_RANGE: 'Rent lease start and end dates required',
@@ -272,16 +301,21 @@ export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
 export const DOCUMENT_TYPES = Object.freeze({
   INCOME_STATEMENT: 'Income Statement',
   BALANCE_SHEET: 'Balance Sheet',
+  MORTGAGE_STATEMENT: 'Mortgage Statement',
+  RENT_LEASE_AGREEMENT: 'Rent/Lease Agreement',
   SUPPORTING_DOCS: 'Supporting Documents',
   COMMUNITY_LETTER: 'Community Support Letter',
   HEALTH_AUTHORITY_REPORT: 'HA Compliance Rpt',
   INCLUSION_POLICY: 'Inclusion Policy Document',
+  POLICY_PROCEDURE_MANUAL: 'Policy and Procedure Manual',
+  ASSISTANCE_REQUEST: 'Assistance Request',
 })
 
 export const DOCUMENT_LABELS = Object.freeze({
   LICENCE: 'A copy of your current licence',
   HEALTH_AUTHORITY_REPORT: 'A copy of your most recent Health Authority compliance report',
   COMMUNITY_LETTER: 'Letter of Reference for Community Support',
+  POLICY_PROCEDURE_MANUAL: ' A copy of your most recent Policy and Procedure Manual',
 })
 
 export const YES_NO_CHOICE_CRM_MAPPING = Object.freeze({

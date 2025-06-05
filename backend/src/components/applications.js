@@ -1,5 +1,5 @@
 'use strict'
-const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError } = require('./utils')
+const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError, formatDateTimeForBack } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
 const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
@@ -38,7 +38,7 @@ function mapSupplementaryApplicationObjectForFront(data) {
 async function getApplications(req, res) {
   try {
     const applications = []
-    const operation = `ofm_applications?$select=ofm_application,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,ofm_unionized,_ofm_facility_value&$filter=(${buildFilterQuery(
+    const operation = `ofm_applications?$select=ofm_application,ofm_application_type,ofm_summary_ministry_last_updated,ofm_summary_provider_last_updated,ofm_summary_submittedon,statuscode,statecode,ofm_unionized,_ofm_facility_value&$filter=(${buildFilterQuery(
       req?.query,
       ApplicationMappings,
     )})`
@@ -116,6 +116,7 @@ async function createApplication(req, res) {
       ofm_provider_type: req.body?.providerType,
       ofm_summary_ownership: req.body?.ownership,
       'ofm_createdby@odata.bind': `/contacts(${req.body?.createdBy})`,
+      ofm_application_type: req.body?.applicationRenewalType,
     }
     const response = await postOperation('ofm_applications', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())
@@ -154,14 +155,7 @@ async function getSupplementaryApplicationById(req, res) {
 
 async function createSupplementaryApplication(req, res) {
   try {
-    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
-    if (payload.ofm_indigenous_expenses) {
-      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
-    } else if (payload.ofm_needs_expenses) {
-      payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
-    }
-
-    delete payload['_ofm_application_value']
+    const payload = formatSupplementaryApplication(new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON())
 
     payload['ofm_application@odata.bind'] = `/ofm_applications(${req.body.applicationId})`
     const response = await postOperation('ofm_allowances', payload)
@@ -174,14 +168,7 @@ async function createSupplementaryApplication(req, res) {
 
 async function updateSupplementaryApplication(req, res) {
   try {
-    const payload = new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON()
-    if (payload.ofm_indigenous_expenses) {
-      payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
-    } else if (payload.ofm_needs_expenses) {
-      payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
-    }
-
-    delete payload['_ofm_application_value']
+    const payload = formatSupplementaryApplication(new MappableObjectForBack(req.body, SupplementaryApplicationMappings).toJSON())
 
     const response = await patchOperationWithObjectId('ofm_allowances', req.params.applicationId, payload)
     return res.status(HttpStatus.OK).json(response)
@@ -189,6 +176,22 @@ async function updateSupplementaryApplication(req, res) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
+}
+
+function formatSupplementaryApplication(payload) {
+  if (payload.ofm_indigenous_expenses) {
+    payload.ofm_indigenous_expenses = payload.ofm_indigenous_expenses.toString()
+  } else if (payload.ofm_needs_expenses) {
+    payload.ofm_needs_expenses = payload.ofm_needs_expenses.toString()
+  }
+
+  if (payload.ofm_retroactive_date) {
+    payload.ofm_retroactive_date = formatDateTimeForBack(payload.ofm_retroactive_date)
+  }
+
+  delete payload['_ofm_application_value']
+
+  return payload
 }
 
 async function deleteSupplementaryApplication(req, res) {

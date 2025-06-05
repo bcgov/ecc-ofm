@@ -39,9 +39,27 @@
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
+          <a href="https://www.youtube.com/watch?v=dmtcxxuWrqo" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>$10 a Day Welcome Session 2025</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://www.youtube.com/watch?v=o8nPVa9xq8Q" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>$10 a Day Application Information Session 2024</span>
+          </a>
+          <br />
+          <br />
           <a href="https://www2.gov.bc.ca/gov/content/family-social-supports/caring-for-young-children/childcarebc-programs/10-a-day-childcarebc-centres" target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>$10 a Day ChildCareBC Centres Website - Province of British Columbia (gov.bc.ca)</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://www.youtube.com/watch?v=tbLliQYf4-s" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>2018 Welcome Session Recording</span>
           </a>
           <br />
           <br />
@@ -74,6 +92,18 @@
           <span class="supplementary-header-label">{{ panelComponent.title }}</span>
         </v-expansion-panel-title>
         <v-expansion-panel-text v-if="panelComponent.id === 'manuals'">
+          <a href="https://www2.gov.bc.ca/assets/download/46A19E72A2C94FA19A8A5CA2131A1B91" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>2023 - Policy and Procedure Manual</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://www2.gov.bc.ca/assets/download/0B232910D75C4A56AE753C9B964AC97F" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>2023 - Funding Agreement Template</span>
+          </a>
+          <br />
+          <br />
           <a href="https://www2.gov.bc.ca/assets/download/2215735D9D5540079294C5B032864123" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2024 - Policy and Procedure Manual</span>
@@ -88,13 +118,19 @@
           <br />
           <a href="https://www2.gov.bc.ca/assets/download/D10A0045B4724B81A235A2CE418F29DB" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>Applicant Guide</span>
+            <span>2024 - Intake Applicant Guide</span>
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
           <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>Funding Agreement Training e-Module</span>
+          </a>
+          <br />
+          <br />
+          <a href="https://rise.articulate.com/share/5jymO4jk2gWm5csl-hiPdV6XN_d81gj8#/" target="_blank">
+            <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
+            <span>Monthly Reporting e-Module</span>
           </a>
           <br />
           <br />

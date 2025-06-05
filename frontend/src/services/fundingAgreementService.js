@@ -6,7 +6,6 @@ export default {
     try {
       if (!applicationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?applicationId=${applicationId}&stateCode=${CRM_STATE_CODES.ACTIVE}`)
-
       //Backend will order FA's so newest one (newest MOD agreement) will always be first
       //in the case of Supp Apps - we will need the start date of the ORIGINAL funding agreement - so take the last FA in the list
       if (ignoreMODAgreements) {
@@ -64,6 +63,17 @@ export default {
     }
   },
 
+  async getInactiveFundingAgreementByFacilityIdAndStatus(facilityId, statusCode) {
+    try {
+      if (!facilityId && !statusCode) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}?facilityId=${facilityId}&stateCode=${CRM_STATE_CODES.INACTIVE}&statusCode=${statusCode}`)
+      return response?.data[0]
+    } catch (error) {
+      console.log(`Failed to get the active funding agreement by facility id and status - ${error}`)
+      throw error
+    }
+  },
+
   /*  this function is only used by the FundingAgreementTab currently.
     however I changed this function to take the queries as paramenters,
     in case we would like to reuse this function differently in the future. */
@@ -105,6 +115,15 @@ export default {
       return response?.data
     } catch (error) {
       console.log(`Failed to get the funding reallocation requests by funding agreement id - ${error}`)
+      throw error
+    }
+  },
+  async fundingAgreementExists(facilityIds) {
+    try {
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.FUNDING_AGREEMENTS}/exists`, { facilityIds })
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get funding agreements for facilities - ${error}`)
       throw error
     }
   },
