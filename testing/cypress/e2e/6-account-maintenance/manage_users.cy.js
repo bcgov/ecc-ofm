@@ -7,9 +7,9 @@ describe("Manage Facility Users", () => {
     cy.intercept("**/api/**", (req) => {
       console.log("➡️ Intercepted:", req.method, req.url);
     }).as("apiCalls");
-    cy.session("portal-login", () => {
-      cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL);
-    });
+
+    cy.loginToPortal(USERNAME, PASSWORD, PORTAL_URL);
+
     cy.wait(1000); // Give auth time to register
     cy.visit(PORTAL_URL);
 
