@@ -22,11 +22,14 @@ Instructions on how to install and run Cypress tests in headless mode as well as
 **`Step 3`** Issue the command:
 `npm run cy:run-one cypress\e2e\1-portal-and-crm-login-and-security\portal_login.cy.js`
 
+**`Step 3A`**For Windows / Git Bash Subsystem Issue the command :
+`npm run cy:run-one cypress\\e2e\\1-portal-and-crm-login-and-security\\portal_login.cy.js`
+
 ## Run tests in Cypress GUI
 
 **`Step 1`** If your terminal prompt is not already in the root of the testing folder, cd to ECC-OFM\testing
 
-**`Step 2`** Issue the command: `nm run cy:open`
+**`Step 2`** Issue the command: `npm run cy:open`
 
 **`Step 3`** After the Cypress Test Runner GUI opens, you’ll be presented with the option to select ‘E2E Testing’ or ‘Component Testing’. Click on ‘E2E Testing’.
 
