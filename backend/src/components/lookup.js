@@ -80,7 +80,7 @@ async function getRoles() {
   if (!roles) {
     roles = []
     const response = await getOperation(
-      "ofm_portal_roles?$select=ofm_name,ofm_portal_role_number&$expand=owningbusinessunit($select=name;$filter=name eq 'OFM'),ofm_portal_role_permission($select=ofm_portal_permissionid,ofm_portal_privilege;$filter=statecode eq 0;$expand=ofm_portal_privilege($select=ofm_portal_privilege_number,ofm_category,ofm_name;$filter=statecode eq 0))&$filter=(statecode eq 0)",
+      "ofm_portal_roles?$select=ofm_name,ofm_portal_role_number&$expand=owningbusinessunit($select=name),ofm_portal_role_permission($select=ofm_portal_permissionid,_ofm_portal_privilege_value;$expand=ofm_portal_privilege($select=ofm_category,ofm_name,ofm_portal_privilege_number);$filter=(statecode eq 0))&$filter=(statecode eq 0) and (owningbusinessunit/name eq 'OFM')&pageSize=1000",
     )
     response?.value?.forEach((item) => {
       const role = new MappableObjectForFront(item, RoleMappings)
