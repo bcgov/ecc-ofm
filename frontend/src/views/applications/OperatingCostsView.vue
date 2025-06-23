@@ -83,6 +83,8 @@
                 v-model="financialStatement.documentsToUpload"
                 entity-name="ofm_applications"
                 :document-type="DOCUMENT_TYPES.INCOME_STATEMENT"
+                :example-image="'Income Statement.png'"
+                :example-text="'Content placeholder. Content to be provided.'"
                 :loading="processing"
                 :readonly="readonly"
                 :uploaded-documents="financialStatement.uploadedDocuments"
@@ -94,10 +96,18 @@
                 v-model="balanceSheet.documentsToUpload"
                 entity-name="ofm_applications"
                 :document-type="DOCUMENT_TYPES.BALANCE_SHEET"
+                :example-image="'Balance Sheet.png'"
+                :example-text="'Content placeholder. Content to be provided.'"
                 :loading="processing"
                 :readonly="readonly"
                 :uploaded-documents="balanceSheet.uploadedDocuments"
-                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
+                @delete-uploaded-document="deleteUploadedDocument">
+                <template #exampleText>
+                  This is custom content for the Balance Sheet. It supports html. Like
+                  <strong>STRONG</strong>
+                  .
+                </template>
+              </AppDocumentUpload>
             </v-card>
             <v-card class="pa-4">
               <AppDocumentUpload

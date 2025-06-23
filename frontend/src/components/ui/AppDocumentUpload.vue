@@ -4,6 +4,7 @@
       <v-row>
         <v-col v-if="documentLabel || documentType" cols="12" sm="7" class="pb-0">
           <AppLabel>{{ documentLabel ?? documentType }}</AppLabel>
+          <v-btn v-if="exampleText" class="example-button" variant="plain" @click="toggleExampleDialog">View Example</v-btn>
           <p v-if="documentHelpText" class="text-sm text-muted mt-1">{{ documentHelpText }}</p>
         </v-col>
         <v-col cols="12" :sm="documentType ? '5' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
@@ -48,17 +49,37 @@
         </v-row>
       </div>
     </v-form>
+    <AppDialog v-model="showExampleDialog" :title="exampleTitle" :is-loading="loading" persistent max-width="600px" @close="toggleExampleDialog">
+      <template #content>
+        <div class="confirm-dialog-text d-flex flex-column">
+          <p class="mt-2">
+            <strong>Note:&nbsp;</strong>
+            <slot name="exampleText">Content placeholder. Content to be provided.</slot>
+          </p>
+          <img v-if="exampleImage" :src="exampleImageSource" />
+        </div>
+      </template>
+      <template #button>
+        <v-row>
+          <v-col cols="12" class="d-flex justify-end">
+            <AppButton id="dialog-close" :primary="true" size="large" width="100px" :loading="loading" @click="toggleExampleDialog">Close</AppButton>
+          </v-col>
+        </v-row>
+      </template>
+    </AppDialog>
   </v-container>
 </template>
 <script>
-import AppButton from '@/components/ui/AppButton.vue'
-import AppLabel from '@/components/ui/AppLabel.vue'
-import { humanFileSize, getFileExtensionWithDot } from '@/utils/file'
 import { uuid } from 'vue-uuid'
+
+import AppButton from '@/components/ui/AppButton.vue'
+import AppDialog from '@/components/ui/AppDialog.vue'
+import AppLabel from '@/components/ui/AppLabel.vue'
 import { SUPPORTED_DOCUMENTS_MESSAGE } from '@/utils/constants'
+import { humanFileSize, getFileExtensionWithDot } from '@/utils/file'
 
 export default {
-  components: { AppButton, AppLabel },
+  components: { AppButton, AppDialog, AppLabel },
   props: {
     entityName: {
       type: String,
@@ -98,12 +119,21 @@ export default {
       type: String,
       default: undefined,
     },
+    exampleText: {
+      type: String,
+      default: '',
+    },
+    exampleImage: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['update:modelValue', 'deleteUploadedDocument', 'validateDocumentsToUpload'],
   data() {
     return {
       documents: [],
       isValidForm: false,
+      showExampleDialog: false,
     }
   },
   computed: {
@@ -112,6 +142,12 @@ export default {
     },
     showAddFileButton() {
       return !this.loading && !this.readonly && !this.uploadLimitReached
+    },
+    exampleTitle() {
+      return this.documentType ? `${this.documentType} Example` : 'Example'
+    },
+    exampleImageSource() {
+      return new URL(`../../assets/images/${this.exampleImage}`, import.meta.url)
     },
   },
   watch: {
@@ -187,12 +223,22 @@ export default {
     resetDocuments() {
       this.documents = []
     },
+    toggleExampleDialog() {
+      this.showExampleDialog = !this.showExampleDialog
+    },
   },
 }
 </script>
 <style scoped>
 .add-file-button {
   font-size: 16px;
+}
+
+.example-button {
+  color: #003366;
+  font-weight: 600;
+  margin-top: -3px;
+  text-decoration: underline;
 }
 
 :deep(.v-field__input) {
