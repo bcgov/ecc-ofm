@@ -37,17 +37,19 @@
 
 <script>
 import { mapState } from 'pinia'
+
+import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import alertMixin from '@/mixins/alertMixin.js'
 import ApplicationService from '@/services/applicationService'
 import IrregularExpenseService from '@/services/irregularExpenseService'
-import FundingSearchCard from '@/components/funding/FundingSearchCard.vue'
-import alertMixin from '@/mixins/alertMixin.js'
-import { useAuthStore } from '@/stores/auth'
 import FundingAgreementService from '@/services/fundingAgreementService'
+import { useAuthStore } from '@/stores/auth'
 import { FUNDING_AGREEMENT_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, BLANK_FIELD, APPLICATION_TYPES, IRREGULAR_EXPENSE_STATUS_CODES, TOP_UP_FUNDING_STATUS_CODES } from '@/utils/constants'
 import format from '@/utils/format'
 
-const IN_PROGRESS_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW, FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA]
+const DRAFT_STATUSES = [FUNDING_AGREEMENT_STATUS_CODES.DRAFT, FUNDING_AGREEMENT_STATUS_CODES.FA_REVIEW]
+const PSEUDO_STATUS_IN_PROGRESS = 'In Progress'
 
 export default {
   name: 'FundingAgreementsTab',
@@ -119,8 +121,11 @@ export default {
         this.fundingAgreements = []
         await Promise.all(
           searchQueries?.facilities?.map(async (facility) => {
-            const facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
+            let facilityFas = await FundingAgreementService.getFAsByFacilityId(facility.facilityId, searchQueries?.dateFrom, searchQueries?.dateTo)
             if (facilityFas) {
+              // OFMCC-7758 - Don't show Draft or FA Review FAs in the list
+              facilityFas = facilityFas.filter((fa) => !DRAFT_STATUSES.includes(fa.statusCode))
+
               facilityFas.forEach((fa) => {
                 /* ofmcc-7026 - top ups get returned with the FA request,
                   because I can map them all together nicely in the backend resulting in only one extra call.
@@ -213,12 +218,12 @@ export default {
     },
 
     getStatusName(item) {
-      return IN_PROGRESS_STATUSES.includes(item?.statusCode) ? 'In Progress' : item?.statusName
+      return item?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA ? PSEUDO_STATUS_IN_PROGRESS : item?.statusName
     },
 
     getStatusClass(statusCode) {
       return {
-        'status-gray': IN_PROGRESS_STATUSES.includes(statusCode),
+        'status-gray': statusCode === FUNDING_AGREEMENT_STATUS_CODES.IN_REVIEW_WITH_MINISTRY_EA,
         'status-yellow': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SIGNATURE_PENDING,
         'status-blue': statusCode === FUNDING_AGREEMENT_STATUS_CODES.SUBMITTED,
         'status-green': [FUNDING_AGREEMENT_STATUS_CODES.ACTIVE].includes(statusCode),
