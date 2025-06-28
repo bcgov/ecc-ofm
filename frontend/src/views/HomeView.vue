@@ -63,7 +63,7 @@
   </v-container>
 
   <SignFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setLoadingFA" />
-  <RenewalFundingPopup v-if="hasPermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT)" @loading="setLoadingFA" />
+  <RenewalFundingPopup v-if="hasPermission(PERMISSIONS.APPLY_FOR_FUNDING)" @loading="setLoadingFA" />
   <NewRequestDialog v-if="hasPermission(PERMISSIONS.MANAGE_NOTIFICATIONS)" :show="showAssistanceRequestDialog" @close="toggleAssistanceRequestDialog" />
 </template>
 

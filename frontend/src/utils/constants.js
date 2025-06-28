@@ -308,6 +308,7 @@ export const DOCUMENT_TYPES = Object.freeze({
   HEALTH_AUTHORITY_REPORT: 'HA Compliance Rpt',
   INCLUSION_POLICY: 'Inclusion Policy Document',
   POLICY_PROCEDURE_MANUAL: 'Policy and Procedure Manual',
+  ASSISTANCE_REQUEST: 'Assistance Request',
 })
 
 export const DOCUMENT_LABELS = Object.freeze({
