@@ -77,11 +77,22 @@
           </a>
           <br />
           <br />
+          <a href="#" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>OFM 101 Video</span>
+          </a>
+          <br />
+          <br />
+          <a href="#" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>OFM Next Steps Video</span>
+          </a>
+          <br />
+          <br />
           <a href="https://www2.gov.bc.ca/assets/download/118432D8D0A7481E96BA681CE174BA41">
             <v-icon size="18" icon="fa:fa-regular fa-file-excel" class="mr-1"></v-icon>
             <span>Program Specific Statement of Operations Template</span>
           </a>
-          <br />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -120,6 +131,28 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2024 - Intake Applicant Guide</span>
           </a>
+          &nbsp;
+          <strong>(removed)</strong>
+          <br />
+          <br />
+          <a href="#" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>2025 - Policy and Procedure Manual</span>
+          </a>
+          <br />
+          <br />
+          <a href="#" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>2025 - Funding Agreement Template</span>
+          </a>
+          <br />
+          <br />
+          <a href="#" target="_blank">
+            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
+            <span>2025 - Intake Applicant Guide</span>
+          </a>
+          <br />
+          <br />
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
           <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
@@ -140,16 +173,20 @@
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'other'">
-          <a href="https://www2.gov.bc.ca/assets/download/CAF7A4B7BB5248838968459A0BBD6CC2" target="_blank">
+          <a href="#" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>EE $10 a Day Policy and Procedure Manual</span>
           </a>
+          &nbsp;
+          <strong>(new permalink)</strong>
           <br />
           <br />
           <a href="https://www2.gov.bc.ca/assets/download/37637565F3824721A91EE6D0ED0F1D7C" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>EE $10 a Day Funding Agreement Template</span>
           </a>
+          &nbsp;
+          <strong>(new permalink)</strong>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
