@@ -77,18 +77,6 @@
           </a>
           <br />
           <br />
-          <a href="#" target="_blank">
-            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
-            <span>OFM 101 Video</span>
-          </a>
-          <br />
-          <br />
-          <a href="#" target="_blank">
-            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
-            <span>OFM Next Steps Video</span>
-          </a>
-          <br />
-          <br />
           <a href="https://www2.gov.bc.ca/assets/download/118432D8D0A7481E96BA681CE174BA41">
             <v-icon size="18" icon="fa:fa-regular fa-file-excel" class="mr-1"></v-icon>
             <span>Program Specific Statement of Operations Template</span>
@@ -127,15 +115,7 @@
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/D10A0045B4724B81A235A2CE418F29DB" target="_blank">
-            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2024 - Intake Applicant Guide</span>
-          </a>
-          &nbsp;
-          <strong>(removed)</strong>
-          <br />
-          <br />
-          <a href="#" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/C2F0091F036446AA9A6E715D91DC188B" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2025 - Policy and Procedure Manual</span>
           </a>
@@ -177,16 +157,12 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>EE $10 a Day Policy and Procedure Manual</span>
           </a>
-          &nbsp;
-          <strong>(new permalink)</strong>
           <br />
           <br />
           <a href="https://www2.gov.bc.ca/assets/download/37637565F3824721A91EE6D0ED0F1D7C" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>EE $10 a Day Funding Agreement Template</span>
           </a>
-          &nbsp;
-          <strong>(new permalink)</strong>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
