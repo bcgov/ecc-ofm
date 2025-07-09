@@ -106,10 +106,15 @@ export default {
     }
   },
 
-  async getQuestionResponses(surveyResponseId) {
+  async getQuestionResponses(surveyResponseId, sectionIds) {
     try {
-      if (!surveyResponseId) return []
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/question-responses?surveyResponseId=${surveyResponseId}`)
+      if (!surveyResponseId || isEmpty(sectionIds)) return []
+      const payload = {
+        surveyResponseId: surveyResponseId,
+        sectionIds: sectionIds,
+      }
+      // Use POST to reduce network traffic by batching sectionId requests
+      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/question-responses/fetch-by-section`, payload)
       return response?.data
     } catch (error) {
       console.log(`Failed to get survey's questions' responses - ${error}`)

@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { query, param, validationResult, checkSchema } = require('express-validator')
+const { body, query, param, validationResult, checkSchema } = require('express-validator')
 const {
   getSurveySections,
   getSurveyQuestions,
@@ -85,14 +85,15 @@ router.get(
 )
 
 /**
- * Get questions' responses of a survey response using surveyResponseId
+ * Get questions' responses of a survey response by section
+ * Use POST to reduce network traffic by batching sectionId requests
  */
-router.get(
-  '/question-responses',
+router.post(
+  '/question-responses/fetch-by-section',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('surveyResponseId', 'URL query: [surveyResponseId] is required').notEmpty().isUUID()],
+  [body('surveyResponseId', 'Request body [surveyResponseId] is required').notEmpty().isUUID(), body('sectionIds', 'Request body [sectionIds] is required and must be an array').isArray({ min: 1 })],
   (req, res) => {
     validationResult(req).throw()
     return getQuestionResponses(req, res)

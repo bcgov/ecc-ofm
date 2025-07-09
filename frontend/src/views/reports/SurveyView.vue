@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { isEmpty, cloneDeep } from 'lodash'
+import { isEmpty } from 'lodash'
 import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
@@ -144,7 +144,6 @@ export default {
       try {
         this.loading = true
         this.surveyResponse = await ReportsService.getSurveyResponse(this.$route.params.surveyResponseGuid)
-        await this.getQuestionsResponses()
         this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyTemplateId)
         await Promise.all(
           this.sections?.map(async (section) => {
@@ -152,6 +151,7 @@ export default {
           }),
         )
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
+        await this.getQuestionsResponses()
         this.verifySurveyComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
@@ -173,7 +173,7 @@ export default {
     },
 
     cancelChanges() {
-      this.clonedResponses = cloneDeep(this.originalResponses)
+      this.syncClonedResponses()
       this.processQuestionsBusinessRules(this.currentSection)
       this.verifySectionComplete(this.currentSection)
     },
@@ -190,7 +190,7 @@ export default {
       try {
         this.processing = true
         const responsesToDelete = this.clonedResponses?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response))
-        let callGetQuestionsResponses = responsesToDelete?.length > 0
+        let refreshCurrentSectionResponses = responsesToDelete?.length > 0
         await Promise.all(
           responsesToDelete?.map(async (response) => {
             const originalResponse = this.getOriginalQuestionResponse(response)
@@ -205,15 +205,15 @@ export default {
             response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
             if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
               await ReportsService.createQuestionResponse(response)
-              callGetQuestionsResponses = true
+              refreshCurrentSectionResponses = true
             } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
               await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
-              callGetQuestionsResponses = true
+              refreshCurrentSectionResponses = true
             }
           }),
         )
-        if (callGetQuestionsResponses) {
-          await this.getQuestionsResponses()
+        if (refreshCurrentSectionResponses) {
+          await this.getQuestionsResponsesBySection(this.currentSection)
         }
         this.verifySectionComplete(this.currentSection)
         if (showAlert) {
@@ -251,11 +251,27 @@ export default {
 
     async getQuestionsResponses() {
       try {
-        this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid)
-        this.clonedResponses = cloneDeep(this.originalResponses)
+        const sectionIds = this.sections?.map((section) => section.sectionId)
+        this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid, sectionIds)
+        this.syncClonedResponses()
       } catch (error) {
         this.setFailureAlert('Failed to get questions responses', error)
       }
+    },
+
+    async getQuestionsResponsesBySection(section) {
+      try {
+        if (isEmpty(section)) return
+        const sectionResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid, [section?.sectionId])
+        this.originalResponses[section.sectionId] = sectionResponses[section.sectionId]
+        this.syncClonedResponses()
+      } catch (error) {
+        this.setFailureAlert('Failed to get questions responses', error)
+      }
+    },
+
+    syncClonedResponses() {
+      this.clonedResponses = Object.entries(this.originalResponses).flatMap(([sectionId, responses]) => responses.map((response) => ({ sectionId, ...response })))
     },
 
     updateClonedResponses(updatedResponse) {
@@ -446,7 +462,7 @@ export default {
     },
 
     getOriginalQuestionResponse(response) {
-      return this.originalResponses.find((item) => item.questionResponseId === response?.questionResponseId)
+      return this.originalResponses[response.sectionId]?.find((item) => item.questionResponseId === response?.questionResponseId)
     },
 
     process(value) {

@@ -188,11 +188,15 @@ async function deleteSurveyResponse(req, res) {
 
 async function getQuestionResponses(req, res) {
   try {
-    const questionResponses = []
-    const response = await getOperation(
-      `ofm_question_responses?$select=ofm_question_responseid,_ofm_survey_response_value,_ofm_question_value,_ofm_header_value,ofm_row_id,ofm_response_text&$filter=_ofm_survey_response_value eq '${req?.query?.surveyResponseId}'&pageSize=5000`,
+    const questionResponses = {}
+    await Promise.all(
+      req.body?.sectionIds?.map(async (sectionId) => {
+        const response = await getOperation(
+          `ofm_question_responses?$select=ofm_question_responseid,_ofm_survey_response_value,_ofm_question_value,_ofm_header_value,ofm_row_id,ofm_response_text&$filter=(_ofm_survey_response_value eq '${req?.body?.surveyResponseId}') and (ofm_question/_ofm_section_value eq '${sectionId}')&pageSize=5000`,
+        )
+        questionResponses[sectionId] = response?.value?.map((questionResponse) => new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON())
+      }),
     )
-    response?.value?.forEach((questionResponse) => questionResponses.push(new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON()))
     return res.status(HttpStatus.OK).json(questionResponses)
   } catch (e) {
     log.error(e)
