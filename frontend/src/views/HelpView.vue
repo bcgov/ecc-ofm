@@ -77,7 +77,7 @@
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/118432D8D0A7481E96BA681CE174BA41">
+          <a href="https://www2.gov.bc.ca/assets/download/118432D8D0A7481E96BA681CE174BA41" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-excel" class="mr-1"></v-icon>
             <span>Program Specific Statement of Operations Template</span>
           </a>
@@ -121,13 +121,13 @@
           </a>
           <br />
           <br />
-          <a href="#" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/8655C76EED6249D29523D5411ADA6B03" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2025 - Funding Agreement Template</span>
           </a>
           <br />
           <br />
-          <a href="#" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/D10A0045B4724B81A235A2CE418F29DB" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2025 - Intake Applicant Guide</span>
           </a>
