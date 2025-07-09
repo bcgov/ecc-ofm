@@ -120,10 +120,6 @@ export default {
       type: String,
       default: undefined,
     },
-    exampleText: {
-      type: String,
-      default: '',
-    },
     exampleImage: {
       type: String,
       default: '',
