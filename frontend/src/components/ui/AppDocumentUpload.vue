@@ -49,13 +49,14 @@
         </v-row>
       </div>
     </v-form>
-    <AppDialog v-model="showExampleDialog" :title="exampleTitle" :is-loading="loading" persistent max-width="600px" @close="toggleExampleDialog">
+    <AppDialog v-model="showExampleDialog" :title="exampleTitle" :is-loading="loading" persistent max-width="650px" @close="toggleExampleDialog">
       <template #content>
         <div class="confirm-dialog-text d-flex flex-column">
           <p class="mt-2">
             <strong>Note:&nbsp;</strong>
             <slot name="exampleText">Content placeholder. Content to be provided.</slot>
           </p>
+          <br />
           <img v-if="exampleImage" :src="exampleImageSource" />
         </div>
       </template>
