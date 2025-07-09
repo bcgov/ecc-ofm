@@ -4,7 +4,7 @@
       <v-row>
         <v-col v-if="documentLabel || documentType" cols="12" sm="7" class="pb-0">
           <AppLabel>{{ documentLabel ?? documentType }}</AppLabel>
-          <v-btn v-if="exampleText" class="example-button" variant="plain" @click="toggleExampleDialog">View Example</v-btn>
+          <v-btn v-if="$slots.exampleText" class="example-button" variant="plain" @click="toggleExampleDialog">View Example</v-btn>
           <p v-if="documentHelpText" class="text-sm text-muted mt-1">{{ documentHelpText }}</p>
         </v-col>
         <v-col cols="12" :sm="documentType ? '5' : '12'" :class="documentType ? 'd-flex flex-column align-end pr-4' : ''">
@@ -61,7 +61,7 @@
         </div>
       </template>
       <template #button>
-        <v-row>
+        <v-row class="px-4">
           <v-col cols="12" class="d-flex justify-end">
             <AppButton id="dialog-close" :primary="true" size="large" width="100px" :loading="loading" @click="toggleExampleDialog">Close</AppButton>
           </v-col>
