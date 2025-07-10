@@ -5,7 +5,7 @@
     </v-row>
     <v-row v-else no-gutters>
       <v-col cols="12" md="3" lg="2">
-        <SurveyNavBar :sections="sections" :currentSection="currentSection" @update="updateCurrentSection" />
+        <SurveyNavBar :sections="sections" :current-section="currentSection" @update="updateCurrentSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
         <SurveySection
@@ -14,19 +14,18 @@
           :validation="validation"
           :responses="responsesToBeDisplayed"
           @update="updateClonedResponses"
-          @deleteTableResponses="deleteTableResponses"
-          @process="process" />
+          @delete-table-responses="deleteTableResponses" />
         <v-alert v-if="showIncompleteSurveyErrorAlert" type="error" title="You cannot submit the report until it is complete.">
           <AppButton class="mt-2" :primary="false" size="large" @click="goToIncompleteSection">Update Incomplete Section</AppButton>
         </v-alert>
         <AppNavButtons
           :loading="loading || processing"
-          :showBack="true"
-          :showCancel="showCancel"
-          :showSave="showSave"
-          :showNext="showNext"
-          :showSubmit="showSubmit"
-          :disableSubmit="!isSurveyComplete"
+          :show-back="true"
+          :show-cancel="showCancel"
+          :show-save="showSave"
+          :show-next="showNext"
+          :show-submit="showSubmit"
+          :disable-submit="!isSurveyComplete"
           @back="back"
           @cancel="toggleCancelDialog"
           @save="save(true)"
@@ -150,8 +149,8 @@ export default {
             section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
           }),
         )
-        this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         await this.getQuestionsResponses()
+        this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
@@ -463,10 +462,6 @@ export default {
 
     getOriginalQuestionResponse(response) {
       return this.originalResponses[response.sectionId]?.find((item) => item.questionResponseId === response?.questionResponseId)
-    },
-
-    process(value) {
-      this.processing = value
     },
 
     toggleSubmitConfirmationDialog() {
