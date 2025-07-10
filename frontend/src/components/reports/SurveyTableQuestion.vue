@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
-      <template v-slot:item="{ item }">
+    <v-data-table-virtual :headers="tableHeaders" :items="updatedResponses" item-value="name" :height="tableHeight" fixed-header>
+      <template #item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
             <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
@@ -13,8 +13,7 @@
           </td>
         </tr>
       </template>
-      <template v-slot:bottom><!-- no paging --></template>
-    </v-data-table>
+    </v-data-table-virtual>
     <div v-if="validation && required && isTableEmpty" class="error-message mt-2">This field is required</div>
     <AppButton v-if="showAddButton" id="add-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
   </v-container>
@@ -81,6 +80,10 @@ export default {
         headers.push({ title: '', key: 'actionButtons', sortable: false, width: '3%' })
       }
       return headers
+    },
+
+    tableHeight() {
+      return this.updatedResponses?.length > 6 ? 600 : null
     },
 
     responsesInTableFormat() {
