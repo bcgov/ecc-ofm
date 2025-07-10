@@ -131,8 +131,6 @@
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2025 - Intake Applicant Guide</span>
           </a>
-          <br />
-          <br />
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
           <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
