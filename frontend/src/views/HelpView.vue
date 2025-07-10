@@ -153,7 +153,7 @@
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'other'">
-          <a href="#" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/CAF7A4B7BB5248838968459A0BBD6CC2" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>EE $10 a Day Policy and Procedure Manual</span>
           </a>
