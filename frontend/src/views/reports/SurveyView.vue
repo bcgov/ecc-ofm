@@ -5,7 +5,7 @@
     </v-row>
     <v-row v-else no-gutters>
       <v-col cols="12" md="3" lg="2">
-        <SurveyNavBar :sections="sections" :current-section="currentSection" @update="updateCurrentSection" />
+        <SurveyNavBar :sections="sections" :current-section="currentSection" @update="goToSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
         <SurveySection
@@ -159,14 +159,6 @@ export default {
       }
     },
 
-    async back() {
-      await this.save()
-      if (this.isFirstSection(this.currentSection)) {
-        this.$router.push({ name: 'reporting' })
-      }
-      this.currentSection = this.sections[this.currentSectionIndex - 1]
-    },
-
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
     },
@@ -177,11 +169,26 @@ export default {
       this.verifySectionComplete(this.currentSection)
     },
 
+    async goToSection(section) {
+      if (this.loading || this.processing || isEmpty(section) || this.currentSection?.sectionId === section.sectionId) return
+      await this.save()
+      this.currentSection = section
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+
+    async back() {
+      if (this.isFirstSection(this.currentSection)) {
+        await this.save()
+        this.$router.push({ name: 'reporting' })
+      }
+      const previousSection = this.sections[this.currentSectionIndex - 1]
+      await this.goToSection(previousSection)
+    },
+
     async next() {
       if (this.isLastSection(this.currentSection)) return
-      await this.save()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      this.currentSection = this.sections[this.currentSectionIndex + 1]
+      const nextSection = this.sections[this.currentSectionIndex + 1]
+      await this.goToSection(nextSection)
     },
 
     async save(showAlert) {
@@ -223,12 +230,6 @@ export default {
       } finally {
         this.processing = false
       }
-    },
-
-    async updateCurrentSection(section) {
-      if (this.loading || this.processing) return
-      await this.save()
-      this.currentSection = section
     },
 
     async submit() {
@@ -468,10 +469,9 @@ export default {
       this.showSubmitConfirmationDialog = true
     },
 
-    goToIncompleteSection() {
+    async goToIncompleteSection() {
       const incompleteSection = this.sections?.find((section) => !section.isComplete)
-      if (!incompleteSection) return
-      this.currentSection = incompleteSection
+      await this.goToSection(incompleteSection)
     },
 
     isLastSection(section) {
