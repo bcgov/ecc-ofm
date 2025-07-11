@@ -13,30 +13,15 @@ const {
   updateSurveyResponse,
   deleteSurveyResponse,
   getQuestionResponses,
-  createQuestionResponse,
-  updateQuestionResponse,
-  deleteQuestionResponse,
+  createQuestionResponses,
+  updateQuestionResponses,
+  deleteQuestionResponses,
 } = require('../components/reports')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
 const { PERMISSIONS } = require('../util/constants')
 
 module.exports = router
-
-const postQuestionResponseSchema = {
-  questionId: {
-    in: ['body'],
-    exists: { errorMessage: '[questionId] is required' },
-  },
-  surveyResponseId: {
-    in: ['body'],
-    exists: { errorMessage: '[surveyResponseId] is required' },
-  },
-  value: {
-    in: ['body'],
-    exists: { errorMessage: '[value] is required' },
-  },
-}
 
 /**
  * Get survey's sections using query
@@ -93,7 +78,7 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [body('surveyResponseId', 'Request body [surveyResponseId] is required').notEmpty().isUUID(), body('sectionIds', 'Request body [sectionIds] is required and must be an array').isArray({ min: 1 })],
+  [body('surveyResponseId', 'Request body [surveyResponseId] is required').notEmpty().isUUID(), body('sectionIds', 'Request body [sectionIds] must be a non-empty array').isArray({ min: 1 })],
   (req, res) => {
     validationResult(req).throw()
     return getQuestionResponses(req, res)
@@ -163,46 +148,77 @@ router.delete(
 )
 
 /**
- * Create a question response
+ * Create question responses
  */
 router.post(
-  '/question-responses',
+  '/question-responses/bulk',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [checkSchema(postQuestionResponseSchema)],
+  [
+    body().isArray({ min: 1 }).withMessage('Request body must be a non-empty array'),
+    checkSchema({
+      '*.questionId': {
+        in: ['body'],
+        exists: { errorMessage: '[questionId] is required' },
+        isUUID: { errorMessage: '[questionId] must be a valid UUID' },
+      },
+      '*.surveyResponseId': {
+        in: ['body'],
+        exists: { errorMessage: '[surveyResponseId] is required' },
+        isUUID: { errorMessage: '[surveyResponseId] must be a valid UUID' },
+      },
+      '*.value': {
+        in: ['body'],
+        exists: { errorMessage: '[value] is required' },
+      },
+    }),
+  ],
   (req, res) => {
     validationResult(req).throw()
-    return createQuestionResponse(req, res)
+    return createQuestionResponses(req, res)
   },
 )
 
 /**
- * Update a question response
+ * Update question responses
  */
 router.patch(
-  '/question-responses/:questionResponseId',
+  '/question-responses/bulk',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [param('questionResponseId', 'URL param: [questionResponseId] is required').notEmpty().isUUID()],
+  [
+    body().isArray({ min: 1 }).withMessage('Request body must be a non-empty array'),
+    checkSchema({
+      '*.questionResponseId': {
+        in: ['body'],
+        exists: { errorMessage: '[questionResponseId] is required' },
+        isUUID: { errorMessage: '[questionResponseId] must be a valid UUID' },
+      },
+      '*.value': {
+        in: ['body'],
+        exists: { errorMessage: '[value] is required' },
+      },
+    }),
+  ],
   (req, res) => {
     validationResult(req).throw()
-    return updateQuestionResponse(req, res)
+    return updateQuestionResponses(req, res)
   },
 )
 
 /**
- * Delete a question response
+ * Delete question responses
  */
 router.delete(
-  '/question-responses/:questionResponseId',
+  '/question-responses/bulk',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [param('questionResponseId', 'URL param: [questionResponseId] is required').notEmpty().isUUID()],
+  [body().isArray({ min: 1 }).withMessage('Request body must be a non-empty array'), body('*').isUUID().withMessage('Each ID must be a valid UUID')],
   (req, res) => {
     validationResult(req).throw()
-    return deleteQuestionResponse(req, res)
+    return deleteQuestionResponses(req, res)
   },
 )

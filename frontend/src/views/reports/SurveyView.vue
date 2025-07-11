@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
@@ -58,7 +58,7 @@ import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
 import SurveySection from '@/components/reports/SurveySection.vue'
 import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitConfirmationDialog.vue'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
-import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
+import { SURVEY_QUESTION_TYPES, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
 
 export default {
   name: 'SurveyView',
@@ -195,30 +195,24 @@ export default {
       if (this.readonly) return
       try {
         this.processing = true
-        const responsesToDelete = this.clonedResponses?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response))
-        let refreshCurrentSectionResponses = responsesToDelete?.length > 0
-        await Promise.all(
-          responsesToDelete?.map(async (response) => {
-            const originalResponse = this.getOriginalQuestionResponse(response)
-            await ReportsService.deleteQuestionResponse(originalResponse?.questionResponseId)
-            originalResponse.rowId = null
-          }),
-        )
-        await Promise.all(
-          this.clonedResponses?.map(async (response) => {
-            if (this.isHiddenOrDeleted(response)) return
-            const originalResponse = this.getOriginalQuestionResponse(response)
-            response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
-            if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
-              await ReportsService.createQuestionResponse(response)
-              refreshCurrentSectionResponses = true
-            } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
-              await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
-              refreshCurrentSectionResponses = true
-            }
-          }),
-        )
-        if (refreshCurrentSectionResponses) {
+        // XXX Clone clonedResponses to safely modify each response's value without mutating the original
+        const clonedResponsesForSave = cloneDeep(this.clonedResponses)
+        const responsesToCreate = []
+        const responsesToUpdate = []
+        const responsesToDelete = clonedResponsesForSave?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response)).map((response) => response.questionResponseId)
+        clonedResponsesForSave?.forEach((response) => {
+          const originalResponse = this.getOriginalQuestionResponse(response)
+          response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
+          if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
+            responsesToCreate.push(response)
+          } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
+            responsesToUpdate.push(response)
+          }
+        })
+        await ReportsService.deleteQuestionResponses(responsesToDelete)
+        await ReportsService.createQuestionResponses(responsesToCreate)
+        await ReportsService.updateQuestionResponses(responsesToUpdate)
+        if (!isEmpty(responsesToCreate) || !isEmpty(responsesToUpdate) || !isEmpty(responsesToDelete)) {
           await this.getQuestionsResponsesBySection(this.currentSection)
         }
         this.verifySectionComplete(this.currentSection)

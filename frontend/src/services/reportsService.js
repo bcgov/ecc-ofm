@@ -122,35 +122,46 @@ export default {
     }
   },
 
-  async createQuestionResponse(payload) {
+  async createQuestionResponses(payload) {
     try {
       if (isEmpty(payload)) return
-      const response = await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/question-responses`, payload)
-      return response?.data
+      const chunkSize = 15
+      for (let i = 0; i < payload.length; i += chunkSize) {
+        const chunk = payload.slice(i, i + chunkSize)
+        await ApiService.apiAxios.post(`${ApiRoutes.REPORTS}/question-responses/bulk`, chunk)
+      }
     } catch (error) {
-      console.log(`Failed to create question response - ${error}`)
+      console.log(`Failed to create question responses - ${error}`)
       throw error
     }
   },
 
-  async updateQuestionResponse(questionResponseId, payload) {
+  async updateQuestionResponses(payload) {
     try {
-      if (!questionResponseId || isEmpty(payload)) return
-      const response = await ApiService.apiAxios.patch(`${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`, payload)
-      return response?.data
+      if (isEmpty(payload)) return
+      const chunkSize = 15
+      for (let i = 0; i < payload.length; i += chunkSize) {
+        const chunk = payload.slice(i, i + chunkSize)
+        await ApiService.apiAxios.patch(`${ApiRoutes.REPORTS}/question-responses/bulk`, chunk)
+      }
     } catch (error) {
-      console.log(`Failed to update question response - ${error}`)
+      console.log(`Failed to update question responses - ${error}`)
       throw error
     }
   },
 
-  async deleteQuestionResponse(questionResponseId) {
+  async deleteQuestionResponses(responseIds) {
     try {
-      if (!questionResponseId) return
-      const response = await ApiService.apiAxios.delete(`${ApiRoutes.REPORTS}/question-responses/${questionResponseId}`)
-      return response?.data
+      if (isEmpty(responseIds)) return
+      const chunkSize = 50
+      for (let i = 0; i < responseIds.length; i += chunkSize) {
+        const chunk = responseIds.slice(i, i + chunkSize)
+        await ApiService.apiAxios.delete(`${ApiRoutes.REPORTS}/question-responses/bulk`, {
+          data: chunk,
+        })
+      }
     } catch (error) {
-      console.log(`Failed to delete question response - ${error}`)
+      console.log(`Failed to delete question responses - ${error}`)
       throw error
     }
   },
