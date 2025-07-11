@@ -5,7 +5,7 @@
     </v-row>
     <v-row v-else no-gutters>
       <v-col cols="12" md="3" lg="2">
-        <SurveyNavBar :sections="sections" :currentSection="currentSection" @update="updateCurrentSection" />
+        <SurveyNavBar :sections="sections" :current-section="currentSection" @update="goToSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
         <SurveySection
@@ -14,19 +14,18 @@
           :validation="validation"
           :responses="responsesToBeDisplayed"
           @update="updateClonedResponses"
-          @deleteTableResponses="deleteTableResponses"
-          @process="process" />
+          @delete-table-responses="deleteTableResponses" />
         <v-alert v-if="showIncompleteSurveyErrorAlert" type="error" title="You cannot submit the report until it is complete.">
           <AppButton class="mt-2" :primary="false" size="large" @click="goToIncompleteSection">Update Incomplete Section</AppButton>
         </v-alert>
         <AppNavButtons
           :loading="loading || processing"
-          :showBack="true"
-          :showCancel="showCancel"
-          :showSave="showSave"
-          :showNext="showNext"
-          :showSubmit="showSubmit"
-          :disableSubmit="!isSurveyComplete"
+          :show-back="true"
+          :show-cancel="showCancel"
+          :show-save="showSave"
+          :show-next="showNext"
+          :show-submit="showSubmit"
+          :disable-submit="!isSurveyComplete"
           @back="back"
           @cancel="toggleCancelDialog"
           @save="save(true)"
@@ -40,7 +39,7 @@
 </template>
 
 <script>
-import { isEmpty, cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
@@ -144,13 +143,13 @@ export default {
       try {
         this.loading = true
         this.surveyResponse = await ReportsService.getSurveyResponse(this.$route.params.surveyResponseGuid)
-        await this.getQuestionsResponses()
         this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyTemplateId)
         await Promise.all(
           this.sections?.map(async (section) => {
             section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
           }),
         )
+        await this.getQuestionsResponses()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
         this.verifySurveyComplete()
       } catch (error) {
@@ -160,60 +159,61 @@ export default {
       }
     },
 
-    async back() {
-      await this.save()
-      if (this.isFirstSection(this.currentSection)) {
-        this.$router.push({ name: 'reporting' })
-      }
-      this.currentSection = this.sections[this.currentSectionIndex - 1]
-    },
-
     toggleCancelDialog() {
       this.showCancelDialog = !this.showCancelDialog
     },
 
     cancelChanges() {
-      this.clonedResponses = cloneDeep(this.originalResponses)
+      this.syncClonedResponses()
       this.processQuestionsBusinessRules(this.currentSection)
       this.verifySectionComplete(this.currentSection)
     },
 
+    async goToSection(section) {
+      if (this.loading || this.processing || isEmpty(section) || this.currentSection?.sectionId === section.sectionId) return
+      await this.save()
+      this.currentSection = section
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+
+    async back() {
+      if (this.isFirstSection(this.currentSection)) {
+        await this.save()
+        this.$router.push({ name: 'reporting' })
+      }
+      const previousSection = this.sections[this.currentSectionIndex - 1]
+      await this.goToSection(previousSection)
+    },
+
     async next() {
       if (this.isLastSection(this.currentSection)) return
-      await this.save()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      this.currentSection = this.sections[this.currentSectionIndex + 1]
+      const nextSection = this.sections[this.currentSectionIndex + 1]
+      await this.goToSection(nextSection)
     },
 
     async save(showAlert) {
       if (this.readonly) return
       try {
         this.processing = true
-        const responsesToDelete = this.clonedResponses?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response))
-        let callGetQuestionsResponses = responsesToDelete?.length > 0
-        await Promise.all(
-          responsesToDelete?.map(async (response) => {
-            const originalResponse = this.getOriginalQuestionResponse(response)
-            await ReportsService.deleteQuestionResponse(originalResponse?.questionResponseId)
-            originalResponse.rowId = null
-          }),
-        )
-        await Promise.all(
-          this.clonedResponses?.map(async (response) => {
-            if (this.isHiddenOrDeleted(response)) return
-            const originalResponse = this.getOriginalQuestionResponse(response)
-            response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
-            if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
-              await ReportsService.createQuestionResponse(response)
-              callGetQuestionsResponses = true
-            } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
-              await ReportsService.updateQuestionResponse(originalResponse?.questionResponseId, response)
-              callGetQuestionsResponses = true
-            }
-          }),
-        )
-        if (callGetQuestionsResponses) {
-          await this.getQuestionsResponses()
+        // XXX Clone clonedResponses to safely modify each response's value without mutating the original
+        const clonedResponsesForSave = cloneDeep(this.clonedResponses)
+        const responsesToCreate = []
+        const responsesToUpdate = []
+        const responsesToDelete = clonedResponsesForSave?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response)).map((response) => response.questionResponseId)
+        clonedResponsesForSave?.forEach((response) => {
+          const originalResponse = this.getOriginalQuestionResponse(response)
+          response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
+          if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
+            responsesToCreate.push(response)
+          } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
+            responsesToUpdate.push(response)
+          }
+        })
+        await ReportsService.deleteQuestionResponses(responsesToDelete)
+        await ReportsService.createQuestionResponses(responsesToCreate)
+        await ReportsService.updateQuestionResponses(responsesToUpdate)
+        if (!isEmpty(responsesToCreate) || !isEmpty(responsesToUpdate) || !isEmpty(responsesToDelete)) {
+          await this.getQuestionsResponsesBySection(this.currentSection)
         }
         this.verifySectionComplete(this.currentSection)
         if (showAlert) {
@@ -224,12 +224,6 @@ export default {
       } finally {
         this.processing = false
       }
-    },
-
-    async updateCurrentSection(section) {
-      if (this.loading || this.processing) return
-      await this.save()
-      this.currentSection = section
     },
 
     async submit() {
@@ -251,11 +245,27 @@ export default {
 
     async getQuestionsResponses() {
       try {
-        this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid)
-        this.clonedResponses = cloneDeep(this.originalResponses)
+        const sectionIds = this.sections?.map((section) => section.sectionId)
+        this.originalResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid, sectionIds)
+        this.syncClonedResponses()
       } catch (error) {
         this.setFailureAlert('Failed to get questions responses', error)
       }
+    },
+
+    async getQuestionsResponsesBySection(section) {
+      try {
+        if (isEmpty(section)) return
+        const sectionResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid, [section?.sectionId])
+        this.originalResponses[section.sectionId] = sectionResponses[section.sectionId]
+        this.syncClonedResponses()
+      } catch (error) {
+        this.setFailureAlert('Failed to get questions responses', error)
+      }
+    },
+
+    syncClonedResponses() {
+      this.clonedResponses = Object.entries(this.originalResponses).flatMap(([sectionId, responses]) => responses.map((response) => ({ sectionId, ...response })))
     },
 
     updateClonedResponses(updatedResponse) {
@@ -446,21 +456,16 @@ export default {
     },
 
     getOriginalQuestionResponse(response) {
-      return this.originalResponses.find((item) => item.questionResponseId === response?.questionResponseId)
-    },
-
-    process(value) {
-      this.processing = value
+      return this.originalResponses[response.sectionId]?.find((item) => item.questionResponseId === response?.questionResponseId)
     },
 
     toggleSubmitConfirmationDialog() {
       this.showSubmitConfirmationDialog = true
     },
 
-    goToIncompleteSection() {
+    async goToIncompleteSection() {
       const incompleteSection = this.sections?.find((section) => !section.isComplete)
-      if (!incompleteSection) return
-      this.currentSection = incompleteSection
+      await this.goToSection(incompleteSection)
     },
 
     isLastSection(section) {
