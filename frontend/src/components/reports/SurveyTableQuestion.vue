@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <v-data-table-virtual :headers="tableHeaders" :items="updatedResponses" item-value="name" :height="tableHeight" fixed-header>
+    <v-data-table-virtual ref="virtualTable" :headers="tableHeaders" :items="updatedResponses" item-value="name" :height="tableHeight" fixed-header>
       <template #item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
@@ -141,7 +141,7 @@ export default {
     },
   },
 
-  created() {
+  mounted() {
     if (isEmpty(this.responses)) {
       this.addRow()
     } else {
@@ -163,8 +163,10 @@ export default {
         if (
           this.isRowBlank(this.updatedResponses[lastIndex]?.headers) ||
           (!isEmpty(this.valueInheritanceParentsQuestion) && isEmpty(this.updatedResponses[lastIndex]?.headers[this.valueInheritanceParentsQuestion?.questionId]))
-        )
+        ) {
+          this.scrollToBottom()
           return
+        }
       }
       this.updatedResponses = this.updatedResponses ?? []
       const row = {
@@ -174,6 +176,19 @@ export default {
       }
       this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
       this.updatedResponses?.push(row)
+      this.scrollToBottom()
+    },
+
+    scrollToBottom() {
+      setTimeout(() => {
+        const wrapper = this.$refs.virtualTable?.$el?.querySelector('.v-table__wrapper')
+        if (wrapper) {
+          wrapper.scrollTo({
+            top: wrapper.scrollHeight,
+            behavior: 'smooth',
+          })
+        }
+      }, 100)
     },
 
     getQuestionResponse(row, questionId) {
