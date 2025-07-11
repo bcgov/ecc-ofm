@@ -58,7 +58,7 @@ import SurveyNavBar from '@/components/reports/SurveyNavBar.vue'
 import SurveySection from '@/components/reports/SurveySection.vue'
 import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitConfirmationDialog.vue'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
-import { SURVEY_QUESTION_TYPES, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
+import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
 
 export default {
   name: 'SurveyView',
