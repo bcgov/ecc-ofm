@@ -262,17 +262,19 @@ export default {
       }
     },
     isAddCoreApplicationAllowed() {
+      if (!this.isIntakeWindowOpenAndValid) {
+        return false
+      }
       const hasDraftApplication = this.applications?.some(
         (application) =>
-          application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode === APPLICATION_STATUS_CODES.DRAFT && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
+          application.stateCode === CRM_STATE_CODES.ACTIVE && application.statusCode === APPLICATION_STATUS_CODES.DRAFT && application.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
       )
-
       const hasMissingApplication = this.userInfo?.facilities?.some((facility) => {
         return !this.applications?.some((application) => {
-          return application?.facilityId === facility.facilityId && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW
+          return application.facilityId === facility.facilityId && application.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW && application.stateCode === CRM_STATE_CODES.ACTIVE
         })
       })
-      return this.isIntakeWindowOpenAndValid && (hasDraftApplication || hasMissingApplication)
+      return hasDraftApplication || hasMissingApplication
     },
     isIntakeWindowOpenAndValid() {
       return this.userInfo?.facilities?.some(
