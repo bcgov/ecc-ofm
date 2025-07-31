@@ -114,13 +114,13 @@
   </AppDialog>
   <AppDialog v-if="!readonly" v-model="showPPMDialog" title="Review Policy and Procedure Manual" :is-loading="loading" persistent max-width="50%" @close="goBack">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">
-        <p class="mt-4 text-center">
+      <div class="d-flex flex-column align-center">
+        <p class="mt-2 text-center">
           You may only sign the Funding Agreement if you have read and understood the
           <a href="https://www2.gov.bc.ca/assets/download/C2F0091F036446AA9A6E715D91DC188B" target="_blank">Policy and Procedure Manual</a>
           .
         </p>
-        <v-checkbox v-model="ppmReviewed" class="ml-3" color="primary" label="I confirm that I have read and understand the Policy and Procedure Manual" />
+        <v-checkbox v-model="ppmReviewed" class="mt-2 ml-3" color="primary" label="I confirm that I have read and understand the Policy and Procedure Manual" />
       </div>
     </template>
     <template #button>
