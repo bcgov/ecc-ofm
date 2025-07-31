@@ -127,7 +127,7 @@
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/D10A0045B4724B81A235A2CE418F29DB" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/16AB5EDAC27D495A9283BC090CF58CA9" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
             <span>2025 - Intake Applicant Guide</span>
           </a>
