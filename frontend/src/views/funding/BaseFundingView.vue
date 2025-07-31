@@ -118,7 +118,7 @@
         <p class="mt-2 text-center">
           You may only sign the Funding Agreement if you have read and understood the
           <a href="https://www2.gov.bc.ca/assets/download/C2F0091F036446AA9A6E715D91DC188B" target="_blank">Policy and Procedure Manual</a>
-          .
+          <span>.</span>
         </p>
         <v-checkbox v-model="ppmReviewed" class="mt-2 ml-3" color="primary" label="I confirm that I have read and understand the Policy and Procedure Manual" />
       </div>
