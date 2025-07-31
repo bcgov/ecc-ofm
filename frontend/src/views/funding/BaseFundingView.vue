@@ -96,7 +96,7 @@
   </v-container>
   <AppDialog v-model="showDeclineDialog" title="Confirm" :is-loading="loading" persistent max-width="50%" @close="showDeclineDialog = false">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">
+      <div class="d-flex flex-column align-center">
         <strong>Are you sure you want to decline this funding agreement?</strong>
         <p class="mt-4 text-center">By choosing to decline, you are declining funding from the Ministry and terminating your $10 a Day application.</p>
       </div>
@@ -104,10 +104,10 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="showDeclineDialog = false">Go back</AppButton>
+          <AppButton id="decline-dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="showDeclineDialog = false">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="loading" @click="decline()">Decline Funding Agreement</AppButton>
+          <AppButton id="decline-dialog-decline-fa" size="large" min-width="250px" max-width="450px" :loading="loading" @click="decline()">Decline Funding Agreement</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -126,10 +126,10 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="goBack">Go back</AppButton>
+          <AppButton id="ppm-dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="goBack">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" :disabled="!ppmReviewed" size="large" min-width="250px" max-width="450px" :loading="loading" @click="confirmPPM">Confirm</AppButton>
+          <AppButton id="ppm-dialog-confirm" :disabled="!ppmReviewed" size="large" min-width="250px" max-width="450px" :loading="loading" @click="confirmPPM">Confirm</AppButton>
         </v-col>
       </v-row>
     </template>
