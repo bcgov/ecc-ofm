@@ -103,7 +103,8 @@
         </template>
 
         <template #item.actions="{ item }">
-          <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
+          <p v-if="!facilityMayOpenApplication(item.facilityId)">Application Expired</p>
+          <router-link v-else-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
           <a v-else href="#table" @click="getPDF(item)">View Application</a>
@@ -415,11 +416,15 @@ export default {
       this.applications.push(...this.redirectedApplications)
     },
 
+    facilityMayOpenApplication(facilityId) {
+      return this.userInfo.facilities.find((f) => f.facilityId === facilityId)?.intakeWindowCheckForAddApplication || false
+    },
+
     /**
      * Create an array of keys to be used as the model for an application item (union of regular and supplementary applications)
      */
     createApplicationItemModel() {
-      return [...this.headers.map((header) => header.key), 'applicationId', 'supplementaryApplicationId']
+      return [...this.headers.map((header) => header.key), 'applicationId', 'supplementaryApplicationId', 'facilityId']
     },
 
     /**

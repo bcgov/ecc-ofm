@@ -6,6 +6,8 @@ import DocumentService from '@/services/documentService'
 import FacilityService from '@/services/facilityService'
 import LicenceService from '@/services/licenceService'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
+
 import { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES, DOCUMENT_TYPES, FACILITY_TYPES, OFM_PROGRAM_CODES, YES_NO_CHOICE_CRM_MAPPING, YES_NO_RADIO_GROUP_MAPPING } from '@/utils/constants'
 
 export const useApplicationsStore = defineStore('applications', {
@@ -39,6 +41,7 @@ export const useApplicationsStore = defineStore('applications', {
 
     async getApplication(applicationId) {
       try {
+        const authStore = useAuthStore();
         this.currentApplication = await ApplicationService.getApplication(applicationId)
         if (!this.currentApplication) return
         const [uploadedDocuments, licences, facility] = await Promise.all([
@@ -49,6 +52,7 @@ export const useApplicationsStore = defineStore('applications', {
         this.currentApplication.uploadedDocuments = uploadedDocuments
         this.currentApplication.licences = licences
         this.currentApplication.facility = facility
+        this.currentApplication.facilityCanAddApplication = authStore.userInfo.facilities.find((f) => f.facilityId === facility.facilityId)?.intakeWindowCheckForAddApplication || false
         this.checkApplicationComplete()
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
