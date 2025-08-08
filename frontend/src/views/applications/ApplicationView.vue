@@ -83,6 +83,9 @@ export default {
       return !!this.$route.meta.isRenewal
     },
     readonly() {
+      if (!this.currentApplication.facilityCanAddApplication) {
+        return true
+      }
       if (this.isSelectFacilityPage) {
         return this.loading || this.processing || !this.hasPermission(this.PERMISSIONS.APPLY_FOR_FUNDING)
       }
