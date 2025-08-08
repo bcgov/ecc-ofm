@@ -41,7 +41,7 @@ export const useApplicationsStore = defineStore('applications', {
 
     async getApplication(applicationId) {
       try {
-        const authStore = useAuthStore();
+        const authStore = useAuthStore()
         this.currentApplication = await ApplicationService.getApplication(applicationId)
         if (!this.currentApplication) return
         const [uploadedDocuments, licences, facility] = await Promise.all([
