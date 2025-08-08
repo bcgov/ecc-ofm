@@ -103,7 +103,7 @@
         </template>
 
         <template #item.actions="{ item }">
-          <p v-if="!facilityMayOpenApplication(item.facilityId)">Application Expired</p>
+          <p v-if="!facilityMayOpenApplication(item.facilityId)">No Intake Available</p>
           <router-link v-else-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
