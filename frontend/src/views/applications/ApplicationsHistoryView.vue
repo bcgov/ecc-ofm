@@ -103,7 +103,7 @@
         </template>
 
         <template #item.actions="{ item }">
-          <p v-if="!facilityMayOpenApplication(item.facilityId)">No Intake Available</p>
+          <p v-if="!facilityMayContinueDraft(item)">No Intake Available</p>
           <router-link v-else-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
@@ -418,7 +418,9 @@ export default {
       this.applications.push(...this.redirectedApplications)
     },
 
-    facilityMayOpenApplication(facilityId) {
+    facilityMayContinueDraft(applicationItem) {
+      const { facilityId, statusCode } = applicationItem
+      if (statusCode !== APPLICATION_STATUS_CODES.DRAFT) return true
       return this.userInfo.facilities.find((f) => f.facilityId === facilityId)?.intakeWindowCheckForAddApplication || false
     },
 
