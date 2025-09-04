@@ -94,9 +94,9 @@
       </v-col>
     </v-row>
   </v-container>
-  <AppDialog v-model="showDeclineDialog" title="Confirm" :isLoading="loading" persistent max-width="50%" @close="showDeclineDialog = false">
+  <AppDialog v-model="showDeclineDialog" title="Confirm" :is-loading="loading" persistent max-width="50%" @close="showDeclineDialog = false">
     <template #content>
-      <div class="confirm-dialog-text d-flex flex-column align-center">
+      <div class="d-flex flex-column align-center">
         <strong>Are you sure you want to decline this funding agreement?</strong>
         <p class="mt-4 text-center">By choosing to decline, you are declining funding from the Ministry and terminating your $10 a Day application.</p>
       </div>
@@ -104,10 +104,32 @@
     <template #button>
       <v-row justify="space-around">
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="showDeclineDialog = false">Go back</AppButton>
+          <AppButton id="decline-dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="showDeclineDialog = false">Go back</AppButton>
         </v-col>
         <v-col cols="12" md="6" class="d-flex justify-center">
-          <AppButton id="dialog-cancel-application" size="large" min-width="250px" max-width="450px" :loading="loading" @click="decline()">Decline Funding Agreement</AppButton>
+          <AppButton id="decline-dialog-decline-fa" size="large" min-width="250px" max-width="450px" :loading="loading" @click="decline()">Decline Funding Agreement</AppButton>
+        </v-col>
+      </v-row>
+    </template>
+  </AppDialog>
+  <AppDialog v-if="!readonly" v-model="showPPMDialog" title="Review Policy and Procedure Manual" :is-loading="loading" persistent max-width="50%" @close="goBack">
+    <template #content>
+      <div class="d-flex flex-column align-center">
+        <p class="mt-2 text-center">
+          You may only sign the Funding Agreement if you have read and understood the
+          <a href="https://www2.gov.bc.ca/assets/download/C2F0091F036446AA9A6E715D91DC188B" target="_blank">Policy and Procedure Manual</a>
+          <span>.</span>
+        </p>
+        <v-checkbox v-model="ppmReviewed" class="mt-2 ml-3" color="primary" label="I confirm that I have read and understand the Policy and Procedure Manual" />
+      </div>
+    </template>
+    <template #button>
+      <v-row justify="space-around">
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="ppm-dialog-go-back" :primary="false" size="large" width="250px" :loading="loading" @click="goBack">Go back</AppButton>
+        </v-col>
+        <v-col cols="12" md="6" class="d-flex justify-center">
+          <AppButton id="ppm-dialog-confirm" :disabled="!ppmReviewed" size="large" min-width="250px" max-width="450px" :loading="loading" @click="confirmPPM">Confirm</AppButton>
         </v-col>
       </v-row>
     </template>
@@ -152,6 +174,8 @@ export default {
       panel: [],
       loading: false,
       showDeclineDialog: false,
+      showPPMDialog: true,
+      ppmReviewed: false,
     }
   },
 
@@ -187,7 +211,8 @@ export default {
           data: atob(resp),
         }
         this.pdfDownloadLink = `data:application/pdf;base64,${resp}`
-      } catch (ignoreError) {
+      } catch (error) {
+        console.log(`Failed to load loading funding agreement data - ${error}`)
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       } finally {
         this.loading = false
@@ -241,6 +266,12 @@ export default {
     goToDeclaration() {
       const declarationElement = document.getElementById('declaration')
       declarationElement.scrollIntoView({ behavior: 'smooth' })
+    },
+    goBack() {
+      return this.$router.push({ name: 'funding-overview' })
+    },
+    confirmPPM() {
+      this.showPPMDialog = false
     },
   },
 }

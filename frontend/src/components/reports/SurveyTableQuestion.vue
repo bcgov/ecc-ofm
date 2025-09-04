@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
-    <v-data-table :headers="tableHeaders" :items="updatedResponses" item-value="name" items-per-page="-1">
-      <template v-slot:item="{ item }">
+    <v-data-table-virtual ref="virtualTable" :headers="tableHeaders" :items="updatedResponses" item-value="name" :height="tableHeight" fixed-header>
+      <template #item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
             <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
@@ -13,8 +13,7 @@
           </td>
         </tr>
       </template>
-      <template v-slot:bottom><!-- no paging --></template>
-    </v-data-table>
+    </v-data-table-virtual>
     <div v-if="validation && required && isTableEmpty" class="error-message mt-2">This field is required</div>
     <AppButton v-if="showAddButton" id="add-button" class="mt-4 mb-12" :primary="false" size="large" width="125px" @click="addRow">Add Row</AppButton>
   </v-container>
@@ -83,6 +82,10 @@ export default {
       return headers
     },
 
+    tableHeight() {
+      return this.updatedResponses?.length > 6 ? 600 : null
+    },
+
     responsesInTableFormat() {
       if (isEmpty(this.responses)) return
       const responses = []
@@ -138,7 +141,7 @@ export default {
     },
   },
 
-  created() {
+  mounted() {
     if (isEmpty(this.responses)) {
       this.addRow()
     } else {
@@ -160,8 +163,10 @@ export default {
         if (
           this.isRowBlank(this.updatedResponses[lastIndex]?.headers) ||
           (!isEmpty(this.valueInheritanceParentsQuestion) && isEmpty(this.updatedResponses[lastIndex]?.headers[this.valueInheritanceParentsQuestion?.questionId]))
-        )
+        ) {
+          this.scrollToBottom()
           return
+        }
       }
       this.updatedResponses = this.updatedResponses ?? []
       const row = {
@@ -171,6 +176,19 @@ export default {
       }
       this.questions.forEach((question) => (row.headers[question.questionId] = undefined))
       this.updatedResponses?.push(row)
+      this.scrollToBottom()
+    },
+
+    scrollToBottom() {
+      setTimeout(() => {
+        const wrapper = this.$refs.virtualTable?.$el?.querySelector('.v-table__wrapper')
+        if (wrapper) {
+          wrapper.scrollTo({
+            top: wrapper.scrollHeight,
+            behavior: 'smooth',
+          })
+        }
+      }, 100)
     },
 
     getQuestionResponse(row, questionId) {

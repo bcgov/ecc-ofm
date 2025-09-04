@@ -103,7 +103,8 @@
         </template>
 
         <template #item.actions="{ item }">
-          <router-link v-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
+          <p v-if="!facilityMayContinueDraft(item)">No Intake Available</p>
+          <router-link v-else-if="item.applicationType !== APPLICATION_TYPES.IRREGULAR_EXPENSE" :to="getActionsRoute(item)">
             {{ getApplicationAction(item) }}
           </router-link>
           <a v-else href="#table" @click="getPDF(item)">View Application</a>
@@ -262,17 +263,19 @@ export default {
       }
     },
     isAddCoreApplicationAllowed() {
+      if (!this.isIntakeWindowOpenAndValid) {
+        return false
+      }
       const hasDraftApplication = this.applications?.some(
         (application) =>
-          application?.stateCode === CRM_STATE_CODES.ACTIVE && application?.statusCode === APPLICATION_STATUS_CODES.DRAFT && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
+          application.stateCode === CRM_STATE_CODES.ACTIVE && application.statusCode === APPLICATION_STATUS_CODES.DRAFT && application.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW,
       )
-
       const hasMissingApplication = this.userInfo?.facilities?.some((facility) => {
         return !this.applications?.some((application) => {
-          return application?.facilityId === facility.facilityId && application?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW
+          return application.facilityId === facility.facilityId && application.applicationRenewalType === APPLICATION_RENEWAL_TYPES.NEW && application.stateCode === CRM_STATE_CODES.ACTIVE
         })
       })
-      return this.isIntakeWindowOpenAndValid && (hasDraftApplication || hasMissingApplication)
+      return hasDraftApplication || hasMissingApplication
     },
     isIntakeWindowOpenAndValid() {
       return this.userInfo?.facilities?.some(
@@ -415,11 +418,17 @@ export default {
       this.applications.push(...this.redirectedApplications)
     },
 
+    facilityMayContinueDraft(applicationItem) {
+      const { facilityId, statusCode } = applicationItem
+      if (statusCode !== APPLICATION_STATUS_CODES.DRAFT) return true
+      return this.userInfo.facilities.find((f) => f.facilityId === facilityId)?.intakeWindowCheckForAddApplication || false
+    },
+
     /**
      * Create an array of keys to be used as the model for an application item (union of regular and supplementary applications)
      */
     createApplicationItemModel() {
-      return [...this.headers.map((header) => header.key), 'applicationId', 'supplementaryApplicationId']
+      return [...this.headers.map((header) => header.key), 'applicationId', 'supplementaryApplicationId', 'facilityId']
     },
 
     /**

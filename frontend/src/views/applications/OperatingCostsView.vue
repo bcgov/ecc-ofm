@@ -83,10 +83,17 @@
                 v-model="financialStatement.documentsToUpload"
                 entity-name="ofm_applications"
                 :document-type="DOCUMENT_TYPES.INCOME_STATEMENT"
+                :example-image="'Income Statement or Statement of Operations.png'"
                 :loading="processing"
                 :readonly="readonly"
                 :uploaded-documents="financialStatement.uploadedDocuments"
-                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
+                @delete-uploaded-document="deleteUploadedDocument">
+                <template #exampleText>
+                  Also referred to as a Program-specific statement of operations, assesses the profit or loss (revenue less expenditures) over a period of time. The income statement must be for your
+                  prior fiscal year, (for example, if the fiscal year for your centre is April 1 – March 31, the statement would be for the period of April 1, 2024 to March 31, 2025) Please ensure the
+                  document must be verified (signed) by the designated representative for your organization i.e., your expense authority.
+                </template>
+              </AppDocumentUpload>
             </v-card>
             <v-card v-if="!isRenewal" class="mb-4 pa-4">
               <AppDocumentUpload
@@ -94,10 +101,17 @@
                 v-model="balanceSheet.documentsToUpload"
                 entity-name="ofm_applications"
                 :document-type="DOCUMENT_TYPES.BALANCE_SHEET"
+                :example-image="'Balance Sheet or Statement of Financial Position.png'"
                 :loading="processing"
                 :readonly="readonly"
                 :uploaded-documents="balanceSheet.uploadedDocuments"
-                @delete-uploaded-document="deleteUploadedDocument"></AppDocumentUpload>
+                @delete-uploaded-document="deleteUploadedDocument">
+                <template #exampleText>
+                  Demonstrates the financial position (assets, liabilities, and equity) of the centre at a specific point in time. The balance sheet must be for your prior fiscal year. For example, if
+                  the fiscal year for your centre is April 1 – March 31, the statement would be for the period of April 1, 2024, to March 31, 2025. Please ensure the document must be verified (signed)
+                  by the designated representative for your organization i.e., your expense authority.
+                </template>
+              </AppDocumentUpload>
             </v-card>
             <v-card class="pa-4">
               <AppDocumentUpload

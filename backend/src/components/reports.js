@@ -188,11 +188,15 @@ async function deleteSurveyResponse(req, res) {
 
 async function getQuestionResponses(req, res) {
   try {
-    const questionResponses = []
-    const response = await getOperation(
-      `ofm_question_responses?$select=ofm_question_responseid,_ofm_survey_response_value,_ofm_question_value,_ofm_header_value,ofm_row_id,ofm_response_text&$filter=_ofm_survey_response_value eq '${req?.query?.surveyResponseId}'&pageSize=5000`,
+    const questionResponses = {}
+    await Promise.all(
+      req.body?.sectionIds?.map(async (sectionId) => {
+        const response = await getOperation(
+          `ofm_question_responses?$select=ofm_question_responseid,_ofm_survey_response_value,_ofm_question_value,_ofm_header_value,ofm_row_id,ofm_response_text&$filter=(_ofm_survey_response_value eq '${req?.body?.surveyResponseId}') and (ofm_question/_ofm_section_value eq '${sectionId}')&pageSize=5000`,
+        )
+        questionResponses[sectionId] = response?.value?.map((questionResponse) => new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON())
+      }),
     )
-    response?.value?.forEach((questionResponse) => questionResponses.push(new MappableObjectForFront(questionResponse, QuestionResponseMappings).toJSON()))
     return res.status(HttpStatus.OK).json(questionResponses)
   } catch (e) {
     log.error(e)
@@ -200,43 +204,54 @@ async function getQuestionResponses(req, res) {
   }
 }
 
-async function createQuestionResponse(req, res) {
+async function createQuestionResponses(req, res) {
   try {
-    const payload = {
-      'ofm_question@odata.bind': `/ofm_questions(${req.body?.questionId})`,
-      'ofm_survey_response@odata.bind': `/ofm_survey_responses(${req.body?.surveyResponseId})`,
-      ofm_response_text: req.body?.value,
-    }
-    if ('tableQuestionId' in req.body) {
-      payload['ofm_row_id'] = req.body?.rowId
-      payload['ofm_header@odata.bind'] = `/ofm_questions(${req.body?.tableQuestionId})`
-    }
-    const response = await postOperation('ofm_question_responses', payload)
-    return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, QuestionResponseMappings).toJSON())
+    await Promise.all(
+      req.body?.map(async (response) => {
+        const payload = {
+          'ofm_question@odata.bind': `/ofm_questions(${response?.questionId})`,
+          'ofm_survey_response@odata.bind': `/ofm_survey_responses(${response?.surveyResponseId})`,
+          ofm_response_text: response?.value,
+        }
+        if ('tableQuestionId' in response) {
+          payload['ofm_row_id'] = response?.rowId
+          payload['ofm_header@odata.bind'] = `/ofm_questions(${response?.tableQuestionId})`
+        }
+        await postOperation('ofm_question_responses', payload)
+      }),
+    )
+    return res.status(HttpStatus.CREATED).json()
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
 
-async function updateQuestionResponse(req, res) {
+async function updateQuestionResponses(req, res) {
   try {
-    const payload = {
-      ofm_response_text: req.body?.value,
-      ofm_row_id: req.body?.rowId,
-    }
-    const response = await patchOperationWithObjectId('ofm_question_responses', req.params.questionResponseId, payload)
-    return res.status(HttpStatus.OK).json(response)
+    await Promise.all(
+      req.body?.map(async (response) => {
+        const payload = {
+          ofm_response_text: response.value,
+          ofm_row_id: response.rowId,
+        }
+        await patchOperationWithObjectId('ofm_question_responses', response.questionResponseId, payload)
+      }),
+    )
+    return res.status(HttpStatus.OK).json()
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
-
-async function deleteQuestionResponse(req, res) {
+async function deleteQuestionResponses(req, res) {
   try {
-    const response = await deleteOperationWithObjectId('ofm_question_responses', req.params.questionResponseId)
-    return res.status(HttpStatus.OK).json(response)
+    await Promise.all(
+      req.body?.map(async (responseId) => {
+        await deleteOperationWithObjectId('ofm_question_responses', responseId)
+      }),
+    )
+    return res.status(HttpStatus.OK).json()
   } catch (e) {
     log.error(e)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
@@ -252,7 +267,7 @@ module.exports = {
   updateSurveyResponse,
   deleteSurveyResponse,
   getQuestionResponses,
-  createQuestionResponse,
-  updateQuestionResponse,
-  deleteQuestionResponse,
+  createQuestionResponses,
+  updateQuestionResponses,
+  deleteQuestionResponses,
 }
