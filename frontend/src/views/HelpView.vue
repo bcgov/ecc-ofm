@@ -39,6 +39,12 @@
           </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'additional'">
+          <a href="https://youtu.be/20fW31GZzco" target="_blank">
+            <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
+            <span>What is the Operating Funding Model?</span>
+          </a>
+          <br />
+          <br />
           <a href="https://www.youtube.com/watch?v=dmtcxxuWrqo" target="_blank">
             <v-icon size="20" icon="fa:fa-regular fa-circle-play" class="mr-1"></v-icon>
             <span>$10 a Day Welcome Session 2025</span>
