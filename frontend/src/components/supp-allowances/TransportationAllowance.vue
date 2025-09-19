@@ -118,8 +118,8 @@
           <v-card class="pa-6 greyBorder">
             <AppLabel>Upload supporting documents:</AppLabel>
             <ul class="ml-7">
-              <li>Picture of your odometer at the time of this application.</li>
-              <li>Your lease / finance payment schedule</li>
+              <li>Picture of your odometer at the time of this application</li>
+              <li>Your lease / finance payment schedule (if any)</li>
             </ul>
             <AppDocumentUpload
               id="application-document-upload"
