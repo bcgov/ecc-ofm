@@ -1,5 +1,5 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Confirm" :is-loading="isLoading" persistent max-width="50%" @close="closeDialog">
     <template #content>
       <div align="center">Are you sure you want to deactivate this BCeID: {{ user?.userName }}?</div>
     </template>

@@ -6,7 +6,7 @@
 export default {
   name: 'AppDateInput',
   inheritAttrs: true,
-  props: ['modelValue'],
+  props: { modelValue: { type: String, default: '' } },
   emits: ['update:modelValue'],
   data() {
     return {

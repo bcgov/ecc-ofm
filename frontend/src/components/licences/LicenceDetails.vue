@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form">
-    <v-container fluid class="pt-0" id="top">
+    <v-container id="top" fluid class="pt-0">
       <v-row no-gutters>
         <v-col cols="12" lg="6">
           <v-row no-gutters class="mr-2 my-2">
@@ -85,7 +85,7 @@
                             :rules="[...rules.required, rules.max(1000)]"
                             :hide-details="readOnly"
                             :disabled="readOnly"
-                            @update:modelValue="update(licenceDetail)" />
+                            @update:model-value="update(licenceDetail)" />
                           <span v-else>{{ licenceDetail?.operationalSpaces }}</span>
                         </v-col>
                       </v-row>
@@ -105,7 +105,7 @@
                             :rules="[...rules.required, rules.max(1000)]"
                             :hide-details="readOnly"
                             :disabled="readOnly"
-                            @update:modelValue="update(licenceDetail)" />
+                            @update:model-value="update(licenceDetail)" />
                           <span v-else>{{ licenceDetail?.enrolledSpaces }}</span>
                         </v-col>
                       </v-row>
@@ -127,7 +127,7 @@
                             :rules="[...rules.required, rules.max(52)]"
                             :hide-details="readOnly"
                             :disabled="readOnly"
-                            @update:modelValue="update(licenceDetail)" />
+                            @update:model-value="update(licenceDetail)" />
                           <span v-else>{{ licenceDetail?.weeksInOperation }}</span>
                         </v-col>
                       </v-row>
@@ -171,7 +171,7 @@
                           <AppLabel>Hours:</AppLabel>
                         </v-col>
                         <v-col cols="12" sm="7" lg="8" xl="9">
-                          <v-row no-gutters v-if="editable">
+                          <v-row v-if="editable" no-gutters>
                             <AppTimeInput
                               v-model="licenceDetail.operationFromTime"
                               :rules="rules.required"
@@ -181,7 +181,7 @@
                               min-width="150px"
                               max-width="150px"
                               class="pr-2"
-                              @update:modelValue="update(licenceDetail)" />
+                              @update:model-value="update(licenceDetail)" />
                             <AppTimeInput
                               v-model="licenceDetail.operationToTime"
                               :rules="[...rules.required, rules.validHourTo(licenceDetail.operationFromTime)]"
@@ -191,7 +191,7 @@
                               min-width="150px"
                               max-width="150px"
                               class="pr-2"
-                              @update:modelValue="update(licenceDetail)" />
+                              @update:model-value="update(licenceDetail)" />
                           </v-row>
                           <span v-else>{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</span>
                         </v-col>
@@ -224,7 +224,7 @@
                         max-width="300px"
                         text="A situation where children are divided into different rooms due to physical limitations of the building and child-to-staff ratio requirements. This can affect the staffing ratio compared to keeping the group together in one room."
                         top>
-                        <template v-slot:activator="{ props }">
+                        <template #activator="{ props }">
                           <v-icon size="large" v-bind="props">mdi-information-slab-circle-outline</v-icon>
                         </template>
                       </v-tooltip>

@@ -7,7 +7,7 @@
       <v-col v-if="showFacility" class="header-facility justify-md-end justify-sm-start" cols="12" md="6">
         Facility: {{ currentFacility?.facilityName }}
         <v-menu id="facilityMenu">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn id="changeFacility" variant="text" v-bind="props">(change)</v-btn>
           </template>
           <v-list>

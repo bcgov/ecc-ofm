@@ -1,5 +1,5 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="50%" @close="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Confirm" :is-loading="isLoading" persistent max-width="50%" @close="closeDialog">
     <template #content>
       <div class="confirm-dialog-text d-flex flex-column align-center">Are you sure you want to cancel this application?</div>
     </template>

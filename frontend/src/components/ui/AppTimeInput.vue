@@ -8,7 +8,7 @@ import format from '@/utils/format'
 export default {
   name: 'AppTimeInput',
   inheritAttrs: true,
-  props: ['modelValue'],
+  props: { modelValue: { type: String, default: '' } },
   emits: ['update:modelValue'],
   data() {
     return {
