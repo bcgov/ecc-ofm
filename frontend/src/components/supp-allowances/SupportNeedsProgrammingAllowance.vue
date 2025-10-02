@@ -83,7 +83,7 @@
     </v-row>
     <v-row v-for="item in SUPPORT_CHECKBOX_LABELS" :key="item.value" no-gutters>
       <v-checkbox v-model="model.supportFundingModel" :disabled="readOnly" density="compact" class="pl-lg-8 mr-0" prepend-icon :value="item.value">
-        <template v-slot:label>
+        <template #label>
           <p>
             {{ item.label }}
             <v-tooltip v-if="item.tooltip" content-class="tooltip" :text="item.tooltip">

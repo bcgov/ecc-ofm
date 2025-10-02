@@ -10,7 +10,7 @@
         <FacilityFilter :loading="loading" @facility-filter-changed="facilityFilterChanged" />
       </v-col>
       <v-col class="d-flex justify-end align-end pb-0">
-        <AppButton variant="text" @click="toggleDialog({})" :disabled="loading" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">
+        <AppButton v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)" variant="text" :disabled="loading" @click="toggleDialog({})">
           <v-icon left>mdi-plus</v-icon>
           Add new user
         </AppButton>
@@ -31,32 +31,32 @@
             :mobile="null"
             mobile-breakpoint="md">
             <!-- Slot to customize expand row event -->
-            <template v-slot:item.dataTableExpand="{ item }">
+            <template #item.dataTableExpand="{ item }">
               <AppButton variant="text" @click.stop="toggleExpand(item)">
                 {{ expanded[0] == item.contactId ? 'hide detail' : 'view' }}
               </AppButton>
             </template>
 
-            <template v-slot:item.actions="{ item }">
-              <AppButton variant="text" @click.stop="toggleDialog(item)" v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)">edit</AppButton>
+            <template #item.actions="{ item }">
+              <AppButton v-if="hasPermission(PERMISSIONS.MANAGE_USERS_EDIT)" variant="text" @click.stop="toggleDialog(item)">edit</AppButton>
             </template>
             <!-- Slots to translate specific column values into display values -->
 
-            <template v-slot:item.role="{ item }">
+            <template #item.role="{ item }">
               <span>{{ item.role?.roleName }}</span>
             </template>
 
-            <template v-slot:item.isExpenseAuthority="{ item }">
+            <template #item.isExpenseAuthority="{ item }">
               <span>{{ isExpenseAuthority(item) }}</span>
             </template>
 
-            <template v-slot:item.stateCode="{ item }">
+            <template #item.stateCode="{ item }">
               <span>{{ getStatusDescription(item) }}</span>
             </template>
 
             <!-- Slot to customize expand row content -->
 
-            <template v-slot:expanded-row="{ item }">
+            <template #expanded-row="{ item }">
               <tr>
                 <td v-if="!isMobileMode"></td>
                 <td colspan="6" class="pl-0">
@@ -77,11 +77,11 @@
                         density="compact"
                         :mobile="null"
                         mobile-breakpoint="md">
-                        <template v-slot:item.address="{ item }">{{ item.address }}, {{ item.city }}</template>
+                        <template #item.address="{ item: addressItem }">{{ addressItem.address }}, {{ addressItem.city }}</template>
 
-                        <template v-slot:item.isExpenseAuthority="{ item }">{{ item.isExpenseAuthority ? 'Yes' : 'No' }}</template>
+                        <template #item.isExpenseAuthority="{ item: authorityItem }">{{ authorityItem.isExpenseAuthority ? 'Yes' : 'No' }}</template>
 
-                        <template v-slot:bottom><!-- no paging --></template>
+                        <template #bottom><!-- no paging --></template>
                       </v-data-table>
                     </v-col>
                     <v-col cols="12"></v-col>
@@ -96,7 +96,7 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
-    <ManageUserDialog :show="showManageUserDialog" :updatingUser="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
+    <ManageUserDialog :show="showManageUserDialog" :updating-user="userToUpdate" @close="toggleDialog" @close-refresh="closeDialogAndRefresh" @update-success-event="updateSuccessEvent" />
     <DeactivateUserDialog :show="showDeactivateUserDialog" :user="userToDeactivate" @close="toggleDeactivateUserDialog" @deactivate="getUsersAndFacilities" />
     <AppBackButton max-width="450px" :to="{ name: 'account-mgmt' }" :loading="loading">Account Management</AppBackButton>
   </v-container>

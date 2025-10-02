@@ -43,7 +43,7 @@
         <v-expansion-panel title="Attachments" @click="openAttachmentsPanel">
           <v-expansion-panel-text>
             <v-skeleton-loader :loading="!loadedAttachments" type="table-tbody">
-              <v-data-table v-if="loadedAttachments" hide-default-footer v-model:sort-by="sortBy" :headers="attachmentHeaders" :items="loadedAttachments" item-key="documentId" class="data-table">
+              <v-data-table v-if="loadedAttachments" v-model:sort-by="sortBy" hide-default-footer :headers="attachmentHeaders" :items="loadedAttachments" item-key="documentId" class="data-table">
                 <template #[`item.fileName`]="{ item }">
                   <a href="#" @click="getFile(item)">{{ item.fileName }}</a>
                 </template>

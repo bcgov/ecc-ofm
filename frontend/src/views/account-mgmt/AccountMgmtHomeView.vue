@@ -1,5 +1,5 @@
 <template>
-  <OrganizationHeader :showFacility="false" />
+  <OrganizationHeader :show-facility="false" />
   <router-view v-bind="$attrs" />
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <AppDialog v-model="isDisplayed" title="Confirm" :isLoading="isLoading" persistent max-width="25%" @close="closeDialog">
+  <AppDialog v-model="isDisplayed" title="Confirm" :is-loading="isLoading" persistent max-width="25%" @close="closeDialog">
     <template #content>
       <div align="center" class="confirm-dialog-text">A user with this name and email already exists. Are you sure you wish to proceed with this BCeID?</div>
     </template>
