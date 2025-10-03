@@ -165,7 +165,7 @@ export default {
   },
   created() {
     this.SUPPORTED_DOCUMENTS_MESSAGE = SUPPORTED_DOCUMENTS_MESSAGE
-    this.MAX_FILE_SIZE = 4194304 // 4 MB
+    this.MAX_FILE_SIZE = 20971520 // 20 MB
     this.fileExtensionAccept = ['.pdf', '.png', '.jpg', '.jpeg', '.heic', '.doc', '.docx', '.xls', '.xlsx']
     this.fileFormats = 'PDF, JPEG, JPG, PNG, HEIC, DOC, DOCX, XLS, and XLSX'
     this.fileRules = [

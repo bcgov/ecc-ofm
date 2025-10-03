@@ -335,7 +335,7 @@ export const YES_NO_CRM_MAPPING = Object.freeze({
   NO: 0,
 })
 
-export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 4MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
+export const SUPPORTED_DOCUMENTS_MESSAGE = 'The maximum file size is 20MB for each document. Accepted file types are jpg, jpeg, heic, png, pdf, docx, doc, xls, and xlsx.'
 export const OFM_PROGRAM = '$10 a Day Funding Program'
 
 export const PHONE_FORMAT = '###-###-####'
