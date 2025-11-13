@@ -6,6 +6,7 @@ const log = require('./logger')
 const HttpStatus = require('http-status-codes')
 const lodash = require('lodash')
 const { ApiError } = require('./error')
+const { IDENTITY_PROVIDER } = require('../util/constants')
 const jsonwebtoken = require('jsonwebtoken')
 const { LocalDateTime, DateTimeFormatter } = require('@js-joda/core')
 const { Locale } = require('@js-joda/locale_en')
@@ -74,18 +75,7 @@ function getUserGuid(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  return splitUsername(userInfo._json.preferred_username).guid
-}
-
-/**
- * Splits the username into it's component parts.
- * Format is username@idp e.g. 6bf387bb6dd6481997f70c42dd103f83@bceidbusiness
- * @param {*} username
- * @returns
- */
-function splitUsername(username) {
-  const usernameArray = username.split('@')
-  return { guid: usernameArray[0].toUpperCase(), idp: usernameArray[1] }
+  return userInfo._json.guid
 }
 
 function isIdirUser(req) {
@@ -93,7 +83,7 @@ function isIdirUser(req) {
   if (!userInfo || !userInfo.jwt || !userInfo._json) {
     throw new ApiError(HttpStatus.UNAUTHORIZED, { message: 'API Get error' })
   }
-  return !!req.session?.passport?.user?._json?.idir_username
+  return req.session?.passport?.user?._json?.identity_provider === IDENTITY_PROVIDER.IDIR
 }
 
 function getUserName(req) {
@@ -320,7 +310,6 @@ const utils = {
   deleteOperation,
   sleep,
   postDocuments,
-  splitUsername,
   handleError,
   formatDateTimeForBack,
 }
