@@ -3,15 +3,15 @@
     <v-col sm="12" md="6" class="pa-0" :class="borderClass">
       <v-row class="mt-0 ml-0">
         <v-col cols="12">
-          <AppButton size="small" class="messages-button" @click="toggleNewRequestDialog()">
+          <AppButton size="small" class="messages-button" :disabled="!canModifyMessages" @click="toggleNewRequestDialog()">
             <v-icon class="mr-1" left>mdi-email-plus-outline</v-icon>
             <span>New message</span>
           </AppButton>
-          <AppButton size="small" class="messages-button mx-1" :primary="false" @click="toggleMarkUnreadButtonInMessageTable()">
+          <AppButton size="small" class="messages-button mx-1" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkUnreadButtonInMessageTable()">
             <v-icon class="mr-1" left>mdi-email-outline</v-icon>
             <span>Mark unread</span>
           </AppButton>
-          <AppButton size="small" class="messages-button" :primary="false" @click="toggleMarkReadButton()">
+          <AppButton size="small" class="messages-button" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkReadButton()">
             <v-icon class="mr-1" left>mdi-email-open-outline</v-icon>
             <span>Mark read</span>
           </AppButton>
@@ -35,6 +35,7 @@
 <script>
 import { mapState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
 import RequestConversations from '@/components/messages/RequestConversations.vue'
@@ -44,6 +45,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 export default {
   name: 'MessagesTab',
   components: { AppButton, NewRequestDialog, AssistanceRequestTable, RequestConversations },
+  mixins: [permissionsMixin],
   data() {
     return {
       showNewRequestDialog: false,
@@ -57,6 +59,9 @@ export default {
     ...mapState(useMessagesStore, ['assistanceRequests']),
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
+    },
+    canModifyMessages() {
+      return this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
     },
   },
   methods: {

@@ -42,6 +42,7 @@ const paymentsRouter = require('./routes/payments')
 const publicRouter = require('./routes/public')
 const reportsRouter = require('./routes/reports')
 const topUpRouter = require('./routes/topups')
+const { IDENTITY_PROVIDER } = require('./util/constants')
 const { MappableObjectForBack } = require('./util/mapping/MappableObject')
 const { RoleMappings } = require('./util/mapping/Mappings')
 const { getRedisDbSession } = require('./util/redis/redis-client')
@@ -138,7 +139,7 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
         }
 
         //set access and refresh tokens
-        profile.jwtFrontend = await auth.generateUiToken(profile)
+        profile.jwtFrontend = auth.generateUiToken(profile)
         profile.jwt = accessToken
         profile._json = parseJwt(accessToken)
         profile.refreshToken = refreshToken
@@ -154,12 +155,12 @@ function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, 
 }
 
 async function populateUserInfo(profile) {
-  const username = utils.splitUsername(profile.username)
   // Get UserProfile for BCeID users
-  if (username.idp === config.get('oidc:idpHintBceid')) {
+  const { identity_provider, guid } = profile._json
+  if (identity_provider === IDENTITY_PROVIDER.BUSINESS) {
     // If the userGuid cannot be found in Dynamics, then Dynamics will check if the userName exists,
     // If userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
-    const user = await getUserProfile(username.guid, profile._json.bceid_username)
+    const user = await getUserProfile(guid, profile._json.bceid_username)
 
     profile.role = user?.role
     profile.organizationId = user?.organization?.accountid
@@ -172,7 +173,7 @@ async function populateUserInfo(profile) {
         isExpenseAuthority: fp.ofm_is_expense_authority,
       }
     })
-  } else if (username.idp === config.get('oidc:idpHintIdir')) {
+  } else if (identity_provider === IDENTITY_PROVIDER.IDIR) {
     const roles = await getRoles()
     const role = roles.find((role) => role.data.roleName === 'Impersonate')
 

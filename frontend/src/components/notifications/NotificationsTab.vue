@@ -4,11 +4,11 @@
       <v-row>
         <v-col class="mt-3 ml-3">
           <div>
-            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkUnreadButtonInNotificationTable(false)">
+            <AppButton class="mx-1 notifications-button" size="small" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkUnreadButtonInNotificationTable(false)">
               <v-icon class="mr-1" left>mdi-email-outline</v-icon>
               <span>Mark unread</span>
             </AppButton>
-            <AppButton class="mx-1 notifications-button" size="small" :primary="false" @click="toggleMarkReadButton(true)">
+            <AppButton class="mx-1 notifications-button" size="small" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkReadButton(true)">
               <v-icon class="mr-1" left>mdi-email-open-outline</v-icon>
               <span>Mark read</span>
             </AppButton>
@@ -35,10 +35,12 @@ import { useNotificationsStore } from '@/stores/notifications'
 import NotificationsTable from '@/components/notifications/NotificationsTable.vue'
 import NotificationDetails from '@/components/notifications/NotificationDetails.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import permissionsMixin from '@/mixins/permissionsMixin'
 
 export default {
   name: 'NotificationsTab',
   components: { AppButton, NotificationsTable, NotificationDetails },
+  mixins: [permissionsMixin],
   data() {
     return {
       selectedNotificationId: '',
@@ -49,6 +51,9 @@ export default {
   },
   computed: {
     ...mapState(useNotificationsStore, ['notifications']),
+    canModifyMessages() {
+      return this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
+    },
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
     },

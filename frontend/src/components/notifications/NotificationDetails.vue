@@ -8,7 +8,13 @@
           &nbsp;$10 a Day Funding Program
         </v-col>
         <v-col cols="5" md="4" lg="3" class="pa-0 d-flex justify-end mt-1">
-          <AppButton v-if="notification?.isRead" size="small" class="notifications-button" :primary="false" @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
+          <AppButton
+            v-if="notification?.isRead"
+            size="small"
+            class="notifications-button"
+            :primary="false"
+            :disabled="!canModifyMessages"
+            @click="$emit('toggleMarkUnreadButtonInNotificationDetails')">
             <v-icon class="mr-1" left>mdi-email-outline</v-icon>
             <span>Mark Unread</span>
           </AppButton>
@@ -31,12 +37,13 @@
 import { mapState } from 'pinia'
 import { useNotificationsStore } from '@/stores/notifications'
 import alertMixin from '@/mixins/alertMixin'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import format from '@/utils/format'
 import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
   components: { AppButton },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   format: [format],
   props: {
     notificationId: {
@@ -54,6 +61,9 @@ export default {
   },
   computed: {
     ...mapState(useNotificationsStore, ['notifications']),
+    canModifyMessages() {
+      return this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
+    },
   },
   watch: {
     // When notificationId changes, get the details for that notification.

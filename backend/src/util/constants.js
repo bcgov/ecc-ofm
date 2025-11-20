@@ -8,6 +8,11 @@ const SCAN_RESULTS = Object.freeze({
   VIRUS_FOUND: 'FOUND',
 })
 
+const IDENTITY_PROVIDER = Object.freeze({
+  BUSINESS: 'bceidbusiness',
+  IDIR: 'idir',
+})
+
 const PERMISSIONS = Object.freeze({
   // Reporting
   SEARCH_VIEW_REPORTS: 'Search/View Reports',
@@ -38,6 +43,7 @@ const PERMISSIONS = Object.freeze({
 
   // Notifications and Messages
   MANAGE_NOTIFICATIONS: 'Manage Notification and Messages',
+  MESSAGES_READ_ONLY: 'Messages Read Only',
 })
 
 const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({
@@ -73,13 +79,14 @@ const APPLICATION_RENEWAL_TYPES = Object.freeze({
 })
 
 module.exports = {
+  APPLICATION_RENEWAL_TYPES,
   ASSISTANCE_REQUEST_STATUS_CODES,
+  FUNDING_AGREEMENT_STATE_CODES,
+  FUNDING_AGREEMENT_STATUS_CODES,
+  IDENTITY_PROVIDER,
   OFM_PROGRAM_CODES,
+  PERMISSIONS,
   SCAN_RESULTS,
   SURVEY_RESPONSE_STATUS_CODES,
-  PERMISSIONS,
   TOP_UP_FUNDING_STATUS_CODES,
-  FUNDING_AGREEMENT_STATUS_CODES,
-  FUNDING_AGREEMENT_STATE_CODES,
-  APPLICATION_RENEWAL_TYPES,
 }

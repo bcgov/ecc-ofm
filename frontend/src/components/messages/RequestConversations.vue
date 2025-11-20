@@ -6,7 +6,14 @@
         <span class="subject-header">Subject: {{ assistanceRequest.subject }}</span>
       </v-col>
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
-        <AppButton v-if="assistanceRequest.isRead" size="small" min-width="155px" :primary="false" class="conversations-button" @click="$emit('toggleMarkUnreadButtonInConversationThread')">
+        <AppButton
+          v-if="assistanceRequest.isRead"
+          size="small"
+          min-width="155px"
+          :primary="false"
+          :disabled="!canModifyMessages"
+          class="conversations-button"
+          @click="$emit('toggleMarkUnreadButtonInConversationThread')">
           <v-icon left class="mr-1">mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
@@ -115,12 +122,13 @@ import { deriveImageType } from '@/utils/file'
 import format from '@/utils/format'
 import DocumentService from '@/services/documentService'
 import { createFileDownloadLink } from '@/utils/common'
+import permissionsMixin from '@/mixins/permissionsMixin'
 
 const ID_REGEX = /\(([^)]+)\)/
 
 export default {
   components: { AppButton, ReplyRequestDialog, CloseRequestBanner },
-  mixins: [alertMixin],
+  mixins: [alertMixin, permissionsMixin],
   props: {
     assistanceRequestId: {
       type: String,
@@ -156,6 +164,9 @@ export default {
   computed: {
     ...mapState(useMessagesStore, ['assistanceRequests', 'assistanceRequestConversation']),
     ...mapState(useAuthStore, ['userInfo']),
+    canModifyMessages() {
+      return this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
+    },
     showTooltip() {
       return !this.isReplyButtonEnabled && !this.isStatusClosed
     },
@@ -165,7 +176,7 @@ export default {
     },
     isReplyButtonEnabled() {
       const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
-      return [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(assistanceRequest?.statusCode)
+      return this.canModifyMessages || [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(assistanceRequest?.statusCode)
     },
     isStatusClosed() {
       const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)

@@ -86,7 +86,7 @@ router.get(
   '/',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
   [query('contactId', 'URL query: [contactId] is required').notEmpty().isUUID()],
   validateContact(),
   (req, res) => {
@@ -102,7 +102,7 @@ router.get(
   '/:assistanceRequestId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
   [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
@@ -117,7 +117,7 @@ router.get(
   '/conversations/:assistanceRequestId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
   [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID()],
   (req, res) => {
     validationResult(req).throw()
