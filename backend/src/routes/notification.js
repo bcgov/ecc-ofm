@@ -7,7 +7,7 @@ const { getNotifications, updateNotification } = require('../components/notifica
 const { param, query, validationResult } = require('express-validator')
 const validateContact = require('../middlewares/validateContact.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -19,7 +19,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
-  [query('contactId', 'URL query: [contactId] is required').notEmpty().isUUID()],
+  [query('contactId', 'URL query: [contactId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateContact(),
   (req, res) => {
     validationResult(req).throw()
@@ -35,7 +35,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
-  [param('notificationId', 'URL param: [notificationId] is required').notEmpty().isUUID()],
+  [param('notificationId', 'URL param: [notificationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return updateNotification(req, res)

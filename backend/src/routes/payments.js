@@ -7,7 +7,7 @@ const { getPayments } = require('../components/payments')
 const { query, validationResult } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -19,7 +19,11 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AMOUNTS),
-  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('stateCode').optional().isInt({ min: 0, max: 1 }), query('statusCode').optional().isInt({ min: 0, max: 8 })],
+  [
+    query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION),
+    query('stateCode').optional().isInt({ min: 0, max: 1 }),
+    query('statusCode').optional().isInt({ min: 0, max: 8 }),
+  ],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()

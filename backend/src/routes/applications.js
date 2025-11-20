@@ -25,7 +25,7 @@ const { query, param, validationResult, checkSchema } = require('express-validat
 const validateFacility = require('../middlewares/validateFacility.js')
 const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -79,7 +79,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('stateCode').optional().isInt({ min: 0, max: 1 })],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), query('stateCode').optional().isInt({ min: 0, max: 1 })],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -95,7 +95,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -174,7 +174,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplications(req, res)
@@ -188,7 +188,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApplicationById(req, res)
@@ -256,7 +256,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_APPLICATIONS),
-  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID()],
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getSupplementaryApprovalPDF(req, res)

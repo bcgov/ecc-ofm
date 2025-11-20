@@ -14,7 +14,7 @@ const {
 const { param, query, validationResult, checkSchema } = require('express-validator')
 const validateContact = require('../middlewares/validateContact.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -64,7 +64,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
-  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID()],
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return updateAssistanceRequest(req, res)
@@ -87,7 +87,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
-  [query('contactId', 'URL query: [contactId] is required').notEmpty().isUUID()],
+  [query('contactId', 'URL query: [contactId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateContact(),
   (req, res) => {
     validationResult(req).throw()
@@ -103,7 +103,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
-  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID()],
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getAssistanceRequest(req, res)
@@ -118,7 +118,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
-  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID()],
+  [param('assistanceRequestId', 'URL param: [assistanceRequestId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getAssistanceRequestConversation(req, res)

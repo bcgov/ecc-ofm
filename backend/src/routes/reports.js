@@ -19,7 +19,7 @@ const {
 } = require('../components/reports')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -31,7 +31,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('surveyTemplateId', 'URL query: [surveyTemplateId] is required').notEmpty().isUUID()],
+  [query('surveyTemplateId', 'URL query: [surveyTemplateId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getSurveySections(req, res)
@@ -46,7 +46,10 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('sectionId', 'URL query: [sectionId] is required').notEmpty().isUUID(), query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID()],
+  [
+    query('sectionId', 'URL query: [sectionId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION),
+    query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION),
+  ],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -62,7 +65,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID()],
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getSurveyResponse(req, res)
@@ -78,7 +81,10 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [body('surveyResponseId', 'Request body [surveyResponseId] is required').notEmpty().isUUID(), body('sectionIds', 'Request body [sectionIds] must be a non-empty array').isArray({ min: 1 })],
+  [
+    body('surveyResponseId', 'Request body [surveyResponseId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION),
+    body('sectionIds', 'Request body [sectionIds] must be a non-empty array').isArray({ min: 1 }),
+  ],
   (req, res) => {
     validationResult(req).throw()
     return getQuestionResponses(req, res)
@@ -93,7 +99,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('isSubmitted').optional().isBoolean()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), query('isSubmitted').optional().isBoolean()],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -109,7 +115,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SEARCH_VIEW_REPORTS),
-  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(), query('isSubmitted').optional().isBoolean()],
+  [query('facilityId', 'URL query: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), query('isSubmitted').optional().isBoolean()],
   validateFacility(),
   (req, res) => {
     validationResult(req).throw()
@@ -125,7 +131,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID()],
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return updateSurveyResponse(req, res)
@@ -140,7 +146,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.DELETE_DRAFT_REPORTS),
-  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID()],
+  [param('surveyResponseId', 'URL param: [surveyResponseId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return deleteSurveyResponse(req, res)
@@ -161,12 +167,12 @@ router.post(
       '*.questionId': {
         in: ['body'],
         exists: { errorMessage: '[questionId] is required' },
-        isUUID: { errorMessage: '[questionId] must be a valid UUID' },
+        isUUID: { errorMessage: '[questionId] must be a valid UUID', options: EXPRESS_VALIDATOR_UUID_VERSION },
       },
       '*.surveyResponseId': {
         in: ['body'],
         exists: { errorMessage: '[surveyResponseId] is required' },
-        isUUID: { errorMessage: '[surveyResponseId] must be a valid UUID' },
+        isUUID: { errorMessage: '[surveyResponseId] must be a valid UUID', options: EXPRESS_VALIDATOR_UUID_VERSION },
       },
       '*.value': {
         in: ['body'],
@@ -194,7 +200,7 @@ router.patch(
       '*.questionResponseId': {
         in: ['body'],
         exists: { errorMessage: '[questionResponseId] is required' },
-        isUUID: { errorMessage: '[questionResponseId] must be a valid UUID' },
+        isUUID: { errorMessage: '[questionResponseId] must be a valid UUID', options: EXPRESS_VALIDATOR_UUID_VERSION },
       },
       '*.value': {
         in: ['body'],
@@ -216,7 +222,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.SUBMIT_DRAFT_REPORTS),
-  [body().isArray({ min: 1 }).withMessage('Request body must be a non-empty array'), body('*').isUUID().withMessage('Each ID must be a valid UUID')],
+  [body().isArray({ min: 1 }).withMessage('Request body must be a non-empty array'), body('*').isUUID(EXPRESS_VALIDATOR_UUID_VERSION).withMessage('Each ID must be a valid UUID')],
   (req, res) => {
     validationResult(req).throw()
     return deleteQuestionResponses(req, res)
