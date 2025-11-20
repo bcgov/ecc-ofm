@@ -6,7 +6,7 @@ const isValidBackendToken = auth.isValidBackendToken()
 const { getFile } = require('../components/files')
 const { param, query, validationResult } = require('express-validator')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -17,7 +17,7 @@ router.get(
   '/:fileId',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  [param('fileId', 'URL param: [fileId] is required').notEmpty().isUUID()],
+  [param('fileId', 'URL param: [fileId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   query('image').optional().isBoolean(),
   validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
   (req, res) => {

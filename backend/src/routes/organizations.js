@@ -7,7 +7,7 @@ const { getOrganization, getOrganizationFacilities, getOrganizationUsers, update
 const { param, validationResult } = require('express-validator')
 const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -19,7 +19,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID()],
+  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
@@ -35,7 +35,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID()],
+  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateOrganization(),
   (req, res) => {
     validationResult(req).throw()
@@ -52,7 +52,7 @@ router.put(
   isValidBackendToken,
   validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY, PERMISSIONS.APPLY_FOR_FUNDING),
   validateOrganization(),
-  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID()],
+  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return updateOrganization(req, res)
@@ -67,7 +67,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.MANAGE_USERS_EDIT),
-  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID()],
+  [param('organizationId', 'URL param: [organizationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateOrganization(),
   (req, res) => {
     validationResult(req).throw()

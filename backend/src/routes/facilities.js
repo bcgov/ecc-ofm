@@ -7,7 +7,7 @@ const { getFacility, getFacilityContacts, getFacilityLicences, updateFacility, g
 const { param, body, validationResult } = require('express-validator')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -19,7 +19,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
@@ -35,7 +35,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()
@@ -51,7 +51,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.UPDATE_ORG_FACILITY, PERMISSIONS.APPLY_FOR_FUNDING),
-  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateFacility(true),
   (req, res) => {
     validationResult(req).throw()
@@ -67,7 +67,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_ORG_FACILITY),
-  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID()],
+  [param('facilityId', 'URL param: [facilityId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateFacility(false),
   (req, res) => {
     validationResult(req).throw()

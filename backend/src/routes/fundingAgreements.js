@@ -8,7 +8,7 @@ const { body, param, query, validationResult, oneOf } = require('express-validat
 const validateExpenseAuthority = require('../middlewares/validateExpenseAuthority.js')
 const validateFacility = require('../middlewares/validateFacility.js')
 const validatePermission = require('../middlewares/validatePermission.js')
-const { PERMISSIONS } = require('../util/constants')
+const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
@@ -20,7 +20,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  oneOf([query('applicationId').notEmpty().isUUID(), query('facilityId').notEmpty().isUUID()], {
+  oneOf([query('applicationId').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), query('facilityId').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)], {
     message: 'URL query: [applicationId or facilityId] is required',
   }),
   [query('stateCode').optional().isInt({ min: 0, max: 1 }), query('statusCode').optional().isInt({ min: 0, max: 10 })],
@@ -39,7 +39,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getFundingAgreementById(req, res)
@@ -54,7 +54,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getFundingPDFById(req, res)
@@ -70,7 +70,7 @@ router.patch(
   isValidBackendToken,
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
   validateExpenseAuthority(),
-  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return updateFundingAgreement(req, res)
@@ -86,7 +86,7 @@ router.get(
   isValidBackendToken,
   // TODO (vietle-cgi) - update permission once we receive confirmation for this requirement
   validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
-  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID()],
+  [param('fundingAgreementId', 'URL param: [fundingAgreementId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   (req, res) => {
     validationResult(req).throw()
     return getFundingReallocationRequests(req, res)

@@ -9,13 +9,14 @@ const multer = require('multer')
 const upload = multer()
 const { scanFilePayload } = require('../components/fileUtils')
 const validateRole = require('../middlewares/validateRole')
+const { EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
 
 /**
  * Get the list of documents
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, query('regardingId').notEmpty().isUUID(), validateRole(), (req, res) => {
+router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, query('regardingId').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), validateRole(), (req, res) => {
   validationResult(req).throw()
   return getDocuments(req, res)
 })
@@ -27,7 +28,7 @@ router.get(
   '/:documentId/file',
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
-  [param('documentId', 'URL param: [documentId] is required').notEmpty().isUUID()],
+  [param('documentId', 'URL param: [documentId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
   validateRole(),
   (req, res) => {
     validationResult(req).throw()
