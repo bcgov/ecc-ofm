@@ -93,7 +93,7 @@ export default {
       return this.isAuthenticated && this.userInfo
     },
     showMessagingIcon() {
-      return this.isAuthenticated && this.userInfo && this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
+      return this.isAuthenticated && this.userInfo && this.hasPermission([this.PERMISSIONS.MANAGE_NOTIFICATIONS, this.PERMISSIONS.MESSAGES_READ_ONLY])
     },
     logoutPath() {
       return this.isMinistryUser ? AuthRoutes.LOGOUT_IDIR : AuthRoutes.LOGOUT

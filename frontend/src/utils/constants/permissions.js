@@ -28,4 +28,5 @@ export const PERMISSIONS = Object.freeze({
 
   // Notifications and Messages
   MANAGE_NOTIFICATIONS: 'Manage Notification and Messages',
+  MESSAGES_READ_ONLY: 'Messages Read Only',
 })

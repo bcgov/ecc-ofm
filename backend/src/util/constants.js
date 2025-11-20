@@ -43,6 +43,7 @@ const PERMISSIONS = Object.freeze({
 
   // Notifications and Messages
   MANAGE_NOTIFICATIONS: 'Manage Notification and Messages',
+  MESSAGES_READ_ONLY: 'Messages Read Only',
 })
 
 const SURVEY_RESPONSE_STATUS_CODES = Object.freeze({

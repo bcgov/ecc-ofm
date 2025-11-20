@@ -36,9 +36,11 @@ import { mapState } from 'pinia'
 import { useNotificationsStore } from '@/stores/notifications'
 import NotificationService from '@/services/notificationService'
 import format from '@/utils/format'
+import permissionsMixin from '@/mixins/permissionsMixin'
 
 export default {
   name: 'NotificationsTable',
+  mixins: [permissionsMixin],
   format: [format],
   props: {
     markReadButtonState: {
@@ -124,10 +126,12 @@ export default {
     /**
      * Handles the row click event. When a row is clicked the notification in context is displayed and marked as read.
      */
-    async rowClickHandler(item, row) {
+    async rowClickHandler(_item, row) {
       this.selectedNotificationId = row?.item?.notificationId
       this.$emit('openNotificationDetails', this.selectedNotificationId)
-      await this.updateNotificationReadUnread(true, this.selectedNotificationId)
+      if (this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)) {
+        await this.updateNotificationReadUnread(true, this.selectedNotificationId)
+      }
     },
     /**
      * Include lastOpenedTime in the payload if the email/notification is "Marked as Read" or "Opened"

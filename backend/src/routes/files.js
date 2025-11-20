@@ -19,7 +19,7 @@ router.get(
   isValidBackendToken,
   [param('fileId', 'URL param: [fileId] is required').notEmpty().isUUID()],
   query('image').optional().isBoolean(),
-  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS),
+  validatePermission(PERMISSIONS.MANAGE_NOTIFICATIONS, PERMISSIONS.MESSAGES_READ_ONLY),
   (req, res) => {
     validationResult(req).throw()
     return getFile(req, res)

@@ -38,11 +38,13 @@
 <script>
 import { mapState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import permissionsMixin from '@/mixins/permissionsMixin'
 import MessageService from '@/services/messageService'
 import format from '@/utils/format'
 
 export default {
   name: 'AssistanceRequestTable',
+  mixins: [permissionsMixin],
   format: [format],
   props: {
     markReadButtonState: {
@@ -111,10 +113,12 @@ export default {
     /**
      * Handles the row click event. When a row is clicked the assistanceRequests in context is displayed and marked as read.
      */
-    async rowClickHandler(item, row) {
+    async rowClickHandler(_item, row) {
       this.selectedRequestId = row?.item?.assistanceRequestId
       this.$emit('openRequestConversation', this.selectedRequestId)
-      await this.updateMessageReadUnread(true, this.selectedRequestId)
+      if (this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)) {
+        await this.updateMessageReadUnread(true, this.selectedRequestId)
+      }
     },
     /**
      * Include isRead in the payload if its value changes
