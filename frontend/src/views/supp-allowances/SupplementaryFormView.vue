@@ -2,7 +2,7 @@
   <p class="my-11">
     Allowances (Core and Discretionary) have a one-year term. You must re-apply annually to continue receiving funding.
     <br />
-    The renewal date will be the anniversary of your OFM base funding agreement
+    The renewal date will be the anniversary of your OFM Base Funding Agreement
   </p>
 
   <p class="my-11">

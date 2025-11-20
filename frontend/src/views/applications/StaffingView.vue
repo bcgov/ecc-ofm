@@ -31,9 +31,9 @@
               :items="unions"
               item-title="description"
               item-value="id">
-              <template v-slot:prepend-item>
+              <template #prepend-item>
                 <v-list-item title="Select All" @click="toggleAllUnions">
-                  <template v-slot:prepend>
+                  <template #prepend>
                     <v-checkbox-btn :color="someUnionsSelected ? '#003366' : undefined" :indeterminate="someUnionsSelected && !allUnionsSelected" :model-value="someUnionsSelected"></v-checkbox-btn>
                   </template>
                 </v-list-item>

@@ -226,7 +226,7 @@
                 v-model.trim="newRequestModel.description"
                 placeholder="Detailed description of request"
                 counter
-                maxlength="1000"
+                maxlength="4000"
                 variant="outlined"
                 :rules="rules.required"
                 :disabled="isLoadingOrDisabled"></v-textarea>

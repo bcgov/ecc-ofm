@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import ApiService from '@/common/apiService'
 import { useApplicationsStore } from '@/stores/applications'
 import { useAuthStore } from '@/stores/auth'
-import { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
+import { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES, FUNDING_AGREEMENT_STATUS_CODES, ApiRoutes, CRM_STATE_CODES } from '@/utils/constants'
 
 function sortApplications(applications) {
   applications?.sort((app1, app2) => {
@@ -297,7 +297,7 @@ export default {
 
   checkFundingAgreement(fundingAgreement) {
     const isUnexpired = new Date() < new Date(fundingAgreement?.endDate)
-    return fundingAgreement?.stateCode === CRM_STATE_CODES.ACTIVE && isUnexpired
+    return fundingAgreement?.stateCode === CRM_STATE_CODES.ACTIVE && isUnexpired && fundingAgreement?.statusCode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE
   },
 
   async hasApprovedApplication(facilities = []) {

@@ -23,6 +23,7 @@ export default [
           allowModifiers: true,
         },
       ],
+      'vue/no-v-html': 'off',
     },
   },
 ]
