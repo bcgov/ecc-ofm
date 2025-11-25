@@ -67,7 +67,15 @@
           </v-row>
           <v-row no-gutters class="mt-2">
             <v-col cols="12" md="3">
-              <AppLabel for="role">Role:</AppLabel>
+              <AppLabel for="role">
+                Role:
+                <v-tooltip v-if="selectedRole?.roleDescription" content-class="tooltip" max-width="350px">
+                  <template #activator="{ props }">
+                    <v-icon v-bind="props" icon="mdi-information" color="primary" />
+                  </template>
+                  <div v-html="sanitizeHtml(selectedRole.roleDescription)" />
+                </v-tooltip>
+              </AppLabel>
             </v-col>
             <v-col cols="12" md="9">
               <v-select
@@ -80,7 +88,15 @@
                 :rules="rules.required"
                 :disabled="isLoading || isSameUser"
                 density="compact"
-                variant="outlined"></v-select>
+                variant="outlined">
+                <template #item="{ props: itemProps, item }">
+                  <v-list-item v-bind="itemProps">
+                    <template #subtitle>
+                      <div v-html="sanitizeHtml(item.raw.roleDescription)" />
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-select>
             </v-col>
           </v-row>
           <v-row v-if="isUpdatingUser" no-gutters>
@@ -140,6 +156,7 @@
 <script>
 import { isEmpty } from 'lodash'
 import { mapState } from 'pinia'
+import DOMPurify from 'dompurify'
 
 import DuplicateUserDialog from '@/components/account-mgmt/DuplicateUserDialog.vue'
 import AppButton from '@/components/ui/AppButton.vue'
@@ -213,6 +230,9 @@ export default {
     someFacilitiesSelected() {
       return this.selectedFacilityIds?.length > 0
     },
+    selectedRole() {
+      return this.roles.find((role) => role.roleId === this.user.role.roleId)
+    },
   },
   watch: {
     show: {
@@ -271,6 +291,10 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+
+    sanitizeHtml(html) {
+      return DOMPurify.sanitize(html)
     },
 
     /**
