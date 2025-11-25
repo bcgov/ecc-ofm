@@ -90,7 +90,7 @@
                 density="compact"
                 variant="outlined">
                 <template #item="{ props: itemProps, item }">
-                  <v-list-item v-bind="itemProps" max-width="568px">
+                  <v-list-item v-bind="itemProps">
                     <template #subtitle>
                       <div v-html="sanitizeHtml(item.raw.roleDescription)" />
                     </template>
