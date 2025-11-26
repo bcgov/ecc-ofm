@@ -119,6 +119,7 @@
             <AppLabel>Upload supporting documents:</AppLabel>
             <ul class="ml-7">
               <li>Picture of your odometer at the time of this application</li>
+              <li>Your proof of vehicle insurance</li>
               <li>Your lease / finance payment schedule (if any)</li>
             </ul>
             <AppDocumentUpload
@@ -310,7 +311,7 @@ export default {
       if (model.monthlyLease == 0) {
         return model.documentsToUpload?.length === 0 && model.uploadedDocuments?.length === 0
       }
-      return model.documentsToUpload?.length + model.uploadedDocuments?.length < 2
+      return model.documentsToUpload?.length + model.uploadedDocuments?.length < 3
     },
   },
 }

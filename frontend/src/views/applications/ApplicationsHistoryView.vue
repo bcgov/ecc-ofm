@@ -419,7 +419,9 @@ export default {
     },
 
     facilityMayContinueDraft(applicationItem) {
-      const { facilityId, statusCode, applicationRenewalType } = applicationItem
+      const { applicationId, statusCode, applicationRenewalType } = applicationItem
+      const facilityId = this.applications.find((a) => a.applicationId === applicationId).facilityId
+
       if (statusCode !== APPLICATION_STATUS_CODES.DRAFT || applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL) return true
       return this.userInfo.facilities.find((f) => f.facilityId === facilityId)?.intakeWindowCheckForAddApplication || false
     },

@@ -207,7 +207,7 @@ export default {
         } else if (model.monthlyLease == 0) {
           return model.uploadedDocuments?.length != 0
         }
-        return model.uploadedDocuments?.length > 1
+        return model.uploadedDocuments?.length > 2
       })
     },
     isApplicationComplete() {
