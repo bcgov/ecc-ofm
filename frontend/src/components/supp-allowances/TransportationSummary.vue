@@ -145,9 +145,9 @@ export default {
   methods: {
     areDocumentsMissing(model) {
       if (model.monthlyLease == 0) {
-        return model.uploadedDocuments?.length < 1
+        return model.uploadedDocuments?.length < 2
       }
-      return model.uploadedDocuments?.length < 2
+      return model.uploadedDocuments?.length < 3
     },
     isModelComplete(model) {
       return model.VIN && model.odometer && model.estimatedMileage && !this.areDocumentsMissing(model) && !hasDuplicateVIN(model, this.allTransportModels)
