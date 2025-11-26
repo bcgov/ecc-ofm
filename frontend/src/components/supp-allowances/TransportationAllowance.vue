@@ -311,7 +311,6 @@ export default {
       if (model.monthlyLease == 0) {
         return model.documentsToUpload?.length === 0 && model.uploadedDocuments?.length === 0
       }
-      console.log(model.documentsToUpload?.length + model.uploadedDocuments?.length < 3)
       return model.documentsToUpload?.length + model.uploadedDocuments?.length < 3
     },
   },
