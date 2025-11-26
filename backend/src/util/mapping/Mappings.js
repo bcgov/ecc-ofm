@@ -425,6 +425,7 @@ const SupplementaryApplicationMappings = [
 
 const RoleMappings = [
   { back: 'ofm_name', front: 'roleName' },
+  { back: 'ofm_description', front: 'roleDescription' },
   { back: 'ofm_portal_role_number', front: 'roleNumber' },
   { back: 'ofm_portal_roleid', front: 'roleId' },
 ]
