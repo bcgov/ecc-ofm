@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty, isEqual } from 'lodash'
 import { CRM_STATE_CODES, SURVEY_RESPONSE_STATUS_CODES } from '@/utils/constants'
 import rules from '@/utils/rules'
 
@@ -200,21 +200,25 @@ export default {
         const responsesToCreate = []
         const responsesToUpdate = []
         const responsesToDelete = clonedResponsesForSave?.filter((response) => response.questionResponseId && this.isHiddenOrDeleted(response)).map((response) => response.questionResponseId)
-        clonedResponsesForSave?.forEach((response) => {
+
+        for (const response of clonedResponsesForSave) {
           const originalResponse = this.getOriginalQuestionResponse(response)
           response.value = Array.isArray(response.value) ? response.value?.join(SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR) : response.value
           if (isEmpty(originalResponse) && !isEmpty(response?.value)) {
             responsesToCreate.push(response)
-          } else if (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId) {
+          } else if (
+            !responsesToDelete.includes(response.questionResponseId) &&
+            !this.isHiddenOrDeleted(response) &&
+            (originalResponse?.value !== response?.value || originalResponse?.rowId !== response?.rowId)
+          ) {
             responsesToUpdate.push(response)
           }
-        })
+        }
+
         await ReportsService.deleteQuestionResponses(responsesToDelete)
         await ReportsService.createQuestionResponses(responsesToCreate)
         await ReportsService.updateQuestionResponses(responsesToUpdate)
-        if (!isEmpty(responsesToCreate) || !isEmpty(responsesToUpdate) || !isEmpty(responsesToDelete)) {
-          await this.getQuestionsResponsesBySection(this.currentSection)
-        }
+
         this.verifySectionComplete(this.currentSection)
         if (showAlert) {
           this.setSuccessAlert('Survey response saved successfully')
@@ -222,6 +226,9 @@ export default {
       } catch (error) {
         this.setFailureAlert('Failed to save your survey responses', error)
       } finally {
+        if (!isEqual(this.clonedResponses, this.flattenResponses(this.originalResponses))) {
+          await this.getQuestionsResponses()
+        }
         this.processing = false
       }
     },
@@ -253,19 +260,12 @@ export default {
       }
     },
 
-    async getQuestionsResponsesBySection(section) {
-      try {
-        if (isEmpty(section)) return
-        const sectionResponses = await ReportsService.getQuestionResponses(this.$route.params.surveyResponseGuid, [section?.sectionId])
-        this.originalResponses[section.sectionId] = sectionResponses[section.sectionId]
-        this.syncClonedResponses()
-      } catch (error) {
-        this.setFailureAlert('Failed to get questions responses', error)
-      }
+    syncClonedResponses() {
+      this.clonedResponses = this.flattenResponses(this.originalResponses)
     },
 
-    syncClonedResponses() {
-      this.clonedResponses = Object.entries(this.originalResponses).flatMap(([sectionId, responses]) => responses.map((response) => ({ sectionId, ...response })))
+    flattenResponses(responses) {
+      return Object.entries(responses).flatMap(([sectionId, responses]) => responses.map((response) => ({ sectionId, ...response })))
     },
 
     updateClonedResponses(updatedResponse) {
@@ -358,7 +358,8 @@ export default {
 
     toggleConditionalChildrenQuestions(section, parentsQuestion) {
       const parentsResponse = this.clonedResponses?.find((item) => item.questionId === parentsQuestion.questionId)
-      parentsQuestion?.businessRules?.forEach((rule) => {
+
+      for (const rule of parentsQuestion?.businessRules || []) {
         const falseChild = section?.questions?.find((item) => item.questionId === rule.falseChildQuestionId)
         const trueChild = section?.questions?.find((item) => item.questionId === rule.trueChildQuestionId)
         const isConditionMet = parentsResponse?.value?.includes(rule.conditionValue)
@@ -369,7 +370,7 @@ export default {
         if (trueChild) {
           trueChild.hide = hideChildQuestions ? hideChildQuestions : !isConditionMet
         }
-      })
+      }
     },
 
     resetResponsesForHiddenQuestions() {
