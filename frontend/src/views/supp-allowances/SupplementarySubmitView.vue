@@ -275,13 +275,20 @@ export default {
 
         //this page should specifiy to load only those applications in "draft" status - as there will be
         //scenarios where some applications have been submitted, but the user will want to come back and fill in others.
-        this.models = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
+        const modelsInApplication = await ApplicationService.getSupplementaryApplications(this.$route.params.applicationGuid)
         this.fundingAgreement = await FundingAgreementService.getActiveFundingAgreementByApplicationId(this.$route.params.applicationGuid, true)
 
         this.setSuppTermDates()
-        //we need submitted transport applications to verify that all VINs are unique, even in past applications
-        this.allTransportModels = [...this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT)]
-        this.models = this.models.filter((el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED)
+        // we need submitted transport applications to verify that all VINs are unique, even in past application, but
+        // only in the context of the current funding agreement term.
+        const proposedModels = modelsInApplication.filter(
+          (el) => el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.DRAFT || el.statusCode == SUPPLEMENTARY_APPLICATION_STATUS_CODES.ACTION_REQUIRED,
+        )
+        const termContext = proposedModels[0]?.renewalTerm || -1
+        if (termContext <= 0) throw new Error('The renewalTerm context is unset. This should not have happened')
+
+        this.allTransportModels = [...this.getModelsByType(SUPPLEMENTARY_TYPES.TRANSPORT, modelsInApplication)].filter((el) => el.renewalTerm == termContext)
+        this.models = proposedModels
 
         for (const el of this.models) {
           if (el.supplementaryType === SUPPLEMENTARY_TYPES.TRANSPORT) {
@@ -337,8 +344,10 @@ export default {
           this.renewalTerm = SUPP_TERM_CODES.TERM_THREE
       }
     },
-    getModelsByType(supplementaryType) {
-      return this.models?.filter((el) => el.supplementaryType === supplementaryType)
+    getModelsByType(supplementaryType, models = []) {
+      const bySupplementaryType = (el) => el.supplementaryType === supplementaryType
+      if (!isEmpty(models)) return models.filter(bySupplementaryType)
+      return this.models?.filter(bySupplementaryType)
     },
     getModel(type) {
       return this.models?.find((el) => el.supplementaryType === type)
