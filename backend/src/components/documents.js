@@ -23,6 +23,26 @@ async function getDocuments(req, res) {
   }
 }
 
+/**
+ * Get documents that may have been sent to numerous recipients in a notification
+ */
+async function getSharedDocuments(req, res) {
+  try {
+    const operation =
+      'ofm_shared_documents?$select=ofm_shared_documentid' +
+      '&$expand=ofm_document(' +
+      '$select=ofm_documentid,ofm_name,ofm_file_name,ofm_subject,ofm_description,ofm_category,modifiedon,statuscode,statecode' +
+      ')' +
+      `&$filter=_ofm_email_value eq ${req?.query?.notificationId}`
+    const response = await getOperation(operation)
+    const sharedDocs = response?.value || []
+    const documents = sharedDocs.map((sd) => new MappableObjectForFront(sd.ofm_document, DocumentMappings).toJSON())
+    return res.status(HttpStatus.OK).json(documents)
+  } catch (e) {
+    handleError(res, e)
+  }
+}
+
 //returns a base64 encoded version of a document to download or display on the portal
 async function getDocumentFile(req, res) {
   try {
@@ -70,6 +90,7 @@ async function deleteDocument(req, res) {
 
 module.exports = {
   getDocuments,
+  getSharedDocuments,
   createDocuments,
   deleteDocument,
   getDocumentFile,
