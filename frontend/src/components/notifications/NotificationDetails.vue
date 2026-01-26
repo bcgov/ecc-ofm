@@ -27,24 +27,43 @@
           </div>
         </v-col>
       </v-row>
+      <v-row v-if="isLookingUpDocuments">
+        <v-col>
+          <v-skeleton-loader type="list-item-two-line" />
+        </v-col>
+      </v-row>
+      <v-row v-if="hasDocuments" class="my-5">
+        <v-expansion-panels v-model="panel">
+          <v-expansion-panel title="Attachments">
+            <v-expansion-panel-text>
+              <v-data-table v-model:sort-by="sortBy" hide-default-footer :headers="attachmentHeaders" :items="loadedAttachments" item-key="documentId" class="data-table">
+                <template #[`item.fileName`]="{ item }">
+                  <a href="#" @click="getFile(item)">{{ item.fileName }}</a>
+                </template>
+                <template #[`item.lastUpdatedTime`]="{ item }">{{ format.formatDateToLocale(item?.lastUpdatedTime) }}</template>
+              </v-data-table>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-row>
     </v-card-title>
-
     <v-card-text class="notification-content" v-html="notification?.notificationContent" />
   </v-card>
 </template>
 
 <script>
+import AppButton from '@/components/ui/AppButton.vue'
+import DocumentService from '@/services/documentService'
+import alertMixin from '@/mixins/alertMixin'
+import format from '@/utils/format'
+import permissionsMixin from '@/mixins/permissionsMixin'
+import { createFileDownloadLink } from '@/utils/common'
 import { mapState } from 'pinia'
 import { useNotificationsStore } from '@/stores/notifications'
-import alertMixin from '@/mixins/alertMixin'
-import permissionsMixin from '@/mixins/permissionsMixin'
-import format from '@/utils/format'
-import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
   components: { AppButton },
   mixins: [alertMixin, permissionsMixin],
-  format: [format],
   props: {
     notificationId: {
       type: String,
@@ -57,6 +76,15 @@ export default {
     return {
       format,
       notification: null,
+      isLookingUpDocuments: false,
+      isSortedDesc: true,
+      panel: [],
+      sortBy: [{ key: 'lastUpdatedTime', order: 'desc' }],
+      attachmentHeaders: [
+        { title: 'File Name', key: 'fileName' },
+        { title: 'Uploaded On', key: 'lastUpdatedTime' },
+      ],
+      loadedAttachments: [],
     }
   },
   computed: {
@@ -64,11 +92,30 @@ export default {
     canModifyMessages() {
       return this.hasPermission(this.PERMISSIONS.MANAGE_NOTIFICATIONS)
     },
+    hasDocuments() {
+      return this.loadedAttachments.length > 0
+    },
   },
   watch: {
     // When notificationId changes, get the details for that notification.
-    notificationId(newVal) {
+    notificationId: async function (newVal) {
       this.notification = this.notifications.find((item) => item.notificationId === newVal)
+      this.panel = []
+      this.isLookingUpDocuments = true
+      this.loadedAttachments = []
+      this.loadedAttachments = await DocumentService.getSharedDocuments(newVal)
+      this.isLookingUpDocuments = false
+    },
+  },
+  methods: {
+    async getFile(document) {
+      try {
+        const file = await DocumentService.getDocumentFileByID(document.documentId)
+        createFileDownloadLink(file, document.fileName)
+      } catch (e) {
+        console.error(e)
+        this.setFailureAlert('Error downloading file. Please wait a few minutes before you try again.')
+      }
     },
   },
 }

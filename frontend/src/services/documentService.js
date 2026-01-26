@@ -56,6 +56,17 @@ export default {
     }
   },
 
+  async getSharedDocuments(notificationId) {
+    try {
+      if (!notificationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.DOCUMENTS}/shared?notificationId=${notificationId}`)
+      return sortDocuments(response?.data)
+    } catch (error) {
+      console.log(`Failed to get the list of documents by notification id - ${error}`)
+      throw error
+    }
+  },
+
   async getDocumentFileByID(documentId) {
     try {
       if (!documentId) return

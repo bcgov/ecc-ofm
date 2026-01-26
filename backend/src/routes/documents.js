@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
 const isValidBackendToken = auth.isValidBackendToken()
-const { getDocuments, createDocuments, deleteDocument, getDocumentFile } = require('../components/documents')
+const { getDocuments, createDocuments, getSharedDocuments, deleteDocument, getDocumentFile } = require('../components/documents')
 const { param, query, validationResult } = require('express-validator')
 const multer = require('multer')
 const upload = multer()
@@ -19,6 +19,14 @@ module.exports = router
 router.get('/', passport.authenticate('jwt', { session: false }), isValidBackendToken, query('regardingId').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), validateRole(), (req, res) => {
   validationResult(req).throw()
   return getDocuments(req, res)
+})
+
+/**
+ * Get the list of shared documents
+ */
+router.get('/shared/', passport.authenticate('jwt', { session: false }), isValidBackendToken, query('notificationId').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION), validateRole(), (req, res) => {
+  validationResult(req).throw()
+  return getSharedDocuments(req, res)
 })
 
 /**

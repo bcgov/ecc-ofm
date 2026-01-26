@@ -27,11 +27,45 @@ export function sanitizeWholeNumberInput(input) {
   return input?.replace(/[^0-9]/g, '')
 }
 
+/**
+ * @param {string} base64Data - The base64 encoded file data (without data URL prefix)
+ * @param {string} fileName - The name of the file including extension
+ * @returns {string} A data URL string that can be used in href or src attributes
+ */
+function createDataURL(base64Data, fileName) {
+  const extension = fileName.split('.').pop().toLowerCase()
+  const mimeTypes = {
+    // Documents
+    pdf: 'application/pdf',
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    txt: 'text/plain',
+    csv: 'text/csv',
+
+    // Images
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    webp: 'image/webp',
+    svg: 'image/svg+xml',
+    bmp: 'image/bmp',
+
+    // Archives
+    zip: 'application/zip',
+  }
+
+  const mimeType = mimeTypes[extension] || 'application/octet-stream'
+  return `data:${mimeType};base64,${base64Data}`
+}
+
 export function createFileDownloadLink(file, fileName) {
   const link = document.createElement('a')
-  //this declares it as a PDF - but it works to download all file types.
-  //JB tried to change the mimetype, but this is the only method that I found that detected the extension automatically, and let you open the file correctly
-  link.href = `data:application/pdf;base64,${file}`
+  link.href = createDataURL(file, fileName)
   link.target = '_blank'
   link.download = fileName
 
