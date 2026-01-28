@@ -40,13 +40,14 @@
 <script>
 import { mapWritableState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import MessageService from '@/services/messageService'
 import format from '@/utils/format'
 
 export default {
   name: 'AssistanceRequestTable',
-  mixins: [permissionsMixin],
+  mixins: [alertMixin, permissionsMixin],
   format: [format],
   props: {
     markArchivedButtonState: {
@@ -54,6 +55,10 @@ export default {
       default: false,
     },
     markReadButtonState: {
+      type: Boolean,
+      default: false,
+    },
+    unarchiveButtonInConversationState: {
       type: Boolean,
       default: false,
     },
@@ -105,6 +110,11 @@ export default {
     markReadButtonState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(true)
+      },
+    },
+    unarchiveButtonInConversationState: {
+      async handler() {
+        await this.unarchiveMessage(this.selectedRequestId)
       },
     },
     markUnreadButtonInMessageTableState: {
@@ -172,11 +182,22 @@ export default {
     },
     async updateMessageIsArchived(archive, assistanceRequestId) {
       let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
-      let payload = {}
       if (selectedAssistanceRequest?.isArchived != archive) {
-        selectedAssistanceRequest.isArchived = archive
-        payload.isArchived = archive
-        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
+        if (!selectedAssistanceRequest?.isRead && archive) {
+          this.setWarningAlert('You may not archive unread messages')
+        } else {
+          selectedAssistanceRequest.isArchived = archive
+          await MessageService.updateAssistanceRequest(assistanceRequestId, {
+            isArchived: archive,
+          })
+        }
+      }
+    },
+    async unarchiveMessage(assistanceRequestId) {
+      let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
+      if (selectedAssistanceRequest?.isArchived) {
+        selectedAssistanceRequest.isArchived = false
+        await MessageService.updateAssistanceRequest(assistanceRequestId, { isArchived: false })
       }
     },
     isActionRequiredMessage(item) {

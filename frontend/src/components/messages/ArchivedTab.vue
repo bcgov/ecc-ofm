@@ -3,18 +3,6 @@
     <v-col sm="12" md="6" class="pa-0" :class="borderClass">
       <v-row class="mt-0 ml-0">
         <v-col cols="12">
-          <AppButton size="small" class="messages-button" :disabled="!canModifyMessages" @click="toggleNewRequestDialog()">
-            <v-icon class="mr-1" left>mdi-email-plus-outline</v-icon>
-            <span>New message</span>
-          </AppButton>
-          <AppButton size="small" class="messages-button mx-1" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkUnreadButtonInMessageTable()">
-            <v-icon class="mr-1" left>mdi-email-outline</v-icon>
-            <span>Mark unread</span>
-          </AppButton>
-          <AppButton size="small" class="messages-button" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkReadButton()">
-            <v-icon class="mr-1" left>mdi-email-open-outline</v-icon>
-            <span>Mark read</span>
-          </AppButton>
           <AppButton size="small" class="messages-button mx-1" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkArchivedButton()">
             <v-icon class="mr-1" left>mdi-archive-arrow-up-outline</v-icon>
             <span>Unarchive</span>
@@ -25,25 +13,21 @@
         <AssistanceRequestTable
           :requests="archivedAssistanceRequests"
           :mark-archived-button-state="markArchivedButtonState"
-          :mark-read-button-state="markReadButtonState"
-          :mark-unread-button-in-message-table-state="markUnreadButtonInMessageTableState"
-          :mark-unread-button-in-conversation-thread-state="markUnreadButtonInConversationThreadState"
+          :unarchive-button-in-conversation-state="unarchiveButtonInConversationState"
           is-archive
           @open-request-conversation="openRequestConversation" />
       </v-skeleton-loader>
     </v-col>
     <v-col sm="12" md="6">
-      <RequestConversations :assistance-request-id="selectedAssistanceRequestId" @toggle-mark-unread-button-in-conversation-thread="toggleMarkUnreadButtonInConversationThread" />
+      <RequestConversations :assistance-request-id="selectedAssistanceRequestId" is-archived @toggle-unarchive-button-in-conversation-thread="toggleUnarchiveButtonInConversation" />
     </v-col>
   </v-row>
-  <NewRequestDialog class="pa-0" :show="showNewRequestDialog" @close="toggleNewRequestDialog" />
 </template>
 
 <script>
 import { mapState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import permissionsMixin from '@/mixins/permissionsMixin'
-import NewRequestDialog from '@/components/messages/NewRequestDialog.vue'
 import AssistanceRequestTable from '@/components/messages/AssistanceRequestTable.vue'
 import RequestConversations from '@/components/messages/RequestConversations.vue'
 
@@ -51,16 +35,13 @@ import AppButton from '@/components/ui/AppButton.vue'
 
 export default {
   name: 'MessagesTab',
-  components: { AppButton, NewRequestDialog, AssistanceRequestTable, RequestConversations },
+  components: { AppButton, AssistanceRequestTable, RequestConversations },
   mixins: [permissionsMixin],
   data() {
     return {
-      showNewRequestDialog: false,
       selectedAssistanceRequestId: '',
       markArchivedButtonState: false,
-      markReadButtonState: false,
-      markUnreadButtonInMessageTableState: false,
-      markUnreadButtonInConversationThreadState: false,
+      unarchiveButtonInConversationState: false,
     }
   },
   computed: {
@@ -73,20 +54,11 @@ export default {
     },
   },
   methods: {
-    toggleNewRequestDialog() {
-      this.showNewRequestDialog = !this.showNewRequestDialog
-    },
     toggleMarkArchivedButton() {
       this.markArchivedButtonState = !this.markArchivedButtonState
     },
-    toggleMarkReadButton() {
-      this.markReadButtonState = !this.markReadButtonState
-    },
-    toggleMarkUnreadButtonInMessageTable() {
-      this.markUnreadButtonInMessageTableState = !this.markUnreadButtonInMessageTableState
-    },
-    toggleMarkUnreadButtonInConversationThread() {
-      this.markUnreadButtonInConversationThreadState = !this.markUnreadButtonInConversationThreadState
+    toggleUnarchiveButtonInConversation() {
+      this.unarchiveButtonInConversationState = !this.unarchiveButtonInConversationState
     },
     openRequestConversation(assistanceRequestId) {
       this.selectedAssistanceRequestId = assistanceRequestId

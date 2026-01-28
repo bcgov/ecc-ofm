@@ -16,10 +16,7 @@
           </strong>
         </v-tab>
         <v-tab value="archived">
-          <strong>
-            Archived
-            <template v-if="unreadArchivedMessageCount > 0">({{ unreadArchivedMessageCount }} unread)</template>
-          </strong>
+          <strong>Archived</strong>
         </v-tab>
       </v-tabs>
       <v-card-text>
@@ -59,7 +56,7 @@ export default {
   },
   computed: {
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
-    ...mapState(useMessagesStore, ['unreadActiveMessageCount', 'unreadArchivedMessageCount']),
+    ...mapState(useMessagesStore, ['unreadActiveMessageCount']),
   },
 }
 </script>

@@ -18,9 +18,6 @@ export const useMessagesStore = defineStore('messages', {
     unreadActiveMessageCount() {
       return this.activeAssistanceRequests.filter((request) => !request.isRead).length || 0
     },
-    unreadArchivedMessageCount() {
-      return this.archivedAssistanceRequests.filter((request) => !request.isRead).length || 0
-    },
     unreadMessageCount(state) {
       return state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0
     },
