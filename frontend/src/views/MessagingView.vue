@@ -12,7 +12,13 @@
         <v-tab value="messages">
           <strong>
             Messages
-            <template v-if="unreadMessageCount > 0">({{ unreadMessageCount }} unread)</template>
+            <template v-if="unreadActiveMessageCount > 0">({{ unreadActiveMessageCount }} unread)</template>
+          </strong>
+        </v-tab>
+        <v-tab value="archived">
+          <strong>
+            Archived
+            <template v-if="unreadArchivedMessageCount > 0">({{ unreadArchivedMessageCount }} unread)</template>
           </strong>
         </v-tab>
       </v-tabs>
@@ -24,6 +30,9 @@
           <v-window-item value="messages">
             <MessagesTab />
           </v-window-item>
+          <v-window-item value="archived">
+            <ArchivedTab />
+          </v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
@@ -33,6 +42,7 @@
 <script>
 import { mapState } from 'pinia'
 import MessagesTab from '@/components/messages/MessagesTab.vue'
+import ArchivedTab from '@/components/messages/ArchivedTab.vue'
 import NotificationsTab from '@/components/notifications/NotificationsTab.vue'
 import OrganizationHeader from '@/components/organizations/OrganizationHeader.vue'
 import AppBackButton from '@/components/ui/AppBackButton.vue'
@@ -41,15 +51,15 @@ import { useNotificationsStore } from '@/stores/notifications'
 
 export default {
   name: 'MessagingView',
-  components: { AppBackButton, MessagesTab, NotificationsTab, OrganizationHeader },
+  components: { AppBackButton, ArchivedTab, MessagesTab, NotificationsTab, OrganizationHeader },
   data() {
     return {
-      tab: 1,
+      tab: 'messages',
     }
   },
   computed: {
     ...mapState(useNotificationsStore, ['unreadNotificationCount']),
-    ...mapState(useMessagesStore, ['unreadMessageCount']),
+    ...mapState(useMessagesStore, ['unreadActiveMessageCount', 'unreadArchivedMessageCount']),
   },
 }
 </script>

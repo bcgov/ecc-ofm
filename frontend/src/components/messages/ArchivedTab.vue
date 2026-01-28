@@ -16,18 +16,19 @@
             <span>Mark read</span>
           </AppButton>
           <AppButton size="small" class="messages-button mx-1" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkArchivedButton()">
-            <v-icon class="mr-1" left>mdi-archive-outline</v-icon>
-            <span>Archive</span>
+            <v-icon class="mr-1" left>mdi-archive-arrow-up-outline</v-icon>
+            <span>Unarchive</span>
           </AppButton>
         </v-col>
       </v-row>
       <v-skeleton-loader :loading="!assistanceRequests" type="table-tbody">
         <AssistanceRequestTable
-          :requests="activeAssistanceRequests"
+          :requests="archivedAssistanceRequests"
           :mark-archived-button-state="markArchivedButtonState"
           :mark-read-button-state="markReadButtonState"
           :mark-unread-button-in-message-table-state="markUnreadButtonInMessageTableState"
           :mark-unread-button-in-conversation-thread-state="markUnreadButtonInConversationThreadState"
+          is-archive
           @open-request-conversation="openRequestConversation" />
       </v-skeleton-loader>
     </v-col>
@@ -63,7 +64,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests', 'activeAssistanceRequests']),
+    ...mapState(useMessagesStore, ['assistanceRequests', 'archivedAssistanceRequests']),
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
     },

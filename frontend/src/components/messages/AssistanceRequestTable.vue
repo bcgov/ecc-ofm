@@ -1,13 +1,15 @@
 <template>
   <v-data-table-virtual
-    v-if="assistanceRequests"
+    v-if="requests"
+    :key="requestCount"
     v-model="bodyCheckboxesSelected"
     :headers="headers"
-    :items="assistanceRequests"
+    :items="requests"
     item-key="assistanceRequestId"
     item-value="assistanceRequestId"
     show-select
     hover
+    :request-update-count="requestUpdateCount"
     fixed-header
     class="table"
     density="compact"
@@ -36,7 +38,7 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
+import { mapWritableState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import MessageService from '@/services/messageService'
@@ -47,6 +49,10 @@ export default {
   mixins: [permissionsMixin],
   format: [format],
   props: {
+    markArchivedButtonState: {
+      type: Boolean,
+      default: false,
+    },
     markReadButtonState: {
       type: Boolean,
       default: false,
@@ -56,6 +62,14 @@ export default {
       default: false,
     },
     markUnreadButtonInConversationThreadState: {
+      type: Boolean,
+      default: false,
+    },
+    requests: {
+      type: Array,
+      required: true,
+    },
+    isArchive: {
       type: Boolean,
       default: false,
     },
@@ -72,12 +86,22 @@ export default {
       ],
       bodyCheckboxesSelected: [],
       selectedRequestId: null,
+      requestUpdateCount: 0,
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests']),
+    ...mapWritableState(useMessagesStore, ['assistanceRequests']),
+    /** Bogus computed variable to stimulate re-render, as store binding via props is not enough */
+    requestCount() {
+      return this.requests.length
+    },
   },
   watch: {
+    markArchivedButtonState: {
+      async handler() {
+        await this.updateBodyCheckboxesArchived(!this.isArchive)
+      },
+    },
     markReadButtonState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(true)
@@ -93,6 +117,11 @@ export default {
         await this.updateMessageReadUnread(false, this.selectedRequestId)
       },
     },
+    requests: {
+      handler() {
+        this.requestUpdateCount += 1
+      },
+    },
   },
   methods: {
     resetAllCheckboxes() {
@@ -102,11 +131,20 @@ export default {
      * Update the body/item checkboxes to read or unread.
      */
     async updateBodyCheckboxesReadUnread(isRead) {
-      const selectedAssistanceRequestIds = this.bodyCheckboxesSelected
+      const selectedAssistanceRequestIds = [...this.bodyCheckboxesSelected]
       this.resetAllCheckboxes()
       await Promise.all(
         selectedAssistanceRequestIds.map(async (assistanceRequestId) => {
           await this.updateMessageReadUnread(isRead, assistanceRequestId)
+        }),
+      )
+    },
+    async updateBodyCheckboxesArchived(archived) {
+      const selectedAssistanceRequestIds = [...this.bodyCheckboxesSelected]
+      this.resetAllCheckboxes()
+      await Promise.all(
+        selectedAssistanceRequestIds.map(async (assistanceRequestId) => {
+          await this.updateMessageIsArchived(archived, assistanceRequestId)
         }),
       )
     },
@@ -129,6 +167,15 @@ export default {
       if (selectedAssistanceRequest?.isRead != isRead) {
         selectedAssistanceRequest.isRead = isRead
         payload.isRead = isRead
+        await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
+      }
+    },
+    async updateMessageIsArchived(archive, assistanceRequestId) {
+      let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
+      let payload = {}
+      if (selectedAssistanceRequest?.isArchived != archive) {
+        selectedAssistanceRequest.isArchived = archive
+        payload.isArchived = archive
         await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
       }
     },
