@@ -55,6 +55,7 @@ const AssistanceRequestMappings = [
   { back: 'modifiedon', front: 'lastUpdatedTime' },
   { back: 'ofm_is_read', front: 'isRead' },
   { back: 'ofm_number_of_documents', front: 'hasDocuments' },
+  { back: 'ofm_is_archived', front: 'isArchived' },
 ]
 
 const AssistanceRequestConversationMappings = [

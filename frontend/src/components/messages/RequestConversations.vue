@@ -7,7 +7,7 @@
       </v-col>
       <v-col cols="5" lg="3" class="d-flex flex-column align-end pa-0">
         <AppButton
-          v-if="assistanceRequest.isRead"
+          v-if="assistanceRequest.isRead && !isArchived"
           size="small"
           min-width="155px"
           :primary="false"
@@ -17,11 +17,22 @@
           <v-icon left class="mr-1">mdi-email-outline</v-icon>
           <span>Mark unread</span>
         </AppButton>
+        <AppButton
+          v-if="isArchived"
+          size="small"
+          min-width="155px"
+          :primary="false"
+          :disabled="!canModifyMessages || !assistanceRequest.isArchived"
+          class="conversations-button"
+          @click="$emit('toggleUnarchiveButtonInConversationThread')">
+          <v-icon left class="mr-1">mdi-archive-arrow-up-outline</v-icon>
+          <span>Unarchive</span>
+        </AppButton>
         <v-tooltip
           :disabled="!showTooltip"
           class="ma-1"
           content-class="tooltip"
-          text="Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).">
+          :text="isArchived ? 'This message has been archived.' : 'Your request is still in the queue. If this is an urgent request, you can call the program at 1-888-338-6622 (Option 7).'">
           <template #activator="{ props }">
             <div v-bind="props">
               <AppButton class="reply-button my-1" :disabled="!isReplyButtonEnabled" size="small" min-width="155px" @click="toggleReplyRequestDialog">
@@ -135,9 +146,13 @@ export default {
       required: true,
       default: '',
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
   },
   format: [format],
-  emits: ['toggleMarkUnreadButtonInConversationThread'],
+  emits: ['toggleMarkUnreadButtonInConversationThread', 'toggleUnarchiveButtonInConversationThread'],
   data() {
     return {
       format,
@@ -176,7 +191,7 @@ export default {
     },
     isReplyButtonEnabled() {
       const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)
-      return this.canModifyMessages || [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(assistanceRequest?.statusCode)
+      return (!this.isArchived && this.canModifyMessages) || [ASSISTANCE_REQUEST_STATUS_CODES.WITH_PROVIDER, ASSISTANCE_REQUEST_STATUS_CODES.READY_TO_RESOLVE].includes(assistanceRequest?.statusCode)
     },
     isStatusClosed() {
       const assistanceRequest = this.assistanceRequests.find((item) => item.assistanceRequestId === this.assistanceRequestId)

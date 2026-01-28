@@ -1,13 +1,15 @@
 <template>
   <v-data-table-virtual
-    v-if="assistanceRequests"
+    v-if="requests"
+    :key="requestCount"
     v-model="bodyCheckboxesSelected"
     :headers="headers"
-    :items="assistanceRequests"
+    :items="requests"
     item-key="assistanceRequestId"
     item-value="assistanceRequestId"
     show-select
     hover
+    :request-update-count="requestUpdateCount"
     fixed-header
     class="table"
     density="compact"
@@ -36,18 +38,27 @@
 </template>
 
 <script>
-import { mapState } from 'pinia'
+import { mapWritableState } from 'pinia'
 import { useMessagesStore } from '@/stores/messages'
+import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import MessageService from '@/services/messageService'
 import format from '@/utils/format'
 
 export default {
   name: 'AssistanceRequestTable',
-  mixins: [permissionsMixin],
+  mixins: [alertMixin, permissionsMixin],
   format: [format],
   props: {
+    markArchivedButtonState: {
+      type: Boolean,
+      default: false,
+    },
     markReadButtonState: {
+      type: Boolean,
+      default: false,
+    },
+    unarchiveButtonInConversationState: {
       type: Boolean,
       default: false,
     },
@@ -56,6 +67,14 @@ export default {
       default: false,
     },
     markUnreadButtonInConversationThreadState: {
+      type: Boolean,
+      default: false,
+    },
+    requests: {
+      type: Array,
+      required: true,
+    },
+    isArchive: {
       type: Boolean,
       default: false,
     },
@@ -72,15 +91,30 @@ export default {
       ],
       bodyCheckboxesSelected: [],
       selectedRequestId: null,
+      requestUpdateCount: 0,
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests']),
+    ...mapWritableState(useMessagesStore, ['assistanceRequests']),
+    /** Bogus computed variable to stimulate re-render, as store binding via props is not enough */
+    requestCount() {
+      return this.requests.length
+    },
   },
   watch: {
+    markArchivedButtonState: {
+      async handler() {
+        await this.updateBodyCheckboxesArchived(!this.isArchive)
+      },
+    },
     markReadButtonState: {
       async handler() {
         await this.updateBodyCheckboxesReadUnread(true)
+      },
+    },
+    unarchiveButtonInConversationState: {
+      async handler() {
+        await this.unarchiveMessage(this.selectedRequestId)
       },
     },
     markUnreadButtonInMessageTableState: {
@@ -93,6 +127,11 @@ export default {
         await this.updateMessageReadUnread(false, this.selectedRequestId)
       },
     },
+    requests: {
+      handler() {
+        this.requestUpdateCount += 1
+      },
+    },
   },
   methods: {
     resetAllCheckboxes() {
@@ -102,11 +141,20 @@ export default {
      * Update the body/item checkboxes to read or unread.
      */
     async updateBodyCheckboxesReadUnread(isRead) {
-      const selectedAssistanceRequestIds = this.bodyCheckboxesSelected
+      const selectedAssistanceRequestIds = [...this.bodyCheckboxesSelected]
       this.resetAllCheckboxes()
       await Promise.all(
         selectedAssistanceRequestIds.map(async (assistanceRequestId) => {
           await this.updateMessageReadUnread(isRead, assistanceRequestId)
+        }),
+      )
+    },
+    async updateBodyCheckboxesArchived(archived) {
+      const selectedAssistanceRequestIds = [...this.bodyCheckboxesSelected]
+      this.resetAllCheckboxes()
+      await Promise.all(
+        selectedAssistanceRequestIds.map(async (assistanceRequestId) => {
+          await this.updateMessageIsArchived(archived, assistanceRequestId)
         }),
       )
     },
@@ -130,6 +178,26 @@ export default {
         selectedAssistanceRequest.isRead = isRead
         payload.isRead = isRead
         await MessageService.updateAssistanceRequest(assistanceRequestId, payload)
+      }
+    },
+    async updateMessageIsArchived(archive, assistanceRequestId) {
+      let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
+      if (selectedAssistanceRequest?.isArchived != archive) {
+        if (!selectedAssistanceRequest?.isRead && archive) {
+          this.setWarningAlert('You may not archive unread messages')
+        } else {
+          selectedAssistanceRequest.isArchived = archive
+          await MessageService.updateAssistanceRequest(assistanceRequestId, {
+            isArchived: archive,
+          })
+        }
+      }
+    },
+    async unarchiveMessage(assistanceRequestId) {
+      let selectedAssistanceRequest = this.assistanceRequests?.find((item) => item.assistanceRequestId === assistanceRequestId)
+      if (selectedAssistanceRequest?.isArchived) {
+        selectedAssistanceRequest.isArchived = false
+        await MessageService.updateAssistanceRequest(assistanceRequestId, { isArchived: false })
       }
     },
     isActionRequiredMessage(item) {

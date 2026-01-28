@@ -15,10 +15,16 @@
             <v-icon class="mr-1" left>mdi-email-open-outline</v-icon>
             <span>Mark read</span>
           </AppButton>
+          <AppButton size="small" class="messages-button mx-1" :primary="false" :disabled="!canModifyMessages" @click="toggleMarkArchivedButton()">
+            <v-icon class="mr-1" left>mdi-archive-outline</v-icon>
+            <span>Archive</span>
+          </AppButton>
         </v-col>
       </v-row>
       <v-skeleton-loader :loading="!assistanceRequests" type="table-tbody">
         <AssistanceRequestTable
+          :requests="activeAssistanceRequests"
+          :mark-archived-button-state="markArchivedButtonState"
           :mark-read-button-state="markReadButtonState"
           :mark-unread-button-in-message-table-state="markUnreadButtonInMessageTableState"
           :mark-unread-button-in-conversation-thread-state="markUnreadButtonInConversationThreadState"
@@ -50,13 +56,14 @@ export default {
     return {
       showNewRequestDialog: false,
       selectedAssistanceRequestId: '',
+      markArchivedButtonState: false,
       markReadButtonState: false,
       markUnreadButtonInMessageTableState: false,
       markUnreadButtonInConversationThreadState: false,
     }
   },
   computed: {
-    ...mapState(useMessagesStore, ['assistanceRequests']),
+    ...mapState(useMessagesStore, ['assistanceRequests', 'activeAssistanceRequests']),
     borderClass() {
       return this.$vuetify.display.xs || this.$vuetify.display.sm ? 'border-bottom' : 'border-right'
     },
@@ -67,6 +74,9 @@ export default {
   methods: {
     toggleNewRequestDialog() {
       this.showNewRequestDialog = !this.showNewRequestDialog
+    },
+    toggleMarkArchivedButton() {
+      this.markArchivedButtonState = !this.markArchivedButtonState
     },
     toggleMarkReadButton() {
       this.markReadButtonState = !this.markReadButtonState

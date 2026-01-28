@@ -5,11 +5,22 @@ import MessageService from '@/services/messageService'
 export const useMessagesStore = defineStore('messages', {
   namespaced: true,
   state: () => ({
-    assistanceRequests: null,
+    assistanceRequests: [],
     assistanceRequestConversation: null,
   }),
   getters: {
-    unreadMessageCount: (state) => (state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0),
+    activeAssistanceRequests(state) {
+      return state.assistanceRequests.filter((request) => request.isArchived === false || request.isArchived === null)
+    },
+    archivedAssistanceRequests(state) {
+      return state.assistanceRequests.filter((request) => request.isArchived === true)
+    },
+    unreadActiveMessageCount() {
+      return this.activeAssistanceRequests.filter((request) => !request.isRead).length || 0
+    },
+    unreadMessageCount(state) {
+      return state.assistanceRequests ? state.assistanceRequests.filter((message) => !message.isRead).length : 0
+    },
   },
   actions: {
     async getAssistanceRequests(contactId) {
@@ -47,7 +58,6 @@ export const useMessagesStore = defineStore('messages', {
         return priorityOrder || dateOrder
       })
     },
-
     async getAssistanceRequestConversation(assistanceRequestId) {
       try {
         this.assistanceRequestConversation = await MessageService.getAssistanceRequestConversation(assistanceRequestId)
