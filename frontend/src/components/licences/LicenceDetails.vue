@@ -193,7 +193,7 @@
                               class="pr-2"
                               @update:model-value="update(licenceDetail)" />
                           </v-row>
-                          <span v-else>{{ licenceDetail?.operationFromTime }} - {{ licenceDetail?.operationToTime }}</span>
+                          <span v-else>{{ formatTimeString(licenceDetail?.updatableOperationFromTime) }} - {{ formatTimeString(licenceDetail?.updatableOperationToTime) }}</span>
                         </v-col>
                       </v-row>
                     </v-col>
@@ -379,6 +379,11 @@ export default {
       } else {
         licenceDetail.weekDays = DAYS_OF_WEEK.map((day) => day.value)
       }
+    },
+
+    formatTimeString(isoDateTime) {
+      const dt = new Date(isoDateTime)
+      return dt.toLocaleTimeString('en-US', { timeZone: 'UTC' }).toLowerCase()
     },
   },
 }
