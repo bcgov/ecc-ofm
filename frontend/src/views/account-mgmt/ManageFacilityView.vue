@@ -50,9 +50,18 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row class="mb-4">
+      <v-col class="pb-1 pt-6">
+        <h4>Facility Contacts</h4>
+        <p>
+          Your organization account manager can edit contacts in
+          <router-link :to="{ name: 'manage-users' }">Manage Users</router-link>
+        </p>
+      </v-col>
+    </v-row>
     <v-row no-gutters class="mt-6">
       <h4 class="mr-2">Primary Contact</h4>
-      <h5>(You can only have one primary contact)</h5>
+      <h5>(Required.)</h5>
     </v-row>
     <v-row>
       <v-col cols="12" class="py-0">
@@ -107,7 +116,7 @@
     <EditFacilityContacts
       :loading="loading"
       title="Expense Authorities"
-      title-info="(You can have more than one expense authority)"
+      title-info="(Required. You can have more than one expense authority)"
       :contacts="expenseAuthorities"
       :contacts-for-add="expenseAuthoritiesAvailableForAdd"
       :at-least-one-contact-mandatory="true"
@@ -118,7 +127,7 @@
     <EditFacilityContacts
       :loading="loading"
       title="Additional Contacts"
-      title-info="(You can have more than one additional contact)"
+      title-info="(Recommended. You can add one or more additional contacts.)"
       :contacts="additionalContacts"
       :contacts-for-add="additionalContactsAvailableForAdd"
       :parent-in-edit-mode="editMode"
