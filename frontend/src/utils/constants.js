@@ -294,6 +294,7 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   MULTIPLE_CHOICE: 'Multiple Choice',
   TABLE: 'Table',
   INSTRUCTIONS: 'Instructions',
+  PERCENT: 'Percent', // Does not exist in Dynamics
 })
 
 export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'

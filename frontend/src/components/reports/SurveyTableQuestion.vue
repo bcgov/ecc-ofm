@@ -4,7 +4,14 @@
       <template #item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
-            <SurveyQuestion :question="question" :response="getQuestionResponse(item, question?.questionId)" :validation="false" :readonly="readonly" @update="updateResponses" />
+            <SurveyQuestion
+              :all-questions="questions"
+              :all-responses="responses"
+              :question="question"
+              :response="getQuestionResponse(item, question?.questionId)"
+              :validation="false"
+              :readonly="readonly"
+              @update="updateResponses" />
           </td>
           <td v-if="!readonly && !hasValueInheritanceChildQuestions && updatedResponses?.length > 1">
             <v-btn variant="text" @click="deleteResponse(item, question?.questionId)">

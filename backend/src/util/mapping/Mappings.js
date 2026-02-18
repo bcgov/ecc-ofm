@@ -453,6 +453,7 @@ const SurveySectionMappings = [
 
 const SurveyQuestionMappings = [
   { back: 'ofm_questionid', front: 'questionId' },
+  { back: 'ofm_question_id', front: 'uniqueId' },
   { back: 'ofm_question_text', front: 'text' },
   { back: 'ofm_question_type@OData.Community.Display.V1.FormattedValue', front: 'type' },
   { back: 'ofm_sequence', front: 'sequence' },

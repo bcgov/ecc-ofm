@@ -146,7 +146,7 @@ export default {
         this.sections = await ReportsService.getSurveySections(this.surveyResponse?.surveyTemplateId)
         await Promise.all(
           this.sections?.map(async (section) => {
-            section.questions = await ReportsService.getSectionQuestions(section?.sectionId, this.surveyResponse?.facilityId)
+            section.questions = await ReportsService.getSectionQuestions(section, this.surveyResponse?.facilityId)
           }),
         )
         await this.getQuestionsResponses()
