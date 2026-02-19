@@ -62,7 +62,7 @@ import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitCon
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
 import { REPORT_SECTION_TITLES } from '@/utils/constants/reports'
-import { QUESTION_UNIQUE_IDS } from '@/utils/constants/reports'
+import { QIDS } from '@/utils/constants/reports'
 
 export default {
   name: 'SurveyView',
@@ -475,7 +475,7 @@ export default {
     verifySectionComplete(section) {
       if (!section) return
       const responseRequiredQuestions = section?.questions?.filter((question) => {
-        if (question.uniqueId === QUESTION_UNIQUE_IDS.UNDER_ENROLMENT && this.isUnderEnrolled) {
+        if (question.uniqueId === QIDS.UNDER_ENROLMENT && this.isUnderEnrolled) {
           return true
         }
         return !question.hide && question.responseRequired

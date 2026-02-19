@@ -52,7 +52,7 @@ import SurveyTableQuestion from '@/components/reports/SurveyTableQuestion.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
 import { REPORT_SECTION_TITLES } from '@/utils/constants/reports'
-import { QUESTION_UNIQUE_IDS } from '@/utils/constants/reports'
+import { QIDS } from '@/utils/constants/reports'
 
 export default {
   components: { AppLabel, SurveyQuestion, SurveyTableQuestion, AppAlertBanner },
@@ -100,7 +100,7 @@ export default {
     },
 
     isUnderEnrolmentQuestion(question) {
-      return question.uniqueId === QUESTION_UNIQUE_IDS.UNDER_ENROLMENT
+      return question.uniqueId === QIDS.UNDER_ENROLMENT
     },
 
     getTableQuestionHeaders(tableQuestion) {

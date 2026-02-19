@@ -27,8 +27,32 @@ export const REPORT_SECTION_TITLES = Object.freeze({
   OVERALL_FUNDING: 'Overall Funding',
 })
 
-export const QUESTION_UNIQUE_IDS = {
+/**
+ * QuestionIDS, a cross environment way to identify which abstract questions are which.
+ */
+export const QIDS = {
   UNDER_ENROLMENT: 'QID47',
+  UNDER_36_MONTHS_TOTAL_CAPACITY: 'QID56_3_1',
+  UNDER_36_MONTHS_PART_TIME: 'QID56_1_1',
+  UNDER_36_MONTHS_FULL_TIME: 'QID56_2_1',
+  THIRTY_MONTHS_TO_SCHOOL_TOTAL_CAPACITY: 'QID57_3_1',
+  THIRTY_MONTHS_TO_SCHOOL_PART_TIME: 'QID57_1_1',
+  THIRTY_MONTHS_TO_SCHOOL_FULL_TIME: 'QID57_2_1',
+  PRESCHOOL_GROUP_ONE_TOTAL_CAPACITY: 'QID60_2_1',
+  PRESCHOOL_GROUP_ONE: 'QID60_1_1',
+  PRESCHOOL_GROUP_TWO_TOTAL_CAPACITY: 'QID61_2_1',
+  PRESCHOOL_GROUP_TWO: 'QID61_1_1',
+  PRESCHOOL_GROUP_THREE_TOTAL_CAPACITY: 'QID62_2_1',
+  PRESCHOOL_GROUP_THREE: 'QID62_1_1',
+  PRESCHOOL_GROUP_FOUR_TOTAL_CAPACITY: 'QID63_2_1',
+  PRESCHOOL_GROUP_FOUR: 'QID63_1_1',
+  MULTI_AGE_TOTAL_CAPACITY: 'QID69_3_1',
+  MULTI_AGE_PART_TIME: 'QID69_1_1',
+  MULTI_AGE_FULL_TIME: 'QID69_2_1',
+  SCHOOL_AGE_BEFORE_SCHOOL: 'QID64_1_1',
+  SCHOOL_AGE_BEFORE_SCHOOL_TOTAL_CAPACITY: 'QID64_2_1',
+  SCHOOL_AGE_AFTER_SCHOOL: 'QID65_1_1',
+  SCHOOL_AGE_AFTER_SCHOOL_TOTAL_CAPACITY: 'QID65_2_1',
 }
 
 /**
@@ -37,76 +61,69 @@ export const QUESTION_UNIQUE_IDS = {
  */
 export const FIXED_PERCENTAGE_QUESTIONS = [
   {
-    // Children under 36 months old
-    comesAfter: 'QID56_3_1',
+    comesAfter: QIDS.UNDER_36_MONTHS_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID56_3_1')?.fixedResponse || 0
-      const partTimeId = questions.find((q) => q.uniqueId === 'QID56_1_1')?.questionId
-      const fullTimeId = questions.find((q) => q.uniqueId === 'QID56_2_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.UNDER_36_MONTHS_TOTAL_CAPACITY)?.fixedResponse || 0
+      const partTimeId = questions.find((q) => q.uniqueId === QIDS.UNDER_36_MONTHS_PART_TIME)?.questionId
+      const fullTimeId = questions.find((q) => q.uniqueId === QIDS.UNDER_36_MONTHS_FULL_TIME)?.questionId
       const partTimeEnrolment = (Number(responses.find((r) => r.questionId === partTimeId)?.value) || 0) / 2
       const fullTimeEnrolment = Number(responses.find((r) => r.questionId === fullTimeId)?.value) || 0
       return Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100)
     },
   },
   {
-    // 30 months to school age
-    comesAfter: 'QID57_3_1',
+    comesAfter: QIDS.THIRTY_MONTHS_TO_SCHOOL_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID57_3_1')?.fixedResponse || 0
-      const partTimeId = questions.find((q) => q.uniqueId === 'QID57_1_1')?.questionId
-      const fullTimeId = questions.find((q) => q.uniqueId === 'QID57_2_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.THIRTY_MONTHS_TO_SCHOOL_TOTAL_CAPACITY)?.fixedResponse || 0
+      const partTimeId = questions.find((q) => q.uniqueId === QIDS.THIRTY_MONTHS_TO_SCHOOL_PART_TIME)?.questionId
+      const fullTimeId = questions.find((q) => q.uniqueId === QIDS.THIRTY_MONTHS_TO_SCHOOL_FULL_TIME)?.questionId
       const partTimeEnrolment = (Number(responses.find((r) => r.questionId === partTimeId)?.value) || 0) / 2
       const fullTimeEnrolment = Number(responses.find((r) => r.questionId === fullTimeId)?.value) || 0
       return Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100)
     },
   },
   {
-    // Preschool group 1
-    comesAfter: 'QID60_2_1',
+    comesAfter: QIDS.PRESCHOOL_GROUP_ONE_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID60_2_1')?.fixedResponse || 0
-      const questionId = questions.find((q) => q.uniqueId === 'QID60_1_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_ONE_TOTAL_CAPACITY)?.fixedResponse || 0
+      const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_ONE)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
   {
-    // Preschool group 2
-    comesAfter: 'QID61_2_1',
+    comesAfter: QIDS.PRESCHOOL_GROUP_TWO_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID61_2_1')?.fixedResponse || 0
-      const questionId = questions.find((q) => q.uniqueId === 'QID61_1_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_TWO_TOTAL_CAPACITY)?.fixedResponse || 0
+      const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_TWO)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
   {
-    // Preschool group 3
-    comesAfter: 'QID62_2_1',
+    comesAfter: QIDS.PRESCHOOL_GROUP_THREE_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID62_2_1')?.fixedResponse || 0
-      const questionId = questions.find((q) => q.uniqueId === 'QID62_1_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_THREE_TOTAL_CAPACITY)?.fixedResponse || 0
+      const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_THREE)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
   {
-    // Preschool Group 4
-    comesAfter: 'QID63_2_1',
+    comesAfter: QIDS.PRESCHOOL_GROUP_FOUR_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID63_2_1')?.fixedResponse || 0
-      const questionId = questions.find((q) => q.uniqueId === 'QID63_1_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_FOUR_TOTAL_CAPACITY)?.fixedResponse || 0
+      const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_FOUR)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
   {
-    // Multi-age care
-    comesAfter: 'QID69_3_1',
+    comesAfter: QIDS.MULTI_AGE_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const totalCapacity = questions.find((q) => q.uniqueId === 'QID69_3_1')?.fixedResponse || 0
-      const partTimeId = questions.find((q) => q.uniqueId === 'QID69_1_1')?.questionId
-      const fullTimeId = questions.find((q) => q.uniqueId === 'QID69_2_1')?.questionId
+      const totalCapacity = questions.find((q) => q.uniqueId === QIDS.MULTI_AGE_TOTAL_CAPACITY)?.fixedResponse || 0
+      const partTimeId = questions.find((q) => q.uniqueId === QIDS.MULTI_AGE_PART_TIME)?.questionId
+      const fullTimeId = questions.find((q) => q.uniqueId === QIDS.MULTI_AGE_FULL_TIME)?.questionId
       const partTimeEnrolment = (Number(responses.find((r) => r.questionId === partTimeId)?.value) || 0) / 2
       const fullTimeEnrolment = Number(responses.find((r) => r.questionId === fullTimeId)?.value) || 0
       return Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100)
@@ -116,10 +133,13 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
     // Group school-age child care after school, but used to find the group school aged row
     // and calculate a consolidated percentage.
     // TODO: Verify if this question is still valid or not
-    comesAfter: 'QID65_2_1',
+    comesAfter: QIDS.SCHOOL_AGE_AFTER_SCHOOL_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
-      const enrolmentQuestionIds = [questions.find((q) => q.uniqueId === 'QID64_1_1')?.questionId, questions.find((q) => q.uniqueId === 'QID65_1_1')?.questionId]
-      const capacityQuestionIds = [questions.find((q) => q.uniqueId === 'QID64_2_1')?.questionId, questions.find((q) => q.uniqueId === 'QID65_2_1')?.questionId]
+      const enrolmentQuestionIds = [questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_BEFORE_SCHOOL)?.questionId, questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_AFTER_SCHOOL)?.questionId]
+      const capacityQuestionIds = [
+        questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_BEFORE_SCHOOL_TOTAL_CAPACITY)?.questionId,
+        questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_AFTER_SCHOOL_TOTAL_CAPACITY)?.questionId,
+      ]
       const enrolment = enrolmentQuestionIds.reduce(toQuestionResponseSum(responses), 0)
       const totalCapacity = capacityQuestionIds.reduce(toFixedResponseSum(questions), 0)
 
