@@ -5,7 +5,7 @@
     </v-row>
     <v-row v-else no-gutters>
       <v-col cols="12" md="3" lg="2">
-        <SurveyNavBar :sections="sections" :current-section="currentSection" @update="goToSection" />
+        <SurveyNavBar :all-sections="sections" :is-under-enrolled="isUnderEnrolled" :current-section="currentSection" @update="goToSection" />
       </v-col>
       <v-col cols="12" md="9" lg="10">
         <SurveySection
@@ -13,6 +13,7 @@
           :readonly="readonly"
           :validation="validation"
           :responses="responsesToBeDisplayed"
+          :cumulative-enrolment="cumulativeEnrolment"
           @update="updateClonedResponses"
           @delete-table-responses="deleteTableResponses" />
         <v-alert v-if="showIncompleteSurveyErrorAlert" type="error" title="You cannot submit the report until it is complete.">
@@ -26,6 +27,7 @@
           :show-next="showNext"
           :show-submit="showSubmit"
           :disable-submit="!isSurveyComplete"
+          :cululative-enrolment="cumulativeEnrolment"
           @back="back"
           @cancel="toggleCancelDialog"
           @save="save(true)"
@@ -59,6 +61,8 @@ import SurveySection from '@/components/reports/SurveySection.vue'
 import SurveySubmitConfirmationDialog from '@/components/reports/SurveySubmitConfirmationDialog.vue'
 import { PERMISSIONS } from '@/utils/constants/permissions.js'
 import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
+import { REPORT_SECTION_TITLES } from '@/utils/constants/reports'
+import { QUESTION_UNIQUE_IDS } from '@/utils/constants/reports'
 
 export default {
   name: 'SurveyView',
@@ -106,6 +110,9 @@ export default {
     isSurveyComplete() {
       return this.sections?.every((section) => section.isComplete)
     },
+    isUnderEnrolled() {
+      return this.cumulativeEnrolment <= 80
+    },
     showIncompleteSurveyErrorAlert() {
       const index = this.sections?.findIndex((section) => !this.isLastSection(section) && !section.isComplete)
       return !this.readonly && this.isLastSection(this.currentSection) && index > -1
@@ -152,7 +159,7 @@ export default {
         )
         await this.getQuestionsResponses()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
-        this.calculateCumulativeEnrolment()
+        this.cumulativeEnrolment = this.calculateCumulativeEnrolment()
         this.verifySurveyComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
@@ -183,13 +190,25 @@ export default {
         await this.save()
         this.$router.push({ name: 'reporting' })
       }
-      const previousSection = this.sections[this.currentSectionIndex - 1]
+
+      let nextIndex = this.currentSectionIndex - 1
+      if (this.currentSection.title === REPORT_SECTION_TITLES.OVERALL_FUNDING && !this.isUnderEnrolled) {
+        nextIndex -= 1
+      }
+      const previousSection = this.sections[nextIndex]
+
       await this.goToSection(previousSection)
     },
 
     async next() {
       if (this.isLastSection(this.currentSection)) return
-      const nextSection = this.sections[this.currentSectionIndex + 1]
+
+      let nextIndex = this.currentSectionIndex + 1
+      if (this.currentSection.title === REPORT_SECTION_TITLES.ENROLMENT && !this.isUnderEnrolled) {
+        nextIndex += 1
+      }
+
+      const nextSection = this.sections[nextIndex]
       await this.goToSection(nextSection)
     },
 
@@ -271,7 +290,7 @@ export default {
     },
 
     calculateCumulativeEnrolment() {
-      const enrolmentSection = this.sections.find((s) => s.title === 'Enrolment')
+      const enrolmentSection = this.sections.find((s) => s.title === REPORT_SECTION_TITLES.ENROLMENT)
       const percentageColumns = enrolmentSection.questions.filter((q) => q.type === 'Percent')
       const enrolmentSum = percentageColumns.reduce((total, currentCol) => {
         return total + currentCol.calculator(enrolmentSection.questions, this.clonedResponses)
@@ -455,7 +474,12 @@ export default {
 
     verifySectionComplete(section) {
       if (!section) return
-      const responseRequiredQuestions = section?.questions?.filter((question) => !question.hide && question.responseRequired)
+      const responseRequiredQuestions = section?.questions?.filter((question) => {
+        if (question.uniqueId === QUESTION_UNIQUE_IDS.UNDER_ENROLMENT && this.isUnderEnrolled) {
+          return true
+        }
+        return !question.hide && question.responseRequired
+      })
       const isComplete = responseRequiredQuestions?.every((question) => {
         return this.clonedResponses.some(
           (response) =>

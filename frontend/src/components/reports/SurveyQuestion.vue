@@ -119,6 +119,11 @@ export default {
       type: Array,
       default: () => [],
     },
+    cumulativeEnrolment: {
+      type: Number,
+      required: false,
+      default: null,
+    },
     allResponses: {
       type: Array,
       default: () => [],
@@ -163,6 +168,9 @@ export default {
       return 'fixedResponse' in this.question
     },
     validationRules() {
+      if (this.cumulativeEnrolment !== null && this.cumulativeEnrolment <= 80) {
+        return [...rules.required]
+      }
       return this.question?.responseRequired ? [...rules.required] : []
     },
     allItemsSelected() {

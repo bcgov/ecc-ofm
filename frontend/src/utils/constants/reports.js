@@ -20,6 +20,17 @@ function toFixedResponseSum(questions) {
   }
 }
 
+export const REPORT_SECTION_TITLES = Object.freeze({
+  HUMAN_RESOURCES: 'Human Resources',
+  ENROLMENT: 'Enrolment',
+  UNDER_ENROLMENT: 'Under Enrolment',
+  OVERALL_FUNDING: 'Overall Funding',
+})
+
+export const QUESTION_UNIQUE_IDS = {
+  UNDER_ENROLMENT: 'QID47',
+}
+
 /**
  * The list of fixed percentage question columns. Each object contains the column the percentage column comes after
  * along with a calculator property that will reactively calculate the percentage based on related dependency columns.

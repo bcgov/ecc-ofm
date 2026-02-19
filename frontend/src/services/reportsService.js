@@ -4,6 +4,7 @@ import ApiService from '@/common/apiService'
 import { convertStringToArray } from '@/utils/common'
 import { toEnrolmentQuestionsWithPercentages } from '../utils/reports'
 import { ApiRoutes, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR, SURVEY_QUESTION_TYPES } from '@/utils/constants'
+import { REPORT_SECTION_TITLES } from '../utils/constants/reports'
 
 export default {
   async getSurveySections(surveyTemplateId) {
@@ -30,7 +31,7 @@ export default {
         return question
       })
 
-      if (title === 'Enrolment') {
+      if (title === REPORT_SECTION_TITLES.ENROLMENT) {
         questions = questions.reduce(toEnrolmentQuestionsWithPercentages, [])
       }
 
