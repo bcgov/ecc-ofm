@@ -77,6 +77,7 @@ export default {
       currentSection: undefined,
       originalResponses: [],
       clonedResponses: [],
+      cumulativeEnrolment: 0,
     }
   },
 
@@ -151,6 +152,7 @@ export default {
         )
         await this.getQuestionsResponses()
         this.sections?.forEach((section) => this.processQuestionsBusinessRules(section))
+        this.calculateCumulativeEnrolment()
         this.verifySurveyComplete()
       } catch (error) {
         this.setFailureAlert('Failed to load data', error)
@@ -268,6 +270,15 @@ export default {
       return Object.entries(responses).flatMap(([sectionId, responses]) => responses.map((response) => ({ sectionId, ...response })))
     },
 
+    calculateCumulativeEnrolment() {
+      const enrolmentSection = this.sections.find((s) => s.title === 'Enrolment')
+      const percentageColumns = enrolmentSection.questions.filter((q) => q.type === 'Percent')
+      const enrolmentSum = percentageColumns.reduce((total, currentCol) => {
+        return total + currentCol.calculator(enrolmentSection.questions, this.clonedResponses)
+      }, 0)
+      return enrolmentSum / percentageColumns.length
+    },
+
     updateClonedResponses(updatedResponse) {
       /* eslint-disable indent */
       const index = this.isTableQuestionResponse(updatedResponse)
@@ -285,6 +296,7 @@ export default {
       if (updatedResponse?.hasConditionalChildren || updatedResponse?.hasValueInheritanceChildren) {
         this.processQuestionsBusinessRules(this.currentSection)
       }
+      this.cumulativeEnrolment = this.calculateCumulativeEnrolment()
       this.verifySectionComplete(this.currentSection)
     },
 
