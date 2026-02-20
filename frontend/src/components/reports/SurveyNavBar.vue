@@ -14,10 +14,12 @@
 </template>
 
 <script>
+import { REPORT_SECTION_TITLES } from '@/utils/constants/reports'
+
 export default {
   name: 'SurveyNavBar',
   props: {
-    sections: {
+    allSections: {
       type: Array,
       default: () => [],
     },
@@ -27,8 +29,22 @@ export default {
         return {}
       },
     },
+    isUnderEnrolled: {
+      type: Boolean,
+    },
   },
   emits: ['update'],
+  computed: {
+    sections() {
+      return this.allSections.filter((section) => {
+        if (section.title === REPORT_SECTION_TITLES.UNDER_ENROLMENT) {
+          if (this.isUnderEnrolled) return true
+          return false
+        }
+        return true
+      })
+    },
+  },
   methods: {
     getNavIconClass(section) {
       return section?.sectionId === this.currentSection?.sectionId ? 'current-icon' : 'active'

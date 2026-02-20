@@ -294,6 +294,7 @@ export const SURVEY_QUESTION_TYPES = Object.freeze({
   MULTIPLE_CHOICE: 'Multiple Choice',
   TABLE: 'Table',
   INSTRUCTIONS: 'Instructions',
+  PERCENT: 'Percent', // Does not exist in Dynamics
 })
 
 export const SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR = '","'
@@ -403,8 +404,4 @@ export const PROVIDER_TYPE_CODES = Object.freeze({
 export const UNION_TYPE_CODES = Object.freeze({
   NO: 0,
   YES: 1,
-})
-
-export const REPORT_SECTION_TITLES = Object.freeze({
-  HUMAN_RESOURCES: 'Human Resources',
 })

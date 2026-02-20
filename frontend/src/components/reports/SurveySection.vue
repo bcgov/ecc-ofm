@@ -3,8 +3,13 @@
     <div class="min-height-screen">
       <h2 class="pb-6">{{ section?.title }}</h2>
 
-      <AppAlertBanner v-if="section?.title === REPORT_SECTION_TITLES.HUMAN_RESOURCES" type="info">
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.HUMAN_RESOURCES" type="info">
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.UNDER_ENROLMENT" type="warning">
+        Enrolment Capacity:
+        {{ cumulativeEnrolment }}%
       </AppAlertBanner>
 
       <v-form ref="form">
@@ -23,6 +28,14 @@
               :max-rows="question?.tableMaxRows"
               @update="updateResponses"
               @delete="deleteTableResponses" />
+            <SurveyQuestion
+              v-else-if="isUnderEnrolmentQuestion"
+              :cumulative-enrolment="cumulativeEnrolment"
+              :question="question"
+              :response="getQuestionResponse(question)"
+              :validation="true"
+              :readonly="readonly"
+              @update="updateResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :validation="validation" :readonly="readonly" @update="updateResponses" />
           </div>
         </div>
@@ -38,12 +51,17 @@ import SurveyQuestion from '@/components/reports/SurveyQuestion.vue'
 import SurveyTableQuestion from '@/components/reports/SurveyTableQuestion.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
-import { REPORT_SECTION_TITLES } from '@/utils/constants'
+import { REPORT_SECTION_TITLES } from '@/utils/constants/reports'
+import { QIDS } from '@/utils/constants/reports'
 
 export default {
   components: { AppLabel, SurveyQuestion, SurveyTableQuestion, AppAlertBanner },
   mixins: [reportMixin],
   props: {
+    cumulativeEnrolment: {
+      type: Number,
+      required: true,
+    },
     section: {
       type: Object,
       default: () => {
@@ -79,6 +97,10 @@ export default {
   methods: {
     getQuestionResponse(question) {
       return this.responses?.find((response) => response.questionId === question?.questionId)
+    },
+
+    isUnderEnrolmentQuestion(question) {
+      return question.uniqueId === QIDS.UNDER_ENROLMENT
     },
 
     getTableQuestionHeaders(tableQuestion) {

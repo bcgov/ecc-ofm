@@ -2,7 +2,9 @@ import { isEmpty } from 'lodash'
 
 import ApiService from '@/common/apiService'
 import { convertStringToArray } from '@/utils/common'
+import { toEnrolmentQuestionsWithPercentages } from '../utils/reports'
 import { ApiRoutes, SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR, SURVEY_QUESTION_TYPES } from '@/utils/constants'
+import { REPORT_SECTION_TITLES } from '../utils/constants/reports'
 
 export default {
   async getSurveySections(surveyTemplateId) {
@@ -16,16 +18,23 @@ export default {
     }
   },
 
-  async getSectionQuestions(sectionId, facilityId) {
+  async getSectionQuestions(section, facilityId) {
     try {
+      const { sectionId, title } = section
       if (!sectionId || !facilityId) return []
       const response = await ApiService.apiAxios.get(`${ApiRoutes.REPORTS}/survey-questions?sectionId=${sectionId}&facilityId=${facilityId}`)
-      const questions = response?.data
-      questions?.forEach((question) => {
+
+      let questions = (response?.data || []).map((question) => {
         if ([SURVEY_QUESTION_TYPES.TWO_OPTION, SURVEY_QUESTION_TYPES.CHOICE, SURVEY_QUESTION_TYPES.MULTIPLE_CHOICE].includes(question?.type)) {
           question.choices = convertStringToArray(question.choices?.slice(1, -1), SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR)
         }
+        return question
       })
+
+      if (title === REPORT_SECTION_TITLES.ENROLMENT) {
+        questions = questions.reduce(toEnrolmentQuestionsWithPercentages, [])
+      }
+
       return questions
     } catch (error) {
       console.log(`Failed to get report's questions - ${error}`)

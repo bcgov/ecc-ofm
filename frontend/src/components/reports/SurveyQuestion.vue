@@ -2,7 +2,14 @@
   <v-form ref="form">
     <div v-if="question?.type === SURVEY_QUESTION_TYPES.NUMBER">
       <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
-        <strong>{{ question?.fixedResponse ? question?.fixedResponse : '0' }}</strong>
+        <strong>{{ question?.fixedResponse || '0' }}</strong>
+      </div>
+      <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
+    </div>
+
+    <div v-if="question?.type === SURVEY_QUESTION_TYPES.PERCENT">
+      <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
+        <strong>{{ question.calculator(allQuestions, allResponses) }}%</strong>
       </div>
       <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
     </div>
@@ -108,6 +115,19 @@ export default {
   components: { AppDateInput, AppNumberInput },
   mixins: [reportMixin],
   props: {
+    allQuestions: {
+      type: Array,
+      default: () => [],
+    },
+    cumulativeEnrolment: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    allResponses: {
+      type: Array,
+      default: () => [],
+    },
     question: {
       type: Object,
       default: () => {
@@ -148,6 +168,9 @@ export default {
       return 'fixedResponse' in this.question
     },
     validationRules() {
+      if (this.cumulativeEnrolment !== null && this.cumulativeEnrolment <= 80) {
+        return [...rules.required]
+      }
       return this.question?.responseRequired ? [...rules.required] : []
     },
     allItemsSelected() {
