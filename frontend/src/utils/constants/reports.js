@@ -87,7 +87,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
     calculator: (questions, responses) => {
       const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_ONE_TOTAL_CAPACITY)?.fixedResponse || 0
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_ONE)?.questionId
-      const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
+      const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
@@ -96,7 +96,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
     calculator: (questions, responses) => {
       const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_TWO_TOTAL_CAPACITY)?.fixedResponse || 0
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_TWO)?.questionId
-      const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
+      const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
@@ -105,7 +105,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
     calculator: (questions, responses) => {
       const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_THREE_TOTAL_CAPACITY)?.fixedResponse || 0
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_THREE)?.questionId
-      const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
+      const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
@@ -114,7 +114,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
     calculator: (questions, responses) => {
       const totalCapacity = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_FOUR_TOTAL_CAPACITY)?.fixedResponse || 0
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_FOUR)?.questionId
-      const enrolment = Number(responses.find((r) => r.questionId === questionId).value)
+      const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       return Math.round((enrolment / totalCapacity) * 100)
     },
   },
