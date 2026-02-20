@@ -130,9 +130,6 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
     },
   },
   {
-    // Group school-age child care after school, but used to find the group school aged row
-    // and calculate a consolidated percentage.
-    // TODO: Verify if this question is still valid or not
     comesAfter: QIDS.SCHOOL_AGE_AFTER_SCHOOL_TOTAL_CAPACITY,
     calculator: (questions, responses) => {
       const enrolmentQuestionIds = [questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_BEFORE_SCHOOL)?.questionId, questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_AFTER_SCHOOL)?.questionId]
