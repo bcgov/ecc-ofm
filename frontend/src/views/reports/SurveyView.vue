@@ -291,11 +291,17 @@ export default {
 
     calculateCumulativeEnrolment() {
       const enrolmentSection = this.sections.find((s) => s.title === REPORT_SECTION_TITLES.ENROLMENT)
-      const percentageColumns = enrolmentSection.questions.filter((q) => q.type === 'Percent')
-      const enrolmentSum = percentageColumns.reduce((total, currentCol) => {
-        return total + currentCol.calculator(enrolmentSection.questions, this.clonedResponses)
+      const calculationResults = enrolmentSection.questions
+        .filter((q) => q.type === 'Percent')
+        .map((q) => q.calculator(enrolmentSection.questions, this.clonedResponses))
+        .filter((q) => q.included === true)
+      const percentageSum = calculationResults.reduce((total, calculatorResult) => {
+        const { percent } = calculatorResult
+        return total + percent
       }, 0)
-      return enrolmentSum / percentageColumns.length
+
+      if (calculationResults.length <= 0) return 0
+      return percentageSum / calculationResults.length
     },
 
     updateClonedResponses(updatedResponse) {
