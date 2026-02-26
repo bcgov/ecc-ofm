@@ -69,7 +69,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const partTimeEnrolment = (Number(responses.find((r) => r.questionId === partTimeId)?.value) || 0) / 2
       const fullTimeEnrolment = Number(responses.find((r) => r.questionId === fullTimeId)?.value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100) }
+      return { included: true, percent: Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100), totalCapacity, enrolment: partTimeEnrolment + fullTimeEnrolment }
     },
   },
   {
@@ -81,7 +81,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const partTimeEnrolment = (Number(responses.find((r) => r.questionId === partTimeId)?.value) || 0) / 2
       const fullTimeEnrolment = Number(responses.find((r) => r.questionId === fullTimeId)?.value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100) }
+      return { included: true, percent: Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100), totalCapacity, enrolment: partTimeEnrolment + fullTimeEnrolment }
     },
   },
   {
@@ -91,7 +91,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_ONE)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100) }
+      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100), totalCapacity, enrolment }
     },
   },
   {
@@ -101,7 +101,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_TWO)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100) }
+      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100), totalCapacity, enrolment }
     },
   },
   {
@@ -111,7 +111,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_THREE)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100) }
+      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100), totalCapacity, enrolment }
     },
   },
   {
@@ -121,7 +121,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const questionId = questions.find((q) => q.uniqueId === QIDS.PRESCHOOL_GROUP_FOUR)?.questionId
       const enrolment = Number(responses.find((r) => r.questionId === questionId).value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100) }
+      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100), totalCapacity, enrolment }
     },
   },
   {
@@ -133,7 +133,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const partTimeEnrolment = (Number(responses.find((r) => r.questionId === partTimeId)?.value) || 0) / 2
       const fullTimeEnrolment = Number(responses.find((r) => r.questionId === fullTimeId)?.value) || 0
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100) }
+      return { included: true, percent: Math.round(((partTimeEnrolment + fullTimeEnrolment) / totalCapacity) * 100), totalCapacity, enrolment: partTimeEnrolment + fullTimeEnrolment }
     },
   },
   {
@@ -147,7 +147,7 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
       const enrolment = enrolmentQuestionIds.reduce(toQuestionResponseSum(responses), 0)
       const totalCapacity = capacityQuestionIds.reduce(toFixedResponseSum(questions), 0)
       if (totalCapacity <= 0) return { included: false }
-      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100) }
+      return { included: true, percent: Math.round((enrolment / totalCapacity) * 100), totalCapacity, enrolment }
     },
   },
 ]
