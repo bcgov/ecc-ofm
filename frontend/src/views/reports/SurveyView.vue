@@ -304,7 +304,7 @@ export default {
       )
 
       if (totalCapacity <= 0) return 0
-      return parseInt((totalEnrolments / totalCapacity) * 100)
+      return Math.floor((totalEnrolments / totalCapacity) * 100)
     },
 
     updateClonedResponses(updatedResponse) {
