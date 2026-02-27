@@ -295,13 +295,16 @@ export default {
         .filter((q) => q.type === 'Percent')
         .map((q) => q.calculator(enrolmentSection.questions, this.clonedResponses))
         .filter((q) => q.included === true)
-      const percentageSum = calculationResults.reduce((total, calculatorResult) => {
-        const { percent } = calculatorResult
-        return total + percent
-      }, 0)
+      const [totalEnrolments, totalCapacity] = calculationResults.reduce(
+        (totals, calculatorResult) => {
+          const { enrolment, totalCapacity } = calculatorResult
+          return [totals[0] + enrolment, totals[1] + totalCapacity]
+        },
+        [0, 0],
+      )
 
-      if (calculationResults.length <= 0) return 0
-      return percentageSum / calculationResults.length
+      if (totalCapacity <= 0) return 0
+      return Math.floor((totalEnrolments / totalCapacity) * 100)
     },
 
     updateClonedResponses(updatedResponse) {
