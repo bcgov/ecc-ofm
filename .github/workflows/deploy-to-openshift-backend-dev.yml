@@ -225,6 +225,8 @@ jobs:
     environment: dev
     steps:
       - name: Run ZAP Scan
-        uses: zaproxy/action-full-scan@v0.12.0
+        uses: zaproxy/action-full-scan@v0.13.0
         with:
           target: 'https://${{ env.HOST_ROUTE }}/api'
+          fail_action: true              # fail the job if alerts found
+          allow_issue_writing: false     # don't open/update a GitHub Issue
