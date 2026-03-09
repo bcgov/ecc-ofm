@@ -9,7 +9,7 @@
 
     <div v-if="question?.type === SURVEY_QUESTION_TYPES.PERCENT">
       <div v-if="isFixedResponseQuestion" :class="readonly ? '' : 'mb-6'">
-        <strong>{{ question.calculator(allQuestions, allResponses) }}%</strong>
+        <strong>{{ percent }}</strong>
       </div>
       <AppNumberInput v-else v-model.lazy="updatedResponse.value" :format="NUMBER_FORMAT" maxlength="12" :rules="validationRules" :hide-details="readonly" :disabled="disabled" min-width="150px" />
     </div>
@@ -178,6 +178,15 @@ export default {
     },
     someItemsSelected() {
       return this.updatedResponse?.value?.length > 0
+    },
+    percent() {
+      if (this.question.type === 'Percent') {
+        const results = this.question.calculator(this.allQuestions, this.allResponses)
+        if (results.included) {
+          return `${results.percent}%`
+        }
+      }
+      return 'N/A'
     },
   },
 
