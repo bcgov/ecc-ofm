@@ -1,7 +1,7 @@
 import js from '@eslint/js'
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended'
 
-const globals = import('globals')
+import globals from 'globals'
 
 export default [
   js.configs.recommended,
@@ -10,13 +10,7 @@ export default [
     files: ['**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
-      globals: {
-        // This doesn't seem to be working as expected hence the user-defined globals
-        ...globals.node,
-        __dirname: 'readonly',
-        process: 'readonly',
-        setTimeout: 'readonly',
-      },
+      globals: { ...globals.node },
     },
     rules: {
       semi: 'off',
