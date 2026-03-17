@@ -1,7 +1,6 @@
 'use strict'
 const { getOperation, handleError } = require('./utils')
 const HttpStatus = require('http-status-codes')
-const cache = require('memory-cache')
 const {
   ApplicationIntakeMappings,
   FacilityIntakeMappings,
@@ -15,33 +14,55 @@ const {
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('./logger')
 
-const lookupCache = new cache.Cache()
-const ONE_HOUR_MS = 60 * 60 * 1000 // Cache timeout set for one hour
+const Redis = require('../util/redis/redis-client')
+const REDIS_EXPIRE_ARGS = [3600, 'NX']
 
 async function getRequestCategories() {
-  let requestCategories = lookupCache.get('requestCategories')
+  let requestCategories
+  try {
+    requestCategories = await Redis.jsonGet('requestCategories')
+  } catch (e) {
+    log.error('Unable to retrieve the requestCategories from Redis', e)
+  }
+
   if (!requestCategories) {
     requestCategories = []
     const response = await getOperation('ofm_request_categories')
     response?.value?.forEach((item) => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)))
-    lookupCache.put('requestCategories', requestCategories, ONE_HOUR_MS)
+    Redis.jsonSet('requestCategories', '$', requestCategories)
+      .then(() => Redis.expire('requestCategories', ...REDIS_EXPIRE_ARGS))
+      .catch((error) => log.error('Could not set requestCategories with Redis', error))
   }
   return requestCategories
 }
 
 async function getRequestSubCategories() {
-  let requestSubCategories = lookupCache.get('requestSubCategories')
+  let requestSubCategories
+  try {
+    requestSubCategories = await Redis.jsonGet('requestSubCategories')
+  } catch (e) {
+    log.error('Unable to retrieve the requestSubCategories from Redis', e)
+  }
+
   if (!requestSubCategories) {
     requestSubCategories = []
     const response = await getOperation('ofm_subcategories?$orderby=ofm_display_order')
     response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
-    lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
+    Redis.jsonSet('requestSubCategories', '$', requestSubCategories)
+      .then(() => Redis.expire('requestSubCategories', ...REDIS_EXPIRE_ARGS))
+      .catch((error) => log.error('Could not set requestSubCategories with Redis', error))
   }
   return requestSubCategories
 }
 
 async function fetchAndCacheData(cacheKey, operationName) {
-  let data = lookupCache.get(cacheKey)
+  let data
+  try {
+    data = await Redis.jsonGet(cacheKey)
+  } catch (e) {
+    log.error(`Unable to retrieve ${cacheKey} from Redis`, e)
+  }
+
   if (!data) {
     try {
       const response = await getOperation(`GlobalOptionSetDefinitions(Name='${operationName}')`)
@@ -50,7 +71,9 @@ async function fetchAndCacheData(cacheKey, operationName) {
           id: Number(item.Value),
           description: item.Label?.LocalizedLabels?.[0]?.Label ?? null,
         })) || []
-      lookupCache.put(cacheKey, data, ONE_HOUR_MS)
+      Redis.jsonSet(cacheKey, '$', data)
+        .then(() => Redis.expire(cacheKey, ...REDIS_EXPIRE_ARGS))
+        .catch((error) => log.error(`Could not set ${cacheKey} with Redis`, error))
     } catch (error) {
       log.error(`Error fetching data for ${cacheKey}:`, error)
     }
@@ -59,7 +82,13 @@ async function fetchAndCacheData(cacheKey, operationName) {
 }
 
 async function getApplicationIntakes() {
-  let applicationIntakes = lookupCache.get('applicationIntakes')
+  let applicationIntakes
+  try {
+    applicationIntakes = await Redis.jsonGet('applicationIntakes')
+  } catch (e) {
+    log.error('Unable to retrieve the applicationIntakes from Redis', e)
+  }
+
   if (!applicationIntakes) {
     applicationIntakes = []
     const response = await getOperation(
@@ -70,13 +99,21 @@ async function getApplicationIntakes() {
       intake.facilities = item.ofm_intake_facilityintake?.map((facility) => new MappableObjectForFront(facility, FacilityIntakeMappings).toJSON())
       applicationIntakes.push(intake)
     })
-    lookupCache.put('applicationIntakes', applicationIntakes, ONE_HOUR_MS)
+    Redis.jsonSet('applicationIntakes', '$', applicationIntakes)
+      .then(() => Redis.expire('applicationIntakes', ...REDIS_EXPIRE_ARGS))
+      .catch((error) => log.error('Could not set applicationIntakes with Redis', error))
   }
   return applicationIntakes
 }
 
 async function getRoles() {
-  let roles = lookupCache.get('roles')
+  let roles
+  try {
+    roles = await Redis.jsonGet('roles')
+  } catch (e) {
+    log.error('Could not retrieve roles data from Redis', e)
+  }
+
   if (!roles) {
     roles = []
     const response = await getOperation(
@@ -88,7 +125,9 @@ async function getRoles() {
       roles.push(role)
     })
     roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
-    lookupCache.put('roles', roles, ONE_HOUR_MS)
+    Redis.jsonSet('roles', '$', roles)
+      .then(() => Redis.expire('roles', ...REDIS_EXPIRE_ARGS))
+      .catch((error) => log.error('Could not set roles with Redis', error))
   }
   return roles
 }
@@ -175,7 +214,13 @@ async function getLookupInfo(_req, res) {
 
 async function getSystemMessages(_req, res) {
   try {
-    let systemMessages = lookupCache.get('systemMessages')
+    let systemMessages
+    try {
+      systemMessages = await Redis.jsonGet('systemMessages')
+    } catch (e) {
+      log.error('Could not retrieve the systemMessages from Redis', e)
+    }
+
     if (!systemMessages) {
       systemMessages = []
       const currentTime = new Date().toISOString()
@@ -183,7 +228,9 @@ async function getSystemMessages(_req, res) {
         `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
       )
       response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
-      lookupCache.put('systemMessages', systemMessages, ONE_HOUR_MS)
+      Redis.jsonSet('systemMessages', '$', systemMessages)
+        .then(() => Redis.expire('systemMessages', 900, 'NX'))
+        .catch((error) => log.error('Could not set systemMessages with Redis', error))
     }
     return res.status(HttpStatus.OK).json(systemMessages)
   } catch (e) {

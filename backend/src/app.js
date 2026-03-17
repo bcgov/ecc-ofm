@@ -45,262 +45,276 @@ const topUpRouter = require('./routes/topups')
 const { IDENTITY_PROVIDER } = require('./util/constants')
 const { MappableObjectForBack } = require('./util/mapping/MappableObject')
 const { RoleMappings } = require('./util/mapping/Mappings')
-const { getRedisDbSession } = require('./util/redis/redis-client')
 
+const { RedisStore: ConnectRedis } = require('connect-redis')
+const { RedisStore: RateLimitRedis } = require('rate-limit-redis')
+const { rateLimit } = require('express-rate-limit')
+
+const Redis = require('./util/redis/redis-client')
 const promMid = require('express-prometheus-middleware')
-const rateLimit = require('express-rate-limit')
-const { RedisStore } = require('rate-limit-redis')
 const HttpStatus = require('http-status-codes')
 
 //initialize app
 const app = express()
-app.set('trust proxy', 1)
-// ZAP Scan Proxy Disclosure Alert fix
-app.disable('x-powered-by')
 
-//sets security measures (headers, etc)
-app.use(cors({ origin: config.get('server:frontend') }))
-app.use(helmet())
-app.use(noCache())
-app.use(
-  promMid({
-    metricsPath: '/api/prometheus',
-    collectDefaultMetrics: true,
-    requestDurationBuckets: [0.1, 0.5, 1, 1.5],
-  }),
-)
-//tells the app to use json as means of transporting data
-app.use(bodyParser.json({ limit: '50mb', extended: true }))
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-    limit: '50mb',
-  }),
-)
+Redis.init()
+  .catch((error) => {
+    log.error('Redis init failed at the app.js level ::', error)
+  })
+  .then(() => {
+    app.set('trust proxy', 1)
+    // ZAP Scan Proxy Disclosure Alert fix
+    app.disable('x-powered-by')
 
-// ZAP Scan Proxy Disclosure Alert fix
-const blockedMethods = ['TRACE', 'TRACK']
-app.use((req, res, next) => {
-  if (blockedMethods.includes(req.method)) return res.sendStatus(HttpStatus.METHOD_NOT_ALLOWED)
-  return next()
-})
+    //sets security measures (headers, etc)
+    app.use(cors({ origin: config.get('server:frontend') }))
+    app.use(helmet())
+    app.use(noCache())
+    app.use(
+      promMid({
+        metricsPath: '/api/prometheus',
+        collectDefaultMetrics: true,
+        requestDurationBuckets: [0.1, 0.5, 1, 1.5],
+      }),
+    )
+    //tells the app to use json as means of transporting data
+    app.use(bodyParser.json({ limit: '50mb', extended: true }))
+    app.use(
+      bodyParser.urlencoded({
+        extended: true,
+        limit: '50mb',
+      }),
+    )
 
-const logStream = {
-  write: (message) => {
-    log.info(message)
-  },
-}
-
-const dbSession = String(config.get('redis:enable')) === 'true' ? getRedisDbSession(session) : undefined
-
-const cookie = {
-  secure: true,
-  httpOnly: true,
-  sameSite: 'Lax',
-  maxAge: 1800000, //30 minutes in ms. this is same as session time. DO NOT MODIFY, IF MODIFIED, MAKE SURE SAME AS SESSION TIME OUT VALUE.
-}
-if ('local' === config.get('environment')) {
-  cookie.secure = false
-}
-//sets cookies for security purposes (prevent cookie access, allow secure connections only, etc)
-app.use(
-  session({
-    name: 'ofm_cookie',
-    secret: config.get('oidc:clientSecret'),
-    resave: false,
-    saveUninitialized: true,
-    cookie: cookie,
-    store: dbSession,
-  }),
-)
-
-//initialize routing and session. Cookies are now only reachable via requests (not js)
-app.use(passport.initialize())
-app.use(passport.session())
-
-function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, clientId, clientSecret) {
-  passport.use(
-    strategyName,
-    new OidcStrategy(
-      {
-        issuer: discovery.issuer,
-        authorizationURL: discovery.authorization_endpoint,
-        tokenURL: discovery.token_endpoint,
-        userInfoURL: discovery.userinfo_endpoint,
-        clientID: config.get(clientId),
-        clientSecret: config.get(clientSecret),
-        callbackURL: callbackURI,
-        scope: 'openid',
-        kc_idp_hint: kc_idp_hint,
-      },
-      async (_iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
-        if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
-          return verified('No access token', null)
-        }
-
-        //set access and refresh tokens
-        profile.jwtFrontend = auth.generateUiToken(profile)
-        profile.jwt = accessToken
-        profile._json = parseJwt(accessToken)
-        profile.refreshToken = refreshToken
-        profile.idToken = idToken
-
-        // Set additional user info for validation
-        await populateUserInfo(profile)
-
-        return verified(null, profile)
-      },
-    ),
-  )
-}
-
-async function populateUserInfo(profile) {
-  // Get UserProfile for BCeID users
-  const { identity_provider, guid } = profile._json
-  if (identity_provider === IDENTITY_PROVIDER.BUSINESS) {
-    // If the userGuid cannot be found in Dynamics, then Dynamics will check if the userName exists,
-    // If userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
-    const user = await getUserProfile(guid, profile._json.bceid_username)
-
-    profile.role = user?.role
-    profile.organizationId = user?.organization?.accountid
-    profile.contactId = user?.contactid
-
-    profile.facilities = user?.facility_permission.map((fp) => {
-      return {
-        facilityId: fp.facility.accountid,
-        ofmPortalAccess: fp.ofm_portal_access,
-        isExpenseAuthority: fp.ofm_is_expense_authority,
-      }
+    // ZAP Scan Proxy Disclosure Alert fix
+    const blockedMethods = ['TRACE', 'TRACK']
+    app.use((req, res, next) => {
+      if (blockedMethods.includes(req.method)) return res.sendStatus(HttpStatus.METHOD_NOT_ALLOWED)
+      return next()
     })
-  } else if (identity_provider === IDENTITY_PROVIDER.IDIR) {
-    const roles = await getRoles()
-    const role = roles.find((role) => role.data.roleName === 'Impersonate')
 
-    // Store the role in Dynamics format to match BCeID
-    profile.role = new MappableObjectForBack(role.toJSON(), RoleMappings).toJSON()
-
-    // IDIR users don't have an Organization
-    // The Org is only assigned in the frontend when impersonating a BCeID user
-  }
-}
-
-const parseJwt = (token) => {
-  try {
-    return JSON.parse(atob(token.split('.')[1]))
-  } catch (e) {
-    log.error(e)
-    return null
-  }
-}
-//initialize our authentication strategy
-utils.getOidcDiscovery().then((discovery) => {
-  // OIDC Strategy is used for authorization
-  // XXX We maintain two separate strategies because of the different idpHint. Otherwise they are equivalent.
-  addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', config.get('oidc:idpHintIdir'), 'oidc:clientId', 'oidc:clientSecret')
-  addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', config.get('oidc:idpHintBceid'), 'oidc:clientId', 'oidc:clientSecret')
-
-  //JWT strategy is used for authorization  keycloak_bcdevexchange_idir
-  passport.use(
-    'jwt',
-    new JWTStrategy(
-      {
-        algorithms: ['RS256'],
-        // Keycloak 7.3.0 no longer automatically supplies matching client_id audience.
-        // If audience checking is needed, check the following SO to update Keycloak first.
-        // Ref: https://stackoverflow.com/a/53627747
-        audience: config.get('server:frontend'),
-        issuer: config.get('tokenGenerate:issuer'),
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: config.get('tokenGenerate:publicKey'),
-        ignoreExpiration: true,
+    const logStream = {
+      write: (message) => {
+        log.info(message)
       },
-      (jwtPayload, done) => {
-        if (typeof jwtPayload === 'undefined' || jwtPayload === null) {
-          return done('No JWT token', null)
-        }
+    }
 
-        done(null, {
-          email: jwtPayload.email,
-          familyName: jwtPayload.family_name,
-          givenName: jwtPayload.given_name,
-          jwt: jwtPayload,
-          name: jwtPayload.name,
-          user_guid: jwtPayload.user_guid,
-          realmRole: jwtPayload.realm_role,
+    const cookie = {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Lax',
+      maxAge: 1800000, //30 minutes in ms. this is same as session time. DO NOT MODIFY, IF MODIFIED, MAKE SURE SAME AS SESSION TIME OUT VALUE.
+    }
+
+    if ('local' === config.get('environment')) {
+      cookie.secure = false
+    }
+
+    //sets cookies for security purposes (prevent cookie access, allow secure connections only, etc)
+    let sessionConfig = {
+      name: 'ofm_cookie',
+      secret: config.get('oidc:clientSecret'),
+      resave: false,
+      saveUninitialized: true,
+      cookie: cookie,
+    }
+
+    if (Redis.isReady) {
+      sessionConfig.store = new ConnectRedis({ client: Redis.client, prefix: 'ofm-sess:' })
+    }
+    app.use(session(sessionConfig))
+
+    //initialize routing and session. Cookies are now only reachable via requests (not js)
+    app.use(passport.initialize())
+    app.use(passport.session())
+
+    function addLoginPassportUse(discovery, strategyName, callbackURI, kc_idp_hint, clientId, clientSecret) {
+      passport.use(
+        strategyName,
+        new OidcStrategy(
+          {
+            issuer: discovery.issuer,
+            authorizationURL: discovery.authorization_endpoint,
+            tokenURL: discovery.token_endpoint,
+            userInfoURL: discovery.userinfo_endpoint,
+            clientID: config.get(clientId),
+            clientSecret: config.get(clientSecret),
+            callbackURL: callbackURI,
+            scope: 'openid',
+            kc_idp_hint: kc_idp_hint,
+          },
+          async (_iss, profile, _context, idToken, accessToken, refreshToken, verified) => {
+            if (typeof accessToken === 'undefined' || accessToken === null || typeof refreshToken === 'undefined' || refreshToken === null) {
+              return verified('No access token', null)
+            }
+
+            //set access and refresh tokens
+            profile.jwtFrontend = auth.generateUiToken(profile)
+            profile.jwt = accessToken
+            profile._json = parseJwt(accessToken)
+            profile.refreshToken = refreshToken
+            profile.idToken = idToken
+
+            // Set additional user info for validation
+            await populateUserInfo(profile)
+
+            return verified(null, profile)
+          },
+        ),
+      )
+    }
+
+    async function populateUserInfo(profile) {
+      // Get UserProfile for BCeID users
+      const { identity_provider, guid } = profile._json
+      if (identity_provider === IDENTITY_PROVIDER.BUSINESS) {
+        // If the userGuid cannot be found in Dynamics, then Dynamics will check if the userName exists,
+        // If userName exists but has a null userGuid, the system will update the user record with the GUID and return that user profile.
+        const user = await getUserProfile(guid, profile._json.bceid_username)
+
+        profile.role = user?.role
+        profile.organizationId = user?.organization?.accountid
+        profile.contactId = user?.contactid
+
+        profile.facilities = user?.facility_permission.map((fp) => {
+          return {
+            facilityId: fp.facility.accountid,
+            ofmPortalAccess: fp.ofm_portal_access,
+            isExpenseAuthority: fp.ofm_is_expense_authority,
+          }
         })
-      },
-    ),
-  )
-})
-//functions for serializing/deserializing users
-passport.serializeUser((user, next) => next(null, user))
-passport.deserializeUser((obj, next) => next(null, obj))
+      } else if (identity_provider === IDENTITY_PROVIDER.IDIR) {
+        const roles = await getRoles()
+        const role = roles.find((role) => role.roleName === 'Impersonate')
 
-app.use(morgan(config.get('server:morganFormat'), { stream: logStream }))
+        // Store the role in Dynamics format to match BCeID
+        profile.role = new MappableObjectForBack(role.toJSON(), RoleMappings).toJSON()
 
-// Setup Rate limit for the number of frontend requests allowed per windowMs to avoid DDOS attack
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+        // IDIR users don't have an Organization
+        // The Org is only assigned in the frontend when impersonating a BCeID user
+      }
+    }
 
-  // Redis store configuration
-  /* eslint-disable indent */
-  store: dbSession
-    ? new RedisStore({
-        sendCommand: (...args) => dbSession.client.call(...args),
-      })
-    : undefined,
-  /* eslint-enable indent */
-})
+    const parseJwt = (token) => {
+      try {
+        return JSON.parse(atob(token.split('.')[1]))
+      } catch (e) {
+        log.error(e)
+        return null
+      }
+    }
+    //initialize our authentication strategy
+    utils.getOidcDiscovery().then((discovery) => {
+      // OIDC Strategy is used for authorization
+      // XXX We maintain two separate strategies because of the different idpHint. Otherwise they are equivalent.
+      addLoginPassportUse(discovery, 'oidcIdir', config.get('server:frontend') + '/api/auth/callback_idir', config.get('oidc:idpHintIdir'), 'oidc:clientId', 'oidc:clientSecret')
+      addLoginPassportUse(discovery, 'oidcBceid', config.get('server:frontend') + '/api/auth/callback', config.get('oidc:idpHintBceid'), 'oidc:clientId', 'oidc:clientSecret')
 
-app.use('/api/public', limiter)
+      //JWT strategy is used for authorization  keycloak_bcdevexchange_idir
+      passport.use(
+        'jwt',
+        new JWTStrategy(
+          {
+            algorithms: ['RS256'],
+            // Keycloak 7.3.0 no longer automatically supplies matching client_id audience.
+            // If audience checking is needed, check the following SO to update Keycloak first.
+            // Ref: https://stackoverflow.com/a/53627747
+            audience: config.get('server:frontend'),
+            issuer: config.get('tokenGenerate:issuer'),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            secretOrKey: config.get('tokenGenerate:publicKey'),
+            ignoreExpiration: true,
+          },
+          (jwtPayload, done) => {
+            if (typeof jwtPayload === 'undefined' || jwtPayload === null) {
+              return done('No JWT token', null)
+            }
 
-//set up routing to auth and main API
-app.use(/(\/api)?/, apiRouter)
-
-apiRouter.use('/applications', applicationsRouter)
-apiRouter.use('/auth', authRouter)
-apiRouter.use('/config', configRouter)
-apiRouter.use('/documents', documentsRouter)
-apiRouter.use('/facilities', facilitiesRouter)
-apiRouter.use('/files', filesRouter)
-apiRouter.use('/funding-agreements', fundingAgreementsRouter)
-apiRouter.use('/health', healthCheckRouter)
-apiRouter.use('/irregular', irregularApplicationsRouter)
-apiRouter.use('/licences', licencesRouter)
-apiRouter.use('/messages', messageRouter)
-apiRouter.use('/notifications', notificationRouter)
-apiRouter.use('/organizations', organizationsRouter)
-apiRouter.use('/payments', paymentsRouter)
-apiRouter.use('/public', publicRouter)
-apiRouter.use('/reports', reportsRouter)
-apiRouter.use('/user', userRouter)
-apiRouter.use('/topups', topUpRouter)
-
-//Handle 500 error
-app.use((err, _req, res, next) => {
-  //This is from the ResultValidation
-  if (err.errors && err.mapped) {
-    return res.status(400).json({
-      errors: err.mapped(),
+            done(null, {
+              email: jwtPayload.email,
+              familyName: jwtPayload.family_name,
+              givenName: jwtPayload.given_name,
+              jwt: jwtPayload,
+              name: jwtPayload.name,
+              user_guid: jwtPayload.user_guid,
+              realmRole: jwtPayload.realm_role,
+            })
+          },
+        ),
+      )
     })
-  }
-  log.error(err?.stack)
-  res?.redirect(config?.get('server:frontend') + '/error?message=500_internal_error')
-  next()
-})
+    //functions for serializing/deserializing users
+    passport.serializeUser((user, next) => next(null, user))
+    passport.deserializeUser((obj, next) => next(null, obj))
 
-// Handle 404 error
-app.use((_req, res) => {
-  log.error('404 Error')
-  res.redirect(config?.get('server:frontend') + '/error?message=404_Page_Not_Found')
-})
+    app.use(morgan(config.get('server:morganFormat'), { stream: logStream }))
+    // Setup Rate limit for the number of frontend requests allowed per windowMs to avoid DDOS attack
+    let limiter = rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+      standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+      legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    })
 
-// Prevent unhandled errors from crashing application
-process.on('unhandledRejection', (err) => {
-  log.error('Unhandled Rejection at:', err?.stack || err)
-})
+    if (Redis.isReady) {
+      const createRateLimitRedisConfig = () => {
+        if (Redis.clustered) {
+          return {
+            sendCommandCluster: ({ key, isReadOnly, command }) => Redis.client.sendCommand(key, isReadOnly, command),
+          }
+        }
+        return { sendCommand: (...args) => Redis.client.sendCommand(args) }
+      }
+      limiter.store = new RateLimitRedis(createRateLimitRedisConfig())
+    }
+
+    app.use('/api/public', limiter)
+
+    //set up routing to auth and main API
+    app.use(/(\/api)?/, apiRouter)
+
+    apiRouter.use('/applications', applicationsRouter)
+    apiRouter.use('/auth', authRouter)
+    apiRouter.use('/config', configRouter)
+    apiRouter.use('/documents', documentsRouter)
+    apiRouter.use('/facilities', facilitiesRouter)
+    apiRouter.use('/files', filesRouter)
+    apiRouter.use('/funding-agreements', fundingAgreementsRouter)
+    apiRouter.use('/health', healthCheckRouter)
+    apiRouter.use('/irregular', irregularApplicationsRouter)
+    apiRouter.use('/licences', licencesRouter)
+    apiRouter.use('/messages', messageRouter)
+    apiRouter.use('/notifications', notificationRouter)
+    apiRouter.use('/organizations', organizationsRouter)
+    apiRouter.use('/payments', paymentsRouter)
+    apiRouter.use('/public', publicRouter)
+    apiRouter.use('/reports', reportsRouter)
+    apiRouter.use('/user', userRouter)
+    apiRouter.use('/topups', topUpRouter)
+
+    //Handle 500 error
+    app.use((err, _req, res, next) => {
+      //This is from the ResultValidation
+      if (err.errors && err.mapped) {
+        return res.status(400).json({
+          errors: err.mapped(),
+        })
+      }
+      log.error(err?.stack)
+      res?.redirect(config?.get('server:frontend') + '/error?message=500_internal_error')
+      next()
+    })
+
+    // Handle 404 error
+    app.use((_req, res) => {
+      log.error('404 Error')
+      res.redirect(config?.get('server:frontend') + '/error?message=404_Page_Not_Found')
+    })
+
+    // Prevent unhandled errors from crashing application
+    process.on('unhandledRejection', (err) => {
+      log.error('Unhandled Rejection at:', err?.stack || err)
+    })
+  })
+
 module.exports = app
