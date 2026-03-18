@@ -12,7 +12,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 
 const auth = require('./components/auth')
-const { getRoles } = require('./components/lookup')
+const { getRoles, startCacheJobs, stopCacheJobs } = require('./components/lookup')
 const { getUserProfile } = require('./components/user')
 const utils = require('./components/utils')
 
@@ -62,6 +62,8 @@ Redis.init()
     log.error('Redis init failed at the app.js level ::', error)
   })
   .then(() => {
+    startCacheJobs()
+    Redis.shutdownHooks.push(stopCacheJobs)
     app.set('trust proxy', 1)
     // ZAP Scan Proxy Disclosure Alert fix
     app.disable('x-powered-by')

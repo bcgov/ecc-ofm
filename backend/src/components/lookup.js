@@ -15,7 +15,7 @@ const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('./logger')
 
 const Redis = require('../util/redis/redis-client')
-const REDIS_EXPIRE_ARGS = [3600, 'NX']
+const { CronJob } = require('cron')
 
 async function getRequestCategories() {
   let requestCategories
@@ -29,9 +29,7 @@ async function getRequestCategories() {
     requestCategories = []
     const response = await getOperation('ofm_request_categories')
     response?.value?.forEach((item) => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)))
-    Redis.jsonSet('requestCategories', '$', requestCategories)
-      .then(() => Redis.expire('requestCategories', ...REDIS_EXPIRE_ARGS))
-      .catch((error) => log.error('Could not set requestCategories with Redis', error))
+    Redis.jsonSet('requestCategories', '$', requestCategories).catch((error) => log.error('Could not set requestCategories with Redis', error))
   }
   return requestCategories
 }
@@ -48,9 +46,7 @@ async function getRequestSubCategories() {
     requestSubCategories = []
     const response = await getOperation('ofm_subcategories?$orderby=ofm_display_order')
     response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
-    Redis.jsonSet('requestSubCategories', '$', requestSubCategories)
-      .then(() => Redis.expire('requestSubCategories', ...REDIS_EXPIRE_ARGS))
-      .catch((error) => log.error('Could not set requestSubCategories with Redis', error))
+    Redis.jsonSet('requestSubCategories', '$', requestSubCategories).catch((error) => log.error('Could not set requestSubCategories with Redis', error))
   }
   return requestSubCategories
 }
@@ -71,9 +67,7 @@ async function fetchAndCacheData(cacheKey, operationName) {
           id: Number(item.Value),
           description: item.Label?.LocalizedLabels?.[0]?.Label ?? null,
         })) || []
-      Redis.jsonSet(cacheKey, '$', data)
-        .then(() => Redis.expire(cacheKey, ...REDIS_EXPIRE_ARGS))
-        .catch((error) => log.error(`Could not set ${cacheKey} with Redis`, error))
+      Redis.jsonSet(cacheKey, '$', data).catch((error) => log.error(`Could not set ${cacheKey} with Redis`, error))
     } catch (error) {
       log.error(`Error fetching data for ${cacheKey}:`, error)
     }
@@ -99,9 +93,7 @@ async function getApplicationIntakes() {
       intake.facilities = item.ofm_intake_facilityintake?.map((facility) => new MappableObjectForFront(facility, FacilityIntakeMappings).toJSON())
       applicationIntakes.push(intake)
     })
-    Redis.jsonSet('applicationIntakes', '$', applicationIntakes)
-      .then(() => Redis.expire('applicationIntakes', ...REDIS_EXPIRE_ARGS))
-      .catch((error) => log.error('Could not set applicationIntakes with Redis', error))
+    Redis.jsonSet('applicationIntakes', '$', applicationIntakes).catch((error) => log.error('Could not set applicationIntakes with Redis', error))
   }
   return applicationIntakes
 }
@@ -125,9 +117,7 @@ async function getRoles() {
       roles.push(role)
     })
     roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
-    Redis.jsonSet('roles', '$', roles)
-      .then(() => Redis.expire('roles', ...REDIS_EXPIRE_ARGS))
-      .catch((error) => log.error('Could not set roles with Redis', error))
+    Redis.jsonSet('roles', '$', roles).catch((error) => log.error('Could not set roles with Redis', error))
   }
   return roles
 }
@@ -212,29 +202,103 @@ async function getLookupInfo(_req, res) {
   }
 }
 
+async function retrieveSystemMessages() {
+  let systemMessages
+  try {
+    systemMessages = await Redis.jsonGet('systemMessages')
+  } catch (e) {
+    log.error('Could not retrieve the systemMessages from Redis', e)
+  }
+
+  if (!systemMessages) {
+    systemMessages = []
+    const currentTime = new Date().toISOString()
+    const response = await getOperation(
+      `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
+    )
+    response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
+    Redis.jsonSet('systemMessages', '$', systemMessages).catch((error) => log.error('Could not set systemMessages with Redis', error))
+  }
+  return systemMessages
+}
+
 async function getSystemMessages(_req, res) {
   try {
-    let systemMessages
-    try {
-      systemMessages = await Redis.jsonGet('systemMessages')
-    } catch (e) {
-      log.error('Could not retrieve the systemMessages from Redis', e)
-    }
-
-    if (!systemMessages) {
-      systemMessages = []
-      const currentTime = new Date().toISOString()
-      const response = await getOperation(
-        `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
-      )
-      response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
-      Redis.jsonSet('systemMessages', '$', systemMessages)
-        .then(() => Redis.expire('systemMessages', 900, 'NX'))
-        .catch((error) => log.error('Could not set systemMessages with Redis', error))
-    }
+    const systemMessages = await retrieveSystemMessages()
     return res.status(HttpStatus.OK).json(systemMessages)
   } catch (e) {
     handleError(res, e)
+  }
+}
+
+async function hourlyPrecache() {
+  if (Redis.isReady) {
+    const expireKeys = [
+      'applicationIntakes',
+      'requestCategories',
+      'requestSubCategories',
+      'roles',
+      'businessTypes',
+      'healthAuthorities',
+      'applicationFacilityTypes',
+      'licenceTypes',
+      'paymentTypes',
+      'unions',
+    ]
+    const expired = expireKeys.map((key) => {
+      return Redis.expire(key, 0)
+    })
+    await Promise.all(expired)
+    await Promise.all([
+      getApplicationIntakes(),
+      getRequestCategories(),
+      getRequestSubCategories(),
+      getRoles(),
+      getBusinessTypes(),
+      getHealthAuthorities(),
+      getFacilityTypes(),
+      getLicenceTypes(),
+      // getReportTemplates(),
+      getPaymentTypes(),
+      getUnions(),
+    ])
+  } else {
+    log.info('Cannot run hourly precache without Redis being ready')
+  }
+}
+
+async function quarterHourPrecache() {
+  if (Redis.isReady) {
+    await Redis.expire('systemMessages', 0)
+    await retrieveSystemMessages()
+  } else {
+    log.info('Cannot run quarter hour precache without Redis being ready')
+  }
+}
+
+const preCacheJobs = [
+  {
+    cron: new CronJob('* 0 * * * *', hourlyPrecache),
+    onTick: hourlyPrecache,
+  },
+  {
+    cron: new CronJob('* */15 * * * *', quarterHourPrecache),
+    onTick: quarterHourPrecache,
+  },
+]
+
+async function startCacheJobs() {
+  log.info('Starting cache jobs')
+  for (const job of preCacheJobs) {
+    await job.onTick()
+    job.cron.start()
+  }
+}
+
+function stopCacheJobs() {
+  log.info('Stopping cache jobs')
+  for (const job of preCacheJobs) {
+    job.cron.stop()
   }
 }
 
@@ -242,4 +306,6 @@ module.exports = {
   getLookupInfo,
   getRoles,
   getSystemMessages,
+  startCacheJobs,
+  stopCacheJobs,
 }

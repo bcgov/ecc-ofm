@@ -5,6 +5,7 @@ const log = require('../../components/logger')
 class Redis {
   static client
   static prefix = config.get('redis:prefix')
+  static shutdownHooks = []
 
   static async shutdown(signal = 'quit') {
     log.info(`Received ${signal}, closing Redis connection`)
@@ -13,6 +14,10 @@ class Redis {
     } catch (err) {
       log.error('Redis had to force quit', err)
       await Redis.client.disconnect()
+    } finally {
+      for (const hook of Redis.shutdownHooks) {
+        hook()
+      }
     }
   }
 
