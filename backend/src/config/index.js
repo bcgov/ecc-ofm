@@ -59,9 +59,9 @@ nconf.defaults({
     natsCluster: process.env.NATS_CLUSTER,
   },
   redis: {
-    enable: process.env.REDIS_ENABLE,
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
+    prefix: process.env.REDIS_PREFIX,
     clustered: process.env.REDIS_CLUSTERED,
   },
   clamav: {
