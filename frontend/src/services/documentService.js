@@ -44,6 +44,16 @@ function sortDocuments(documents) {
 }
 
 export default {
+  async getAttachments(notificationId) {
+    try {
+      if (!notificationId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.ATTACHMENTS}?notificationId=${notificationId}`)
+      return response?.data || []
+    } catch (error) {
+      console.log(`Failed to get the list of attachments by notification id - ${error}`)
+      throw error
+    }
+  },
   // regardingId (entityId) is the id of the entity link to the document (e.g.: assistanceRequestId, applicationId, facilityId, etc.)
   async getDocuments(regardingId) {
     try {
@@ -55,14 +65,25 @@ export default {
       throw error
     }
   },
-
+  sortDocuments,
   async getSharedDocuments(notificationId) {
     try {
       if (!notificationId) return
       const response = await ApiService.apiAxios.get(`${ApiRoutes.DOCUMENTS}/shared?notificationId=${notificationId}`)
-      return sortDocuments(response?.data)
+      return response?.data || []
     } catch (error) {
       console.log(`Failed to get the list of documents by notification id - ${error}`)
+      throw error
+    }
+  },
+
+  async getAttachmentByID(documentId) {
+    try {
+      if (!documentId) return
+      const response = await ApiService.apiAxios.get(`${ApiRoutes.ATTACHMENTS}/${documentId}/file`)
+      return response?.data
+    } catch (error) {
+      console.log(`Failed to get the approved  PDF by application id - ${error}`)
       throw error
     }
   },

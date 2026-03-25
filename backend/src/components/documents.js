@@ -10,13 +10,18 @@ const { isHeicFile, convertHeicBufferToJpg, updateHeicFileNameToJpg, getPostDocu
 
 async function getDocuments(req, res) {
   try {
-    const documents = []
+
     const operation = `ofm_documents?$select=ofm_documentid,ofm_name,ofm_file_name,ofm_subject,ofm_description,ofm_category,modifiedon,statuscode,statecode&$filter=(${buildFilterQuery(
       req?.query,
       DocumentMappings,
     )} )`
     const response = await getOperation(operation)
-    response?.value?.forEach((document) => documents.push(new MappableObjectForFront(document, DocumentMappings).toJSON()))
+    const responseDocs = response?.value || []
+    const documents = responseDocs.map((doc) => {
+      const docMap = new MappableObjectForFront(doc, DocumentMappings)
+      docMap.data.type = 'ofm_document'
+      return docMap.toJSON()
+    })
     return res.status(HttpStatus.OK).json(documents)
   } catch (e) {
     handleError(res, e)
@@ -36,7 +41,11 @@ async function getSharedDocuments(req, res) {
       `&$filter=_ofm_email_value eq ${req?.query?.notificationId}`
     const response = await getOperation(operation)
     const sharedDocs = response?.value || []
-    const documents = sharedDocs.map((sd) => new MappableObjectForFront(sd.ofm_document, DocumentMappings).toJSON())
+    const documents = sharedDocs.map((sd) => {
+      const docMap = new MappableObjectForFront(sd.ofm_document, DocumentMappings)
+      docMap.data.type = 'ofm_shared_document'
+      return docMap.toJSON()
+    })
     return res.status(HttpStatus.OK).json(documents)
   } catch (e) {
     handleError(res, e)

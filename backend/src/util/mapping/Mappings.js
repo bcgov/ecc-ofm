@@ -312,6 +312,10 @@ const LicenceDetailsMappings = [
   { back: 'statecode', front: 'stateCode' },
 ]
 
+const AttachmentMappings = [
+  { back: 'filename', front: 'fileName' },
+]
+
 const DocumentMappings = [
   { back: 'ofm_documentid', front: 'documentId' },
   { back: 'ofm_name', front: 'referenceNumber' },
@@ -541,6 +545,7 @@ module.exports = {
   AssistanceRequestMappings,
   AssistanceRequestFacilityMappings,
   AssistanceRequestConversationMappings,
+  AttachmentMappings,
   ContactMappings,
   DocumentMappings,
   FacilityIntakeMappings,
