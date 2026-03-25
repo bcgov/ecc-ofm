@@ -10,7 +10,6 @@ const { isHeicFile, convertHeicBufferToJpg, updateHeicFileNameToJpg, getPostDocu
 
 async function getDocuments(req, res) {
   try {
-
     const operation = `ofm_documents?$select=ofm_documentid,ofm_name,ofm_file_name,ofm_subject,ofm_description,ofm_category,modifiedon,statuscode,statecode&$filter=(${buildFilterQuery(
       req?.query,
       DocumentMappings,

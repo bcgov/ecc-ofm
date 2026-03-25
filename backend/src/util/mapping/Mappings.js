@@ -312,9 +312,7 @@ const LicenceDetailsMappings = [
   { back: 'statecode', front: 'stateCode' },
 ]
 
-const AttachmentMappings = [
-  { back: 'filename', front: 'fileName' },
-]
+const AttachmentMappings = [{ back: 'filename', front: 'fileName' }]
 
 const DocumentMappings = [
   { back: 'ofm_documentid', front: 'documentId' },
