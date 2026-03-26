@@ -12,6 +12,7 @@ export const AuthRoutes = Object.freeze({
 
 export const ApiRoutes = Object.freeze({
   APPLICATIONS: baseRoot + '/applications',
+  ATTACHMENTS: baseRoot + '/attachments',
   DOCUMENTS: baseRoot + '/documents',
   FACILITIES: baseRoot + '/facilities',
   FACILITIES_CONTACTS: baseRoot + '/facilities/:facilityId/contacts',
