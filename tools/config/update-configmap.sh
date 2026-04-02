@@ -96,7 +96,7 @@ oc create -n "$OPENSHIFT_NAMESPACE" configmap \
   --from-literal="TZ=$TIMEZONE" \
   --from-literal="NODE_ENV=$NODE_ENV" \
   --from-literal="REDIS_CLUSTERED=true" \
-  --from-literal="REDIS_HOST=redis" \
+  --from-literal="REDIS_HOST=redis.$OPENSHIFT_NAMESPACE.svc.cluster.local" \
   --from-literal="REDIS_PORT=6379" \
   --from-literal="REDIS_PREFIX=$ENV_VAL:" \
   --from-literal="SERVER_FRONTEND=$SERVER_FRONTEND" \
