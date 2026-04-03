@@ -1,66 +1,145 @@
-'use-strict'
-
-const ioRedis = require('ioredis')
+const { createClient, createCluster } = require('redis')
 const config = require('../../config')
 const log = require('../../components/logger')
-const connectRedis = require('connect-redis')
 
-let redisClient
-let connectionClosed = false
-const Redis = {
-  /**
-   * This method is called during application start and redis client is obtained.
-   * The redis client can be reused rather than creating multiple clients.
-   */
-  init() {
-    if (String(config.get('redis:clustered')) === 'true') {
-      log.info('using CLUSTERED Redis implementation')
-      redisClient = new ioRedis.Cluster([
-        {
-          host: config.get('redis:host'),
-          port: config.get('redis:port'),
-        },
-      ])
-    } else {
-      log.info('using STANDALONE Redis implementation')
-      redisClient = new ioRedis({
-        host: config.get('redis:host'),
-        port: config.get('redis:port'),
-      })
+class Redis {
+  static client
+  static prefix = config.get('redis:prefix')
+  static shutdownHooks = []
+
+  static async shutdown(signal = 'quit') {
+    log.info(`Received ${signal}, closing Redis connection`)
+    try {
+      await Redis.client.quit()
+    } catch (err) {
+      log.error('Redis had to force quit', err)
+      await Redis.client.disconnect()
+    } finally {
+      for (const hook of Redis.shutdownHooks) {
+        hook()
+      }
     }
-    redisClient.on('error', (error) => {
-      log.error(`error occurred in redis client. ${error}`)
-    })
-    redisClient.on('end', (error) => {
-      log.error(`redis client end. ${error}`)
-      connectionClosed = true
-    })
-    redisClient.on('ready', () => {
-      log.info('Redis Ready.')
-    })
-    redisClient.on('connect', () => {
-      log.info('connected to redis.')
-    })
-  },
-  isConnectionClosed() {
-    return connectionClosed
-  },
-  getRedisClient() {
-    return redisClient
-  },
-}
+  }
 
-function getRedisDbSession(expressSession) {
-  if (redisClient === undefined) Redis.init()
-  const RedisStore = connectRedis(expressSession)
-  const dbSession = new RedisStore({
-    client: Redis.getRedisClient(),
-    prefix: 'ofm-sess:',
-  })
-  return dbSession
-}
+  static get isReady() {
+    if (Redis.client) {
+      return Redis.clustered ? Redis.client.isOpen : Redis.client.isReady
+    }
+    return false
+  }
 
-module.exports = {
-  Redis,
-  getRedisDbSession,
+  static get clustered() {
+    return config.get('redis:clustered') == 'true'
+  }
+
+  static encodeKey(string) {
+    return Buffer.from(string).toString('hex')
+  }
+
+  static decodeKey(hex) {
+    return Buffer.from(hex, 'hex').toString('utf8')
+  }
+
+  /**
+   * A prefix wrapper for `Redis.client.get`. Do not use this for cached data
+   * that is shared between pod environments.
+   *
+   * @param {string} key - The un-prefixed Redis key
+   * @param {args} args - The rest of the command args
+   */
+  static async get(key, ...args) {
+    return Redis.client.get(`${Redis.prefix}${key}`, ...args)
+  }
+
+  /**
+   * A prefix wrapper for `Redis.client.set`. Do not use this for cached data
+   * that is shared between pod environments.
+   *
+   * @param {string} key - The un-prefixed Redis key
+   * @param {args} args - The rest of the command args
+   */
+  static async set(key, ...args) {
+    return Redis.client.set(`${Redis.prefix}${key}`, ...args)
+  }
+
+  /**
+   * A prefix wrapper for `Redis.client.json.get`. Do not use this for cached data
+   * that is shared between pod environments.
+   *
+   * @param {string} key - The un-prefixed Redis key
+   * @param {args} args - The rest of the command args
+   */
+  static async jsonGet(key, ...args) {
+    return Redis.client.json.get(`${Redis.prefix}${key}`, ...args)
+  }
+
+  /**
+   * A prefix wrapper for `Redis.client.json.set`. Do not use this for cached data
+   * that is shared between pod environments.
+   *
+   * @param {string} key - The un-prefixed Redis key
+   * @param {args} args - The rest of the command args
+   */
+  static async jsonSet(key, ...args) {
+    return Redis.client.json.set(`${Redis.prefix}${key}`, ...args)
+  }
+
+  /**
+   * A prefix wrapper for `Redis.client.expire`. Do not use this for cached data
+   * that is shared between pod environments.
+   *
+   * @param {string} key - The un-prefixed Redis key
+   * @param {args} args - The rest of the command args
+   */
+  static async expire(key, ...args) {
+    return Redis.client.expire(`${Redis.prefix}${key}`, ...args)
+  }
+
+  static async init() {
+    if (!Redis.client) {
+      if (Redis.clustered) {
+        log.info('using CLUSTERED Redis implementation')
+        Redis.client = createCluster({
+          rootNodes: [
+            {
+              url: `redis://redis-0.${config.get('redis:host')}:${config.get('redis:port')}`,
+            },
+            {
+              url: `redis://redis-1.${config.get('redis:host')}:${config.get('redis:port')}`,
+            },
+            {
+              url: `redis://redis-2.${config.get('redis:host')}:${config.get('redis:port')}`,
+            },
+          ],
+        })
+      } else {
+        log.info('using STANDALONE Redis implementation')
+        Redis.client = createClient({ url: `redis://${config.get('redis:host')}:${config.get('redis:port')}` })
+      }
+
+      Redis.client.on('error', (error) => {
+        log.error(`Error occurred in Redis client. ${error}`)
+      })
+
+      Redis.client.on('end', () => {
+        log.info('Redis client closed.')
+      })
+
+      Redis.client.on('ready', () => {
+        log.info('Redis Ready.')
+      })
+
+      Redis.client.on('connect', () => {
+        log.info('Connected to Redis.')
+      })
+
+      process.on('SIGTERM', () => Redis.shutdown('SIGTERM'))
+      process.on('SIGINT', () => Redis.shutdown('SIGINT'))
+
+      await Redis.client.connect()
+    } else {
+      log.warning('Redis.init() called after it was already initialized')
+    }
+  }
 }
+module.exports = Redis

@@ -1,7 +1,6 @@
 'use strict'
 const { getOperation, handleError } = require('./utils')
 const HttpStatus = require('http-status-codes')
-const cache = require('memory-cache')
 const {
   ApplicationIntakeMappings,
   FacilityIntakeMappings,
@@ -15,33 +14,51 @@ const {
 const { MappableObjectForFront } = require('../util/mapping/MappableObject')
 const log = require('./logger')
 
-const lookupCache = new cache.Cache()
-const ONE_HOUR_MS = 60 * 60 * 1000 // Cache timeout set for one hour
+const Redis = require('../util/redis/redis-client')
+const { CronJob } = require('cron')
 
 async function getRequestCategories() {
-  let requestCategories = lookupCache.get('requestCategories')
+  let requestCategories
+  try {
+    requestCategories = await Redis.jsonGet('requestCategories')
+  } catch (e) {
+    log.error('Unable to retrieve the requestCategories from Redis', e)
+  }
+
   if (!requestCategories) {
     requestCategories = []
     const response = await getOperation('ofm_request_categories')
     response?.value?.forEach((item) => requestCategories.push(new MappableObjectForFront(item, RequestCategoryMappings)))
-    lookupCache.put('requestCategories', requestCategories, ONE_HOUR_MS)
+    Redis.jsonSet('requestCategories', '$', requestCategories).catch((error) => log.error('Could not set requestCategories with Redis', error))
   }
   return requestCategories
 }
 
 async function getRequestSubCategories() {
-  let requestSubCategories = lookupCache.get('requestSubCategories')
+  let requestSubCategories
+  try {
+    requestSubCategories = await Redis.jsonGet('requestSubCategories')
+  } catch (e) {
+    log.error('Unable to retrieve the requestSubCategories from Redis', e)
+  }
+
   if (!requestSubCategories) {
     requestSubCategories = []
     const response = await getOperation('ofm_subcategories?$orderby=ofm_display_order')
     response?.value?.forEach((item) => requestSubCategories.push(new MappableObjectForFront(item, RequestSubCategoryMappings)))
-    lookupCache.put('requestSubCategories', requestSubCategories, ONE_HOUR_MS)
+    Redis.jsonSet('requestSubCategories', '$', requestSubCategories).catch((error) => log.error('Could not set requestSubCategories with Redis', error))
   }
   return requestSubCategories
 }
 
 async function fetchAndCacheData(cacheKey, operationName) {
-  let data = lookupCache.get(cacheKey)
+  let data
+  try {
+    data = await Redis.jsonGet(cacheKey)
+  } catch (e) {
+    log.error(`Unable to retrieve ${cacheKey} from Redis`, e)
+  }
+
   if (!data) {
     try {
       const response = await getOperation(`GlobalOptionSetDefinitions(Name='${operationName}')`)
@@ -50,7 +67,7 @@ async function fetchAndCacheData(cacheKey, operationName) {
           id: Number(item.Value),
           description: item.Label?.LocalizedLabels?.[0]?.Label ?? null,
         })) || []
-      lookupCache.put(cacheKey, data, ONE_HOUR_MS)
+      Redis.jsonSet(cacheKey, '$', data).catch((error) => log.error(`Could not set ${cacheKey} with Redis`, error))
     } catch (error) {
       log.error(`Error fetching data for ${cacheKey}:`, error)
     }
@@ -59,7 +76,13 @@ async function fetchAndCacheData(cacheKey, operationName) {
 }
 
 async function getApplicationIntakes() {
-  let applicationIntakes = lookupCache.get('applicationIntakes')
+  let applicationIntakes
+  try {
+    applicationIntakes = await Redis.jsonGet('applicationIntakes')
+  } catch (e) {
+    log.error('Unable to retrieve the applicationIntakes from Redis', e)
+  }
+
   if (!applicationIntakes) {
     applicationIntakes = []
     const response = await getOperation(
@@ -70,13 +93,19 @@ async function getApplicationIntakes() {
       intake.facilities = item.ofm_intake_facilityintake?.map((facility) => new MappableObjectForFront(facility, FacilityIntakeMappings).toJSON())
       applicationIntakes.push(intake)
     })
-    lookupCache.put('applicationIntakes', applicationIntakes, ONE_HOUR_MS)
+    Redis.jsonSet('applicationIntakes', '$', applicationIntakes).catch((error) => log.error('Could not set applicationIntakes with Redis', error))
   }
   return applicationIntakes
 }
 
 async function getRoles() {
-  let roles = lookupCache.get('roles')
+  let roles
+  try {
+    roles = await Redis.jsonGet('roles')
+  } catch (e) {
+    log.error('Could not retrieve roles data from Redis', e)
+  }
+
   if (!roles) {
     roles = []
     const response = await getOperation(
@@ -88,7 +117,7 @@ async function getRoles() {
       roles.push(role)
     })
     roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
-    lookupCache.put('roles', roles, ONE_HOUR_MS)
+    Redis.jsonSet('roles', '$', roles).catch((error) => log.error('Could not set roles with Redis', error))
   }
   return roles
 }
@@ -173,21 +202,103 @@ async function getLookupInfo(_req, res) {
   }
 }
 
+async function retrieveSystemMessages() {
+  let systemMessages
+  try {
+    systemMessages = await Redis.jsonGet('systemMessages')
+  } catch (e) {
+    log.error('Could not retrieve the systemMessages from Redis', e)
+  }
+
+  if (!systemMessages) {
+    systemMessages = []
+    const currentTime = new Date().toISOString()
+    const response = await getOperation(
+      `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
+    )
+    response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
+    Redis.jsonSet('systemMessages', '$', systemMessages).catch((error) => log.error('Could not set systemMessages with Redis', error))
+  }
+  return systemMessages
+}
+
 async function getSystemMessages(_req, res) {
   try {
-    let systemMessages = lookupCache.get('systemMessages')
-    if (!systemMessages) {
-      systemMessages = []
-      const currentTime = new Date().toISOString()
-      const response = await getOperation(
-        `ofm_system_messages?$select=ofm_message&$filter=(statecode eq 0 and ofm_start_date le ${currentTime} and ofm_end_date ge ${currentTime})&$orderby=ofm_start_date`,
-      )
-      response?.value?.forEach((item) => systemMessages.push(new MappableObjectForFront(item, SystemMessageMappings)))
-      lookupCache.put('systemMessages', systemMessages, ONE_HOUR_MS)
-    }
+    const systemMessages = await retrieveSystemMessages()
     return res.status(HttpStatus.OK).json(systemMessages)
   } catch (e) {
     handleError(res, e)
+  }
+}
+
+async function hourlyPrecache() {
+  if (Redis.isReady) {
+    const expireKeys = [
+      'applicationIntakes',
+      'requestCategories',
+      'requestSubCategories',
+      'roles',
+      'businessTypes',
+      'healthAuthorities',
+      'applicationFacilityTypes',
+      'licenceTypes',
+      'paymentTypes',
+      'unions',
+    ]
+    const expired = expireKeys.map((key) => {
+      return Redis.expire(key, 0)
+    })
+    await Promise.all(expired)
+    await Promise.all([
+      getApplicationIntakes(),
+      getRequestCategories(),
+      getRequestSubCategories(),
+      getRoles(),
+      getBusinessTypes(),
+      getHealthAuthorities(),
+      getFacilityTypes(),
+      getLicenceTypes(),
+      // getReportTemplates(),
+      getPaymentTypes(),
+      getUnions(),
+    ])
+  } else {
+    log.info('Cannot run hourly precache without Redis being ready')
+  }
+}
+
+async function quarterHourPrecache() {
+  if (Redis.isReady) {
+    await Redis.expire('systemMessages', 0)
+    await retrieveSystemMessages()
+  } else {
+    log.info('Cannot run quarter hour precache without Redis being ready')
+  }
+}
+
+const preCacheJobs = [
+  {
+    cron: new CronJob('* 0 * * * *', hourlyPrecache),
+    onTick: hourlyPrecache,
+  },
+  {
+    cron: new CronJob('* */15 * * * *', quarterHourPrecache),
+    onTick: quarterHourPrecache,
+  },
+]
+
+async function startCacheJobs() {
+  log.info('Starting cache jobs')
+  for (const job of preCacheJobs) {
+    await job.onTick()
+    job.cron.start()
+  }
+}
+
+function stopCacheJobs() {
+  log.info('Stopping cache jobs')
+  for (const job of preCacheJobs) {
+    job.cron.stop()
   }
 }
 
@@ -195,4 +306,6 @@ module.exports = {
   getLookupInfo,
   getRoles,
   getSystemMessages,
+  startCacheJobs,
+  stopCacheJobs,
 }
