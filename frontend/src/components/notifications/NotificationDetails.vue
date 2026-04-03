@@ -40,7 +40,7 @@
                 <template #[`item.fileName`]="{ item }">
                   <a href="#" @click="getFile(item)">{{ item.fileName }}</a>
                 </template>
-                <template #[`item.lastUpdatedTime`]="{ item }">{{ format.formatDateToLocale(item?.lastUpdatedTime) }}</template>
+                <template #[`item.lastUpdatedTime`]="{ item }">{{ format.formatDateToLocale(item?.lastUpdatedTime || notification.dateReceived) }}</template>
               </v-data-table>
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -103,14 +103,17 @@ export default {
       this.panel = []
       this.isLookingUpDocuments = true
       this.loadedAttachments = []
-      this.loadedAttachments = await DocumentService.getSharedDocuments(newVal)
+      const docPromises = [await DocumentService.getAttachments(newVal), await DocumentService.getSharedDocuments(newVal)]
+      await Promise.all(docPromises)
+      this.loadedAttachments = DocumentService.sortDocuments([...docPromises[0], ...docPromises[1]])
       this.isLookingUpDocuments = false
     },
   },
   methods: {
     async getFile(document) {
       try {
-        const file = await DocumentService.getDocumentFileByID(document.documentId)
+        const getter = document.type === 'attachment' ? DocumentService.getAttachmentByID : DocumentService.getDocumentFileByID
+        const file = await getter(document.documentId)
         createFileDownloadLink(file, document.fileName)
       } catch (e) {
         console.error(e)
