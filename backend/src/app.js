@@ -191,7 +191,7 @@ Redis.init()
         const role = roles.find((role) => role.roleName === 'Impersonate')
 
         // Store the role in Dynamics format to match BCeID
-        profile.role = new MappableObjectForBack(role.toJSON(), RoleMappings).toJSON()
+        profile.role = new MappableObjectForBack(role, RoleMappings).toJSON()
 
         // IDIR users don't have an Organization
         // The Org is only assigned in the frontend when impersonating a BCeID user
