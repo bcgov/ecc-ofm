@@ -278,11 +278,11 @@ async function quarterHourPrecache() {
 
 const preCacheJobs = [
   {
-    cron: new CronJob('* 0 * * * *', hourlyPrecache),
+    cron: new CronJob('0 * * * *', hourlyPrecache),
     onTick: hourlyPrecache,
   },
   {
-    cron: new CronJob('* */15 * * * *', quarterHourPrecache),
+    cron: new CronJob('*/15 * * * *', quarterHourPrecache),
     onTick: quarterHourPrecache,
   },
 ]
