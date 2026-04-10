@@ -114,9 +114,9 @@ async function getRoles() {
     response?.value?.forEach((item) => {
       const role = new MappableObjectForFront(item, RoleMappings)
       role.data.permissions = item.ofm_portal_role_permission.map((p) => new MappableObjectForFront(p.ofm_portal_privilege, PermissionMappings).toJSON())
-      roles.push(role)
+      roles.push(role.data)
     })
-    roles.sort((a, b) => a.data.roleName?.localeCompare(b.data.roleName))
+    roles.sort((a, b) => a.roleName?.localeCompare(b.roleName))
     Redis.jsonSet('roles', '$', roles).catch((error) => log.error('Could not set roles with Redis', error))
   }
   return roles
@@ -278,11 +278,11 @@ async function quarterHourPrecache() {
 
 const preCacheJobs = [
   {
-    cron: new CronJob('* 0 * * * *', hourlyPrecache),
+    cron: new CronJob('0 * * * *', hourlyPrecache),
     onTick: hourlyPrecache,
   },
   {
-    cron: new CronJob('* */15 * * * *', quarterHourPrecache),
+    cron: new CronJob('*/15 * * * *', quarterHourPrecache),
     onTick: quarterHourPrecache,
   },
 ]
