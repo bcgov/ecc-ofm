@@ -17,7 +17,7 @@ async function getFundingAgreements(req, res) {
       'ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number'
     if (req.query?.includeFundingEnvelopes) {
       operation +=
-        ',ofm_envelope_hr_total_reallo,ofm_envelope_hr_wages_paidtimeoff_reallo,ofm_envelope_hr_benefits_reallo,ofm_envelope_hr_employerhealthtax_reallo,ofm_envelope_hr_prodevhours_reallo,ofm_envelope_hr_prodevexpenses_reallo,ofm_envelope_programming_reallo,ofm_envelope_administrative_reallo,ofm_envelope_operational_reallo,ofm_envelope_facility_reallo,ofm_envelope_grand_total_reallo'
+        ',ofm_envelope_hr_total_reallo,ofm_envelope_hr_wages_paidtimeoff_reallo,ofm_envelope_hr_benefits_reallo,ofm_envelope_hr_employerhealthtax_reallo,ofm_envelope_hr_prodevhours_reallo,ofm_envelope_hr_prodevexpenses_reallo,ofm_envelope_programming_reallo,ofm_envelope_administrative_reallo,ofm_envelope_operational_reallo,ofm_envelope_facility_reallo,ofm_envelope_grand_total_reallo,ofm_envelope_hr_total_topup,ofm_envelope_hr_wages_paidtimeoff_topup,ofm_envelope_hr_benefits_topup,ofm_envelope_hr_employerhealthtax_topup,ofm_envelope_hr_prodevhours_topup,ofm_envelope_hr_prodevexpenses_topup,ofm_envelope_programming_topup,ofm_envelope_administrative_topup,ofm_envelope_operational_topup,ofm_envelope_facility_topup'
     }
     if (req.query?.includeEA) {
       operation += '&$expand=ofm_application($select=_ofm_expense_authority_value;$expand=ofm_expense_authority($select=ofm_first_name,ofm_last_name))'
