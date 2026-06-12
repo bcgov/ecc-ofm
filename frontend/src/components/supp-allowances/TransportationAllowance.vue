@@ -179,7 +179,7 @@ import AppNumberInput from '@/components/ui/AppNumberInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDocumentUpload from '@/components/ui/AppDocumentUpload.vue'
 import { cloneDeep } from 'lodash'
-import { uuid } from 'vue-uuid'
+import { v1 as uuidv1 } from 'uuid'
 import { SUPPLEMENTARY_TYPES, DOCUMENT_TYPES } from '@/utils/constants'
 import { isApplicationLocked, hasDuplicateVIN } from '@/utils/common'
 import format from '@/utils/format'
@@ -272,7 +272,7 @@ export default {
         supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
         uploadedDocuments: [],
         documentsToUpload: [],
-        id: uuid.v1(),
+        id: uuidv1(),
         renewalTerm: this.renewalTerm,
         retroactiveDate: null,
       }
