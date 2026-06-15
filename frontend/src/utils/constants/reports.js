@@ -21,8 +21,11 @@ function toFixedResponseSum(questions) {
 }
 
 export const REPORT_SECTION_TITLES = Object.freeze({
+  ADMINISTRATION: 'Administration',
   HUMAN_RESOURCES: 'Human Resources',
+  OPERATIONAL: 'Operational',
   ENROLMENT: 'Enrolment',
+  FACILITY: 'Facility',
   UNDER_ENROLMENT: 'Under Enrolment',
   OVERALL_FUNDING: 'Overall Funding',
 })

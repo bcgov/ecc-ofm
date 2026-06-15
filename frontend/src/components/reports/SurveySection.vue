@@ -7,6 +7,23 @@
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ADMINISTRATION" type="info">
+        For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT" type="info">
+        For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT" type="question">
+        Operational spaces are the total number of child care spaces that may be occupied based on the operational capacity of your centre. For more information, please review the Policy and
+        Procedures Manual in the Help and Resources section.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.FACILITY" type="info">
+        For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
       <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.UNDER_ENROLMENT" type="warning">
         Enrolment Capacity:
         {{ cumulativeEnrolment }}%
@@ -16,7 +33,14 @@
         <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
           <div v-if="isInstructions(question)" v-html="question?.additionalInfo" />
           <div v-else-if="!question.hide">
-            <AppLabel>{{ question?.text }}</AppLabel>
+            <div class="d-flex align-center">
+              <AppLabel>{{ question?.text }}</AppLabel>
+              <v-tooltip v-if="question?.toolTip" content-class="tooltip" :text="question.toolTip" location="bottom">
+                <template #activator="{ props }">
+                  <v-icon size="large" v-bind="props" class="ml-1">mdi-information-slab-circle-outline</v-icon>
+                </template>
+              </v-tooltip>
+            </div>
             <div v-if="question?.additionalInfo" class="my-2" v-html="question?.additionalInfo" />
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
