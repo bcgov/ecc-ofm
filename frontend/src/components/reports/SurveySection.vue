@@ -7,6 +7,23 @@
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ADMINISTRATION" type="info">
+        For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT" type="info">
+        For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT" type="question">
+        Operational spaces are the total number of child care spaces that may be occupied based on the operational capacity of your centre. For more information, please review the Policy and
+        Procedures Manual in the Help and Resources section.
+      </AppAlertBanner>
+
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.FACILITY" type="info">
+        For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
+      </AppAlertBanner>
+
       <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.UNDER_ENROLMENT" type="warning">
         Enrolment Capacity:
         {{ cumulativeEnrolment }}%
@@ -16,7 +33,15 @@
         <div v-for="question in questions" :key="question.questionId" class="mt-4 mb-8">
           <div v-if="isInstructions(question)" v-html="question?.additionalInfo" />
           <div v-else-if="!question.hide">
-            <AppLabel>{{ question?.text }}</AppLabel>
+            <div class="d-flex align-center">
+              <AppLabel class="mb-0">{{ question?.text }}</AppLabel>
+              <v-tooltip v-if="question?.tooltip" content-class="tooltip" max-width="300px">
+                <template #activator="{ props }">
+                  <v-icon v-bind="props" size="small" class="ml-2">mdi-information-slab-circle-outline</v-icon>
+                </template>
+                {{ question?.tooltip }}
+              </v-tooltip>
+            </div>
             <div v-if="question?.additionalInfo" class="my-2" v-html="question?.additionalInfo" />
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
@@ -51,8 +76,7 @@ import SurveyQuestion from '@/components/reports/SurveyQuestion.vue'
 import SurveyTableQuestion from '@/components/reports/SurveyTableQuestion.vue'
 import AppAlertBanner from '@/components/ui/AppAlertBanner.vue'
 
-import { REPORT_SECTION_TITLES } from '@/utils/constants/reports'
-import { QIDS } from '@/utils/constants/reports'
+import { REPORT_SECTION_TITLES, QIDS } from '@/utils/constants/reports'
 
 export default {
   components: { AppLabel, SurveyQuestion, SurveyTableQuestion, AppAlertBanner },
@@ -123,6 +147,10 @@ export default {
 
     isInstructions(question) {
       return question?.type === this.SURVEY_QUESTION_TYPES.INSTRUCTIONS
+    },
+
+    isOperationalPhoneInternetQuestion(question) {
+      return question?.uniqueId === QIDS.OPERATIONAL_PHONE_INTERNET_FEES
     },
   },
 }

@@ -101,4 +101,18 @@ export default {
 .bc-gov-alertbanner-success a {
   color: #2b542c;
 }
+
+.bc-gov-alertbanner-question {
+  background-color: #c1ddfc;
+  border-color: #c1ddfc;
+  color: #000000;
+}
+
+.bc-gov-alertbanner-question:before {
+  content: '\f059';
+}
+
+.bc-gov-alertbanner-question a {
+  color: #000000;
+}
 </style>

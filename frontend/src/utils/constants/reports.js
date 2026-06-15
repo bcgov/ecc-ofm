@@ -21,8 +21,11 @@ function toFixedResponseSum(questions) {
 }
 
 export const REPORT_SECTION_TITLES = Object.freeze({
+  ADMINISTRATION: 'Administration',
   HUMAN_RESOURCES: 'Human Resources',
+  OPERATIONAL: 'Operational',
   ENROLMENT: 'Enrolment',
+  FACILITY: 'Facility',
   UNDER_ENROLMENT: 'Under Enrolment',
   OVERALL_FUNDING: 'Overall Funding',
 })
@@ -32,6 +35,7 @@ export const REPORT_SECTION_TITLES = Object.freeze({
  */
 export const QIDS = {
   UNDER_ENROLMENT: 'QID47',
+  OPERATIONAL_PHONE_INTERNET_FEES: 'QID_OPERATIONAL_PHONE_INTERNET', // Question for operational phone/internet expenses
   UNDER_36_MONTHS_TOTAL_CAPACITY: 'QID56_3_1',
   UNDER_36_MONTHS_PART_TIME: 'QID56_1_1',
   UNDER_36_MONTHS_FULL_TIME: 'QID56_2_1',
