@@ -196,7 +196,7 @@ import alertMixin from '@/mixins/alertMixin'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { isEmpty, isEqual, cloneDeep } from 'lodash'
 import { SUPPLEMENTARY_TYPES, VIRUS_SCAN_ERROR_MESSAGE, GOOD_STANDING_STATUS_CODES, SUPPLEMENTARY_APPLICATION_STATUS_CODES, NOT_IN_GOOD_STANDING_WARNING_MESSAGE } from '@/utils/constants'
-import { uuid } from 'vue-uuid'
+import { v4 as uuidv4 } from 'uuid'
 import { mapState } from 'pinia'
 import { useOrgStore } from '@/stores/org'
 import { isApplicationLocked } from '@/utils/common'
@@ -482,7 +482,7 @@ export default {
     findAndUpdateModel(suppApplications, modelToUpdate, renewalTerm) {
       const foundApp = suppApplications.find((application) => application.supplementaryType === modelToUpdate.supplementaryType && application.renewalTerm == renewalTerm)
       modelToUpdate.renewalTerm = renewalTerm
-      modelToUpdate.id = uuid.v4()
+      modelToUpdate.id = uuidv4()
       return foundApp ?? modelToUpdate
     },
     updateTransportModel(transportApplications, term) {
@@ -497,7 +497,7 @@ export default {
           supplementaryType: SUPPLEMENTARY_TYPES.TRANSPORT,
           uploadedDocuments: [],
           documentsToUpload: [],
-          id: uuid.v4(),
+          id: uuidv4(),
           renewalTerm: term,
           retroactiveDate: null,
         })

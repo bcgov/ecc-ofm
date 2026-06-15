@@ -71,7 +71,7 @@
   </v-container>
 </template>
 <script>
-import { uuid } from 'vue-uuid'
+import { v1 as uuidv1 } from 'uuid'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import AppDialog from '@/components/ui/AppDialog.vue'
@@ -187,7 +187,7 @@ export default {
   },
   methods: {
     addFile() {
-      this.documents.push({ id: uuid.v1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
+      this.documents.push({ id: uuidv1(), entityName: this.entityName, isValidFile: true, documentType: this.documentType })
     },
 
     deleteFile(deletedItemId) {

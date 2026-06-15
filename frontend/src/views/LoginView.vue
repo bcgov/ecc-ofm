@@ -58,7 +58,7 @@
 
 <script>
 import { mapActions, mapState } from 'pinia'
-import { uuid } from 'vue-uuid'
+import { v4 as uuidv4 } from 'uuid'
 
 import { AuthRoutes } from '@/utils/constants'
 import { useAuthStore } from '@/stores/auth'
@@ -94,7 +94,7 @@ export default {
       try {
         this.loading = true
         this.systemMessages = await LookupService.getSystemMessages()
-        this.systemMessages?.forEach((message) => (message.id = uuid.v4()))
+        this.systemMessages?.forEach((message) => (message.id = uuidv4()))
       } catch (error) {
         this.setFailureAlert('Failed to load system messages', error)
       } finally {
