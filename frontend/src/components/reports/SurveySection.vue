@@ -60,6 +60,13 @@
               :validation="true"
               :readonly="readonly"
               @update="updateResponses" />
+            <SurveyQuestion
+              v-else-if="isOverallFundingQuestion"
+              :question="question"
+              :response="getQuestionResponse(question)"
+              :validation="validation"
+              :readonly="readonly || isOverallFundingQuestion(question)"
+              @update="updateResponses" />
             <SurveyQuestion v-else :question="question" :response="getQuestionResponse(question)" :validation="validation" :readonly="readonly" @update="updateResponses" />
           </div>
         </div>
@@ -125,6 +132,10 @@ export default {
 
     isUnderEnrolmentQuestion(question) {
       return question.uniqueId === QIDS.UNDER_ENROLMENT
+    },
+
+    isOverallFundingQuestion(question) {
+      return question?.uniqueId === QIDS.OVERALL_FUNDING
     },
 
     getTableQuestionHeaders(tableQuestion) {
