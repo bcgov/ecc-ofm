@@ -8,8 +8,8 @@
     "cy:run-one": "cypress run --browser electron --headed --spec "
   },
   "devDependencies": {
-    "cypress": "^13.3.0",
+    "cypress": "^15.17.0",
     "mochawesome": "^7.1.3",
-    "uuid": "^10.0.0"
+    "uuid": "^14.0.0"
   }
 }
