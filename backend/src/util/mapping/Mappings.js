@@ -464,6 +464,7 @@ const SurveyQuestionMappings = [
   { back: '_ofm_header_value', front: 'tableQuestionId' },
   { back: 'ofm_maximum_rows', front: 'tableMaxRows' },
   { back: 'ofm_additional_info', front: 'additionalInfo' },
+  { back: 'ofm_tool_tip', front: 'tooltip' },
   { back: 'statuscode', front: 'statusCode' },
   { back: 'statecode', front: 'stateCode' },
 ]
