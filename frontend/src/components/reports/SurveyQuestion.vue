@@ -110,6 +110,7 @@ import rules from '@/utils/rules'
 import { isEmpty, cloneDeep } from 'lodash'
 import { convertStringToArray } from '@/utils/common'
 import { SURVEY_QUESTION_MULTIPLE_CHOICE_SEPARATOR } from '@/utils/constants'
+import { QIDS } from '@/utils/constants/reports'
 
 export default {
   components: { AppDateInput, AppNumberInput },
@@ -161,7 +162,7 @@ export default {
 
   computed: {
     disabled() {
-      return this.readonly || !isEmpty(this.question?.inheritanceValues) || this.isFixedResponseQuestion
+      return this.readonly || !isEmpty(this.question?.inheritanceValues) || this.isFixedResponseQuestion || this.question?.uniqueId === QIDS.REVENUE
     },
     // Note: For now, we can have a fixed response question for these question types: Number, Currency, Text
     isFixedResponseQuestion() {
