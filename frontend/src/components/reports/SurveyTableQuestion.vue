@@ -1,6 +1,16 @@
 <template>
   <v-container fluid class="pa-0 ma-0">
     <v-data-table-virtual ref="virtualTable" :headers="tableHeaders" :items="updatedResponses" item-value="name" :height="tableHeight" fixed-header>
+      <template v-for="header in tableHeaders" #[`header.${header.key}`]="{ column }" :key="header.key">
+        <div class="d-flex align-center">
+          <span>{{ column.title }}</span>
+          <v-tooltip v-if="header.toolTip" content-class="tooltip" :text="header.toolTip" location="bottom">
+            <template #activator="{ props }">
+              <v-icon size="large" v-bind="props" class="ml-1">mdi-information-slab-circle-outline</v-icon>
+            </template>
+          </v-tooltip>
+        </div>
+      </template>
       <template #item="{ item }">
         <tr>
           <td v-for="question in questions" :key="question?.questionId" :class="readonly ? 'py-4' : 'pt-4'">
@@ -81,6 +91,7 @@ export default {
           title: header.text,
           key: header.questionId,
           sortable: false,
+          toolTip: header.toolTip ?? null,
         }
       })
       if (!this.hasValueInheritanceChildQuestions) {
