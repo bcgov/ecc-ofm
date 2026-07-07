@@ -41,7 +41,7 @@
                 </template>
               </v-tooltip>
             </div>
-            <div v-if="question?.additionalInfo" class="my-2" v-html="question?.additionalInfo" />
+            <div v-if="question?.additionalInfo" class="my-2" :class="{ 'overall-funding-section': section.title === REPORT_SECTION_TITLES.OVERALL_FUNDING }" v-html="question?.additionalInfo" />
             <SurveyTableQuestion
               v-if="isTableQuestion(question)"
               :questions="getTableQuestionHeaders(question)"
@@ -157,5 +157,17 @@ export default {
 }
 .min-height-screen {
   min-height: 60vh;
+}
+</style>
+
+<style>
+.overall-funding-section table {
+  border-collapse: collapse;
+  border: 1px solid #e0e0e0;
+}
+.overall-funding-section th,
+.overall-funding-section td {
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
 }
 </style>
