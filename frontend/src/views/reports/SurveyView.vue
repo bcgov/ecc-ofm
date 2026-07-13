@@ -111,7 +111,7 @@ export default {
       return this.sections?.every((section) => section.isComplete)
     },
     isUnderEnrolled() {
-      return this.cumulativeEnrolment <= 80
+      return this.cumulativeEnrolment < 80
     },
     showIncompleteSurveyErrorAlert() {
       const index = this.sections?.findIndex((section) => !this.isLastSection(section) && !section.isComplete)
