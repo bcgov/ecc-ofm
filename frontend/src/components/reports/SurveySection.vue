@@ -117,7 +117,7 @@ export default {
       return this.section?.questions?.filter((question) => !this.isTableQuestionHeader(question))
     },
     isV5Template() {
-      const version = Number(this.surveyResponse?.version)
+      const version = Number(this.surveyResponse?.templateVersion)
       return Number.isFinite(version) && version >= 5
     },
   },

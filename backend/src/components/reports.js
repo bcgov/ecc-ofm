@@ -137,10 +137,10 @@ async function getSurveyResponsesCount(req, res) {
 
 async function getSurveyResponse(req, res) {
   try {
-    const operation = `ofm_survey_responses(${req?.params?.surveyResponseId})?$expand=ofm_survey($select=ofm_version)`
+    const operation = `ofm_survey_responses(${req?.params?.surveyResponseId})?$expand=ofm_survey($select=ofm_template_version)`
     const response = await getOperation(operation)
     const mappedResponse = new MappableObjectForFront(response, SurveyResponseMappings).toJSON()
-    mappedResponse.version = response?.ofm_survey?.ofm_version
+    mappedResponse.templateVersion = response?.ofm_survey?.ofm_template_version
     return res.status(HttpStatus.OK).json(mappedResponse)
   } catch (e) {
     log.error(e)
