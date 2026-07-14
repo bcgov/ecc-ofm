@@ -148,8 +148,8 @@ export const FIXED_PERCENTAGE_QUESTIONS = [
         questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_BEFORE_SCHOOL_TOTAL_CAPACITY)?.questionId,
         questions.find((q) => q.uniqueId === QIDS.SCHOOL_AGE_AFTER_SCHOOL_TOTAL_CAPACITY)?.questionId,
       ]
-      const enrolment = enrolmentQuestionIds.reduce(toQuestionResponseSum(responses), 0)
-      const totalCapacity = capacityQuestionIds.reduce(toFixedResponseSum(questions), 0)
+      const enrolment = enrolmentQuestionIds.reduce(toQuestionResponseSum(responses), 0) / 2
+      const totalCapacity = capacityQuestionIds.reduce(toFixedResponseSum(questions), 0) / 2
       if (totalCapacity <= 0) return { included: false }
       return { included: true, percent: Math.floor((enrolment / totalCapacity) * 100), totalCapacity, enrolment }
     },
