@@ -14,6 +14,7 @@
           :validation="validation"
           :responses="responsesToBeDisplayed"
           :cumulative-enrolment="cumulativeEnrolment"
+          :survey-response="surveyResponse"
           @update="updateClonedResponses"
           @delete-table-responses="deleteTableResponses" />
         <v-alert v-if="showIncompleteSurveyErrorAlert" type="error" title="You cannot submit the report until it is complete.">

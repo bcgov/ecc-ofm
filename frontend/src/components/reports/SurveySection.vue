@@ -7,20 +7,20 @@
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
-      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ADMINISTRATION" type="info">
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ADMINISTRATION && isV5Template" type="info">
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
-      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT" type="info">
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT && isV5Template" type="info">
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
-      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT" type="question">
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.ENROLMENT && isV5Template" type="question">
         Operational spaces are the total number of child care spaces that may be occupied based on the operational capacity of your centre. For more information, please review the Policy and
         Procedures Manual in the Help and Resources section.
       </AppAlertBanner>
 
-      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.FACILITY" type="info">
+      <AppAlertBanner v-if="section.title === REPORT_SECTION_TITLES.FACILITY && isV5Template" type="info">
         For your convenience, most of this information has been pre-filled based on information you provided in previous monthly reports. Please review carefully and update any changes as needed.
       </AppAlertBanner>
 
@@ -104,6 +104,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    surveyResponse: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   emits: ['update', 'deleteTableResponses'],
@@ -111,6 +115,10 @@ export default {
   computed: {
     questions() {
       return this.section?.questions?.filter((question) => !this.isTableQuestionHeader(question))
+    },
+    isV5Template() {
+      const version = Number(this.surveyResponse?.templateVersion)
+      return Number.isFinite(version) && version >= 5
     },
   },
 
