@@ -351,7 +351,7 @@ const FundingAgreementMappings = [
   { back: 'ofm_envelope_administrative', front: 'envelope_Administrative' },
   { back: 'ofm_envelope_operational', front: 'envelope_Operational' },
   { back: 'ofm_envelope_facility', front: 'envelope_Facility' },
-  { back: 'ofm_envelope_hr_total_reallo', front: 'reallocated_HRTotal' },
+  { back: 'ofm_envelope_hr_total_reallo', front: 'reallocation_HRTotal' },
   { back: 'ofm_envelope_hr_wages_paidtimeoff_reallo', front: 'reallocation_HRWagePaidTimeOff' },
   { back: 'ofm_envelope_hr_benefits_reallo', front: 'reallocation_HRBenefits' },
   { back: 'ofm_envelope_hr_employerhealthtax_reallo', front: 'reallocation_HREmployerHealthTax' },
