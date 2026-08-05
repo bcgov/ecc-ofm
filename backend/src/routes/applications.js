@@ -2,6 +2,7 @@ const express = require('express')
 const passport = require('passport')
 const router = express.Router()
 const auth = require('../components/auth')
+const { getFundingReallocationRequests } = require('../components/applications')
 const isValidBackendToken = auth.isValidBackendToken()
 const {
   getApplications,
@@ -117,6 +118,21 @@ router.post(
   (req, res) => {
     validationResult(req).throw()
     return createApplication(req, res)
+  },
+)
+
+/**
+ * Get the list of Funding Reallocation Requests
+ */
+router.get(
+  '/:applicationId/funding-reallocation-requests',
+  passport.authenticate('jwt', { session: false }),
+  isValidBackendToken,
+  validatePermission(PERMISSIONS.VIEW_FUNDING_AGREEMENT),
+  [param('applicationId', 'URL param: [applicationId] is required').notEmpty().isUUID(EXPRESS_VALIDATOR_UUID_VERSION)],
+  (req, res) => {
+    validationResult(req).throw()
+    return getFundingReallocationRequests(req, res)
   },
 )
 

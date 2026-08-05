@@ -1,7 +1,13 @@
 'use strict'
 const { getOperation, patchOperationWithObjectId, postOperation, deleteOperationWithObjectId, handleError, formatDateTimeForBack } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
-const { ApplicationMappings, ApplicationProviderEmployeeMappings, SupplementaryApplicationMappings } = require('../util/mapping/Mappings')
+const {
+  ApplicationMappings,
+  ApplicationProviderEmployeeMappings,
+  SupplementaryApplicationMappings,
+  FundingAllocationChangeMappings,
+  FundingReallocationRequestMappings,
+} = require('../util/mapping/Mappings')
 const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
@@ -261,6 +267,24 @@ async function deleteEmployeeCertificate(req, res) {
   }
 }
 
+async function getFundingReallocationRequests(req, res) {
+  try {
+    const operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode&$filter=(_ofm_applicationid_value eq ${req?.params?.applicationId})&$expand=ofm_funding_allocation_envelope_change($select=ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base)&pageSize=500`
+    const response = await getOperation(operation)
+
+    const fundingReallocationRequests = response?.value.map((reallocationRequest) => {
+      const fundingAllocations = reallocationRequest.ofm_funding_allocation_envelope_change?.map((allocation) => new MappableObjectForFront(allocation, FundingAllocationChangeMappings).toJSON())
+      const fundingRequest = new MappableObjectForFront(reallocationRequest, FundingReallocationRequestMappings).toJSON()
+      fundingRequest.fundingAllocations = fundingAllocations
+      return fundingRequest
+    })
+
+    return res.status(HttpStatus.OK).json(fundingReallocationRequests)
+  } catch (e) {
+    handleError(res, e)
+  }
+}
+
 module.exports = {
   getApplications,
   getApplicationsCount,
@@ -278,4 +302,5 @@ module.exports = {
   getSupplementaryApplicationPDF,
   getSupplementaryApprovalPDF,
   getSupplementaryApplicationById,
+  getFundingReallocationRequests,
 }

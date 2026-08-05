@@ -108,16 +108,6 @@ export default {
     }
   },
 
-  async getFundingReallocationRequestsByApplicationId(applicationId) {
-    try {
-      if (!applicationId) return
-      const response = await ApiService.apiAxios.get(`${ApiRoutes.FUNDING_AGREEMENTS}/${applicationId}/funding-reallocation-requests`)
-      return response?.data
-    } catch (error) {
-      console.log(`Failed to get the funding reallocation requests by funding agreement id - ${error}`)
-      throw error
-    }
-  },
   async fundingAgreementExists(facilityIds) {
     try {
       const response = await ApiService.apiAxios.post(`${ApiRoutes.FUNDING_AGREEMENTS}/exists`, { facilityIds })

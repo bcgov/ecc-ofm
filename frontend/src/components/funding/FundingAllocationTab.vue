@@ -46,6 +46,7 @@ import alertMixin from '@/mixins/alertMixin.js'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES, REQUEST_CATEGORY_NAMES } from '@/utils/constants'
 import isEmpty from 'lodash/isEmpty'
+import ApplicationService from "@/services/applicationService";
 
 export default {
   name: 'FundingAllocationTab',
@@ -89,7 +90,7 @@ export default {
       try {
         this.loading = true
         this.fundingDetails = await FundingAgreementService.getFundingEnvelopesByFacilityIdAndStatus(this.selectedFacility?.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-        this.fundingReallocationRequests = await FundingAgreementService.getFundingReallocationRequestsByApplicationId(this.fundingDetails?.applicationId)
+        this.fundingReallocationRequests = await ApplicationService.getFundingReallocationRequestsByApplicationId(this.fundingDetails?.applicationId)
         this.sortFundingReallocationRequests()
       } catch (error) {
         this.setFailureAlert('Failed to load funding re-allocation requests', error)
