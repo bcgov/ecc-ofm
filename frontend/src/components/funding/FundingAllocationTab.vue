@@ -46,7 +46,7 @@ import alertMixin from '@/mixins/alertMixin.js'
 import permissionsMixin from '@/mixins/permissionsMixin'
 import { FUNDING_AGREEMENT_STATUS_CODES, REQUEST_CATEGORY_NAMES } from '@/utils/constants'
 import isEmpty from 'lodash/isEmpty'
-import ApplicationService from '@/services/applicationService';
+import ApplicationService from '@/services/applicationService'
 
 export default {
   name: 'FundingAllocationTab',
