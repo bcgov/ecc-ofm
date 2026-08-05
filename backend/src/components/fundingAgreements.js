@@ -107,7 +107,7 @@ async function updateFundingAgreement(req, res) {
 
 async function getFundingReallocationRequests(req, res) {
   try {
-    const operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode&$filter=(_ofm_funding_value eq ${req?.params?.fundingAgreementId})&$expand=ofm_funding_allocation_envelope_change($select=ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base)&pageSize=500`
+    const operation = `ofm_funding_envelope_changes?$select=ofm_funding_envelope_changeid,_ofm_funding_value,ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base,createdon,statuscode&$filter=(_ofm_applicationid_value eq ${req?.params?.applicationId})&$expand=ofm_funding_allocation_envelope_change($select=ofm_funding_envelope_from,ofm_funding_envelope_to,ofm_amount_base)&pageSize=500`
     const response = await getOperation(operation)
 
     const fundingReallocationRequests = response?.value.map((reallocationRequest) => {

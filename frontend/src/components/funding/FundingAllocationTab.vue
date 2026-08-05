@@ -89,7 +89,7 @@ export default {
       try {
         this.loading = true
         this.fundingDetails = await FundingAgreementService.getFundingEnvelopesByFacilityIdAndStatus(this.selectedFacility?.facilityId, FUNDING_AGREEMENT_STATUS_CODES.ACTIVE)
-        this.fundingReallocationRequests = await FundingAgreementService.getFundingReallocationRequestsByFundingAgreementId(this.fundingDetails?.fundingId)
+        this.fundingReallocationRequests = await FundingAgreementService.getFundingReallocationRequestsByApplicationId(this.fundingDetails?.applicationId)
         this.sortFundingReallocationRequests()
       } catch (error) {
         this.setFailureAlert('Failed to load funding re-allocation requests', error)
