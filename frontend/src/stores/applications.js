@@ -52,7 +52,8 @@ export const useApplicationsStore = defineStore('applications', {
         this.currentApplication.uploadedDocuments = uploadedDocuments
         this.currentApplication.licences = licences
         this.currentApplication.facility = facility
-        this.currentApplication.facilityCanAddApplication = authStore.userInfo.facilities.find((f) => f.facilityId === facility.facilityId)?.intakeWindowCheckForAddApplication || false
+        this.currentApplication.facilityCanAddApplication =
+          this.isRenewal || authStore.userInfo.facilities.find((f) => f.facilityId === facility.facilityId)?.intakeWindowCheckForAddApplication || false
         this.checkApplicationComplete()
       } catch (error) {
         console.log(`Failed to get the application by application id - ${error}`)
