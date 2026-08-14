@@ -115,14 +115,15 @@ async function updateFacility(req, res) {
 }
 function getNextBusinessDay(date) {
   const result = new Date(date)
-  const day = result.getDay()
+  const day = result.getUTCDay()
   if (day === 6) {
-    result.setDate(result.getDate() + 2)
+    result.setUTCDate(result.getUTCDate() + 2)
   } else if (day === 0) {
-    result.setDate(result.getDate() + 1)
+    result.setUTCDate(result.getUTCDate() + 1)
   }
   return result
 }
+
 async function getFacilitiesForRenewal(req, res) {
   try {
     const facilityIds = req.body?.facilityIds
@@ -133,16 +134,15 @@ async function getFacilitiesForRenewal(req, res) {
     const response = await getOperation(operation)
 
     const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    today.setUTCHours(0, 0, 0, 0)
 
     const facilityList = []
     response?.value?.forEach((fa) => {
       if (fa._ofm_facility_value && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
         const endDate = new Date(fa.ofm_end_date)
         const openDate = new Date(endDate)
-        openDate.setDate(openDate.getDate() - FA_EXPIRING_DAYS)
+        openDate.setUTCHours(openDate.getUTCDate() - FA_EXPIRING_DAYS)
         const businessOpenDate = getNextBusinessDay(openDate)
-
         if (today >= businessOpenDate) {
           facilityList.push({
             facilityId: fa._ofm_facility_value,
