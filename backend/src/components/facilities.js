@@ -6,12 +6,13 @@ const { FUNDING_AGREEMENT_STATUS_CODES, APPLICATION_RENEWAL_TYPES } = require('.
 const { getMappingString } = require('../util/common')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
+const { LocalDate, ZoneOffset, DayOfWeek } = require('@js-joda/core')
 
 //these numbers are specified in Dynamics. There is no 1 or 2 because that
 //is the typical mailing / physical address fields.
 const FIRST_ADDITIONAL_ADDRESS_NUMBER = 3
 const LAST_ADDITIONAL_ADDRESS_NUMBER = 13
-const FA_EXPIRING_DAYS = 120
+const FA_EXPIRING_DAYS = 56
 const FA_EXPIRED_DAYS = 30
 const RENEWAL_SUBMITTED_DAYS = 150
 
@@ -113,6 +114,22 @@ async function updateFacility(req, res) {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(e.data ? e.data : e?.status)
   }
 }
+function getNextBusinessDay(date) {
+  const day = date.dayOfWeek()
+  if (day === DayOfWeek.SATURDAY) {
+    return date.plusDays(2)
+  } else if (day === DayOfWeek.SUNDAY) {
+    return date.plusDays(1)
+  }
+  return date
+}
+
+function isRenewalOpen(endDate, today) {
+  const openDate = endDate.minusDays(FA_EXPIRING_DAYS)
+  const businessOpenDate = getNextBusinessDay(openDate)
+  return !today.isBefore(businessOpenDate)
+}
+
 async function getFacilitiesForRenewal(req, res) {
   try {
     const facilityIds = req.body?.facilityIds
@@ -122,14 +139,19 @@ async function getFacilitiesForRenewal(req, res) {
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
     const response = await getOperation(operation)
 
+    const today = LocalDate.now(ZoneOffset.UTC)
+
     const facilityList = []
     response?.value?.forEach((fa) => {
       if (fa._ofm_facility_value && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
-        facilityList.push({
-          facilityId: fa._ofm_facility_value,
-          fundingId: fa.ofm_fundingid,
-          facilityName: fa['_ofm_facility_value@OData.Community.Display.V1.FormattedValue'] || null,
-        })
+        const endDate = LocalDate.parse(fa.ofm_end_date)
+        if (isRenewalOpen(endDate, today)) {
+          facilityList.push({
+            facilityId: fa._ofm_facility_value,
+            fundingId: fa.ofm_fundingid,
+            facilityName: fa['_ofm_facility_value@OData.Community.Display.V1.FormattedValue'] || null,
+          })
+        }
       }
     })
 
@@ -159,4 +181,6 @@ module.exports = {
   updateFacility,
   getRawFacilityContacts,
   getFacilitiesForRenewal,
+  isRenewalOpen,
+  getNextBusinessDay,
 }
