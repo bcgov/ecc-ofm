@@ -6,6 +6,7 @@ const { FUNDING_AGREEMENT_STATUS_CODES, APPLICATION_RENEWAL_TYPES } = require('.
 const { getMappingString } = require('../util/common')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
+const { LocalDate, ZoneOffset, DayOfWeek } = require('@js-joda/core')
 
 //these numbers are specified in Dynamics. There is no 1 or 2 because that
 //is the typical mailing / physical address fields.
@@ -114,14 +115,19 @@ async function updateFacility(req, res) {
   }
 }
 function getNextBusinessDay(date) {
-  const result = new Date(date)
-  const day = result.getUTCDay()
-  if (day === 6) {
-    result.setUTCDate(result.getUTCDate() + 2)
-  } else if (day === 0) {
-    result.setUTCDate(result.getUTCDate() + 1)
+  const day = date.dayOfWeek()
+  if (day === DayOfWeek.SATURDAY) {
+    return date.plusDays(2)
+  } else if (day === DayOfWeek.SUNDAY) {
+    return date.plusDays(1)
   }
-  return result
+  return date
+}
+
+function isRenewalOpen(endDate, today) {
+  const openDate = endDate.minusDays(FA_EXPIRING_DAYS)
+  const businessOpenDate = getNextBusinessDay(openDate)
+  return !today.isBefore(businessOpenDate)
 }
 
 async function getFacilitiesForRenewal(req, res) {
@@ -133,17 +139,13 @@ async function getFacilitiesForRenewal(req, res) {
     const operation = `ofm_fundings?$select=ofm_fundingid,ofm_funding_number,ofm_declaration,ofm_start_date,ofm_end_date,_ofm_application_value,_ofm_facility_value,statuscode,statecode,ofm_version_number&$filter=${filter}&pageSize=500`
     const response = await getOperation(operation)
 
-    const today = new Date()
-    today.setUTCHours(0, 0, 0, 0)
+    const today = LocalDate.now(ZoneOffset.UTC)
 
     const facilityList = []
     response?.value?.forEach((fa) => {
       if (fa._ofm_facility_value && (fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.ACTIVE || fa.statuscode === FUNDING_AGREEMENT_STATUS_CODES.EXPIRED)) {
-        const endDate = new Date(fa.ofm_end_date)
-        const openDate = new Date(endDate)
-        openDate.setUTCHours(openDate.getUTCDate() - FA_EXPIRING_DAYS)
-        const businessOpenDate = getNextBusinessDay(openDate)
-        if (today >= businessOpenDate) {
+        const endDate = LocalDate.parse(fa.ofm_end_date)
+        if (isRenewalOpen(endDate, today)) {
           facilityList.push({
             facilityId: fa._ofm_facility_value,
             fundingId: fa.ofm_fundingid,
@@ -179,4 +181,6 @@ module.exports = {
   updateFacility,
   getRawFacilityContacts,
   getFacilitiesForRenewal,
+  isRenewalOpen,
+  getNextBusinessDay,
 }
