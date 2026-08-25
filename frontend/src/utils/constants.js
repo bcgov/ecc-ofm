@@ -249,7 +249,6 @@ export const APPLICATION_ERROR_MESSAGES = Object.freeze({
   DOCUMENT_HA_REPORT_UPLOAD: 'Document upload of your most recent Health Authority compliance report required',
   DOCUMENT_POLICY_PROCEDURE_UPLOAD: 'Document upload of your most recent Policy and Procedure Manual required',
   FACILITY_TYPE: 'Facility type required',
-  ARM_LENGTH: "Arm's Length agreement checkbox required",
   RENT_LEASE_DATE_RANGE: 'Rent lease start and end dates required',
   OPERATIONAL_COST: 'Operating costs required -or- Facility costs required',
   STAFFING: 'Staffing information required',

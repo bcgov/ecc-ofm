@@ -254,8 +254,8 @@ export default {
     isRentLeaseInformationComplete() {
       return (
         !this.isRentLease ||
-        (this.rentLeaseInfoModel?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
-          (this.rentLeaseInfoModel?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES || (this.rentLeaseInfoModel?.rentLeaseStartDate && this.rentLeaseInfoModel?.rentLeaseEndDate)))
+        this.rentLeaseInfoModel?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
+        (this.rentLeaseInfoModel?.rentLeaseStartDate && this.rentLeaseInfoModel?.rentLeaseEndDate)
       )
     },
     totalOperationalCost() {

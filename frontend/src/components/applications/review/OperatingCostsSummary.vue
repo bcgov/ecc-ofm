@@ -27,12 +27,7 @@
             </v-checkbox>
           </div>
           <div>
-            <AppMissingInfoError
-              v-if="!readonly && currentApplication.armsLength !== YES_NO_CHOICE_CRM_MAPPING.YES"
-              :to="{ name: routeName, hash: '#arm-length', params: { applicationGuid: $route.params.applicationGuid } }">
-              {{ APPLICATION_ERROR_MESSAGES.ARM_LENGTH }}
-            </AppMissingInfoError>
-            <v-checkbox v-else v-model="currentApplication.armsLength" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
+            <v-checkbox v-model="currentApplication.armsLength" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" disabled hide-details>
               <template #label>I attest that my rent/lease is at arm's length lease, or my lease is not at arm's length and I understand it is not an eligible expense.</template>
             </v-checkbox>
           </div>
