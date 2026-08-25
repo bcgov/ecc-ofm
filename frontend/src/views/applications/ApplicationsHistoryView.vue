@@ -573,7 +573,7 @@ export default {
           resp = await ApplicationService.getSupplementaryApplicationPDF(application.supplementaryApplicationId)
         }
 
-        createFileDownloadLink(resp, application.referenceNumber)
+        createFileDownloadLink(resp, `${application.referenceNumber}.pdf`)
       } catch (ignoreError) {
         this.setWarningAlert('PDF Generation is still in progress. Please wait a few minutes before you try again.')
       }
