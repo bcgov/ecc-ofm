@@ -9,6 +9,7 @@ const {
   FundingReallocationRequestMappings,
 } = require('../util/mapping/Mappings')
 const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
+const { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES } = require('../util/constants')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
@@ -116,6 +117,16 @@ async function updateApplication(req, res) {
 
 async function createApplication(req, res) {
   try {
+    let fiscalYearEndDate = null
+    if (req.body?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL) {
+      const previousAppFilter = `statuscode eq ${APPLICATION_STATUS_CODES.APPROVED} and _ofm_facility_value eq ${req.body.facilityId} and ofm_fiscal_year_end ne null`
+      const previousAppQuery = `ofm_applications?$select=ofm_fiscal_year_end&$filter=(${previousAppFilter})&$orderby=ofm_summary_submittedon desc&$top=1`
+      const previousApp = await getOperation(previousAppQuery)
+      if (previousApp?.value?.length > 0) {
+        fiscalYearEndDate = previousApp.value[0].ofm_fiscal_year_end
+      }
+    }
+
     const payload = {
       'ofm_facility@odata.bind': `/accounts(${req.body?.facilityId})`,
       'ofm_organization@odata.bind': `/accounts(${req.body?.organizationId})`,
@@ -123,6 +134,7 @@ async function createApplication(req, res) {
       ofm_summary_ownership: req.body?.ownership,
       'ofm_createdby@odata.bind': `/contacts(${req.body?.createdBy})`,
       ofm_application_type: req.body?.applicationRenewalType,
+      ofm_fiscal_year_end: fiscalYearEndDate,
     }
     const response = await postOperation('ofm_applications', payload)
     return res.status(HttpStatus.CREATED).json(new MappableObjectForFront(response, ApplicationMappings).toJSON())
