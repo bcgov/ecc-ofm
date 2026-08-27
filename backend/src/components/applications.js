@@ -9,7 +9,7 @@ const {
   FundingReallocationRequestMappings,
 } = require('../util/mapping/Mappings')
 const { buildFilterQuery, buildDateFilterQuery } = require('../util/common')
-const { APPLICATION_RENEWAL_TYPES } = require('../util/constants')
+const { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES } = require('../util/constants')
 const HttpStatus = require('http-status-codes')
 const { isEmpty } = require('lodash')
 const log = require('./logger')
@@ -119,7 +119,7 @@ async function createApplication(req, res) {
   try {
     let fiscalYearEndDate = null
     if (req.body?.applicationRenewalType === APPLICATION_RENEWAL_TYPES.RENEWAL) {
-      const previousAppFilter = `ofm_summary_submittedon ne null and _ofm_facility_value eq ${req.body.facilityId} and ofm_fiscal_year_end ne null`
+      const previousAppFilter = `statuscode eq ${APPLICATION_STATUS_CODES.APPROVED} and _ofm_facility_value eq ${req.body.facilityId} and ofm_fiscal_year_end ne null`
       const previousAppQuery = `ofm_applications?$select=ofm_fiscal_year_end&$filter=(${previousAppFilter})&$orderby=ofm_summary_submittedon desc&$top=1`
       const previousApp = await getOperation(previousAppQuery)
       if (previousApp?.value?.length > 0) {
