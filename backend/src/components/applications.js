@@ -122,7 +122,6 @@ async function createApplication(req, res) {
       const previousAppFilter = `ofm_summary_submittedon ne null and _ofm_facility_value eq ${req.body.facilityId} and ofm_fiscal_year_end ne null`
       const previousAppQuery = `ofm_applications?$select=ofm_fiscal_year_end&$filter=(${previousAppFilter})&$orderby=ofm_summary_submittedon desc&$top=1`
       const previousApp = await getOperation(previousAppQuery)
-      log.info('previousApp lookup result:', previousApp?.value)
       if (previousApp?.value?.length > 0) {
         fiscalYearEndDate = previousApp.value[0].ofm_fiscal_year_end
       }
