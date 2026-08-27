@@ -36,7 +36,7 @@
         <template #label>My facility's rent/lease is on a month-to-month basis.</template>
       </v-checkbox>
       <div id="arm-length" class="d-flex mt-2">
-        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :disabled="readonly" :hide-details="readonly">
+        <v-checkbox v-model="model.armsLength" color="primary" :true-value="YES_NO_CHOICE_CRM_MAPPING.YES" :false-value="YES_NO_CHOICE_CRM_MAPPING.NO" :disabled="readonly" :hide-details="readonly">
           <template #label>I attest that my rent/lease is at arm's length lease, or my lease is not at arm's length and I understand it is not an eligible expense.</template>
         </v-checkbox>
         <v-tooltip content-class="tooltip" max-width="300px" text="Third-parties dealing with each other at arm's length are independent and unrelated to each other.">
