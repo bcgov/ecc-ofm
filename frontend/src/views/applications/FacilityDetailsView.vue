@@ -8,9 +8,9 @@
         <AppDateInput
           id="fiscal-year-end-date"
           v-model="fiscalYearEndDate"
-          :rules="isRenewal ? [] : [...rules.required, rules.MMDDYYYY]"
-          :disabled="readonly || isRenewal"
-          :hide-details="readonly || isRenewal"
+          :rules="[...rules.required, rules.MMDDYYYY]"
+          :disabled="readonly"
+          :hide-details="readonly"
           label="Fiscal Year End Date"
           class="mt-3" />
       </v-row>
