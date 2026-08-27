@@ -186,9 +186,8 @@ export const useApplicationsStore = defineStore('applications', {
       const areCostsPositive = this.currentApplication?.totalYearlyOperatingCosts + this.currentApplication?.totalYearlyFacilityCosts > 0
       const isRentLeaseInformationComplete =
         !this.isRentLease(this.currentApplication) ||
-        (this.currentApplication?.armsLength === YES_NO_CHOICE_CRM_MAPPING.YES &&
-          (this.currentApplication?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
-            (this.currentApplication?.rentLeaseStartDate && this.currentApplication?.rentLeaseEndDate && this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)))
+        this.currentApplication?.monthToMonthRentLease === YES_NO_CHOICE_CRM_MAPPING.YES ||
+        (this.currentApplication?.rentLeaseStartDate && this.currentApplication?.rentLeaseEndDate && this.currentApplication?.rentLeaseEndDate > this.currentApplication?.rentLeaseStartDate)
       return this.currentApplication?.facilityType && isRentLeaseInformationComplete && isFacilityTypeRequiredDocsUploaded && areCostsPositive
     },
 
