@@ -23,7 +23,7 @@ npm install
 With NPM:
 
 ```sh
-npm run dev
+npm run serve
 ```
 
 ### Compile and Minify for Production
