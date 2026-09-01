@@ -121,11 +121,11 @@
         </template>
 
         <template #item.submittedDate="{ item }">
-          {{ format.formatDate(item.submittedDate) }}
+          {{ format.formatDateTime(item.submittedDate) }}
         </template>
 
         <template #item.latestActivityDate="{ item }">
-          {{ format.formatDate(item.latestActivityDate) }}
+          {{ format.formatDateTime(item.latestActivityDate) }}
         </template>
 
         <template #item.actionButtons="{ item }">
