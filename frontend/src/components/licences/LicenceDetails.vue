@@ -193,7 +193,7 @@
                               class="pr-2"
                               @update:model-value="update(licenceDetail)" />
                           </v-row>
-                          <span v-else>{{ formatTimeString(licenceDetail?.updatableOperationFromTime) }} - {{ formatTimeString(licenceDetail?.updatableOperationToTime) }}</span>
+                          <span v-else>{{ formatTimeDisplay(licenceDetail?.operationFromTime) }} - {{ formatTimeDisplay(licenceDetail?.operationToTime) }}</span>
                         </v-col>
                       </v-row>
                     </v-col>
@@ -268,6 +268,7 @@ import AppYesNoInput from '@/components/ui/AppYesNoInput.vue'
 import rules from '@/utils/rules'
 import { useAppStore } from '@/stores/app'
 import { BLANK_FIELD, DAYS_OF_WEEK } from '@/utils/constants'
+import format from '@/utils/format'
 
 export default {
   name: 'LicenceDetails',
@@ -381,9 +382,10 @@ export default {
       }
     },
 
-    formatTimeString(isoDateTime) {
-      const dt = new Date(isoDateTime)
-      return dt.toLocaleTimeString('en-US', { timeZone: 'UTC' }).toLowerCase()
+    formatTimeDisplay(timeValue) {
+      if (!timeValue) return ''
+      const is12h = timeValue.toUpperCase().includes('AM') || timeValue.toUpperCase().includes('PM')
+      return is12h ? timeValue.toLowerCase() : format.formatTime24to12(timeValue)
     },
   },
 }
