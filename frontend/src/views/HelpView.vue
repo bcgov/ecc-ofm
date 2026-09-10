@@ -121,22 +121,18 @@
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/C2F0091F036446AA9A6E715D91DC188B" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/843EFB8B907D4367B43959F899327266" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2025 - Policy and Procedure Manual</span>
+            <span>2026 - Policy and Procedure Manual</span>
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/8655C76EED6249D29523D5411ADA6B03" target="_blank">
+          <a href="https://www2.gov.bc.ca/assets/download/5463C126F1424128AC4F474352F98C2E" target="_blank">
             <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2025 - Funding Agreement Template</span>
+            <span>2026 - Funding Agreement Template</span>
           </a>
           <br />
           <br />
-          <a href="https://www2.gov.bc.ca/assets/download/16AB5EDAC27D495A9283BC090CF58CA9" target="_blank">
-            <v-icon size="18" icon="fa:fa-regular fa-file-pdf" class="mr-1"></v-icon>
-            <span>2025 - Intake Applicant Guide</span>
-          </a>
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
           <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
