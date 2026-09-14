@@ -135,19 +135,19 @@
           <br />
         </v-expansion-panel-text>
         <v-expansion-panel-text v-if="panelComponent.id === 'training'">
-          <a href="https://rise.articulate.com/share/_eN8nAZYN7_Jmi9tpG69W6dcza6aHsXZ#/" target="_blank">
+          <a href="https://share.articulate.com/rU7xSvInm0V_Oq8OgKL1z" target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>Funding Agreement Training e-Module</span>
           </a>
           <br />
           <br />
-          <a href="https://rise.articulate.com/share/5jymO4jk2gWm5csl-hiPdV6XN_d81gj8#/" target="_blank">
+          <a href="https://share.articulate.com/OBn6j77bk0hySo2wwsU6g" target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>Monthly Reporting e-Module</span>
           </a>
           <br />
           <br />
-          <a href="https://rise.articulate.com/share/4IlRwcyWDpuotLtH71zjj_czAkUUsPOw#/" target="_blank">
+          <a href="https://share.articulate.com/pbIkYv_e5xB1mQhDWS-ba" target="_blank">
             <v-icon size="20" icon="mdi-link-variant" class="mr-1"></v-icon>
             <span>Policy and Procedure Manual Training e-Module</span>
           </a>
