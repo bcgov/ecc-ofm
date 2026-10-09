@@ -175,7 +175,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
-  validateIntake,
+  validateIntake(),
   [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()
