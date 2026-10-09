@@ -135,7 +135,10 @@ export default {
     filteredFacilities() {
       if (this.isRenewal) {
         return this.userInfo?.facilities?.filter((facility) => {
-          return this.loadedApplications?.some((app) => app.facilityId === facility.facilityId) || this.facilitiesForRenewal?.some((fac) => fac.facilityId === facility.facilityId)
+          return (
+            facility.intakeWindowCheckForAddApplication &&
+            (this.loadedApplications?.some((app) => app.facilityId === facility.facilityId) || this.facilitiesForRenewal?.some((fac) => fac.facilityId === facility.facilityId))
+          )
         })
       }
 

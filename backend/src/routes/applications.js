@@ -26,6 +26,7 @@ const { query, param, validationResult, checkSchema } = require('express-validat
 const validateFacility = require('../middlewares/validateFacility.js')
 const validateOrganization = require('../middlewares/validateOrganization.js')
 const validatePermission = require('../middlewares/validatePermission.js')
+const validateIntake = require('../middlewares/validateIntake.js')
 const { PERMISSIONS, EXPRESS_VALIDATOR_UUID_VERSION } = require('../util/constants')
 
 module.exports = router
@@ -174,6 +175,7 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   isValidBackendToken,
   validatePermission(PERMISSIONS.APPLY_FOR_FUNDING),
+  validateIntake,
   [param('applicationId', 'URL param: [applicationId] is required').notEmpty()],
   (req, res) => {
     validationResult(req).throw()

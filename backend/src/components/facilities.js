@@ -2,7 +2,7 @@
 const { getOperation, patchOperationWithObjectId } = require('./utils')
 const { MappableObjectForFront, MappableObjectForBack } = require('../util/mapping/MappableObject')
 const { FacilityMappings, RoleMappings, UserMappings, UsersPermissionsFacilityMappings, LicenceMappings } = require('../util/mapping/Mappings')
-const { FUNDING_AGREEMENT_STATUS_CODES, APPLICATION_RENEWAL_TYPES } = require('../util/constants')
+const { FUNDING_AGREEMENT_STATUS_CODES, APPLICATION_RENEWAL_TYPES, APPLICATION_INTAKE_TYPES } = require('../util/constants')
 const { getMappingString } = require('../util/common')
 const log = require('./logger')
 const HttpStatus = require('http-status-codes')
@@ -130,6 +130,26 @@ function isRenewalOpen(endDate, today) {
   return !today.isBefore(businessOpenDate)
 }
 
+async function getFacilitiesWithValidIntake(facilityIds) {
+  const today = LocalDate.now(ZoneOffset.UTC).toString()
+  const operation = `ofm_intakes?$select=ofm_intakeid,ofm_intake_type,ofm_start_date,ofm_end_date&$filter=(statecode eq 0 and ofm_start_date le ${today} and ofm_end_date ge ${today})&$expand=ofm_intake_facilityintake($select=ofm_facility_intakeid,_ofm_facility_value)&pageSize=500`
+  const response = await getOperation(operation)
+
+  const validIntakeFacilityIds = new Set()
+  response?.value?.forEach((intake) => {
+    if (intake.ofm_intake_type === APPLICATION_INTAKE_TYPES.OPEN_INTAKE) {
+      facilityIds.forEach((id) => validIntakeFacilityIds.add(id))
+    } else if (intake.ofm_intake_type === APPLICATION_INTAKE_TYPES.LIMITED_INTAKE) {
+      intake.ofm_intake_facilityintake?.forEach((linked) => {
+        if (linked._ofm_facility_value) {
+          validIntakeFacilityIds.add(linked._ofm_facility_value)
+        }
+      })
+    }
+  })
+  return validIntakeFacilityIds
+}
+
 async function getFacilitiesForRenewal(req, res) {
   try {
     const facilityIds = req.body?.facilityIds
@@ -166,7 +186,16 @@ async function getFacilitiesForRenewal(req, res) {
     const renewalResponse = await getOperation(renewalOperation)
     const renewalFacilityIds = renewalResponse?.value?.map((app) => app._ofm_facility_value) || []
 
-    const finalList = facilityList.filter((fac) => !renewalFacilityIds.includes(fac.facilityId))
+    const afterRenewalFilter = facilityList.filter((fac) => !renewalFacilityIds.includes(fac.facilityId))
+
+    if (afterRenewalFilter.length === 0) {
+      return res.status(HttpStatus.OK).json([])
+    }
+
+    const eligibleFacilityIds = afterRenewalFilter.map((fac) => fac.facilityId)
+    const validIntakeFacilityIds = await getFacilitiesWithValidIntake(eligibleFacilityIds)
+
+    const finalList = afterRenewalFilter.filter((fac) => validIntakeFacilityIds.has(fac.facilityId))
 
     return res.status(HttpStatus.OK).json(finalList)
   } catch (e) {
@@ -181,6 +210,7 @@ module.exports = {
   updateFacility,
   getRawFacilityContacts,
   getFacilitiesForRenewal,
+  getFacilitiesWithValidIntake,
   isRenewalOpen,
   getNextBusinessDay,
 }
