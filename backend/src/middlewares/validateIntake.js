@@ -9,8 +9,8 @@ const { APPLICATION_RENEWAL_TYPES, APPLICATION_STATUS_CODES } = require('../util
  * @param
  * @returns
  */
-module.exports = function () {
-  return async function (req, res, next) {
+module.exports = function validateIntake() {
+  return async function validateIntakeMiddleware(req, res, next) {
     log.verbose('validating intake')
     try {
       if (req.body?.statusCode !== APPLICATION_STATUS_CODES.SUBMITTED) return next()
