@@ -4,6 +4,7 @@ import eslintPluginPrettier from 'eslint-plugin-prettier/recommended'
 import globals from 'globals'
 
 export default [
+  { ignores: ['tests/'] },
   js.configs.recommended,
   eslintPluginPrettier,
   {
