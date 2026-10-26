@@ -15,11 +15,18 @@ on:
       - 'ofmcc-*'
     paths:
       - 'frontend/src/**'
+      - 'frontend/test/**'
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - 'frontend/Dockerfile'
   pull_request:
     branches: [main]
     paths:
       - 'frontend/src/**'
-      - 'frontend/src/**'
+      - 'frontend/test/**'
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - 'frontend/Dockerfile'
 
 jobs:
   test:
@@ -34,9 +41,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.16.x'
+          node-version: '22.23.x'
       - run: npm ci
       - run: npm run lint
+      - run: npm test -- --run test/utils
 
   # TODO: Uncomment after project is set up in sonar
   # sonarcloud:

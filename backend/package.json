@@ -2,6 +2,9 @@
   "name": "ofm-backend",
   "version": "0.0.1",
   "description": "The backend portion of the OFM web app",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "scripts": {
     "serve": "npm run setlocal && npm run servecmd",
     "serve-linux": "export NODE_ENV='local' && nodemon ./src/server.js",
@@ -13,7 +16,7 @@
     "start": "node --max-old-space-size=450 ./src/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test": "node_modules/.bin/jest --env node --passWithNoTests",
+    "test": "jest --env node --passWithNoTests",
     "test-linux": "export NODE_ENV=test && node_modules/.bin/jest",
     "test:local": "npm run setlocal && npm run test",
     "test:unit": "npm run settest && npm run test",
@@ -52,7 +55,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
-    "moment-timezone": "^0.5.39",
+    "moment-timezone": "^0.6.5",
     "morgan": "^1.9.1",
     "multer": "^2.1.1",
     "nats": "^1.4.12",

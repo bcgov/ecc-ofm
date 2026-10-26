@@ -16,10 +16,18 @@ on:
       - 'ofmcc-*'
     paths:
       - 'backend/src/**'
+      - 'backend/tests/**'
+      - 'backend/package.json'
+      - 'backend/package-lock.json'
+      - 'backend/Dockerfile'
   pull_request:
     branches: [main]
     paths:
       - 'backend/src/**'
+      - 'backend/tests/**'
+      - 'backend/package.json'
+      - 'backend/package-lock.json'
+      - 'backend/Dockerfile'
 
 jobs:
   test:
@@ -32,11 +40,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.16.x'
+          node-version: '22.23.x'
       - run: npm ci
       - run: npm run lint
         env:
           NODE_ENV: 'test'
+      - run: npm test -- --runInBand --coverage=false tests/components/timezone.spec.js
 
   # TODO: Uncomment after project is set up in sonar
   # sonarcloud:
