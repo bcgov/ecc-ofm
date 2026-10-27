@@ -280,8 +280,9 @@ function handleError(res, e) {
 
 function formatDateTimeForBack(date) {
   //NOTE: date MUST be a string value. Do not try with a Date obj!
-  //Some date fields in Dynamics are actaully date/time fields. Set default time to noon PST, so associated time will always be
-  // 7/8 PM UTC. This time is totally arbitrary, but done to avoid time conversion issues between Portal and Dynamics.
+  //Some date fields in Dynamics are actually date/time fields. Default the time to 12:00 at -07:00 (Pacific), i.e. 19:00 UTC,
+  // so any UTC -> Pacific conversion renders the same calendar date: -7 after BC's permanent change (2026-11-01) and
+  // legacy -8 (PST) before it. The time itself is arbitrary; it only needs to sit inside the same UTC day for both offsets.
   return `${date}T12:00:00-07:00`
 }
 

@@ -39,11 +39,10 @@ function formatDateToLocale(date) {
 
 function convertUTCDatetoPSTDate(date) {
   if (!date) return null
-  const dateObject = new Date(date)
-  const pstOffset = 8 * 60 // PST offset in minutes
-  // Adjust the date by the difference in offsets
-  const pstDate = new Date(dateObject.getTime() + pstOffset * 60000)
-  return pstDate.toISOString().split('.')[0] + 'Z'
+  const parsed = moment.utc(date, moment.ISO_8601)
+  if (!parsed.isValid()) return null
+  const day = parsed.format('YYYY-MM-DD')
+  return `${moment.tz(day, 'YYYY-MM-DD', TIME_ZONE).toISOString().split('.')[0]}Z`
 }
 
 /* Example

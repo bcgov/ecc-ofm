@@ -1,4 +1,4 @@
-FROM node:22.17.1-alpine3.22
+FROM node:22.23.4-alpine3.23
 
 RUN mkdir -p /logs \
     && chmod 755 /logs
