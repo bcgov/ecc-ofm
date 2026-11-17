@@ -141,6 +141,27 @@ export default {
   font-size: 16px;
 }
 
+.notification-content table {
+  display: block !important;
+  width: fit-content !important;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  border: none !important;
+}
+
+.notification-content table * {
+  font-size: 14px;
+}
+
+.notification-content th,
+.notification-content td {
+  border: 1px solid #e0e0e0 !important;
+  padding: 8px 12px !important;
+  background-color: transparent !important;
+  width: auto !important;
+}
+
 .notification-from-text {
   white-space: pre-wrap;
 }
