@@ -47,12 +47,13 @@
         </v-expansion-panels>
       </v-row>
     </v-card-title>
-    <v-card-text class="notification-content" v-html="notification?.notificationContent" />
+    <v-card-text class="notification-content" v-html="notificationHtml" />
   </v-card>
 </template>
 
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
+import DOMPurify from 'dompurify'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
@@ -95,6 +96,15 @@ export default {
     hasDocuments() {
       return this.loadedAttachments.length > 0
     },
+    notificationHtml() {
+      const content = this.notification?.notificationContent
+      if (!content) return ''
+      const doc = new DOMParser().parseFromString(DOMPurify.sanitize(content), 'text/html')
+      doc.querySelectorAll('table, tr, th, td').forEach((el) => this.removeTableInlineStyles(el))
+      const topLevelTables = [...doc.querySelectorAll('table')].filter((table) => !table.parentElement?.closest('table'))
+      topLevelTables.forEach((table, index) => this.wrapTableInScrollRegion(doc, table, index))
+      return doc.body.innerHTML
+    },
   },
   watch: {
     // When notificationId changes, get the details for that notification.
@@ -120,6 +130,19 @@ export default {
         this.setFailureAlert('Error downloading file. Please wait a few minutes before you try again.')
       }
     },
+    removeTableInlineStyles(el) {
+      ;['border', 'padding', 'background', 'width', 'display'].forEach((prop) => el.style.removeProperty(prop))
+      ;['border', 'bgcolor', 'width', 'cellpadding'].forEach((attr) => el.removeAttribute(attr))
+    },
+    wrapTableInScrollRegion(doc, table, index) {
+      const wrapper = doc.createElement('div')
+      wrapper.className = 'notification-table-scroll'
+      wrapper.setAttribute('tabindex', '0')
+      wrapper.setAttribute('role', 'region')
+      wrapper.setAttribute('aria-label', `Scrollable table ${index + 1}`)
+      table.before(wrapper)
+      wrapper.appendChild(table)
+    },
   },
 }
 </script>
@@ -139,6 +162,33 @@ export default {
 .notification-content * {
   font-family: 'BCSans', Verdana, Arial, sans-serif !important;
   font-size: 16px;
+}
+
+.notification-table-scroll {
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 4px 0;
+}
+
+.notification-table-scroll:focus-visible {
+  outline: 2px solid #003366;
+  outline-offset: 2px;
+}
+
+.notification-content table {
+  border-collapse: collapse;
+}
+
+.notification-content table * {
+  font-size: 14px;
+}
+
+.notification-content th,
+.notification-content td {
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
+  background-color: transparent;
 }
 
 .notification-from-text {
