@@ -53,6 +53,7 @@
 
 <script>
 import AppButton from '@/components/ui/AppButton.vue'
+import DOMPurify from 'dompurify'
 import DocumentService from '@/services/documentService'
 import alertMixin from '@/mixins/alertMixin'
 import format from '@/utils/format'
@@ -98,7 +99,7 @@ export default {
     notificationHtml() {
       const content = this.notification?.notificationContent
       if (!content) return ''
-      const doc = new DOMParser().parseFromString(content, 'text/html')
+      const doc = new DOMParser().parseFromString(DOMPurify.sanitize(content), 'text/html')
       doc.querySelectorAll('table, tr, th, td').forEach((el) => this.removeTableInlineStyles(el))
       const topLevelTables = [...doc.querySelectorAll('table')].filter((table) => !table.parentElement?.closest('table'))
       topLevelTables.forEach((table, index) => this.wrapTableInScrollRegion(doc, table, index))
